@@ -102,7 +102,7 @@ public class SecurityConfig {
     @Bean
     public OpenAPI openapi() {
         return new OpenAPI()
-                .info(new io.swagger.v3.oas.models.info.Info().title("PASPM F01 API").version("0.1.0"))
+                .info(new io.swagger.v3.oas.models.info.Info().title("PASPM Backend API").version("0.1.0"))
                 .components(new Components()
                         .addSecuritySchemes("bearerAuth",
                                 new SecurityScheme()
@@ -120,6 +120,7 @@ public class SecurityConfig {
                             "400", "Invalid request / verification",
                             "401", "Authentication required / invalid",
                             "403", "Permission denied",
+                            "404", "Resource not found or outside the authenticated Store",
                             "409", "Conflict",
                             "429", "Rate limit exceeded",
                             "503", "Email / Google configuration unavailable"
