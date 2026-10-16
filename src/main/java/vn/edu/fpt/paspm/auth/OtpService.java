@@ -82,7 +82,9 @@ public class OtpService {
         }
 
         User user = userRepository.lockById(candidate.get().id());
-        if (!"PENDING_VERIFICATION".equals(user.status()) || !purpose.equals(user.purpose())) {
+        if (!"PENDING_VERIFICATION".equals(user.status())
+                || !purpose.equals(user.purpose())
+                || user.verifiedAt() != null) {
             return;
         }
 
@@ -150,11 +152,18 @@ public class OtpService {
         }
 
         String passwordHash = null;
+        boolean emailOnlyRegistration = "SELF_REGISTER".equals(purpose)
+                && user.name() == null
+                && user.passwordHash() == null;
         if ("ADMIN_INVITE".equals(purpose)) {
             passwordHash = auth.encodePassword(newPassword);
         }
 
         challenges.consume(user.id());
-        userRepository.activate(user.id(), Instant.now(), passwordHash);
+        if (emailOnlyRegistration) {
+            userRepository.markEmailVerified(user.id(), Instant.now());
+        } else {
+            userRepository.activate(user.id(), Instant.now(), passwordHash);
+        }
     }
 }

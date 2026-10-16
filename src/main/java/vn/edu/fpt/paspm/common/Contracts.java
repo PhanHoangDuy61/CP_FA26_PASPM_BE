@@ -14,6 +14,9 @@ public final class Contracts {
             @NotBlank @Size(max = 72) String password) {
     }
 
+    public record EmailRequest(@NotBlank @Email @Size(max = 254) String email) {
+    }
+
     public record Registration(
             @NotBlank @Size(max = 150) String name,
             @NotBlank @Email @Size(max = 254) String email,

@@ -88,8 +88,10 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/auth/login",
                                 "/api/auth/register",
+                                "/api/auth/register/complete",
                                 "/api/auth/otp/**",
                                 "/api/auth/activate",
+                                "/api/auth/google/register",
                                 "/api/auth/google"
                         ).permitAll()
                         .anyRequest().authenticated())

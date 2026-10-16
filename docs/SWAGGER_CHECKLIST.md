@@ -14,8 +14,11 @@ Ngày 14/10/2026: MySQL/Flyway và 14 ca HTTP Login/Current User đã được k
 | Gán role sai / thiếu Store cho staff | 400 | Not Tested |
 | Email admin-created bị trùng | 409 | Not Tested |
 | Đổi role/status rồi dùng token cũ | 401 | Not Tested |
-| Public Register không nhận role đặc quyền | role luôn END_CUSTOMER; extra field bị 400 | Not Tested |
-| Register → OTP verify → Login → /me | 202 → 200 → 200 → 200 | Not Tested |
+| Public Register chỉ nhận email; extra field bị từ chối | 202; role luôn END_CUSTOMER | Not Tested |
+| Register email → OTP verify → register complete → Login → /me | 202 → 200 → 200 → 200 → 200 | Not Tested |
+| Complete trước OTP, OTP sai/hết hạn/đã dùng | 400; account không active | Not Tested |
+| Google register → OTP verify → Google login | 202 → 200 → 200; END_CUSTOMER active sau OTP | Not Tested |
+| Google đăng ký với email đã có tài khoản | Không tự liên kết identity | Not Tested |
 | OTP sai, hết hạn, đã dùng hoặc sai purpose | 400 | Not Tested |
 | Resend trong cooldown | 429 | Not Tested |
 | Resend sau cooldown; dùng lại OTP cũ | 202; OTP cũ bị 400 | Not Tested |

@@ -114,7 +114,7 @@ public class UserRepository {
                     Statement.RETURN_GENERATED_KEYS
             );
             ps.setString(1, email(email));
-            ps.setString(2, name.trim());
+            ps.setString(2, name == null ? null : name.trim());
             ps.setInt(3, findRoleId(roleCode));
             ps.setObject(4, storeId);
             ps.setString(5, passwordHash);
@@ -169,8 +169,25 @@ public class UserRepository {
 
     public void activate(int id, Instant verifiedAt, String passwordHash) {
         jdbc.update(
-                "UPDATE app_user SET status='ACTIVE',email_verified_at=?,password_hash=?,token_version=token_version+1 WHERE user_id=?",
+                "UPDATE app_user SET status='ACTIVE',email_verified_at=?,password_hash=COALESCE(?,password_hash),token_version=token_version+1 WHERE user_id=?",
                 Timestamp.from(verifiedAt),
+                passwordHash,
+                id
+        );
+    }
+
+    public void markEmailVerified(int id, Instant verifiedAt) {
+        jdbc.update(
+                "UPDATE app_user SET email_verified_at=? WHERE user_id=?",
+                Timestamp.from(verifiedAt),
+                id
+        );
+    }
+
+    public void completeRegistration(int id, String name, String passwordHash) {
+        jdbc.update(
+                "UPDATE app_user SET name=?,password_hash=?,status='ACTIVE',token_version=token_version+1 WHERE user_id=?",
+                name,
                 passwordHash,
                 id
         );

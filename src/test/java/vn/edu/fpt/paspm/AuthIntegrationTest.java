@@ -37,7 +37,7 @@ import vn.edu.fpt.paspm.user.UserRepository;
  "spring.datasource.url=jdbc:h2:mem:paspm;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1;NON_KEYWORDS=USER",
  "spring.datasource.username=sa","spring.datasource.password=",
  "spring.flyway.enabled=false","spring.sql.init.mode=always",
- "spring.sql.init.schema-locations=classpath:db/migration/V1__shared_store_and_f01.sql",
+ "spring.sql.init.schema-locations=classpath:db/migration/V1__shared_store_and_f01.sql,classpath:db/migration/V2__allow_name_after_email_verification.sql",
  "paspm.jwt-secret=test-only-signing-key-with-at-least-thirty-two-bytes",
  "paspm.otp-secret=test-only-otp-key-with-at-least-thirty-two-bytes",
  "paspm.bootstrap-email=","paspm.bootstrap-password="})
@@ -94,14 +94,19 @@ class AuthIntegrationTest {
   mvc.perform(get("/api/auth/me").header("Authorization","Bearer "+expired)).andExpect(status().isUnauthorized());
  }
  @Test void registrationCannotChooseRoleAndOtpIsSingleUse()throws Exception{
-  mvc.perform(body(post("/api/auth/register"),Map.of("name","Customer","email","customer@example.com","password",password,"roleCode","SYSTEM_ADMIN"))).andExpect(status().isBadRequest());
-  mvc.perform(body(post("/api/auth/register"),Map.of("name","Customer","email","customer@example.com","password",password))).andExpect(status().isAccepted()).andExpect(jsonPath("$.otp").doesNotExist());
-  User u=users.findByEmail("customer@example.com").orElseThrow();assertEquals("END_CUSTOMER",u.role());assertEquals("PENDING_VERIFICATION",u.status());
+  mvc.perform(body(post("/api/auth/register"),Map.of("email","customer@example.com","roleCode","SYSTEM_ADMIN"))).andExpect(status().isBadRequest());
+  mvc.perform(body(post("/api/auth/register"),Map.of("email","customer@example.com"))).andExpect(status().isAccepted()).andExpect(jsonPath("$.otp").doesNotExist());
+  User u=users.findByEmail("customer@example.com").orElseThrow();assertEquals("END_CUSTOMER",u.role());assertEquals("PENDING_VERIFICATION",u.status());assertNull(u.name());assertNull(u.passwordHash());
   mvc.perform(body(post("/api/auth/login"),Map.of("email",u.email(),"password",password))).andExpect(status().isUnauthorized());
+  mvc.perform(body(post("/api/auth/register/complete"),Map.of("email",u.email(),"name","Customer","password",password))).andExpect(status().isBadRequest());
   String code=latestOtp();
   mvc.perform(body(post("/api/auth/otp/verify"),Map.of("email",u.email(),"otp",code))).andExpect(status().isOk());
   mvc.perform(body(post("/api/auth/otp/verify"),Map.of("email",u.email(),"otp",code))).andExpect(status().isBadRequest());
+  User verified=users.findById(u.id());assertFalse(verified.active());assertNotNull(verified.verifiedAt());
+  mvc.perform(body(post("/api/auth/register/complete"),Map.of("email",u.email(),"name","Customer","password",password))).andExpect(status().isOk()).andExpect(jsonPath("$.message").value("Registration complete"));
   assertTrue(users.findById(u.id()).active());
+  mvc.perform(body(post("/api/auth/login"),Map.of("email",u.email(),"password",password))).andExpect(status().isOk());
+  mvc.perform(body(post("/api/auth/register/complete"),Map.of("email",u.email(),"name","Customer","password",password))).andExpect(status().isBadRequest());
  }
  @Test void adminInviteActivatesWithInitialPassword()throws Exception{
   User admin=active("admin@example.com","SYSTEM_ADMIN",null);String t=token(admin);
@@ -113,14 +118,14 @@ class AuthIntegrationTest {
   mvc.perform(body(post("/api/auth/login"),Map.of("email","invite@example.com","password",password))).andExpect(status().isOk());
  }
  @Test void invalidOtpAttemptsPersistAndLockChallenge()throws Exception{
-  mvc.perform(body(post("/api/auth/register"),Map.of("name","Customer","email","attempts@example.com","password",password))).andExpect(status().isAccepted());
+  mvc.perform(body(post("/api/auth/register"),Map.of("email","attempts@example.com"))).andExpect(status().isAccepted());
   String code=latestOtp(),wrong=code.equals("000000")?"111111":"000000";
   for(int i=0;i<5;i++)mvc.perform(body(post("/api/auth/otp/verify"),Map.of("email","attempts@example.com","otp",wrong))).andExpect(status().isBadRequest());
   assertEquals(5,jdbc.queryForObject("SELECT attempts FROM verification_challenge",Integer.class));
   mvc.perform(body(post("/api/auth/otp/verify"),Map.of("email","attempts@example.com","otp",code))).andExpect(status().isBadRequest());
  }
  @Test void resendRevokesOldChallengeAndCooldownApplies()throws Exception{
-  mvc.perform(body(post("/api/auth/register"),Map.of("name","Customer","email","resend@example.com","password",password))).andExpect(status().isAccepted());
+  mvc.perform(body(post("/api/auth/register"),Map.of("email","resend@example.com"))).andExpect(status().isAccepted());
   String oldHash=jdbc.queryForObject("SELECT code_hash FROM verification_challenge",String.class);
   mvc.perform(body(post("/api/auth/otp/resend"),Map.of("email","resend@example.com","purpose","SELF_REGISTER"))).andExpect(status().isTooManyRequests());
   jdbc.update("UPDATE verification_challenge SET issued_at=?",Timestamp.from(Instant.now().minusSeconds(120)));
@@ -129,7 +134,7 @@ class AuthIntegrationTest {
  }
  @Test void expiredOtpAndManualActivationAreDenied()throws Exception{
   User admin=active("expireadmin@example.com","SYSTEM_ADMIN",null);
-  mvc.perform(body(post("/api/auth/register"),Map.of("name","Customer","email","expired@example.com","password",password))).andExpect(status().isAccepted());String code=latestOtp();
+  mvc.perform(body(post("/api/auth/register"),Map.of("email","expired@example.com"))).andExpect(status().isAccepted());String code=latestOtp();
   User u=users.findByEmail("expired@example.com").orElseThrow();
   jdbc.update("UPDATE verification_challenge SET expires_at=?",Timestamp.from(Instant.now().minusSeconds(60)));
   mvc.perform(body(post("/api/auth/otp/verify"),Map.of("email",u.email(),"otp",code))).andExpect(status().isBadRequest());
@@ -155,11 +160,12 @@ class AuthIntegrationTest {
  }
  @Test void smtpFailureRollsBackRegistration()throws Exception{
   doThrow(new MailSendException("test unavailable")).when(mail).send(any(SimpleMailMessage.class));
-  mvc.perform(body(post("/api/auth/register"),Map.of("name","Customer","email","mailfail@example.com","password",password))).andExpect(status().isServiceUnavailable());
+  mvc.perform(body(post("/api/auth/register"),Map.of("email","mailfail@example.com"))).andExpect(status().isServiceUnavailable());
   assertTrue(users.findByEmail("mailfail@example.com").isEmpty());
  }
  @Test void googleFailsClosedWithoutClientConfiguration()throws Exception{
   mvc.perform(body(post("/api/auth/google"),Map.of("idToken","invalid"))).andExpect(status().isServiceUnavailable());
+  mvc.perform(body(post("/api/auth/google/register"),Map.of("idToken","invalid"))).andExpect(status().isServiceUnavailable());
   mvc.perform(body(post("/api/auth/google/link"),Map.of("idToken","invalid"))).andExpect(status().isUnauthorized());
  }
  @Test void swaggerContractAvailableAndPasswordsHashed()throws Exception{

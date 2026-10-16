@@ -8,9 +8,9 @@
 | F01-05–06 | User list/detail/create/update/status; roles/assignment | PUT chỉ sửa name; email bất biến để không bỏ qua verification |
 | F01-07 | Checklist và automated integration tests | Swagger evidence / PR review / merge chưa thực hiện |
 | F01-08–09 | HMAC OTP, send/request/resend/verify/activate; SMTP | Mailpit/provider thực tế và outbox chưa nghiệm thu |
-| F01-10 | Google verifier + authenticated linking | Happy path cần Google OAuth client/token thật |
+| F01-10 | Google verifier, authenticated linking, Google signup as pending END_CUSTOMER + email OTP | Happy path cần Google OAuth client/token thật |
 | F01-11 | Checklist OTP/Google | Manual verification chưa thực hiện |
-| F01-12 | END_CUSTOMER registration + OTP | Mail provider thực tế cần cấu hình |
+| F01-12 | Email/password and Google END_CUSTOMER registration + OTP | Mail provider thực tế cần cấu hình |
 | F02–F11 | Chưa triển khai | Không có mock endpoints trả thành công |
 
 ## Bước tiếp theo

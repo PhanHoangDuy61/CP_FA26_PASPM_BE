@@ -1,0 +1,1 @@
+ALTER TABLE app_user MODIFY name VARCHAR(150) NULL;

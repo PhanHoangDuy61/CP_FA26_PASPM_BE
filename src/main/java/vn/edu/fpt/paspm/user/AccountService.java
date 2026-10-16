@@ -42,22 +42,39 @@ public class AccountService {
     }
 
     @Transactional
-    public void register(Registration request, String ip) {
+    public void requestRegistration(String email, String ip) {
         limits.hit("register:" + ip, 10, 3600);
-        auth.validatePasswordLength(request.password());
-        if (userRepository.findByEmail(request.email()).isPresent()) {
+        var existing = userRepository.findByEmail(email);
+        if (existing.isPresent()) {
             return;
         }
 
         User user = userRepository.createPendingUser(
-                request.name(),
-                request.email(),
+                null,
+                email,
                 "END_CUSTOMER",
                 null,
-                auth.encodePassword(request.password()),
+                null,
                 "SELF_REGISTER"
         );
         otp.issue(user);
+    }
+
+    @Transactional
+    public void completeRegistration(Registration request) {
+        auth.validatePasswordLength(request.password());
+        User user = userRepository.findByEmail(request.email())
+                .orElseThrow(() -> new ApiException(400, "Email must be verified before completing registration"));
+        user = userRepository.lockById(user.id());
+        if (!"PENDING_VERIFICATION".equals(user.status())
+                || !"SELF_REGISTER".equals(user.purpose())
+                || user.verifiedAt() == null
+                || user.name() != null
+                || user.passwordHash() != null) {
+            throw new ApiException(400, "Email must be verified before completing registration");
+        }
+
+        userRepository.completeRegistration(user.id(), request.name().trim(), auth.encodePassword(request.password()));
     }
 
     @Transactional

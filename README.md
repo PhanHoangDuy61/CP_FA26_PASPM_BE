@@ -41,10 +41,12 @@ MySQL local đã có bảng STORE/F02: **không chạy V1 lên DB đó một cá
 |---|---|
 | POST `/api/auth/login` | Email/password; ACTIVE + verified mới được cấp JWT |
 | GET `/api/auth/me` | JWT hợp lệ; trả user/role/store |
-| POST `/api/auth/register` | Công khai; chỉ tạo END_CUSTOMER; trả 202 chung cho email đã tồn tại |
-| POST `/api/auth/otp/request`, `/otp/resend` | Email + purpose SELF_REGISTER hoặc ADMIN_INVITE |
-| POST `/api/auth/otp/verify` | Email + OTP; xác minh self-registration |
+| POST `/api/auth/register` | Công khai; chỉ nhận email, tạo END_CUSTOMER chờ OTP và gửi mã; trả 202 chung |
+| POST `/api/auth/otp/request`, `/otp/resend` | Gửi lại OTP cho tài khoản đang chờ; email + purpose SELF_REGISTER hoặc ADMIN_INVITE |
+| POST `/api/auth/otp/verify` | Email + OTP; xác minh email. Admin invitation hoàn tất qua `/activate` |
+| POST `/api/auth/register/complete` | Email đã xác minh + name/password; hoàn tất và kích hoạt END_CUSTOMER |
 | POST `/api/auth/activate` | Email + OTP + password; kích hoạt admin invitation |
+| POST `/api/auth/google/register` | Google ID token hợp lệ; tạo END_CUSTOMER chờ OTP gửi tới email Google đã xác minh |
 | POST `/api/auth/google` | Đăng nhập Google identity đã liên kết; cần client ID thật |
 | POST `/api/auth/google/link` | JWT PASPM hợp lệ + Google ID token; không tự liên kết qua email |
 | GET/POST `/api/users` | SYSTEM_ADMIN; list có q/role/status/page/size, POST gửi invitation |
@@ -52,6 +54,26 @@ MySQL local đã có bảng STORE/F02: **không chạy V1 lên DB đó một cá
 | PATCH `/api/users/{id}/status` | ACTIVE/INACTIVE; không bỏ qua OTP activation |
 | PUT `/api/users/{id}/role` | SYSTEM_ADMIN; đổi role/store và thu hồi token cũ |
 | GET `/api/roles` | SYSTEM_ADMIN; bốn role đã seed |
+
+### Đăng ký bằng Google/Gmail
+
+Frontend cần lấy Google ID token bằng Google Identity Services với OAuth Client ID trùng `GOOGLE_CLIENT_ID`, sau đó:
+
+1. Gửi `POST /api/auth/google/register` với `{"idToken":"<Google ID token>"}`. API chỉ nhận Google identity có email đã xác minh; tài khoản mới được tạo ở trạng thái chờ OTP.
+2. Đọc OTP gửi tới email Google trong Mailpit ở development hoặc hộp thư thật đã cấu hình SMTP.
+3. Gửi `POST /api/auth/otp/verify` với `{"email":"<Google email>","otp":"<6 digits>"}`.
+4. Gửi `POST /api/auth/google` với cùng Google ID token để nhận JWT PASPM.
+
+Google identity chỉ được liên kết tự động trong lúc tạo tài khoản mới; API không tự liên kết vào tài khoản PASPM đã tồn tại chỉ dựa trên email. Nếu email đã có tài khoản, đăng nhập tài khoản đó rồi dùng `/api/auth/google/link`.
+
+### Đăng ký bằng email trong Swagger
+
+1. Gọi `POST /api/auth/register` với `{"email":"you@example.com"}`. Nếu email đủ điều kiện, backend gửi OTP.
+2. Gọi `POST /api/auth/otp/verify` với email và OTP 6 chữ số. Email được xác minh nhưng tài khoản vẫn pending.
+3. Gọi `POST /api/auth/register/complete` với email, name và password để kích hoạt tài khoản. Mật khẩu cần ít nhất 12 ký tự, gồm chữ hoa, chữ thường và số.
+4. Đăng nhập bằng `POST /api/auth/login`.
+
+Các endpoint trả phản hồi chung cho email đã tồn tại để hạn chế dò tìm tài khoản. OTP gửi qua cấu hình SMTP; Mailpit local có thể xem tại http://localhost:8025.
 
 Swagger có Bearer Authorize và DTO. Các lỗi validation không trả thông tin nội bộ. Duplicate email trong admin creation trả 409. Các endpoint công khai không nhận role/store và từ chối field không khai báo.
 
