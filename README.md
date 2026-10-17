@@ -6,30 +6,27 @@ Backend cho FA26_SE048, dựa trên `PASPM_F01_12_API_Swagger_Tasks_Clean.docx` 
 
 Java 17, Spring Boot 3.5.7, Spring Security, Spring JDBC, MySQL 8.4, Flyway, springdoc Swagger, SMTP. JDBC được chọn để quản lý rõ SQL và migration theo ERD; chưa sử dụng JPA/Hibernate. Hai thuật toán HUI-Miner/EFIM có interface riêng trong `mining/MiningEngine.java`, chưa có adapter thực thi.
 
-## Chạy trên Windows / IntelliJ
+## Chạy backend trên Windows
 
-1. Cài JDK 17, Docker Desktop. Mở thư mục chứa `pom.xml` trong IntelliJ, chọn JDK 17 cho cả Project và Maven.
-2. Copy `.env.example` thành `.env`, điền `DB_PASSWORD` và `MYSQL_ROOT_PASSWORD` bằng giá trị riêng. File `.env` chỉ được Docker Compose đọc tự động.
-3. Chạy `docker compose up -d`. MySQL dùng cổng 3306, hộp thư Mailpit ở http://localhost:8025.
-4. Trong **Run Configuration → Environment variables** của IntelliJ, cấu hình:
+1. Cài JDK 17 và đảm bảo `JAVA_HOME` trỏ đến thư mục JDK.
+2. Điền cấu hình local trong `.env` (MySQL, JWT/OTP và SMTP). Script tự đọc file này; không commit hoặc chia sẻ file `.env`.
+3. Mở PowerShell tại thư mục backend và chạy:
 
-   - `DB_PASSWORD`: trùng giá trị của MySQL.
-   - `JWT_SECRET` và `OTP_SECRET`: hai chuỗi ngẫu nhiên khác nhau, mỗi chuỗi ít nhất 32 byte; có thể dùng chuỗi hex ngẫu nhiên 64 ký tự.
-   - `BOOTSTRAP_EMAIL`, `BOOTSTRAP_PASSWORD`: tài khoản System Admin khởi tạo. Mật khẩu ít nhất 12 ký tự, có chữ hoa/thường và số, tối đa 72 byte UTF-8.
-   - `GOOGLE_CLIENT_ID`: bỏ trống nếu chưa thử Google.
+   ```powershell
+   .\scripts\Start-Dev.ps1
+   ```
 
-5. Chạy `vn.edu.fpt.paspm.PaspmApplication`. Flyway tự chạy migration. Mở http://localhost:8080/swagger.
-6. Sau lần khởi tạo đầu tiên, bỏ biến bootstrap khỏi cấu hình chạy. Source không chứa tài khoản/mật khẩu mặc định.
+   Script dùng JDK 17 từ `JAVA_HOME`, nạp `.env` và chạy Maven/Spring Boot. Flyway tự chạy migration khi cần. Mở http://localhost:8080/swagger.
 
-Nếu không dùng IntelliJ, đặt biến `$env:DB_PASSWORD`, `$env:JWT_SECRET`… trong PowerShell rồi chạy `./mvnw.cmd spring-boot:run`. Maven Wrapper trong gói sẽ tải Maven 3.9.9 ở lần đầu, nên không cần cài Maven riêng. Không dán secret vào tài liệu hay commit.
+Nhấn Ctrl+C trong cửa sổ PowerShell để dừng backend. Maven Wrapper tự tải Maven 3.9.9 ở lần chạy đầu; không cần cài Maven riêng.
 
-Có thể dùng script Windows để kiểm tra JDK 17 và đọc file cấu hình local trước khi chạy:
+Nếu muốn chỉ rõ file `.env` trong thư mục backend:
 
 ```powershell
-./scripts/Start-Dev.ps1 -JdkHome 'DUONG_DAN_JDK_17' -EnvFile './.env'
+.\scripts\Start-Dev.ps1 -EnvFile '.\.env'
 ```
 
-Thay `DUONG_DAN_JDK_17` bằng thư mục có `bin/java.exe` và `bin/javac.exe`. Script đọc `NAME=value` như dữ liệu, không thực thi nội dung file; các biến chỉ áp dụng cho process hiện tại. Điền đầy đủ `DB_PASSWORD`, `JWT_SECRET`, `OTP_SECRET` trước khi chạy. Không đưa file `.env` vào Git. Nếu đã đặt biến trong PowerShell thì bỏ tham số `-EnvFile`. IntelliJ vẫn cần cấu hình biến môi trường riêng.
+Lệnh chạy thông thường vẫn là `.\scripts\Start-Dev.ps1`; script tự tìm `.env` trong thư mục backend. Chỉ truyền `-JdkHome` nếu `JAVA_HOME` chưa trỏ đến JDK 17, và khi đó thay bằng đường dẫn JDK 17 thật trên máy. Script đọc file `NAME=value` như dữ liệu, không thực thi nội dung file; các biến chỉ áp dụng cho process backend. Cần có `DB_PASSWORD`, `JWT_SECRET`, `OTP_SECRET`; mỗi secret phải có ít nhất 32 byte. Nếu chạy bằng IntelliJ, cấu hình biến môi trường trong Run Configuration thay vì dùng script.
 
 Trên Windows, dừng backend đang chạy từ `target/*.jar` trước khi `./mvnw.cmd verify`: JVM giữ file JAR có thể khiến bước repackage không đổi tên được file. Nếu chạy `spring-boot:run` trong terminal, dùng Ctrl+C để dừng backend rồi build lại.
 
@@ -41,8 +38,9 @@ MySQL local đã có bảng STORE/F02: **không chạy V1 lên DB đó một cá
 |---|---|
 | POST `/api/auth/login` | Email/password; ACTIVE + verified mới được cấp JWT |
 | GET `/api/auth/me` | JWT hợp lệ; trả user/role/store |
-| POST `/api/auth/register` | Công khai; chỉ nhận email, tạo END_CUSTOMER chờ OTP và gửi mã; trả 202 chung |
-| POST `/api/auth/otp/request`, `/otp/resend` | Gửi lại OTP cho tài khoản đang chờ; email + purpose SELF_REGISTER hoặc ADMIN_INVITE |
+| POST `/api/auth/register` | Công khai; email mới tạo END_CUSTOMER chờ OTP và trả 202; email đã tồn tại trả 409 |
+| POST `/api/auth/otp/request` | Yêu cầu OTP cho tài khoản đang chờ xác minh; email + purpose SELF_REGISTER hoặc ADMIN_INVITE |
+| POST `/api/auth/otp/resend` | Gửi mã OTP mới khi mã cũ thất lạc/hết hạn; cooldown được áp dụng và mã cũ bị vô hiệu |
 | POST `/api/auth/otp/verify` | Email + OTP; xác minh email. Admin invitation hoàn tất qua `/activate` |
 | POST `/api/auth/register/complete` | Email đã xác minh + name/password; hoàn tất và kích hoạt END_CUSTOMER |
 | POST `/api/auth/activate` | Email + OTP + password; kích hoạt admin invitation |
@@ -73,7 +71,7 @@ Google identity chỉ được liên kết tự động trong lúc tạo tài kh
 3. Gọi `POST /api/auth/register/complete` với email, name và password để kích hoạt tài khoản. Mật khẩu cần ít nhất 12 ký tự, gồm chữ hoa, chữ thường và số.
 4. Đăng nhập bằng `POST /api/auth/login`.
 
-Các endpoint trả phản hồi chung cho email đã tồn tại để hạn chế dò tìm tài khoản. OTP gửi qua cấu hình SMTP; Mailpit local có thể xem tại http://localhost:8025.
+Endpoint đăng ký email phân biệt email mới (202, gửi OTP) với email đã tồn tại (409); phản hồi này cho phép dò tìm email đã đăng ký. OTP gửi qua cấu hình SMTP; Mailpit local có thể xem tại http://localhost:8025.
 
 Swagger có Bearer Authorize và DTO. Các lỗi validation không trả thông tin nội bộ. Duplicate email trong admin creation trả 409. Các endpoint công khai không nhận role/store và từ chối field không khai báo.
 
