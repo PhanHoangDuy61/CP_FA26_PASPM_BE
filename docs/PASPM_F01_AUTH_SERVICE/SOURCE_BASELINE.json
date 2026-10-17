@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-14",
+  "sources": [
+    {
+      "filename": "PASPM_F01_12_API_Swagger_Tasks_Clean.docx",
+      "sha256": "8eaa89b0b39938f56d72f09ac45f47b7d9039031f245197b994852d25bbbc8ba"
+    },
+    {
+      "filename": "PASPM_ERD_V3.drawio",
+      "sha256": "9446a0c1bf5271b485207066a2bc53ff0537c9426b880292720a4d65cc1ecdbc"
+    }
+  ],
+  "scope": "F01 first backend implementation; earlier project context used only where consistent with these latest sources"
+}

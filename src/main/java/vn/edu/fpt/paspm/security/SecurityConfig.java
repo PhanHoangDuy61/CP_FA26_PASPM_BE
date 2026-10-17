@@ -123,7 +123,7 @@ public class SecurityConfig {
                             "404", "Resource not found or outside the authenticated Store",
                             "409", "Conflict",
                             "429", "Rate limit exceeded",
-                            "503", "Email / Google configuration unavailable"
+                            "503", "Service configuration or required dependency unavailable"
                     ).entrySet()) {
                         operation.getResponses().addApiResponse(
                                 entry.getKey(),

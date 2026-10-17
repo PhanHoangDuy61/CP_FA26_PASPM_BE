@@ -1,0 +1,9 @@
+{
+  "userId": 45,
+  "email": "new.admin@example.test",
+  "name": "New Store Admin",
+  "roleCode": "STORE_ADMIN",
+  "storeId": 7,
+  "status": "PENDING_VERIFICATION",
+  "emailVerified": false
+}

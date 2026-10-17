@@ -1,0 +1,9 @@
+{
+  "enableStock": true,
+  "enableExpiry": true,
+  "enableSeason": true,
+  "alpha": 0.5,
+  "beta": 0.2,
+  "gamma": 0.3,
+  "lambda": 0.5
+}
