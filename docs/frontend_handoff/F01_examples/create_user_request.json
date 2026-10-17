@@ -1,0 +1,6 @@
+{
+  "name": "New Store Admin",
+  "email": "new.admin@example.test",
+  "roleCode": "STORE_ADMIN",
+  "storeId": 7
+}
