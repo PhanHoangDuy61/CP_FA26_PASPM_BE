@@ -1,6 +1,6 @@
-# F01 / F02 RBAC Matrix
+# F01 / F02 / F03 RBAC Matrix
 
-Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and F01/F02 service/repository checks (2026-10-17). “Public” means the Spring security route is explicitly permitted; “authenticated” requires a valid active bearer token. An authenticated-but-wrong role is 403. F02 foreign or absent resources are hidden as 404 after the controller role gate.
+Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and F01/F02/F03 service/repository checks (2026-10-17). “Public” means the Spring security route is explicitly permitted; “authenticated” requires a valid active bearer token. An authenticated-but-wrong role is 403. F02/F03 foreign or absent Store-scoped resources are hidden as 404 after the controller role gate.
 
 | Feature | Endpoint | System Admin | Store Admin | Merchandiser | End Customer |
 |---|---|---|---|---|---|
@@ -37,12 +37,26 @@ Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and F01
 | F02 Batch detail | GET `/api/inventory-batches/{id}` | Forbidden | Allowed, own Store; foreign→404 | Forbidden | Forbidden |
 | F02 Update batch | PATCH `/api/inventory-batches/{id}` | Forbidden | Allowed, own Store; foreign→404 | Forbidden | Forbidden |
 | F02 Inventory summary | GET `/api/products/{id}/inventory-summary` | Forbidden | Allowed, own Store; foreign→404 | Forbidden | Forbidden |
+| F03 Lambda policy | GET `/api/system/utility/lambda-policy` | Allowed, global | Forbidden | Forbidden | Forbidden |
+| F03 Lambda policy | PUT `/api/system/utility/lambda-policy` | Allowed, global | Forbidden | Forbidden | Forbidden |
+| F03 Store utility config | GET `/api/utility/config` | Forbidden | Allowed, own Store | Allowed, own Store | Forbidden |
+| F03 Weight config / selected lambda | PUT `/api/utility/config` | Forbidden | Forbidden | Allowed, own Store | Forbidden |
+| F03 Expiry window T | PUT `/api/utility/config/expiry-window` | Forbidden | Allowed, own Store | Forbidden | Forbidden |
+| F03 Product score read | GET `/api/utility/products/{productId}/scores` | Forbidden | Forbidden | Allowed, own Store; foreign Product→404 | Forbidden |
+| F03 Product score update | PATCH `/api/utility/products/{productId}/scores` | Forbidden | Forbidden | Allowed, own Store; foreign Product→404 | Forbidden |
+| F03 Utility preview | POST `/api/utility/preview` | Forbidden | Forbidden | Allowed, own Store; F04 source required | Forbidden |
+| F03 Snapshot create | POST `/api/utility/snapshots` | Forbidden | Forbidden | Allowed, own Store; F04 source required | Forbidden |
+| F03 Snapshot detail | GET `/api/utility/snapshots/{id}` | Forbidden | Forbidden | Allowed, own Store; foreign snapshot→404 | Forbidden |
+| F03 Snapshot matrix | GET `/api/utility/snapshots/{id}/matrix` | Forbidden | Forbidden | Allowed, own Store; foreign snapshot→404 | Forbidden |
+| F03 Snapshot history list | GET `/api/utility/snapshots` | NOT IMPLEMENTED | NOT IMPLEMENTED | NOT IMPLEMENTED | NOT IMPLEMENTED |
 
 ## Authorization details
 
 Role is global to the account; `STORE_ADMIN` and `MERCHANDISER` have a `store_id`, while `SYSTEM_ADMIN` and `END_CUSTOMER` are global/no Store. Store Admin and Merchandiser assignment requires an existing Store. System Admin and End Customer assignment requires no Store. Public self-registration accepts only email and always creates `END_CUSTOMER`; request fields such as `roleCode` are rejected as unknown. System Admin can invite privileged roles and assign roles/Stores through protected user management endpoints.
 
 F01 `/api/users` is global System Admin administration, so it can list/read/manage accounts across Stores. F02 does **not** grant System Admin access: every F02 controller is restricted to `STORE_ADMIN`, even though the shared StoreScope helper contains a System Admin branch. Do not infer endpoint permission from helper behavior alone.
+
+F03 policy routes are explicitly System Admin-only. F03 Store settings use distinct permissions: Store Admin changes T; Merchandiser changes enabled criteria, coefficients and selected lambda. Both can read the combined Store config. Product scores and Utility operations are Merchandiser-only. All Store-bound F03 calls derive Store identity from the authenticated user; request bodies and query strings cannot select another Store. A tightened lambda policy leaves existing Store configuration unchanged and is surfaced through `lambdaValid=false`; Preview/Snapshot rejects the stale lambda with 409 until a Merchandiser updates it.
 
 The database identity claims one Store and no request accepts a Store selector. Repositories scope category/product/batch reads and writes through the authenticated Store. F02 cross-Store records resolve to 404. Missing token is 401; authenticated insufficient role is 403. OpenAPI contains a global bearer scheme but Springdoc does not expose these role rules per operation; this source-derived table is authoritative for frontend navigation.
 
@@ -58,8 +72,11 @@ Integration-ready: F01 password/OTP/user APIs and F02 all 15 operations. Google 
 |---|---:|---:|---:|---|---|
 | F01 | 18 | 18 | 18 | Google register/login/link require Google client configuration and mail for OTP; in the default unconfigured setup those return 503 | logout, refresh token, password reset/change, self-profile edit |
 | F02 | 15 | 15 | 15 | Browser cross-origin integration needs a same-origin proxy or deployment CORS policy; API endpoints themselves are available | delete endpoints, stock adjustment/movement history |
+| F03 | 11 | 11 | 7 | Preview and snapshot creation need F04's unavailable validated transaction provider; snapshot reads need a known snapshot ID | snapshot history list, F04 provider/dataset identity, F05 Mining Request FK/export/engine |
 
 “Contract verified” means route, method, request/response model and security declaration were compared with the actual OpenAPI plus controller/service source. Existing MockMvc tests cover F01 authentication/OTP/invite/token revocation and F02 CRUD/Store isolation/summary. This is not a claim that each endpoint was separately called through a live Swagger UI during this doc task. `mvn -q verify` ran for this task; see final report for actual result.
+
+F03 source and runtime OpenAPI contain 11 operations; all 11 are represented in `docs/api/F03_UTILITY_API.md`. Existing `UtilityIntegrationTest` directly requests 10 of 11 HTTP operations; `GET /api/system/utility/lambda-policy` is not directly requested, although its implementation and OpenAPI operation were statically checked. Interactive Swagger UI execution was NOT RUN for the F03 handoff. Preview and snapshot creation are exercised with the isolated fixture but need F04's unavailable validated transaction provider in the default profile. F03 has no snapshot listing endpoint, so snapshot-history discovery is not ready for Frontend integration.
 
 ## Per-operation readiness matrix
 

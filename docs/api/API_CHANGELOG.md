@@ -1,5 +1,16 @@
 # API Changelog
 
+## 2026-10-17 — F03 contract and Frontend handoff verification
+
+- Expanded `F03_UTILITY_API.md` with field-level request/response contracts, implemented routes, source-derived role rules, validations, utility/expiry math, snapshot persistence and F04/F05 dependency gaps.
+- Expanded the React handoff with screen-to-route mapping, TypeScript types, form/error behavior, setup and mining handoff details; added synthetic JSON examples for implemented endpoints.
+- Extended the existing shared RBAC matrix with F03 routes instead of creating a duplicate matrix.
+- Compared all 11 F03 controller operations with the existing runtime-generated OpenAPI 3.1.0 export and source DTOs. The export already included all routes, so it was validated and preserved rather than replaced with a new or partial specification.
+- Recorded that MockMvc tests exercise F03 runtime routes, while interactive Swagger UI “Try it out” was NOT RUN in this documentation task.
+- Recorded implementation gaps: no default F04 validated transaction provider (Preview/Snapshot return 503), no snapshot-history list route, no F05 `MINING_REQUEST` FK/export, and OpenAPI response-nullability/role metadata gaps.
+
+No Backend API behavior, source code, or database migration was changed as part of this documentation verification.
+
 ## 2026-10-17 — F03 Utility API contract
 
 Published the implemented F03 contract and runtime OpenAPI export in `docs/api/openapi.json`.
