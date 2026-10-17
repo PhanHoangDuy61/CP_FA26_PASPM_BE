@@ -5,6 +5,7 @@ import java.util.Map;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -60,17 +61,24 @@ public class AuthController {
 
     @Operation(
             summary = "Yêu cầu OTP đăng ký",
-            description = "Chỉ nhập email để tạo tài khoản END_CUSTOMER đang chờ xác minh và gửi OTP qua SMTP. Phản hồi chung không tiết lộ email đã tồn tại.",
+            description = "Chỉ nhập email để tạo tài khoản END_CUSTOMER đang chờ xác minh và gửi OTP qua SMTP. Trả 202 nếu email mới, 409 nếu email đã tồn tại; điều này tiết lộ trạng thái đăng ký của email.",
             security = {})
     @PostMapping("/register")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public Map<String, String> register(@Valid @RequestBody EmailRequest request, HttpServletRequest servletRequest) {
+    public ResponseEntity<Map<String, String>> register(
+            @Valid @RequestBody EmailRequest request,
+            HttpServletRequest servletRequest) {
         try {
-            accounts.requestRegistration(request.email(), servletRequest.getRemoteAddr());
+            boolean created = accounts.requestRegistration(request.email(), servletRequest.getRemoteAddr());
+            if (!created) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(Map.of("error", "Email already exists"));
+            }
         } catch (org.springframework.dao.DuplicateKeyException ignored) {
-            // Concurrent duplicate registration: preserve generic response.
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("error", "Email already exists"));
         }
-        return accepted();
+        return ResponseEntity.status(HttpStatus.ACCEPTED)
+                .body(Map.of("message", "Verification email sent"));
     }
 
     @Operation(
@@ -84,12 +92,30 @@ public class AuthController {
     }
 
     @Operation(
-            summary = "Yêu cầu hoặc gửi lại OTP",
-            description = "Gửi OTP cho tài khoản đang chờ xác minh. purpose là SELF_REGISTER hoặc ADMIN_INVITE. Đăng ký mới chỉ cần gọi POST /api/auth/register.",
+            summary = "Yêu cầu OTP",
+            description = "Gửi OTP xác minh cho tài khoản đang chờ xác minh email. Dùng purpose SELF_REGISTER hoặc ADMIN_INVITE. Đăng ký tài khoản mới bắt đầu bằng POST /api/auth/register, endpoint này chỉ dùng khi cần yêu cầu OTP cho tài khoản đang chờ.",
             security = {})
-    @PostMapping({"/otp/request", "/otp/resend"})
+    @PostMapping("/otp/request")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public Map<String, String> request(@Valid @RequestBody OtpRequest request, HttpServletRequest servletRequest) {
+    public Map<String, String> requestOtp(
+            @Valid @RequestBody OtpRequest request,
+            HttpServletRequest servletRequest) {
+        return issueOtp(request, servletRequest);
+    }
+
+    @Operation(
+            summary = "Gửi lại OTP",
+            description = "Gửi mã OTP mới cho tài khoản đang chờ xác minh khi mã trước đó thất lạc hoặc hết hạn. Dùng cùng email và purpose SELF_REGISTER hoặc ADMIN_INVITE; mã cũ bị vô hiệu và phải qua thời gian chờ cooldown trước khi gửi lại.",
+            security = {})
+    @PostMapping("/otp/resend")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public Map<String, String> resendOtp(
+            @Valid @RequestBody OtpRequest request,
+            HttpServletRequest servletRequest) {
+        return issueOtp(request, servletRequest);
+    }
+
+    private Map<String, String> issueOtp(OtpRequest request, HttpServletRequest servletRequest) {
         otp.request(request.email(), request.purpose(), servletRequest.getRemoteAddr());
         return accepted();
     }

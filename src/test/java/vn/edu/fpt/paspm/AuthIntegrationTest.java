@@ -95,7 +95,10 @@ class AuthIntegrationTest {
  }
  @Test void registrationCannotChooseRoleAndOtpIsSingleUse()throws Exception{
   mvc.perform(body(post("/api/auth/register"),Map.of("email","customer@example.com","roleCode","SYSTEM_ADMIN"))).andExpect(status().isBadRequest());
-  mvc.perform(body(post("/api/auth/register"),Map.of("email","customer@example.com"))).andExpect(status().isAccepted()).andExpect(jsonPath("$.otp").doesNotExist());
+  mvc.perform(body(post("/api/auth/register"),Map.of("email","customer@example.com")))
+   .andExpect(status().isAccepted()).andExpect(jsonPath("$.message").value("Verification email sent")).andExpect(jsonPath("$.otp").doesNotExist());
+  mvc.perform(body(post("/api/auth/register"),Map.of("email","customer@example.com")))
+   .andExpect(status().isConflict()).andExpect(jsonPath("$.error").value("Email already exists"));
   User u=users.findByEmail("customer@example.com").orElseThrow();assertEquals("END_CUSTOMER",u.role());assertEquals("PENDING_VERIFICATION",u.status());assertNull(u.name());assertNull(u.passwordHash());
   mvc.perform(body(post("/api/auth/login"),Map.of("email",u.email(),"password",password))).andExpect(status().isUnauthorized());
   mvc.perform(body(post("/api/auth/register/complete"),Map.of("email",u.email(),"name","Customer","password",password))).andExpect(status().isBadRequest());

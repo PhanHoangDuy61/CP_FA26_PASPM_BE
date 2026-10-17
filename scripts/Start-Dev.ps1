@@ -4,6 +4,12 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
+if (!$EnvFile) {
+    $defaultEnvFile = Join-Path $projectRoot '.env'
+    if (Test-Path -LiteralPath $defaultEnvFile -PathType Leaf) {
+        $EnvFile = $defaultEnvFile
+    }
+}
 if ($EnvFile) {
     if (!(Test-Path -LiteralPath $EnvFile -PathType Leaf)) { throw 'Environment file does not exist.' }
     foreach ($line in [IO.File]::ReadAllLines((Resolve-Path -LiteralPath $EnvFile).Path)) {
