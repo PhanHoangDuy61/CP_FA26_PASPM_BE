@@ -47,7 +47,8 @@ public class UserRepository {
                     ? null
                     : resultSet.getTimestamp("email_verified_at").toInstant(),
             resultSet.getInt("token_version"),
-            resultSet.getString("verification_purpose")
+            resultSet.getString("verification_purpose"),
+            resultSet.getString("avatar_key")
     );
 
     public User findById(int id) {
@@ -191,6 +192,18 @@ public class UserRepository {
                 passwordHash,
                 id
         );
+    }
+
+    public void updatePassword(int id, String passwordHash) {
+        jdbc.update(
+                "UPDATE app_user SET password_hash=?,token_version=token_version+1 WHERE user_id=?",
+                passwordHash,
+                id
+        );
+    }
+
+    public void updateAvatar(int id, String avatarKey) {
+        jdbc.update("UPDATE app_user SET avatar_key=? WHERE user_id=?", avatarKey, id);
     }
 
     public void activateBootstrapAdmin(int id, Instant verifiedAt) {

@@ -27,6 +27,7 @@ import vn.edu.fpt.paspm.user.UserRepository;
 
 @SpringBootTest(properties = {
         "spring.datasource.url=jdbc:h2:mem:catalog;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1;NON_KEYWORDS=USER",
+        "paspm.otp-secret=test-only-otp-key-with-at-least-thirty-two-bytes",
         "spring.datasource.username=sa", "spring.datasource.password=",
         "spring.flyway.enabled=true", "paspm.jwt-secret=01234567890123456789012345678901",
         "paspm.bootstrap-email=", "paspm.bootstrap-password=",

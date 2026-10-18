@@ -15,6 +15,7 @@ Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and F01
 | F01 Google login | POST `/api/auth/google` | Public, linked identity/config required | same | same | same |
 | F01 Link Google identity | POST `/api/auth/google/link` | Authenticated own account | Authenticated own account | Authenticated own account | Authenticated own account |
 | F01 Current user | GET `/api/auth/me` | Authenticated own account | same | same | same |
+| F01 Change own password | POST `/api/auth/password/change` | Authenticated own account; current password required | same | same | same |
 | F01 User list | GET `/api/users` | Allowed, global | Forbidden | Forbidden | Forbidden |
 | F01 User detail | GET `/api/users/{id}` | Allowed, global | Forbidden | Forbidden | Forbidden |
 | F01 Invite/create account | POST `/api/users` | Allowed; role/Store constraints apply | Forbidden | Forbidden | Forbidden |
@@ -62,19 +63,19 @@ The database identity claims one Store and no request accepts a Store selector. 
 
 ## Readiness evidence
 
-The runtime OpenAPI export contains 18 F01 and 15 F02 HTTP operations. All listed operations are implemented in current controllers and represented in the export. Source/spec contract verification: PASS for all 33. Existing automated tests exercise F01 login/current-user/self-registration/OTP/invitation/role and token-revocation behavior, and F02 authentication, category/product, batch, summary and Store isolation behavior; not every individual operation was separately tested in a live browser for this documentation task. F02 browser verification from the prior F02 QA run is summarized in `docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_SWAGGER_TEST_REPORT.md`.
+The maintained OpenAPI export contains 19 listed F01 and 15 F02 HTTP operations. All listed operations are implemented in current controllers and represented in the export. Source/spec contract verification: PASS for all 34. Existing automated tests exercise F01 login/current-user/self-registration/OTP/invitation/password-change/role and token-revocation behavior, and F02 authentication, category/product, batch, summary and Store isolation behavior; not every individual operation was separately tested in a live browser for this documentation task. F02 browser verification from the prior F02 QA run is summarized in `docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_SWAGGER_TEST_REPORT.md`.
 
-Integration-ready: F01 password/OTP/user APIs and F02 all 15 operations. Google operations are conditional on the Google client ID, mail delivery and valid Google-issued ID tokens. Browser cross-origin use is blocked until a same-origin proxy or deployment CORS policy is provided; Backend source contains no CORS mapping. Missing F01 operations: logout, refresh, password reset/change, self-profile update. F02 delete and stock-movement/adjustment history APIs do not exist and are not implied by the implemented contract.
+Integration-ready: F01 password/OTP/user APIs and F02 all 15 operations. Google operations are conditional on the Google client ID, mail delivery and valid Google-issued ID tokens. Browser cross-origin use is blocked until a same-origin proxy or deployment CORS policy is provided; Backend source contains no CORS mapping. Missing F01 operations: logout, refresh and general self-profile editing beyond the documented avatar operations. F02 delete and stock-movement/adjustment history APIs do not exist and are not implied by the implemented contract.
 
 ## Endpoint readiness counts
 
 | Feature | Implemented | Contract verified (source + runtime OpenAPI) | Ready for Frontend integration | Conditional / blocked at runtime | Not implemented workflows outside these endpoints |
 |---|---:|---:|---:|---|---|
-| F01 | 18 | 18 | 18 | Google register/login/link require Google client configuration and mail for OTP; in the default unconfigured setup those return 503 | logout, refresh token, password reset/change, self-profile edit |
+| F01 | 19 | 19 | 19 | Google register/login/link require Google client configuration and mail for OTP; in the default unconfigured setup those return 503 | logout, refresh token, general profile editing |
 | F02 | 15 | 15 | 15 | Browser cross-origin integration needs a same-origin proxy or deployment CORS policy; API endpoints themselves are available | delete endpoints, stock adjustment/movement history |
 | F03 | 11 | 11 | 7 | Preview and snapshot creation need F04's unavailable validated transaction provider; snapshot reads need a known snapshot ID | snapshot history list, F04 provider/dataset identity, F05 Mining Request FK/export/engine |
 
-“Contract verified” means route, method, request/response model and security declaration were compared with the actual OpenAPI plus controller/service source. Existing MockMvc tests cover F01 authentication/OTP/invite/token revocation and F02 CRUD/Store isolation/summary. This is not a claim that each endpoint was separately called through a live Swagger UI during this doc task. `mvn -q verify` ran for this task; see final report for actual result.
+“Contract verified” means route, method, request/response model and security declaration were compared with the maintained OpenAPI plus controller/service source. Existing MockMvc tests cover F01 authentication/OTP/invite/password change/token revocation and F02 CRUD/Store isolation/summary. This is not a claim that each endpoint was separately called through a live Swagger UI during this doc task. `mvn -q verify` ran for this task; see final report for actual result.
 
 F03 source and runtime OpenAPI contain 11 operations; all 11 are represented in `docs/api/F03_UTILITY_API.md`. Existing `UtilityIntegrationTest` directly requests 10 of 11 HTTP operations; `GET /api/system/utility/lambda-policy` is not directly requested, although its implementation and OpenAPI operation were statically checked. Interactive Swagger UI execution was NOT RUN for the F03 handoff. Preview and snapshot creation are exercised with the isolated fixture but need F04's unavailable validated transaction provider in the default profile. F03 has no snapshot listing endpoint, so snapshot-history discovery is not ready for Frontend integration.
 

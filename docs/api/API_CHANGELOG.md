@@ -1,5 +1,12 @@
 # API Changelog
 
+## 2026-10-18 — F01 authenticated password change
+
+- Added `POST /api/auth/password/change` for an authenticated user to verify their current password and change only their own password.
+- Reuses BCrypt policy, row locking and the existing `token_version`; all existing access tokens are revoked and no replacement token is returned.
+- Kept the public `PASSWORD_RESET` OTP endpoints separate and unchanged.
+- Updated the F01 API contract, RBAC matrix, frontend handoff and README. Runtime OpenAPI export is maintained in `openapi.json`.
+
 ## 2026-10-17 — F03 contract and Frontend handoff verification
 
 - Expanded `F03_UTILITY_API.md` with field-level request/response contracts, implemented routes, source-derived role rules, validations, utility/expiry math, snapshot persistence and F04/F05 dependency gaps.
@@ -37,6 +44,6 @@ No endpoint contract changes were made as part of this documentation export; thi
 ### Contract metadata and integration gaps
 
 - OpenAPI `info.version`: `0.1.0`; F01/F02 handoff checked against the 2026-10-17 runtime export.
-- Missing F01 endpoints: logout, refresh, password reset/change, self-profile editing. Google operations are conditional on external Google/SMTP configuration.
+- Missing F01 endpoints: logout, refresh and self-profile editing. Authenticated password change and OTP reset are implemented in source; Google operations are conditional on external Google/SMTP configuration.
 - Missing F02 endpoints: deletion and stock adjustment/movement history. No cross-origin CORS mapping is present in current Backend source.
 - OpenAPI does not mark nullable `UserView.name`, `UserView.storeId`, `ProductView.category`, or `BatchView.expiryDate`; handoff types document actual null behavior.

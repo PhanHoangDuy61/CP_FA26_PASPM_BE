@@ -20,12 +20,13 @@ Backend source has no CORS mapping or allowed-origin configuration. A browser se
 | Invite activation | `POST /api/auth/activate` for ADMIN_INVITE OTP + new password |
 | Google login/register | `POST /api/auth/google`, `/google/register`; requires Google client configured. Google registration still uses PASPM OTP |
 | Link Google identity | `POST /api/auth/google/link`; authenticated; never auto-links by matching email |
-| User profile | `GET /api/auth/me`; no profile edit or password change API |
+| User profile | `GET /api/auth/me`; `POST /api/auth/password/change` changes only the caller's password after current-password verification |
 | User management | System Admin only: `GET /api/users`, `/api/users/{id}`, `GET /api/roles`, `POST /api/users`, `PUT /api/users/{id}`, `PATCH /api/users/{id}/status`, `PUT /api/users/{id}/role` |
 | Create User | Admin invitation; user remains pending until `/api/auth/activate` succeeds |
 | Edit User | Only name can be changed through current PUT; no email/password edit |
 | Account activation | `/api/auth/activate` invitation flow or successful self-registration completion; no manual OTP bypass |
-| Logout / refresh / reset password | Not implemented; mark screens/workflows unsupported |
+| Password reset | `POST /api/auth/password-reset/request` + `POST /api/auth/password-reset/confirm` via separate OTP flow |
+| Logout / refresh token | Not implemented; clear client session for logout; no refresh API |
 
 ## Real authentication sequences
 
@@ -37,6 +38,8 @@ Google: obtain a Google ID token from Google Identity Services; send it to the a
 
 No API returns OTP. Default OTP TTL is 10 minutes; resend cooldown defaults60 seconds; a challenge stops accepting attempts after five incorrect codes. Login/OTP throttles are in-memory, so UI should handle `429` with a wait message. OTP request returns a generic response even when email is not eligible; do not promise an account exists.
 
+Authenticated password change: send `POST /api/auth/password/change` with the current bearer token and `{"currentPassword":"CurrentPassword123!","newPassword":"NewPassword456!"}`. On `200 {"message":"Password changed"}`, clear the old JWT and direct the user to login again; the endpoint intentionally does not issue a replacement token. A wrong current password returns 401; policy/same-password errors return 400. This flow does not send OTP and does not replace the separate email OTP reset flow. Google-only accounts without a password credential cannot use this endpoint. Synthetic examples are in `F01_examples/password_change_request.json` and `F01_examples/password_change_response.json`.
+
 ## Role-based UI
 
 `SYSTEM_ADMIN` sees global user/role management and may assign roles and Stores. `STORE_ADMIN`, `MERCHANDISER`, and `END_CUSTOMER` may call `/api/auth/me`; no self-service role selection exists. Store Admin and Merchandiser are Store-scoped identities; End Customer and System Admin have no Store. F01 has no customer storefront/catalog endpoint. UI navigation may reflect roles, but Backend authorization is mandatory and returns 403 otherwise.
@@ -47,8 +50,9 @@ No API returns OTP. Default OTP TTL is 10 minutes; resend cooldown defaults60 se
 export type RoleCode = 'SYSTEM_ADMIN' | 'STORE_ADMIN' | 'MERCHANDISER' | 'END_CUSTOMER';
 export type AccountStatus = 'PENDING_VERIFICATION' | 'ACTIVE' | 'INACTIVE';
 export interface LoginRequest { email: string; password: string }
+export interface ChangePasswordRequest { currentPassword: string; newPassword: string }
 export interface TokenResponse { accessToken: string; expiresIn: number; tokenType: 'Bearer' | string }
-export interface UserView { userId: number; email: string; name: string | null; roleCode: RoleCode | string; storeId: number | null; status: AccountStatus | string; emailVerified: boolean }
+export interface UserView { userId: number; email: string; name: string | null; roleCode: RoleCode | string; storeId: number | null; status: AccountStatus | string; emailVerified: boolean; avatarUrl: string | null }
 export interface EmailRequest { email: string }
 export interface RegistrationRequest { name: string; email: string; password: string }
 export interface OtpRequest { email: string; purpose: 'SELF_REGISTER' | 'ADMIN_INVITE' }

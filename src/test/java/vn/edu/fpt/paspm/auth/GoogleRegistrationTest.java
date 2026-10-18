@@ -53,7 +53,8 @@ class GoogleRegistrationTest {
                 null,
                 null,
                 0,
-                "SELF_REGISTER"
+                "SELF_REGISTER",
+                null
         );
         when(decoder.decode(TOKEN)).thenReturn(identityToken(true));
         when(identities.findGoogleUserId(SUBJECT)).thenReturn(Optional.empty());
@@ -82,6 +83,7 @@ class GoogleRegistrationTest {
                 "password-hash",
                 Instant.now(),
                 0,
+                null,
                 null
         );
         when(decoder.decode(TOKEN)).thenReturn(identityToken(true));

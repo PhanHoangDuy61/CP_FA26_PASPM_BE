@@ -4,8 +4,11 @@ import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,10 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
 import vn.edu.fpt.paspm.common.Contracts.Activate;
+import vn.edu.fpt.paspm.common.Contracts.ChangePassword;
 import vn.edu.fpt.paspm.common.Contracts.EmailRequest;
 import vn.edu.fpt.paspm.common.Contracts.Google;
 import vn.edu.fpt.paspm.common.Contracts.Login;
 import vn.edu.fpt.paspm.common.Contracts.OtpRequest;
+import vn.edu.fpt.paspm.common.Contracts.PasswordReset;
 import vn.edu.fpt.paspm.common.Contracts.Registration;
 import vn.edu.fpt.paspm.common.Contracts.Token;
 import vn.edu.fpt.paspm.common.Contracts.UserView;
@@ -30,6 +35,8 @@ import vn.edu.fpt.paspm.user.AccountService;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+
     private final AuthService auth;
     private final AccountService accounts;
     private final OtpService otp;
@@ -92,6 +99,17 @@ public class AuthController {
     }
 
     @Operation(
+            summary = "Đổi mật khẩu đang đăng nhập",
+            description = "Chỉ đổi mật khẩu tài khoản trong JWT sau khi xác minh mật khẩu hiện tại. JWT cũ bị thu hồi; cần đăng nhập lại.")
+    @PostMapping("/password/change")
+    public Map<String, String> changePassword(
+            @AuthenticationPrincipal Jwt jwt,
+            @Valid @RequestBody ChangePassword request) {
+        auth.changePassword(jwt, request);
+        return Map.of("message", "Password changed");
+    }
+
+    @Operation(
             summary = "Yêu cầu OTP",
             description = "Gửi OTP xác minh cho tài khoản đang chờ xác minh email. Dùng purpose SELF_REGISTER hoặc ADMIN_INVITE. Đăng ký tài khoản mới bắt đầu bằng POST /api/auth/register, endpoint này chỉ dùng khi cần yêu cầu OTP cho tài khoản đang chờ.",
             security = {})
@@ -113,6 +131,35 @@ public class AuthController {
             @Valid @RequestBody OtpRequest request,
             HttpServletRequest servletRequest) {
         return issueOtp(request, servletRequest);
+    }
+
+    @Operation(
+            summary = "Yêu cầu OTP đặt lại mật khẩu",
+            description = "Luôn trả cùng thông báo cho mọi email hợp lệ, không tiết lộ tài khoản có tồn tại hoặc đủ điều kiện hay không.",
+            security = {})
+    @PostMapping("/password-reset/request")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public Map<String, String> requestPasswordReset(
+            @Valid @RequestBody EmailRequest request,
+            HttpServletRequest servletRequest) {
+        try {
+            otp.request(request.email(), "PASSWORD_RESET", servletRequest.getRemoteAddr());
+        } catch (MailException exception) {
+            logger.error("Password reset email delivery failed ({})", exception.getClass().getSimpleName());
+        }
+        return accepted();
+    }
+
+    @Operation(
+            summary = "Xác minh OTP và đặt mật khẩu mới",
+            description = "OTP PASSWORD_RESET còn hạn và chưa sử dụng; mật khẩu mới theo cùng chính sách với đăng ký.",
+            security = {})
+    @PostMapping("/password-reset/confirm")
+    public Map<String, String> confirmPasswordReset(
+            @Valid @RequestBody PasswordReset request,
+            HttpServletRequest servletRequest) {
+        otp.verify(request.email(), request.otp(), "PASSWORD_RESET", request.password(), servletRequest.getRemoteAddr());
+        return Map.of("message", "Password reset complete");
     }
 
     private Map<String, String> issueOtp(OtpRequest request, HttpServletRequest servletRequest) {

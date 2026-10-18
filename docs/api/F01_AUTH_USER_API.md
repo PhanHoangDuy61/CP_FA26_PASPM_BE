@@ -5,7 +5,7 @@ Contract checked against the running application OpenAPI export and current sour
 ## Models
 
 - `Token`: `{accessToken:string, expiresIn:integer seconds, tokenType:string}`. JWT issuer is `paspm`, token type is `Bearer`; expiry is configured by `TOKEN_TTL_SECONDS` (default 900). No refresh token is returned.
-- `UserView`: `{userId:int32,email:string,name:string|null,roleCode:string,storeId:int32|null,status:string,emailVerified:boolean}`. `storeId` is null for global roles and End Customer.
+- `UserView`: `{userId:int32,email:string,name:string|null,roleCode:string,storeId:int32|null,status:string,emailVerified:boolean,avatarUrl:string|null}`. `storeId` is null for global roles and End Customer; `avatarUrl` is null before upload and otherwise points to the authenticated owner-only image endpoint.
 - User status values: `PENDING_VERIFICATION`, `ACTIVE`, `INACTIVE`. Role values from migration: `SYSTEM_ADMIN`, `STORE_ADMIN`, `MERCHANDISER`, `END_CUSTOMER`.
 - Handled errors use `{ "error": string }`. Validation/deserialization errors use `{"error":"Invalid request fields"}`. Framework-generated authentication errors may have no JSON body.
 
@@ -21,6 +21,9 @@ Contract checked against the running application OpenAPI export and current sour
 | `POST /api/auth/otp/resend` | Public | Same `OtpRequest` → same response | 202; 400 invalid fields; 429 cooldown/rate; 503 mail unavailable | PASS — source + runtime OpenAPI; alias uses same controller method as request |
 | `POST /api/auth/otp/verify` | Public | `Verify` → `{message:string}` | 200; 400 invalid, expired, consumed, wrong-purpose OTP or five failed attempts | PASS — source + runtime OpenAPI |
 | `POST /api/auth/activate` | Public invitation completion | `Activate` → `{message:string}` | 200; 400 invalid/expired OTP or invalid password; 429 verification limiter | PASS — source + runtime OpenAPI |
+| `POST /api/auth/password/change` | Any valid active bearer; changes only its own account | `ChangePassword` → `{message:string}` | 200; 400 invalid fields, unavailable password credential or same password; 401 missing/invalid token or incorrect current password | Implemented — locks user row and increments token version; login again |
+| `POST /api/auth/password-reset/request` | Public | `EmailRequest` → `{message:string}` | 202 with identical response for unknown/ineligible/existing accounts; 429 rate limit | Implemented — `PASSWORD_RESET` challenge, existing cooldown and request limits |
+| `POST /api/auth/password-reset/confirm` | Public | `PasswordReset` → `{message:string}` | 200; 400 invalid/expired/consumed OTP, invalid password or five attempts | Implemented — consumes challenge and revokes prior JWTs |
 | `POST /api/auth/google/register` | Public | `Google` → `{message:string}` | 202; 401 invalid Google ID token; 429 limiter; 503 Google config/mail unavailable. Creates pending `END_CUSTOMER` and requests PASPM OTP | PASS — source + runtime OpenAPI; GoogleRegistrationTest exists |
 | `POST /api/auth/google` | Public | `Google` → `Token` | 200; 401 invalid/unlinked Google identity or unavailable account; 429; 503 if Google client is not configured | PASS — source + runtime OpenAPI |
 | `POST /api/auth/google/link` | Any valid active bearer | `Google` → `{message:string}` | 200; 401 invalid Google token; 409 identity already belongs to another account; 503 if Google not configured | PASS — source + runtime OpenAPI |
@@ -35,7 +38,11 @@ Admin invite sequence: System Admin creates a pending account with `POST /api/us
 
 OTP rules: configured TTL defaults to 600 seconds (10 minutes), accepted config range 60–1800 seconds; resend cooldown defaults to 60 seconds and configured value must be at least 30 seconds. A challenge permits at most five incorrect attempts. Rate limits are in-memory, single-process: login 30/IP and 10/normalized email per 900s; registration 10/IP per 3600s; OTP request 20/IP and 5/email per 3600s; verification 30/IP per 900s. Limits reset on process restart and are not shared across replicas. Do not build a workflow that depends on knowing whether an email exists.
 
-No logout, refresh-token, password-reset, authenticated password-change, self-profile update, or self-registration role-selection endpoint is implemented. Token revocation after role/status changes is enforced with a user token version; the old token is rejected on the next request.
+Password reset only sends to ACTIVE, verified accounts that already have a password credential. A different purpose replaces an older per-user OTP challenge and has a separate cooldown; request response remains generic during cooldown and on SMTP delivery failure. The replacement JWT uses the existing DB-backed `token_version`; previous access tokens fail validation on the next request.
+
+`PasswordReset`: required email, six-digit OTP and password with the registration rules (12–72 characters, at least one lowercase, uppercase and digit, maximum 72 UTF-8 bytes). Never log or return the OTP/password. The in-memory rate limiter remains single-process and needs a shared gateway/Redis policy for replicas.
+
+`ChangePassword`: required `currentPassword` (max 72 characters) and `newPassword` (12–72 characters, at least one lowercase, uppercase and digit; maximum 72 UTF-8 bytes). After locking the JWT owner's account row, the service checks the token version again, verifies the current password with BCrypt and rejects a new password matching the current hash. A missing password credential (for example, a Google-only account) receives 400 and must use an account flow that establishes a password first. Incorrect current password receives 401. On success the password is BCrypt-encoded and `token_version` increments in the same transaction. No replacement token is issued; sign in again. This route is distinct from public OTP reset and doesn't accept an account identifier.
 
 ## User administration endpoints
 
@@ -49,9 +56,16 @@ All `/api/users` and `/api/roles` operations require `SYSTEM_ADMIN` and are glob
 | `PUT /api/users/{id}` | `UpdateUser` → `UserView`; only name changes | 200, 400, 404, 401, 403  | PASS — source + runtime OpenAPI |
 | `PATCH /api/users/{id}/status` | `Status` → `UserView` | 200; invalid status/self-disable/unverified activation 400; 404, 401, 403  | PASS — source + runtime OpenAPI |
 | `PUT /api/users/{id}/role` | `RoleAssignment` → `UserView` | 200; invalid role/store scope or self-removal of admin access 400; 404, 401, 403  | PASS — source + runtime OpenAPI |
+| `PUT /api/users/me/avatar` | authenticated owner, multipart `file` → `UserView` | 200; 400 invalid/non-image; 413 over 5 MiB; 401; 503 storage unavailable | Implemented — owner only |
+| `DELETE /api/users/me/avatar` | authenticated owner → `UserView` with `avatarUrl:null` | 200; 401 | Implemented — owner only |
+| `GET /api/users/{id}/avatar` | authenticated owner only → JPEG/PNG bytes | 200; 403 for another user's avatar; 404 if absent; 401; 503 storage unavailable | Implemented — owner only |
 | `GET /api/roles` | returns raw array of `{code:string,display_name:string}` | 200, 401, 403  | PASS — source + runtime OpenAPI |
 
-`CreateUser`: required name (max150), email (valid, max254), roleCode; optional nullable `storeId:int32`. `RoleAssignment`: required roleCode and optional nullable storeId. `STORE_ADMIN` and `MERCHANDISER` require an existing Store. `SYSTEM_ADMIN` and `END_CUSTOMER` must have no Store. Unknown role is 400. Thus an authenticated System Admin can assign privileged roles; the public register API cannot. `UpdateUser` requires nonblank name max150. `Status.status` is `ACTIVE` or `INACTIVE`. Status/role changes increment token version and invalidate prior JWTs; a System Admin cannot deactivate their own account or remove their own System Admin access.
+`CreateUser`: required name (max150), email (valid, max254), roleCode; optional nullable `storeId:int32`. `RoleAssignment`: required roleCode and optional nullable storeId. `STORE_ADMIN` and `MERCHANDISER` require an existing Store.
+
+Avatar upload validates actual JPEG/PNG content using image readers; client filename and MIME type are ignored. Maximum upload size is 5 MiB, each image dimension is at most 4096 pixels and decoded image area at most 12 megapixels. Storage generates UUID-based `.jpg`/`.png` object keys and stores only the key in `app_user.avatar_key`. `PROFILE_IMAGE_DIRECTORY` selects a persistent local directory; default is `${user.home}/.paspm/profile-images`. Configure a private durable mount for one instance, or register a shared `AvatarObjectStorage` adapter as a Spring `@Primary` bean for replicas/object storage. Files are written before DB update and removed on transaction rollback; replaced/deleted objects are removed after DB commit. Failed cleanup is logged and may leave an unreachable orphan for operator cleanup.
+
+`SYSTEM_ADMIN` and `END_CUSTOMER` must have no Store. Unknown role is 400. Thus an authenticated System Admin can assign privileged roles; the public register API cannot. `UpdateUser` requires nonblank name max150. `Status.status` is `ACTIVE` or `INACTIVE`. Status/role changes increment token version and invalidate prior JWTs; a System Admin cannot deactivate their own account or remove their own System Admin access.
 
 Search parameters: `q`, `role`, `status` default empty; `page` defaults 0, range 0..100000; `size` defaults 20, range 1..100. The API returns only the current page as an array, with no total count.
 
@@ -73,6 +87,18 @@ Representative error:
 
 ```json
 {"error":"Invalid credentials or account unavailable"}
+```
+
+Change-password request (authenticated with the caller's bearer JWT):
+
+```json
+{"currentPassword":"CurrentPassword123!","newPassword":"NewPassword456!"}
+```
+
+Success response (the bearer token used for the request is now revoked):
+
+```json
+{"message":"Password changed"}
 ```
 
 ## Authorization and verification notes

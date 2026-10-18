@@ -55,6 +55,17 @@ public final class Contracts {
             @NotBlank @Size(min = 12, max = 72) @Pattern(regexp = "(?s)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).+") String password) {
     }
 
+    public record PasswordReset(
+            @NotBlank @Email @Size(max = 254) String email,
+            @NotBlank @Pattern(regexp = "[0-9]{6}") String otp,
+            @NotBlank @Size(min = 12, max = 72) @Pattern(regexp = "(?s)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).+") String password) {
+    }
+
+    public record ChangePassword(
+            @NotBlank @Size(max = 72) String currentPassword,
+            @NotBlank @Size(min = 12, max = 72) @Pattern(regexp = "(?s)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).+") String newPassword) {
+    }
+
     public record Google(@NotBlank @Size(max = 8192) String idToken) {
     }
 
@@ -65,7 +76,8 @@ public final class Contracts {
             String roleCode,
             Integer storeId,
             String status,
-            boolean emailVerified) {
+            boolean emailVerified,
+            String avatarUrl) {
     }
 
     public record Token(String accessToken, long expiresIn, String tokenType) {

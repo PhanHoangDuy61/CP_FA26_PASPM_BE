@@ -1,6 +1,10 @@
 server:
   port: ${PORT:8080}
 spring:
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 6MB
   datasource:
     url: ${DB_URL:jdbc:mysql://localhost:3306/paspm?connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true}
     username: ${DB_USER:paspm}
@@ -29,6 +33,8 @@ paspm:
   token-ttl-seconds: ${TOKEN_TTL_SECONDS:900}
   otp-ttl-seconds: ${OTP_TTL_SECONDS:600}
   otp-cooldown-seconds: ${OTP_COOLDOWN_SECONDS:60}
+  avatar:
+    directory: ${PROFILE_IMAGE_DIRECTORY:${user.home}/.paspm/profile-images}
   mail-from: ${MAIL_FROM:no-reply@paspm.local}
   google-client-id: ${GOOGLE_CLIENT_ID:}
   bootstrap-email: ${BOOTSTRAP_EMAIL:}

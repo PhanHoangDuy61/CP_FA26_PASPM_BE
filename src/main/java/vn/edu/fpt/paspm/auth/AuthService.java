@@ -12,8 +12,10 @@ import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import vn.edu.fpt.paspm.common.ApiException;
+import vn.edu.fpt.paspm.common.Contracts.ChangePassword;
 import vn.edu.fpt.paspm.common.Contracts.Login;
 import vn.edu.fpt.paspm.common.Contracts.Token;
 import vn.edu.fpt.paspm.security.RateLimits;
@@ -74,6 +76,29 @@ public class AuthService {
         }
 
         return token(user);
+    }
+
+    @Transactional
+    public void changePassword(Jwt jwt, ChangePassword request) {
+        validatePasswordLength(request.currentPassword());
+        validatePasswordLength(request.newPassword());
+
+        User user = userRepository.lockById(Integer.parseInt(jwt.getSubject()));
+        Number tokenVersion = jwt.getClaim("ver");
+        if (!user.active() || tokenVersion == null || tokenVersion.intValue() != user.version()) {
+            throw new ApiException(401, "Invalid or expired token");
+        }
+        if (user.passwordHash() == null) {
+            throw new ApiException(400, "Password change is unavailable for this account");
+        }
+        if (!passwords.matches(request.currentPassword(), user.passwordHash())) {
+            throw new ApiException(401, "Current password is incorrect");
+        }
+        if (passwords.matches(request.newPassword(), user.passwordHash())) {
+            throw new ApiException(400, "New password must differ from current password");
+        }
+
+        userRepository.updatePassword(user.id(), encodePassword(request.newPassword()));
     }
 
     public Token token(User user) {

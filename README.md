@@ -44,6 +44,9 @@ MySQL local đã có bảng STORE/F02: **không chạy V1 lên DB đó một cá
 | POST `/api/auth/otp/verify` | Email + OTP; xác minh email. Admin invitation hoàn tất qua `/activate` |
 | POST `/api/auth/register/complete` | Email đã xác minh + name/password; hoàn tất và kích hoạt END_CUSTOMER |
 | POST `/api/auth/activate` | Email + OTP + password; kích hoạt admin invitation |
+| POST `/api/auth/password-reset/request` | Công khai; gửi OTP PASSWORD_RESET, phản hồi không tiết lộ email tồn tại |
+| POST `/api/auth/password-reset/confirm` | Email + OTP + mật khẩu mới; dùng một lần, thu hồi JWT cũ |
+| POST `/api/auth/password/change` | JWT hợp lệ + mật khẩu hiện tại + mật khẩu mới; chỉ đổi tài khoản đang đăng nhập, bắt đăng nhập lại |
 | POST `/api/auth/google/register` | Google ID token hợp lệ; tạo END_CUSTOMER chờ OTP gửi tới email Google đã xác minh |
 | POST `/api/auth/google` | Đăng nhập Google identity đã liên kết; cần client ID thật |
 | POST `/api/auth/google/link` | JWT PASPM hợp lệ + Google ID token; không tự liên kết qua email |
@@ -51,7 +54,20 @@ MySQL local đã có bảng STORE/F02: **không chạy V1 lên DB đó một cá
 | GET/PUT `/api/users/{id}` | SYSTEM_ADMIN; PUT cập nhật name |
 | PATCH `/api/users/{id}/status` | ACTIVE/INACTIVE; không bỏ qua OTP activation |
 | PUT `/api/users/{id}/role` | SYSTEM_ADMIN; đổi role/store và thu hồi token cũ |
+| PUT/DELETE `/api/users/me/avatar`; GET `/api/users/{id}/avatar` | JWT hợp lệ; người dùng chỉ cập nhật/xóa/đọc ảnh của chính mình |
 | GET `/api/roles` | SYSTEM_ADMIN; bốn role đã seed |
+
+### Ảnh profile và đặt lại mật khẩu
+
+Ảnh profile nhận multipart field `file` dạng JPEG hoặc PNG; backend nhận diện nội dung ảnh thay vì tin MIME type/tên file client, giới hạn 5 MiB, 4096 pixel mỗi chiều và 12 megapixel. Tên object được sinh ngẫu nhiên. Database chỉ lưu object key; file local mặc định ở `${user.home}/.paspm/profile-images` (ngoài source/build). Có thể đặt `PROFILE_IMAGE_DIRECTORY` trong `.env` hoặc environment của process để chọn thư mục persistent riêng.
+
+`UserView` trả `avatarUrl` dạng `/api/users/{userId}/avatar`, hoặc `null` nếu chưa có ảnh. Ảnh được phục vụ riêng cho owner đã xác thực, không có quyền đọc ảnh admin/nhân viên thay mặt user. Production cần gắn thư mục persistent riêng, giới hạn quyền filesystem và sao lưu; nếu có nhiều backend replicas, dùng shared durable volume hoặc đăng ký adapter `AvatarObjectStorage` dùng chung làm Spring `@Primary` bean. Không mount thư mục ảnh vào source hay `target/`.
+
+Luồng quên mật khẩu: `POST /api/auth/password-reset/request` với `{"email":"user@example.com"}` → nhập OTP email → `POST /api/auth/password-reset/confirm` với `{"email":"user@example.com","otp":"123456","password":"NewPassword123!"}`. Hai phản hồi gửi OTP giống nhau cho email tồn tại/không tồn tại/không đủ điều kiện; email không đủ điều kiện (pending, inactive hoặc chỉ đăng nhập Google chưa có password) không nhận thư. Cooldown, hạn dùng, tối đa năm lần thử và giới hạn IP/email tái sử dụng policy OTP hiện tại. SMTP lỗi gửi password-reset cũng giữ phản hồi generic; lỗi được ghi log đã lược bỏ dữ liệu nhạy cảm. Mật khẩu mới theo policy đăng ký (12–72 ký tự, chữ hoa/chữ thường/số; tối đa 72 byte UTF-8).
+
+Đổi mật khẩu chủ động: gửi `POST /api/auth/password/change` cùng bearer JWT và `{"currentPassword":"CurrentPassword123!","newPassword":"NewPassword456!"}`. Backend khóa user record trong transaction, kiểm tra lại JWT `token_version`, xác minh mật khẩu hiện tại và từ chối mật khẩu mới trùng với mật khẩu cũ. Response là `{"message":"Password changed"}`. Token hiện tại và các token cũ đều bị thu hồi; người dùng phải đăng nhập lại bằng mật khẩu mới. Luồng này không dùng OTP và không thay đổi quy trình reset qua OTP.
+
+Đổi mật khẩu tăng `token_version`, nên mọi JWT hiện có bị từ chối ngay ở request tiếp theo; không bổ sung refresh/session store song song.
 
 ### Đăng ký bằng Google/Gmail
 
@@ -90,4 +106,4 @@ SYSTEM_ADMIN và END_CUSTOMER là tài khoản global (`storeId=null`); STORE_AD
 
 `./mvnw.cmd test` (Windows) hoặc `./mvnw test` (Linux/macOS) chạy integration tests bằng H2 ở MySQL compatibility mode; SMTP được mock. Các bài test kiểm tra OTP sai/hết hạn/đã dùng, quyền, token revocation, store boundary và rollback khi SMTP lỗi. H2 **không thay thế kiểm thử migration trên MySQL thật**.
 
-Xem `docs/SWAGGER_CHECKLIST.md` để test thủ công theo F01-07/F01-11. Xem `docs/IMPLEMENTATION_STATUS.md` để biết các hạn chế và bước tiếp theo.
+Xem `docs/PASPM_F01_AUTH_SERVICE/SWAGGER_CHECKLIST.md` để test thủ công theo F01-07/F01-11. Xem `docs/PASPM_F01_AUTH_SERVICE/IMPLEMENTATION_STATUS.md` để biết các hạn chế và bước tiếp theo.

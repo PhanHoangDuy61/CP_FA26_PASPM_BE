@@ -15,20 +15,14 @@ public class VerificationChallengeRepository {
         this.jdbc = jdbc;
     }
 
-    public Optional<Instant> findIssuedAt(int userId) {
+    public Optional<ChallengeMetadata> findMetadata(int userId) {
         return jdbc.query(
-                        "SELECT issued_at FROM verification_challenge WHERE user_id=?",
-                        (resultSet, rowNum) -> resultSet.getTimestamp("issued_at").toInstant(),
-                        userId
-                )
-                .stream()
-                .findFirst();
-    }
-
-    public Optional<String> findCodeHash(int userId) {
-        return jdbc.query(
-                        "SELECT code_hash FROM verification_challenge WHERE user_id=?",
-                        (resultSet, rowNum) -> resultSet.getString("code_hash"),
+                        "SELECT purpose,code_hash,issued_at FROM verification_challenge WHERE user_id=?",
+                        (resultSet, rowNum) -> new ChallengeMetadata(
+                                resultSet.getString("purpose"),
+                                resultSet.getString("code_hash"),
+                                resultSet.getTimestamp("issued_at").toInstant()
+                        ),
                         userId
                 )
                 .stream()
@@ -80,5 +74,8 @@ public class VerificationChallengeRepository {
     }
 
     public record Challenge(String purpose, String codeHash, Instant expiresAt, int attempts, boolean consumed) {
+    }
+
+    public record ChallengeMetadata(String purpose, String codeHash, Instant issuedAt) {
     }
 }

@@ -91,6 +91,7 @@ public class SecurityConfig {
                                 "/api/auth/register/complete",
                                 "/api/auth/otp/**",
                                 "/api/auth/activate",
+                                "/api/auth/password-reset/**",
                                 "/api/auth/google/register",
                                 "/api/auth/google"
                         ).permitAll()

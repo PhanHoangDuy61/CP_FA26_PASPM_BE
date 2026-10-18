@@ -82,34 +82,56 @@ public class OtpService {
         }
 
         User user = userRepository.lockById(candidate.get().id());
+        if ("PASSWORD_RESET".equals(purpose)) {
+            if (!user.active()
+                    || user.passwordHash() == null
+                    || isCooldownActive(user.id(), purpose, Instant.now())) {
+                return;
+            }
+            issue(user, purpose);
+            return;
+        }
+
         if (!"PENDING_VERIFICATION".equals(user.status())
                 || !purpose.equals(user.purpose())
                 || user.verifiedAt() != null) {
             return;
         }
 
-        issue(user);
+        issue(user, purpose);
     }
 
     public void issue(User user) {
+        issue(user, user.purpose());
+    }
+
+    private boolean isCooldownActive(int userId, String purpose, Instant now) {
+        return challenges.findMetadata(userId)
+                .filter(challenge -> purpose.equals(challenge.purpose()))
+                .map(challenge -> challenge.issuedAt().plusSeconds(cooldown).isAfter(now))
+                .orElse(false);
+    }
+
+    private void issue(User user, String purpose) {
         Instant now = Instant.now();
-        if (challenges.findIssuedAt(user.id())
-                .map(issuedAt -> issuedAt.plusSeconds(cooldown).isAfter(now))
-                .orElse(false)) {
+        if (isCooldownActive(user.id(), purpose, now)) {
             throw new ApiException(429, "Wait before requesting another OTP");
         }
 
-        String oldHash = challenges.findCodeHash(user.id()).orElse(null);
+        String oldHash = challenges.findMetadata(user.id())
+                .filter(challenge -> purpose.equals(challenge.purpose()))
+                .map(VerificationChallengeRepository.ChallengeMetadata::codeHash)
+                .orElse(null);
 
         String code;
         do {
             code = String.format(Locale.ROOT, "%06d", random.nextInt(1_000_000));
-        } while (hash(user.id(), user.purpose(), code).equals(oldHash));
+        } while (hash(user.id(), purpose, code).equals(oldHash));
 
         challenges.replace(
                 user.id(),
-                user.purpose(),
-                hash(user.id(), user.purpose(), code),
+                purpose,
+                hash(user.id(), purpose, code),
                 now.plusSeconds(ttl),
                 now
         );
@@ -117,8 +139,9 @@ public class OtpService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(from);
         message.setTo(user.email());
-        message.setSubject("PASPM account verification");
-        message.setText("Your " + user.purpose() + " code is " + code + ". Expires in " + ttl / 60 + " minutes. Do not share this code.");
+        boolean passwordReset = "PASSWORD_RESET".equals(purpose);
+        message.setSubject(passwordReset ? "PASPM password reset" : "PASPM account verification");
+        message.setText("Your " + purpose + " code is " + code + ". Expires in " + ttl / 60 + " minutes. Do not share this code.");
         mail.send(message);
     }
 
@@ -131,8 +154,12 @@ public class OtpService {
         user = userRepository.lockById(user.id());
 
         var challenge = challenges.lockByUserId(user.id()).orElse(null);
-        if (!"PENDING_VERIFICATION".equals(user.status())
-                || !purpose.equals(user.purpose())
+        boolean eligible = "PASSWORD_RESET".equals(purpose)
+                ? user.active() && user.passwordHash() != null
+                : "PENDING_VERIFICATION".equals(user.status())
+                        && purpose.equals(user.purpose())
+                        && user.verifiedAt() == null;
+        if (!eligible
                 || challenge == null) {
             throw new ApiException(400, "Invalid or expired verification");
         }
@@ -155,12 +182,14 @@ public class OtpService {
         boolean emailOnlyRegistration = "SELF_REGISTER".equals(purpose)
                 && user.name() == null
                 && user.passwordHash() == null;
-        if ("ADMIN_INVITE".equals(purpose)) {
+        if ("ADMIN_INVITE".equals(purpose) || "PASSWORD_RESET".equals(purpose)) {
             passwordHash = auth.encodePassword(newPassword);
         }
 
         challenges.consume(user.id());
-        if (emailOnlyRegistration) {
+        if ("PASSWORD_RESET".equals(purpose)) {
+            userRepository.updatePassword(user.id(), passwordHash);
+        } else if (emailOnlyRegistration) {
             userRepository.markEmailVerified(user.id(), Instant.now());
         } else {
             userRepository.activate(user.id(), Instant.now(), passwordHash);
