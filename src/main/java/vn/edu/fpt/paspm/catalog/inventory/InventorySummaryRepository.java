@@ -17,11 +17,11 @@ public class InventorySummaryRepository {
         return jdbc.queryForObject("""
                 SELECT COALESCE(SUM(remaining_quantity), 0) AS total_quantity,
                        COALESCE(SUM(CASE WHEN status='BLOCKED' THEN remaining_quantity ELSE 0 END), 0) AS blocked_quantity,
-                       COALESCE(SUM(CASE WHEN status='ACTIVE' AND expiry_date IS NOT NULL AND expiry_date < ?
+                       COALESCE(SUM(CASE WHEN status='ACTIVE' AND expiry_date IS NOT NULL AND expiry_date <= ?
                                          THEN remaining_quantity ELSE 0 END), 0) AS expired_quantity,
-                       COALESCE(SUM(CASE WHEN status='ACTIVE' AND (expiry_date IS NULL OR expiry_date >= ?)
+                       COALESCE(SUM(CASE WHEN status='ACTIVE' AND (expiry_date IS NULL OR expiry_date > ?)
                                          THEN remaining_quantity ELSE 0 END), 0) AS sellable_quantity,
-                       COALESCE(SUM(CASE WHEN status='ACTIVE' AND expiry_date >= ? AND expiry_date <= ?
+                       COALESCE(SUM(CASE WHEN status='ACTIVE' AND expiry_date > ? AND expiry_date <= ?
                                          THEN remaining_quantity ELSE 0 END), 0) AS expiring_soon_quantity
                 FROM inventory_batch WHERE product_id=?
                 """, (rs, row) -> new InventorySummary(productId,

@@ -19,12 +19,13 @@ public class UtilityConfigurationController {
     @Operation(summary="Change permitted lambda bounds without rewriting Store settings or snapshots")
     public LambdaPolicy policy(@AuthenticationPrincipal Jwt jwt,@Valid @RequestBody PolicyRequest request) { return service.updatePolicy(jwt,request); }
     @GetMapping("/api/utility/config") @PreAuthorize("hasAnyRole('STORE_ADMIN','MERCHANDISER')")
-    @Operation(summary="Read Store weights, expiry window and permitted lambda range")
+    @Operation(summary="Read Store weights and permitted lambda range; legacy expiry window is ignored by new scoring")
     public ConfigView config(@AuthenticationPrincipal Jwt jwt) { return service.config(jwt); }
     @PutMapping("/api/utility/config") @PreAuthorize("hasRole('MERCHANDISER')")
-    @Operation(summary="Set Store weights and selected lambda; preserve Store Admin expiry window")
+    @Operation(summary="Set Store weights and selected lambda; expiry scoring uses only Product.expiryPushDays")
     public ConfigView config(@AuthenticationPrincipal Jwt jwt,@Valid @RequestBody WeightRequest request) { return service.weights(jwt,request); }
     @PutMapping("/api/utility/config/expiry-window") @PreAuthorize("hasRole('STORE_ADMIN')")
-    @Operation(summary="Set the Store expiry window as a positive integer; preserve weights")
+    @Deprecated
+    @Operation(deprecated=true,summary="Legacy compatibility only: Store expiry window is ignored by v1.2; configure Product.expiryPushDays instead")
     public ConfigView expiry(@AuthenticationPrincipal Jwt jwt,@Valid @RequestBody ExpiryWindowRequest request) { return service.expiryWindow(jwt,request); }
 }

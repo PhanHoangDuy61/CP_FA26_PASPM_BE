@@ -1,0 +1,5603 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "PASPM Backend API",
+    "version": "0.1.0"
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:18085",
+      "description": "Generated server url"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "F05 Mining",
+      "description": "Frozen F03 snapshot mining. Store-scoped; Merchandiser creates, Store Admin and Merchandiser read."
+    }
+  ],
+  "paths": {
+    "/api/utility/config": {
+      "get": {
+        "tags": [
+          "utility-configuration-controller"
+        ],
+        "summary": "Read Store weights and permitted lambda range; legacy expiry window is ignored by new scoring",
+        "operationId": "config",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "utility-configuration-controller"
+        ],
+        "summary": "Set Store weights and selected lambda; expiry scoring uses only Product.expiryPushDays",
+        "operationId": "config_1",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WeightRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/utility/config/expiry-window": {
+      "put": {
+        "tags": [
+          "utility-configuration-controller"
+        ],
+        "summary": "Legacy compatibility only: Store expiry window is ignored by v1.2; configure Product.expiryPushDays instead",
+        "operationId": "expiry",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExpiryWindowRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "deprecated": true
+      }
+    },
+    "/api/users/{id}": {
+      "get": {
+        "tags": [
+          "user-controller"
+        ],
+        "summary": "Xem tài khoản",
+        "description": "SYSTEM_ADMIN: trả thông tin tài khoản theo ID.",
+        "operationId": "getUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "user-controller"
+        ],
+        "summary": "Cập nhật tên tài khoản",
+        "description": "SYSTEM_ADMIN: chỉ cập nhật tên; email không đổi để không bỏ qua xác minh.",
+        "operationId": "updateUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUser"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/users/{id}/role": {
+      "put": {
+        "tags": [
+          "user-controller"
+        ],
+        "summary": "Đổi role và Store",
+        "description": "SYSTEM_ADMIN: gán role/store theo phạm vi hợp lệ. Thay đổi sẽ thu hồi token cũ.",
+        "operationId": "assignRole",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoleAssignment"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/users/me/avatar": {
+      "put": {
+        "tags": [
+          "profile-avatar-controller"
+        ],
+        "summary": "Tải/cập nhật ảnh profile của chính mình",
+        "description": "Multipart field `file`; chỉ JPEG/PNG đã xác thực nội dung, tối đa 5 MiB, 4096 px mỗi chiều và 12 megapixel.",
+        "operationId": "updateAvatar",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "profile-avatar-controller"
+        ],
+        "summary": "Xóa ảnh profile của chính mình",
+        "operationId": "deleteAvatar",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/system/utility/lambda-policy": {
+      "get": {
+        "tags": [
+          "utility-configuration-controller"
+        ],
+        "summary": "Read the versioned system lambda policy",
+        "operationId": "policy",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/LambdaPolicy"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "utility-configuration-controller"
+        ],
+        "summary": "Change permitted lambda bounds without rewriting Store settings or snapshots",
+        "operationId": "policy_1",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/LambdaPolicy"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/products/{id}": {
+      "get": {
+        "tags": [
+          "product-controller"
+        ],
+        "summary": "Get a product and batch-derived stock for the authenticated Store",
+        "operationId": "get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "product-controller"
+        ],
+        "summary": "Update product information without changing stock",
+        "operationId": "update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/categories/{id}": {
+      "get": {
+        "tags": [
+          "category-controller"
+        ],
+        "summary": "Get a Store category",
+        "operationId": "get_1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "category-controller"
+        ],
+        "summary": "Update a Store category",
+        "operationId": "update_1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/utility/snapshots": {
+      "post": {
+        "tags": [
+          "utility-snapshot-controller"
+        ],
+        "summary": "Atomically create an immutable snapshot; revalidate lambda against current policy",
+        "operationId": "create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RangeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SnapshotView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/utility/preview": {
+      "post": {
+        "tags": [
+          "utility-snapshot-controller"
+        ],
+        "summary": "Preview utility using a fixed analysis date without saving a snapshot",
+        "operationId": "preview",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreviewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatrixPage"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "get": {
+        "tags": [
+          "user-controller"
+        ],
+        "summary": "Danh sách tài khoản",
+        "description": "SYSTEM_ADMIN: lọc bằng q (email/tên), role, status; phân trang bằng page bắt đầu từ 0 và size tối đa 100.",
+        "operationId": "listUsers",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "role",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserView"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "user-controller"
+        ],
+        "summary": "Mời tạo tài khoản",
+        "description": "SYSTEM_ADMIN: tạo tài khoản chờ xác minh theo role/store hợp lệ và gửi OTP invitation đến email.",
+        "operationId": "createUser",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUser"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/transactions/imports/csv": {
+      "post": {
+        "tags": [
+          "transaction-import-controller"
+        ],
+        "summary": "Upload a CSV sales transaction import for the authenticated Store",
+        "operationId": "upload",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "CSV file using the approved F04 template"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportSummary"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/products": {
+      "get": {
+        "tags": [
+          "product-controller"
+        ],
+        "summary": "Search and filter products in the authenticated Store",
+        "operationId": "list",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "name"
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductPage"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "product-controller"
+        ],
+        "summary": "Create a product in the authenticated Store; stock is managed through batches",
+        "operationId": "create_1",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/products/{id}/batches": {
+      "get": {
+        "tags": [
+          "inventory-batch-controller"
+        ],
+        "summary": "List inventory batches for a Store product",
+        "operationId": "list_1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BatchView"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "inventory-batch-controller"
+        ],
+        "summary": "Receive an inventory batch for a Store product",
+        "operationId": "create_2",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatchView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/mining/requests": {
+      "get": {
+        "tags": [
+          "F05 Mining"
+        ],
+        "summary": "List this Store's mining requests, newest first",
+        "operationId": "requests",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageRequestView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "F05 Mining"
+        ],
+        "summary": "Submit durable asynchronous mining; UUID requestKey is idempotent per Store",
+        "description": "Same key and payload returns existing request. Different payload returns 409. Missing/unverified SPMF returns 503. Input is a READY F03 snapshot; no uploads or current Weight recalculation.",
+        "operationId": "create_3",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/categories": {
+      "get": {
+        "tags": [
+          "category-controller"
+        ],
+        "summary": "List categories for the authenticated Store",
+        "operationId": "list_2",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CategoryView"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "category-controller"
+        ],
+        "summary": "Create a category in the authenticated Store",
+        "operationId": "create_4",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "tags": [
+          "auth-controller"
+        ],
+        "summary": "Yêu cầu OTP đăng ký",
+        "description": "Chỉ nhập email để tạo tài khoản END_CUSTOMER đang chờ xác minh và gửi OTP qua SMTP. Trả 202 nếu email mới, 409 nếu email đã tồn tại; điều này tiết lộ trạng thái đăng ký của email.",
+        "operationId": "register",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/auth/register/complete": {
+      "post": {
+        "tags": [
+          "auth-controller"
+        ],
+        "summary": "Hoàn tất đăng ký email",
+        "description": "Chỉ gọi sau POST /api/auth/otp/verify thành công. Gửi cùng email, tên và mật khẩu; mật khẩu cần ít nhất 12 ký tự, có chữ hoa, chữ thường và số.",
+        "operationId": "completeRegistration",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Registration"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/auth/password/change": {
+      "post": {
+        "tags": [
+          "auth-controller"
+        ],
+        "summary": "Đổi mật khẩu đang đăng nhập",
+        "description": "Chỉ đổi mật khẩu tài khoản trong JWT sau khi xác minh mật khẩu hiện tại. JWT cũ bị thu hồi; cần đăng nhập lại.",
+        "operationId": "changePassword",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePassword"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/auth/password-reset/request": {
+      "post": {
+        "tags": [
+          "auth-controller"
+        ],
+        "summary": "Yêu cầu OTP đặt lại mật khẩu",
+        "description": "Luôn trả cùng thông báo cho mọi email hợp lệ, không tiết lộ tài khoản có tồn tại hoặc đủ điều kiện hay không.",
+        "operationId": "requestPasswordReset",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/auth/password-reset/confirm": {
+      "post": {
+        "tags": [
+          "auth-controller"
+        ],
+        "summary": "Xác minh OTP và đặt mật khẩu mới",
+        "description": "OTP PASSWORD_RESET còn hạn và chưa sử dụng; mật khẩu mới theo cùng chính sách với đăng ký.",
+        "operationId": "confirmPasswordReset",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordReset"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/auth/otp/verify": {
+      "post": {
+        "tags": [
+          "auth-controller"
+        ],
+        "summary": "Xác minh OTP",
+        "description": "Xác minh OTP 6 chữ số. Đăng ký email tiếp tục bằng POST /api/auth/register/complete; tài khoản được mời tiếp tục bằng POST /api/auth/activate.",
+        "operationId": "verify",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Verify"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/auth/otp/resend": {
+      "post": {
+        "tags": [
+          "auth-controller"
+        ],
+        "summary": "Gửi lại OTP",
+        "description": "Gửi mã OTP mới cho tài khoản đang chờ xác minh khi mã trước đó thất lạc hoặc hết hạn. Dùng cùng email và purpose SELF_REGISTER hoặc ADMIN_INVITE; mã cũ bị vô hiệu và phải qua thời gian chờ cooldown trước khi gửi lại.",
+        "operationId": "resendOtp",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OtpRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/auth/otp/request": {
+      "post": {
+        "tags": [
+          "auth-controller"
+        ],
+        "summary": "Yêu cầu OTP",
+        "description": "Gửi OTP xác minh cho tài khoản đang chờ xác minh email. Dùng purpose SELF_REGISTER hoặc ADMIN_INVITE. Đăng ký tài khoản mới bắt đầu bằng POST /api/auth/register, endpoint này chỉ dùng khi cần yêu cầu OTP cho tài khoản đang chờ.",
+        "operationId": "requestOtp",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OtpRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "auth-controller"
+        ],
+        "summary": "Đăng nhập bằng email",
+        "description": "Chỉ tài khoản đã xác minh email và đang ACTIVE mới nhận PASPM access token.",
+        "operationId": "login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Login"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/auth/google": {
+      "post": {
+        "tags": [
+          "auth-controller"
+        ],
+        "summary": "Đăng nhập bằng Google",
+        "description": "Đổi Google ID token của identity đã liên kết lấy PASPM access token. Tài khoản phải đang ACTIVE.",
+        "operationId": "google",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Google"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/auth/google/register": {
+      "post": {
+        "tags": [
+          "auth-controller"
+        ],
+        "summary": "Đăng ký bằng Google",
+        "description": "Nhận Google ID token hợp lệ, tạo END_CUSTOMER chờ xác minh và gửi OTP đến email Google. Sau khi xác minh OTP, gọi POST /api/auth/google.",
+        "operationId": "registerWithGoogle",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Google"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/auth/google/link": {
+      "post": {
+        "tags": [
+          "auth-controller"
+        ],
+        "summary": "Liên kết tài khoản Google",
+        "description": "Liên kết Google ID token với tài khoản PASPM đang đăng nhập. Không tự liên kết chỉ vì email Google trùng email PASPM.",
+        "operationId": "link",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Google"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/auth/activate": {
+      "post": {
+        "tags": [
+          "auth-controller"
+        ],
+        "summary": "Kích hoạt tài khoản được mời",
+        "description": "Dành cho nhân viên được quản trị viên mời: nhập email, OTP và mật khẩu mới để kích hoạt.",
+        "operationId": "activate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Activate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/utility/products/{productId}/scores": {
+      "get": {
+        "tags": [
+          "product-score-controller"
+        ],
+        "summary": "Read manual stock and seasonal scores in the authenticated Store",
+        "operationId": "get_2",
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Scores"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "product-score-controller"
+        ],
+        "summary": "Update supplied manual scores without editing inventory; explicit null is rejected",
+        "operationId": "patch",
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScorePatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Scores"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/users/{id}/status": {
+      "patch": {
+        "tags": [
+          "user-controller"
+        ],
+        "summary": "Đổi trạng thái tài khoản",
+        "description": "SYSTEM_ADMIN: đặt ACTIVE hoặc INACTIVE. Kích hoạt thủ công không thay thế OTP; thay đổi sẽ thu hồi token cũ.",
+        "operationId": "changeStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Status"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/products/{id}/status": {
+      "patch": {
+        "tags": [
+          "product-controller"
+        ],
+        "summary": "Activate or deactivate a product",
+        "operationId": "updateStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StatusRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/inventory-batches/{id}": {
+      "get": {
+        "tags": [
+          "inventory-batch-controller"
+        ],
+        "summary": "Get a Store inventory batch",
+        "operationId": "get_3",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatchView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "inventory-batch-controller"
+        ],
+        "summary": "Set remaining quantity and/or block state for a Store inventory batch",
+        "operationId": "update_2",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchPatchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatchView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/categories/{id}/status": {
+      "patch": {
+        "tags": [
+          "category-controller"
+        ],
+        "summary": "Activate or deactivate a Store category",
+        "operationId": "updateStatus_1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StatusRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/utility/snapshots/{id}": {
+      "get": {
+        "tags": [
+          "utility-snapshot-controller"
+        ],
+        "summary": "Read frozen snapshot settings without consulting current policy or inventory",
+        "operationId": "get_4",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SnapshotView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/utility/snapshots/{id}/matrix": {
+      "get": {
+        "tags": [
+          "utility-snapshot-controller"
+        ],
+        "summary": "Read immutable matrix rows with stable Product-to-mining-item mapping",
+        "operationId": "matrix",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatrixPage"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/utility/expiry-push-batches": {
+      "get": {
+        "tags": [
+          "expiry-push-controller"
+        ],
+        "summary": "Discover sellable expiry-push batches independently of Mining",
+        "description": "Defaults to the current Store-local date. An explicit asOfDate is analytical; recommendations must recheck current eligibility. Ordered FEFO, then productId/batchId. Store scope comes from F01 identity.",
+        "operationId": "list_3",
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "asOfDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PushPage"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/users/{id}/avatar": {
+      "get": {
+        "tags": [
+          "profile-avatar-controller"
+        ],
+        "summary": "Xem ảnh profile của chính mình",
+        "description": "Chỉ người dùng sở hữu tài khoản có thể đọc ảnh; response là JPEG hoặc PNG.",
+        "operationId": "getAvatar",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/transactions": {
+      "get": {
+        "tags": [
+          "transaction-controller"
+        ],
+        "summary": "List sales transactions for the authenticated Store",
+        "operationId": "list_4",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageTransactionView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/transactions/{id}": {
+      "get": {
+        "tags": [
+          "transaction-controller"
+        ],
+        "summary": "Get one sales transaction and its historical product lines",
+        "operationId": "get_5",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/transactions/imports": {
+      "get": {
+        "tags": [
+          "transaction-import-controller"
+        ],
+        "summary": "List transaction imports for the authenticated Store",
+        "operationId": "list_5",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20,
+              "maximum": 100,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageImportSummary"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/transactions/imports/{id}": {
+      "get": {
+        "tags": [
+          "transaction-import-controller"
+        ],
+        "summary": "Get one transaction import owned by the authenticated Store",
+        "operationId": "get_6",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportSummary"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/transactions/imports/{id}/errors": {
+      "get": {
+        "tags": [
+          "transaction-import-controller"
+        ],
+        "summary": "List rejected or conflicted rows for one Store-owned import",
+        "operationId": "errors",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 100,
+              "maximum": 100,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageImportError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/roles": {
+      "get": {
+        "tags": [
+          "user-controller"
+        ],
+        "summary": "Danh sách role",
+        "description": "SYSTEM_ADMIN: trả các role có sẵn để dùng khi quản lý tài khoản.",
+        "operationId": "listRoles",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": {}
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/products/{id}/inventory-summary": {
+      "get": {
+        "tags": [
+          "inventory-batch-controller"
+        ],
+        "summary": "Summarize derived inventory for a Store product",
+        "description": "Expiry dates are inclusive through the configured Store time zone's local date.",
+        "operationId": "summary",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "expiringWithinDays",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 7,
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventorySummary"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/mining/snapshots": {
+      "get": {
+        "tags": [
+          "F05 Mining"
+        ],
+        "summary": "List this Store's READY frozen snapshots; numerical eligibility is validated on submission",
+        "operationId": "snapshots",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageSnapshotView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/mining/runs/{id}": {
+      "get": {
+        "tags": [
+          "F05 Mining"
+        ],
+        "summary": "Get run status, measured metrics and sanitized failure information",
+        "operationId": "run",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/mining/runs/{id}/patterns": {
+      "get": {
+        "tags": [
+          "F05 Mining"
+        ],
+        "summary": "Page raw high-utility patterns by utility descending, canonical Product IDs ascending",
+        "description": "Empty while pending/failed; check run status. Utility is frozen weighted utility, not revenue. pageSize controls display only and never changes minUtil. Support is not measured.",
+        "operationId": "patterns",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagePatternView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/mining/runs/{id}/benchmark": {
+      "get": {
+        "tags": [
+          "F05 Mining"
+        ],
+        "summary": "Read comparable cold child-JVM wall time and sampled Java heap MiB, plus exact result comparison",
+        "operationId": "benchmark",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/BenchmarkView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/mining/requests/{id}": {
+      "get": {
+        "tags": [
+          "F05 Mining"
+        ],
+        "summary": "Get immutable input provenance and current mining request status",
+        "operationId": "request",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/mining/requests/{id}/runs": {
+      "get": {
+        "tags": [
+          "F05 Mining"
+        ],
+        "summary": "Get each persisted algorithm run for a request",
+        "operationId": "runs",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RunView"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "tags": [
+          "auth-controller"
+        ],
+        "summary": "Xem tài khoản hiện tại",
+        "description": "Trả thông tin tài khoản gắn với PASPM Bearer access token hiện tại; cần xác thực.",
+        "operationId": "me",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "WeightRequest": {
+        "type": "object",
+        "properties": {
+          "enableStock": {
+            "type": "boolean",
+            "example": true
+          },
+          "enableExpiry": {
+            "type": "boolean",
+            "example": true
+          },
+          "enableSeason": {
+            "type": "boolean",
+            "example": true
+          },
+          "alpha": {
+            "type": "number",
+            "example": 0.5,
+            "maximum": 1,
+            "minimum": 0
+          },
+          "beta": {
+            "type": "number",
+            "example": 0.2,
+            "maximum": 1,
+            "minimum": 0
+          },
+          "gamma": {
+            "type": "number",
+            "example": 0.3,
+            "maximum": 1,
+            "minimum": 0
+          },
+          "lambda": {
+            "type": "number",
+            "example": 0.5,
+            "minimum": 0
+          }
+        },
+        "required": [
+          "alpha",
+          "beta",
+          "enableExpiry",
+          "enableSeason",
+          "enableStock",
+          "gamma",
+          "lambda"
+        ]
+      },
+      "ConfigView": {
+        "type": "object",
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/WeightConfig"
+          },
+          "lambdaPolicy": {
+            "$ref": "#/components/schemas/LambdaPolicy"
+          },
+          "lambdaValid": {
+            "type": "boolean"
+          }
+        }
+      },
+      "LambdaPolicy": {
+        "type": "object",
+        "properties": {
+          "lambdaMin": {
+            "type": "number"
+          },
+          "lambdaMax": {
+            "type": "number"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "WeightConfig": {
+        "type": "object",
+        "properties": {
+          "enableStock": {
+            "type": "boolean"
+          },
+          "enableExpiry": {
+            "type": "boolean"
+          },
+          "enableSeason": {
+            "type": "boolean"
+          },
+          "alpha": {
+            "type": "number"
+          },
+          "beta": {
+            "type": "number"
+          },
+          "gamma": {
+            "type": "number"
+          },
+          "lambda": {
+            "type": "number"
+          },
+          "expiryWindowDays": {
+            "type": "integer",
+            "format": "int32",
+            "deprecated": true,
+            "description": "Legacy Store setting; ignored by v1.2 scoring. Product.expiryPushDays is authoritative"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "scoringVersion": {
+            "type": "string"
+          }
+        }
+      },
+      "ExpiryWindowRequest": {
+        "type": "object",
+        "properties": {
+          "expiryWindowDays": {
+            "type": "integer",
+            "format": "int32",
+            "example": 30,
+            "minimum": 1
+          }
+        },
+        "required": [
+          "expiryWindowDays"
+        ]
+      },
+      "UpdateUser": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 150,
+            "minLength": 0
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "UserView": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "roleCode": {
+            "type": "string"
+          },
+          "storeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string"
+          },
+          "emailVerified": {
+            "type": "boolean"
+          },
+          "avatarUrl": {
+            "type": "string"
+          }
+        }
+      },
+      "RoleAssignment": {
+        "type": "object",
+        "properties": {
+          "roleCode": {
+            "type": "string",
+            "minLength": 1
+          },
+          "storeId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "required": [
+          "roleCode"
+        ]
+      },
+      "PolicyRequest": {
+        "type": "object",
+        "properties": {
+          "lambdaMin": {
+            "type": "number",
+            "example": 0,
+            "minimum": 0
+          },
+          "lambdaMax": {
+            "type": "number",
+            "example": 0.5,
+            "minimum": 0
+          }
+        },
+        "required": [
+          "lambdaMax",
+          "lambdaMin"
+        ]
+      },
+      "ProductRequest": {
+        "type": "object",
+        "properties": {
+          "sku": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 0
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 180,
+            "minLength": 0
+          },
+          "categoryId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unit": {
+            "type": "string",
+            "maxLength": 40,
+            "minLength": 0
+          },
+          "requiresExpiry": {
+            "type": "boolean"
+          },
+          "sellingPrice": {
+            "type": "number"
+          },
+          "costPrice": {
+            "type": "number"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE"
+            ],
+            "minLength": 1
+          },
+          "expiryPushDays": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Product expiry push threshold in calendar days. Missing or null means 0 (disabled); no Store fallback",
+            "example": 7,
+            "minimum": 0
+          }
+        },
+        "required": [
+          "costPrice",
+          "name",
+          "requiresExpiry",
+          "sellingPrice",
+          "sku",
+          "status",
+          "unit"
+        ]
+      },
+      "CategoryView": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "ProductView": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sku": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "requiresExpiry": {
+            "type": "boolean"
+          },
+          "category": {
+            "$ref": "#/components/schemas/CategoryView"
+          },
+          "sellingPrice": {
+            "type": "number"
+          },
+          "costPrice": {
+            "type": "number"
+          },
+          "status": {
+            "type": "string"
+          },
+          "stockQuantity": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Derived sum of inventory batch remainingQuantity values",
+            "readOnly": true
+          },
+          "expiryPushDays": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "CategoryRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 150,
+            "minLength": 0
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE"
+            ],
+            "minLength": 1
+          }
+        },
+        "required": [
+          "name",
+          "status"
+        ]
+      },
+      "RangeRequest": {
+        "type": "object",
+        "properties": {
+          "rangeStart": {
+            "type": "string",
+            "format": "date"
+          },
+          "rangeEnd": {
+            "type": "string",
+            "format": "date"
+          },
+          "asOfDate": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "required": [
+          "asOfDate",
+          "rangeEnd",
+          "rangeStart"
+        ]
+      },
+      "EffectiveCoefficients": {
+        "type": "object",
+        "properties": {
+          "alpha": {
+            "type": "number"
+          },
+          "beta": {
+            "type": "number"
+          },
+          "gamma": {
+            "type": "number"
+          }
+        }
+      },
+      "FrozenConfiguration": {
+        "type": "object",
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/WeightConfig"
+          },
+          "lambdaPolicy": {
+            "$ref": "#/components/schemas/LambdaPolicy"
+          },
+          "effectiveCoefficients": {
+            "$ref": "#/components/schemas/EffectiveCoefficients"
+          },
+          "analysisDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "source": {
+            "type": "string"
+          },
+          "utilityScale": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "roundingMode": {
+            "type": "string"
+          },
+          "itemMapping": {
+            "type": "string"
+          },
+          "timeZone": {
+            "type": "string"
+          }
+        }
+      },
+      "SnapshotView": {
+        "type": "object",
+        "properties": {
+          "snapshotId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "storeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rangeStart": {
+            "type": "string",
+            "format": "date"
+          },
+          "rangeEnd": {
+            "type": "string",
+            "format": "date"
+          },
+          "asOfDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "configuration": {
+            "$ref": "#/components/schemas/FrozenConfiguration"
+          },
+          "sourceHash": {
+            "type": "string"
+          },
+          "matrixHash": {
+            "type": "string"
+          },
+          "totalWeightedUtility": {
+            "type": "number"
+          },
+          "roundingScale": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "PreviewRequest": {
+        "type": "object",
+        "properties": {
+          "rangeStart": {
+            "type": "string",
+            "format": "date"
+          },
+          "rangeEnd": {
+            "type": "string",
+            "format": "date"
+          },
+          "asOfDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 100,
+            "minimum": 1
+          }
+        },
+        "required": [
+          "asOfDate",
+          "rangeEnd",
+          "rangeStart"
+        ]
+      },
+      "Evidence": {
+        "type": "object",
+        "properties": {
+          "expiryPushDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "earliestEligibleExpiryDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "daysRemaining": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "asOfDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "batches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PushBatch"
+            }
+          }
+        }
+      },
+      "MatrixItem": {
+        "type": "object",
+        "properties": {
+          "transactionId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "productId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "algorithmItemId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "baseUtility": {
+            "type": "number"
+          },
+          "stockScore": {
+            "type": "number"
+          },
+          "expiryScore": {
+            "type": "number"
+          },
+          "seasonalScore": {
+            "type": "number"
+          },
+          "expiryStatus": {
+            "type": "string"
+          },
+          "weightValue": {
+            "type": "number"
+          },
+          "weightedUtility": {
+            "type": "number"
+          },
+          "transactionUtility": {
+            "type": "number"
+          },
+          "expiryEvidence": {
+            "$ref": "#/components/schemas/Evidence"
+          }
+        }
+      },
+      "MatrixPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MatrixItem"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalWeightedUtility": {
+            "type": "number"
+          },
+          "sourceHash": {
+            "type": "string"
+          },
+          "matrixHash": {
+            "type": "string"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "ready": {
+            "type": "boolean"
+          },
+          "configuration": {
+            "$ref": "#/components/schemas/FrozenConfiguration"
+          }
+        }
+      },
+      "PushBatch": {
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "batchId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "expiryDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "remainingQuantity": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "expiryPushDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "daysRemaining": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "pushRequired": {
+            "type": "boolean"
+          },
+          "pushRequiredQuantity": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "asOfDate": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "CreateUser": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 150,
+            "minLength": 0
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 254,
+            "minLength": 0
+          },
+          "roleCode": {
+            "type": "string",
+            "minLength": 1
+          },
+          "storeId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "required": [
+          "email",
+          "name",
+          "roleCode"
+        ]
+      },
+      "ImportSummary": {
+        "type": "object",
+        "properties": {
+          "importBatchId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string"
+          },
+          "filename": {
+            "type": "string"
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "finishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "validCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rejectedCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalOrderCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "acceptedOrderCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rejectedOrderCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "duplicateOrderCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "conflictOrderCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "errorSummary": {
+            "type": "string"
+          }
+        }
+      },
+      "BatchCreateRequest": {
+        "type": "object",
+        "properties": {
+          "batchCode": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 0
+          },
+          "receivedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiryDate": {
+            "type": "string",
+            "format": "date",
+            "description": "Optional unless the product requires expiry tracking"
+          },
+          "initialQuantity": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "required": [
+          "batchCode",
+          "initialQuantity",
+          "receivedAt"
+        ]
+      },
+      "BatchView": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "productId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "batchCode": {
+            "type": "string"
+          },
+          "receivedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiryDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "initialQuantity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "remainingQuantity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CreateRequest": {
+        "type": "object",
+        "properties": {
+          "requestKey": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "snapshotId": {
+            "type": "integer",
+            "format": "int32",
+            "example": 2,
+            "minimum": 1
+          },
+          "algorithms": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "HUI_MINER",
+                "EFIM"
+              ],
+              "maxItems": 2,
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "maxItems": 2,
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "minUtilMode": {
+            "type": "string",
+            "enum": [
+              "PERCENTAGE",
+              "ABSOLUTE"
+            ]
+          },
+          "minUtilValue": {
+            "type": "number",
+            "description": "Positive value, at most 6 decimal places; PERCENTAGE in (0,100], ABSOLUTE in frozen weighted utility units",
+            "example": 30,
+            "minimum": 0
+          }
+        },
+        "required": [
+          "algorithms",
+          "minUtilMode",
+          "minUtilValue",
+          "requestKey",
+          "snapshotId"
+        ]
+      },
+      "RequestView": {
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "storeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requestedBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requestKey": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "snapshotId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "algorithms": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "HUI_MINER",
+                "EFIM"
+              ]
+            }
+          },
+          "minUtilMode": {
+            "type": "string",
+            "enum": [
+              "PERCENTAGE",
+              "ABSOLUTE"
+            ]
+          },
+          "minUtilValue": {
+            "type": "number"
+          },
+          "minUtilSpmf": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "effectiveMinUtility": {
+            "type": "number"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "RUNNING",
+              "COMPLETED",
+              "FAILED"
+            ]
+          },
+          "comparisonStatus": {
+            "type": "string",
+            "enum": [
+              "NOT_REQUESTED",
+              "PENDING",
+              "MATCH",
+              "FAILED",
+              "BLOCKED"
+            ]
+          },
+          "snapshotHash": {
+            "type": "string"
+          },
+          "inputHash": {
+            "type": "string"
+          },
+          "conversionVersion": {
+            "type": "string"
+          },
+          "utilityScale": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "roundingMode": {
+            "type": "string"
+          },
+          "divisor": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalScaledUtility": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "transactionCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "distinctItems": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "inputBytes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "snapshot": {
+            "$ref": "#/components/schemas/SnapshotView"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "EmailRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 254,
+            "minLength": 0
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "Registration": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 150,
+            "minLength": 0
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 254,
+            "minLength": 0
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 72,
+            "minLength": 12,
+            "pattern": "(?s)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).+"
+          }
+        },
+        "required": [
+          "email",
+          "name",
+          "password"
+        ]
+      },
+      "ChangePassword": {
+        "type": "object",
+        "properties": {
+          "currentPassword": {
+            "type": "string",
+            "maxLength": 72,
+            "minLength": 0
+          },
+          "newPassword": {
+            "type": "string",
+            "maxLength": 72,
+            "minLength": 12,
+            "pattern": "(?s)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).+"
+          }
+        },
+        "required": [
+          "currentPassword",
+          "newPassword"
+        ]
+      },
+      "PasswordReset": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 254,
+            "minLength": 0
+          },
+          "otp": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "[0-9]{6}"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 72,
+            "minLength": 12,
+            "pattern": "(?s)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).+"
+          }
+        },
+        "required": [
+          "email",
+          "otp",
+          "password"
+        ]
+      },
+      "Verify": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "minLength": 1
+          },
+          "otp": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "[0-9]{6}"
+          }
+        },
+        "required": [
+          "email",
+          "otp"
+        ]
+      },
+      "OtpRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "minLength": 1
+          },
+          "purpose": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "SELF_REGISTER|ADMIN_INVITE"
+          }
+        },
+        "required": [
+          "email",
+          "purpose"
+        ]
+      },
+      "Login": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "minLength": 1
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 72,
+            "minLength": 0
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "Token": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string"
+          },
+          "expiresIn": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "tokenType": {
+            "type": "string"
+          }
+        }
+      },
+      "Google": {
+        "type": "object",
+        "properties": {
+          "idToken": {
+            "type": "string",
+            "maxLength": 8192,
+            "minLength": 0
+          }
+        },
+        "required": [
+          "idToken"
+        ]
+      },
+      "Activate": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "minLength": 1
+          },
+          "otp": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "[0-9]{6}"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 72,
+            "minLength": 12,
+            "pattern": "(?s)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).+"
+          }
+        },
+        "required": [
+          "email",
+          "otp",
+          "password"
+        ]
+      },
+      "ScorePatch": {
+        "type": "object",
+        "properties": {
+          "stockPriorityScore": {
+            "type": "number",
+            "maximum": 1,
+            "minimum": 0
+          },
+          "seasonalPriorityScore": {
+            "type": "number",
+            "maximum": 1,
+            "minimum": 0
+          }
+        }
+      },
+      "Scores": {
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stockPriorityScore": {
+            "type": "number"
+          },
+          "seasonalPriorityScore": {
+            "type": "number"
+          }
+        }
+      },
+      "Status": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "ACTIVE|INACTIVE"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "StatusRequest": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE"
+            ],
+            "minLength": 1
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "BatchPatchRequest": {
+        "type": "object",
+        "properties": {
+          "remainingQuantity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "BLOCKED"
+            ]
+          }
+        }
+      },
+      "PushPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PushBatch"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "asOfDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "timeZone": {
+            "type": "string"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "PageTransactionView": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TransactionView"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "TransactionLine": {
+        "type": "object",
+        "properties": {
+          "transactionItemId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "productId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sku": {
+            "type": "string"
+          },
+          "productName": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unitPrice": {
+            "type": "number"
+          },
+          "unitCost": {
+            "type": "number"
+          }
+        }
+      },
+      "TransactionView": {
+        "type": "object",
+        "properties": {
+          "transactionId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sourceSystem": {
+            "type": "string"
+          },
+          "sourceOrderId": {
+            "type": "string"
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string"
+          },
+          "f03Eligible": {
+            "type": "boolean"
+          },
+          "totalAmount": {
+            "type": "number"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TransactionLine"
+            }
+          }
+        }
+      },
+      "PageImportSummary": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ImportSummary"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "ImportError": {
+        "type": "object",
+        "properties": {
+          "rowNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sourceOrderId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "errorDetails": {
+            "type": "string"
+          }
+        }
+      },
+      "PageImportError": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ImportError"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "ProductPage": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductView"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "InventorySummary": {
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalQuantity": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sellableQuantity": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "expiredQuantity": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "blockedQuantity": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "expiringSoonQuantity": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Sellable quantity expiring strictly after today through the inclusive lookahead date"
+          }
+        }
+      },
+      "PageSnapshotView": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SnapshotView"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "RunView": {
+        "type": "object",
+        "properties": {
+          "runId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "requestId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "storeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "snapshotId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "algorithm": {
+            "type": "string",
+            "enum": [
+              "HUI_MINER",
+              "EFIM"
+            ]
+          },
+          "attemptNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "libraryVersion": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "RUNNING",
+              "COMPLETED",
+              "FAILED",
+              "TIMED_OUT"
+            ]
+          },
+          "minUtilSpmf": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "inputHash": {
+            "type": "string"
+          },
+          "conversionVersion": {
+            "type": "string"
+          },
+          "startedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "completedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "runtimeMillis": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64"
+          },
+          "memoryMiB": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "format": "double"
+          },
+          "memoryMethod": {
+            "type": "string"
+          },
+          "runtimeMethod": {
+            "type": "string"
+          },
+          "environment": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "patternCount": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32"
+          },
+          "failureCode": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "failureMessage": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "PagePatternView": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PatternView"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "PatternView": {
+        "type": "object",
+        "properties": {
+          "patternId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "runId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "productIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "utility": {
+            "type": "number"
+          },
+          "utilitySpmf": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "patternSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "supportCount": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32",
+            "description": "Not measured by SPMF; always null"
+          }
+        }
+      },
+      "BenchmarkView": {
+        "type": "object",
+        "properties": {
+          "run": {
+            "$ref": "#/components/schemas/RunView"
+          },
+          "snapshotHash": {
+            "type": "string"
+          },
+          "transactionCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "distinctItems": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "inputBytes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "divisor": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "utilityScale": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "effectiveMinUtility": {
+            "type": "number"
+          },
+          "comparisonStatus": {
+            "type": "string"
+          },
+          "repetitionPolicy": {
+            "type": "string"
+          }
+        }
+      },
+      "PageRequestView": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RequestView"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

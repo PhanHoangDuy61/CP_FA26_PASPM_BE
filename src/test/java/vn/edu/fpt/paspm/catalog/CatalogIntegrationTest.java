@@ -266,10 +266,10 @@ class CatalogIntegrationTest {
         mvc.perform(get("/api/products/{id}/inventory-summary?expiringWithinDays=7", productId)
                         .header("Authorization", "Bearer " + storeAdminToken))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.totalQuantity").value(25))
-                .andExpect(jsonPath("$.sellableQuantity").value(16))
-                .andExpect(jsonPath("$.expiredQuantity").value(3))
+                .andExpect(jsonPath("$.sellableQuantity").value(12))
+                .andExpect(jsonPath("$.expiredQuantity").value(7))
                 .andExpect(jsonPath("$.blockedQuantity").value(6))
-                .andExpect(jsonPath("$.expiringSoonQuantity").value(9));
+                .andExpect(jsonPath("$.expiringSoonQuantity").value(5));
 
         mvc.perform(get("/api/products/{id}/inventory-summary?expiringWithinDays=-1", productId)
                         .header("Authorization", "Bearer " + storeAdminToken))

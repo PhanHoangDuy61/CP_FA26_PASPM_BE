@@ -15,13 +15,14 @@ public class UtilitySnapshotService {
     private final UtilitySettingsRepository settings;
     private final UtilityMatrixBuilder builder;
     private final UtilitySnapshotRepository snapshots;
-    public UtilitySnapshotService(CatalogAccess access,UtilitySettingsRepository settings,UtilityMatrixBuilder builder,UtilitySnapshotRepository snapshots) { this.access=access;this.settings=settings;this.builder=builder;this.snapshots=snapshots; }
+    private final UtilityTimeZone timeZone;
+    public UtilitySnapshotService(CatalogAccess access,UtilitySettingsRepository settings,UtilityMatrixBuilder builder,UtilitySnapshotRepository snapshots,UtilityTimeZone timeZone) { this.access=access;this.settings=settings;this.builder=builder;this.snapshots=snapshots;this.timeZone=timeZone; }
     // Lock the policy before the Store config in every writer to serialize policy changes with snapshot capture.
     private FrozenConfiguration freeze(int store,RangeRequest range) {
         var policy=settings.policy(true);
         var config=settings.config(store,true);
         UtilityConfigurationService.requireLambda(config.lambda(),policy,409);
-        return new FrozenConfiguration(config,policy,new EffectiveCoefficients(config.effectiveAlpha(),config.effectiveBeta(),config.effectiveGamma()),range.asOfDate(),builder.sourceType(),UtilityMath.SCALE,"HALF_UP","PRODUCT_ID_V1");
+        return new FrozenConfiguration(config,policy,new EffectiveCoefficients(config.effectiveAlpha(),config.effectiveBeta(),config.effectiveGamma()),range.asOfDate(),builder.sourceType(),UtilityMath.SCALE,"HALF_UP","PRODUCT_ID_V1",timeZone.id());
     }
     @Transactional(isolation=Isolation.REPEATABLE_READ)
     public MatrixPage preview(Jwt jwt,PreviewRequest request) {
@@ -48,7 +49,7 @@ public class UtilitySnapshotService {
     @Transactional(readOnly=true,isolation=Isolation.REPEATABLE_READ)
     public MatrixPage matrix(Jwt jwt,int id,int page,int size) {
         pagination(page,size);int store=access.currentStoreId(jwt);var snapshot=require(store,id);
-        return new MatrixPage(snapshots.page(store,id,page,size),page,size,snapshots.countItems(id),snapshot.totalWeightedUtility(),snapshot.sourceHash(),snapshot.matrixHash(),List.of(),true,snapshot.configuration());
+        return new MatrixPage(snapshots.page(store,id,page,size),page,size,snapshots.countItems(id),snapshot.totalWeightedUtility(),snapshot.sourceHash(),snapshot.matrixHash(),snapshot.warnings(),true,snapshot.configuration());
     }
     private SnapshotView require(int store,int id) {
         var snapshot=snapshots.find(store,id);if(snapshot==null)throw new ApiException(404,"Utility snapshot not found");return snapshot;

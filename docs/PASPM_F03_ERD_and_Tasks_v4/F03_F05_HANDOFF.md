@@ -1,19 +1,9 @@
-# F03 → F04/F05 Handoff
+# F03 → F04/F05 handoff (v1.2)
 
-## Dữ liệu bất biến
+The current contract is [F03_V12_F05_F06_INTEGRATION.md](../api/F03_V12_F05_F06_INTEGRATION.md), with [F03 Utility API](../api/F03_UTILITY_API.md) and [final business specification](../requirements/F03_WEIGHT_RULES_v1_2.md).
 
-F05 nhận snapshotId, gọi GET metadata/matrix bằng quyền và Store scope phù hợp. Snapshot lưu analysis date, T, policy version/bounds, selected lambda, coefficients, scoring/config versions, scores, source/matrix hashes. Không tính lại từ cấu hình hiện tại. Rows có transactionId, productId, algorithmItemId=productId (PRODUCT_ID_V1), quantity, base utility, S/E/M, expiry status, W, weighted utility và TU. Transaction totals được suy từ các row đã đóng băng; pagination không đổi dataset total.
+F04 is implemented: DatabaseTransactionSource reads validated persisted COMPLETED transactions with historical quantity/price/cost; V7 owns the transaction FK. F03 never substitutes current Product price/cost. The normal provider is F04_DATABASE_V1; optional dev fixtures are not production data.
 
-## Số học
+F05 consumes known immutable snapshot IDs and all frozen matrix pages. New snapshots use EXPIRY_PRODUCT_EARLIEST_BATCH_BINARY_V1; old F03_LINEAR_V1 values remain readable and unchanged. Product-ID mapping is stable, utility scale is6 HALF_UP, and exact signed64 scaled conversion is required. Matrix JSON identity/hash is distinct from any future mining-file byte hash. Do not recompute weights.
 
-Item utility được làm tròn HALF_UP sáu chữ số thập phân trước khi cộng TU và dataset total. Handoff scaled integer = utility ×10^6, phải chuyển chính xác sang signed64bit. Overflow item/TU/dataset bị400. Nếu engine F05 chỉ nhận32bit, cần chốt adapter riêng; không âm thầm scale hoặc clamp. F03 không triển khai F05 algorithms, minUtil hay mining execution.
-
-## Adapter giao dịch F04 còn thiếu
-
-Implement TransactionSource trong module sở hữu dữ liệu thật: load(Store,rangeStart,rangeEnd) trả transactionId,Store,date,eligible và các item productId,quantity>0,giá bán/giá vốn lịch sử hoặc source-native total item utility. Không dùng giá Product hiện tại. Adapter quyết định trạng thái giao dịch đủ điều kiện theo hợp đồng F04, phải xử lý duplicates trước khi cung cấp; F03 reject duplicate Product trong cùng prepared transaction, foreign Store, malformed/negative utility. Range inclusive; analysis date tách khỏi transaction date.
-
-Default provider hiện trả503. UtilityFixtureSource chỉ hoạt động với cả dev và utility-fixture, yêu cầu credential/ngày QA rõ ràng; không phải nguồn production. F04 bổ sung FK utility_matrix_item.transaction_id khi SALES_TRANSACTION tồn tại, kèm kiểm tra dữ liệu/migration riêng. F05 bổ sung MINING_REQUEST.utility_snapshot_id FK trong migration của F05. Không tạo các bảng thuộc module chưa có để giả hoàn tất ERD.
-
-## Giới hạn còn mở
-
-Production eligible-status mapping và adapter dữ liệu thật phụ thuộc F04. Kiểu số consumer32bit nếu có phải được thống nhất với F05. Quy tắc expiry/missing data của F03 đã chốt và kiểm thử; không còn quyết định nghiệp vụ T/lambda/E chưa được chốt trong phạm vi hiện tại.
+F05 P0 has now implemented the frozen snapshot adapter, V9 Mining Request/Run/pattern persistence, asynchronous APIs, actual HUI-Miner/EFIM execution and benchmark comparison. See [F05 Mining API](../api/F05_MINING_API.md) and [verification](../PASPM_F05_High_Utility_Mining/F05_VERIFICATION.md); these additions are separate from F03 scoring. F06 similarly lacks a Recommendation Engine, but the implemented Store-scoped expiry-push API supplies independent current batch data. Read the linked integration contract for required current sellability checks.

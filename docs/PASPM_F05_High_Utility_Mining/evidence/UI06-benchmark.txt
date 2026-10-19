@@ -1,0 +1,153 @@
+GET
+/api/mining/runs/{id}/benchmark
+Read comparable cold child-JVM wall time and sampled Java heap MiB, plus exact result comparison
+Parameters
+Cancel
+Name	Description
+
+id *
+integer($int64)
+(path)
+
+Execute
+Clear
+Responses
+Curl
+curl -X 'GET' \
+  'http://127.0.0.1:18085/api/mining/runs/1/benchmark' \
+  -H 'accept: */*' \
+  -H 'Authorization: Bearer [REDACTED]'
+Request URL
+http://127.0.0.1:18085/api/mining/runs/1/benchmark
+Server response
+Code	Details
+200
+Response body
+Download
+{
+  "run": {
+    "runId": 1,
+    "requestId": 1,
+    "storeId": 5,
+    "snapshotId": 2,
+    "algorithm": "HUI_MINER",
+    "attemptNo": 1,
+    "libraryVersion": "SPMF_2.67a",
+    "status": "COMPLETED",
+    "minUtilSpmf": 30,
+    "inputHash": "8ce22f131d59e8486c6974733fcc81de0c3caadaf13765399311cdfe3dc32626",
+    "conversionVersion": "F03_SCALE6_GCD_INT32_DENSE_V1",
+    "startedAt": "2026-10-19T16:06:05Z",
+    "completedAt": "2026-10-19T16:06:05Z",
+    "runtimeMillis": 98,
+    "memoryMiB": 10.622848510742188,
+    "memoryMethod": "SPMF_SAMPLED_JAVA_HEAP_MIB_NOT_RSS",
+    "runtimeMethod": "CHILD_JVM_WALL_TIME_INCLUDING_STARTUP_AND_IO_EXCLUDING_INPUT_PREPARATION",
+    "environment": "SPMF=SPMF_2.67a;jarSha256=4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a;heapMiB=256;os=Mac OS X;arch=aarch64;javaExecutableSha256=707698c4c6f29cd001e270afed04aed51a201f5e0adba0023ac3f6c35f11a978",
+    "patternCount": 8,
+    "failureCode": null,
+    "failureMessage": null
+  },
+  "snapshotHash": "2aa21b391283e3b6ff5a46f4565d277d421d1c23643756cc7b3449270b0dcae3",
+  "transactionCount": 5,
+  "distinctItems": 7,
+  "inputBytes": 100,
+  "divisor": 1000000,
+  "utilityScale": 6,
+  "effectiveMinUtility": 30,
+  "comparisonStatus": "MATCH",
+  "repetitionPolicy": "ONE_COLD_RUN_PER_ALGORITHM_NO_WARMUP_SEQUENTIAL_SAME_LIMITS"
+}
+Response headers
+ cache-control: no-cache,no-store,max-age=0,must-revalidate
+ connection: keep-alive
+ content-type: application/json
+ date: Mon,19 Oct 2026 16:07:25 GMT
+ expires: 0
+ keep-alive: timeout=60
+ pragma: no-cache
+ transfer-encoding: chunked
+ x-content-type-options: nosniff
+ x-frame-options: DENY
+ x-xss-protection: 0
+Responses
+Code	Description	Links
+200
+
+OK
+
+Media type
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "run": {
+    "runId": 0,
+    "requestId": 0,
+    "storeId": 0,
+    "snapshotId": 0,
+    "algorithm": "HUI_MINER",
+    "attemptNo": 0,
+    "libraryVersion": "string",
+    "status": "string",
+    "minUtilSpmf": 0,
+    "inputHash": "string",
+    "conversionVersion": "string",
+    "startedAt": "2026-10-19T16:07:25.362Z",
+    "completedAt": "2026-10-19T16:07:25.362Z",
+    "runtimeMillis": 0,
+    "memoryMiB": 0.1,
+    "memoryMethod": "string",
+    "runtimeMethod": "string",
+    "environment": "string",
+    "patternCount": 0,
+    "failureCode": "string",
+    "failureMessage": "string"
+  },
+  "snapshotHash": "string",
+  "transactionCount": 0,
+  "distinctItems": 0,
+  "inputBytes": 0,
+  "divisor": 0,
+  "utilityScale": 0,
+  "effectiveMinUtility": 0,
+  "comparisonStatus": "string",
+  "repetitionPolicy": "string"
+}
+	No links
+400
+
+Invalid request / verification
+
+	No links
+401
+
+Authentication required / invalid
+
+	No links
+403
+
+Permission denied
+
+	No links
+404
+
+Resource not found or outside the authenticated Store
+
+	No links
+409
+
+Conflict
+
+	No links
+429
+
+Rate limit exceeded
+
+	No links
+503
+
+Service configuration or required dependency unavailable
+
+	No links

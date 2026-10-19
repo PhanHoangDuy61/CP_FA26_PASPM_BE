@@ -6,5 +6,6 @@
   "requiresExpiry": true,
   "sellingPrice": 2.5,
   "costPrice": 1.25,
-  "status": "ACTIVE"
+  "status": "ACTIVE",
+  "expiryPushDays": 7
 }

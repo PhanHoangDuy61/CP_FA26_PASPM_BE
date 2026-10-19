@@ -1,4 +1,4 @@
-package vn.edu.fpt.paspm.utility;
+package vn.edu.fpt.paspm.common;
 
 import java.io.IOException;
 import com.fasterxml.jackson.core.JsonParser;

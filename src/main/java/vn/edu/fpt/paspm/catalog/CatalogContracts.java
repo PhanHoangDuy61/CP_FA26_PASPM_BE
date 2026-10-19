@@ -1,6 +1,8 @@
 package vn.edu.fpt.paspm.catalog;
 
 import java.math.BigDecimal;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import vn.edu.fpt.paspm.common.StrictIntegerDeserializer;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
@@ -31,14 +33,16 @@ public final class CatalogContracts {
             @NotNull Boolean requiresExpiry,
             @NotNull @PositiveOrZero BigDecimal sellingPrice,
             @NotNull @PositiveOrZero BigDecimal costPrice,
-            @NotBlank @Schema(allowableValues = {"ACTIVE", "INACTIVE"}) String status) {}
+            @NotBlank @Schema(allowableValues = {"ACTIVE", "INACTIVE"}) String status,
+            @PositiveOrZero @JsonDeserialize(using=StrictIntegerDeserializer.class)
+            @Schema(description="Product expiry push threshold in calendar days. Missing or null means 0 (disabled); no Store fallback", minimum="0", example="7") Integer expiryPushDays) {}
 
     public record ProductView(
             int id, String sku, String name, String unit, boolean requiresExpiry,
             CategoryView category, BigDecimal sellingPrice, BigDecimal costPrice,
             String status,
             @Schema(accessMode = Schema.AccessMode.READ_ONLY,
-                    description = "Derived sum of inventory batch remainingQuantity values") long stockQuantity) {}
+                    description = "Derived sum of inventory batch remainingQuantity values") long stockQuantity, int expiryPushDays) {}
 
     public record ProductPage(List<ProductView> content, int page, int pageSize,
                               long totalElements, int totalPages) {}
@@ -61,6 +65,6 @@ public final class CatalogContracts {
     public record InventorySummary(
             int productId, long totalQuantity, long sellableQuantity,
             long expiredQuantity, long blockedQuantity,
-            @Schema(description = "Sellable quantity expiring between today and the inclusive lookahead date")
+            @Schema(description = "Sellable quantity expiring strictly after today through the inclusive lookahead date")
             long expiringSoonQuantity) {}
 }

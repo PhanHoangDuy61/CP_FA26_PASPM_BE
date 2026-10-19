@@ -14,7 +14,8 @@
       "sellingPrice": 2.5,
       "costPrice": 1.25,
       "status": "ACTIVE",
-      "stockQuantity": 12
+      "stockQuantity": 12,
+      "expiryPushDays": 7
     }
   ],
   "page": 0,

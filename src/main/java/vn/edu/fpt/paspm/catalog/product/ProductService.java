@@ -50,7 +50,7 @@ public class ProductService {
         int storeId = access.currentStoreId(jwt);
         validateRequest(storeId, request);
         return products.create(storeId, request.sku(), request.name(), request.categoryId(), request.unit(),
-                request.requiresExpiry(), request.sellingPrice(), request.costPrice(), request.status());
+                request.requiresExpiry(), request.sellingPrice(), request.costPrice(), request.status(), request.expiryPushDays()==null?0:request.expiryPushDays());
     }
 
     @Transactional
@@ -62,7 +62,7 @@ public class ProductService {
             throw new ApiException(400, "Cannot require expiry while a batch has no expiry date");
         }
         if (!products.update(storeId, id, request.sku(), request.name(), request.categoryId(), request.unit(),
-                request.requiresExpiry(), request.sellingPrice(), request.costPrice(), request.status())) {
+                request.requiresExpiry(), request.sellingPrice(), request.costPrice(), request.status(), request.expiryPushDays()==null?0:request.expiryPushDays())) {
             throw missing();
         }
         return requireProduct(storeId, id);

@@ -2,7 +2,6 @@ package vn.edu.fpt.paspm.utility;
 
 import static org.junit.jupiter.api.Assertions.*;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -11,11 +10,11 @@ import vn.edu.fpt.paspm.utility.UtilityContracts.WeightConfig;
 
 class UtilityCalculationTest {
     final LocalDate day=LocalDate.of(2026,10,17);
-    @Test void expiryUsesQuantityWeightedMeanAndConfiguredWindow() {
+    @Test void expiryUsesEarliestEligibleBatchAndBinaryProductThreshold() {
         var calc=new ExpiryScoreCalculator();
         var batches=List.of(new ExpiryScoreCalculator.Batch(day.plusDays(5),20,"ACTIVE"),new ExpiryScoreCalculator.Batch(day.plusDays(40),80,"ACTIVE"));
-        assertEquals(new BigDecimal("0.166667"),calc.calculate(true,batches,day,30).score().setScale(6,RoundingMode.HALF_UP));
-        assertEquals(new BigDecimal("0.100000"),calc.calculate(true,batches,day,10).score().setScale(6,RoundingMode.HALF_UP));
+        assertEquals(BigDecimal.ONE,calc.calculate(true,batches,day,7).score());
+        assertEquals(BigDecimal.ZERO,calc.calculate(true,batches,day,3).score());
     }
     @Test void excludesBlockedExpiredTodayAndEmptyBatches() {
         var result=new ExpiryScoreCalculator().calculate(true,List.of(
@@ -31,7 +30,7 @@ class UtilityCalculationTest {
         assertEquals("NOT_APPLICABLE",calc.calculate(false,batches,day,30).status());
         assertEquals(0,calc.calculate(false,batches,day,30).score().signum());
     }
-    @Test void computesReferenceUtilityFromHistoricalValues() {
+    @Test void supportsFrozenHistoricalDecimalScoresWithoutChangingMath() {
         BigDecimal base=UtilityMath.base(3,new BigDecimal("10000"),new BigDecimal("6000"),null);
         var cfg=new WeightConfig(true,true,true,new BigDecimal("0.5"),new BigDecimal("0.2"),new BigDecimal("0.3"),new BigDecimal("0.5"),30,1,"F03_LINEAR_V1");
         BigDecimal weight=UtilityMath.weight(cfg,new BigDecimal("0.8"),new BigDecimal("0.6"),new BigDecimal("0.9"));
@@ -44,6 +43,8 @@ class UtilityCalculationTest {
             var cfg=new WeightConfig(c==0,c==1,c==2,c==0?BigDecimal.ONE:BigDecimal.ZERO,c==1?BigDecimal.ONE:BigDecimal.ZERO,c==2?BigDecimal.ONE:BigDecimal.ZERO,new BigDecimal("0.5"),30,1,"v1");
             assertEquals(0,UtilityMath.weight(cfg,new BigDecimal("0.8"),new BigDecimal("0.8"),new BigDecimal("0.8")).compareTo(new BigDecimal("1.4")));
         }
+        var stockAndSeason=new WeightConfig(true,false,true,new BigDecimal("0.25"),BigDecimal.ZERO,new BigDecimal("0.75"),new BigDecimal("0.5"),30,1,"v1");
+        assertEquals(0,UtilityMath.weight(stockAndSeason,new BigDecimal("0.8"),null,new BigDecimal("0.4")).compareTo(new BigDecimal("1.25")));
     }
     @Test void rejectsUnsafeNegativeOrMissingBusinessValues() {
         assertThrows(ApiException.class,()->UtilityMath.base(1,BigDecimal.ONE,BigDecimal.TEN,null));

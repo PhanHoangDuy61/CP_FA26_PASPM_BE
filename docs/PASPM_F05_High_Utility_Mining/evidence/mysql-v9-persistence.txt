@@ -1,0 +1,12 @@
+MySQL 8.4.11 isolated QA, 2026-10-19 Asia/Ho_Chi_Minh
+Prepared V1-V8 schema; ONLY QA setup quoted V7 row_number. Source V7 unchanged. Flyway baseline8 then original V9 applied successfully.
+Flyway: baseline8 success, V9 SQL success
+request1 COMPLETED MATCH minUtilSPMF30
+request2 COMPLETED MATCH minUtilSPMF30 (percentage31.25)
+run1 HUI_MINER COMPLETED patterns8 runtime98ms heap10.622848510742188MiB
+run2 EFIM COMPLETED patterns8 runtime90ms heap11.122848510742188MiB
+run3 HUI_MINER COMPLETED patterns8 runtime111ms heap10.622848510742188MiB
+run4 EFIM COMPLETED patterns8 runtime92ms heap11.122848510742188MiB
+patterns32; pattern_item rows104
+snapshot1 stored96.000000, matrix sum96.000000
+snapshot2 stored96.000000, matrix sum96.000000

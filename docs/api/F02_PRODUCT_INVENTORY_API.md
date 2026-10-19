@@ -1,5 +1,12 @@
 # F02 Product and Inventory API Contract
 
+## v1.2 Product expiry priority update (2026-10-19)
+
+The existing Product POST/PUT request accepts optional `expiryPushDays: integer|null`; absent/null is stored as0, values must be >=0, and fractional/string/boolean values are rejected400. Full PUT must send the desired threshold (omitting resets it to0). Product GET/list/create/update/status responses include `expiryPushDays: integer`. Store Admin owns this field in their Store; Merchandiser and System Admin cannot modify it through F02, and cross-Store records return404. No duplicate configuration endpoint was added. `requiresExpiry=false` remains NOT_APPLICABLE in F03 even if a threshold is configured. Inventory quantities are unchanged by threshold updates.
+
+F03 uses only this Product threshold: no Store fallback. The legacy Store expiry-window endpoint is deprecated. New E is binary from the earliest-expiring ACTIVE positive-quantity batch with expiry strictly after the analysis date. Batch expiring today is not sellable in the current summary. `GET /api/utility/expiry-push-batches` provides a Store Admin/Merchandiser current push view independently of mining; see the F03 contract.
+
+
 Contract checked against the running OpenAPI export, F02 ERD and current Backend source on 2026-10-17. Each endpoint below is PASS for source/spec contract correspondence; this handoff did not individually invoke all endpoints in a live Swagger UI session. Full shared OpenAPI: [`openapi.json`](openapi.json). Every route requires a bearer JWT and `STORE_ADMIN`. Resources are scoped to the authenticated Store; request bodies cannot choose a Store. Cross-Store product/category/batch access is returned as 404. F02 does not expose delete or stock-movement APIs.
 
 The approved ERD is `docs/ERD_Diagram/PASPM_Complete_ERD_F02_Inventory_Batch_v3.drawio` (capitalized directory in this checkout). The schema uses `INVENTORY_BATCH`, not `PRODUCT_LOT`. Product stock is derived from batch remaining quantities.
@@ -8,8 +15,8 @@ The approved ERD is `docs/ERD_Diagram/PASPM_Complete_ERD_F02_Inventory_Batch_v3.
 
 - `CategoryRequest`: required nonblank `name:string` max150 and `status:string` in `ACTIVE|INACTIVE`.
 - `CategoryView`: `{id:int32,name:string,status:string}`.
-- `ProductRequest`: required nonblank `sku:string` max80, `name:string` max180, `unit:string` max40, `requiresExpiry:boolean`, `sellingPrice:number >= 0`, `costPrice:number >= 0`, `status:ACTIVE|INACTIVE`; nullable/optional `categoryId:int32`. No stock or F03 score fields are accepted.
-- `ProductView`: `{id:int32,sku:string,name:string,unit:string,requiresExpiry:boolean,category:CategoryView|null,sellingPrice:number,costPrice:number,status:string,stockQuantity:int64}`. `stockQuantity` is derived from all batch remaining quantities and read-only.
+- `ProductRequest`: required nonblank `sku:string` max80, `name:string` max180, `unit:string` max40, `requiresExpiry:boolean`, `sellingPrice:number >= 0`, `costPrice:number >= 0`, `status:ACTIVE|INACTIVE`; nullable/optional `categoryId:int32` and `expiryPushDays:int32 >=0` (null/omitted→0, strict integer). No stock or F03 score fields are accepted.
+- `ProductView`: `{id:int32,sku:string,name:string,unit:string,requiresExpiry:boolean,category:CategoryView|null,sellingPrice:number,costPrice:number,status:string,stockQuantity:int64,expiryPushDays:int32}`. `stockQuantity` is derived from all batch remaining quantities and read-only.
 - `ProductPage`: `{content:ProductView[],page:int32,pageSize:int32,totalElements:int64,totalPages:int32}`.
 - `BatchCreateRequest`: required `batchCode:string` nonblank max80, `receivedAt:string` ISO date-time, `initialQuantity:int32 > 0`; nullable/optional `expiryDate:string` ISO date. Expiry required if Product `requiresExpiry=true`.
 - `BatchPatchRequest`: optional `remainingQuantity:int32 >= 0`, optional `status:ACTIVE|BLOCKED`; at least one must be supplied. Remaining may not exceed initial quantity.
@@ -44,9 +51,9 @@ SKU is unique per Store (database constraint); same SKU may exist in another Sto
 
 - `totalQuantity` sums every batch's remaining quantity, including blocked and expired stock. No batch yields zero.
 - `blockedQuantity` sums batches whose status is `BLOCKED`.
-- `expiredQuantity` sums ACTIVE batches with non-null expiry date strictly earlier than the Store-local current date.
-- `sellableQuantity` sums ACTIVE batches with no expiry date or expiry date greater than or equal to today. Therefore expiry today remains included in F02's sellable quantity.
-- `expiringSoonQuantity` sums ACTIVE batches with expiry date from today through today + `expiringWithinDays`, inclusive. It is part of sellable quantity and is not an additional disjoint bucket.
+- `expiredQuantity` sums ACTIVE batches with non-null expiry date on or before the Store-local current date.
+- `sellableQuantity` sums ACTIVE batches with no expiry date or expiry date strictly after today. Expiry today is excluded under v1.2.
+- `expiringSoonQuantity` sums ACTIVE batches with expiry date strictly after today through today + `expiringWithinDays`, upper boundary inclusive. It is part of sellable quantity and is not an additional disjoint bucket.
 - Blocked and expired quantities do not overlap: expired calculation only considers ACTIVE batches.
 - Time zone defaults to `Asia/Ho_Chi_Minh` (`paspm.store-time-zone`), configured at application level in current source, not per-Store.
 - Summary SQL does not check Product status, so a deactivated Product's batches can still be counted as sellable by this summary. The frontend should display Product status separately.
@@ -54,14 +61,14 @@ SKU is unique per Store (database constraint); same SKU may exist in another Sto
 
 ## F02 / F03 ownership
 
-F02 Product create/update owns `requiresExpiry`, SKU, category, unit, prices, and Product status. F02 batch APIs own batch expiry and quantities. `stockQuantity` is derived and cannot be edited. The F03 API owns `stock_priority_score` and `seasonal_priority_score` through `/api/utility/products/{productId}/scores`; ProductRequest does not accept these fields. F03 derives expiry priority using inventory batches and a fixed analysis date. Do not add F03 score fields to F02 Product forms/contracts.
+F02 Product create/update owns `expiryPushDays`, `requiresExpiry`, SKU, category, unit, prices, and Product status. F02 batch APIs own batch expiry and quantities. `stockQuantity` is derived and cannot be edited. The F03 API owns `stock_priority_score` and `seasonal_priority_score` through `/api/utility/products/{productId}/scores`; ProductRequest does not accept these fields. F03 derives expiry priority using inventory batches and a fixed analysis date. Do not add F03 score fields to F02 Product forms/contracts.
 
 ## Request and response examples
 
 Synthetic JSON examples are available under [`../frontend_handoff/F02_examples/`](../frontend_handoff/F02_examples/). Example Product response:
 
 ```json
-{"id":21,"sku":"MILK-01","name":"Fresh Milk","unit":"bottle","requiresExpiry":true,"category":{"id":4,"name":"Dairy","status":"ACTIVE"},"sellingPrice":2.5,"costPrice":1.25,"status":"ACTIVE","stockQuantity":12}
+{"id":21,"sku":"MILK-01","name":"Fresh Milk","unit":"bottle","requiresExpiry":true,"category":{"id":4,"name":"Dairy","status":"ACTIVE"},"sellingPrice":2.5,"costPrice":1.25,"status":"ACTIVE","stockQuantity":12,"expiryPushDays":7}
 ```
 
 Example batch response:
