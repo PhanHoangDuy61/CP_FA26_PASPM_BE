@@ -1,5 +1,14 @@
 # API Changelog
 
+## 2026-10-19 — F04 transaction data pipeline
+
+- Added authenticated Store-scoped CSV import, import batch/error reads, and transaction list/detail APIs.
+- CSV upload is `STORE_ADMIN` only; `STORE_ADMIN` and `MERCHANDISER` can read imports and transactions. Store scope is always derived from the F01 identity.
+- Added response schemas for import counters, validation errors, historical transaction lines and F03 eligibility.
+- Exported the running application's OpenAPI 3.1.0 document after Flyway V7 startup; six F04 routes are present in `openapi.json`.
+- CSV processing is synchronous, bounded, idempotent by Store/source/order, and does not mutate inventory. Excel and external POS API synchronization remain deferred.
+- Swagger UI was opened and the transaction-list `Try it out` request returned the expected `401` without a token. Authenticated import was not run because this isolated H2 environment had no Store Admin credential or matching product fixture; controller behavior is covered by MockMvc integration tests.
+
 ## 2026-10-18 — F01 authenticated password change
 
 - Added `POST /api/auth/password/change` for an authenticated user to verify their current password and change only their own password.

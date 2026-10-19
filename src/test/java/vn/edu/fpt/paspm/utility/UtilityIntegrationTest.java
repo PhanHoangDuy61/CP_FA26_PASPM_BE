@@ -37,6 +37,13 @@ class UtilityIntegrationTest {
     int store, product;
 
     @BeforeEach void setup() {
+        jdbc.update("DELETE FROM utility_matrix_item");
+        jdbc.update("DELETE FROM utility_snapshot");
+        jdbc.update("DELETE FROM import_staging_row");
+        jdbc.update("DELETE FROM transaction_item");
+        jdbc.update("DELETE FROM sales_transaction");
+        jdbc.update("DELETE FROM import_batch");
+        jdbc.update("DELETE FROM api_connection");
         jdbc.update("INSERT INTO store(name) VALUES (?)", "Utility " + UUID.randomUUID());
         store=jdbc.queryForObject("SELECT MAX(store_id) FROM store", Integer.class);
         jdbc.update("INSERT INTO store(name) VALUES (?)", "Other " + UUID.randomUUID());
@@ -202,7 +209,7 @@ class UtilityIntegrationTest {
         postUtility("snapshots",merchant,RANGE).andExpect(status().isBadRequest());
         patchScore(merchant,"{\"stockPriorityScore\":0}").andExpect(status().isOk());
         var tx=fixtures.data.get(store).get(0);
-        fixtures.data.put(store,java.util.List.of(new TransactionSource.PreparedTransaction(store,1,ANALYSIS,false,tx.items())));
+        fixtures.data.put(store,java.util.List.of(new TransactionSource.PreparedTransaction(store,tx.transactionId(),ANALYSIS,false,tx.items())));
         postUtility("preview",merchant,RANGE).andExpect(status().isOk()).andExpect(jsonPath("$.totalElements").value(0));
         postUtility("snapshots",merchant,RANGE).andExpect(status().isBadRequest());
     }
@@ -218,7 +225,16 @@ class UtilityIntegrationTest {
     }
 
     void fixture() {
-        fixtures.data.put(store,java.util.List.of(new TransactionSource.PreparedTransaction(store,1,ANALYSIS,true,java.util.List.of(new TransactionSource.Item(product,3,new java.math.BigDecimal("10000"),new java.math.BigDecimal("6000"),null)))));
+        String sourceOrderId="utility-fixture-"+UUID.randomUUID();
+        jdbc.update("INSERT INTO sales_transaction(store_id,source_system,source_order_id,occurred_at,status,f03_eligible,total_amount,content_sha256) VALUES (?,'TEST_FIXTURE',?,?,'COMPLETED',TRUE,30000,?)",
+            store,sourceOrderId,java.sql.Timestamp.from(ANALYSIS.atStartOfDay(java.time.ZoneId.of("Asia/Ho_Chi_Minh")).toInstant()),"a".repeat(64));
+        int transactionId=jdbc.queryForObject("SELECT transaction_id FROM sales_transaction WHERE store_id=? AND source_order_id=?",Integer.class,store,sourceOrderId);
+        jdbc.update("INSERT INTO transaction_item(store_id,transaction_id,product_id,quantity,unit_price,unit_cost) VALUES (?,?,?,3,10000,6000)",store,transactionId,product);
+        fixtures.data.put(store,java.util.List.of(new TransactionSource.PreparedTransaction(store,transactionId,ANALYSIS,true,
+            java.util.List.of(new TransactionSource.Item(product,3,new java.math.BigDecimal("10000"),new java.math.BigDecimal("6000"),null)))));
+    }
+    void assertDecimal(String expected,java.math.BigDecimal actual) {
+        assertEquals(0,new java.math.BigDecimal(expected).compareTo(actual),"decimal value");
     }
     org.springframework.test.web.servlet.ResultActions postUtility(String path,String token,String body)throws Exception {
         return mvc.perform(post("/api/utility/"+path).header("Authorization","Bearer "+token).contentType(MediaType.APPLICATION_JSON).content(body));
