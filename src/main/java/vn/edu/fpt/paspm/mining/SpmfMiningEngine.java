@@ -3,14 +3,12 @@ package vn.edu.fpt.paspm.mining;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
-import java.security.*;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import vn.edu.fpt.paspm.common.ApiException;
 
 /** SPMF is an external GPLv3 dependency, deliberately not bundled into the backend artifact. */
 @Component
@@ -19,28 +17,24 @@ public class SpmfMiningEngine implements MiningEngine {
     public static final String JAR_HASH="4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a";
     public static final String MEMORY_METHOD="SPMF_SAMPLED_JAVA_HEAP_MIB_NOT_RSS";
     public static final String RUNTIME_METHOD="CHILD_JVM_WALL_TIME_INCLUDING_STARTUP_AND_IO_EXCLUDING_INPUT_PREPARATION";
-    private final Path jar,java;
+    private final SpmfRuntime runtime;
     private final long timeoutMillis;
     private final int heapMiB,maxPatterns;
     public SpmfMiningEngine(@Value("${paspm.mining.spmf-jar:}") String jar,
-        @Value("${paspm.mining.java-executable:#{systemProperties['java.home'] + '/bin/java'}}") String java,
+        @Value("${paspm.mining.java-executable:}") String java,
         @Value("${paspm.mining.timeout-millis:60000}") long timeout,
         @Value("${paspm.mining.heap-mib:256}") int heap,
         @Value("${paspm.mining.max-patterns:2000}") int maxPatterns){
-        this.jar=jar.isBlank()?null:Path.of(jar);this.java=Path.of(java);this.timeoutMillis=timeout;this.heapMiB=heap;this.maxPatterns=maxPatterns;
+        this.runtime=new SpmfRuntime(jar,java,heap);this.timeoutMillis=timeout;this.heapMiB=heap;this.maxPatterns=maxPatterns;
         if(timeout<1||timeout>300000||heap<32||heap>2048||maxPatterns<1||maxPatterns>10000)throw new IllegalArgumentException("Invalid mining resource limits");
     }
     @Override public void requireAvailable(){
-        if(jar==null||!jar.isAbsolute()||!Files.isRegularFile(jar)||!java.isAbsolute()||!Files.isExecutable(java))
-            throw new ApiException(503,"Configure trusted SPMF 2.67a JAR and Java 25 executable before mining");
-        try(var input=Files.newInputStream(jar)){
-            var digest=MessageDigest.getInstance("SHA-256");var buffer=new byte[8192];int n;
-            while((n=input.read(buffer))!=-1)digest.update(buffer,0,n);
-            if(!JAR_HASH.equals(HexFormat.of().formatHex(digest.digest())))throw new ApiException(503,"SPMF dependency fingerprint is not the verified version");
-        }catch(IOException|NoSuchAlgorithmException e){throw new ApiException(503,"SPMF dependency is unavailable");}
+        runtime.requireAvailable();
     }
     @Override public Output execute(Algorithm algorithm,MiningInputBuilder.Dataset input,int minUtility)throws Exception {
+        if(Thread.currentThread().isInterrupted())throw new ExecutionFailure("INTERRUPTED","Mining execution interrupted");
         requireAvailable();
+        Path jar=runtime.jar(),java=runtime.javaExecutable();
         if(minUtility<1||!MiningInputBuilder.sha(input.text()).equals(input.hash()))throw new ExecutionFailure("INVALID_INPUT","Frozen mining input failed integrity validation");
         Path dir=Files.createTempDirectory("paspm-mining-");Process process=null;
         try{
@@ -81,8 +75,8 @@ public class SpmfMiningEngine implements MiningEngine {
             }
         }
     }
-    private String executableHash()throws IOException,NoSuchAlgorithmException{
-        return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(Files.readAllBytes(java)));
+    private String executableHash()throws IOException{
+        return SpmfRuntime.hash(runtime.javaExecutable());
     }
     /** Verifies algorithm output utilities by summing frozen input values, never re-evaluating F03 scores/weights. */
     Map<String,Integer> parse(String output,MiningInputBuilder.Dataset input,int minUtility){

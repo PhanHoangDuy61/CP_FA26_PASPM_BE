@@ -2,7 +2,7 @@
 
 ## Readiness and environment
 
-Eight implemented F05 operations are ready for integration against a migrated development backend with the verified SPMF dependency configured. All eight were invoked with Swagger UI; see the [executed verification report](../PASPM_F05_High_Utility_Mining/F05_VERIFICATION.md). There is a separate preexisting V7 blocker for provisioning a fresh MySQL database: unquoted `row_number` fails on MySQL 8.4. Do not treat the successful V9 baseline upgrade as a successful clean V1–V9 MySQL install.
+Eight implemented F05 operations are ready for integration against a migrated development backend with the verified SPMF dependency configured. All eight were invoked with Swagger UI; see the [executed verification report](../PASPM_F05_High_Utility_Mining/F05_VERIFICATION.md). The 2026-10-20 P0 patch resolves fresh MySQL V1–V9 startup; existing applied V7 checksums require the [controlled reconciliation procedure](../setup/FLYWAY_MYSQL_V7_RECOVERY.md). Runtime configuration and diagnostic HTTP503 codes are documented in [SPMF setup](../setup/F05_SPMF_RUNTIME_SETUP.md). Backend remains Java17 with an explicitly configured Java25+ child executable.
 
 Default local base URL follows the existing backend configuration, normally `http://localhost:8080`; the actual isolated QA run used `http://127.0.0.1:18085`. Configure the React API base URL for the target environment. OpenAPI: `GET /v3/api-docs`; Swagger: `/swagger-ui/index.html`. The committed [OpenAPI export](../api/openapi.json) contains the actual QA server URL; override that server URL when generating/using the client elsewhere.
 

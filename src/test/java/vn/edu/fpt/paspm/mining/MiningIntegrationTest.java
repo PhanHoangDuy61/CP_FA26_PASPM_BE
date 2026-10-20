@@ -16,7 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import vn.edu.fpt.paspm.auth.AuthService;
 import vn.edu.fpt.paspm.user.UserRepository;
 
-@SpringBootTest(properties={"spring.datasource.url=jdbc:h2:mem:mining;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1","spring.datasource.username=sa","spring.datasource.password=","spring.flyway.enabled=true","paspm.jwt-secret=01234567890123456789012345678901","paspm.otp-secret=01234567890123456789012345678901","paspm.bootstrap-email=","paspm.bootstrap-password=","paspm.mining.spmf-jar=${user.dir}/../spmf_run/spmf.jar","paspm.mining.java-executable=${java.home}/bin/java","paspm.avatar.directory=/tmp/paspm-test-avatars"})
+@SpringBootTest(properties={"spring.datasource.url=jdbc:h2:mem:mining;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1","spring.datasource.username=sa","spring.datasource.password=","spring.flyway.enabled=true","paspm.jwt-secret=01234567890123456789012345678901","paspm.otp-secret=01234567890123456789012345678901","paspm.bootstrap-email=","paspm.bootstrap-password=","paspm.mining.spmf-jar=${paspm.test.spmf-jar:${user.dir}/../spmf_run/spmf.jar}","paspm.mining.java-executable=${paspm.test.spmf-java:${java.home}/bin/java}","paspm.avatar.directory=/tmp/paspm-test-avatars"})
 @AutoConfigureMockMvc
 class MiningIntegrationTest {
     @Autowired MockMvc mvc; @Autowired JdbcTemplate jdbc; @Autowired ObjectMapper json;
@@ -206,6 +206,15 @@ class MiningIntegrationTest {
         int foreignStore=jdbc.queryForObject("SELECT MAX(store_id) FROM store",Integer.class);
         assertThrows(org.springframework.dao.DataIntegrityViolationException.class,()->jdbc.update("INSERT INTO pattern_item(pattern_id,store_id,product_id,algorithm_item_id) SELECT pattern_id,?, ?,2 FROM high_utility_pattern WHERE run_id=?",foreignStore,products.get(1),run.runId()));
         miningRepository.recoverInterrupted();
+    }
+    @Test void unavailableRuntimeRejectsNewWorkAndPreservesReadableHistory()throws Exception{
+        var existing=pending();miningRepository.recoverInterrupted();
+        org.mockito.Mockito.doThrow(new vn.edu.fpt.paspm.common.ApiException(503,"SPMF_JAVA_VERSION_UNSUPPORTED: Configure a Java 25 child"))
+            .when(miningEngine).requireAvailable();
+        postJson("/api/mining/requests",merchant,payload(UUID.randomUUID().toString())).andExpect(status().isServiceUnavailable())
+            .andExpect(jsonPath("$.error").value(org.hamcrest.Matchers.startsWith("SPMF_JAVA_VERSION_UNSUPPORTED:")));
+        assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM mining_request WHERE store_id=?",Integer.class,store));
+        getJson("/api/mining/requests/"+existing.view().requestId(),merchant).andExpect(status().isOk()).andExpect(jsonPath("$.status").value("FAILED"));
     }
     @Test void validEmptyResultIsCompletedWithZeroPatterns()throws Exception{
         var body=payload(UUID.randomUUID().toString()).replace("\"minUtilValue\":30","\"minUtilValue\":100");

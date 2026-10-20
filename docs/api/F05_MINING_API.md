@@ -385,13 +385,15 @@ The external JAR is not bundled in Git/backend artifact. Verified SPMF Main vers
 | Property | Default / supported values |
 |---|---|
 | paspm.mining.spmf-jar | Empty; trusted absolute readable JAR path required; fingerprint pinned |
-| paspm.mining.java-executable | java.home/bin/java; trusted absolute executable path; use Java25+ for pinned JAR |
+| paspm.mining.java-executable | Empty; explicitly configure a trusted absolute Java25+ executable independently from Backend Java17 |
 | paspm.mining.timeout-millis | 60000; 1..300000 |
 | paspm.mining.heap-mib | 256; 32..2048 |
 | paspm.mining.max-patterns | 2000; 1..10000 |
 
 Hard limits: 20,000 snapshot rows, 256 Products, 4MiB algorithm output, 64KiB process log. Numeric overflow rejected before enqueueing. Child commands use ProcessBuilder fixed arguments, never shell concatenation; temp files are cleaned on completion/failure/interruption. No temporary paths are exposed through APIs. Configure database connection/session timestamps consistently, normally UTC (`forceConnectionTimeZoneToSession=true` was used in isolated MySQL QA).
 
-Full V1–V9 H2 migrations passed. MySQL8.4 clean startup currently fails in existing V7 at unquoted row_number; V9 was separately verified by Flyway after an isolated prepared baseline8 schema. Do not enable automatic baselining against a shared database as a workaround. Resolve the existing migration provisioning policy separately before a clean MySQL deployment.
+The 2026-10-20 P0 correction quotes row_number in V7 and F04 SQL. Fresh MySQL8.4 V1–V9 and F04/F05 regression tests now pass. Existing applied V7 history needs controlled checksum reconciliation; see [V7 recovery](../setup/FLYWAY_MYSQL_V7_RECOVERY.md). No automatic repair or baselining occurs.
+
+Before admitting new work, runtime preflight validates the pinned JAR, separately configured Java25+, actual SPMF version entrypoint and temporary storage. Invalid runtime returns HTTP503 using the existing error envelope, with diagnostic prefixes SPMF_JAR_NOT_CONFIGURED, SPMF_JAR_NOT_FOUND, SPMF_JAR_NOT_READABLE, SPMF_JAR_HASH_MISMATCH, SPMF_JAVA_NOT_FOUND, SPMF_JAVA_VERSION_UNSUPPORTED or SPMF_RUNTIME_UNAVAILABLE. Historical read APIs remain available. See [portable setup](../setup/F05_SPMF_RUNTIME_SETUP.md) for environment variables, caching and bounds.
 
 F06 raw-pattern semantics and deferred scheduling are documented in [F05_F06_HANDOFF.md](../PASPM_F05_High_Utility_Mining/F05_F06_HANDOFF.md). No Frontend or F06 implementation was changed.

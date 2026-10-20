@@ -92,7 +92,7 @@ CREATE TABLE import_staging_row (
     staging_row_id INT AUTO_INCREMENT PRIMARY KEY,
     store_id INT NOT NULL,
     import_batch_id INT NOT NULL,
-    row_number INT NOT NULL,
+    `row_number` INT NOT NULL,
     source_order_id VARCHAR(150) NULL,
     raw_data TEXT NOT NULL,
     status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
@@ -102,7 +102,7 @@ CREATE TABLE import_staging_row (
     transaction_item_id INT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     processed_at TIMESTAMP NULL,
-    CONSTRAINT uq_import_staging_batch_row UNIQUE (import_batch_id, row_number),
+    CONSTRAINT uq_import_staging_batch_row UNIQUE (import_batch_id, `row_number`),
     CONSTRAINT fk_import_staging_batch FOREIGN KEY (store_id, import_batch_id)
         REFERENCES import_batch(store_id, import_batch_id),
     CONSTRAINT fk_import_staging_product FOREIGN KEY (store_id, product_id)
@@ -111,12 +111,12 @@ CREATE TABLE import_staging_row (
         REFERENCES sales_transaction(store_id, transaction_id),
     CONSTRAINT fk_import_staging_item FOREIGN KEY (store_id, transaction_item_id)
         REFERENCES transaction_item(store_id, transaction_item_id),
-    CONSTRAINT ck_import_staging_row_number CHECK (row_number > 0),
+    CONSTRAINT ck_import_staging_row_number CHECK (`row_number` > 0),
     CONSTRAINT ck_import_staging_status CHECK (status IN ('PENDING', 'VALID', 'REJECTED', 'PROCESSED'))
 );
 
-CREATE INDEX ix_import_staging_batch_status ON import_staging_row(import_batch_id, status, row_number);
-CREATE INDEX ix_import_staging_batch_order ON import_staging_row(import_batch_id, source_order_id, row_number);
+CREATE INDEX ix_import_staging_batch_status ON import_staging_row(import_batch_id, status, `row_number`);
+CREATE INDEX ix_import_staging_batch_order ON import_staging_row(import_batch_id, source_order_id, `row_number`);
 
 ALTER TABLE utility_matrix_item
     ADD CONSTRAINT fk_utility_matrix_transaction FOREIGN KEY (transaction_id)

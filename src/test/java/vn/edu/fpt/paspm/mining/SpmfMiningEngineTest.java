@@ -7,8 +7,8 @@ import java.util.*;
 import java.time.Duration;
 
 class SpmfMiningEngineTest {
-    static final Path JAR=Path.of(System.getProperty("paspm.mining.spmf-jar","../spmf_run/spmf.jar")).toAbsolutePath().normalize();
-    static final String JAVA=System.getProperty("paspm.mining.java-executable",Path.of(System.getProperty("java.home"),"bin","java").toString());
+    static final Path JAR=Path.of(System.getProperty("paspm.test.spmf-jar",System.getProperty("paspm.mining.spmf-jar","../spmf_run/spmf.jar"))).toAbsolutePath().normalize();
+    static final String JAVA=System.getProperty("paspm.test.spmf-java",System.getProperty("paspm.mining.java-executable",Path.of(System.getProperty("java.home"),"bin","java").toString()));
     static final String INPUT="1 2 3 4 5 6:30:5 10 1 6 3 5\n2 3 4 5:20:8 3 6 3\n1 3 4:8:5 1 2\n1 3 5 7:27:10 6 6 5\n2 3 5 7:11:4 2 3 2\n";
     static MiningInputBuilder.Dataset data(String input){return new MiningInputBuilder.Dataset(input,MiningInputBuilder.sha(input),Map.of(1,1,2,2,3,3,4,4,5,5,6,6,7,7),1000000,96,5);}
     static SpmfMiningEngine engine(long timeout){return new SpmfMiningEngine(JAR.toString(),JAVA,timeout,128,2000);}
@@ -31,8 +31,8 @@ class SpmfMiningEngineTest {
         assertThrows(vn.edu.fpt.paspm.common.ApiException.class,()->new SpmfMiningEngine("/not-found.jar",JAVA,1000,128,10).requireAvailable());
         var e=assertThrows(SpmfMiningEngine.ExecutionFailure.class,()->engine(1).execute(MiningEngine.Algorithm.EFIM,data(INPUT),30));
         assertEquals("TIMED_OUT",e.code());
-        var failure=assertThrows(SpmfMiningEngine.ExecutionFailure.class,()->new SpmfMiningEngine(JAR.toString(),"/usr/bin/false",1000,128,10).execute(MiningEngine.Algorithm.EFIM,data(INPUT),30));
-        assertEquals("SPMF_FAILED",failure.code());
+        var failure=assertThrows(vn.edu.fpt.paspm.common.ApiException.class,()->new SpmfMiningEngine(JAR.toString(),"/usr/bin/false",1000,128,10).execute(MiningEngine.Algorithm.EFIM,data(INPUT),30));
+        assertEquals(503,failure.status());assertTrue(failure.getMessage().startsWith("SPMF_RUNTIME_UNAVAILABLE:"));
     }
     @Test void interruptionCleansTemporaryFilesAndPreservesInterruptFlag() throws Exception {
         var before=temporaryDirectories();

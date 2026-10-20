@@ -1,5 +1,12 @@
 # API Changelog
 
+## 2026-10-20 — F05 P0 deployment fixes
+
+- Corrected V7/F04 identifier quoting for MySQL8.4; V7 checksum changes from -1762009830 to -1490036030. Existing environments require controlled review/reconciliation; no automatic repair or baseline. See [recovery guide](../setup/FLYWAY_MYSQL_V7_RECOVERY.md).
+- New mining admission preflight checks the same pinned SPMF2.67a JAR, independent Java25+ executable, real entrypoint and temporary storage. Both runtime paths now default empty; configure PASPM_MINING_SPMF_JAR and PASPM_MINING_JAVA_EXECUTABLE.
+- Invalid dependency returns503 before creating work with actionable SPMF_* diagnostic prefixes in the existing error string. Historical reads, endpoints, DTO shapes, algorithms and numerical conversion are unchanged.
+- Verified backend Java17 with real Java25 child, fresh MySQL8.4 V1–V9, persisted equal patterns, and147 tests. See [P0 report](../audits/F05_P0_DEPLOYMENT_FIX_REPORT.md) and [setup](../setup/F05_SPMF_RUNTIME_SETUP.md).
+
 ## 2026-10-19 — F05 High-Utility Mining P0
 
 - Added eight Store-scoped operations: mining snapshot selection, asynchronous request creation/history/detail/runs, run detail/patterns/benchmark. Merchandiser creates; Merchandiser/StoreAdmin reads; SystemAdmin/EndCustomer denied.
