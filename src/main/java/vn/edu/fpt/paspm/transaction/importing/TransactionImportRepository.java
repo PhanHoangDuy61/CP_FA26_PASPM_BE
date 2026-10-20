@@ -46,7 +46,7 @@ public class TransactionImportRepository {
     }
 
     public void insertStagingRows(int storeId, int batchId, List<ParsedCsvRow> rows) {
-        jdbc.batchUpdate("INSERT INTO import_staging_row(store_id,import_batch_id,row_number,source_order_id,raw_data,status) VALUES (?,?,?,?,?, 'PENDING')",
+        jdbc.batchUpdate("INSERT INTO import_staging_row(store_id,import_batch_id,`row_number`,source_order_id,raw_data,status) VALUES (?,?,?,?,?, 'PENDING')",
                 rows, 500, (statement, row) -> {
                     statement.setInt(1, storeId);
                     statement.setInt(2, batchId);
@@ -124,7 +124,7 @@ public class TransactionImportRepository {
 
     public void markOrderValid(int batchId, ValidatedOrder order, Map<Integer, Integer> productIdsByRow) {
         for (int rowNumber : order.rowNumbers()) {
-            jdbc.update("UPDATE import_staging_row SET status='VALID',product_id=? WHERE import_batch_id=? AND row_number=?",
+            jdbc.update("UPDATE import_staging_row SET status='VALID',product_id=? WHERE import_batch_id=? AND `row_number`=?",
                     productIdsByRow.get(rowNumber), batchId, rowNumber);
         }
     }
@@ -135,14 +135,14 @@ public class TransactionImportRepository {
         for (int rowNumber : order.rowNumbers()) {
             List<ValidationError> errors = errorsByRow.getOrDefault(rowNumber, List.of());
             String details = errors.isEmpty() ? "Order rejected because another row failed validation" : writeJson(errors);
-            jdbc.update("UPDATE import_staging_row SET status='REJECTED',error_details=?,processed_at=? WHERE import_batch_id=? AND row_number=?",
+            jdbc.update("UPDATE import_staging_row SET status='REJECTED',error_details=?,processed_at=? WHERE import_batch_id=? AND `row_number`=?",
                     details, Timestamp.from(Instant.now()), batchId, rowNumber);
         }
     }
 
     public void markConflict(int batchId, ValidatedOrder order, String message) {
         for (int rowNumber : order.rowNumbers()) {
-            jdbc.update("UPDATE import_staging_row SET status='REJECTED',error_details=?,processed_at=? WHERE import_batch_id=? AND row_number=?",
+            jdbc.update("UPDATE import_staging_row SET status='REJECTED',error_details=?,processed_at=? WHERE import_batch_id=? AND `row_number`=?",
                     writeJson(List.of(new ValidationError(rowNumber, "source_order_id", message))),
                     Timestamp.from(Instant.now()), batchId, rowNumber);
         }
@@ -154,7 +154,7 @@ public class TransactionImportRepository {
             Integer productId = productIdsByRow.get(rowNumber);
             jdbc.update("""
                     UPDATE import_staging_row SET status='PROCESSED',product_id=?,processed_transaction_id=?,
-                        transaction_item_id=?,processed_at=? WHERE import_batch_id=? AND row_number=?
+                        transaction_item_id=?,processed_at=? WHERE import_batch_id=? AND `row_number`=?
                     """, productId, transactionId, itemIds.get(productId), Timestamp.from(Instant.now()), batchId, rowNumber);
         }
     }
@@ -203,10 +203,10 @@ public class TransactionImportRepository {
 
     public List<ImportError> listErrors(int storeId, int batchId, int page, int pageSize) {
         return jdbc.query("""
-                SELECT r.row_number,r.source_order_id,r.status,r.error_details FROM import_staging_row r
+                SELECT r.`row_number`,r.source_order_id,r.status,r.error_details FROM import_staging_row r
                 JOIN import_batch b ON b.import_batch_id=r.import_batch_id
                 WHERE b.store_id=? AND b.import_batch_id=? AND (r.status='REJECTED' OR r.error_details IS NOT NULL)
-                ORDER BY r.row_number LIMIT ? OFFSET ?
+                ORDER BY r.`row_number` LIMIT ? OFFSET ?
                 """, (rs, row) -> new ImportError(rs.getInt("row_number"), rs.getString("source_order_id"),
                         rs.getString("status"), rs.getString("error_details")), storeId, batchId, pageSize, (long) page * pageSize);
     }
