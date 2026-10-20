@@ -1,0 +1,55 @@
+{
+  "miningRunId" : 21,
+  "snapshotId" : 11,
+  "policyVersion" : 1,
+  "ruleVersion" : "F06_RULES_V1_1",
+  "createdCount" : 8,
+  "reusedCount" : 0,
+  "recommendationIds" : [ 62, 63, 64, 65, 66, 67, 68, 69 ],
+  "skipped" : [ {
+    "patternId" : 83,
+    "type" : "BUNDLE",
+    "anchorProductId" : null,
+    "reason" : "PATTERN_REQUIRES_AT_LEAST_TWO_PRODUCTS"
+  }, {
+    "patternId" : 83,
+    "type" : "CROSS_SELL",
+    "anchorProductId" : null,
+    "reason" : "PATTERN_REQUIRES_AT_LEAST_TWO_PRODUCTS"
+  }, {
+    "patternId" : 83,
+    "type" : "FBT",
+    "anchorProductId" : null,
+    "reason" : "PATTERN_REQUIRES_AT_LEAST_TWO_PRODUCTS"
+  }, {
+    "patternId" : 81,
+    "type" : "BUNDLE",
+    "anchorProductId" : null,
+    "reason" : "PATTERN_REQUIRES_AT_LEAST_TWO_PRODUCTS"
+  }, {
+    "patternId" : 81,
+    "type" : "CROSS_SELL",
+    "anchorProductId" : null,
+    "reason" : "PATTERN_REQUIRES_AT_LEAST_TWO_PRODUCTS"
+  }, {
+    "patternId" : 81,
+    "type" : "FBT",
+    "anchorProductId" : null,
+    "reason" : "PATTERN_REQUIRES_AT_LEAST_TWO_PRODUCTS"
+  }, {
+    "patternId" : 84,
+    "type" : "BUNDLE",
+    "anchorProductId" : null,
+    "reason" : "PATTERN_REQUIRES_AT_LEAST_TWO_PRODUCTS"
+  }, {
+    "patternId" : 84,
+    "type" : "CROSS_SELL",
+    "anchorProductId" : null,
+    "reason" : "PATTERN_REQUIRES_AT_LEAST_TWO_PRODUCTS"
+  }, {
+    "patternId" : 84,
+    "type" : "FBT",
+    "anchorProductId" : null,
+    "reason" : "PATTERN_REQUIRES_AT_LEAST_TWO_PRODUCTS"
+  } ]
+}

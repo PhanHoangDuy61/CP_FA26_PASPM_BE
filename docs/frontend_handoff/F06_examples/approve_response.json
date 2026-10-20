@@ -1,0 +1,144 @@
+{
+  "recommendationId" : 62,
+  "storeId" : 21,
+  "snapshotId" : 11,
+  "type" : "BUNDLE",
+  "productIds" : [ 31, 32 ],
+  "anchorProductId" : null,
+  "utility" : 40.0,
+  "reviewStatus" : "APPROVED",
+  "version" : 2,
+  "ruleVersion" : "F06_RULES_V1_1",
+  "policy" : {
+    "version" : 1,
+    "maxBundleSize" : 4,
+    "minSupportCount" : 2,
+    "minSupportRatio" : 0.05,
+    "minConfidence" : 0.5,
+    "minimumSellableQuantity" : 1,
+    "ruleVersion" : "F06_RULES_V1_1"
+  },
+  "evidence" : {
+    "totalTransactions" : 6,
+    "supportCount" : 2,
+    "supportRatio" : 0.333333,
+    "anchorSupportCount" : null,
+    "confidence" : null,
+    "status" : "AVAILABLE"
+  },
+  "generationEligibility" : {
+    "status" : "ELIGIBLE",
+    "products" : [ {
+      "productId" : 31,
+      "productStatus" : "ACTIVE",
+      "sellableQuantity" : 10,
+      "status" : "ELIGIBLE",
+      "expiryPriorityScore" : 0,
+      "expiryStatus" : "NOT_APPLICABLE",
+      "expiryPushDays" : 0,
+      "warnings" : [ ]
+    }, {
+      "productId" : 32,
+      "productStatus" : "ACTIVE",
+      "sellableQuantity" : 10,
+      "status" : "ELIGIBLE",
+      "expiryPriorityScore" : 0,
+      "expiryStatus" : "NOT_APPLICABLE",
+      "expiryPushDays" : 0,
+      "warnings" : [ ]
+    } ],
+    "checkedAt" : "2026-10-20T14:19:53.714512Z",
+    "asOfDate" : "2026-10-20",
+    "timeZone" : "Asia/Ho_Chi_Minh",
+    "warnings" : [ ],
+    "fingerprint" : "9d73b4c2cb9af15ef16424aa27d3f9a250bfdf49d701a50124541b4520ba9030"
+  },
+  "currentEligibility" : {
+    "status" : "ELIGIBLE",
+    "products" : [ {
+      "productId" : 31,
+      "productStatus" : "ACTIVE",
+      "sellableQuantity" : 10,
+      "status" : "ELIGIBLE",
+      "expiryPriorityScore" : 0,
+      "expiryStatus" : "NOT_APPLICABLE",
+      "expiryPushDays" : 0,
+      "warnings" : [ ]
+    }, {
+      "productId" : 32,
+      "productStatus" : "ACTIVE",
+      "sellableQuantity" : 10,
+      "status" : "ELIGIBLE",
+      "expiryPriorityScore" : 0,
+      "expiryStatus" : "NOT_APPLICABLE",
+      "expiryPushDays" : 0,
+      "warnings" : [ ]
+    } ],
+    "checkedAt" : "2026-10-20T14:19:53.743297Z",
+    "asOfDate" : "2026-10-20",
+    "timeZone" : "Asia/Ho_Chi_Minh",
+    "warnings" : [ ],
+    "fingerprint" : "9d73b4c2cb9af15ef16424aa27d3f9a250bfdf49d701a50124541b4520ba9030"
+  },
+  "inventoryChanged" : false,
+  "readyForConsumption" : true,
+  "sources" : [ {
+    "runId" : 21,
+    "patternId" : 82,
+    "requestId" : 11,
+    "snapshotId" : 11,
+    "algorithm" : "HUI_MINER",
+    "libraryVersion" : "SPMF_2.67a",
+    "conversionVersion" : "F03_SCALE6_GCD_INT32_DENSE_V1",
+    "inputHash" : "757c370552348bd72bdf70e0d154e342cb60fb1ea701b6d644de29691dbc9788",
+    "sourceHash" : "5eeef6e1a4cfb1a16d04cab488934c81477c754b7a9ebb4b7fb06b0a57c0ea05",
+    "matrixHash" : "14f01818821bbc779aafc47d249f8bdc73af4eb8b546d63bdb84a407d3edda82",
+    "minUtilMode" : "ABSOLUTE",
+    "minUtilValue" : 1.0,
+    "minUtilSpmf" : 1,
+    "effectiveMinUtility" : 10.0,
+    "patternUtility" : 40.0,
+    "analysisDate" : "2026-10-20"
+  } ],
+  "explanation" : [ "Rule F06_RULES_V1_1 / policy 1: BUNDLE", "Completed mining run 21, pattern 82, immutable snapshot 11", "Utility 40.000000 uses frozen weighted utility units; it is not purchase probability", "Historical support=2/6; confidence=null; anchor=null", "Live eligibility is checked separately; expiry priority is shown per Product and does not alter ranking utility", "Rank policy: eligibility, frozen utility descending within source run, support descending, canonical Product key, type and anchor", "Historical co-occurrence does not establish causality" ],
+  "reviewHistory" : [ {
+    "oldStatus" : "PENDING_REVIEW",
+    "newStatus" : "APPROVED",
+    "reviewedBy" : 51,
+    "reviewedAt" : "2026-10-20T14:19:53.740463Z",
+    "reason" : "QA checked current inventory",
+    "resultingVersion" : 2,
+    "eligibilityCheck" : {
+      "status" : "ELIGIBLE",
+      "products" : [ {
+        "productId" : 31,
+        "productStatus" : "ACTIVE",
+        "sellableQuantity" : 10,
+        "status" : "ELIGIBLE",
+        "expiryPriorityScore" : 0,
+        "expiryStatus" : "NOT_APPLICABLE",
+        "expiryPushDays" : 0,
+        "warnings" : [ ]
+      }, {
+        "productId" : 32,
+        "productStatus" : "ACTIVE",
+        "sellableQuantity" : 10,
+        "status" : "ELIGIBLE",
+        "expiryPriorityScore" : 0,
+        "expiryStatus" : "NOT_APPLICABLE",
+        "expiryPushDays" : 0,
+        "warnings" : [ ]
+      } ],
+      "checkedAt" : "2026-10-20T14:19:53.739877Z",
+      "asOfDate" : "2026-10-20",
+      "timeZone" : "Asia/Ho_Chi_Minh",
+      "warnings" : [ ],
+      "fingerprint" : "9d73b4c2cb9af15ef16424aa27d3f9a250bfdf49d701a50124541b4520ba9030"
+    }
+  } ],
+  "reviewedBy" : 51,
+  "reviewedAt" : "2026-10-20T14:19:53.740152Z",
+  "reviewReason" : "QA checked current inventory",
+  "createdAt" : "2026-10-20T14:19:53.715199Z",
+  "rank" : null
+}

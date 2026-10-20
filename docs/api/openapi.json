@@ -6,7 +6,7 @@
   },
   "servers": [
     {
-      "url": "http://127.0.0.1:18085",
+      "url": "http://127.0.0.1:18086",
       "description": "Generated server url"
     }
   ],
@@ -19,6 +19,10 @@
     {
       "name": "F05 Mining",
       "description": "Frozen F03 snapshot mining. Store-scoped; Merchandiser creates, Store Admin and Merchandiser read."
+    },
+    {
+      "name": "F06 Recommendations",
+      "description": "Store-scoped reviewable candidates; independent live expiry alerts. Approval never publishes or reserves inventory."
     }
   ],
   "paths": {
@@ -40,12 +44,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -60,6 +58,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       },
@@ -90,12 +94,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -110,6 +108,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -142,12 +146,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -162,6 +160,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         },
         "deprecated": true
@@ -197,12 +201,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -217,6 +215,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       },
@@ -259,12 +263,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -279,6 +277,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -323,12 +327,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -343,6 +341,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -384,12 +388,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -404,6 +402,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       },
@@ -424,12 +428,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -444,6 +442,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -466,12 +470,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -486,6 +484,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       },
@@ -516,11 +520,47 @@
               }
             }
           },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
           "403": {
             "description": "Permission denied"
+          }
+        }
+      }
+    },
+    "/api/recommendations/config": {
+      "get": {
+        "tags": [
+          "F06 Recommendations"
+        ],
+        "summary": "Read effective own-Store versioned rule policy and approved defaults",
+        "operationId": "config_2",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecPolicy"
+                }
+              }
+            }
           },
           "429": {
             "description": "Rate limit exceeded"
@@ -536,6 +576,63 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "F06 Recommendations"
+        ],
+        "summary": "Store Admin updates own-Store policy with expectedVersion",
+        "description": "Does not rewrite existing recommendation policy/evidence/review history. Defaults version1; first update produces version2.",
+        "operationId": "config_3",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecPolicyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecPolicy"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -569,12 +666,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -589,6 +680,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       },
@@ -630,12 +727,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -650,6 +741,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -683,12 +780,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -703,6 +794,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       },
@@ -744,12 +841,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -764,6 +855,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -796,12 +893,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -816,6 +907,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -848,12 +945,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -868,6 +959,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -943,12 +1040,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -963,6 +1054,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       },
@@ -994,12 +1091,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -1014,6 +1105,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -1055,11 +1152,68 @@
               }
             }
           },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
           "403": {
             "description": "Permission denied"
+          }
+        }
+      }
+    },
+    "/api/recommendations/{id}/reject": {
+      "post": {
+        "tags": [
+          "F06 Recommendations"
+        ],
+        "summary": "Reject a pending candidate and preserve auditable decision history",
+        "operationId": "reject",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecReviewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecView"
+                }
+              }
+            }
           },
           "429": {
             "description": "Rate limit exceeded"
@@ -1075,6 +1229,128 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          }
+        }
+      }
+    },
+    "/api/recommendations/{id}/approve": {
+      "post": {
+        "tags": [
+          "F06 Recommendations"
+        ],
+        "summary": "Approve a pending eligible candidate with optimistic version check",
+        "operationId": "approve",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecReviewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecView"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          }
+        }
+      }
+    },
+    "/api/recommendations/generate": {
+      "post": {
+        "tags": [
+          "F06 Recommendations"
+        ],
+        "summary": "Generate idempotent review candidates from a completed own-Store mining run",
+        "description": "Frozen evidence, versioned Store policy and current inventory; equivalent algorithm sources are preserved. No SPMF execution or automatic approval.",
+        "operationId": "generate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecGenerateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecGenerationResult"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -1164,12 +1440,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -1184,6 +1454,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       },
@@ -1214,12 +1490,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -1234,6 +1504,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -1270,12 +1546,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -1290,6 +1560,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       },
@@ -1331,12 +1607,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -1351,6 +1621,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -1395,12 +1671,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -1415,6 +1685,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       },
@@ -1446,12 +1722,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -1466,6 +1736,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -1491,12 +1767,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -1511,6 +1781,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       },
@@ -1541,12 +1817,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -1561,6 +1831,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -1597,12 +1873,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -1617,6 +1887,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -1653,12 +1929,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -1673,6 +1943,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -1709,12 +1985,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -1729,6 +1999,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -1765,12 +2041,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -1785,6 +2055,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -1821,12 +2097,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -1841,6 +2111,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -1877,12 +2153,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -1897,6 +2167,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -1933,12 +2209,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -1953,6 +2223,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -1989,12 +2265,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -2009,6 +2279,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -2042,12 +2318,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -2062,6 +2332,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -2095,12 +2371,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -2115,6 +2385,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -2151,12 +2427,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -2171,6 +2441,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -2207,12 +2483,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -2227,6 +2497,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -2263,12 +2539,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -2283,6 +2553,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -2316,12 +2592,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -2336,6 +2606,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       },
@@ -2377,12 +2653,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -2397,6 +2667,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -2441,12 +2717,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -2461,6 +2731,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -2504,12 +2780,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -2524,6 +2794,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -2557,12 +2833,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -2577,6 +2847,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       },
@@ -2618,12 +2894,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -2638,6 +2908,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -2681,12 +2957,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -2701,6 +2971,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -2734,12 +3010,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -2754,6 +3024,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -2807,12 +3083,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -2827,6 +3097,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -2890,12 +3166,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -2910,6 +3180,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -2945,12 +3221,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -2965,6 +3235,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -3035,12 +3311,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -3055,6 +3325,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -3088,12 +3364,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -3108,6 +3378,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -3155,12 +3431,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -3175,6 +3445,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -3208,12 +3484,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -3228,6 +3498,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -3284,12 +3560,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -3304,6 +3574,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -3331,11 +3607,115 @@
               }
             }
           },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
           "403": {
             "description": "Permission denied"
+          }
+        }
+      }
+    },
+    "/api/recommendations": {
+      "get": {
+        "tags": [
+          "F06 Recommendations"
+        ],
+        "summary": "List candidates; miningRunId scopes deterministic live ranking",
+        "description": "Without miningRunId, chronological history; raw utility is never ranked across unrelated snapshots. Filters: snapshotId, type, reviewStatus. Rank evaluated before pagination.",
+        "operationId": "list_6",
+        "parameters": [
+          {
+            "name": "miningRunId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "snapshotId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "BUNDLE",
+                "CROSS_SELL",
+                "FBT",
+                "BANNER"
+              ]
+            }
+          },
+          {
+            "name": "reviewStatus",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "PENDING_REVIEW",
+                "APPROVED",
+                "REJECTED"
+              ]
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecPage"
+                }
+              }
+            }
           },
           "429": {
             "description": "Rate limit exceeded"
@@ -3351,6 +3731,151 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          }
+        }
+      }
+    },
+    "/api/recommendations/{id}": {
+      "get": {
+        "tags": [
+          "F06 Recommendations"
+        ],
+        "summary": "Get immutable evidence, review history and rechecked live eligibility",
+        "description": "Downstream must require reviewStatus=APPROVED and readyForConsumption=true at time of use. Inventory is not reserved; recheck again when actually activating/fulfilling.",
+        "operationId": "get_7",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecView"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          }
+        }
+      }
+    },
+    "/api/recommendations/expiry-push": {
+      "get": {
+        "tags": [
+          "recommendation-expiry-controller"
+        ],
+        "summary": "Read current sellable expiry-push batches without Mining",
+        "description": "Uses the current Store-local date only; historical asOfDate is rejected. Ordered by expiry date, productId and batchId. checkedAt records this eligibility check, not an inventory reservation.",
+        "operationId": "list_7",
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "parameters",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecExpiryPage"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -3396,12 +3921,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -3416,6 +3935,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -3460,12 +3985,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -3480,6 +3999,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -3513,12 +4038,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -3533,6 +4052,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -3587,12 +4112,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -3607,6 +4126,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -3640,12 +4165,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -3660,6 +4179,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -3693,12 +4218,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -3713,6 +4232,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -3749,12 +4274,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -3769,6 +4288,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -3792,12 +4317,6 @@
               }
             }
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
@@ -3812,6 +4331,12 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
           }
         }
       }
@@ -4028,6 +4553,80 @@
           "lambdaMax",
           "lambdaMin"
         ]
+      },
+      "RecPolicyRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "maxBundleSize": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 256,
+            "minimum": 2
+          },
+          "minSupportCount": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 1
+          },
+          "minSupportRatio": {
+            "type": "number",
+            "maximum": 1,
+            "minimum": 0
+          },
+          "minConfidence": {
+            "type": "number",
+            "maximum": 1,
+            "minimum": 0
+          },
+          "minimumSellableQuantity": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "expectedVersion",
+          "maxBundleSize",
+          "minConfidence",
+          "minSupportCount",
+          "minSupportRatio",
+          "minimumSellableQuantity"
+        ]
+      },
+      "RecPolicy": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "maxBundleSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minSupportCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minSupportRatio": {
+            "type": "number"
+          },
+          "minConfidence": {
+            "type": "number"
+          },
+          "minimumSellableQuantity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ruleVersion": {
+            "type": "string"
+          }
+        }
       },
       "ProductRequest": {
         "type": "object",
@@ -4572,6 +5171,471 @@
             "format": "int32"
           },
           "errorSummary": {
+            "type": "string"
+          }
+        }
+      },
+      "RecReviewRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 0
+          }
+        },
+        "required": [
+          "expectedVersion",
+          "reason"
+        ]
+      },
+      "RecEligibility": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ELIGIBLE",
+              "NEEDS_RECHECK",
+              "INELIGIBLE"
+            ]
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecProductEligibility"
+            }
+          },
+          "checkedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "asOfDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "timeZone": {
+            "type": "string"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "fingerprint": {
+            "type": "string"
+          }
+        }
+      },
+      "RecProductEligibility": {
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "productStatus": {
+            "type": "string"
+          },
+          "sellableQuantity": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ELIGIBLE",
+              "NEEDS_RECHECK",
+              "INELIGIBLE"
+            ]
+          },
+          "expiryPriorityScore": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "expiryStatus": {
+            "type": "string"
+          },
+          "expiryPushDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "RecReview": {
+        "type": "object",
+        "properties": {
+          "oldStatus": {
+            "type": "string",
+            "enum": [
+              "PENDING_REVIEW",
+              "APPROVED",
+              "REJECTED"
+            ]
+          },
+          "newStatus": {
+            "type": "string",
+            "enum": [
+              "PENDING_REVIEW",
+              "APPROVED",
+              "REJECTED"
+            ]
+          },
+          "reviewedBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "reviewedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "resultingVersion": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "eligibilityCheck": {
+            "$ref": "#/components/schemas/RecEligibility"
+          }
+        }
+      },
+      "RecSource": {
+        "type": "object",
+        "properties": {
+          "runId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "patternId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "requestId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "snapshotId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "algorithm": {
+            "type": "string"
+          },
+          "libraryVersion": {
+            "type": "string"
+          },
+          "conversionVersion": {
+            "type": "string"
+          },
+          "inputHash": {
+            "type": "string"
+          },
+          "sourceHash": {
+            "type": "string"
+          },
+          "matrixHash": {
+            "type": "string"
+          },
+          "minUtilMode": {
+            "type": "string"
+          },
+          "minUtilValue": {
+            "type": "number"
+          },
+          "minUtilSpmf": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "effectiveMinUtility": {
+            "type": "number"
+          },
+          "patternUtility": {
+            "type": "number"
+          },
+          "analysisDate": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "RecTransactionEvidence": {
+        "type": "object",
+        "description": "Presence counts from one immutable source dataset; ratios displayed at six decimal places, decisions use exact counts",
+        "properties": {
+          "totalTransactions": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "supportCount": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32"
+          },
+          "supportRatio": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "anchorSupportCount": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32"
+          },
+          "confidence": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "AVAILABLE",
+              "EVIDENCE_UNAVAILABLE",
+              "ZERO_ANCHOR_SUPPORT"
+            ]
+          }
+        }
+      },
+      "RecView": {
+        "type": "object",
+        "properties": {
+          "recommendationId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "storeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "snapshotId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "BUNDLE",
+              "CROSS_SELL",
+              "FBT",
+              "BANNER"
+            ]
+          },
+          "productIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "anchorProductId": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32"
+          },
+          "utility": {
+            "type": "number"
+          },
+          "reviewStatus": {
+            "type": "string",
+            "enum": [
+              "PENDING_REVIEW",
+              "APPROVED",
+              "REJECTED"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "ruleVersion": {
+            "type": "string"
+          },
+          "policy": {
+            "$ref": "#/components/schemas/RecPolicy"
+          },
+          "evidence": {
+            "$ref": "#/components/schemas/RecTransactionEvidence"
+          },
+          "generationEligibility": {
+            "$ref": "#/components/schemas/RecEligibility"
+          },
+          "currentEligibility": {
+            "$ref": "#/components/schemas/RecEligibility"
+          },
+          "inventoryChanged": {
+            "type": "boolean"
+          },
+          "readyForConsumption": {
+            "type": "boolean"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecSource"
+            }
+          },
+          "explanation": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reviewHistory": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecReview"
+            }
+          },
+          "reviewedBy": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32"
+          },
+          "reviewedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "reviewReason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "rank": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "RecGenerateRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "miningRunId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "types": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "BUNDLE",
+                "CROSS_SELL",
+                "FBT",
+                "BANNER"
+              ]
+            },
+            "maxItems": 4,
+            "minItems": 0
+          }
+        },
+        "required": [
+          "miningRunId",
+          "types"
+        ]
+      },
+      "RecGenerationResult": {
+        "type": "object",
+        "properties": {
+          "miningRunId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "snapshotId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "policyVersion": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "ruleVersion": {
+            "type": "string"
+          },
+          "createdCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "reusedCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "recommendationIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          "skipped": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecSkipped"
+            }
+          }
+        }
+      },
+      "RecSkipped": {
+        "type": "object",
+        "properties": {
+          "patternId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "BUNDLE",
+              "CROSS_SELL",
+              "FBT",
+              "BANNER"
+            ]
+          },
+          "anchorProductId": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32"
+          },
+          "reason": {
             "type": "string"
           }
         }
@@ -5269,6 +6333,117 @@
           "totalElements": {
             "type": "integer",
             "format": "int64"
+          }
+        }
+      },
+      "RecPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecView"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "ordering": {
+            "type": "string"
+          }
+        }
+      },
+      "RecExpiryBatch": {
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "batchId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "expiryDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "daysRemaining": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "remainingQuantity": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "expiryPushDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pushRequired": {
+            "type": "boolean"
+          },
+          "checkedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "RecExpiryPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecExpiryBatch"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "asOfDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "timeZone": {
+            "type": "string"
+          },
+          "checkedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },

@@ -1,0 +1,9 @@
+{
+  "version" : 1,
+  "maxBundleSize" : 4,
+  "minSupportCount" : 2,
+  "minSupportRatio" : 0.05,
+  "minConfidence" : 0.5,
+  "minimumSellableQuantity" : 1,
+  "ruleVersion" : "F06_RULES_V1_1"
+}

@@ -1,5 +1,13 @@
 # API Changelog
 
+## 2026-10-20 — F06 recommendation contract and frontend handoff
+
+- Documented eight implemented Store-scoped operations: generation, list/detail, approve/reject, config GET/PUT and independent expiry-push GET. Merchandiser generates/reviews; Store Admin configures; both read.
+- Added source-derived nested response types, nullability, exact-count support/confidence rules, frozen policy/provenance, deterministic run ranking, chronological history, optimistic review/configuration conflicts and current eligibility checks.
+- Added React/TypeScript integration workflow with F01 authentication, role-specific screens, lossless numeric handling, current expiry boundaries and downstream APPROVED + readyForConsumption gate. Approval has no publishing, reservation, campaign, discount or stock side effect.
+- Verified Java17 clean build:210 tests PASS (63 new F06 +147 regression), fresh/upgrade MySQL and27 Swagger UI cases. Exported actual runtime OpenAPI59 paths/73 operations. Kept F03 expiry Evidence separate from RecTransactionEvidence to preserve schema compatibility. See [verification](../requirements/F06_VERIFICATION.md).
+- Contracts: [F06 API](F06_RECOMMENDATION_API.md), [frontend handoff](../frontend_handoff/F06_HANDOFF.md).
+
 ## 2026-10-20 — F05 P0 deployment fixes
 
 - Corrected V7/F04 identifier quoting for MySQL8.4; V7 checksum changes from -1762009830 to -1490036030. Existing environments require controlled review/reconciliation; no automatic repair or baseline. See [recovery guide](../setup/FLYWAY_MYSQL_V7_RECOVERY.md).
