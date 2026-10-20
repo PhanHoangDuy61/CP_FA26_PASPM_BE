@@ -19,7 +19,10 @@ public class UtilitySettingsRepository {
     }
     public WeightConfig config(int storeId,boolean lock) {
         String raw=jdbc.queryForObject("SELECT utility_config FROM store WHERE store_id=?"+(lock?" FOR UPDATE":""),String.class,storeId);
-        return raw==null?WeightConfig.defaults():read(raw,WeightConfig.class);
+        var c=raw==null?WeightConfig.defaults():read(raw,WeightConfig.class);
+        // Normalize only the active Store view. Persisted historical snapshot JSON is never passed here.
+        return new WeightConfig(c.enableStock(),c.enableExpiry(),c.enableSeason(),c.alpha(),c.beta(),c.gamma(),c.lambda(),
+            c.expiryWindowDays(),c.version(),ExpiryScoreCalculator.SCORING_VERSION);
     }
     public void config(int storeId,WeightConfig config) {
         jdbc.update("UPDATE store SET utility_config=? WHERE store_id=?",write(config),storeId);

@@ -1,6 +1,7 @@
 package vn.edu.fpt.paspm.utility;
 
 import java.math.BigDecimal;
+import vn.edu.fpt.paspm.common.StrictIntegerDeserializer;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import jakarta.validation.constraints.*;
@@ -23,10 +24,10 @@ public final class UtilityContracts {
         @NotNull @Min(1) Integer expiryWindowDays) {}
     public record WeightConfig(boolean enableStock, boolean enableExpiry, boolean enableSeason,
         BigDecimal alpha, BigDecimal beta, BigDecimal gamma, BigDecimal lambda,
-        int expiryWindowDays, long version, String scoringVersion) {
+        @io.swagger.v3.oas.annotations.media.Schema(deprecated=true,description="Legacy Store setting; ignored by v1.2 scoring. Product.expiryPushDays is authoritative") Integer expiryWindowDays, long version, String scoringVersion) {
         public static WeightConfig defaults() {
             return new WeightConfig(false,false,false,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,
-                BigDecimal.ZERO,30,1,"F03_LINEAR_V1");
+                BigDecimal.ZERO,null,1,ExpiryScoreCalculator.SCORING_VERSION);
         }
         public BigDecimal effectiveAlpha() { return enableStock ? alpha : BigDecimal.ZERO; }
         public BigDecimal effectiveBeta() { return enableExpiry ? beta : BigDecimal.ZERO; }

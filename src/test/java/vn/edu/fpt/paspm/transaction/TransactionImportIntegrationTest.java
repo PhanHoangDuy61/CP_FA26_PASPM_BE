@@ -110,7 +110,7 @@ class TransactionImportIntegrationTest {
         assertEquals(12, jdbc.queryForObject("SELECT remaining_quantity FROM inventory_batch WHERE product_id=?", Integer.class, productId));
         assertTrue(jdbc.queryForObject("SELECT f03_eligible FROM sales_transaction WHERE source_order_id='good-order'", Boolean.class));
         assertEquals(false, jdbc.queryForObject("SELECT f03_eligible FROM sales_transaction WHERE source_order_id='cancelled-order'", Boolean.class));
-        assertEquals("PROCESSED", jdbc.queryForObject("SELECT status FROM import_staging_row WHERE import_batch_id=? AND row_number=2", String.class, batchId));
+        assertEquals("PROCESSED", jdbc.queryForObject("SELECT status FROM import_staging_row WHERE import_batch_id=? AND `row_number`=2", String.class, batchId));
         var f03Rows = transactionSource.load(storeId, LocalDate.parse("2026-10-19"), LocalDate.parse("2026-10-19"));
         assertEquals("F04_DATABASE_V1", transactionSource.sourceType());
         assertEquals(1, f03Rows.size());
@@ -165,8 +165,8 @@ class TransactionImportIntegrationTest {
         assertEquals(0, jdbc.queryForObject("SELECT COUNT(*) FROM sales_transaction WHERE store_id=? AND source_order_id='atomic-order'", Integer.class, storeId));
         assertEquals(1, jdbc.queryForObject("SELECT COUNT(*) FROM sales_transaction WHERE store_id=? AND source_order_id='independent-order'", Integer.class, storeId));
         assertEquals(0, jdbc.queryForObject("SELECT COUNT(*) FROM transaction_item i JOIN sales_transaction t ON t.transaction_id=i.transaction_id WHERE t.source_order_id='atomic-order'", Integer.class));
-        assertEquals("REJECTED", jdbc.queryForObject("SELECT status FROM import_staging_row WHERE import_batch_id=? AND row_number=2", String.class, batchId));
-        assertEquals("REJECTED", jdbc.queryForObject("SELECT status FROM import_staging_row WHERE import_batch_id=? AND row_number=3", String.class, batchId));
+        assertEquals("REJECTED", jdbc.queryForObject("SELECT status FROM import_staging_row WHERE import_batch_id=? AND `row_number`=2", String.class, batchId));
+        assertEquals("REJECTED", jdbc.queryForObject("SELECT status FROM import_staging_row WHERE import_batch_id=? AND `row_number`=3", String.class, batchId));
     }
 
     @Test

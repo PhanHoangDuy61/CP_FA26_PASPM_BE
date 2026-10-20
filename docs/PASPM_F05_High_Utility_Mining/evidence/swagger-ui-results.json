@@ -1,0 +1,1262 @@
+[
+  {
+    "id": "UI01-create-both",
+    "mechanism": "SWAGGER_UI_AUTHORIZE_TRY_IT_OUT_EXECUTE",
+    "input": {
+      "requestKey": "009f3ef1-d4ba-4291-9854-b74c6878d26b",
+      "snapshotId": 2,
+      "algorithms": [
+        "HUI_MINER",
+        "EFIM"
+      ],
+      "minUtilMode": "ABSOLUTE",
+      "minUtilValue": 30
+    },
+    "expectedHttpStatus": 202,
+    "actualHttpStatus": 202,
+    "result": "PASS",
+    "response": {
+      "requestId": 1,
+      "storeId": 5,
+      "requestedBy": 8,
+      "requestKey": "009f3ef1-d4ba-4291-9854-b74c6878d26b",
+      "snapshotId": 2,
+      "algorithms": [
+        "HUI_MINER",
+        "EFIM"
+      ],
+      "minUtilMode": "ABSOLUTE",
+      "minUtilValue": 30,
+      "minUtilSpmf": 30,
+      "effectiveMinUtility": 30,
+      "status": "PENDING",
+      "comparisonStatus": "PENDING",
+      "snapshotHash": "2aa21b391283e3b6ff5a46f4565d277d421d1c23643756cc7b3449270b0dcae3",
+      "inputHash": "8ce22f131d59e8486c6974733fcc81de0c3caadaf13765399311cdfe3dc32626",
+      "conversionVersion": "F03_SCALE6_GCD_INT32_DENSE_V1",
+      "utilityScale": 6,
+      "roundingMode": "HALF_UP",
+      "divisor": 1000000,
+      "totalScaledUtility": 96,
+      "transactionCount": 5,
+      "distinctItems": 7,
+      "inputBytes": 100,
+      "snapshot": {
+        "snapshotId": 2,
+        "storeId": 5,
+        "createdBy": 8,
+        "rangeStart": "2026-10-19",
+        "rangeEnd": "2026-10-19",
+        "asOfDate": "2026-10-19",
+        "configuration": {
+          "config": {
+            "enableStock": false,
+            "enableExpiry": false,
+            "enableSeason": false,
+            "alpha": 0,
+            "beta": 0,
+            "gamma": 0,
+            "lambda": 0,
+            "expiryWindowDays": null,
+            "version": 1,
+            "scoringVersion": "EXPIRY_PRODUCT_EARLIEST_BATCH_BINARY_V1"
+          },
+          "lambdaPolicy": {
+            "lambdaMin": 0,
+            "lambdaMax": 0.5,
+            "version": 1
+          },
+          "effectiveCoefficients": {
+            "alpha": 0,
+            "beta": 0,
+            "gamma": 0
+          },
+          "analysisDate": "2026-10-19",
+          "source": "F04_DATABASE_V1",
+          "utilityScale": 6,
+          "roundingMode": "HALF_UP",
+          "itemMapping": "PRODUCT_ID_V1",
+          "timeZone": "Asia/Ho_Chi_Minh"
+        },
+        "sourceHash": "98684bb2c94988d70246c05fbb7451cfc5aff494faf736f4c51db8b5a8b8ded4",
+        "matrixHash": "2aa21b391283e3b6ff5a46f4565d277d421d1c23643756cc7b3449270b0dcae3",
+        "totalWeightedUtility": 96,
+        "roundingScale": 6,
+        "status": "READY",
+        "createdAt": "2026-10-19T16:04:32Z",
+        "warnings": []
+      },
+      "createdAt": "2026-10-19T16:06:05Z"
+    },
+    "executedAt": "2026-10-19T16:06:16.042Z",
+    "timezone": "Asia/Ho_Chi_Minh",
+    "method": "POST",
+    "endpoint": "/api/mining/requests",
+    "role": "MERCHANDISER",
+    "businessChecksPassed": true
+  },
+  {
+    "id": "UI02-request-completed",
+    "mechanism": "SWAGGER_UI_AUTHORIZE_TRY_IT_OUT_EXECUTE",
+    "input": {
+      "requestId": 1
+    },
+    "expectedHttpStatus": 200,
+    "actualHttpStatus": 200,
+    "result": "PASS",
+    "response": {
+      "requestId": 1,
+      "storeId": 5,
+      "requestedBy": 8,
+      "requestKey": "009f3ef1-d4ba-4291-9854-b74c6878d26b",
+      "snapshotId": 2,
+      "algorithms": [
+        "HUI_MINER",
+        "EFIM"
+      ],
+      "minUtilMode": "ABSOLUTE",
+      "minUtilValue": 30,
+      "minUtilSpmf": 30,
+      "effectiveMinUtility": 30,
+      "status": "COMPLETED",
+      "comparisonStatus": "MATCH",
+      "snapshotHash": "2aa21b391283e3b6ff5a46f4565d277d421d1c23643756cc7b3449270b0dcae3",
+      "inputHash": "8ce22f131d59e8486c6974733fcc81de0c3caadaf13765399311cdfe3dc32626",
+      "conversionVersion": "F03_SCALE6_GCD_INT32_DENSE_V1",
+      "utilityScale": 6,
+      "roundingMode": "HALF_UP",
+      "divisor": 1000000,
+      "totalScaledUtility": 96,
+      "transactionCount": 5,
+      "distinctItems": 7,
+      "inputBytes": 100,
+      "snapshot": {
+        "snapshotId": 2,
+        "storeId": 5,
+        "createdBy": 8,
+        "rangeStart": "2026-10-19",
+        "rangeEnd": "2026-10-19",
+        "asOfDate": "2026-10-19",
+        "configuration": {
+          "config": {
+            "enableStock": false,
+            "enableExpiry": false,
+            "enableSeason": false,
+            "alpha": 0,
+            "beta": 0,
+            "gamma": 0,
+            "lambda": 0,
+            "expiryWindowDays": null,
+            "version": 1,
+            "scoringVersion": "EXPIRY_PRODUCT_EARLIEST_BATCH_BINARY_V1"
+          },
+          "lambdaPolicy": {
+            "lambdaMin": 0,
+            "lambdaMax": 0.5,
+            "version": 1
+          },
+          "effectiveCoefficients": {
+            "alpha": 0,
+            "beta": 0,
+            "gamma": 0
+          },
+          "analysisDate": "2026-10-19",
+          "source": "F04_DATABASE_V1",
+          "utilityScale": 6,
+          "roundingMode": "HALF_UP",
+          "itemMapping": "PRODUCT_ID_V1",
+          "timeZone": "Asia/Ho_Chi_Minh"
+        },
+        "sourceHash": "98684bb2c94988d70246c05fbb7451cfc5aff494faf736f4c51db8b5a8b8ded4",
+        "matrixHash": "2aa21b391283e3b6ff5a46f4565d277d421d1c23643756cc7b3449270b0dcae3",
+        "totalWeightedUtility": 96,
+        "roundingScale": 6,
+        "status": "READY",
+        "createdAt": "2026-10-19T16:04:32Z",
+        "warnings": []
+      },
+      "createdAt": "2026-10-19T16:06:05Z"
+    },
+    "executedAt": "2026-10-19T16:06:47.327Z",
+    "timezone": "Asia/Ho_Chi_Minh",
+    "method": "GET",
+    "endpoint": "/api/mining/requests/{id}",
+    "role": "MERCHANDISER",
+    "businessChecksPassed": true
+  },
+  {
+    "id": "UI03-runs",
+    "mechanism": "SWAGGER_UI_AUTHORIZE_TRY_IT_OUT_EXECUTE",
+    "method": "GET",
+    "endpoint": "/api/mining/requests/{id}/runs",
+    "role": "MERCHANDISER",
+    "input": {
+      "requestId": 1
+    },
+    "expectedHttpStatus": 200,
+    "actualHttpStatus": 200,
+    "businessChecksPassed": true,
+    "result": "PASS",
+    "response": [
+      {
+        "runId": 1,
+        "requestId": 1,
+        "storeId": 5,
+        "snapshotId": 2,
+        "algorithm": "HUI_MINER",
+        "attemptNo": 1,
+        "libraryVersion": "SPMF_2.67a",
+        "status": "COMPLETED",
+        "minUtilSpmf": 30,
+        "inputHash": "8ce22f131d59e8486c6974733fcc81de0c3caadaf13765399311cdfe3dc32626",
+        "conversionVersion": "F03_SCALE6_GCD_INT32_DENSE_V1",
+        "startedAt": "2026-10-19T16:06:05Z",
+        "completedAt": "2026-10-19T16:06:05Z",
+        "runtimeMillis": 98,
+        "memoryMiB": 10.622848510742188,
+        "memoryMethod": "SPMF_SAMPLED_JAVA_HEAP_MIB_NOT_RSS",
+        "runtimeMethod": "CHILD_JVM_WALL_TIME_INCLUDING_STARTUP_AND_IO_EXCLUDING_INPUT_PREPARATION",
+        "environment": "SPMF=SPMF_2.67a;jarSha256=4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a;heapMiB=256;os=Mac OS X;arch=aarch64;javaExecutableSha256=707698c4c6f29cd001e270afed04aed51a201f5e0adba0023ac3f6c35f11a978",
+        "patternCount": 8,
+        "failureCode": null,
+        "failureMessage": null
+      },
+      {
+        "runId": 2,
+        "requestId": 1,
+        "storeId": 5,
+        "snapshotId": 2,
+        "algorithm": "EFIM",
+        "attemptNo": 1,
+        "libraryVersion": "SPMF_2.67a",
+        "status": "COMPLETED",
+        "minUtilSpmf": 30,
+        "inputHash": "8ce22f131d59e8486c6974733fcc81de0c3caadaf13765399311cdfe3dc32626",
+        "conversionVersion": "F03_SCALE6_GCD_INT32_DENSE_V1",
+        "startedAt": "2026-10-19T16:06:05Z",
+        "completedAt": "2026-10-19T16:06:05Z",
+        "runtimeMillis": 90,
+        "memoryMiB": 11.122848510742188,
+        "memoryMethod": "SPMF_SAMPLED_JAVA_HEAP_MIB_NOT_RSS",
+        "runtimeMethod": "CHILD_JVM_WALL_TIME_INCLUDING_STARTUP_AND_IO_EXCLUDING_INPUT_PREPARATION",
+        "environment": "SPMF=SPMF_2.67a;jarSha256=4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a;heapMiB=256;os=Mac OS X;arch=aarch64;javaExecutableSha256=707698c4c6f29cd001e270afed04aed51a201f5e0adba0023ac3f6c35f11a978",
+        "patternCount": 8,
+        "failureCode": null,
+        "failureMessage": null
+      }
+    ],
+    "executedAt": "2026-10-19T16:07:07.396Z",
+    "timezone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "UI04-run-detail",
+    "mechanism": "SWAGGER_UI_AUTHORIZE_TRY_IT_OUT_EXECUTE",
+    "method": "GET",
+    "endpoint": "/api/mining/runs/{id}",
+    "role": "MERCHANDISER",
+    "input": {
+      "runId": 1
+    },
+    "expectedHttpStatus": 200,
+    "actualHttpStatus": 200,
+    "businessChecksPassed": true,
+    "result": "PASS",
+    "response": {
+      "runId": 1,
+      "requestId": 1,
+      "storeId": 5,
+      "snapshotId": 2,
+      "algorithm": "HUI_MINER",
+      "attemptNo": 1,
+      "libraryVersion": "SPMF_2.67a",
+      "status": "COMPLETED",
+      "minUtilSpmf": 30,
+      "inputHash": "8ce22f131d59e8486c6974733fcc81de0c3caadaf13765399311cdfe3dc32626",
+      "conversionVersion": "F03_SCALE6_GCD_INT32_DENSE_V1",
+      "startedAt": "2026-10-19T16:06:05Z",
+      "completedAt": "2026-10-19T16:06:05Z",
+      "runtimeMillis": 98,
+      "memoryMiB": 10.622848510742188,
+      "memoryMethod": "SPMF_SAMPLED_JAVA_HEAP_MIB_NOT_RSS",
+      "runtimeMethod": "CHILD_JVM_WALL_TIME_INCLUDING_STARTUP_AND_IO_EXCLUDING_INPUT_PREPARATION",
+      "environment": "SPMF=SPMF_2.67a;jarSha256=4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a;heapMiB=256;os=Mac OS X;arch=aarch64;javaExecutableSha256=707698c4c6f29cd001e270afed04aed51a201f5e0adba0023ac3f6c35f11a978",
+      "patternCount": 8,
+      "failureCode": null,
+      "failureMessage": null
+    },
+    "executedAt": "2026-10-19T16:07:15.122Z",
+    "timezone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "UI05-patterns",
+    "mechanism": "SWAGGER_UI_AUTHORIZE_TRY_IT_OUT_EXECUTE",
+    "method": "GET",
+    "endpoint": "/api/mining/runs/{id}/patterns",
+    "role": "MERCHANDISER",
+    "input": {
+      "runId": 1,
+      "page": 0,
+      "pageSize": 20
+    },
+    "expectedHttpStatus": 200,
+    "actualHttpStatus": 200,
+    "businessChecksPassed": true,
+    "result": "PASS",
+    "response": {
+      "items": [
+        {
+          "patternId": 4,
+          "runId": 1,
+          "productIds": [
+            9,
+            10,
+            11,
+            12
+          ],
+          "utility": 40,
+          "utilitySpmf": 40,
+          "patternSize": 4,
+          "supportCount": null
+        },
+        {
+          "patternId": 5,
+          "runId": 1,
+          "productIds": [
+            9,
+            10,
+            12
+          ],
+          "utility": 37,
+          "utilitySpmf": 37,
+          "patternSize": 3,
+          "supportCount": null
+        },
+        {
+          "patternId": 7,
+          "runId": 1,
+          "productIds": [
+            9,
+            11,
+            12
+          ],
+          "utility": 36,
+          "utilitySpmf": 36,
+          "patternSize": 3,
+          "supportCount": null
+        },
+        {
+          "patternId": 3,
+          "runId": 1,
+          "productIds": [
+            9,
+            10,
+            11
+          ],
+          "utility": 34,
+          "utilitySpmf": 34,
+          "patternSize": 3,
+          "supportCount": null
+        },
+        {
+          "patternId": 1,
+          "runId": 1,
+          "productIds": [
+            8,
+            10,
+            12
+          ],
+          "utility": 31,
+          "utilitySpmf": 31,
+          "patternSize": 3,
+          "supportCount": null
+        },
+        {
+          "patternId": 8,
+          "runId": 1,
+          "productIds": [
+            9,
+            12
+          ],
+          "utility": 31,
+          "utilitySpmf": 31,
+          "patternSize": 2,
+          "supportCount": null
+        },
+        {
+          "patternId": 2,
+          "runId": 1,
+          "productIds": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            13
+          ],
+          "utility": 30,
+          "utilitySpmf": 30,
+          "patternSize": 6,
+          "supportCount": null
+        },
+        {
+          "patternId": 6,
+          "runId": 1,
+          "productIds": [
+            9,
+            11
+          ],
+          "utility": 30,
+          "utilitySpmf": 30,
+          "patternSize": 2,
+          "supportCount": null
+        }
+      ],
+      "page": 0,
+      "pageSize": 20,
+      "totalElements": 8
+    },
+    "executedAt": "2026-10-19T16:07:24.181Z",
+    "timezone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "UI06-benchmark",
+    "mechanism": "SWAGGER_UI_AUTHORIZE_TRY_IT_OUT_EXECUTE",
+    "method": "GET",
+    "endpoint": "/api/mining/runs/{id}/benchmark",
+    "role": "MERCHANDISER",
+    "input": {
+      "runId": 1
+    },
+    "expectedHttpStatus": 200,
+    "actualHttpStatus": 200,
+    "businessChecksPassed": true,
+    "result": "PASS",
+    "response": {
+      "run": {
+        "runId": 1,
+        "requestId": 1,
+        "storeId": 5,
+        "snapshotId": 2,
+        "algorithm": "HUI_MINER",
+        "attemptNo": 1,
+        "libraryVersion": "SPMF_2.67a",
+        "status": "COMPLETED",
+        "minUtilSpmf": 30,
+        "inputHash": "8ce22f131d59e8486c6974733fcc81de0c3caadaf13765399311cdfe3dc32626",
+        "conversionVersion": "F03_SCALE6_GCD_INT32_DENSE_V1",
+        "startedAt": "2026-10-19T16:06:05Z",
+        "completedAt": "2026-10-19T16:06:05Z",
+        "runtimeMillis": 98,
+        "memoryMiB": 10.622848510742188,
+        "memoryMethod": "SPMF_SAMPLED_JAVA_HEAP_MIB_NOT_RSS",
+        "runtimeMethod": "CHILD_JVM_WALL_TIME_INCLUDING_STARTUP_AND_IO_EXCLUDING_INPUT_PREPARATION",
+        "environment": "SPMF=SPMF_2.67a;jarSha256=4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a;heapMiB=256;os=Mac OS X;arch=aarch64;javaExecutableSha256=707698c4c6f29cd001e270afed04aed51a201f5e0adba0023ac3f6c35f11a978",
+        "patternCount": 8,
+        "failureCode": null,
+        "failureMessage": null
+      },
+      "snapshotHash": "2aa21b391283e3b6ff5a46f4565d277d421d1c23643756cc7b3449270b0dcae3",
+      "transactionCount": 5,
+      "distinctItems": 7,
+      "inputBytes": 100,
+      "divisor": 1000000,
+      "utilityScale": 6,
+      "effectiveMinUtility": 30,
+      "comparisonStatus": "MATCH",
+      "repetitionPolicy": "ONE_COLD_RUN_PER_ALGORITHM_NO_WARMUP_SEQUENTIAL_SAME_LIMITS"
+    },
+    "executedAt": "2026-10-19T16:07:31.214Z",
+    "timezone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "UI07-request-list",
+    "mechanism": "SWAGGER_UI_AUTHORIZE_TRY_IT_OUT_EXECUTE",
+    "method": "GET",
+    "endpoint": "/api/mining/requests",
+    "role": "MERCHANDISER",
+    "input": {
+      "page": 0,
+      "pageSize": 20
+    },
+    "expectedHttpStatus": 200,
+    "actualHttpStatus": 200,
+    "businessChecksPassed": true,
+    "result": "PASS",
+    "response": {
+      "items": [
+        {
+          "requestId": 1,
+          "storeId": 5,
+          "requestedBy": 8,
+          "requestKey": "009f3ef1-d4ba-4291-9854-b74c6878d26b",
+          "snapshotId": 2,
+          "algorithms": [
+            "HUI_MINER",
+            "EFIM"
+          ],
+          "minUtilMode": "ABSOLUTE",
+          "minUtilValue": 30,
+          "minUtilSpmf": 30,
+          "effectiveMinUtility": 30,
+          "status": "COMPLETED",
+          "comparisonStatus": "MATCH",
+          "snapshotHash": "2aa21b391283e3b6ff5a46f4565d277d421d1c23643756cc7b3449270b0dcae3",
+          "inputHash": "8ce22f131d59e8486c6974733fcc81de0c3caadaf13765399311cdfe3dc32626",
+          "conversionVersion": "F03_SCALE6_GCD_INT32_DENSE_V1",
+          "utilityScale": 6,
+          "roundingMode": "HALF_UP",
+          "divisor": 1000000,
+          "totalScaledUtility": 96,
+          "transactionCount": 5,
+          "distinctItems": 7,
+          "inputBytes": 100,
+          "snapshot": {
+            "snapshotId": 2,
+            "storeId": 5,
+            "createdBy": 8,
+            "rangeStart": "2026-10-19",
+            "rangeEnd": "2026-10-19",
+            "asOfDate": "2026-10-19",
+            "configuration": {
+              "config": {
+                "enableStock": false,
+                "enableExpiry": false,
+                "enableSeason": false,
+                "alpha": 0,
+                "beta": 0,
+                "gamma": 0,
+                "lambda": 0,
+                "expiryWindowDays": null,
+                "version": 1,
+                "scoringVersion": "EXPIRY_PRODUCT_EARLIEST_BATCH_BINARY_V1"
+              },
+              "lambdaPolicy": {
+                "lambdaMin": 0,
+                "lambdaMax": 0.5,
+                "version": 1
+              },
+              "effectiveCoefficients": {
+                "alpha": 0,
+                "beta": 0,
+                "gamma": 0
+              },
+              "analysisDate": "2026-10-19",
+              "source": "F04_DATABASE_V1",
+              "utilityScale": 6,
+              "roundingMode": "HALF_UP",
+              "itemMapping": "PRODUCT_ID_V1",
+              "timeZone": "Asia/Ho_Chi_Minh"
+            },
+            "sourceHash": "98684bb2c94988d70246c05fbb7451cfc5aff494faf736f4c51db8b5a8b8ded4",
+            "matrixHash": "2aa21b391283e3b6ff5a46f4565d277d421d1c23643756cc7b3449270b0dcae3",
+            "totalWeightedUtility": 96,
+            "roundingScale": 6,
+            "status": "READY",
+            "createdAt": "2026-10-19T16:04:32Z",
+            "warnings": []
+          },
+          "createdAt": "2026-10-19T16:06:05Z"
+        }
+      ],
+      "page": 0,
+      "pageSize": 20,
+      "totalElements": 1
+    },
+    "executedAt": "2026-10-19T16:07:36.434Z",
+    "timezone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "UI08-snapshot-list",
+    "mechanism": "SWAGGER_UI_AUTHORIZE_TRY_IT_OUT_EXECUTE",
+    "method": "GET",
+    "endpoint": "/api/mining/snapshots",
+    "role": "MERCHANDISER",
+    "input": {
+      "page": 0,
+      "pageSize": 20
+    },
+    "expectedHttpStatus": 200,
+    "actualHttpStatus": 200,
+    "businessChecksPassed": true,
+    "result": "PASS",
+    "response": {
+      "items": [
+        {
+          "snapshotId": 2,
+          "storeId": 5,
+          "createdBy": 8,
+          "rangeStart": "2026-10-19",
+          "rangeEnd": "2026-10-19",
+          "asOfDate": "2026-10-19",
+          "configuration": {
+            "config": {
+              "enableStock": false,
+              "enableExpiry": false,
+              "enableSeason": false,
+              "alpha": 0,
+              "beta": 0,
+              "gamma": 0,
+              "lambda": 0,
+              "expiryWindowDays": null,
+              "version": 1,
+              "scoringVersion": "EXPIRY_PRODUCT_EARLIEST_BATCH_BINARY_V1"
+            },
+            "lambdaPolicy": {
+              "lambdaMin": 0,
+              "lambdaMax": 0.5,
+              "version": 1
+            },
+            "effectiveCoefficients": {
+              "alpha": 0,
+              "beta": 0,
+              "gamma": 0
+            },
+            "analysisDate": "2026-10-19",
+            "source": "F04_DATABASE_V1",
+            "utilityScale": 6,
+            "roundingMode": "HALF_UP",
+            "itemMapping": "PRODUCT_ID_V1",
+            "timeZone": "Asia/Ho_Chi_Minh"
+          },
+          "sourceHash": "98684bb2c94988d70246c05fbb7451cfc5aff494faf736f4c51db8b5a8b8ded4",
+          "matrixHash": "2aa21b391283e3b6ff5a46f4565d277d421d1c23643756cc7b3449270b0dcae3",
+          "totalWeightedUtility": 96,
+          "roundingScale": 6,
+          "status": "READY",
+          "createdAt": "2026-10-19T16:04:32Z",
+          "warnings": []
+        }
+      ],
+      "page": 0,
+      "pageSize": 20,
+      "totalElements": 1
+    },
+    "executedAt": "2026-10-19T16:07:41.151Z",
+    "timezone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "UI09-idempotency",
+    "mechanism": "SWAGGER_UI_AUTHORIZE_TRY_IT_OUT_EXECUTE",
+    "method": "POST",
+    "endpoint": "/api/mining/requests",
+    "role": "MERCHANDISER",
+    "input": {
+      "requestKey": "009f3ef1-d4ba-4291-9854-b74c6878d26b",
+      "snapshotId": 2,
+      "algorithms": [
+        "HUI_MINER",
+        "EFIM"
+      ],
+      "minUtilMode": "ABSOLUTE",
+      "minUtilValue": 30
+    },
+    "expectedHttpStatus": 202,
+    "actualHttpStatus": 202,
+    "businessChecksPassed": true,
+    "result": "PASS",
+    "response": {
+      "requestId": 1,
+      "storeId": 5,
+      "requestedBy": 8,
+      "requestKey": "009f3ef1-d4ba-4291-9854-b74c6878d26b",
+      "snapshotId": 2,
+      "algorithms": [
+        "HUI_MINER",
+        "EFIM"
+      ],
+      "minUtilMode": "ABSOLUTE",
+      "minUtilValue": 30,
+      "minUtilSpmf": 30,
+      "effectiveMinUtility": 30,
+      "status": "COMPLETED",
+      "comparisonStatus": "MATCH",
+      "snapshotHash": "2aa21b391283e3b6ff5a46f4565d277d421d1c23643756cc7b3449270b0dcae3",
+      "inputHash": "8ce22f131d59e8486c6974733fcc81de0c3caadaf13765399311cdfe3dc32626",
+      "conversionVersion": "F03_SCALE6_GCD_INT32_DENSE_V1",
+      "utilityScale": 6,
+      "roundingMode": "HALF_UP",
+      "divisor": 1000000,
+      "totalScaledUtility": 96,
+      "transactionCount": 5,
+      "distinctItems": 7,
+      "inputBytes": 100,
+      "snapshot": {
+        "snapshotId": 2,
+        "storeId": 5,
+        "createdBy": 8,
+        "rangeStart": "2026-10-19",
+        "rangeEnd": "2026-10-19",
+        "asOfDate": "2026-10-19",
+        "configuration": {
+          "config": {
+            "enableStock": false,
+            "enableExpiry": false,
+            "enableSeason": false,
+            "alpha": 0,
+            "beta": 0,
+            "gamma": 0,
+            "lambda": 0,
+            "expiryWindowDays": null,
+            "version": 1,
+            "scoringVersion": "EXPIRY_PRODUCT_EARLIEST_BATCH_BINARY_V1"
+          },
+          "lambdaPolicy": {
+            "lambdaMin": 0,
+            "lambdaMax": 0.5,
+            "version": 1
+          },
+          "effectiveCoefficients": {
+            "alpha": 0,
+            "beta": 0,
+            "gamma": 0
+          },
+          "analysisDate": "2026-10-19",
+          "source": "F04_DATABASE_V1",
+          "utilityScale": 6,
+          "roundingMode": "HALF_UP",
+          "itemMapping": "PRODUCT_ID_V1",
+          "timeZone": "Asia/Ho_Chi_Minh"
+        },
+        "sourceHash": "98684bb2c94988d70246c05fbb7451cfc5aff494faf736f4c51db8b5a8b8ded4",
+        "matrixHash": "2aa21b391283e3b6ff5a46f4565d277d421d1c23643756cc7b3449270b0dcae3",
+        "totalWeightedUtility": 96,
+        "roundingScale": 6,
+        "status": "READY",
+        "createdAt": "2026-10-19T16:04:32Z",
+        "warnings": []
+      },
+      "createdAt": "2026-10-19T16:06:05Z"
+    },
+    "executedAt": "2026-10-19T16:07:48.111Z",
+    "timezone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "UI10-key-conflict",
+    "mechanism": "SWAGGER_UI_AUTHORIZE_TRY_IT_OUT_EXECUTE",
+    "method": "POST",
+    "endpoint": "/api/mining/requests",
+    "role": "MERCHANDISER",
+    "input": {
+      "requestKey": "009f3ef1-d4ba-4291-9854-b74c6878d26b",
+      "snapshotId": 2,
+      "algorithms": [
+        "HUI_MINER",
+        "EFIM"
+      ],
+      "minUtilMode": "ABSOLUTE",
+      "minUtilValue": 31
+    },
+    "expectedHttpStatus": 409,
+    "actualHttpStatus": 409,
+    "businessChecksPassed": true,
+    "result": "PASS",
+    "response": {
+      "error": "requestKey already used for a different mining request"
+    },
+    "executedAt": "2026-10-19T16:07:54.805Z",
+    "timezone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "UI11-invalid-percentage",
+    "mechanism": "SWAGGER_UI_AUTHORIZE_TRY_IT_OUT_EXECUTE",
+    "method": "POST",
+    "endpoint": "/api/mining/requests",
+    "role": "MERCHANDISER",
+    "input": {
+      "requestKey": "89577a10-ebaa-48ef-b7b3-fbec047df7b5",
+      "snapshotId": 2,
+      "algorithms": [
+        "HUI_MINER",
+        "EFIM"
+      ],
+      "minUtilMode": "PERCENTAGE",
+      "minUtilValue": 101
+    },
+    "expectedHttpStatus": 400,
+    "actualHttpStatus": 400,
+    "businessChecksPassed": true,
+    "result": "PASS",
+    "response": {
+      "error": "Percentage minUtil must be in (0,100]"
+    },
+    "executedAt": "2026-10-19T16:08:02.428Z",
+    "timezone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "UI12-forged-store",
+    "mechanism": "SWAGGER_UI_AUTHORIZE_TRY_IT_OUT_EXECUTE",
+    "method": "POST",
+    "endpoint": "/api/mining/requests",
+    "role": "MERCHANDISER",
+    "input": {
+      "requestKey": "ac3f3e3c-2fe4-431d-bb16-0d7e55187012",
+      "snapshotId": 2,
+      "algorithms": [
+        "HUI_MINER",
+        "EFIM"
+      ],
+      "minUtilMode": "ABSOLUTE",
+      "minUtilValue": 30,
+      "storeId": 999
+    },
+    "expectedHttpStatus": 400,
+    "actualHttpStatus": 400,
+    "businessChecksPassed": true,
+    "result": "PASS",
+    "response": {
+      "error": "Invalid request fields"
+    },
+    "executedAt": "2026-10-19T16:08:11.720Z",
+    "timezone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "UI13-admin-cannot-create",
+    "mechanism": "SWAGGER_UI_AUTHORIZE_TRY_IT_OUT_EXECUTE",
+    "method": "POST",
+    "endpoint": "/api/mining/requests",
+    "role": "MERCHANDISER",
+    "input": {
+      "snapshotId": 2
+    },
+    "expectedHttpStatus": 403,
+    "actualHttpStatus": 403,
+    "businessChecksPassed": true,
+    "result": "PASS",
+    "response": {
+      "error": "Forbidden"
+    },
+    "executedAt": "2026-10-19T16:08:31.424Z",
+    "timezone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "UI14-admin-read-benchmark",
+    "mechanism": "SWAGGER_UI_AUTHORIZE_TRY_IT_OUT_EXECUTE",
+    "method": "GET",
+    "endpoint": "/api/mining/runs/{id}/benchmark",
+    "role": "MERCHANDISER",
+    "input": {
+      "runId": 1
+    },
+    "expectedHttpStatus": 200,
+    "actualHttpStatus": 200,
+    "businessChecksPassed": true,
+    "result": "PASS",
+    "response": {
+      "run": {
+        "runId": 1,
+        "requestId": 1,
+        "storeId": 5,
+        "snapshotId": 2,
+        "algorithm": "HUI_MINER",
+        "attemptNo": 1,
+        "libraryVersion": "SPMF_2.67a",
+        "status": "COMPLETED",
+        "minUtilSpmf": 30,
+        "inputHash": "8ce22f131d59e8486c6974733fcc81de0c3caadaf13765399311cdfe3dc32626",
+        "conversionVersion": "F03_SCALE6_GCD_INT32_DENSE_V1",
+        "startedAt": "2026-10-19T16:06:05Z",
+        "completedAt": "2026-10-19T16:06:05Z",
+        "runtimeMillis": 98,
+        "memoryMiB": 10.622848510742188,
+        "memoryMethod": "SPMF_SAMPLED_JAVA_HEAP_MIB_NOT_RSS",
+        "runtimeMethod": "CHILD_JVM_WALL_TIME_INCLUDING_STARTUP_AND_IO_EXCLUDING_INPUT_PREPARATION",
+        "environment": "SPMF=SPMF_2.67a;jarSha256=4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a;heapMiB=256;os=Mac OS X;arch=aarch64;javaExecutableSha256=707698c4c6f29cd001e270afed04aed51a201f5e0adba0023ac3f6c35f11a978",
+        "patternCount": 8,
+        "failureCode": null,
+        "failureMessage": null
+      },
+      "snapshotHash": "2aa21b391283e3b6ff5a46f4565d277d421d1c23643756cc7b3449270b0dcae3",
+      "transactionCount": 5,
+      "distinctItems": 7,
+      "inputBytes": 100,
+      "divisor": 1000000,
+      "utilityScale": 6,
+      "effectiveMinUtility": 30,
+      "comparisonStatus": "MATCH",
+      "repetitionPolicy": "ONE_COLD_RUN_PER_ALGORITHM_NO_WARMUP_SEQUENTIAL_SAME_LIMITS"
+    },
+    "executedAt": "2026-10-19T16:08:40.211Z",
+    "timezone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "UI15-cross-store-patterns",
+    "mechanism": "SWAGGER_UI_AUTHORIZE_TRY_IT_OUT_EXECUTE",
+    "method": "GET",
+    "endpoint": "/api/mining/runs/{id}/patterns",
+    "role": "MERCHANDISER",
+    "input": {
+      "runId": 1
+    },
+    "expectedHttpStatus": 404,
+    "actualHttpStatus": 404,
+    "businessChecksPassed": true,
+    "result": "PASS",
+    "response": {
+      "error": "Mining run not found"
+    },
+    "executedAt": "2026-10-19T16:08:45.886Z",
+    "timezone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "UI16-cross-store-list",
+    "mechanism": "SWAGGER_UI_AUTHORIZE_TRY_IT_OUT_EXECUTE",
+    "method": "GET",
+    "endpoint": "/api/mining/requests",
+    "role": "MERCHANDISER",
+    "input": {
+      "page": 0,
+      "pageSize": 20
+    },
+    "expectedHttpStatus": 200,
+    "actualHttpStatus": 200,
+    "businessChecksPassed": true,
+    "result": "PASS",
+    "response": {
+      "items": [],
+      "page": 0,
+      "pageSize": 20,
+      "totalElements": 0
+    },
+    "executedAt": "2026-10-19T16:08:50.498Z",
+    "timezone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "UI17-customer-forbidden",
+    "mechanism": "SWAGGER_UI_AUTHORIZE_TRY_IT_OUT_EXECUTE",
+    "method": "GET",
+    "endpoint": "/api/mining/requests",
+    "role": "MERCHANDISER",
+    "input": {},
+    "expectedHttpStatus": 403,
+    "actualHttpStatus": 403,
+    "businessChecksPassed": true,
+    "result": "PASS",
+    "response": {
+      "error": "Forbidden"
+    },
+    "executedAt": "2026-10-19T16:08:55.721Z",
+    "timezone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "UI18-system-admin-forbidden",
+    "mechanism": "SWAGGER_UI_AUTHORIZE_TRY_IT_OUT_EXECUTE",
+    "method": "GET",
+    "endpoint": "/api/mining/requests",
+    "role": "MERCHANDISER",
+    "input": {},
+    "expectedHttpStatus": 403,
+    "actualHttpStatus": 403,
+    "businessChecksPassed": true,
+    "result": "PASS",
+    "response": {
+      "error": "Forbidden"
+    },
+    "executedAt": "2026-10-19T16:09:00.951Z",
+    "timezone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "UI19-invalid-token",
+    "mechanism": "SWAGGER_UI_AUTHORIZE_TRY_IT_OUT_EXECUTE",
+    "method": "GET",
+    "endpoint": "/api/mining/requests",
+    "role": "MERCHANDISER",
+    "input": {},
+    "expectedHttpStatus": 401,
+    "actualHttpStatus": 401,
+    "businessChecksPassed": true,
+    "result": "PASS",
+    "response": null,
+    "executedAt": "2026-10-19T16:09:06.620Z",
+    "timezone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "UI20-no-token",
+    "mechanism": "SWAGGER_UI_AUTHORIZE_TRY_IT_OUT_EXECUTE",
+    "method": "GET",
+    "endpoint": "/api/mining/requests",
+    "role": "MERCHANDISER",
+    "input": {},
+    "expectedHttpStatus": 401,
+    "actualHttpStatus": 401,
+    "businessChecksPassed": true,
+    "result": "PASS",
+    "response": null,
+    "executedAt": "2026-10-19T16:09:32.809Z",
+    "timezone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "UI21-percentage-threshold",
+    "mechanism": "SWAGGER_UI_AUTHORIZE_TRY_IT_OUT_EXECUTE",
+    "method": "POST",
+    "endpoint": "/api/mining/requests",
+    "role": "MERCHANDISER",
+    "input": {
+      "requestKey": "0607a0ce-61c5-4021-b62c-70b5b179f3a9",
+      "snapshotId": 2,
+      "algorithms": [
+        "HUI_MINER",
+        "EFIM"
+      ],
+      "minUtilMode": "PERCENTAGE",
+      "minUtilValue": 31.25
+    },
+    "expectedHttpStatus": 202,
+    "actualHttpStatus": 202,
+    "businessChecksPassed": true,
+    "result": "PASS",
+    "response": {
+      "requestId": 2,
+      "storeId": 5,
+      "requestedBy": 8,
+      "requestKey": "0607a0ce-61c5-4021-b62c-70b5b179f3a9",
+      "snapshotId": 2,
+      "algorithms": [
+        "HUI_MINER",
+        "EFIM"
+      ],
+      "minUtilMode": "PERCENTAGE",
+      "minUtilValue": 31.25,
+      "minUtilSpmf": 30,
+      "effectiveMinUtility": 30,
+      "status": "PENDING",
+      "comparisonStatus": "PENDING",
+      "snapshotHash": "2aa21b391283e3b6ff5a46f4565d277d421d1c23643756cc7b3449270b0dcae3",
+      "inputHash": "8ce22f131d59e8486c6974733fcc81de0c3caadaf13765399311cdfe3dc32626",
+      "conversionVersion": "F03_SCALE6_GCD_INT32_DENSE_V1",
+      "utilityScale": 6,
+      "roundingMode": "HALF_UP",
+      "divisor": 1000000,
+      "totalScaledUtility": 96,
+      "transactionCount": 5,
+      "distinctItems": 7,
+      "inputBytes": 100,
+      "snapshot": {
+        "snapshotId": 2,
+        "storeId": 5,
+        "createdBy": 8,
+        "rangeStart": "2026-10-19",
+        "rangeEnd": "2026-10-19",
+        "asOfDate": "2026-10-19",
+        "configuration": {
+          "config": {
+            "enableStock": false,
+            "enableExpiry": false,
+            "enableSeason": false,
+            "alpha": 0,
+            "beta": 0,
+            "gamma": 0,
+            "lambda": 0,
+            "expiryWindowDays": null,
+            "version": 1,
+            "scoringVersion": "EXPIRY_PRODUCT_EARLIEST_BATCH_BINARY_V1"
+          },
+          "lambdaPolicy": {
+            "lambdaMin": 0,
+            "lambdaMax": 0.5,
+            "version": 1
+          },
+          "effectiveCoefficients": {
+            "alpha": 0,
+            "beta": 0,
+            "gamma": 0
+          },
+          "analysisDate": "2026-10-19",
+          "source": "F04_DATABASE_V1",
+          "utilityScale": 6,
+          "roundingMode": "HALF_UP",
+          "itemMapping": "PRODUCT_ID_V1",
+          "timeZone": "Asia/Ho_Chi_Minh"
+        },
+        "sourceHash": "98684bb2c94988d70246c05fbb7451cfc5aff494faf736f4c51db8b5a8b8ded4",
+        "matrixHash": "2aa21b391283e3b6ff5a46f4565d277d421d1c23643756cc7b3449270b0dcae3",
+        "totalWeightedUtility": 96,
+        "roundingScale": 6,
+        "status": "READY",
+        "createdAt": "2026-10-19T16:04:32Z",
+        "warnings": []
+      },
+      "createdAt": "2026-10-19T16:09:34Z"
+    },
+    "executedAt": "2026-10-19T16:09:40.515Z",
+    "timezone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "UI22-efim-patterns",
+    "mechanism": "SWAGGER_UI_AUTHORIZE_TRY_IT_OUT_EXECUTE",
+    "method": "GET",
+    "endpoint": "/api/mining/runs/{id}/patterns",
+    "role": "MERCHANDISER",
+    "input": {
+      "runId": 2
+    },
+    "expectedHttpStatus": 200,
+    "actualHttpStatus": 200,
+    "businessChecksPassed": true,
+    "result": "PASS",
+    "response": {
+      "items": [
+        {
+          "patternId": 12,
+          "runId": 2,
+          "productIds": [
+            9,
+            10,
+            11,
+            12
+          ],
+          "utility": 40,
+          "utilitySpmf": 40,
+          "patternSize": 4,
+          "supportCount": null
+        },
+        {
+          "patternId": 13,
+          "runId": 2,
+          "productIds": [
+            9,
+            10,
+            12
+          ],
+          "utility": 37,
+          "utilitySpmf": 37,
+          "patternSize": 3,
+          "supportCount": null
+        },
+        {
+          "patternId": 15,
+          "runId": 2,
+          "productIds": [
+            9,
+            11,
+            12
+          ],
+          "utility": 36,
+          "utilitySpmf": 36,
+          "patternSize": 3,
+          "supportCount": null
+        },
+        {
+          "patternId": 11,
+          "runId": 2,
+          "productIds": [
+            9,
+            10,
+            11
+          ],
+          "utility": 34,
+          "utilitySpmf": 34,
+          "patternSize": 3,
+          "supportCount": null
+        },
+        {
+          "patternId": 9,
+          "runId": 2,
+          "productIds": [
+            8,
+            10,
+            12
+          ],
+          "utility": 31,
+          "utilitySpmf": 31,
+          "patternSize": 3,
+          "supportCount": null
+        },
+        {
+          "patternId": 16,
+          "runId": 2,
+          "productIds": [
+            9,
+            12
+          ],
+          "utility": 31,
+          "utilitySpmf": 31,
+          "patternSize": 2,
+          "supportCount": null
+        },
+        {
+          "patternId": 10,
+          "runId": 2,
+          "productIds": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            13
+          ],
+          "utility": 30,
+          "utilitySpmf": 30,
+          "patternSize": 6,
+          "supportCount": null
+        },
+        {
+          "patternId": 14,
+          "runId": 2,
+          "productIds": [
+            9,
+            11
+          ],
+          "utility": 30,
+          "utilitySpmf": 30,
+          "patternSize": 2,
+          "supportCount": null
+        }
+      ],
+      "page": 0,
+      "pageSize": 20,
+      "totalElements": 8
+    },
+    "executedAt": "2026-10-19T16:09:45.218Z",
+    "timezone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "UI23-history-after-restart",
+    "mechanism": "SWAGGER_UI_AUTHORIZE_TRY_IT_OUT_EXECUTE",
+    "method": "GET",
+    "endpoint": "/api/mining/runs/{id}/benchmark",
+    "role": "MERCHANDISER",
+    "input": {
+      "runId": 1
+    },
+    "expectedHttpStatus": 200,
+    "actualHttpStatus": 200,
+    "businessChecksPassed": true,
+    "result": "PASS",
+    "response": {
+      "run": {
+        "runId": 1,
+        "requestId": 1,
+        "storeId": 5,
+        "snapshotId": 2,
+        "algorithm": "HUI_MINER",
+        "attemptNo": 1,
+        "libraryVersion": "SPMF_2.67a",
+        "status": "COMPLETED",
+        "minUtilSpmf": 30,
+        "inputHash": "8ce22f131d59e8486c6974733fcc81de0c3caadaf13765399311cdfe3dc32626",
+        "conversionVersion": "F03_SCALE6_GCD_INT32_DENSE_V1",
+        "startedAt": "2026-10-19T16:06:05Z",
+        "completedAt": "2026-10-19T16:06:05Z",
+        "runtimeMillis": 98,
+        "memoryMiB": 10.622848510742188,
+        "memoryMethod": "SPMF_SAMPLED_JAVA_HEAP_MIB_NOT_RSS",
+        "runtimeMethod": "CHILD_JVM_WALL_TIME_INCLUDING_STARTUP_AND_IO_EXCLUDING_INPUT_PREPARATION",
+        "environment": "SPMF=SPMF_2.67a;jarSha256=4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a;heapMiB=256;os=Mac OS X;arch=aarch64;javaExecutableSha256=707698c4c6f29cd001e270afed04aed51a201f5e0adba0023ac3f6c35f11a978",
+        "patternCount": 8,
+        "failureCode": null,
+        "failureMessage": null
+      },
+      "snapshotHash": "2aa21b391283e3b6ff5a46f4565d277d421d1c23643756cc7b3449270b0dcae3",
+      "transactionCount": 5,
+      "distinctItems": 7,
+      "inputBytes": 100,
+      "divisor": 1000000,
+      "utilityScale": 6,
+      "effectiveMinUtility": 30,
+      "comparisonStatus": "MATCH",
+      "repetitionPolicy": "ONE_COLD_RUN_PER_ALGORITHM_NO_WARMUP_SEQUENTIAL_SAME_LIMITS"
+    },
+    "executedAt": "2026-10-19T16:18:55.877Z",
+    "timezone": "Asia/Ho_Chi_Minh"
+  }
+]

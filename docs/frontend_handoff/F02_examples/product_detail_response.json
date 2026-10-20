@@ -13,5 +13,6 @@
     "name": "Dairy",
     "status": "ACTIVE"
   },
-  "stockQuantity": 12
+  "stockQuantity": 12,
+  "expiryPushDays": 7
 }

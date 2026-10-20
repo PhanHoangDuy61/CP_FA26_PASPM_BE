@@ -1,5 +1,32 @@
 # API Changelog
 
+## 2026-10-20 — F05 P0 deployment fixes
+
+- Corrected V7/F04 identifier quoting for MySQL8.4; V7 checksum changes from -1762009830 to -1490036030. Existing environments require controlled review/reconciliation; no automatic repair or baseline. See [recovery guide](../setup/FLYWAY_MYSQL_V7_RECOVERY.md).
+- New mining admission preflight checks the same pinned SPMF2.67a JAR, independent Java25+ executable, real entrypoint and temporary storage. Both runtime paths now default empty; configure PASPM_MINING_SPMF_JAR and PASPM_MINING_JAVA_EXECUTABLE.
+- Invalid dependency returns503 before creating work with actionable SPMF_* diagnostic prefixes in the existing error string. Historical reads, endpoints, DTO shapes, algorithms and numerical conversion are unchanged.
+- Verified backend Java17 with real Java25 child, fresh MySQL8.4 V1–V9, persisted equal patterns, and147 tests. See [P0 report](../audits/F05_P0_DEPLOYMENT_FIX_REPORT.md) and [setup](../setup/F05_SPMF_RUNTIME_SETUP.md).
+
+## 2026-10-19 — F05 High-Utility Mining P0
+
+- Added eight Store-scoped operations: mining snapshot selection, asynchronous request creation/history/detail/runs, run detail/patterns/benchmark. Merchandiser creates; Merchandiser/StoreAdmin reads; SystemAdmin/EndCustomer denied.
+- Added V9 using the existing MINING_REQUEST, MINING_RUN, HIGH_UTILITY_PATTERN, PATTERN_ITEM ERD entities; durable frozen inputs, idempotency, bounded worker, restart recovery and atomic normalized results.
+- Integrated actual external SPMF2.67a HUI-Miner/EFIM with exact scale6/GCD conversion, shared threshold, resource limits and exact result comparison. Backend remains release17; this pinned JAR needs a Java25 child JVM.
+- Exported final runtime OpenAPI (52 paths, 65 operations, 8 F05 operations); documented nullable run metrics/support and validated algorithm-array bounds. Added F05 API/F06/React handoff and real sanitized examples.
+- Verified113 automated tests and23 Swagger UI cases; both algorithms produce8 equal patterns on the same96-unit fixture at minUtil30. Native MySQL V9 upgrade passed on isolated prepared baseline8. Fresh MySQL V1–V9 provisioning remains blocked by preexisting V7 unquoted row_number; original V7 unchanged.
+- No Frontend/F03 scoring/F04 ingestion/F06 recommendation/P1 scheduling implementation changed.
+
+## 2026-10-19 — Final Weight Business Rules v1.2 (breaking scoring semantics)
+
+- Product POST/PUT accepts optional strict nonnegative integer expiryPushDays (omitted/null→0); Product responses expose it. Store Admin owns the field.
+- New E is binary using the earliest future-expiry eligible INVENTORY_BATCH and Product threshold only. No Store fallback, linear scoring or quantity average.
+- Store expiry-window PUT remains deprecated for compatibility; its saved value has no scoring effect.
+- Preview/matrix add expiryEvidence; new snapshot configuration freezes timezone/scoring version; snapshot warnings are persisted/read. Historical rows, scores, hashes and JSON remain unchanged.
+- Added GET /api/utility/expiry-push-batches for Store Admin/Merchandiser, Store-scoped, independent of Mining.
+- F02 summary excludes expiry today (expired uses <=today); frontend should use the new boundary.
+- Added Flyway V8 (Product threshold/check, nullable matrix evidence and snapshot warnings). F04 import/historical prices are unchanged; F05/F06 engines remain outside this change.
+- Numerical fixtures: T7→E1/W1.435/17220; T3 or0→E0/W1.335/16020. See the v1.2 verification report for executed checks; prior sections below are historical release records.
+
 ## 2026-10-19 — F04 transaction data pipeline
 
 - Added authenticated Store-scoped CSV import, import batch/error reads, and transaction list/detail APIs.
@@ -8,6 +35,13 @@
 - Exported the running application's OpenAPI 3.1.0 document after Flyway V7 startup; six F04 routes are present in `openapi.json`.
 - CSV processing is synchronous, bounded, idempotent by Store/source/order, and does not mutate inventory. Excel and external POS API synchronization remain deferred.
 - Swagger UI was opened and the transaction-list `Try it out` request returned the expected `401` without a token. Authenticated import was not run because this isolated H2 environment had no Store Admin credential or matching product fixture; controller behavior is covered by MockMvc integration tests.
+
+## 2026-10-19 — F03 weight example and snapshot verification alignment
+
+- Clarified the existing Preview API contract and React handoff with the exact T=30 and T=10 reference calculations, including frozen historical base utility.
+- Added deterministic test cases for both reference calculations, direct System Admin policy GET coverage, and old/new snapshot values after score/T/policy updates.
+- Read the seven-page PASPM Weight Report and documented its unresolved production decisions and the synthetic-data boundary.
+- No route, DTO, authorization, migration or runtime behavior changed. New verification ran through Maven/MockMvc; it does not claim a new interactive Swagger UI run.
 
 ## 2026-10-18 — F01 authenticated password change
 

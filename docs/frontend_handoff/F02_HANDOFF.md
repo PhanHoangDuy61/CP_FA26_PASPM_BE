@@ -1,5 +1,12 @@
 # F02 Product and Inventory Frontend Handoff
 
+## v1.2 Product expiry priority update (2026-10-19)
+
+The existing Product POST/PUT request accepts optional `expiryPushDays: integer|null`; absent/null is stored as0, values must be >=0, and fractional/string/boolean values are rejected400. Full PUT must send the desired threshold (omitting resets it to0). Product GET/list/create/update/status responses include `expiryPushDays: integer`. Store Admin owns this field in their Store; Merchandiser and System Admin cannot modify it through F02, and cross-Store records return404. No duplicate configuration endpoint was added. `requiresExpiry=false` remains NOT_APPLICABLE in F03 even if a threshold is configured. Inventory quantities are unchanged by threshold updates.
+
+F03 uses only this Product threshold: no Store fallback. The legacy Store expiry-window endpoint is deprecated. New E is binary from the earliest-expiring ACTIVE positive-quantity batch with expiry strictly after the analysis date. Batch expiring today is not sellable in the current summary. `GET /api/utility/expiry-push-batches` provides a Store Admin/Merchandiser current push view independently of mining; see the F03 contract.
+
+
 For React + TypeScript. Exact DTOs and validation are in [`../api/F02_PRODUCT_INVENTORY_API.md`](../api/F02_PRODUCT_INVENTORY_API.md); synthetic payloads are in [`F02_examples/`](F02_examples/). Full runtime contract: [`../api/openapi.json`](../api/openapi.json).
 
 ## Base URL and authentication
@@ -40,10 +47,10 @@ export interface Category { id: number; name: string; status: CatalogStatus }
 export interface CategoryRequest { name: string; status: CatalogStatus }
 export interface ProductRequest {
   sku: string; name: string; categoryId?: number | null; unit: string;
-  requiresExpiry: boolean; sellingPrice: number; costPrice: number; status: CatalogStatus;
+  requiresExpiry: boolean; expiryPushDays?: number | null; sellingPrice: number; costPrice: number; status: CatalogStatus;
 }
 export interface Product {
-  id: number; sku: string; name: string; unit: string; requiresExpiry: boolean;
+  id: number; sku: string; name: string; unit: string; requiresExpiry: boolean; expiryPushDays: number;
   category: Category | null; sellingPrice: number; costPrice: number; status: CatalogStatus; stockQuantity: number;
 }
 export interface ProductPage { content: Product[]; page: number; pageSize: number; totalElements: number; totalPages: number }
@@ -70,7 +77,7 @@ Batch code required/max80 and unique per Product; receivedAt must be an ISO date
 
 ## Inventory display rules
 
-The summary's total includes every remaining unit, including blocked and expired batches. Blocked counts BLOCKED batches. Expired counts ACTIVE batches with expiry before today's date. Sellable counts ACTIVE batches that have no expiry or expire today/later. Expiry today is still sellable in F02. Expiring soon counts ACTIVE batches expiring from today through the inclusive lookahead date; default lookahead is 7 days. These buckets overlap only in that expiringSoon is a subset of sellable; blocked and expired are disjoint. No batches yield zeros. The current query does not filter by Product status, so show an inactive Product state separately. Time zone defaults to `Asia/Ho_Chi_Minh` and is application-configured.
+The summary's total includes every remaining unit, including blocked and expired batches. Blocked counts BLOCKED batches. Expired counts ACTIVE batches with expiry on or before today's date. Sellable counts ACTIVE batches that have no expiry or expire strictly after today. Expiry today is excluded under v1.2. Expiring soon counts ACTIVE batches expiring strictly after today through the inclusive lookahead date; default lookahead is 7 days. These buckets overlap only in that expiringSoon is a subset of sellable; blocked and expired are disjoint. No batches yield zeros. The current query does not filter by Product status, so show an inactive Product state separately. Time zone defaults to `Asia/Ho_Chi_Minh` and is application-configured.
 
 ## Local sample data
 

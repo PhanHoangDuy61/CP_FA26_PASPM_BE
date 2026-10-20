@@ -1,5 +1,7 @@
 # F03 Technical Decisions
 
+> Historical v4/linear implementation record. For new calculations, the approved [v1.2 specification](../requirements/F03_WEIGHT_RULES_v1_2.md), [current API](../api/F03_UTILITY_API.md) and v1.2 verification report supersede conflicting statements below. Historical execution results are retained, not rerun claims.
+
 ## Confirmed business decisions
 
 2026-10-17 user confirmation supersedes original v4 proposals: configurable positive integer T belongs to Store Admin (default 30); System Admin sets versioned lambda bounds (initial [0,0.5]); Merchandiser selects lambda/coefficients and manual S/M. Policy changes do not clamp settings. New snapshots validate current policy, historical snapshots do not read live config.
@@ -32,3 +34,12 @@
 - V5 preserves ERD transaction_id but cannot add its FK to an absent SALES_TRANSACTION table. F04 must add it, validate source statuses/duplicate handling and supply a production provider. F05 must add MINING_REQUEST.utility_snapshot_id FK in its migration. F03 schema completion remains PARTIAL until these dependencies exist.
 - Matrix adds quantity to preserve the original task contract. algorithmItemId and transaction totals are derived from immutable stored items. Snapshot items reference existing Product and snapshot IDs; service validation enforces the same Store.
 - No migration rollback is run on shared data; isolated tests and atomic-write rollback are verified.
+
+## Open business decisions from `docs/requirements/PASPM_Weight_Report.pdf` (reviewed 2026-10-19)
+
+- Set a business maximum for T and define who approves/audits changes to the system-level lambda policy. Until confirmed, F03 accepts positive 32-bit integer T and applies the versioned active policy bounds.
+- Confirm whether a non-expiring Product should remain E=0/`NOT_APPLICABLE` with beta contribution 0 when expiry is enabled. This is the implemented MVP behavior; do not change it without a business decision.
+- Confirm Store/legal sellability for a batch whose expiry date equals the analysis date. F03 currently applies the approved v4 boundary `expiry_date > asOfDate` and excludes same-day expiry; F02's current-stock rule is not modified here.
+- Required missing expiry metadata is already resolved for F03: Preview warns and returns null E; an expiry-enabled snapshot is rejected. Negative base utility is rejected by the later confirmed F03/F05 contract.
+- F03's deterministic decimal rules are implemented, but F05 still needs to approve and implement its consumer conversion/range, especially for a 32-bit-only mining engine. Do not silently rescale.
+- The PDF's worked numbers are synthetic; F04 must supply validated production transaction data, while inventory/expiry and manual S/M metadata must come from their approved sources.

@@ -68,6 +68,11 @@ class UtilityIntegrationTest {
         mvc.perform(get("/api/utility/config").header("Authorization","Bearer "+merchant))
             .andExpect(status().isOk()).andExpect(jsonPath("$.config.expiryWindowDays").value(60))
             .andExpect(jsonPath("$.config.lambda").value(0.4));
+        mvc.perform(get("/api/system/utility/lambda-policy").header("Authorization","Bearer "+system))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.lambdaMin").value(0.0))
+            .andExpect(jsonPath("$.lambdaMax").value(0.5));
+        mvc.perform(get("/api/system/utility/lambda-policy").header("Authorization","Bearer "+merchant))
+            .andExpect(status().isForbidden());
     }
 
     @Test void rejectsInvalidBoundsWindowsAndCoefficientsWithoutChangingValues() throws Exception {
@@ -102,17 +107,18 @@ class UtilityIntegrationTest {
     @Test void snapshotFreezesPolicyWindowScoresAndHistoricalUtilityAndRejectsStaleLambda() throws Exception {
         policy("0","0.5");
         patchScore(merchant,"{\"stockPriorityScore\":0.8,\"seasonalPriorityScore\":0.9}").andExpect(status().isOk());
-        put("/api/utility/config",merchant,config("0.5")).andExpect(status().isOk());
+        String stockAndSeason="{\"enableStock\":true,\"enableExpiry\":false,\"enableSeason\":true,\"alpha\":0.7,\"beta\":0,\"gamma\":0.3,\"lambda\":0.5}";
+        put("/api/utility/config",merchant,stockAndSeason).andExpect(status().isOk());
         fixture();
         postUtility("preview",merchant,RANGE).andExpect(status().isOk())
-            .andExpect(jsonPath("$.totalWeightedUtility").value(16800))
+            .andExpect(jsonPath("$.totalWeightedUtility").value(16980))
             .andExpect(jsonPath("$.items[0].baseUtility").value(12000));
         String created=postUtility("snapshots",merchant,RANGE).andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();
         int id=json.readTree(created).get("snapshotId").asInt();
         String hash=json.readTree(created).get("matrixHash").asText();
         postUtility("snapshots",merchant,RANGE).andExpect(status().isCreated()).andExpect(jsonPath("$.matrixHash").value(hash));
         put("/api/utility/config/expiry-window",admin,"{\"expiryWindowDays\":60}").andExpect(status().isOk());
-        patchScore(merchant,"{\"stockPriorityScore\":0.2}").andExpect(status().isOk());
+        patchScore(merchant,"{\"stockPriorityScore\":0.2,\"seasonalPriorityScore\":0.1}").andExpect(status().isOk());
         policy("0","0.1");
         mvc.perform(get("/api/utility/config").header("Authorization","Bearer "+merchant)).andExpect(jsonPath("$.lambdaValid").value(false));
         int before=jdbc.queryForObject("SELECT COUNT(*) FROM utility_snapshot",Integer.class);
@@ -120,20 +126,67 @@ class UtilityIntegrationTest {
         assertEquals(before,jdbc.queryForObject("SELECT COUNT(*) FROM utility_snapshot",Integer.class));
         mvc.perform(get("/api/utility/snapshots/{id}",id).header("Authorization","Bearer "+merchant))
             .andExpect(status().isOk()).andExpect(jsonPath("$.matrixHash").value(hash))
-            .andExpect(jsonPath("$.configuration.config.expiryWindowDays").value(30))
+            .andExpect(jsonPath("$.configuration.config.expiryWindowDays").isEmpty())
             .andExpect(jsonPath("$.configuration.lambdaPolicy.lambdaMax").value(0.5));
         mvc.perform(get("/api/utility/snapshots/{id}/matrix",id).header("Authorization","Bearer "+merchant))
-            .andExpect(status().isOk()).andExpect(jsonPath("$.items[0].weightedUtility").value(16800))
-            .andExpect(jsonPath("$.items[0].stockScore").value(0.8)).andExpect(jsonPath("$.items[0].quantity").value(3))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.items[0].weightedUtility").value(16980))
+            .andExpect(jsonPath("$.items[0].stockScore").value(0.8)).andExpect(jsonPath("$.items[0].seasonalScore").value(0.9))
+            .andExpect(jsonPath("$.items[0].weightValue").value(1.415)).andExpect(jsonPath("$.items[0].quantity").value(3))
             .andExpect(jsonPath("$.items[0].algorithmItemId").value(product));
         mvc.perform(get("/api/utility/snapshots/{id}",id).header("Authorization","Bearer "+foreign)).andExpect(status().isNotFound());
         mvc.perform(get("/api/utility/snapshots/{id}/matrix",id).header("Authorization","Bearer "+foreign)).andExpect(status().isNotFound());
-        put("/api/utility/config",merchant,config("0.1")).andExpect(status().isOk());
-        postUtility("snapshots",merchant,RANGE).andExpect(status().isCreated());
+        put("/api/utility/config",merchant,stockAndSeason.replace("\"lambda\":0.5","\"lambda\":0.1")).andExpect(status().isOk());
+        String next=postUtility("snapshots",merchant,RANGE).andExpect(status().isCreated())
+            .andExpect(jsonPath("$.configuration.config.expiryWindowDays").value(60))
+            .andExpect(jsonPath("$.configuration.config.lambda").value(0.1))
+            .andReturn().getResponse().getContentAsString();
+        int nextId=json.readTree(next).get("snapshotId").asInt();
+        mvc.perform(get("/api/utility/snapshots/{id}/matrix",nextId).header("Authorization","Bearer "+merchant))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.items[0].stockScore").value(0.2))
+            .andExpect(jsonPath("$.items[0].seasonalScore").value(0.1))
+            .andExpect(jsonPath("$.items[0].weightValue").value(1.017))
+            .andExpect(jsonPath("$.items[0].weightedUtility").value(12204));
+        mvc.perform(get("/api/utility/snapshots/{id}/matrix",id).header("Authorization","Bearer "+merchant))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.items[0].weightValue").value(1.415))
+            .andExpect(jsonPath("$.items[0].weightedUtility").value(16980));
+    }
+
+    @Test void weightReportExamplesFlowThroughPreviewForProductSevenAndThreeDayThresholds() throws Exception {
+        policy("0","0.5");
+        patchScore(merchant,"{\"stockPriorityScore\":0.8,\"seasonalPriorityScore\":0.9}").andExpect(status().isOk());
+        put("/api/utility/config",merchant,"{\"enableStock\":true,\"enableExpiry\":true,\"enableSeason\":true,\"alpha\":0.5,\"beta\":0.2,\"gamma\":0.3,\"lambda\":0.5}").andExpect(status().isOk());
+        put("/api/utility/config/expiry-window",admin,"{\"expiryWindowDays\":30}").andExpect(status().isOk());
+        fixture();
+        jdbc.update("UPDATE product SET expiry_push_days=7 WHERE product_id=?",product);
+        jdbc.update("INSERT INTO inventory_batch(product_id,batch_code,received_at,expiry_date,initial_quantity,remaining_quantity,status) VALUES (?,'B001',CURRENT_TIMESTAMP,?,20,20,'ACTIVE')",product,ANALYSIS.plusDays(5));
+        jdbc.update("INSERT INTO inventory_batch(product_id,batch_code,received_at,expiry_date,initial_quantity,remaining_quantity,status) VALUES (?,'B002',CURRENT_TIMESTAMP,?,80,80,'ACTIVE')",product,ANALYSIS.plusDays(40));
+        jdbc.update("INSERT INTO inventory_batch(product_id,batch_code,received_at,expiry_date,initial_quantity,remaining_quantity,status) VALUES (?,'B003',CURRENT_TIMESTAMP,?,10,10,'ACTIVE')",product,ANALYSIS.minusDays(1));
+
+        var preciseJson=json.copy().enable(com.fasterxml.jackson.databind.DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS);
+        var testA=preciseJson.readTree(postUtility("preview",merchant,RANGE).andExpect(status().isOk()).andReturn().getResponse().getContentAsString());
+        var itemA=testA.path("items").get(0);
+        assertTrue(testA.path("ready").asBoolean());
+        assertDecimal("1",itemA.path("expiryScore").decimalValue());
+        assertDecimal("1.435",itemA.path("weightValue").decimalValue());
+        assertDecimal("12000.000000",itemA.path("baseUtility").decimalValue());
+        assertDecimal("17220.000000",itemA.path("weightedUtility").decimalValue());
+        assertDecimal("17220.000000",testA.path("totalWeightedUtility").decimalValue());
+
+        put("/api/utility/config/expiry-window",admin,"{\"expiryWindowDays\":10}").andExpect(status().isOk());
+        jdbc.update("UPDATE product SET expiry_push_days=3 WHERE product_id=?",product);
+        var testB=preciseJson.readTree(postUtility("preview",merchant,RANGE).andExpect(status().isOk()).andReturn().getResponse().getContentAsString());
+        var itemB=testB.path("items").get(0);
+        assertTrue(testB.path("ready").asBoolean());
+        assertDecimal("0",itemB.path("expiryScore").decimalValue());
+        assertDecimal("1.335",itemB.path("weightValue").decimalValue());
+        assertDecimal("12000.000000",itemB.path("baseUtility").decimalValue());
+        assertDecimal("16020.000000",itemB.path("weightedUtility").decimalValue());
+        assertDecimal("16020.000000",testB.path("totalWeightedUtility").decimalValue());
     }
 
     @Test void missingExpiryIsPreviewWarningAndPreventsReadySnapshotOnlyWhenEnabled() throws Exception {
         policy("0","0.5");fixture();
+        jdbc.update("UPDATE product SET expiry_push_days=7 WHERE product_id=?",product);
         String expiry=config("0.5").replace("\"enableStock\":true","\"enableStock\":false").replace("\"enableExpiry\":false","\"enableExpiry\":true").replace("\"alpha\":1","\"alpha\":0").replace("\"beta\":0","\"beta\":1");
         put("/api/utility/config",merchant,expiry).andExpect(status().isOk());
         jdbc.update("INSERT INTO inventory_batch(product_id,batch_code,received_at,initial_quantity,remaining_quantity,status) VALUES (?,'MISSING',CURRENT_TIMESTAMP,5,5,'ACTIVE')",product);
@@ -151,7 +204,9 @@ class UtilityIntegrationTest {
         var tx=fixtures.data.get(store).get(0);
         fixtures.data.put(store,java.util.List.of(tx,tx));
         postUtility("preview",merchant,RANGE).andExpect(status().isBadRequest());
-        fixtures.data.put(store,java.util.List.of(new TransactionSource.PreparedTransaction(store,1,ANALYSIS,true,java.util.List.of(new TransactionSource.Item(product,3,java.math.BigDecimal.ONE,java.math.BigDecimal.TEN,null)))));
+        fixtures.data.put(store,java.util.List.of(new TransactionSource.PreparedTransaction(store,
+            fixtures.data.get(store).get(0).transactionId(),ANALYSIS,true,
+            java.util.List.of(new TransactionSource.Item(product,3,java.math.BigDecimal.ONE,java.math.BigDecimal.TEN,null)))));
         postUtility("snapshots",merchant,RANGE).andExpect(status().isBadRequest());
         postUtility("preview",merchant,RANGE.replace("2026-10-01","2026-11-01")).andExpect(status().isBadRequest());
         fixture();
@@ -160,22 +215,23 @@ class UtilityIntegrationTest {
     }
     @org.springframework.test.context.bean.override.mockito.MockitoSpyBean UtilitySnapshotRepository snapshotRepository;
 
-    @Test void expirySnapshotsKeepOriginalDateWindowAndBatchScore() throws Exception {
+    @Test void expirySnapshotsKeepOriginalDateProductThresholdAndBatchScore() throws Exception {
         policy("0","0.5");fixture();
+        jdbc.update("UPDATE product SET expiry_push_days=7 WHERE product_id=?",product);
         String expiry=config("0.5").replace("\"enableStock\":true","\"enableStock\":false").replace("\"enableExpiry\":false","\"enableExpiry\":true").replace("\"alpha\":1","\"alpha\":0").replace("\"beta\":0","\"beta\":1");
         put("/api/utility/config",merchant,expiry).andExpect(status().isOk());
         jdbc.update("INSERT INTO inventory_batch(product_id,batch_code,received_at,expiry_date,initial_quantity,remaining_quantity,status) VALUES (?,'FIVE',CURRENT_TIMESTAMP,?,20,20,'ACTIVE')",product,ANALYSIS.plusDays(5));
         jdbc.update("INSERT INTO inventory_batch(product_id,batch_code,received_at,expiry_date,initial_quantity,remaining_quantity,status) VALUES (?,'FORTY',CURRENT_TIMESTAMP,?,80,80,'ACTIVE')",product,ANALYSIS.plusDays(40));
         String created=postUtility("snapshots",merchant,RANGE).andExpect(status().isCreated())
-            .andExpect(jsonPath("$.totalWeightedUtility").value(13000)).andReturn().getResponse().getContentAsString();
+            .andExpect(jsonPath("$.totalWeightedUtility").value(18000)).andReturn().getResponse().getContentAsString();
         int id=json.readTree(created).get("snapshotId").asInt();
         jdbc.update("UPDATE inventory_batch SET remaining_quantity=0 WHERE product_id=? AND batch_code='FIVE'",product);
         put("/api/utility/config/expiry-window",admin,"{\"expiryWindowDays\":60}").andExpect(status().isOk());
-        postUtility("preview",merchant,RANGE).andExpect(status().isOk()).andExpect(jsonPath("$.totalWeightedUtility").value(14000));
+        postUtility("preview",merchant,RANGE).andExpect(status().isOk()).andExpect(jsonPath("$.totalWeightedUtility").value(12000));
         mvc.perform(get("/api/utility/snapshots/{id}/matrix",id).header("Authorization","Bearer "+merchant))
-            .andExpect(status().isOk()).andExpect(jsonPath("$.totalWeightedUtility").value(13000))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.totalWeightedUtility").value(18000))
             .andExpect(jsonPath("$.configuration.analysisDate").value("2026-10-17"))
-            .andExpect(jsonPath("$.configuration.config.expiryWindowDays").value(30));
+            .andExpect(jsonPath("$.configuration.config.expiryWindowDays").isEmpty());
     }
 
     @Test void persistenceFailureRollsBackSnapshotHeader() throws Exception {
@@ -197,7 +253,8 @@ class UtilityIntegrationTest {
         policy("0","0.5");fixture();
         String created=postUtility("snapshots",merchant,RANGE).andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();
         int id=json.readTree(created).get("snapshotId").asInt();
-        assertThrows(org.springframework.dao.DataIntegrityViolationException.class,()->jdbc.update("INSERT INTO utility_matrix_item(snapshot_id,transaction_id,product_id,quantity,base_utility,expiry_status,weight_value,weighted_utility) VALUES (?,1,?,3,12000,'NO_SELLABLE_BATCH',1,12000)",id,product));
+        int transactionId=fixtures.data.get(store).get(0).transactionId();
+        assertThrows(org.springframework.dao.DataIntegrityViolationException.class,()->jdbc.update("INSERT INTO utility_matrix_item(snapshot_id,transaction_id,product_id,quantity,base_utility,expiry_status,weight_value,weighted_utility) VALUES (?,?,?,3,12000,'NO_SELLABLE_BATCH',1,12000)",id,transactionId,product));
         mvc.perform(get("/api/utility/snapshots/{id}/matrix?pageSize=0",id).header("Authorization","Bearer "+merchant)).andExpect(status().isBadRequest());
     }
 

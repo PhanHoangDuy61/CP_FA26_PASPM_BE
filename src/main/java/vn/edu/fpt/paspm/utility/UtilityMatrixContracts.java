@@ -16,15 +16,15 @@ public final class UtilityMatrixContracts {
     }
     public record EffectiveCoefficients(BigDecimal alpha,BigDecimal beta,BigDecimal gamma) {}
     public record FrozenConfiguration(WeightConfig config,LambdaPolicy lambdaPolicy,EffectiveCoefficients effectiveCoefficients,
-        LocalDate analysisDate,String source,int utilityScale,String roundingMode,String itemMapping) {}
+        LocalDate analysisDate,String source,int utilityScale,String roundingMode,String itemMapping,String timeZone) {}
     public record MatrixItem(int transactionId,int productId,int algorithmItemId,int quantity,BigDecimal baseUtility,
         BigDecimal stockScore,BigDecimal expiryScore,BigDecimal seasonalScore,String expiryStatus,
-        BigDecimal weightValue,BigDecimal weightedUtility,BigDecimal transactionUtility) {}
+        BigDecimal weightValue,BigDecimal weightedUtility,BigDecimal transactionUtility,ExpiryScoreCalculator.Evidence expiryEvidence) {}
     public record MatrixResult(List<MatrixItem> items,BigDecimal totalWeightedUtility,String sourceHash,String matrixHash,
         List<String> warnings,boolean ready) {}
     public record MatrixPage(List<MatrixItem> items,int page,int pageSize,long totalElements,BigDecimal totalWeightedUtility,
         String sourceHash,String matrixHash,List<String> warnings,boolean ready,FrozenConfiguration configuration) {}
     public record SnapshotView(int snapshotId,int storeId,int createdBy,LocalDate rangeStart,LocalDate rangeEnd,
         LocalDate asOfDate,FrozenConfiguration configuration,String sourceHash,String matrixHash,
-        BigDecimal totalWeightedUtility,int roundingScale,String status,Instant createdAt) {}
+        BigDecimal totalWeightedUtility,int roundingScale,String status,Instant createdAt,List<String> warnings) {}
 }

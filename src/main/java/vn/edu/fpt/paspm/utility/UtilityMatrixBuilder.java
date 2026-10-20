@@ -43,19 +43,22 @@ public class UtilityMatrixBuilder {
             for(var item:items) {
                 if(item.productId()<=0||!productIds.add(item.productId()))throw new ApiException(400,"Duplicate or invalid product in prepared transaction; F04 must preprocess duplicate items");
                 var product=productCache.computeIfAbsent(item.productId(),id->products.product(store,id));
-                var score=expiryCache.computeIfAbsent(item.productId(),id->expiry.calculate(product.requiresExpiry(),products.batches(store,id),range.asOfDate(),frozen.config().expiryWindowDays()));
+                if(!"ACTIVE".equals(product.status()))warnings.add("Product "+product.id()+": inactive Product; historical transactions retained, not currently sellable");
+                var score=expiryCache.computeIfAbsent(item.productId(),id->expiry.calculate(product.id(),product.requiresExpiry(),"ACTIVE".equals(product.status())?products.batches(store,id):List.of(),range.asOfDate(),product.expiryPushDays()));
                 BigDecimal base=UtilityMath.base(item.quantity(),item.unitPrice(),item.unitCost(),item.sourceUtility());
                 sourceContent.append(item.productId()).append('|').append(item.quantity()).append('|').append(number(item.unitPrice())).append('|').append(number(item.unitCost())).append('|').append(number(item.sourceUtility())).append('\n');
                 BigDecimal weight=null,weighted=null;
                 if("MISSING_METADATA".equals(score.status()))warnings.add("Product "+product.id()+": missing required expiry metadata");
                 if("NO_SELLABLE_BATCH".equals(score.status()))warnings.add("Product "+product.id()+": no sellable batch; historical transactions retained");
-                try { weight=UtilityMath.weight(frozen.config(),product.stockScore(),score.score(),product.seasonalScore()); }
+                try {
+                    if(frozen.config().enableExpiry()&&"MISSING_METADATA".equals(score.status()))throw new ApiException(400,"Missing enabled expiry priority metadata");
+                    weight=UtilityMath.weight(frozen.config(),product.stockScore(),score.score(),product.seasonalScore()); }
                 catch(ApiException e) { warnings.add("Product "+product.id()+": "+e.getMessage());complete=false; }
                 if(weight!=null) { weighted=UtilityMath.weighted(base,weight);total=total.add(weighted); }
-                transactionRows.add(new MatrixItem(transaction.transactionId(),product.id(),product.id(),item.quantity(),base,product.stockScore(),score.score(),product.seasonalScore(),score.status(),weight,weighted,null));
+                transactionRows.add(new MatrixItem(transaction.transactionId(),product.id(),product.id(),item.quantity(),base,product.stockScore(),score.score(),product.seasonalScore(),score.status(),weight,weighted,null,score.evidence()));
             }
             BigDecimal transactionTotal=complete?UtilityMath.utility(total):null;
-            for(var row:transactionRows) rows.add(new MatrixItem(row.transactionId(),row.productId(),row.algorithmItemId(),row.quantity(),row.baseUtility(),row.stockScore(),row.expiryScore(),row.seasonalScore(),row.expiryStatus(),row.weightValue(),row.weightedUtility(),transactionTotal));
+            for(var row:transactionRows) rows.add(new MatrixItem(row.transactionId(),row.productId(),row.algorithmItemId(),row.quantity(),row.baseUtility(),row.stockScore(),row.expiryScore(),row.seasonalScore(),row.expiryStatus(),row.weightValue(),row.weightedUtility(),transactionTotal,row.expiryEvidence()));
         }
         boolean ready=rows.stream().allMatch(row->row.weightedUtility()!=null);
         BigDecimal total=ready?UtilityMath.utility(rows.stream().map(MatrixItem::weightedUtility).reduce(BigDecimal.ZERO,BigDecimal::add)):null;

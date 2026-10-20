@@ -1,5 +1,7 @@
 # F03 — Báo cáo thực thi Swagger và backend
 
+> Historical v4/linear implementation record. For new calculations, the approved [v1.2 specification](../requirements/F03_WEIGHT_RULES_v1_2.md), [current API](../api/F03_UTILITY_API.md) and v1.2 verification report supersede conflicting statements below. Historical execution results are retained, not rerun claims.
+
 Ngày thực thi: **17/10/2026, Asia/Ho_Chi_Minh**. Đây là kết quả đã chạy, không phải kế hoạch kiểm thử.
 
 ## Kết luận
@@ -61,6 +63,22 @@ Mỗi dòng dưới có expected status/behavior theo `F03_SWAGGER_TEST_CASES.md
 | DEP-01 | POST preview/snapshot; GET old snapshot | Restart without utility-fixture profile | 503 for new calculations; old snapshot200 and unchanged | PASS — UI |
 | DB-01 | Application startup / Flyway | Fresh isolated H2 file DB; subsequent restart | V1-V5 migrate successfully; subsequent V5 validation/no pending migration | PASS — Runtime + AUTO |
 | DB-02 | H2 integration tests | Invalid score/check/duplicate matrix row | Database constraints reject invalid writes | PASS — AUTO |
+
+## Alignment retest — 19/10/2026
+
+The following are additional automated checks added during the Weight Report alignment. They are not included in the 120 historical Swagger UI requests above and were executed with Maven/MockMvc against isolated H2; no new interactive Swagger UI session was run.
+
+| Case | Endpoint / method | Actual input/result | Status |
+|---|---|---|---|
+| WGT-01 | `POST /api/utility/preview` after authorized config/score/batch setup | T=30; E=`0.166666666666666667`; Base=`12000.000000`; W=`1.351666666666666667`; weighted/total=`16220.000000`; ready=true | PASS — MockMvc |
+| WGT-02 | `POST /api/utility/preview` after Store Admin changes T | Same fixture, T=10; E=`0.100000000000000000`; Base remains `12000.000000`; W=`1.345000000000000000`; weighted/total=`16140.000000`; ready=true | PASS — MockMvc |
+| SNAP-06 | `POST /api/utility/snapshots`; GET metadata/matrix for old and new IDs | Old snapshot stays at S=.8/M=.9, T=30, lambda=.5, W=1.415 and weighted=16980 after score/T/policy edits. Once lambda is corrected to .1, new snapshot uses S=.2/M=.1, T=60, lambda=.1, W=1.017 and weighted=12204. Re-read old matrix remains unchanged. | PASS — MockMvc |
+| CFG-GET | `GET /api/system/utility/lambda-policy` | System Admin receives 200 and active bounds; Merchandiser receives 403. | PASS — MockMvc |
+| CALC-2CRIT | `UtilityCalculationTest` | Stock+Season enabled; coefficients .25/0/.75, S=.8, M=.4; W=1.25. | PASS — JUnit |
+
+Focused run result: `UtilityCalculationTest` 7 tests and `UtilityIntegrationTest` 12 tests; **19 passed, 0 failed, 0 errors, 0 skipped**. Flyway applied V1–V6 on the isolated H2 database. An initial test assertion compared decimal formatting (`12000.000000` versus JSON numeric `1.2E+4`); it was corrected to compare numeric BigDecimal values. The backend response values were correct, and no production code change was needed.
+
+The full current-`dev` verification then completed with `mvn -q -Dpaspm.avatar.directory=<temporary-test-directory> verify` plus throwaway test-only JWT/OTP values: **54 tests across 7 suites, 0 failures, 0 errors, 0 skipped; exit 0**. Flyway V1–V6 applied in the isolated H2 test contexts; runtime OpenAPI assertions passed. The command-line avatar directory supplied a property absent from this checkout's pre-existing local `application.yml`; that local file was preserved and not edited as part of this alignment.
 
 ## Đối chiếu số học và dữ liệu lưu
 

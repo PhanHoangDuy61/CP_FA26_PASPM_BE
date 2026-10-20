@@ -1,97 +1,82 @@
 {
-  "items": [
-    {
-      "transactionId": 1,
-      "productId": 1,
-      "algorithmItemId": 1,
-      "quantity": 3,
-      "baseUtility": 12000,
-      "stockScore": 0.8,
-      "expiryScore": 0.16666666666666666,
-      "seasonalScore": 0.9,
-      "expiryStatus": "AVAILABLE",
-      "weightValue": 1.3516666666666666,
-      "weightedUtility": 16220,
-      "transactionUtility": 16220
-    },
-    {
-      "transactionId": 2,
-      "productId": 2,
-      "algorithmItemId": 2,
-      "quantity": 2,
-      "baseUtility": 30000,
-      "stockScore": 0.8,
-      "expiryScore": 0,
-      "seasonalScore": 0.9,
-      "expiryStatus": "NOT_APPLICABLE",
-      "weightValue": 1.335,
-      "weightedUtility": 40050,
-      "transactionUtility": 40050
-    },
-    {
-      "transactionId": 3,
-      "productId": 1,
-      "algorithmItemId": 1,
-      "quantity": 1,
-      "baseUtility": 3000,
-      "stockScore": 0.8,
-      "expiryScore": 0.16666666666666666,
-      "seasonalScore": 0.9,
-      "expiryStatus": "AVAILABLE",
-      "weightValue": 1.3516666666666666,
-      "weightedUtility": 4055,
-      "transactionUtility": 17405
-    },
-    {
-      "transactionId": 3,
-      "productId": 2,
-      "algorithmItemId": 2,
-      "quantity": 1,
-      "baseUtility": 10000,
-      "stockScore": 0.8,
-      "expiryScore": 0,
-      "seasonalScore": 0.9,
-      "expiryStatus": "NOT_APPLICABLE",
-      "weightValue": 1.335,
-      "weightedUtility": 13350,
-      "transactionUtility": 17405
+  "items" : [ {
+    "transactionId" : 1,
+    "productId" : 2,
+    "algorithmItemId" : 2,
+    "quantity" : 3,
+    "baseUtility" : 12000.0,
+    "stockScore" : 0.8,
+    "expiryScore" : 1,
+    "seasonalScore" : 0.9,
+    "expiryStatus" : "AVAILABLE",
+    "weightValue" : 1.435,
+    "weightedUtility" : 17220.0,
+    "transactionUtility" : 17220.0,
+    "expiryEvidence" : {
+      "expiryPushDays" : 7,
+      "earliestEligibleExpiryDate" : "2026-10-24",
+      "daysRemaining" : 5,
+      "asOfDate" : "2026-10-19",
+      "reason" : "WITHIN_THRESHOLD",
+      "batches" : [ {
+        "productId" : 2,
+        "batchId" : 7,
+        "expiryDate" : "2026-10-24",
+        "remainingQuantity" : 20,
+        "expiryPushDays" : 7,
+        "daysRemaining" : 5,
+        "pushRequired" : true,
+        "pushRequiredQuantity" : 20,
+        "asOfDate" : "2026-10-19"
+      }, {
+        "productId" : 2,
+        "batchId" : 8,
+        "expiryDate" : "2026-11-28",
+        "remainingQuantity" : 80,
+        "expiryPushDays" : 7,
+        "daysRemaining" : 40,
+        "pushRequired" : false,
+        "pushRequiredQuantity" : 0,
+        "asOfDate" : "2026-10-19"
+      } ]
     }
-  ],
-  "page": 0,
-  "pageSize": 20,
-  "totalElements": 4,
-  "totalWeightedUtility": 73675,
-  "sourceHash": "d43e282cd16c316364c94793a6c01131ea6b29c986cd90f098d2c247d7eca83e",
-  "matrixHash": "d1fd432876a91fa898eea1a8ae2ed8dc7510a6f4387ea02ee3c8e42628d0b055",
-  "warnings": [],
-  "ready": true,
-  "configuration": {
-    "config": {
-      "enableStock": true,
-      "enableExpiry": true,
-      "enableSeason": true,
-      "alpha": 0.5,
-      "beta": 0.2,
-      "gamma": 0.3,
-      "lambda": 0.5,
-      "expiryWindowDays": 30,
-      "version": 9,
-      "scoringVersion": "F03_LINEAR_V1"
+  } ],
+  "page" : 0,
+  "pageSize" : 20,
+  "totalElements" : 1,
+  "totalWeightedUtility" : 17220.0,
+  "sourceHash" : "472e080ef95e9da94efd413a8beeda4dd364c5a91d392fa623ae03ac26fc37a4",
+  "matrixHash" : "2771ac1688d1fa4f27baf82befb82398e67f48d54f052ed9541f9f3abbe37d66",
+  "warnings" : [ ],
+  "ready" : true,
+  "configuration" : {
+    "config" : {
+      "enableStock" : true,
+      "enableExpiry" : true,
+      "enableSeason" : true,
+      "alpha" : 0.5,
+      "beta" : 0.2,
+      "gamma" : 0.3,
+      "lambda" : 0.5,
+      "expiryWindowDays" : 100,
+      "version" : 3,
+      "scoringVersion" : "EXPIRY_PRODUCT_EARLIEST_BATCH_BINARY_V1"
     },
-    "lambdaPolicy": {
-      "lambdaMin": 0,
-      "lambdaMax": 0.5,
-      "version": 4
+    "lambdaPolicy" : {
+      "lambdaMin" : 0,
+      "lambdaMax" : 0.5,
+      "version" : 1
     },
-    "effectiveCoefficients": {
-      "alpha": 0.5,
-      "beta": 0.2,
-      "gamma": 0.3
+    "effectiveCoefficients" : {
+      "alpha" : 0.5,
+      "beta" : 0.2,
+      "gamma" : 0.3
     },
-    "analysisDate": "2026-10-17",
-    "source": "DEV_FIXTURE",
-    "utilityScale": 6,
-    "roundingMode": "HALF_UP",
-    "itemMapping": "PRODUCT_ID_V1"
+    "analysisDate" : "2026-10-19",
+    "source" : "F04_DATABASE_V1",
+    "utilityScale" : 6,
+    "roundingMode" : "HALF_UP",
+    "itemMapping" : "PRODUCT_ID_V1",
+    "timeZone" : "Asia/Ho_Chi_Minh"
   }
 }

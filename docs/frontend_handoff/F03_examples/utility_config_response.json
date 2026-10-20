@@ -7,9 +7,9 @@
     "beta": 0.2,
     "gamma": 0.3,
     "lambda": 0.5,
-    "expiryWindowDays": 30,
+    "expiryWindowDays": null,
     "version": 2,
-    "scoringVersion": "F03_LINEAR_V1"
+    "scoringVersion": "EXPIRY_PRODUCT_EARLIEST_BATCH_BINARY_V1"
   },
   "lambdaPolicy": {
     "lambdaMin": 0,

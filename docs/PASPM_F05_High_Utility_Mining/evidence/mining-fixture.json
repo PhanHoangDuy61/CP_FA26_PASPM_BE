@@ -1,0 +1,19 @@
+{
+  "hash": "8ce22f131d59e8486c6974733fcc81de0c3caadaf13765399311cdfe3dc32626",
+  "text": "1 2 3 4 5 6:30:5 10 1 6 3 5\n2 3 4 5:20:8 3 6 3\n1 3 4:8:5 1 2\n1 3 5 7:27:10 6 6 5\n2 3 5 7:11:4 2 3 2\n",
+  "divisor": 1000000,
+  "products": {
+    "1": 8,
+    "2": 9,
+    "3": 10,
+    "4": 11,
+    "5": 12,
+    "6": 13,
+    "7": 14
+  },
+  "roundingMode": "HALF_UP",
+  "totalUtility": 96,
+  "utilityScale": 6,
+  "transactionCount": 5,
+  "conversionVersion": "F03_SCALE6_GCD_INT32_DENSE_V1"
+}

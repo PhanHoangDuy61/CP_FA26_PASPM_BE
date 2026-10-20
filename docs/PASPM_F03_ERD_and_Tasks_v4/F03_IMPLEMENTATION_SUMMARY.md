@@ -1,5 +1,7 @@
 # F03 — Implementation Summary
 
+> Historical v4/linear implementation record. For new calculations, the approved [v1.2 specification](../requirements/F03_WEIGHT_RULES_v1_2.md), [current API](../api/F03_UTILITY_API.md) and v1.2 verification report supersede conflicting statements below. Historical execution results are retained, not rerun claims.
+
 ## Kết quả
 
 **PARTIAL — backend F03 đã triển khai và kiểm thử bằng dữ liệu QA; còn phụ thuộc F04/F05 thật.** Áp dụng quyết định đã xác nhận ngày17/10/2026. Không triển khai Frontend hoặc F05 Mining Engine.
@@ -31,7 +33,9 @@ Store Admin chỉ đổi T của Store mình. System Admin đổi bounds/version
 
 ## Verification
 
-`mvn -q verify` exit0: **44 tests,0failure,0error,0skip**. Actual Flyway V1-V5 fresh migrate và repeated validation thành công trên H2 file riêng. **120 actual Swagger UI requests**,11 endpoints;36 nhóm case PASS bằng UI/runtime/automated theo báo cáo. Hai initial setup-token errors được sửa và chạy lại, không tính PASS giả. OpenAPI integerT và dependency503 được kiểm tra sau sửa.
+Baseline recorded on 2026-10-17: `mvn -q verify` exit0 with **44 tests, 0 failure/error/skip**, and 120 actual Swagger UI requests across 11 endpoints. Alignment verification on current `dev` (2026-10-19) later ran `mvn -q verify` successfully with **54 tests across 7 suites, 0 failure/error/skip**, applying V1–V6 in isolated H2. The earlier Swagger UI count remains historical evidence; the new cases below used MockMvc rather than Swagger UI.
+
+**Weight Report alignment retest (2026-10-19):** focused Maven/MockMvc run passed 19/19 tests (12 integration + 7 calculation), followed by full Maven `verify` with 54/54 tests passing on current `dev`; Flyway V1–V6 applied in isolated H2. The two exact preview references passed: T=30 gives E=.166666666666666667, W=1.351666666666666667, Base=12000 and weighted=16220; T=10 gives E=.1, W=1.345, Base=12000 and weighted=16140. Direct policy GET now has role coverage. Snapshot integration confirms changed S/M/T/lambda settings affect only the new snapshot. This was not a new interactive Swagger UI run.
 
 Read [báo cáo chi tiết](F03_SWAGGER_TEST_REPORT.md), [defect/retest](F03_SWAGGER_ISSUES.md), [Maven evidence](evidence/F03_MAVEN_VERIFY.txt), [snapshot response](evidence/F03_SNAPSHOT_1.json), [matrix response](evidence/F03_SNAPSHOT_1_MATRIX.json).
 
