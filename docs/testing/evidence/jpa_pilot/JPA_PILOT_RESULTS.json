@@ -1,0 +1,398 @@
+{
+  "date": "2026-10-22",
+  "timezone": "Asia/Ho_Chi_Minh",
+  "branch": "Khoi/Fear/jpa-product-metadata-pilot",
+  "base_commit": "3d58a73543db3b5923289f901f9ffecba6228d23",
+  "baseline": {
+    "tests": 232,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0
+  },
+  "final": {
+    "suites": [
+      {
+        "suite": "vn.edu.fpt.paspm.AuthIntegrationTest",
+        "tests": 22,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.auth.GoogleRegistrationTest",
+        "tests": 3,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.catalog.CatalogDevSeederTest",
+        "tests": 1,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.catalog.CatalogIntegrationTest",
+        "tests": 7,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceIntegrationTest",
+        "tests": 16,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceMySqlIntegrationTest",
+        "tests": 17,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.deployment.FlywayRecoveryTest",
+        "tests": 2,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.mining.MiningHttpMySqlTest",
+        "tests": 1,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.mining.MiningInputTest",
+        "tests": 3,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.mining.MiningIntegrationTest",
+        "tests": 16,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.mining.MiningMySqlIntegrationTest",
+        "tests": 16,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.mining.SpmfMiningEngineTest",
+        "tests": 5,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.mining.SpmfRuntimeTest",
+        "tests": 8,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.persistence.PilotCloneApiIntegrationTest",
+        "tests": 5,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.persistence.PilotCloneSafetyTest",
+        "tests": 4,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.recommendation.FrozenEvidenceReaderTest",
+        "tests": 15,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.recommendation.RecommendationExpiryIntegrationTest",
+        "tests": 5,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.recommendation.RecommendationExpiryMySqlIntegrationTest",
+        "tests": 5,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.recommendation.RecommendationIntegrationTest",
+        "tests": 14,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.recommendation.RecommendationMigrationTest",
+        "tests": 2,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.recommendation.RecommendationMySqlIntegrationTest",
+        "tests": 14,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.recommendation.RecommendationRulesTest",
+        "tests": 4,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.recommendation.TransactionEvidenceTest",
+        "tests": 4,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.transaction.DatabaseTransactionSourceTest",
+        "tests": 2,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.transaction.TransactionImportIntegrationTest",
+        "tests": 6,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.transaction.TransactionImportMySqlIntegrationTest",
+        "tests": 6,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.transaction.TransactionImportSchemaTest",
+        "tests": 1,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.transaction.importing.TransactionCsvParserTest",
+        "tests": 5,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.transaction.importing.TransactionOrderValidatorTest",
+        "tests": 5,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.utility.ExpiryBinaryRulesTest",
+        "tests": 7,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.utility.RetailCatalogUtilityIntegrationTest",
+        "tests": 11,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.utility.RetailCatalogUtilityMySqlIntegrationTest",
+        "tests": 11,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.utility.UtilityCalculationTest",
+        "tests": 6,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.utility.UtilityFixtureTest",
+        "tests": 2,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.utility.UtilityIntegrationTest",
+        "tests": 12,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.utility.WeightRulesV12IntegrationTest",
+        "tests": 10,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      },
+      {
+        "suite": "vn.edu.fpt.paspm.utility.WeightRulesV12MigrationTest",
+        "tests": 1,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0
+      }
+    ],
+    "totals": {
+      "tests": 274,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0
+    }
+  },
+  "comparison": {
+    "openapi_equal_excluding_runtime_servers": true,
+    "path_count": 59,
+    "behavior_cases_equal": {
+      "create": true,
+      "get": true,
+      "duplicate": true,
+      "foreign": true,
+      "missingAuth": true,
+      "update": true,
+      "status": true,
+      "negativePrice": true,
+      "search": true
+    },
+    "baseline_measurement": {
+      "warmup": 5,
+      "notes": "Local MockMvc + real MySQL + JWT lookup, synthetic fixture; no performance guarantee",
+      "p95Millis": 14.696333,
+      "getRequestsMeasured": 25,
+      "medianMillis": 5.093875
+    },
+    "jpa_measurement": {
+      "notes": "Local MockMvc + real MySQL + JWT lookup, synthetic fixture; no performance guarantee",
+      "p95Millis": 3.905333,
+      "getRequestsMeasured": 25,
+      "medianMillis": 2.216042,
+      "warmup": 5
+    },
+    "jpa_update_prepared_statements": 3,
+    "query_note": "Hibernate statistics count JPA statements only; JDBC/auth/projection statements excluded. Product metadata write now has scoped lookup + refresh + UPDATE versus one metadata UPDATE in original JDBC path."
+  },
+  "source_mode": "READ_ONLY connection/session; configured local credential not a dedicated read-only SQL account",
+  "source_mysql_version": "8.4.11",
+  "source_versions": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5"
+  ],
+  "source_counts": {
+    "category": 0,
+    "inventory_batch": 0,
+    "mining_request": "NOT_PRESENT",
+    "mining_run": "NOT_PRESENT",
+    "product": 0,
+    "recommendation": "NOT_PRESENT",
+    "sales_transaction": "NOT_PRESENT",
+    "store": 0,
+    "transaction_item": "NOT_PRESENT",
+    "utility_matrix_item": 0,
+    "utility_snapshot": 0
+  },
+  "source_unchanged": true,
+  "private_configuration_and_migrations_unchanged": {
+    "src/main/resources/application.yml": true,
+    "src/main/resources/db/migration/V9__f05_mining_engine.sql": true,
+    "src/main/resources/db/migration/V4__f03_configuration_and_scores.sql": true,
+    "src/main/resources/db/migration/V10__f06_recommendations.sql": true,
+    "src/main/resources/db/migration/V7__f04_transaction_import_pipeline.sql": true,
+    "src/main/resources/db/migration/V3__f02_catalog_inventory_batch.sql": true,
+    "src/main/resources/db/migration/V5__f03_immutable_utility_snapshots.sql": true,
+    "src/main/resources/db/migration/V6__f01_profile_avatar.sql": true,
+    "src/main/resources/db/migration/V1__shared_store_and_f01.sql": true,
+    "src/main/resources/db/migration/V2__allow_name_after_email_verification.sql": true,
+    "src/main/resources/db/migration/V8__product_binary_expiry_priority.sql": true
+  },
+  "clone": {
+    "mode": "EMPTY_SOURCE_COPY",
+    "host": "local loopback (redacted)",
+    "schemaAlias": "dedicated disposable pilot schema",
+    "piiPolicy": "Only Store/Category/Product/Inventory selected; names/SKU/batch identifiers pseudonymized, auth/OTP/external identity excluded",
+    "sourceVersion": 5,
+    "copiedCounts": {
+      "category": 0,
+      "inventory_batch": 0,
+      "product": 0,
+      "store": 0
+    },
+    "hasActualProductRecords": false,
+    "targetVersionAfterIsolatedUpgrade": 10,
+    "initial_real_data_gate": "BLOCKED: authorized source catalog is empty",
+    "current_actual_record_test_status": "NOT RUN: source empty; simulated-data alternate approved by user"
+  },
+  "user_scope_update": "User explicitly authorized simulated food-store data on a separate migrated test DB after confirming actual populated source unavailable",
+  "real_existing_product_tests": "NOT RUN: source has zero catalog rows; simulated-data alternative expressly approved",
+  "raw_logs": "/tmp/paspm-jpa-pilot/ (temporary, not copied wholesale; may include SQL/environment details)",
+  "final_data_proof": {
+    "targetMigrations": {
+      "1": -1085163770,
+      "10": 997832546,
+      "2": -358034917,
+      "3": -880187789,
+      "4": 383713285,
+      "5": 828269243,
+      "6": -1232611612,
+      "7": -1490036030,
+      "8": -385158925,
+      "9": 1763382014
+    },
+    "sourceV1ToV5ChecksumsMatchRepositoryReference": true,
+    "targetAggregateCounts": {
+      "category": 26,
+      "inventory_batch": 8,
+      "mining_request": 0,
+      "product": 17,
+      "recommendation": 0,
+      "sales_transaction": 0,
+      "store": 30,
+      "utility_matrix_item": 0,
+      "utility_snapshot": 0
+    },
+    "targetStockSum": 52,
+    "allSourceCatalogCounts": 0,
+    "explanation": "Source catalog empty; target changes are intentionally seeded synthetic fixtures only, never actual customer rows"
+  },
+  "source_unchanged_after_all_tests_and_contract_probes": true
+}
