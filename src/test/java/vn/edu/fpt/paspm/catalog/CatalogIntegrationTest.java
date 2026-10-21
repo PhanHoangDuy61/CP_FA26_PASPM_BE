@@ -59,11 +59,14 @@ class CatalogIntegrationTest {
     }
 
     @Test
-    void catalogRequiresAuthenticationAndStoreAdminRole() throws Exception {
+    void catalogRequiresAuthenticationAndAuthorizedStoreRole() throws Exception {
         mvc.perform(get("/api/categories")).andExpect(status().isUnauthorized());
 
-        User merchandiser = active("catalog-merch-" + UUID.randomUUID() + "@example.test", "MERCHANDISER", 1);
+        User merchandiser = active("catalog-merch-" + UUID.randomUUID() + "@example.test", "MERCHANDISER", firstStoreId);
         mvc.perform(get("/api/categories").header("Authorization", "Bearer " + token(merchandiser)))
+                .andExpect(status().isOk());
+        User system = active("catalog-system-" + UUID.randomUUID() + "@example.test", "SYSTEM_ADMIN", null);
+        mvc.perform(get("/api/categories").header("Authorization", "Bearer " + token(system)))
                 .andExpect(status().isForbidden());
     }
 
@@ -286,7 +289,7 @@ class CatalogIntegrationTest {
 
     private User active(String email, int storeId) { return active(email, "STORE_ADMIN", storeId); }
 
-    private User active(String email, String role, int storeId) {
+    private User active(String email, String role, Integer storeId) {
         User user = users.createPendingUser("Catalog Test", email, role, storeId,
                 passwords.encode("TestPassword1!"), null);
         jdbc.update("UPDATE app_user SET status='ACTIVE',email_verified_at=? WHERE user_id=?",
