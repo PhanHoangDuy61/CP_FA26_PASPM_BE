@@ -11,7 +11,7 @@ For React + TypeScript. Exact DTOs and validation are in [`../api/F02_PRODUCT_IN
 
 ## Base URL and authentication
 
-Set `VITE_PASPM_API_BASE_URL` to the backend origin (default local `http://localhost:8080`; do not bake credentials into it). All F02 calls require a `STORE_ADMIN` bearer token. A valid token for other roles gets 403. The server derives Store from the account; never send `storeId` to select scope. Foreign/absent resources return 404. Swagger is `/swagger`; OpenAPI is `/v3/api-docs`.
+Set `VITE_PASPM_API_BASE_URL` to the backend origin (default local `http://localhost:8080`; do not bake credentials into it). GET `/api/products`, `/api/products/{id}`, `/api/categories` and `/api/categories/{id}` permit a `STORE_ADMIN` or `MERCHANDISER` bearer token. All other F02 calls remain `STORE_ADMIN` only; Merchandiser must not see Product/Category/inventory mutation controls. SystemAdmin/EndCustomer have no F02 management access. The server derives Store from the account; never send `storeId` to select scope. Foreign/absent resources return 404. Swagger is `/swagger`; OpenAPI is `/v3/api-docs`.
 
 ## Screen mapping and integration order
 

@@ -1,5 +1,13 @@
 # API Changelog
 
+## 2026-10-21 — Backend Retail Catalog access and current F03 Product Weight
+
+- GET Product/Category list/detail now permits Store Admin and Merchandiser in their own Store. Product/Category mutations and batch/summary APIs remain StoreAdmin-only; SystemAdmin/customer remain denied.
+- GET Product scores also permits Store Admin. Merchandiser-only PATCH retains manual S/M input and adds recalculated current E/W to its response. Added read-only expiryStatus/evidence/T, Store-local date/timezone, configVersion, lambdaValid/ready/warnings; nullable W explicitly represents incomplete current calculation. Existing routes and manual fields are preserved.
+- Reused shared F03 calculators; no new migration, new endpoint, Frontend change, inventory mutation, historical snapshot rewrite or mining execution. Unknown score inputs/calculated fields are rejected explicitly.
+- Java17 clean verify:232/232 PASS, including22 new H2/MySQL test executions and strengthened F03/F05 immutability regression. Real standalone MySQL HTTP checks32/32 PASS; interactive Swagger UI11/11 PASS. Actual runtime OpenAPI remains59 paths/73 operations.
+- [Verification and actual evidence](../requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md), [F03 API](F03_UTILITY_API.md), [role matrix](F01_F02_RBAC_MATRIX.md).
+
 ## 2026-10-20 — F06 recommendation contract and frontend handoff
 
 - Documented eight implemented Store-scoped operations: generation, list/detail, approve/reject, config GET/PUT and independent expiry-push GET. Merchandiser generates/reviews; Store Admin configures; both read.

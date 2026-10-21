@@ -1,6 +1,6 @@
 # F01 / F02 / F03 RBAC Matrix
 
-Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and F01/F02/F03 service/repository checks (2026-10-17). “Public” means the Spring security route is explicitly permitted; “authenticated” requires a valid active bearer token. An authenticated-but-wrong role is 403. F02/F03 foreign or absent Store-scoped resources are hidden as 404 after the controller role gate.
+Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and F01/F02/F03 service/repository checks (updated2026-10-21 for Catalog/current F03 reads). “Public” means the Spring security route is explicitly permitted; “authenticated” requires a valid active bearer token. An authenticated-but-wrong role is 403. F02/F03 foreign or absent Store-scoped resources are hidden as 404 after the controller role gate.
 
 | Feature | Endpoint | System Admin | Store Admin | Merchandiser | End Customer |
 |---|---|---|---|---|---|
@@ -23,13 +23,13 @@ Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and F01
 | F01 Activate/deactivate | PATCH `/api/users/{id}/status` | Allowed, global; OTP cannot be bypassed | Forbidden | Forbidden | Forbidden |
 | F01 Assign role/Store | PUT `/api/users/{id}/role` | Allowed; valid role/store scope | Forbidden | Forbidden | Forbidden |
 | F01 List roles | GET `/api/roles` | Allowed | Forbidden | Forbidden | Forbidden |
-| F02 List categories | GET `/api/categories` | Forbidden by controller role | Allowed, own Store | Forbidden | Forbidden |
-| F02 Category detail | GET `/api/categories/{id}` | Forbidden | Allowed, own Store; foreign→404 | Forbidden | Forbidden |
+| F02 List categories | GET `/api/categories` | Forbidden by controller role | Allowed, own Store | Allowed, own Store only | Forbidden |
+| F02 Category detail | GET `/api/categories/{id}` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign record→404 | Forbidden |
 | F02 Create category | POST `/api/categories` | Forbidden | Allowed, own Store | Forbidden | Forbidden |
 | F02 Update category | PUT `/api/categories/{id}` | Forbidden | Allowed, own Store; foreign→404 | Forbidden | Forbidden |
 | F02 Category status | PATCH `/api/categories/{id}/status` | Forbidden | Allowed, own Store; foreign→404 | Forbidden | Forbidden |
-| F02 List/search products | GET `/api/products` | Forbidden | Allowed, own Store only | Forbidden | Forbidden |
-| F02 Product detail | GET `/api/products/{id}` | Forbidden | Allowed, own Store; foreign→404 | Forbidden | Forbidden |
+| F02 List/search products | GET `/api/products` | Forbidden | Allowed, own Store only | Allowed, own Store only | Forbidden |
+| F02 Product detail | GET `/api/products/{id}` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign record→404 | Forbidden |
 | F02 Create product | POST `/api/products` | Forbidden | Allowed, Store inferred from token | Forbidden | Forbidden |
 | F02 Update product | PUT `/api/products/{id}` | Forbidden | Allowed, own Store; foreign→404 | Forbidden | Forbidden |
 | F02 Product status | PATCH `/api/products/{id}/status` | Forbidden | Allowed, own Store; foreign→404 | Forbidden | Forbidden |
@@ -48,7 +48,7 @@ Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and F01
 | F03 Store utility config | GET `/api/utility/config` | Forbidden | Allowed, own Store | Allowed, own Store | Forbidden |
 | F03 Weight config / selected lambda | PUT `/api/utility/config` | Forbidden | Forbidden | Allowed, own Store | Forbidden |
 | F03 Legacy Store window (deprecated, ignored by scoring) | PUT `/api/utility/config/expiry-window` | Forbidden | Allowed, own Store | Forbidden | Forbidden |
-| F03 Product score read | GET `/api/utility/products/{productId}/scores` | Forbidden | Forbidden | Allowed, own Store; foreign Product→404 | Forbidden |
+| F03 Product score read | GET `/api/utility/products/{productId}/scores` | Forbidden | Allowed, own Store | Allowed, own Store; foreign Product→404 | Forbidden |
 | F03 Product score update | PATCH `/api/utility/products/{productId}/scores` | Forbidden | Forbidden | Allowed, own Store; foreign Product→404 | Forbidden |
 | F03 Utility preview | POST `/api/utility/preview` | Forbidden | Forbidden | Allowed, own Store; F04 source required | Forbidden |
 | F03 Snapshot create | POST `/api/utility/snapshots` | Forbidden | Forbidden | Allowed, own Store; F04 source required | Forbidden |
@@ -61,9 +61,9 @@ Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and F01
 
 Role is global to the account; `STORE_ADMIN` and `MERCHANDISER` have a `store_id`, while `SYSTEM_ADMIN` and `END_CUSTOMER` are global/no Store. Store Admin and Merchandiser assignment requires an existing Store. System Admin and End Customer assignment requires no Store. Public self-registration accepts only email and always creates `END_CUSTOMER`; request fields such as `roleCode` are rejected as unknown. System Admin can invite privileged roles and assign roles/Stores through protected user management endpoints.
 
-F01 `/api/users` is global System Admin administration, so it can list/read/manage accounts across Stores. F02 does **not** grant System Admin access: every F02 controller is restricted to `STORE_ADMIN`, even though the shared StoreScope helper contains a System Admin branch. Do not infer endpoint permission from helper behavior alone.
+F01 `/api/users` is global System Admin administration, so it can list/read/manage accounts across Stores. F02 does **not** grant System Admin access: Product/Category GET list/detail permits Store Admin/Merchandiser, while all mutations and inventory endpoints stay StoreAdmin-only, even though the shared StoreScope helper contains a System Admin branch. Do not infer endpoint permission from helper behavior alone.
 
-F03 policy routes are explicitly System Admin-only. F03 Store settings use distinct permissions: Store Admin changes each Product expiryPushDays through F02 POST/PUT; the legacy Store-window endpoint is deprecated and ignored by scoring. Merchandiser changes enabled criteria, coefficients and selected lambda. Both can read the combined Store config. Product scores and Utility operations are Merchandiser-only. All Store-bound F03 calls derive Store identity from the authenticated user; request bodies and query strings cannot select another Store. A tightened lambda policy leaves existing Store configuration unchanged and is surfaced through `lambdaValid=false`; Preview/Snapshot rejects the stale lambda with 409 until a Merchandiser updates it.
+F03 policy routes are explicitly System Admin-only. F03 Store settings use distinct permissions: Store Admin changes each Product expiryPushDays through F02 POST/PUT; the legacy Store-window endpoint is deprecated and ignored by scoring. Merchandiser changes enabled criteria, coefficients and selected lambda. Both can read the combined Store config. Product score reads permit both Store roles; score PATCH and Preview/snapshot operations remain Merchandiser-only. Current score reads return E/W without transaction history; invalid current lambda yields200 with ready=false/weightValue=null rather than clamping. All Store-bound F03 calls derive Store identity from the authenticated user; request bodies and query strings cannot select another Store. A tightened lambda policy leaves existing Store configuration unchanged and is surfaced through `lambdaValid=false`; Preview/Snapshot rejects the stale lambda with 409 until a Merchandiser updates it.
 
 The database identity claims one Store and no request accepts a Store selector. Repositories scope category/product/batch reads and writes through the authenticated Store. F02 cross-Store records resolve to 404. Missing token is 401; authenticated insufficient role is 403. OpenAPI contains a global bearer scheme but Springdoc does not expose these role rules per operation; this source-derived table is authoritative for frontend navigation.
 

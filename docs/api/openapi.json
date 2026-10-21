@@ -6,7 +6,7 @@
   },
   "servers": [
     {
-      "url": "http://127.0.0.1:18086",
+      "url": "http://localhost:18087",
       "description": "Generated server url"
     }
   ],
@@ -44,12 +44,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -64,6 +58,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       },
@@ -94,12 +94,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -114,6 +108,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -146,12 +146,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -166,6 +160,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         },
         "deprecated": true
@@ -201,12 +201,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -221,6 +215,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       },
@@ -263,12 +263,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -283,6 +277,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -327,12 +327,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -347,6 +341,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -388,12 +388,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -408,6 +402,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       },
@@ -428,12 +428,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -448,6 +442,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -470,12 +470,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -490,6 +484,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       },
@@ -520,12 +520,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -540,6 +534,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -562,12 +562,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -582,6 +576,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       },
@@ -613,12 +613,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -633,6 +627,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -666,12 +666,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -686,6 +680,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       },
@@ -727,12 +727,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -747,6 +741,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -780,12 +780,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -800,6 +794,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       },
@@ -841,12 +841,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -861,6 +855,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -893,12 +893,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -913,6 +907,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -945,12 +945,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -965,6 +959,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -1040,12 +1040,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -1060,6 +1054,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       },
@@ -1091,12 +1091,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -1111,6 +1105,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -1152,12 +1152,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -1172,6 +1166,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -1215,12 +1215,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -1235,6 +1229,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -1278,12 +1278,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -1298,6 +1292,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -1331,12 +1331,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -1351,6 +1345,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -1440,12 +1440,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -1460,6 +1454,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       },
@@ -1490,12 +1490,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -1510,6 +1504,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -1546,12 +1546,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -1566,6 +1560,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       },
@@ -1607,12 +1607,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -1627,6 +1621,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -1671,12 +1671,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -1691,6 +1685,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       },
@@ -1722,12 +1722,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -1742,6 +1736,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -1767,12 +1767,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -1787,6 +1781,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       },
@@ -1817,12 +1817,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -1837,6 +1831,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -1873,12 +1873,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -1893,6 +1887,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -1929,12 +1929,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -1949,6 +1943,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -1985,12 +1985,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -2005,6 +1999,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -2041,12 +2041,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -2061,6 +2055,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -2097,12 +2097,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -2117,6 +2111,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -2153,12 +2153,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -2173,6 +2167,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -2209,12 +2209,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -2229,6 +2223,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -2265,12 +2265,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -2285,6 +2279,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -2318,12 +2318,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -2338,6 +2332,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -2371,12 +2371,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -2391,6 +2385,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -2427,12 +2427,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -2447,6 +2441,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -2483,12 +2483,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -2503,6 +2497,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -2539,12 +2539,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -2559,6 +2553,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -2568,7 +2568,8 @@
         "tags": [
           "product-score-controller"
         ],
-        "summary": "Read manual stock and seasonal scores in the authenticated Store",
+        "summary": "Read manual S/M and current Backend-calculated E/W in the authenticated Store",
+        "description": "Store Admin and Merchandiser read only their Store. Current preview uses Store-local today, not frozen historical values; unavailable Weight is null with ready=false and warnings.",
         "operationId": "get_2",
         "parameters": [
           {
@@ -2592,12 +2593,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -2612,6 +2607,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       },
@@ -2619,7 +2620,8 @@
         "tags": [
           "product-score-controller"
         ],
-        "summary": "Update supplied manual scores without editing inventory; explicit null is rejected",
+        "summary": "Merchandiser updates supplied S/M and reads recalculated current E/W",
+        "description": "Only stockPriorityScore/seasonalPriorityScore are accepted. Explicit null, calculated values and other fields are rejected. Inventory and immutable snapshots/mining results are unchanged.",
         "operationId": "patch",
         "parameters": [
           {
@@ -2653,12 +2655,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -2673,6 +2669,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -2717,12 +2719,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -2737,6 +2733,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -2780,12 +2782,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -2800,6 +2796,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -2833,12 +2835,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -2853,6 +2849,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       },
@@ -2894,12 +2896,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -2914,6 +2910,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -2957,12 +2959,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -2977,6 +2973,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -3010,12 +3012,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -3030,6 +3026,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -3083,12 +3085,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -3103,6 +3099,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -3166,12 +3168,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -3186,6 +3182,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -3221,12 +3223,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -3241,6 +3237,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -3311,12 +3313,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -3331,6 +3327,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -3364,12 +3366,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -3384,6 +3380,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -3431,12 +3433,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -3451,6 +3447,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -3484,12 +3486,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -3504,6 +3500,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -3560,12 +3562,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -3580,6 +3576,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -3607,12 +3609,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -3627,6 +3623,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -3717,12 +3719,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -3737,6 +3733,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -3771,12 +3773,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -3791,6 +3787,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -3856,12 +3858,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -3876,6 +3872,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -3921,12 +3923,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -3941,6 +3937,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -3985,12 +3987,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -4005,6 +4001,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -4038,12 +4040,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -4058,6 +4054,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -4112,12 +4114,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -4132,6 +4128,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -4165,12 +4167,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -4185,6 +4181,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -4218,12 +4220,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -4238,6 +4234,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -4274,12 +4276,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -4294,6 +4290,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -4317,12 +4319,6 @@
               }
             }
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
@@ -4337,6 +4333,12 @@
           },
           "403": {
             "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
           }
         }
       }
@@ -6077,6 +6079,7 @@
       },
       "ScorePatch": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
           "stockPriorityScore": {
             "type": "number",
@@ -6098,10 +6101,75 @@
             "format": "int32"
           },
           "stockPriorityScore": {
-            "type": "number"
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "seasonalPriorityScore": {
-            "type": "number"
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "expiryScore": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Current shared F03 expiry score; unknown required metadata may yield null",
+            "readOnly": true
+          },
+          "weightValue": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Current Backend Weight preview, not a frozen historical Weight. Null when ready=false",
+            "readOnly": true
+          },
+          "expiryStatus": {
+            "type": "string",
+            "readOnly": true
+          },
+          "expiryEvidence": {
+            "$ref": "#/components/schemas/Evidence",
+            "readOnly": true
+          },
+          "expiryPushDays": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "asOfDate": {
+            "type": "string",
+            "format": "date",
+            "readOnly": true
+          },
+          "timeZone": {
+            "type": "string",
+            "readOnly": true
+          },
+          "configVersion": {
+            "type": "integer",
+            "format": "int64",
+            "readOnly": true
+          },
+          "lambdaValid": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "ready": {
+            "type": "boolean",
+            "description": "Whether a valid current Weight can be calculated; not proof of sellable inventory",
+            "readOnly": true
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "readOnly": true
           }
         }
       },

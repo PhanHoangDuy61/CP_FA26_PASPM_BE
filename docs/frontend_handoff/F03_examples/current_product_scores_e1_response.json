@@ -1,0 +1,35 @@
+{
+  "productId": 1,
+  "stockPriorityScore": 0.8,
+  "seasonalPriorityScore": 0.9,
+  "expiryScore": 1,
+  "weightValue": 1.435,
+  "expiryStatus": "AVAILABLE",
+  "expiryEvidence": {
+    "expiryPushDays": 7,
+    "earliestEligibleExpiryDate": "2026-10-26",
+    "daysRemaining": 5,
+    "asOfDate": "2026-10-21",
+    "reason": "WITHIN_THRESHOLD",
+    "batches": [
+      {
+        "productId": 1,
+        "batchId": 1,
+        "expiryDate": "2026-10-26",
+        "remainingQuantity": 10,
+        "expiryPushDays": 7,
+        "daysRemaining": 5,
+        "pushRequired": true,
+        "pushRequiredQuantity": 10,
+        "asOfDate": "2026-10-21"
+      }
+    ]
+  },
+  "expiryPushDays": 7,
+  "asOfDate": "2026-10-21",
+  "timeZone": "Asia/Ho_Chi_Minh",
+  "configVersion": 2,
+  "lambdaValid": true,
+  "ready": true,
+  "warnings": []
+}

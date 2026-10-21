@@ -61,4 +61,4 @@ PATCH accepts only manual stockPriorityScore/seasonalPriorityScore, existing par
 
 No Frontend implementation, GitHub push/merge, F04/F05 algorithms, inventory mutation, PRODUCT_LOT, old migration edit or historical snapshot rewrite. Preserve existing dirty application.yml and unrelated documents.
 
-Before changes: 25 relevant Backend tests PASS (CatalogIntegrationTest, UtilityIntegrationTest, UtilityCalculationTest); existing FE25 tests and FE build also PASS, solely baseline checks before scope was narrowed. No new feature tests or API changes have been implemented yet.
+Before changes: 25 relevant Backend tests PASS (CatalogIntegrationTest, UtilityIntegrationTest, UtilityCalculationTest); existing FE25 tests and FE build also PASS, solely baseline checks before scope was narrowed. At that baseline, no new feature tests or API changes had been implemented. Final results are recorded in [verification](../../requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md).

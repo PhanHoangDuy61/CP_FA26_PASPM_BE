@@ -9,3 +9,7 @@ utility_config_update_request.json, lambda policy and manual score requests reta
 legacy_linear_snapshot_response.json and legacy_linear_matrix_response.json preserve the older synthetic F03_LINEAR_V1 response shapes/decimal values solely as historical-read examples. They are not current calculation fixtures and must not drive new E calculations. New fields such as expiryEvidence/timeZone may be absent in these older shapes; current reads expose null when storage lacks them.
 
 See ../F03_HANDOFF.md and ../../api/F03_UTILITY_API.md for full current contracts and nullability.
+
+## Current Product read model — 2026-10-21
+
+`current_product_scores_e1_response.json`, `current_product_scores_e0_response.json` and `current_product_scores_stale_lambda_response.json` are actual standalone MySQL GET/PATCH results from the Backend Catalog integration verification. They demonstrate E1/W1.435, E0/W1.335 and an out-of-policy lambda (Wnull/readyfalse), using current Store-local dates and no transaction requirement. They are not frozen snapshot responses. See ../../requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md for separate HTTP and interactive Swagger UI evidence. No credentials are included.
