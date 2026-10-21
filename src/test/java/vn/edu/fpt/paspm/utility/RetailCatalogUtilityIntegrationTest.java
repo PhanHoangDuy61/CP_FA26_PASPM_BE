@@ -93,6 +93,115 @@ class RetailCatalogUtilityIntegrationTest {
         }
     }
 
+    @Test void currentScoresUseBackendFormulaWithoutTransactionHistory() throws Exception {
+        assertEquals(0,jdbc.queryForObject("SELECT COUNT(*) FROM transaction_item WHERE product_id=?",Integer.class,product));
+        JsonNode current=body(getJson(scorePath(),merchant).andExpect(status().isOk())
+            .andExpect(jsonPath("$.expiryScore").value(1)).andExpect(jsonPath("$.weightValue").value(1.435))
+            .andExpect(jsonPath("$.ready").value(true)).andExpect(jsonPath("$.lambdaValid").value(true)));
+        assertEquals(today.toString(),current.path("asOfDate").asText());
+        assertEquals(zone.id(),current.path("timeZone").asText());
+        assertEquals(7,current.path("expiryPushDays").asInt());
+        assertEquals(today.plusDays(5).toString(),current.path("expiryEvidence").path("earliestEligibleExpiryDate").asText());
+        assertEquals(body(getJson("/api/utility/config",merchant)).path("config").path("version"),current.path("configVersion"));
+        jdbc.update("UPDATE product SET expiry_push_days=3 WHERE product_id=?",product);
+        getJson(scorePath(),merchant).andExpect(status().isOk()).andExpect(jsonPath("$.expiryScore").value(0))
+            .andExpect(jsonPath("$.weightValue").value(1.335));
+    }
+
+    @Test void partialBoundaryWritesRecalculateButNeverChangeInventory() throws Exception {
+        var inventory=jdbc.queryForList("SELECT * FROM inventory_batch WHERE product_id=?",product);
+        scores(merchant,"{\"stockPriorityScore\":0}").andExpect(status().isOk())
+            .andExpect(jsonPath("$.seasonalPriorityScore").value(0.9)).andExpect(jsonPath("$.weightValue").value(1.235));
+        scores(merchant,"{\"seasonalPriorityScore\":1}").andExpect(status().isOk())
+            .andExpect(jsonPath("$.stockPriorityScore").value(0)).andExpect(jsonPath("$.weightValue").value(1.25));
+        scores(merchant,"{\"stockPriorityScore\":1,\"seasonalPriorityScore\":0}").andExpect(status().isOk())
+            .andExpect(jsonPath("$.weightValue").value(1.35));
+        getJson(scorePath(),admin).andExpect(status().isOk()).andExpect(jsonPath("$.stockPriorityScore").value(1))
+            .andExpect(jsonPath("$.seasonalPriorityScore").value(0)).andExpect(jsonPath("$.weightValue").value(1.35));
+        assertEquals(inventory,jdbc.queryForList("SELECT * FROM inventory_batch WHERE product_id=?",product));
+    }
+
+    @Test void scoreReadAndWritePermissionsStaySeparatedAndStoreScoped() throws Exception {
+        getJson(scorePath(),admin).andExpect(status().isOk());
+        mvc.perform(get(scorePath())).andExpect(status().isUnauthorized());
+        getJson(scorePath(),"invalid").andExpect(status().isUnauthorized());
+        getJson(scorePath(),foreign).andExpect(status().isNotFound());
+        scores(foreign,"{\"stockPriorityScore\":0.1}").andExpect(status().isNotFound());
+        for(String who:new String[]{system,customer}) {
+            getJson(scorePath(),who).andExpect(status().isForbidden());
+            scores(who,"{\"stockPriorityScore\":0.1}").andExpect(status().isForbidden());
+        }
+        scores(admin,"{\"stockPriorityScore\":0.1}").andExpect(status().isForbidden());
+        putJson("/api/utility/config",admin,WEIGHTS).andExpect(status().isForbidden());
+        putJson("/api/system/utility/lambda-policy",merchant,"{\"lambdaMin\":0,\"lambdaMax\":1}").andExpect(status().isForbidden());
+    }
+
+    @Test void scorePatchRejectsInvalidOrCalculatedInputsWithoutChangingSavedValues() throws Exception {
+        var before=jdbc.queryForList("SELECT * FROM product WHERE product_id=?",product);
+        for(String payload:new String[]{"{}","{\"stockPriorityScore\":null}","{\"stockPriorityScore\":-0.1}",
+            "{\"seasonalPriorityScore\":1.1}","{\"stockPriorityScore\":0.1234567}",
+            "{\"stockPriorityScore\":0.2,\"expiryScore\":1}","{\"stockPriorityScore\":0.2,\"weightValue\":999}",
+            "{\"stockPriorityScore\":0.2,\"stockQuantity\":99}","{\"stockPriorityScore\":0.2,\"expiryPushDays\":99}",
+            "{\"stockPriorityScore\":0.2,\"storeId\":"+other+"}"}) {
+            scores(merchant,payload).andExpect(status().isBadRequest());
+        }
+        assertEquals(before,jdbc.queryForList("SELECT * FROM product WHERE product_id=?",product));
+    }
+
+    @Test void missingEnabledInputsReturnExplicitIncompleteCurrentPreview() throws Exception {
+        jdbc.update("UPDATE inventory_batch SET expiry_date=NULL WHERE product_id=?",product);
+        JsonNode result=body(getJson(scorePath(),merchant).andExpect(status().isOk())
+            .andExpect(jsonPath("$.expiryStatus").value("MISSING_METADATA")).andExpect(jsonPath("$.ready").value(false)));
+        assertTrue(result.has("expiryScore")&&result.path("expiryScore").isNull());
+        assertTrue(result.has("weightValue")&&result.path("weightValue").isNull());
+        assertFalse(result.path("warnings").isEmpty());
+        jdbc.update("UPDATE inventory_batch SET expiry_date=? WHERE product_id=?",today.plusDays(5),product);
+        for(String column:new String[]{"stock_priority_score","seasonal_priority_score"}) {
+            jdbc.update("UPDATE product SET "+column+"=NULL WHERE product_id=?",product);
+            JsonNode missing=body(getJson(scorePath(),merchant).andExpect(status().isOk()).andExpect(jsonPath("$.ready").value(false)));
+            assertTrue(missing.has("weightValue")&&missing.path("weightValue").isNull());
+            assertFalse(missing.path("warnings").isEmpty());
+            jdbc.update("UPDATE product SET stock_priority_score=0.8,seasonal_priority_score=0.9 WHERE product_id=?",product);
+        }
+    }
+
+    @Test void sharedExpiryAndDisabledCriteriaRulesRemainIntact() throws Exception {
+        for(String change:new String[]{"status='BLOCKED'","status='ACTIVE',remaining_quantity=0","remaining_quantity=10,expiry_date='"+today+"'"}) {
+            jdbc.update("UPDATE inventory_batch SET "+change+" WHERE product_id=?",product);
+            getJson(scorePath(),merchant).andExpect(status().isOk()).andExpect(jsonPath("$.expiryStatus").value("NO_SELLABLE_BATCH"))
+                .andExpect(jsonPath("$.expiryScore").value(0)).andExpect(jsonPath("$.weightValue").value(1.335));
+        }
+        jdbc.update("UPDATE product SET requires_expiry=FALSE WHERE product_id=?",product);
+        getJson(scorePath(),merchant).andExpect(jsonPath("$.expiryStatus").value("NOT_APPLICABLE")).andExpect(jsonPath("$.expiryScore").value(0));
+        jdbc.update("UPDATE product SET requires_expiry=TRUE,status='INACTIVE' WHERE product_id=?",product);
+        getJson(scorePath(),merchant).andExpect(jsonPath("$.expiryStatus").value("NO_SELLABLE_BATCH"));
+        jdbc.update("UPDATE product SET stock_priority_score=NULL,seasonal_priority_score=NULL WHERE product_id=?",product);
+        putJson("/api/utility/config",merchant,WEIGHTS.replace("true","false")).andExpect(status().isOk());
+        getJson(scorePath(),merchant).andExpect(jsonPath("$.weightValue").value(1)).andExpect(jsonPath("$.ready").value(true));
+    }
+
+    @Test void policyChangesInvalidateCurrentWeightWithoutClampingStoredLambda() throws Exception {
+        putJson("/api/system/utility/lambda-policy",system,"{\"lambdaMin\":0,\"lambdaMax\":0.1}").andExpect(status().isOk());
+        JsonNode result=body(getJson(scorePath(),merchant).andExpect(status().isOk())
+            .andExpect(jsonPath("$.lambdaValid").value(false)).andExpect(jsonPath("$.ready").value(false)));
+        assertTrue(result.has("weightValue")&&result.path("weightValue").isNull());
+        assertFalse(result.path("warnings").isEmpty());
+        getJson("/api/utility/config",merchant).andExpect(jsonPath("$.config.lambda").value(0.5));
+        putJson("/api/utility/config",merchant,WEIGHTS).andExpect(status().isBadRequest());
+        putJson("/api/utility/config",merchant,WEIGHTS.replace("\"lambda\":0.5","\"lambda\":0.1")).andExpect(status().isOk());
+        getJson(scorePath(),merchant).andExpect(jsonPath("$.ready").value(true)).andExpect(jsonPath("$.weightValue").value(1.087));
+    }
+
+    @Test void openApiMarksCalculatedFieldsReadOnlyAndNullable() throws Exception {
+        JsonNode schemas=body(mvc.perform(get("/v3/api-docs")).andExpect(status().isOk())).path("components").path("schemas");
+        JsonNode fields=schemas.path("Scores").path("properties");
+        for(String field:new String[]{"expiryScore","weightValue","expiryStatus","expiryEvidence","expiryPushDays","asOfDate","timeZone","configVersion","lambdaValid","ready","warnings"})
+            assertTrue(fields.path(field).path("readOnly").asBoolean(),field);
+        for(String field:new String[]{"stockPriorityScore","seasonalPriorityScore","expiryScore","weightValue"})
+            assertTrue(fields.path(field).path("type").toString().contains("null"),field);
+        assertFalse(schemas.path("ScorePatch").path("additionalProperties").asBoolean(true));
+    }
+
     ResultActions getJson(String path,String token) throws Exception {return mvc.perform(get(path).header("Authorization","Bearer "+token));}
     ResultActions putJson(String path,String token,String body) throws Exception {return mvc.perform(put(path).header("Authorization","Bearer "+token).contentType(MediaType.APPLICATION_JSON).content(body));}
     ResultActions scores(String token,String body) throws Exception {return mvc.perform(patch("/api/utility/products/"+product+"/scores").header("Authorization","Bearer "+token).contentType(MediaType.APPLICATION_JSON).content(body));}

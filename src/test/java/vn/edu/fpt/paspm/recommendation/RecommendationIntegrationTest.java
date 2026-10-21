@@ -194,6 +194,24 @@ class RecommendationIntegrationTest {
         String config=jdbc.queryForObject("SELECT config_snapshot FROM utility_snapshot WHERE snapshot_id=?",String.class,snapshot);
         String matrix=jdbc.queryForObject("SELECT matrix_hash FROM utility_snapshot WHERE snapshot_id=?",String.class,snapshot);
         var before=body(generate(run,merchant));long id=ids(before).get(0);JsonNode candidate=body(getJson("/api/recommendations/"+id,merchant));
+        var immutable=new LinkedHashMap<String,String>();
+        for(String table:List.of("utility_snapshot","utility_matrix_item","mining_request","mining_run","high_utility_pattern","pattern_item","sales_transaction","transaction_item")) {
+            String query="SELECT * FROM "+table+(table.equals("utility_matrix_item")?
+                " WHERE snapshot_id IN (SELECT snapshot_id FROM utility_snapshot WHERE store_id=?)":" WHERE store_id=?");
+            immutable.put(query,json.writeValueAsString(jdbc.queryForList(query,store)));
+        }
+        String inventory=json.writeValueAsString(jdbc.queryForList("SELECT * FROM inventory_batch WHERE product_id IN (SELECT product_id FROM product WHERE store_id=?)",store));
+        for(int product:products)
+            mvc.perform(patch("/api/utility/products/"+product+"/scores").header("Authorization","Bearer "+merchant)
+                .contentType(MediaType.APPLICATION_JSON).content("{\"stockPriorityScore\":0.2,\"seasonalPriorityScore\":0.1}"))
+                .andExpect(status().isOk());
+        mvc.perform(put("/api/utility/config").header("Authorization","Bearer "+merchant).contentType(MediaType.APPLICATION_JSON)
+            .content("{\"enableStock\":true,\"enableExpiry\":false,\"enableSeason\":true,\"alpha\":0.7,\"beta\":0,\"gamma\":0.3,\"lambda\":0.5}"))
+            .andExpect(status().isOk());
+        getJson("/api/utility/products/"+products.get(0)+"/scores",merchant).andExpect(status().isOk()).andExpect(jsonPath("$.weightValue").value(1.085));
+        for(var entry:immutable.entrySet())
+            assertEquals(entry.getValue(),json.writeValueAsString(jdbc.queryForList(entry.getKey(),store)),entry.getKey());
+        assertEquals(inventory,json.writeValueAsString(jdbc.queryForList("SELECT * FROM inventory_batch WHERE product_id IN (SELECT product_id FROM product WHERE store_id=?)",store)));
         jdbc.update("UPDATE transaction_item SET quantity=99,unit_price=99,unit_cost=1 WHERE store_id=?",store);
         jdbc.update("UPDATE product SET selling_price=999,cost_price=10,stock_priority_score=0.9,seasonal_priority_score=0.8,expiry_push_days=99 WHERE store_id=?",store);
         generate(run,merchant).andExpect(status().isOk()).andExpect(jsonPath("$.createdCount").value(0));

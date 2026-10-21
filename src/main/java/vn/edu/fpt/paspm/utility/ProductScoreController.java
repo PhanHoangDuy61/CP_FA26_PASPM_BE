@@ -14,8 +14,11 @@ import vn.edu.fpt.paspm.utility.UtilityContracts.*;
 public class ProductScoreController {
     private final ProductScoreService service;
     public ProductScoreController(ProductScoreService service) { this.service=service; }
-    @GetMapping @Operation(summary="Read manual stock and seasonal scores in the authenticated Store")
+    @GetMapping @PreAuthorize("hasAnyRole('STORE_ADMIN','MERCHANDISER')")
+    @Operation(summary="Read manual S/M and current Backend-calculated E/W in the authenticated Store",
+        description="Store Admin and Merchandiser read only their Store. Current preview uses Store-local today, not frozen historical values; unavailable Weight is null with ready=false and warnings.")
     public Scores get(@AuthenticationPrincipal Jwt jwt,@PathVariable int productId) { return service.get(jwt,productId); }
-    @PatchMapping @Operation(summary="Update supplied manual scores without editing inventory; explicit null is rejected")
+    @PatchMapping @Operation(summary="Merchandiser updates supplied S/M and reads recalculated current E/W",
+        description="Only stockPriorityScore/seasonalPriorityScore are accepted. Explicit null, calculated values and other fields are rejected. Inventory and immutable snapshots/mining results are unchanged.")
     public Scores patch(@AuthenticationPrincipal Jwt jwt,@PathVariable int productId,@Valid @RequestBody ScorePatch request) { return service.patch(jwt,productId,request); }
 }
