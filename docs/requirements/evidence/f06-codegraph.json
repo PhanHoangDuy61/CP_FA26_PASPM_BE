@@ -1,0 +1,22 @@
+{
+  "before": {
+    "files": 798,
+    "nodes": 10150,
+    "edges": 19344
+  },
+  "after": {
+    "files": 818,
+    "nodes": 10607,
+    "edges": 20700,
+    "routes": 76
+  },
+  "cliVersion": "0.9.9",
+  "verifiedNewSymbols": [
+    "RecommendationService",
+    "FrozenEvidenceReader",
+    "RecommendationExpiryController"
+  ],
+  "method": "CodeGraph MCP status/search/explore; existing watcher incrementally synchronized code; no new global config or tools installed",
+  "frontend": "FE/FE_Kien existing graph symbols inspected read only",
+  "limitations": "Graph relationships are structural; behavior established by actual tests and Swagger execution."
+}

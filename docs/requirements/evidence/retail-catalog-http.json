@@ -1,0 +1,892 @@
+[
+  {
+    "id": "HTTP01",
+    "case": "No token",
+    "method": "GET",
+    "endpoint": "/api/products",
+    "role": "unauthenticated",
+    "request": null,
+    "expectedStatus": 401,
+    "actualStatus": 401,
+    "response": "",
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:28.988297+07:00"
+  },
+  {
+    "id": "HTTP02",
+    "case": "Invalid token",
+    "method": "GET",
+    "endpoint": "/api/products",
+    "role": "invalid",
+    "request": null,
+    "expectedStatus": 401,
+    "actualStatus": 401,
+    "response": "",
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:28.990643+07:00"
+  },
+  {
+    "id": "HTTP03",
+    "case": "Own Store catalog",
+    "method": "GET",
+    "endpoint": "/api/products",
+    "role": "merchandiser",
+    "request": null,
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "response": {
+      "content": [
+        {
+          "id": 1,
+          "sku": "RETAIL-MILK",
+          "name": "Retail QA Milk",
+          "unit": "bottle",
+          "requiresExpiry": true,
+          "category": {
+            "id": 1,
+            "name": "Dairy",
+            "status": "ACTIVE"
+          },
+          "sellingPrice": 100.0,
+          "costPrice": 20.0,
+          "status": "ACTIVE",
+          "stockQuantity": 10,
+          "expiryPushDays": 7
+        }
+      ],
+      "page": 0,
+      "pageSize": 20,
+      "totalElements": 1,
+      "totalPages": 1
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:29.004209+07:00"
+  },
+  {
+    "id": "HTTP04",
+    "case": "Own Store categories",
+    "method": "GET",
+    "endpoint": "/api/categories",
+    "role": "merchandiser",
+    "request": null,
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "response": [
+      {
+        "id": 1,
+        "name": "Dairy",
+        "status": "ACTIVE"
+      }
+    ],
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:29.008167+07:00"
+  },
+  {
+    "id": "HTTP05",
+    "case": "Foreign Product",
+    "method": "GET",
+    "endpoint": "/api/products/2",
+    "role": "merchandiser",
+    "request": null,
+    "expectedStatus": 404,
+    "actualStatus": 404,
+    "response": {
+      "error": "Product not found"
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:29.012722+07:00"
+  },
+  {
+    "id": "HTTP06",
+    "case": "Foreign Category",
+    "method": "GET",
+    "endpoint": "/api/categories/2",
+    "role": "merchandiser",
+    "request": null,
+    "expectedStatus": 404,
+    "actualStatus": 404,
+    "response": {
+      "error": "Category not found"
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:29.016169+07:00"
+  },
+  {
+    "id": "HTTP07",
+    "case": "Merchant cannot update F02 Product",
+    "method": "PUT",
+    "endpoint": "/api/products/1",
+    "role": "merchandiser",
+    "request": {
+      "sku": "RETAIL-MILK",
+      "name": "Retail QA Milk",
+      "categoryId": 1,
+      "unit": "bottle",
+      "requiresExpiry": true,
+      "sellingPrice": 100,
+      "costPrice": 20,
+      "status": "ACTIVE",
+      "expiryPushDays": 3
+    },
+    "expectedStatus": 403,
+    "actualStatus": 403,
+    "response": {
+      "error": "Forbidden"
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:29.024998+07:00"
+  },
+  {
+    "id": "HTTP08",
+    "case": "Merchant configures Store coefficients",
+    "method": "PUT",
+    "endpoint": "/api/utility/config",
+    "role": "merchandiser",
+    "request": {
+      "enableStock": true,
+      "enableExpiry": true,
+      "enableSeason": true,
+      "alpha": 0.5,
+      "beta": 0.2,
+      "gamma": 0.3,
+      "lambda": 0.5
+    },
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "response": {
+      "config": {
+        "enableStock": true,
+        "enableExpiry": true,
+        "enableSeason": true,
+        "alpha": 0.5,
+        "beta": 0.2,
+        "gamma": 0.3,
+        "lambda": 0.5,
+        "expiryWindowDays": null,
+        "version": 2,
+        "scoringVersion": "EXPIRY_PRODUCT_EARLIEST_BATCH_BINARY_V1"
+      },
+      "lambdaPolicy": {
+        "lambdaMin": 0,
+        "lambdaMax": 0.5,
+        "version": 1
+      },
+      "lambdaValid": true
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:29.038739+07:00"
+  },
+  {
+    "id": "HTTP09",
+    "case": "Current E1 and W1.435 without transactions",
+    "method": "GET",
+    "endpoint": "/api/utility/products/1/scores",
+    "role": "merchandiser",
+    "request": null,
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "response": {
+      "productId": 1,
+      "stockPriorityScore": 0.8,
+      "seasonalPriorityScore": 0.9,
+      "expiryScore": 1,
+      "weightValue": 1.435,
+      "expiryStatus": "AVAILABLE",
+      "expiryEvidence": {
+        "expiryPushDays": 7,
+        "earliestEligibleExpiryDate": "2026-10-26",
+        "daysRemaining": 5,
+        "asOfDate": "2026-10-21",
+        "reason": "WITHIN_THRESHOLD",
+        "batches": [
+          {
+            "productId": 1,
+            "batchId": 1,
+            "expiryDate": "2026-10-26",
+            "remainingQuantity": 10,
+            "expiryPushDays": 7,
+            "daysRemaining": 5,
+            "pushRequired": true,
+            "pushRequiredQuantity": 10,
+            "asOfDate": "2026-10-21"
+          }
+        ]
+      },
+      "expiryPushDays": 7,
+      "asOfDate": "2026-10-21",
+      "timeZone": "Asia/Ho_Chi_Minh",
+      "configVersion": 2,
+      "lambdaValid": true,
+      "ready": true,
+      "warnings": []
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:29.047594+07:00"
+  },
+  {
+    "id": "HTTP10",
+    "case": "Store Admin can read current scores",
+    "method": "GET",
+    "endpoint": "/api/utility/products/1/scores",
+    "role": "store_admin",
+    "request": null,
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "response": {
+      "productId": 1,
+      "stockPriorityScore": 0.8,
+      "seasonalPriorityScore": 0.9,
+      "expiryScore": 1,
+      "weightValue": 1.435,
+      "expiryStatus": "AVAILABLE",
+      "expiryEvidence": {
+        "expiryPushDays": 7,
+        "earliestEligibleExpiryDate": "2026-10-26",
+        "daysRemaining": 5,
+        "asOfDate": "2026-10-21",
+        "reason": "WITHIN_THRESHOLD",
+        "batches": [
+          {
+            "productId": 1,
+            "batchId": 1,
+            "expiryDate": "2026-10-26",
+            "remainingQuantity": 10,
+            "expiryPushDays": 7,
+            "daysRemaining": 5,
+            "pushRequired": true,
+            "pushRequiredQuantity": 10,
+            "asOfDate": "2026-10-21"
+          }
+        ]
+      },
+      "expiryPushDays": 7,
+      "asOfDate": "2026-10-21",
+      "timeZone": "Asia/Ho_Chi_Minh",
+      "configVersion": 2,
+      "lambdaValid": true,
+      "ready": true,
+      "warnings": []
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:29.052165+07:00"
+  },
+  {
+    "id": "HTTP11",
+    "case": "S save recalculates W",
+    "method": "PATCH",
+    "endpoint": "/api/utility/products/1/scores",
+    "role": "merchandiser",
+    "request": {
+      "stockPriorityScore": 0.5
+    },
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "response": {
+      "productId": 1,
+      "stockPriorityScore": 0.5,
+      "seasonalPriorityScore": 0.9,
+      "expiryScore": 1,
+      "weightValue": 1.36,
+      "expiryStatus": "AVAILABLE",
+      "expiryEvidence": {
+        "expiryPushDays": 7,
+        "earliestEligibleExpiryDate": "2026-10-26",
+        "daysRemaining": 5,
+        "asOfDate": "2026-10-21",
+        "reason": "WITHIN_THRESHOLD",
+        "batches": [
+          {
+            "productId": 1,
+            "batchId": 1,
+            "expiryDate": "2026-10-26",
+            "remainingQuantity": 10,
+            "expiryPushDays": 7,
+            "daysRemaining": 5,
+            "pushRequired": true,
+            "pushRequiredQuantity": 10,
+            "asOfDate": "2026-10-21"
+          }
+        ]
+      },
+      "expiryPushDays": 7,
+      "asOfDate": "2026-10-21",
+      "timeZone": "Asia/Ho_Chi_Minh",
+      "configVersion": 2,
+      "lambdaValid": true,
+      "ready": true,
+      "warnings": []
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:29.061244+07:00"
+  },
+  {
+    "id": "HTTP12",
+    "case": "GET persists S and W",
+    "method": "GET",
+    "endpoint": "/api/utility/products/1/scores",
+    "role": "merchandiser",
+    "request": null,
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "response": {
+      "productId": 1,
+      "stockPriorityScore": 0.5,
+      "seasonalPriorityScore": 0.9,
+      "expiryScore": 1,
+      "weightValue": 1.36,
+      "expiryStatus": "AVAILABLE",
+      "expiryEvidence": {
+        "expiryPushDays": 7,
+        "earliestEligibleExpiryDate": "2026-10-26",
+        "daysRemaining": 5,
+        "asOfDate": "2026-10-21",
+        "reason": "WITHIN_THRESHOLD",
+        "batches": [
+          {
+            "productId": 1,
+            "batchId": 1,
+            "expiryDate": "2026-10-26",
+            "remainingQuantity": 10,
+            "expiryPushDays": 7,
+            "daysRemaining": 5,
+            "pushRequired": true,
+            "pushRequiredQuantity": 10,
+            "asOfDate": "2026-10-21"
+          }
+        ]
+      },
+      "expiryPushDays": 7,
+      "asOfDate": "2026-10-21",
+      "timeZone": "Asia/Ho_Chi_Minh",
+      "configVersion": 2,
+      "lambdaValid": true,
+      "ready": true,
+      "warnings": []
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:29.065061+07:00"
+  },
+  {
+    "id": "HTTP13",
+    "case": "E is not a manual input",
+    "method": "PATCH",
+    "endpoint": "/api/utility/products/1/scores",
+    "role": "merchandiser",
+    "request": {
+      "stockPriorityScore": 0.8,
+      "expiryScore": 1
+    },
+    "expectedStatus": 400,
+    "actualStatus": 400,
+    "response": {
+      "error": "Invalid request fields"
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:29.067737+07:00"
+  },
+  {
+    "id": "HTTP14",
+    "case": "Store Admin cannot edit S",
+    "method": "PATCH",
+    "endpoint": "/api/utility/products/1/scores",
+    "role": "store_admin",
+    "request": {
+      "stockPriorityScore": 0.1
+    },
+    "expectedStatus": 403,
+    "actualStatus": 403,
+    "response": {
+      "error": "Forbidden"
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:29.070262+07:00"
+  },
+  {
+    "id": "HTTP15",
+    "case": "Foreign merchant cannot edit S",
+    "method": "PATCH",
+    "endpoint": "/api/utility/products/1/scores",
+    "role": "foreign",
+    "request": {
+      "stockPriorityScore": 0.1
+    },
+    "expectedStatus": 404,
+    "actualStatus": 404,
+    "response": {
+      "error": "Product not found"
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:29.074256+07:00"
+  },
+  {
+    "id": "HTTP16",
+    "case": "Negative score rejected",
+    "method": "PATCH",
+    "endpoint": "/api/utility/products/1/scores",
+    "role": "merchandiser",
+    "request": {
+      "stockPriorityScore": -0.1
+    },
+    "expectedStatus": 400,
+    "actualStatus": 400,
+    "response": {
+      "error": "Invalid request fields"
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:29.092329+07:00"
+  },
+  {
+    "id": "HTTP17",
+    "case": "System Admin no Store score read",
+    "method": "GET",
+    "endpoint": "/api/utility/products/1/scores",
+    "role": "system_admin",
+    "request": null,
+    "expectedStatus": 403,
+    "actualStatus": 403,
+    "response": {
+      "error": "Forbidden"
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:29.094959+07:00"
+  },
+  {
+    "id": "HTTP18",
+    "case": "Customer no Store score read",
+    "method": "GET",
+    "endpoint": "/api/utility/products/1/scores",
+    "role": "end_customer",
+    "request": null,
+    "expectedStatus": 403,
+    "actualStatus": 403,
+    "response": {
+      "error": "Forbidden"
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:29.097231+07:00"
+  },
+  {
+    "id": "HTTP19",
+    "case": "Store Admin controls Product T",
+    "method": "PUT",
+    "endpoint": "/api/products/1",
+    "role": "store_admin",
+    "request": {
+      "sku": "RETAIL-MILK",
+      "name": "Retail QA Milk",
+      "categoryId": 1,
+      "unit": "bottle",
+      "requiresExpiry": true,
+      "sellingPrice": 100,
+      "costPrice": 20,
+      "status": "ACTIVE",
+      "expiryPushDays": 3
+    },
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "response": {
+      "id": 1,
+      "sku": "RETAIL-MILK",
+      "name": "Retail QA Milk",
+      "unit": "bottle",
+      "requiresExpiry": true,
+      "category": {
+        "id": 1,
+        "name": "Dairy",
+        "status": "ACTIVE"
+      },
+      "sellingPrice": 100.0,
+      "costPrice": 20.0,
+      "status": "ACTIVE",
+      "stockQuantity": 10,
+      "expiryPushDays": 3
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:29.102304+07:00"
+  },
+  {
+    "id": "HTTP20",
+    "case": "Current E0 and W1.335 after manual save",
+    "method": "PATCH",
+    "endpoint": "/api/utility/products/1/scores",
+    "role": "merchandiser",
+    "request": {
+      "stockPriorityScore": 0.8,
+      "seasonalPriorityScore": 0.9
+    },
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "response": {
+      "productId": 1,
+      "stockPriorityScore": 0.8,
+      "seasonalPriorityScore": 0.9,
+      "expiryScore": 0,
+      "weightValue": 1.335,
+      "expiryStatus": "AVAILABLE",
+      "expiryEvidence": {
+        "expiryPushDays": 3,
+        "earliestEligibleExpiryDate": "2026-10-26",
+        "daysRemaining": 5,
+        "asOfDate": "2026-10-21",
+        "reason": "OUTSIDE_THRESHOLD",
+        "batches": [
+          {
+            "productId": 1,
+            "batchId": 1,
+            "expiryDate": "2026-10-26",
+            "remainingQuantity": 10,
+            "expiryPushDays": 3,
+            "daysRemaining": 5,
+            "pushRequired": false,
+            "pushRequiredQuantity": 0,
+            "asOfDate": "2026-10-21"
+          }
+        ]
+      },
+      "expiryPushDays": 3,
+      "asOfDate": "2026-10-21",
+      "timeZone": "Asia/Ho_Chi_Minh",
+      "configVersion": 2,
+      "lambdaValid": true,
+      "ready": true,
+      "warnings": []
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:29.108027+07:00"
+  },
+  {
+    "id": "HTTP21",
+    "case": "GET persists E0/W1.335",
+    "method": "GET",
+    "endpoint": "/api/utility/products/1/scores",
+    "role": "merchandiser",
+    "request": null,
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "response": {
+      "productId": 1,
+      "stockPriorityScore": 0.8,
+      "seasonalPriorityScore": 0.9,
+      "expiryScore": 0,
+      "weightValue": 1.335,
+      "expiryStatus": "AVAILABLE",
+      "expiryEvidence": {
+        "expiryPushDays": 3,
+        "earliestEligibleExpiryDate": "2026-10-26",
+        "daysRemaining": 5,
+        "asOfDate": "2026-10-21",
+        "reason": "OUTSIDE_THRESHOLD",
+        "batches": [
+          {
+            "productId": 1,
+            "batchId": 1,
+            "expiryDate": "2026-10-26",
+            "remainingQuantity": 10,
+            "expiryPushDays": 3,
+            "daysRemaining": 5,
+            "pushRequired": false,
+            "pushRequiredQuantity": 0,
+            "asOfDate": "2026-10-21"
+          }
+        ]
+      },
+      "expiryPushDays": 3,
+      "asOfDate": "2026-10-21",
+      "timeZone": "Asia/Ho_Chi_Minh",
+      "configVersion": 2,
+      "lambdaValid": true,
+      "ready": true,
+      "warnings": []
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:29.112267+07:00"
+  },
+  {
+    "id": "HTTP22",
+    "case": "Catalog stock remains10",
+    "method": "GET",
+    "endpoint": "/api/products/1",
+    "role": "merchandiser",
+    "request": null,
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "response": {
+      "id": 1,
+      "sku": "RETAIL-MILK",
+      "name": "Retail QA Milk",
+      "unit": "bottle",
+      "requiresExpiry": true,
+      "category": {
+        "id": 1,
+        "name": "Dairy",
+        "status": "ACTIVE"
+      },
+      "sellingPrice": 100.0,
+      "costPrice": 20.0,
+      "status": "ACTIVE",
+      "stockQuantity": 10,
+      "expiryPushDays": 3
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:29.114739+07:00"
+  },
+  {
+    "id": "HTTP23",
+    "case": "Merchant cannot change lambda bounds",
+    "method": "PUT",
+    "endpoint": "/api/system/utility/lambda-policy",
+    "role": "merchandiser",
+    "request": {
+      "lambdaMin": 0,
+      "lambdaMax": 1
+    },
+    "expectedStatus": 403,
+    "actualStatus": 403,
+    "response": {
+      "error": "Forbidden"
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:29.118623+07:00"
+  },
+  {
+    "id": "HTTP24",
+    "case": "Coefficient sum invalid",
+    "method": "PUT",
+    "endpoint": "/api/utility/config",
+    "role": "merchandiser",
+    "request": {
+      "enableStock": true,
+      "enableExpiry": true,
+      "enableSeason": true,
+      "alpha": 0.1,
+      "beta": 0.2,
+      "gamma": 0.3,
+      "lambda": 0.5
+    },
+    "expectedStatus": 400,
+    "actualStatus": 400,
+    "response": {
+      "error": "Enabled coefficients must sum exactly to 1"
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:29.122826+07:00"
+  },
+  {
+    "id": "HTTP25",
+    "case": "Lambda above policy rejected",
+    "method": "PUT",
+    "endpoint": "/api/utility/config",
+    "role": "merchandiser",
+    "request": {
+      "enableStock": true,
+      "enableExpiry": true,
+      "enableSeason": true,
+      "alpha": 0.5,
+      "beta": 0.2,
+      "gamma": 0.3,
+      "lambda": 0.6
+    },
+    "expectedStatus": 400,
+    "actualStatus": 400,
+    "response": {
+      "error": "Selected lambda is outside the current system policy; update the Store weight configuration"
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:29.126423+07:00"
+  },
+  {
+    "id": "HTTP26",
+    "case": "System changes authoritative bounds",
+    "method": "PUT",
+    "endpoint": "/api/system/utility/lambda-policy",
+    "role": "system_admin",
+    "request": {
+      "lambdaMin": 0,
+      "lambdaMax": 0.1
+    },
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "response": {
+      "lambdaMin": 0,
+      "lambdaMax": 0.1,
+      "version": 2
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:29.130415+07:00"
+  },
+  {
+    "id": "HTTP27",
+    "case": "Stale lambda gives explicit incomplete preview",
+    "method": "GET",
+    "endpoint": "/api/utility/products/1/scores",
+    "role": "merchandiser",
+    "request": null,
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "response": {
+      "productId": 1,
+      "stockPriorityScore": 0.8,
+      "seasonalPriorityScore": 0.9,
+      "expiryScore": 0,
+      "weightValue": null,
+      "expiryStatus": "AVAILABLE",
+      "expiryEvidence": {
+        "expiryPushDays": 3,
+        "earliestEligibleExpiryDate": "2026-10-26",
+        "daysRemaining": 5,
+        "asOfDate": "2026-10-21",
+        "reason": "OUTSIDE_THRESHOLD",
+        "batches": [
+          {
+            "productId": 1,
+            "batchId": 1,
+            "expiryDate": "2026-10-26",
+            "remainingQuantity": 10,
+            "expiryPushDays": 3,
+            "daysRemaining": 5,
+            "pushRequired": false,
+            "pushRequiredQuantity": 0,
+            "asOfDate": "2026-10-21"
+          }
+        ]
+      },
+      "expiryPushDays": 3,
+      "asOfDate": "2026-10-21",
+      "timeZone": "Asia/Ho_Chi_Minh",
+      "configVersion": 2,
+      "lambdaValid": false,
+      "ready": false,
+      "warnings": [
+        "Selected lambda is outside the current system policy; update the Store weight configuration"
+      ]
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:29.134959+07:00"
+  },
+  {
+    "id": "HTTP28",
+    "case": "System restores QA bounds",
+    "method": "PUT",
+    "endpoint": "/api/system/utility/lambda-policy",
+    "role": "system_admin",
+    "request": {
+      "lambdaMin": 0,
+      "lambdaMax": 0.5
+    },
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "response": {
+      "lambdaMin": 0,
+      "lambdaMax": 0.5,
+      "version": 3
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:29.140261+07:00"
+  },
+  {
+    "id": "HTTP29",
+    "case": "Preview recovers without clamping settings",
+    "method": "GET",
+    "endpoint": "/api/utility/products/1/scores",
+    "role": "merchandiser",
+    "request": null,
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "response": {
+      "productId": 1,
+      "stockPriorityScore": 0.8,
+      "seasonalPriorityScore": 0.9,
+      "expiryScore": 0,
+      "weightValue": 1.335,
+      "expiryStatus": "AVAILABLE",
+      "expiryEvidence": {
+        "expiryPushDays": 3,
+        "earliestEligibleExpiryDate": "2026-10-26",
+        "daysRemaining": 5,
+        "asOfDate": "2026-10-21",
+        "reason": "OUTSIDE_THRESHOLD",
+        "batches": [
+          {
+            "productId": 1,
+            "batchId": 1,
+            "expiryDate": "2026-10-26",
+            "remainingQuantity": 10,
+            "expiryPushDays": 3,
+            "daysRemaining": 5,
+            "pushRequired": false,
+            "pushRequiredQuantity": 0,
+            "asOfDate": "2026-10-21"
+          }
+        ]
+      },
+      "expiryPushDays": 3,
+      "asOfDate": "2026-10-21",
+      "timeZone": "Asia/Ho_Chi_Minh",
+      "configVersion": 2,
+      "lambdaValid": true,
+      "ready": true,
+      "warnings": []
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:29.144958+07:00"
+  },
+  {
+    "id": "HTTP30",
+    "case": "Store Admin cannot change Store weights",
+    "method": "PUT",
+    "endpoint": "/api/utility/config",
+    "role": "store_admin",
+    "request": {
+      "enableStock": true,
+      "enableExpiry": true,
+      "enableSeason": true,
+      "alpha": 0.5,
+      "beta": 0.2,
+      "gamma": 0.3,
+      "lambda": 0.5
+    },
+    "expectedStatus": 403,
+    "actualStatus": 403,
+    "response": {
+      "error": "Forbidden"
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:29.146921+07:00"
+  },
+  {
+    "id": "HTTP31",
+    "case": "Forged Store ID rejected",
+    "method": "PATCH",
+    "endpoint": "/api/utility/products/1/scores",
+    "role": "merchandiser",
+    "request": {
+      "stockPriorityScore": 0.8,
+      "storeId": 2
+    },
+    "expectedStatus": 400,
+    "actualStatus": 400,
+    "response": {
+      "error": "Invalid request fields"
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:29.149013+07:00"
+  },
+  {
+    "id": "HTTP32",
+    "case": "W is not a manual input",
+    "method": "PATCH",
+    "endpoint": "/api/utility/products/1/scores",
+    "role": "merchandiser",
+    "request": {
+      "stockPriorityScore": 0.8,
+      "weightValue": 999
+    },
+    "expectedStatus": 400,
+    "actualStatus": 400,
+    "response": {
+      "error": "Invalid request fields"
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T13:33:29.150982+07:00"
+  }
+]

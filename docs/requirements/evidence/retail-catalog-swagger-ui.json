@@ -1,0 +1,378 @@
+[
+  {
+    "id": "UI01",
+    "method": "GET",
+    "endpoint": "/api/products",
+    "role": "MERCHANDISER",
+    "request": null,
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "response": {
+      "content": [
+        {
+          "id": 1,
+          "sku": "RETAIL-MILK",
+          "name": "Retail QA Milk",
+          "unit": "bottle",
+          "requiresExpiry": true,
+          "category": {
+            "id": 1,
+            "name": "Dairy",
+            "status": "ACTIVE"
+          },
+          "sellingPrice": 100,
+          "costPrice": 20,
+          "status": "ACTIVE",
+          "stockQuantity": 10,
+          "expiryPushDays": 3
+        }
+      ],
+      "page": 0,
+      "pageSize": 20,
+      "totalElements": 1,
+      "totalPages": 1
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T06:35:29.481Z",
+    "timeZone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "UI02",
+    "method": "GET",
+    "endpoint": "/api/categories",
+    "role": "MERCHANDISER",
+    "request": null,
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "response": [
+      {
+        "id": 1,
+        "name": "Dairy",
+        "status": "ACTIVE"
+      }
+    ],
+    "result": "PASS",
+    "executedAt": "2026-10-21T06:35:32.180Z",
+    "timeZone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "UI03",
+    "method": "GET",
+    "endpoint": "/api/products/1",
+    "role": "MERCHANDISER",
+    "request": null,
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "response": {
+      "id": 1,
+      "sku": "RETAIL-MILK",
+      "name": "Retail QA Milk",
+      "unit": "bottle",
+      "requiresExpiry": true,
+      "category": {
+        "id": 1,
+        "name": "Dairy",
+        "status": "ACTIVE"
+      },
+      "sellingPrice": 100,
+      "costPrice": 20,
+      "status": "ACTIVE",
+      "stockQuantity": 10,
+      "expiryPushDays": 3
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T06:35:45.262Z",
+    "timeZone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "UI04",
+    "method": "GET",
+    "endpoint": "/api/categories/1",
+    "role": "MERCHANDISER",
+    "request": null,
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "response": {
+      "id": 1,
+      "name": "Dairy",
+      "status": "ACTIVE"
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T06:35:47.817Z",
+    "timeZone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "UI05",
+    "method": "GET",
+    "endpoint": "/api/utility/products/1/scores",
+    "role": "MERCHANDISER",
+    "request": null,
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "response": {
+      "productId": 1,
+      "stockPriorityScore": 0.8,
+      "seasonalPriorityScore": 0.9,
+      "expiryScore": 0,
+      "weightValue": 1.335,
+      "expiryStatus": "AVAILABLE",
+      "expiryEvidence": {
+        "expiryPushDays": 3,
+        "earliestEligibleExpiryDate": "2026-10-26",
+        "daysRemaining": 5,
+        "asOfDate": "2026-10-21",
+        "reason": "OUTSIDE_THRESHOLD",
+        "batches": [
+          {
+            "productId": 1,
+            "batchId": 1,
+            "expiryDate": "2026-10-26",
+            "remainingQuantity": 10,
+            "expiryPushDays": 3,
+            "daysRemaining": 5,
+            "pushRequired": false,
+            "pushRequiredQuantity": 0,
+            "asOfDate": "2026-10-21"
+          }
+        ]
+      },
+      "expiryPushDays": 3,
+      "asOfDate": "2026-10-21",
+      "timeZone": "Asia/Ho_Chi_Minh",
+      "configVersion": 2,
+      "lambdaValid": true,
+      "ready": true,
+      "warnings": []
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T06:35:50.452Z",
+    "timeZone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "UI06",
+    "method": "PATCH",
+    "endpoint": "/api/utility/products/1/scores",
+    "role": "MERCHANDISER",
+    "request": {
+      "stockPriorityScore": 0.5,
+      "seasonalPriorityScore": 0.9
+    },
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "response": {
+      "productId": 1,
+      "stockPriorityScore": 0.5,
+      "seasonalPriorityScore": 0.9,
+      "expiryScore": 0,
+      "weightValue": 1.26,
+      "expiryStatus": "AVAILABLE",
+      "expiryEvidence": {
+        "expiryPushDays": 3,
+        "earliestEligibleExpiryDate": "2026-10-26",
+        "daysRemaining": 5,
+        "asOfDate": "2026-10-21",
+        "reason": "OUTSIDE_THRESHOLD",
+        "batches": [
+          {
+            "productId": 1,
+            "batchId": 1,
+            "expiryDate": "2026-10-26",
+            "remainingQuantity": 10,
+            "expiryPushDays": 3,
+            "daysRemaining": 5,
+            "pushRequired": false,
+            "pushRequiredQuantity": 0,
+            "asOfDate": "2026-10-21"
+          }
+        ]
+      },
+      "expiryPushDays": 3,
+      "asOfDate": "2026-10-21",
+      "timeZone": "Asia/Ho_Chi_Minh",
+      "configVersion": 2,
+      "lambdaValid": true,
+      "ready": true,
+      "warnings": []
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T06:36:27.536Z",
+    "timeZone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "UI07",
+    "method": "GET",
+    "endpoint": "/api/utility/products/1/scores",
+    "role": "MERCHANDISER",
+    "request": null,
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "response": {
+      "productId": 1,
+      "stockPriorityScore": 0.5,
+      "seasonalPriorityScore": 0.9,
+      "expiryScore": 0,
+      "weightValue": 1.26,
+      "expiryStatus": "AVAILABLE",
+      "expiryEvidence": {
+        "expiryPushDays": 3,
+        "earliestEligibleExpiryDate": "2026-10-26",
+        "daysRemaining": 5,
+        "asOfDate": "2026-10-21",
+        "reason": "OUTSIDE_THRESHOLD",
+        "batches": [
+          {
+            "productId": 1,
+            "batchId": 1,
+            "expiryDate": "2026-10-26",
+            "remainingQuantity": 10,
+            "expiryPushDays": 3,
+            "daysRemaining": 5,
+            "pushRequired": false,
+            "pushRequiredQuantity": 0,
+            "asOfDate": "2026-10-21"
+          }
+        ]
+      },
+      "expiryPushDays": 3,
+      "asOfDate": "2026-10-21",
+      "timeZone": "Asia/Ho_Chi_Minh",
+      "configVersion": 2,
+      "lambdaValid": true,
+      "ready": true,
+      "warnings": []
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T06:36:39.968Z",
+    "timeZone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "UI08",
+    "method": "PATCH",
+    "endpoint": "/api/utility/products/1/scores",
+    "role": "MERCHANDISER",
+    "request": {
+      "stockPriorityScore": 0.8,
+      "expiryScore": 1
+    },
+    "expectedStatus": 400,
+    "actualStatus": 400,
+    "response": {
+      "error": "Invalid request fields"
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T06:36:42.102Z",
+    "timeZone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "UI09",
+    "method": "GET",
+    "endpoint": "/api/products/2",
+    "role": "MERCHANDISER",
+    "request": null,
+    "expectedStatus": 404,
+    "actualStatus": 404,
+    "response": {
+      "error": "Product not found"
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T06:36:44.137Z",
+    "timeZone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "UI10",
+    "method": "PATCH",
+    "endpoint": "/api/utility/products/1/scores",
+    "role": "MERCHANDISER",
+    "request": {
+      "stockPriorityScore": 0.8,
+      "seasonalPriorityScore": 0.9
+    },
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "response": {
+      "productId": 1,
+      "stockPriorityScore": 0.8,
+      "seasonalPriorityScore": 0.9,
+      "expiryScore": 0,
+      "weightValue": 1.335,
+      "expiryStatus": "AVAILABLE",
+      "expiryEvidence": {
+        "expiryPushDays": 3,
+        "earliestEligibleExpiryDate": "2026-10-26",
+        "daysRemaining": 5,
+        "asOfDate": "2026-10-21",
+        "reason": "OUTSIDE_THRESHOLD",
+        "batches": [
+          {
+            "productId": 1,
+            "batchId": 1,
+            "expiryDate": "2026-10-26",
+            "remainingQuantity": 10,
+            "expiryPushDays": 3,
+            "daysRemaining": 5,
+            "pushRequired": false,
+            "pushRequiredQuantity": 0,
+            "asOfDate": "2026-10-21"
+          }
+        ]
+      },
+      "expiryPushDays": 3,
+      "asOfDate": "2026-10-21",
+      "timeZone": "Asia/Ho_Chi_Minh",
+      "configVersion": 2,
+      "lambdaValid": true,
+      "ready": true,
+      "warnings": []
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T06:37:07.898Z",
+    "timeZone": "Asia/Ho_Chi_Minh"
+  },
+  {
+    "id": "UI11",
+    "method": "GET",
+    "endpoint": "/api/utility/products/1/scores",
+    "role": "MERCHANDISER",
+    "request": null,
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "response": {
+      "productId": 1,
+      "stockPriorityScore": 0.8,
+      "seasonalPriorityScore": 0.9,
+      "expiryScore": 0,
+      "weightValue": 1.335,
+      "expiryStatus": "AVAILABLE",
+      "expiryEvidence": {
+        "expiryPushDays": 3,
+        "earliestEligibleExpiryDate": "2026-10-26",
+        "daysRemaining": 5,
+        "asOfDate": "2026-10-21",
+        "reason": "OUTSIDE_THRESHOLD",
+        "batches": [
+          {
+            "productId": 1,
+            "batchId": 1,
+            "expiryDate": "2026-10-26",
+            "remainingQuantity": 10,
+            "expiryPushDays": 3,
+            "daysRemaining": 5,
+            "pushRequired": false,
+            "pushRequiredQuantity": 0,
+            "asOfDate": "2026-10-21"
+          }
+        ]
+      },
+      "expiryPushDays": 3,
+      "asOfDate": "2026-10-21",
+      "timeZone": "Asia/Ho_Chi_Minh",
+      "configVersion": 2,
+      "lambdaValid": true,
+      "ready": true,
+      "warnings": []
+    },
+    "result": "PASS",
+    "executedAt": "2026-10-21T06:37:09.973Z",
+    "timeZone": "Asia/Ho_Chi_Minh"
+  }
+]

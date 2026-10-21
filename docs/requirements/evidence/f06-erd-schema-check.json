@@ -1,0 +1,30 @@
+{
+  "xml_valid": true,
+  "original_other_pages_preserved": true,
+  "table_column_checks": {
+    "recommendation_rule_config": {
+      "columns": 5,
+      "exact_names_and_types": true
+    },
+    "recommendation": {
+      "columns": 22,
+      "exact_names_and_types": true
+    },
+    "recommendation_item": {
+      "columns": 3,
+      "exact_names_and_types": true
+    },
+    "recommendation_source": {
+      "columns": 5,
+      "exact_names_and_types": true
+    },
+    "recommendation_review_history": {
+      "columns": 10,
+      "exact_names_and_types": true
+    }
+  },
+  "fk_count": 13,
+  "rendered_visual_qa": false,
+  "all_edge_endpoints_valid": true,
+  "all_foreign_keys_exact": true
+}

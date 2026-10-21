@@ -30,6 +30,7 @@ public class ProductController {
 
     @Operation(summary = "Search and filter products in the authenticated Store")
     @GetMapping("/api/products")
+    @PreAuthorize("hasAnyRole('STORE_ADMIN','MERCHANDISER')")
     public ProductPage list(@AuthenticationPrincipal Jwt jwt,
             @RequestParam(defaultValue = "") String search,
             @RequestParam(required = false) Integer categoryId,
@@ -43,6 +44,7 @@ public class ProductController {
 
     @Operation(summary = "Get a product and batch-derived stock for the authenticated Store")
     @GetMapping("/api/products/{id}")
+    @PreAuthorize("hasAnyRole('STORE_ADMIN','MERCHANDISER')")
     public ProductView get(@AuthenticationPrincipal Jwt jwt, @PathVariable int id) { return products.get(jwt, id); }
 
     @Operation(summary = "Create a product in the authenticated Store; stock is managed through batches")

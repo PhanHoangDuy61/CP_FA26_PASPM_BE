@@ -30,10 +30,12 @@ public class CategoryController {
 
     @Operation(summary = "List categories for the authenticated Store")
     @GetMapping("/api/categories")
+    @PreAuthorize("hasAnyRole('STORE_ADMIN','MERCHANDISER')")
     public List<CategoryView> list(@AuthenticationPrincipal Jwt jwt) { return categories.list(jwt); }
 
     @Operation(summary = "Get a Store category")
     @GetMapping("/api/categories/{id}")
+    @PreAuthorize("hasAnyRole('STORE_ADMIN','MERCHANDISER')")
     public CategoryView get(@AuthenticationPrincipal Jwt jwt, @PathVariable int id) { return categories.get(jwt, id); }
 
     @Operation(summary = "Create a category in the authenticated Store")

@@ -1,0 +1,21 @@
+{
+  "items" : [ {
+    "productId" : 31,
+    "batchId" : 31,
+    "expiryDate" : "2026-10-25",
+    "daysRemaining" : 5,
+    "remainingQuantity" : 10,
+    "expiryPushDays" : 7,
+    "pushRequired" : true,
+    "checkedAt" : "2026-10-20T14:19:53.750079Z",
+    "status" : "AVAILABLE",
+    "warnings" : [ ]
+  } ],
+  "page" : 0,
+  "pageSize" : 20,
+  "totalElements" : 1,
+  "asOfDate" : "2026-10-20",
+  "timeZone" : "Asia/Ho_Chi_Minh",
+  "checkedAt" : "2026-10-20T14:19:53.750079Z",
+  "warnings" : [ ]
+}

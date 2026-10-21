@@ -11,7 +11,7 @@ Authoritative business specification: [F03_WEIGHT_RULES_v1_2.md](../requirements
 | GET | `/api/utility/config` | STORE_ADMIN, MERCHANDISER | none → ConfigView | 200 |
 | PUT | `/api/utility/config` | MERCHANDISER | WeightRequest → ConfigView | 200 |
 | PUT | `/api/utility/config/expiry-window` | STORE_ADMIN | ExpiryWindowRequest → ConfigView | 200; **deprecated, no scoring effect** |
-| GET | `/api/utility/products/{productId}/scores` | MERCHANDISER | none → Scores | 200 |
+| GET | `/api/utility/products/{productId}/scores` | STORE_ADMIN, MERCHANDISER | none → Scores | 200 |
 | PATCH | `/api/utility/products/{productId}/scores` | MERCHANDISER | ScorePatch → Scores | 200 |
 | POST | `/api/utility/preview` | MERCHANDISER | PreviewRequest → MatrixPage | 200 |
 | POST | `/api/utility/snapshots` | MERCHANDISER | RangeRequest → SnapshotView | 201 |
@@ -39,11 +39,39 @@ END_CUSTOMER has no permission. SYSTEM_ADMIN cannot use Store-bound F03 actions.
 
 Legacy `ExpiryWindowRequest` still requires positive integer expiryWindowDays and preserves old role/validation behavior; this only stores a deprecated value. Frontend must migrate the threshold form to F02 `ProductRequest.expiryPushDays`. New snapshots derive T only from each Product, even when a legacy Store window is positive.
 
-`ScorePatch` accepts stockPriorityScore and/or seasonalPriorityScore, decimals [0,1], max 6 fractional digits. Send at least one field; omitted preserves previous value; explicit null is rejected. `Scores` returns productId:int32 and the two number|null values. These scores are manual, independent of stock quantity.
+`ScorePatch` accepts stockPriorityScore and/or seasonalPriorityScore, decimals [0,1], max 6 fractional digits. Send at least one field; omitted preserves previous value; explicit null is rejected. `Scores` retains productId:int32 and the two manual number|null values, independent of stock quantity. GET is readable by Store Admin/Merchandiser; PATCH remains Merchandiser-only and returns the saved inputs plus recalculated current results. Unknown fields are rejected explicitly (`ScorePatch.additionalProperties=false`). E, W, expiryPushDays, stockQuantity, coefficients and storeId are not writable through ScorePatch.
 
 ```json
 {"stockPriorityScore":0.8,"seasonalPriorityScore":0.9}
 ```
+
+## Current Product E/W (2026-10-21 additive response)
+
+GET/PATCH scores now returns a **current preview**, including Products with no transaction history. It uses the same ExpiryScoreCalculator and UtilityMath as F03, with current scoped Product/batches/configuration and Store-local today in a repeatable-read transaction. No snapshot, mining or inventory write occurs when reading/calculating these fields.
+
+| Field | JSON type | Meaning |
+|---|---|---|
+| productId | integer | Existing scoped Product identity |
+| stockPriorityScore / seasonalPriorityScore | number or null | Existing manual S/M |
+| expiryScore | number or null | Read-only shared E, normally0/1; required expiry metadata may be unknown |
+| weightValue | number or null | Read-only current W; null if ready=false |
+| expiryStatus | string | AVAILABLE, NOT_APPLICABLE, NO_SELLABLE_BATCH or MISSING_METADATA |
+| expiryEvidence | Evidence object | Product threshold, earliest eligible expiry/date difference, analysis date/reason/batches; same shared structure documented below |
+| expiryPushDays | integer | Read-only Product T; no Store fallback |
+| asOfDate / timeZone | ISO date string / string | Current Store calendar convention |
+| configVersion | integer(int64) | Store configuration version used |
+| lambdaValid / ready | boolean / boolean | Current policy validity / whether current W can be calculated |
+| warnings | string[] | Missing enabled score/metadata, no sellable batch, or stale lambda explanation |
+
+All added fields are response-only in OpenAPI. Explicit nulls are retained; do not replace unknown E/W with0. `ready` describes calculation completeness, **not** sellability, approval or snapshot eligibility. A valid numeric W with NO_SELLABLE_BATCH warning does not authorize sale. When enabled input is missing, or lambda is outside current bounds, return200 with weightValue=null/ready=false and warnings. Manual values may still be saved; do not clamp lambda. All-disabled criteria yield W1 when current lambda policy is valid. Disabled coefficients do not contribute.
+
+Illustrative successful response (IDs/configVersion are examples; full executed response is linked from the verification report):
+
+```json
+{"productId":1,"stockPriorityScore":0.8,"seasonalPriorityScore":0.9,"expiryScore":1,"weightValue":1.435,"expiryStatus":"AVAILABLE","expiryEvidence":{"expiryPushDays":7,"earliestEligibleExpiryDate":"2026-10-26","daysRemaining":5,"asOfDate":"2026-10-21","reason":"WITHIN_THRESHOLD","batches":[{"productId":1,"batchId":1,"expiryDate":"2026-10-26","remainingQuantity":10,"expiryPushDays":7,"daysRemaining":5,"pushRequired":true,"pushRequiredQuantity":10,"asOfDate":"2026-10-21"}]},"expiryPushDays":7,"asOfDate":"2026-10-21","timeZone":"Asia/Ho_Chi_Minh","configVersion":2,"lambdaValid":true,"ready":true,"warnings":[]}
+```
+
+With S0.8/M0.9, alpha0.5/beta0.2/gamma0.3/lambda0.5, T7/D5 gives E1/W1.435. T3/D5 gives E0/W1.335. These are test inputs, not production defaults. Saving S/M or Store config affects future previews/snapshots only; existing snapshot JSON/matrix/hash and F05 persisted results remain unchanged.
 
 ## Preview request and deterministic calculation
 
