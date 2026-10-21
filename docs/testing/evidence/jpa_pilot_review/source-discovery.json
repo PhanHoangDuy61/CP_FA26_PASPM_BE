@@ -1,0 +1,14 @@
+{
+  "mode" : "READ_ONLY SELECT metadata/counts, no raw records",
+  "knownDisposableSchemasExcluded" : 56,
+  "candidates" : [ {
+    "alias" : "candidate-1",
+    "configured" : true,
+    "provenance" : "configured source; environment tier undocumented",
+    "store" : 0,
+    "category" : 0,
+    "product" : 0,
+    "inventory_batch" : 0,
+    "flywayVersion" : 5
+  } ]
+}

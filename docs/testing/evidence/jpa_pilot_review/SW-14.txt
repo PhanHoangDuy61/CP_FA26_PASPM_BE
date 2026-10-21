@@ -1,0 +1,26 @@
+SW-14 | POST /api/products | role=MERCHANDISER | data=SIMULATED | 2026-10-22T05:10:47.859292+07:00
+Actual Swagger UI accessibility observation (credential-free response excerpt):
+heading Server response, Value: 4
+					975 text Server response
+				976 table
+					977 row
+						978 cell
+							979 text Code
+						980 cell
+							981 text Details
+					982 row
+						983 cell
+							984 text 403
+						985 cell
+							1075 text Error: response status is 403
+							987 heading Response body, Value: 5
+								988 text Response body
+							989 container
+								990 button
+								991 button Download
+								992 container
+									993 text {
+ "error" :  "Forbidden" }
+							994 heading Response headers, Value: 5
+								995 text Response headers
+							996 text cache-control :  no-cache,no-store,max-age=0,must-revalidate connection :  keep-alive content-type :  application/json date :  Wed,21 Oct 2026 22:10:47 GMT expires :  0 keep-alive :  timeout=60 pragma :  no-cache transfer-encoding :  chunked x-content-type-options :  nosniff x-frame-options :  DENY x-xss-protection :  0

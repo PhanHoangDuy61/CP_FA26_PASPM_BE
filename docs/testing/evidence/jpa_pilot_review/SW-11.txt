@@ -1,0 +1,26 @@
+SW-11 | GET /api/products/{id} | role=STORE_ADMIN_B | data=SIMULATED | 2026-10-22T05:09:56.301453+07:00
+Actual Swagger UI accessibility observation (credential-free response excerpt):
+heading Server response, Value: 4
+					979 text Server response
+				980 table
+					981 row
+						982 cell
+							983 text Code
+						984 cell
+							985 text Details
+					986 row
+						987 cell
+							988 text 404
+						989 cell
+							1072 text Error: response status is 404
+							1073 heading Response body, Value: 5
+								1074 text Response body
+							1075 container
+								1076 button
+								1077 button Download
+								1078 container
+									1079 text {
+ "error" :  "Product not found" }
+							991 heading Response headers, Value: 5
+								992 text Response headers
+							993 text cache-control :  no-cache,no-store,max-age=0,must-revalidate connection :  keep-alive content-type :  application/json date :  Wed,21 Oct 2026 22:09:55 GMT expires :  0 keep-alive :  timeout=60 pragma :  no-cache transfer-encoding :  chunked x-content-type-options :  nosniff x-frame-options :  DENY x-xss-protection :  0
