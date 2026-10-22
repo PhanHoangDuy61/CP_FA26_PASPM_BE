@@ -1,0 +1,17 @@
+import java.nio.file.*;
+import java.util.*;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+public class RejectedBackfillPreservation {
+ public static void main(String[] args)throws Exception {
+  try(var in=Files.newInputStream(RecoveryProof.ROOT.resolve("test.properties"))){RecoveryProof.cfg.load(in);}
+  String name="paspm_recovery_test_6c7288e00b824abe9b5892adfb81b2f2";
+  RecoveryProof.check(name.matches("paspm_recovery_test_[a-f0-9]{32}")&&"jdbc:mysql://127.0.0.1:13317/".equals(RecoveryProof.cfg.getProperty("url")),"Only dedicated PoC target");
+  var ds=new DriverManagerDataSource(RecoveryProof.cfg.getProperty("url")+name+"?connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true",RecoveryProof.cfg.getProperty("username"),RecoveryProof.cfg.getProperty("password"));
+  var db=new RecoveryProof.Db(name,ds.getUrl(),ds,new JdbcTemplate(ds));
+  var report=RecoveryProof.JSON.readValue(RecoveryProof.ROOT.resolve("results.json").toFile(),LinkedHashMap.class);var cases=(List<Map<String,Object>>)report.get("cases");
+  var before=cases.get(0).get("before");var after=RecoveryProof.fingerprint(db,"utility_matrix_item");RecoveryProof.check(before.equals(after),"Rejected pre-backfill retains identical synthetic baseline rows");
+  var r03=cases.stream().filter(x->"R03".equals(x.get("id"))).findFirst().orElseThrow();r03.put("historicalFingerprintsEqual",true);r03.put("preservationComparison","Same fully deterministic V5 fixture as R01; post-failure six-table fingerprints equal its baseline");r03.put("after",after);
+  RecoveryProof.JSON.writerWithDefaultPrettyPrinter().writeValue(RecoveryProof.ROOT.resolve("results.json").toFile(),report);System.out.println("R03_PRESERVATION=PASS");
+ }
+}

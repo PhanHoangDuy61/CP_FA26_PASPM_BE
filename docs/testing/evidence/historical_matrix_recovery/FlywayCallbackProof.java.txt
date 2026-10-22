@@ -1,0 +1,42 @@
+import java.nio.file.*;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import org.flywaydb.core.Flyway;
+import org.flywaydb.core.api.FlywayException;
+import org.flywaydb.core.api.callback.*;
+
+/** Audit-only experiment; not registered with the application or production Flyway. */
+public class FlywayCallbackProof {
+ static BaseCallback callback(RecoveryProof.Db db,AtomicInteger inspected,AtomicInteger transitioned){return new BaseCallback(){
+  @Override public boolean supports(Event event,Context context){return event==Event.BEFORE_EACH_MIGRATE;}
+  @Override public boolean canHandleInTransaction(Event event,Context context){return false;}
+  @Override public void handle(Event event,Context context){
+   if(!"7".equals(context.getMigrationInfo().getVersion().toString()))return;
+   inspected.incrementAndGet();
+   if(db.j().queryForObject("SELECT COUNT(*) FROM utility_matrix_item",Integer.class)==0)return;
+   try{RecoveryProof.transition(db,false);RecoveryProof.immutable(db);transitioned.incrementAndGet();}
+   catch(Exception e){throw new FlywayException("Isolated callback prototype failed",e);}
+  }
+ };}
+ public static void main(String[] args)throws Exception {
+  try(var in=Files.newInputStream(RecoveryProof.ROOT.resolve("test.properties"))){RecoveryProof.cfg.load(in);}
+  RecoveryProof.run("R12","Actual beforeEachMigrate callback stages archive before unchanged V7",()->{
+   var db=RecoveryProof.v5();var before=RecoveryProof.fingerprint(db,"utility_matrix_item");var inspected=new AtomicInteger();var transitioned=new AtomicInteger();
+   var fly=Flyway.configure().dataSource(db.ds()).locations("filesystem:src/main/resources/db/migration").callbacks(callback(db,inspected,transitioned)).load();
+   RecoveryProof.check(fly.migrate().migrationsExecuted==5,"V6-V10 through actual callback");fly.validate();
+   RecoveryProof.check(inspected.get()==1&&transitioned.get()==1,"Exactly one transition before V7");RecoveryProof.check(before.equals(RecoveryProof.fingerprint(db,RecoveryProof.ARCHIVE)),"Callback preserved values");RecoveryProof.check(db.j().queryForObject("SELECT COUNT(*) FROM sales_transaction",Integer.class)==0,"No invented parent records");
+   return Map.of("migrationOutcome","PASS_POC_CALLBACK","callbackEvent","beforeEachMigrate","triggerMigration","7","callbackInspections",inspected.get(),"transitions",transitioned.get(),"finalVersion",fly.info().current().getVersion().toString(),"productionMigrationFilesEdited",false,"salesRowsCreated",0,"fingerprintsEqual",true);
+  });
+  RecoveryProof.run("R13","Same callback skips fresh empty data and does not replay applied V7",()->{
+   var db=RecoveryProof.create();var inspected=new AtomicInteger();var transitioned=new AtomicInteger();
+   var fly=Flyway.configure().dataSource(db.ds()).locations("filesystem:src/main/resources/db/migration").callbacks(callback(db,inspected,transitioned)).load();
+   RecoveryProof.check(fly.migrate().migrationsExecuted==10,"Fresh bootstrap");fly.validate();RecoveryProof.check(inspected.get()==1&&transitioned.get()==0&&RecoveryProof.archiveExists(db)==0,"Empty legacy path is a no-op");
+   RecoveryProof.check(fly.migrate().migrationsExecuted==0,"Already V10 no replay");RecoveryProof.check(inspected.get()==1&&transitioned.get()==0,"Applied V7 callback never repeated");
+   return Map.of("migrationOutcome","PASS_POC_NOOP","freshVersionsApplied",10,"freshArchiveTransitions",0,"alreadyV10VersionsApplied",0,"noOutOfOrderMigration",true);
+  });
+  var report=RecoveryProof.JSON.readValue(RecoveryProof.ROOT.resolve("results.json").toFile(),LinkedHashMap.class);
+  ((List)report.get("cases")).addAll(RecoveryProof.RESULTS);report.put("callbackWiringTested",true);report.put("formalAdditiveNormalizationMigrationImplemented",false);
+  RecoveryProof.JSON.writerWithDefaultPrettyPrinter().writeValue(RecoveryProof.ROOT.resolve("results.json").toFile(),report);
+  RecoveryProof.check(RecoveryProof.RESULTS.stream().allMatch(x->"PASS".equals(x.get("proofAssertion"))),"Callback proof failure");
+ }
+}
