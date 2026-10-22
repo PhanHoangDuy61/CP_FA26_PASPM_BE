@@ -38,10 +38,9 @@ public class MiningService {
             created=capture.execute(tx->{
                 jdbc.queryForObject("SELECT snapshot_id FROM utility_snapshot WHERE store_id=? AND snapshot_id=? FOR UPDATE",Integer.class,store,request.snapshotId());
                 var snapshot=snapshots.find(store,request.snapshotId());
-                if(snapshots.countItems(request.snapshotId())>MiningInputBuilder.MAX_ROWS)throw new ApiException(400,"Snapshot matrix exceeds mining row limit");
+                if(snapshots.countItems(store,request.snapshotId())>MiningInputBuilder.MAX_ROWS)throw new ApiException(400,"Snapshot matrix exceeds mining row limit");
                 var rows=snapshots.page(store,request.snapshotId(),0,MiningInputBuilder.MAX_ROWS);
-                int foreign=jdbc.queryForObject("SELECT COUNT(*) FROM utility_matrix_item m LEFT JOIN product p ON p.product_id=m.product_id AND p.store_id=? LEFT JOIN sales_transaction t ON t.transaction_id=m.transaction_id AND t.store_id=? WHERE m.snapshot_id=? AND (p.product_id IS NULL OR t.transaction_id IS NULL)",Integer.class,store,store,request.snapshotId());
-                if(foreign!=0)throw new ApiException(400,"Frozen matrix contains invalid Store ownership");
+                snapshots.assertMiningOwnership(store,request.snapshotId());
                 var input=builder.build(snapshot,rows);int threshold=builder.threshold(input,request.minUtilMode(),request.minUtilValue());
                 return repository.create(store,auth.current(jwt).id(),request,hash,snapshot,input,threshold);
             });

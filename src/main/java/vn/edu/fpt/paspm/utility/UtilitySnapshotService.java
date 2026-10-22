@@ -49,7 +49,7 @@ public class UtilitySnapshotService {
     @Transactional(readOnly=true,isolation=Isolation.REPEATABLE_READ)
     public MatrixPage matrix(Jwt jwt,int id,int page,int size) {
         pagination(page,size);int store=access.currentStoreId(jwt);var snapshot=require(store,id);
-        return new MatrixPage(snapshots.page(store,id,page,size),page,size,snapshots.countItems(id),snapshot.totalWeightedUtility(),snapshot.sourceHash(),snapshot.matrixHash(),snapshot.warnings(),true,snapshot.configuration());
+        return new MatrixPage(snapshots.page(store,id,page,size),page,size,snapshots.countItems(store,id),snapshot.totalWeightedUtility(),snapshot.sourceHash(),snapshot.matrixHash(),snapshot.warnings(),true,snapshot.configuration());
     }
     private SnapshotView require(int store,int id) {
         var snapshot=snapshots.find(store,id);if(snapshot==null)throw new ApiException(404,"Utility snapshot not found");return snapshot;
