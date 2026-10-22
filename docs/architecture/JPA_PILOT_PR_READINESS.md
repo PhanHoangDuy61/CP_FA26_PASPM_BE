@@ -1,51 +1,63 @@
-# JPA Pilot — Local Pull Request Readiness
+# Product JPA Pilot — PR Readiness
 
-Date: 2026-10-22, Asia/Ho_Chi_Minh. Implementation: `48bc059`; branch `Khoi/Fear/jpa-product-metadata-pilot`; proposed base `dev`. Fresh fetch confirms origin/dev and local dev both at `3d58a73543db3b5923289f901f9ffecba6228d23` at verification time.
+Date: 2026-10-22, Asia/Ho_Chi_Minh. Branch: `Khoi/Fear/jpa-product-metadata-pilot`; base: `dev`.
 
-## Status
+**Status: PR_CREATION_BLOCKED; NOT READY TO MERGE.** Implementation remains limited to CORE-00 and Product metadata. Category migration has not started.
 
-**READY FOR HUMAN REVIEW WITH DISCLOSED REAL_DATA_BLOCKED.** No unresolved failing test or actionable code-review defect. Source V5 compatibility and genuine-data validation are not complete. This is not a release/deployment approval.
+## GitHub status
 
-No branch push or remote PR created: the task explicitly requires separate authorization. No merge/deploy. The local working tree also contains unrelated preexisting private/untracked work; only pilot verification docs/evidence belong to this follow-up.
+- The Pilot branch exists on the configured public repository and was pushed successfully.
+- GitHub comparison confirms the implementation branch descends from current `dev` (`3d58a73543db3b5923289f901f9ffecba6228d23`) without being behind it at this check.
+- No matching PR exists. Retrying the GitHub app returns HTTP 403, `Resource not accessible by integration`.
+- `gh` is not installed, so there are no existing CLI credentials to check or use. No CLI was installed and no alternate credential source was used.
+- No reviewer has been assigned and no approval exists. No reviewer identity or repository approval policy is invented.
+- No CI status was registered for the pushed implementation commit when checked; required PR checks/review threads/merge conflicts cannot be established without a PR. Repository protection policies have not been bypassed.
+
+Manual creation: [compare Pilot against dev](https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/compare/dev...Khoi%2FFear%2Fjpa-product-metadata-pilot?expand=1). Select **base `dev`**, **compare `Khoi/Fear/jpa-product-metadata-pilot`**, use the title/body below, and create the PR for independent review. An eligible repository maintainer must assign reviewers according to the actual policy. Creating a PR does not authorize merging past the outstanding migration gate.
+
+## Merge gates
+
+| Gate | Status |
+|---|---|
+| Java 17 full verification, MySQL/SPMF enabled | PASS: 277 tests, zero failures/errors/skips |
+| Fresh MySQL V1→V10 + Hibernate validation + Category/Product actual HTTP | PASS |
+| V5 Catalog + snapshot header, no matrix rows → V10 | PASS, fingerprints and mixed JPA/JDBC rollback preserved |
+| V5 populated historical matrix → V10 | **FAIL: V7 foreign key error 1452; approved reconciliation strategy required** |
+| Historical quoted V7/checksum recovery tests | PASS; repair only inside existing in-memory H2 recovery test |
+| Original V5 source preservation | PASS, SELECT-only before/after proof |
+| Genuine retail data | REAL_DATA_BLOCKED; all populated fixtures are synthetic |
+| Required CI/reviewer approval and no blocking threads | BLOCKED / unavailable |
+| Product PR merged | NO |
+| Category migration entry | NOT SATISFIED |
 
 ## Ready-to-use PR title
 
-`feat(backend): add JPA foundation and Product metadata pilot`
+`feat(backend): introduce JPA foundation and Product metadata persistence`
 
 ## Ready-to-use PR description
 
 ```markdown
-Product metadata writes now use Spring Data JPA while existing Product reads, stock projections, Inventory Batch operations and F03–F06 stay on JDBC. The internal Product mapping excludes F03 S/M and stock; API DTOs and Flyway V1–V10 are unchanged.
+Product metadata create/update/status writes now use Spring Data JPA. Product catalog reads and batch-derived stock projections stay on JDBC, as do Category CRUD, Inventory and the existing F03–F06 persistence paths. API DTOs and Flyway schema ownership are preserved.
 
-Boot3.5.7 manages the JPA dependency. One JpaTransactionManager coordinates JPA/JDBC through the same DataSource; mappings validate against the existing schema and Open Session in View is disabled. Writes explicitly flush for JDBC readbacks, refresh stale managed metadata, and scope status updates by Store.
+CORE-00 adds Boot-managed JPA with a shared datasource/JpaTransactionManager, Hibernate mapping validation and disabled Open Session in View. F02-01 maps only Product metadata: S/M, inventory quantities and unapproved version columns are excluded. Explicit flush supports JDBC readbacks, refresh handles stale managed metadata, and status writes are Store-scoped.
 
-Validation:
-- Fresh Java17 full Maven verify:274 PASS,0failures/errors/skips, including original232 +42pilot checks.
-- H2/MySQL tests verify shared physical connection, mixed commit/rollback, native refresh, RC/RR, F04 REQUIRES_NEW, constraints and concurrent score/price preservation.
--18actual Swagger UI cases PASS on an isolated SIMULATED MySQLV10 dataset.
--59OpenAPI paths unchanged except runtime server URL; Product create/read/update/status,400/401/403/404/409 and persistence readbacks verified.
-- Source DB inspected READ ONLY: remainsV5 with empty catalog; metadata/counts/Flyway history and private config/migration hashes unchanged.
+Verification:
+- Fresh Java 17 full Maven verify: 277 PASS, 0 failures/errors/skips. The previous 274 tests all executed, plus three new migration checks. There are 147 H2, 81 MySQL and 49 unit/runtime cases.
+- Product JPA/JDBC shared connection/commit/rollback, F04 REQUIRES_NEW, Store isolation, S/M and inventory preservation, F01–F06 regression, and real HUI-Miner/EFIM with a Java 25 child runtime executed.
+- Dedicated MySQL 8.4.11 instance: fresh V1–V10, Hibernate validation, constraints and actual Category/Product HTTP roundtrips passed. V5 Catalog/snapshot-header upgrade with no matrix rows passed with matching fingerprints.
+- IMPORTANT: an additional valid populated-V5 matrix fixture fails at V7 with fk_utility_matrix_transaction / error 1452. Its characterization test asserts the known failure and preservation of original rows; it does not mean this upgrade path passes. Do not merge until an approved reconciliation strategy resolves this gate.
+- Earlier interactive Swagger evidence records 18 cases and 59 unchanged OpenAPI paths. No new interactive Swagger session was claimed in this follow-up; fresh HTTP/API/OpenAPI regression checks ran.
+- Original configured source remains V5 with empty Catalog. SELECT-only before/after probes show identical counts, columns, Flyway history, configuration and migration hashes.
 
-Limitations:
-- REAL_DATA_BLOCKED: no genuine populated retail source/copy or approved dump is available. Simulated food-store tests are not genuine-data tests.
-- Existing sourceV5 is not deployment-ready; it needs separately approved backup/migration planning before running this app.
-- Metadata update adds scoped lookup/refresh queries; no performance superiority claim.
-- Two stale temporary QA configs were unavailable and were not used.
+REAL_DATA_BLOCKED: no authorized genuine populated retail copy is available. All populated fixtures are simulated; production deployment remains unverified.
 
-Rollback: restore/revert the pilot code and JPA foundation together to the baseline JDBC artifact. No production schema rollback/backfill is required because the pilot introduces no DDL. Do not repair/reset the source DB or regenerate historical data.
+This pilot adds no schema migration. Existing V7 SQL was not changed or repaired on MySQL/source. Roll back the pilot/foundation together to restore prior JDBC Product writes against the same schema; never reset source history or regenerate immutable data as part of rollback.
 
-Reports: docs/testing/JPA_PILOT_SWAGGER_VERIFICATION.md, docs/testing/JPA_PILOT_REAL_DATA_VERIFICATION.md, docs/architecture/JPA_PILOT_CODE_REVIEW.md.
+Reports: docs/testing/JPA_V5_TO_V10_MIGRATION_VERIFICATION.md, docs/testing/JPA_PILOT_REAL_DATA_VERIFICATION.md, docs/testing/JPA_PILOT_SWAGGER_VERIFICATION.md and docs/testing/evidence/jpa_phase2/.
 ```
 
-## File and safety checklist
+## Scope and safety
 
-- Pilot production scope: `pom.xml`; ProductRepository facade; internal ProductEntity/ProductJpaRepository/ProductMetadataPersistence; PersistenceConfiguration; persistence.properties.
-- Test scope: Product mapping/transactions/MySQL proofs, disposable clone safety/API tests; Auth test schema setup only.
-- Follow-up scope: the four requested verification/review/readiness documents and sanitized evidence under `docs/testing/evidence/jpa_pilot_review/`.
-- Exclude application.yml, .env, SQL dumps, private target/credential files, full raw test logs and unrelated audit/feature files from staging.
-- Source code/migrations were not modified during this verification task. git diff --check passes.
-- Genuine-data gate remains BLOCKED; source migration/deployment NOT RUN. Category migration NOT IMPLEMENTED.
+Only the new MySQL acceptance test and sanitized verification/readiness documents are added in this follow-up. Product/Category production implementation and migrations are unchanged. Unrelated local F03/F06/audit documents, private `application.yml`, `.env`, dumps and temporary instance files are excluded from staging. No merge or deployment is performed.
 
-## Commands and evidence
-
-Fresh command: see the latest-run section in [database verification](../testing/JPA_PILOT_REAL_DATA_VERIFICATION.md). Raw log `/tmp/paspm-jpa-review/verify.log`; persistent per-suite results [fresh-test-results.json](../testing/evidence/jpa_pilot_review/fresh-test-results.json). Actual UI observations and response assertions [SWAGGER_RESULTS.json](../testing/evidence/jpa_pilot_review/SWAGGER_RESULTS.json).
+The dedicated test server is disposable and is stopped after verification. The source is not a test target. The populated-V5 failure and GitHub PR permission issue are independent blockers; fixing permissions alone does not satisfy the merge gate.

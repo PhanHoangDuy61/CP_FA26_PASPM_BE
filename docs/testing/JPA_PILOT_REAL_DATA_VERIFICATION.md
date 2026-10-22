@@ -1,3 +1,5 @@
+> **Latest Phase 2 result (2026-10-22):** fresh full verification is **277 PASS / 0 FAIL / 0 SKIPPED**, including all 274 prior tests and three new MySQL migration checks. Source V5 was checked READ ONLY before/after and is unchanged. Fresh MySQL bootstrap and V5 Catalog without matrix rows pass, but populated V5 historical matrices fail at V7 (`fk_utility_matrix_transaction`, MySQL 1452). The passing characterization test records that incompatibility. Merge/Category entry remain blocked, as does GitHub PR creation (app 403; no gh installed). REAL_DATA_BLOCKED remains. See [current migration report](JPA_V5_TO_V10_MIGRATION_VERIFICATION.md) and [current PR readiness](../architecture/JPA_PILOT_PR_READINESS.md). The results below are historical observations from earlier runs and do not override this status.
+
 # JPA Pilot — Source Read-Only & Simulated Food-Store Verification
 
 > Latest verification status: see §6 below. **REAL_DATA_BLOCKED; SWAGGER_UI_TESTED18/18; fresh Maven274/274.** Earlier sections preserve the historical pilot run.
