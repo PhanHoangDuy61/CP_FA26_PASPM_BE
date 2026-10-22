@@ -1,0 +1,37 @@
+
+CodeGraph Status
+
+Project: /tmp/paspm-legacy-matrix-recovery
+
+Index Statistics:
+  Files:     138
+  Nodes:     3,220
+  Edges:     8,223
+  DB Size:   10.53 MB
+  Backend:   node:sqlite — built-in (full WAL)
+  Journal:   wal
+
+Nodes by Kind:
+  import          1,317
+  method          890
+  field           437
+  class           139
+  file            135
+  namespace       134
+  route           76
+  constant        52
+  enum_member     22
+  function        8
+  enum            7
+  interface       3
+
+Files by Language:
+  java            134
+  yaml            2
+  properties      1
+  xml             1
+
+✓ Index is up to date
+
+
+Actual MCP lookups found LegacyRecoveryCallback and impact on UtilitySnapshotRepository; index supplements source/tests and is not runtime verification.

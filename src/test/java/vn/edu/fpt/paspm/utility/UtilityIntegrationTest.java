@@ -38,6 +38,7 @@ class UtilityIntegrationTest {
 
     @BeforeEach void setup() {
         jdbc.update("DELETE FROM utility_matrix_item");
+        jdbc.update("DELETE FROM utility_snapshot_storage");
         jdbc.update("DELETE FROM utility_snapshot");
         jdbc.update("DELETE FROM import_staging_row");
         jdbc.update("DELETE FROM transaction_item");

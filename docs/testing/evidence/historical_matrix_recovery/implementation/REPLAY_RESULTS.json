@@ -1,0 +1,70 @@
+{
+  "after" : {
+    "category" : "6837026fe5a5908691e01938b047cddd4421a271883c0292f00c0b8dccfe7d7d",
+    "inventory_batch" : "a8f51daf6f637d19850452cfda4006a30dd075ba24d1046dede6cb5a146fca2f",
+    "product" : "0b3588e961a6fdcd6869c4ccb518d74073d137ad77c626c1211aff5e028714d8",
+    "store" : "bb2ee79cc34f763d1e147726c10f00b5a2033b5d5649a750e0e732f99a6677a2",
+    "utility_matrix_item" : "f3c1094962ee796ca0e2f37310a092abf2da934bda1053b5c7762e931c98953a",
+    "utility_snapshot" : "a47ba39c200af1443000c853cdcaa5a4cb7b6fb9425533b33a6b9671cb41d26f"
+  },
+  "before" : {
+    "category" : "6837026fe5a5908691e01938b047cddd4421a271883c0292f00c0b8dccfe7d7d",
+    "inventory_batch" : "a8f51daf6f637d19850452cfda4006a30dd075ba24d1046dede6cb5a146fca2f",
+    "product" : "0b3588e961a6fdcd6869c4ccb518d74073d137ad77c626c1211aff5e028714d8",
+    "store" : "bb2ee79cc34f763d1e147726c10f00b5a2033b5d5649a750e0e732f99a6677a2",
+    "utility_matrix_item" : "f3c1094962ee796ca0e2f37310a092abf2da934bda1053b5c7762e931c98953a",
+    "utility_snapshot" : "a47ba39c200af1443000c853cdcaa5a4cb7b6fb9425533b33a6b9671cb41d26f"
+  },
+  "datasets" : {
+    "1" : {
+      "text" : "1 2:3:1 2\n1:1:1\n",
+      "hash" : "d2dc959c1261ee521f5ac4b48031dadf63279e409bc9eb99f469f8a28aab2163",
+      "products" : {
+        "1" : 1,
+        "2" : 3
+      },
+      "divisor" : 2000000,
+      "totalUtility" : 4,
+      "transactionCount" : 2,
+      "conversionVersion" : "F03_SCALE6_GCD_INT32_DENSE_V1",
+      "utilityScale" : 6,
+      "roundingMode" : "HALF_UP"
+    },
+    "2" : {
+      "text" : "1:1:1\n",
+      "hash" : "526a725dfc315cf5e950683bb0d8e6b542130234977cfd247e5f6f50e4ae9401",
+      "products" : {
+        "1" : 2
+      },
+      "divisor" : 3000000,
+      "totalUtility" : 1,
+      "transactionCount" : 1,
+      "conversionVersion" : "F03_SCALE6_GCD_INT32_DENSE_V1",
+      "utilityScale" : 6,
+      "roundingMode" : "HALF_UP"
+    }
+  },
+  "engineExecutions" : 8,
+  "exactPatterns" : {
+    "1EFIM" : {
+      "1" : 2,
+      "1,3" : 3,
+      "3" : 2
+    },
+    "1HUI_MINER" : {
+      "1" : 2,
+      "1,3" : 3,
+      "3" : 2
+    },
+    "2EFIM" : {
+      "2" : 1
+    },
+    "2HUI_MINER" : {
+      "2" : 1
+    }
+  },
+  "fixtureLegacyRows" : 4,
+  "stores" : 2,
+  "threshold" : 1,
+  "verificationPhase" : "all-reader-assertions-passed"
+}

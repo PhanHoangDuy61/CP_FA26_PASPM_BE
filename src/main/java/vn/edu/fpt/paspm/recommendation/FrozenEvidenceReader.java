@@ -27,6 +27,7 @@ public class FrozenEvidenceReader {
     }
     private Source readSource(int store,MiningContracts.RunView run) {
         require(run.storeId()==store);
+        snapshots.assertAssociationEvidence(store,run.snapshotId());
         var requests=jdbc.query("SELECT * FROM mining_request WHERE store_id=? AND request_id=?",(r,n)->new FrozenRequest(
             json.read(r.getString("frozen_input"),MiningInputBuilder.Dataset.class),
             json.read(r.getString("utility_config_snapshot"),UtilityMatrixContracts.SnapshotView.class),
