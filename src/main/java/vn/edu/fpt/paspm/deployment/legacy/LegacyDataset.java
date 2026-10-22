@@ -6,13 +6,15 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.HexFormat;
 
-/** Canonical length-prefixed fields, ordered by immutable primary key. No locale-dependent formatting. */
+/** Canonical length-prefixed fields, ordered by immutable primary key.
+ * Creator identity and snapshot Store are frozen; current user membership is not historical evidence.
+ */
 public record LegacyDataset(long matrixRows, long snapshots, String matrixSha256, String snapshotSha256) {
  public static final String MATRIX_COLUMNS="matrix_item_id,snapshot_id,transaction_id,product_id,quantity,base_utility,stock_score,expiry_score,seasonal_score,expiry_status,weight_value,weighted_utility";
  public static final String SNAPSHOT_COLUMNS="snapshot_id,store_id,created_by,range_start,range_end,as_of_date,config_snapshot,source_hash,matrix_hash,total_weighted_utility,rounding_scale,status,created_at";
  public static LegacyDataset inspect(Connection c,String table) throws SQLException {
   if(!table.equals("utility_matrix_item")&&!table.equals("utility_matrix_item_legacy_v5"))throw new IllegalArgumentException("Invalid matrix table");
-  reject(c,"SELECT COUNT(*) FROM utility_snapshot s LEFT JOIN store t ON t.store_id=s.store_id LEFT JOIN app_user u ON u.user_id=s.created_by WHERE t.store_id IS NULL OR u.user_id IS NULL OR u.store_id IS NULL OR u.store_id<>s.store_id OR s.snapshot_id<=0 OR s.store_id<=0 OR s.created_by<=0 OR s.range_end<s.range_start OR s.rounding_scale<>6 OR s.total_weighted_utility<0 OR s.status NOT IN ('READY','FAILED')", "Invalid snapshot, Store or creator ownership");
+  reject(c,"SELECT COUNT(*) FROM utility_snapshot s LEFT JOIN store t ON t.store_id=s.store_id LEFT JOIN app_user u ON u.user_id=s.created_by WHERE t.store_id IS NULL OR u.user_id IS NULL OR s.snapshot_id<=0 OR s.store_id<=0 OR s.created_by<=0 OR s.range_end<s.range_start OR s.rounding_scale<>6 OR s.total_weighted_utility<0 OR s.status NOT IN ('READY','FAILED')", "Invalid snapshot, Store or creator ownership");
   reject(c,"SELECT COUNT(*) FROM "+table+" m LEFT JOIN utility_snapshot s ON s.snapshot_id=m.snapshot_id LEFT JOIN product p ON p.product_id=m.product_id LEFT JOIN store t ON t.store_id=p.store_id WHERE s.snapshot_id IS NULL OR p.product_id IS NULL OR t.store_id IS NULL OR p.store_id<>s.store_id OR m.matrix_item_id<=0 OR m.transaction_id<=0 OR m.product_id<=0 OR m.quantity<=0 OR m.base_utility<0 OR m.weight_value<1 OR m.weighted_utility<0 OR m.stock_score NOT BETWEEN 0 AND 1 OR m.expiry_score NOT BETWEEN 0 AND 1 OR m.seasonal_score NOT BETWEEN 0 AND 1 OR m.expiry_status NOT IN ('AVAILABLE','NOT_APPLICABLE','NO_SELLABLE_BATCH','MISSING_METADATA')", "Invalid matrix identity, ownership or values");
   reject(c,"SELECT COUNT(*) FROM (SELECT snapshot_id,transaction_id,product_id FROM "+table+" GROUP BY snapshot_id,transaction_id,product_id HAVING COUNT(*)>1) d","Duplicate legacy identity");
   reject(c,"SELECT COUNT(*) FROM utility_snapshot s LEFT JOIN (SELECT snapshot_id,SUM(weighted_utility) total FROM "+table+" GROUP BY snapshot_id) m ON m.snapshot_id=s.snapshot_id WHERE s.total_weighted_utility<>COALESCE(m.total,0)","Snapshot total differs from frozen matrix");

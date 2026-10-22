@@ -58,6 +58,9 @@ CREATE TABLE IF NOT EXISTS utility_snapshot_storage (
    guard(c,mysql,"archive_registry_owner_"+event.toLowerCase(Locale.ROOT),"utility_snapshot_storage",event,
     "NOT EXISTS (SELECT 1 FROM utility_snapshot WHERE snapshot_id=NEW.snapshot_id AND store_id=NEW.store_id)",
     "try(var p=c.prepareStatement(\"SELECT 1 FROM utility_snapshot WHERE snapshot_id=? AND store_id=?\")){p.setObject(1,newRow[0]);p.setObject(2,newRow[1]);try(var r=p.executeQuery()){if(!r.next())throw new java.sql.SQLException(\"Snapshot Store ownership mismatch\");}}");
+  guard(c,mysql,"archive_product_owner_update","product","UPDATE",
+   "NEW.store_id<>OLD.store_id AND EXISTS (SELECT 1 FROM utility_matrix_item_legacy_v5 WHERE product_id=OLD.product_id)",
+   "if(!java.util.Objects.equals(oldRow[1],newRow[1])){try(var p=c.prepareStatement(\"SELECT 1 FROM utility_matrix_item_legacy_v5 WHERE product_id=?\")){p.setObject(1,oldRow[0]);try(var r=p.executeQuery()){if(r.next())throw new java.sql.SQLException(\"Archived Product Store ownership is immutable\");}}}");
   for(String event:new String[]{"INSERT","UPDATE","DELETE"})
    guard(c,mysql,"archive_v5_"+event.toLowerCase(Locale.ROOT),"utility_matrix_item_legacy_v5",event,"TRUE","throw new java.sql.SQLException(\"Historical archive is immutable\");");
   for(String event:new String[]{"UPDATE","DELETE"}) {

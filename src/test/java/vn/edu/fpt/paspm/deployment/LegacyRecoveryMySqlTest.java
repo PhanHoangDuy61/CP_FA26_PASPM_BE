@@ -33,6 +33,9 @@ class LegacyRecoveryMySqlTest {
    var result=latest(f.target,callback(f)).migrate();assertTrue(result.success);
    latest(f.target,callback(f)).validate();
    try(var c=connect(f.target);var s=c.createStatement()){
+    assertEquals(f.before,LegacyDataset.inspect(c,"utility_matrix_item_legacy_v5"));
+    assertThrows(SQLException.class,()->s.executeUpdate("UPDATE product SET store_id=2 WHERE product_id=1"));
+    s.executeUpdate("UPDATE app_user SET store_id=2 WHERE user_id=1");
     assertEquals(f.before,LegacyDataset.inspect(c,"utility_matrix_item_legacy_v5"));assertEquals(0,LegacyDataset.count(c,"sales_transaction"));assertEquals(0,LegacyDataset.count(c,"utility_matrix_item"));assertEquals(2,LegacyDataset.count(c,"utility_snapshot_storage"));
     assertThrows(SQLException.class,()->s.executeUpdate("UPDATE utility_matrix_item_legacy_v5 SET quantity=2"));
     assertThrows(SQLException.class,()->s.executeUpdate("DELETE FROM utility_snapshot WHERE snapshot_id=1"));
@@ -49,7 +52,7 @@ class LegacyRecoveryMySqlTest {
   try(var c=connect(g.target)){assertFalse(LegacyRecoveryCallback.exists(c,"utility_legacy_recovery_journal"));}
  }
  @Test void invalidOwnershipAndTotalsFailClosedEvenWithForeignKeysDisabled()throws Exception {
-  for(String mutation:List.of("UPDATE utility_matrix_item SET product_id=999 WHERE matrix_item_id=1", "UPDATE utility_matrix_item SET product_id=2 WHERE matrix_item_id=1", "UPDATE utility_matrix_item SET snapshot_id=999 WHERE matrix_item_id=1", "UPDATE utility_snapshot SET created_by=999 WHERE snapshot_id=1", "UPDATE utility_snapshot SET created_by=2 WHERE snapshot_id=1", "DELETE FROM store WHERE store_id=1", "UPDATE utility_snapshot SET total_weighted_utility=99 WHERE snapshot_id=1")) {
+  for(String mutation:List.of("UPDATE utility_matrix_item SET product_id=999 WHERE matrix_item_id=1", "UPDATE utility_matrix_item SET product_id=2 WHERE matrix_item_id=1", "UPDATE utility_matrix_item SET snapshot_id=999 WHERE matrix_item_id=1", "UPDATE utility_snapshot SET created_by=999 WHERE snapshot_id=1", "DELETE FROM store WHERE store_id=1", "UPDATE utility_snapshot SET total_weighted_utility=99 WHERE snapshot_id=1")) {
    Fixture f=fixture();try(var c=connect(f.target);var st=c.createStatement()){st.execute("SET FOREIGN_KEY_CHECKS=0");st.executeUpdate(mutation);st.execute("SET FOREIGN_KEY_CHECKS=1");}
    assertThrows(Exception.class,()->latest(f.target,callback(f)).migrate(),mutation);
    try(var c=connect(f.target)){assertFalse(LegacyRecoveryCallback.exists(c,"utility_legacy_recovery_journal"));assertFalse(LegacyRecoveryCallback.exists(c,"api_connection"));assertEquals(2,LegacyDataset.count(c,"utility_matrix_item"));}
@@ -83,15 +86,47 @@ class LegacyRecoveryMySqlTest {
    assertEquals(0,latest(db,new LegacyRecoveryCallback(false,null,null,null,null)).migrate().migrationsExecuted);
   }
  }
+ @Test void matchingCopyCannotProveAnUnrelatedDump()throws Exception {
+  Fixture f=fixture();Path unrelated=Files.createTempFile(dir,"unrelated-",".sql");
+  try(var target=connect(f.target);var restored=connect(f.restored)) {
+   assertThrows(Exception.class,()->LegacyBackupVerifier.generate(target,restored,unrelated,"approved-test",dir.resolve("unsafe.properties"),new LegacyBackupVerifier.RestoreCredentials(f.restored.user(),f.restored.password())));
+  }
+ }
+ @Test void emptyUnrelatedOrCrossSchemaArtifactsNeverProduceManifest()throws Exception {
+  var targetDb=MySqlTestDatabase.create();at5(targetDb);seed(targetDb);
+  String schema=targetDb.url().substring(targetDb.url().lastIndexOf('/')+1).split("\\?")[0];
+  for(String sql:List.of("", "CREATE TABLE unrelated(id INT);", "DELETE FROM `"+schema+"`.utility_matrix_item;")) {
+   var restoreDb=restrictedRestore();Path dump=Files.createTempFile(dir,"invalid-artifact-",".sql"),manifest=dir.resolve(UUID.randomUUID()+".properties");Files.writeString(dump,sql);
+   try(var target=connect(targetDb);var restored=connect(restoreDb)) {
+    var before=LegacyDataset.inspect(target,"utility_matrix_item");
+    assertThrows(Exception.class,()->LegacyBackupVerifier.generate(target,restored,dump,"approved-test",manifest,new LegacyBackupVerifier.RestoreCredentials(restoreDb.user(),restoreDb.password())));
+    assertEquals(before,LegacyDataset.inspect(target,"utility_matrix_item"));assertFalse(Files.exists(manifest));
+   }
+  }
+  var broad=MySqlTestDatabase.create();Path dump=Files.createTempFile(dir,"empty-",".sql");
+  try(var target=connect(targetDb);var restored=connect(broad)) {
+   assertThrows(Exception.class,()->LegacyBackupVerifier.generate(target,restored,dump,"approved-test",dir.resolve("broad.properties"),new LegacyBackupVerifier.RestoreCredentials(broad.user(),broad.password())));
+  }
+ }
  static String rootMessages(Throwable t){StringBuilder b=new StringBuilder();while(t!=null){b.append(t.getMessage());t=t.getCause();}return b.toString();}
  Fixture fixture()throws Exception {
-  var target=MySqlTestDatabase.create();at5(target);seed(target);var restored=MySqlTestDatabase.create();
+  var target=MySqlTestDatabase.create();at5(target);seed(target);var restored=restrictedRestore();
   Path dump=Files.createTempFile(dir,"legacy-",".sql"),manifest=dir.resolve(UUID.randomUUID()+".properties");
   String schema=target.url().substring(target.url().lastIndexOf('/')+1).split("\\?")[0],restoreSchema=restored.url().substring(restored.url().lastIndexOf('/')+1).split("\\?")[0];
   String server=System.getenv("PASPM_TEST_MYSQL_SERVER");String port=server.substring(server.lastIndexOf(':')+1).replace("/","");
   ProcessBuilder backup=new ProcessBuilder("mysqldump","--host=127.0.0.1","--port="+port,"--user="+target.user(),"--single-transaction","--set-gtid-purged=OFF","--no-tablespaces",schema).redirectOutput(dump.toFile()).redirectError(dir.resolve("dump.stderr").toFile());backup.environment().put("MYSQL_PWD",target.password());assertEquals(0,backup.start().waitFor(),"Actual backup failed");
-  ProcessBuilder restore=new ProcessBuilder("mysql","--host=127.0.0.1","--port="+port,"--user="+restored.user(),restoreSchema).redirectInput(dump.toFile()).redirectOutput(dir.resolve("restore.stdout").toFile()).redirectError(dir.resolve("restore.stderr").toFile());restore.environment().put("MYSQL_PWD",restored.password());assertEquals(0,restore.start().waitFor(),"Actual restore failed");
-  try(var c=connect(target);var r=connect(restored)){LegacyDataset before=LegacyDataset.inspect(c,"utility_matrix_item");LegacyBackupVerifier.generate(c,r,dump,"approved-isolated-synthetic-test",manifest);return new Fixture(target,restored,dump,manifest,before);}
+
+  try(var c=connect(target);var r=connect(restored)){LegacyDataset before=LegacyDataset.inspect(c,"utility_matrix_item");LegacyBackupVerifier.generate(c,r,dump,"approved-isolated-synthetic-test",manifest,new LegacyBackupVerifier.RestoreCredentials(restored.user(),restored.password()));return new Fixture(target,restored,dump,manifest,before);}
+ }
+ MySqlTestDatabase restrictedRestore()throws Exception {
+  var db=MySqlTestDatabase.create();String schema=db.url().substring(db.url().lastIndexOf('/')+1).split("\\?")[0];
+  String username="bc_restore_"+UUID.randomUUID().toString().replace("-","").substring(0,12);
+  String password=UUID.randomUUID().toString().replace("-","");
+  String helper=System.getenv("PASPM_TEST_RESTORE_PROVISIONER");assertNotNull(helper,"Opt-in backup tests require disposable restore-account provisioner");
+  var process=new ProcessBuilder(helper).redirectOutput(ProcessBuilder.Redirect.DISCARD).redirectError(ProcessBuilder.Redirect.DISCARD).start();
+  try(var input=process.getOutputStream()){input.write(new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsBytes(Map.of("schema",schema,"username",username,"password",password)));}
+  assertTrue(process.waitFor(30,java.util.concurrent.TimeUnit.SECONDS));assertEquals(0,process.exitValue());
+  return new MySqlTestDatabase(db.url(),username,password);
  }
  static Connection connect(MySqlTestDatabase db)throws SQLException{return DriverManager.getConnection(db.url(),db.user(),db.password());}
  static void at5(MySqlTestDatabase db){Flyway.configure().dataSource(db.url(),db.user(),db.password()).target("5").load().migrate();}
