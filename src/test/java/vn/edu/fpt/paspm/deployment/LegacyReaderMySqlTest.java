@@ -30,6 +30,21 @@ class LegacyReaderMySqlTest {
   var before=fingerprints(target,false);
   LegacyRecoveryMySqlTest.latest(target,new LegacyRecoveryCallback(false,null,null,null,null)).migrate();
   assertEquals(before,fingerprints(target,true));
+  var json=new UtilitySettingsRepository(jdbc,JsonMapper.builder().findAndAddModules().build());
+  var repository=new UtilitySnapshotRepository(jdbc,json);
+  for(int store:List.of(1,2)) {
+   assertEquals(0,repository.countItems(store,store));
+   assertTrue(repository.page(store,store,0,10).isEmpty());
+   var access=org.mockito.Mockito.mock(vn.edu.fpt.paspm.catalog.CatalogAccess.class);
+   var jwt=org.springframework.security.oauth2.jwt.Jwt.withTokenValue("test").header("alg","none").subject(Integer.toString(store)).build();
+   org.mockito.Mockito.when(access.currentStoreId(jwt)).thenReturn(store);
+   var service=new UtilitySnapshotService(access,json,null,repository,null);
+   assertEquals(0,service.matrix(jwt,store,0,10).totalElements());
+   int selected=store;
+   assertEquals(409,assertThrows(ApiException.class,()->repository.saveItems(selected,List.of())).status());
+   assertEquals(409,assertThrows(ApiException.class,()->repository.assertAssociationEvidence(selected,selected)).status());
+  }
+
   for(String table:List.of("utility_matrix_item","utility_matrix_item_legacy_v5","sales_transaction"))
    assertEquals(0,jdbc.queryForObject("SELECT COUNT(*) FROM "+table,Integer.class));
   for(String table:List.of("store","product","category","inventory_batch","utility_snapshot"))

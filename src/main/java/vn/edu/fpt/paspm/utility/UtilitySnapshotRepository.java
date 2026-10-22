@@ -56,11 +56,17 @@ public class UtilitySnapshotRepository {
             legacy="LEGACY_V5_ARCHIVE".equals(entry.getValue());
             if(!legacy&&!"F04_LIVE".equals(entry.getValue()))throw invalid();
         }
-        // Missing registry entries are supported only for demonstrable pre-registry F04 snapshots.
+        // Unregistered empty historical headers remain readable, but never gain live provenance.
         if(routes.isEmpty()) {
             try {
                 var frozen=json.read(jdbc.queryForObject("SELECT config_snapshot FROM utility_snapshot WHERE snapshot_id=?",String.class,id),FrozenConfiguration.class);
-                if(frozen==null||!"F04_DATABASE_V1".equals(frozen.source()))throw invalid();
+                if(frozen==null||!"F04_DATABASE_V1".equals(frozen.source())) {
+                    long live=jdbc.queryForObject("SELECT COUNT(*) FROM utility_matrix_item WHERE snapshot_id=?",Long.class,id);
+                    long archived=jdbc.queryForObject("SELECT COUNT(*) FROM utility_matrix_item_legacy_v5 WHERE snapshot_id=?",Long.class,id);
+                    var total=jdbc.queryForObject("SELECT total_weighted_utility FROM utility_snapshot WHERE snapshot_id=?",java.math.BigDecimal.class,id);
+                    if(live!=0||archived!=0||total==null||total.signum()!=0)throw invalid();
+                    legacy=true;
+                }
             } catch(RuntimeException ex) {throw invalid();}
         }
         String table=legacy?"utility_matrix_item_legacy_v5":"utility_matrix_item";

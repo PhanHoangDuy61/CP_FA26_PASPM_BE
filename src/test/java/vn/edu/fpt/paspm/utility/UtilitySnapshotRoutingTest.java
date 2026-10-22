@@ -24,6 +24,15 @@ class UtilitySnapshotRoutingTest {
  @Test void archiveWritesAndAssociationMembershipAreRejectedBeforeAnyMutation(){assertEquals(409,assertThrows(ApiException.class,()->repository.saveItems(1,List.of())).status());jdbc.update("INSERT INTO sales_transaction VALUES(7,1)");assertEquals(409,assertThrows(ApiException.class,()->repository.assertAssociationEvidence(1,1)).status());}
  @Test void mixedRouteAndWrongStoreRegistryFailClosed(){jdbc.update("INSERT INTO utility_matrix_item(snapshot_id,transaction_id,product_id,weighted_utility) VALUES(1,7,11,2)");assertEquals(409,assertThrows(ApiException.class,()->repository.page(1,1,0,10)).status());jdbc.update("DELETE FROM utility_matrix_item");jdbc.update("UPDATE utility_snapshot_storage SET store_id=2 WHERE snapshot_id=1");assertThrows(ApiException.class,()->repository.countItems(1,1));}
  @Test void missingLegacyRegistryCannotBecomeModern(){jdbc.update("DELETE FROM utility_snapshot_storage");assertThrows(ApiException.class,()->repository.page(1,1,0,10));}
+ @Test void unregisteredEmptyHistoricalSnapshotAllowsOnlyReadOperations(){
+  jdbc.update("DELETE FROM utility_snapshot_storage");jdbc.update("DELETE FROM utility_matrix_item_legacy_v5");
+  jdbc.update("UPDATE utility_snapshot SET total_weighted_utility=0");
+  assertEquals(0,repository.countItems(1,1));assertTrue(repository.page(1,1,0,10).isEmpty());
+  assertEquals(409,assertThrows(ApiException.class,()->repository.saveItems(1,List.of())).status());
+  assertEquals(409,assertThrows(ApiException.class,()->repository.assertAssociationEvidence(1,1)).status());
+  jdbc.update("UPDATE utility_snapshot SET total_weighted_utility=2 WHERE snapshot_id=1");
+  assertEquals(409,assertThrows(ApiException.class,()->repository.countItems(1,1)).status());
+ }
  @Test void absentRegistryRequiresActualFrozenSourceAndSalesOwnership(){
   jdbc.update("DELETE FROM utility_snapshot_storage");jdbc.update("DELETE FROM utility_matrix_item_legacy_v5");
   jdbc.update("INSERT INTO utility_matrix_item(snapshot_id,transaction_id,product_id,weighted_utility) VALUES(1,7,11,2)");
