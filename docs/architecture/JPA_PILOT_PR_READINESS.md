@@ -26,3 +26,7 @@ The previous populated-V5 1452 engineering gap is resolved for the supported reg
 F06 historical recommendations remain limited by verified transaction-membership evidence. No association confidence/support is fabricated. Controlled interruption tests do not represent exhaustive OS-crash or production-scale operational proof.
 
 PR status is recorded in the [migration manifest](../testing/evidence/historical_matrix_recovery/implementation/MIGRATION_MANIFEST.json); use [recovery design](V5_V7_HISTORICAL_MATRIX_RECOVERY_DESIGN.md), [operations](LEGACY_UTILITY_MATRIX_COMPATIBILITY.md), [test report](../testing/V5_V10_POPULATED_MATRIX_RECOVERY_TEST_PLAN.md) and [review history](../testing/evidence/historical_matrix_recovery/implementation/REVIEW_SUMMARY.md) for review. If API PR creation is403, a manual compare link and exact PR body are provided; no merge follows automatically.
+
+## Delivery status
+
+Feature branch pushed successfully. The actual GitHub API PR creation attempt returned **403 Resource not accessible by integration**; no PR was created and nothing was merged. [Create the PR manually](https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/compare/dev...Khoi%2FFear%2Ffix-legacy-utility-matrix-migration?expand=1) into `dev`, using the [prepared exact title and description](HISTORICAL_MATRIX_RECOVERY_PR_DESCRIPTION.md). Human review and remote CI remain pending. Dedicated test MySQL is stopped and temporary plaintext credentials are removed.

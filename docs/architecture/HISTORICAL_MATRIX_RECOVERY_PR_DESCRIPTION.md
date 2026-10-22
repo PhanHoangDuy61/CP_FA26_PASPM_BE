@@ -1,3 +1,9 @@
+Title: `fix: preserve historical utility matrices across V5 upgrades`
+
+Base: `dev`
+Head: `Khoi/Fear/fix-legacy-utility-matrix-migration`
+Requested state: Draft; human review and CI pending.
+
 # Preserve historical Utility Matrix data during V5 upgrades
 
 Populated V5 matrices contain source-local transaction IDs, so V7 previously fails when it treats them as F04 sales keys. A registered pre-V7 callback now verifies an exact backup restore and archives original rows before V7; additive V11 installs archival/routing support on fresh and already upgraded databases.

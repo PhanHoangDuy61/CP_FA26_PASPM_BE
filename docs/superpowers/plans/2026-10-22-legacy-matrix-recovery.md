@@ -44,8 +44,8 @@ Files: new MySQL integration tests/evidence and test fixtures; source DB read-on
 Files: approved recovery design/test plan, JPA verification/readiness, LEGACY_UTILITY_MATRIX_COMPATIBILITY.md, sanitized evidence.
 - [x] Document actual final schema, opt-in/backup CLI/setup, migration order and crash/partial-DDL restore instructions, F06 limitations, actual results/remaining risks.
 - [x] Independent security/correctness review of complete branch, fix important findings and rerun covering tests.
-- [ ] Verify old migration SHA, source immutability, diff/secrets; commit scoped deliverables; push feature branch and create PR into dev or provide manual compare link on 403. No merge.
+- [x] Verify old migration SHA, source immutability, diff/secrets; commit scoped deliverables; push feature branch and create PR into dev or provide manual compare link on 403. No merge.
 
 ## Execution record (2026-10-23)
 
-Core0e4adbb +review fixes7bf89e1; reader7e8503d +empty-read correction2553e54; actual failed-V7 recovery acceptance9c19f2a. Final Maven verify:254 feature and299 detached Pilot compatibility PASS, zero failures/errors/skips. Source remains read-onlyV5/unchanged. Production deployment/real backfill/merge/Category are not authorized. Controlled crash checkpoints, not every OS-kill boundary, executed; operational limits remain documented. Code review approved for review; final docs consistency/cleanup/push underway.
+Core0e4adbb +review fixes7bf89e1; reader7e8503d +empty-read correction2553e54; actual failed-V7 recovery acceptance9c19f2a. Final Maven verify:254 feature and299 detached Pilot compatibility PASS, zero failures/errors/skips. Source remains read-onlyV5/unchanged. Production deployment/real backfill/merge/Category are not authorized. Controlled crash checkpoints, not every OS-kill boundary, executed; operational limits remain documented. Code review approved for review; documentation committed, isolated server stopped, temporary credentials removed, and branch pushed. Actual GitHub PR creation returned 403; manual compare link and ready-to-use description provided. No merge or deployment.

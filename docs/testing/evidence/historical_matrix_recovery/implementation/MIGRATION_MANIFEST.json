@@ -40,8 +40,22 @@
     ],
     "forensics": "Offline private test datadir retained; no raw dumps or credentials in Git"
   },
-  "prStatus": "PENDING",
+  "prStatus": {
+    "status": "BLOCKED_API_403_MANUAL_PR_PREPARED",
+    "base": "dev",
+    "head": "Khoi/Fear/fix-legacy-utility-matrix-migration",
+    "githubError": "403 Resource not accessible by integration",
+    "manualCompareUrl": "https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/compare/dev...Khoi%2FFear%2Ffix-legacy-utility-matrix-migration?expand=1",
+    "descriptionFile": "docs/architecture/HISTORICAL_MATRIX_RECOVERY_PR_DESCRIPTION.md",
+    "automaticMerge": false
+  },
   "independentAgentReview": "APPROVED_FOR_REVIEW_NO_OUTSTANDING_IMPORTANT_FINDINGS",
   "pomSha256": "8fa15d1e3088a3eef106aeadfc1545a6cfe482059d8b656b29f4c3aa57182977",
-  "builtJarSha256": "dcd7d234909f47c325d580ed361b4a4af57ca2265eb3d56aea80ae3f422e8ebb"
+  "builtJarSha256": "dcd7d234909f47c325d580ed361b4a4af57ca2265eb3d56aea80ae3f422e8ebb",
+  "branchPush": {
+    "status": "SUCCESS",
+    "remote": "origin",
+    "branch": "Khoi/Fear/fix-legacy-utility-matrix-migration"
+  },
+  "deliveryUpdatedAt": "2026-10-23T00:59:28.135953+07:00"
 }
