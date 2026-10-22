@@ -43,6 +43,54 @@ class LegacyRecoveryMySqlTest {
    }
   }
  }
+ @Test void partialV7FailureIsLeftIntactWhileCleanVerifiedRestoreCompletesRecovery()throws Exception {
+  Fixture f=fixture();
+  Exception original=assertThrows(Exception.class,()->Flyway.configure().dataSource(f.target.url(),f.target.user(),f.target.password()).load().migrate());
+  assertTrue(sqlCause(original,1452,"fk_utility_matrix_transaction"),rootMessages(original));
+  try(var c=connect(f.target)){
+   assertEquals(f.before,LegacyDataset.inspect(c,"utility_matrix_item"));
+   assertTrue(LegacyRecoveryCallback.exists(c,"api_connection"));
+   assertTrue(LegacyRecoveryCallback.exists(c,"sales_transaction"));
+   assertFalse(LegacyRecoveryCallback.exists(c,"utility_legacy_recovery_journal"));
+   assertEquals(0,LegacyDataset.count(c,"sales_transaction"));
+   assertEquals(1,failedV7Rows(c));
+  }
+
+  assertThrows(Exception.class,()->latest(f.target,callback(f)).migrate());
+  try(var c=connect(f.target)){
+   assertEquals(f.before,LegacyDataset.inspect(c,"utility_matrix_item"));
+   assertTrue(LegacyRecoveryCallback.exists(c,"api_connection"));
+   assertTrue(LegacyRecoveryCallback.exists(c,"sales_transaction"));
+   assertFalse(LegacyRecoveryCallback.exists(c,"utility_legacy_recovery_journal"));
+   assertEquals(0,LegacyDataset.count(c,"sales_transaction"));
+   assertEquals(1,failedV7Rows(c));
+  }
+
+  var verification=restrictedRestore();
+  Path cleanManifest=dir.resolve(UUID.randomUUID()+".properties");
+  try(var target=connect(f.restored);var emptyVerification=connect(verification)){
+   assertEquals(f.before,LegacyDataset.inspect(target,"utility_matrix_item"));
+   LegacyBackupVerifier.generate(target,emptyVerification,f.dump,"approved-clean-restore-test",cleanManifest,
+    new LegacyBackupVerifier.RestoreCredentials(verification.user(),verification.password()));
+  }
+  var cleanCallback=new LegacyRecoveryCallback(true,cleanManifest.toString(),verification.url(),verification.user(),verification.password());
+  var cleanTarget=new MySqlTestDatabase(f.restored.url(),f.target.user(),f.target.password());
+  assertTrue(latest(cleanTarget,cleanCallback).migrate().success);
+  latest(cleanTarget,cleanCallback).validate();
+  try(var c=connect(f.restored)){
+   assertEquals(f.before,LegacyDataset.inspect(c,"utility_matrix_item_legacy_v5"));
+   assertEquals(0,LegacyDataset.count(c,"utility_matrix_item"));
+   assertEquals(0,LegacyDataset.count(c,"sales_transaction"));
+  }
+  try(var c=connect(f.target)){
+   assertEquals(f.before,LegacyDataset.inspect(c,"utility_matrix_item"));
+   assertTrue(LegacyRecoveryCallback.exists(c,"api_connection"));
+   assertTrue(LegacyRecoveryCallback.exists(c,"sales_transaction"));
+   assertFalse(LegacyRecoveryCallback.exists(c,"utility_legacy_recovery_journal"));
+   assertEquals(0,LegacyDataset.count(c,"sales_transaction"));
+   assertEquals(1,failedV7Rows(c));
+  }
+ }
  @Test void dumpTamperAndRestoreTamperCannotAuthorizeTransition()throws Exception {
   Fixture f=fixture();Files.writeString(f.dump,"--tampered",StandardOpenOption.APPEND);
   assertThrows(Exception.class,()->latest(f.target,callback(f)).migrate());
@@ -109,6 +157,13 @@ class LegacyRecoveryMySqlTest {
   }
  }
  static String rootMessages(Throwable t){StringBuilder b=new StringBuilder();while(t!=null){b.append(t.getMessage());t=t.getCause();}return b.toString();}
+ static boolean sqlCause(Throwable t,int code,String constraint){
+  while(t!=null){if(t instanceof SQLException sql&&sql.getErrorCode()==code&&sql.getMessage().contains(constraint))return true;t=t.getCause();}
+  return false;
+ }
+ static int failedV7Rows(Connection c)throws SQLException{
+  try(var s=c.createStatement();var r=s.executeQuery("SELECT COUNT(*) FROM flyway_schema_history WHERE version='7' AND success=0")){r.next();return r.getInt(1);}
+ }
  Fixture fixture()throws Exception {
   var target=MySqlTestDatabase.create();at5(target);seed(target);var restored=restrictedRestore();
   Path dump=Files.createTempFile(dir,"legacy-",".sql"),manifest=dir.resolve(UUID.randomUUID()+".properties");
