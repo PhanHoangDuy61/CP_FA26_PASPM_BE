@@ -1,0 +1,173 @@
+{
+  "tests": 33,
+  "failures": 0,
+  "errors": 6,
+  "skipped": 0,
+  "cases": [
+    {
+      "class": "vn.edu.fpt.paspm.deployment.LegacyRecoveryMySqlTest",
+      "name": "freshAndEmptyV5AndAlreadyV10AreAdditive",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.deployment.LegacyRecoveryMySqlTest",
+      "name": "changedStagedConstraintsAndUnknownStageAreRefused",
+      "result": "ERROR"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.deployment.LegacyRecoveryMySqlTest",
+      "name": "realDumpRestoreMigrationAndEveryJournalBoundaryPreserveBothStores",
+      "result": "ERROR"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.deployment.LegacyRecoveryMySqlTest",
+      "name": "springBootDiscoversGuardAndRefusesWithoutOptInBeforeV7Ddl",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.deployment.LegacyRecoveryMySqlTest",
+      "name": "matchingCopyCannotProveAnUnrelatedDump",
+      "result": "ERROR"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.deployment.LegacyRecoveryMySqlTest",
+      "name": "dumpTamperAndRestoreTamperCannotAuthorizeTransition",
+      "result": "ERROR"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.deployment.LegacyRecoveryMySqlTest",
+      "name": "invalidOwnershipAndTotalsFailClosedEvenWithForeignKeysDisabled",
+      "result": "ERROR"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.deployment.LegacyRecoveryMySqlTest",
+      "name": "modernCrossStoreInsertIsRejectedAfterV11",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.deployment.LegacyRecoveryMySqlTest",
+      "name": "partialV7FailureIsLeftIntactWhileCleanVerifiedRestoreCompletesRecovery",
+      "result": "ERROR"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.deployment.LegacyRecoveryMySqlTest",
+      "name": "emptyUnrelatedOrCrossSchemaArtifactsNeverProduceManifest",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.recommendation.RecommendationMigrationTest",
+      "name": "freshMySqlMigratesAllElevenVersions",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.recommendation.RecommendationMigrationTest",
+      "name": "mysqlV9UpgradePreservesHistoricalSnapshotAndStoreConfiguration",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.transaction.TransactionImportMySqlIntegrationTest",
+      "name": "stagesRawRowsPersistsCompleteOrdersAndNeverMutatesInventory",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.transaction.TransactionImportMySqlIntegrationTest",
+      "name": "importAndTransactionReadsAreRoleCheckedAndStoreScoped",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.transaction.TransactionImportMySqlIntegrationTest",
+      "name": "rejectsEntireOrderWhenAnyLineFailsButPersistsOtherOrdersInTheBatch",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.transaction.TransactionImportMySqlIntegrationTest",
+      "name": "duplicateFileIsIdempotentAndConflictingOrderDoesNotOverwriteHistory",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.transaction.TransactionImportMySqlIntegrationTest",
+      "name": "openApiAdvertisesCsvUploadAsMultipartBinary",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.transaction.TransactionImportMySqlIntegrationTest",
+      "name": "acceptsCsvContentTypeWithCharsetParameter",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.deployment.LegacyRecoverySchemaTest",
+      "name": "freshAndRepeatedInstallationFreezesArchiveAndLegacyHeaders",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.deployment.LegacyRecoverySchemaTest",
+      "name": "mysqlGuardsAndFreshSchema",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.utility.RetailCatalogUtilityMySqlIntegrationTest",
+      "name": "scorePatchRejectsInvalidOrCalculatedInputsWithoutChangingSavedValues",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.utility.RetailCatalogUtilityMySqlIntegrationTest",
+      "name": "openApiMarksCalculatedFieldsReadOnlyAndNullable",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.utility.RetailCatalogUtilityMySqlIntegrationTest",
+      "name": "merchandiserReadsOnlyTheirStoreCatalogWithFiltersAndPagination",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.utility.RetailCatalogUtilityMySqlIntegrationTest",
+      "name": "partialBoundaryWritesRecalculateButNeverChangeInventory",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.utility.RetailCatalogUtilityMySqlIntegrationTest",
+      "name": "sharedExpiryAndDisabledCriteriaRulesRemainIntact",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.utility.RetailCatalogUtilityMySqlIntegrationTest",
+      "name": "scoreReadAndWritePermissionsStaySeparatedAndStoreScoped",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.utility.RetailCatalogUtilityMySqlIntegrationTest",
+      "name": "missingEnabledInputsReturnExplicitIncompleteCurrentPreview",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.utility.RetailCatalogUtilityMySqlIntegrationTest",
+      "name": "catalogRejectsUnauthenticatedAndNonStoreBusinessRoles",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.utility.RetailCatalogUtilityMySqlIntegrationTest",
+      "name": "policyChangesInvalidateCurrentWeightWithoutClampingStoredLambda",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.utility.RetailCatalogUtilityMySqlIntegrationTest",
+      "name": "catalogReadDoesNotGrantProductCategoryOrInventoryWrites",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.utility.RetailCatalogUtilityMySqlIntegrationTest",
+      "name": "currentScoresUseBackendFormulaWithoutTransactionHistory",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.deployment.FlywayRecoveryTest",
+      "name": "existingMySqlV7UpgradesWithoutReplayingOrDeletingData",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.deployment.FlywayRecoveryTest",
+      "name": "oldAppliedChecksumRequiresExplicitRepairAndPreservesData",
+      "result": "PASS"
+    }
+  ]
+}

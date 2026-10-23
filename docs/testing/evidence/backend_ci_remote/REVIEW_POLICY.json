@@ -1,0 +1,37 @@
+{
+  "/pulls/1": {
+    "number": 1,
+    "state": "closed",
+    "merged": true,
+    "merged_at": "2026-10-22T19:10:21Z",
+    "merge_commit_sha": "691371b9a283208f41269f0956b1386a045fe27a",
+    "html_url": "https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/pull/1"
+  },
+  "/pulls/2": {
+    "number": 2,
+    "state": "closed",
+    "merged": true,
+    "merged_at": "2026-10-23T00:36:47Z",
+    "merge_commit_sha": "783725c7c8aac810f43fce4971a3b45ce6562a94",
+    "html_url": "https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/pull/2"
+  },
+  "/pulls/1/reviews": [],
+  "/pulls/2/reviews": [],
+  "/branches/dev": {
+    "name": "dev",
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    }
+  },
+  "/rules/branches/dev": [],
+  "/rulesets": [],
+  "/branches/dev/protection": {
+    "httpStatus": 401
+  }
+}
