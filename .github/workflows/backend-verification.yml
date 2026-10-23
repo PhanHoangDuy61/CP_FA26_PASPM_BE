@@ -100,7 +100,6 @@ jobs:
       PASPM_TEST_MYSQL_USER: root
       PASPM_TEST_MYSQL_PASSWORD: ''
       PASPM_CI_SPMF_ARTIFACT_URL: ${{ vars.PASPM_CI_SPMF_ARTIFACT_URL }}
-      SPMF_JAR_PATH: ${{ runner.temp }}/spmf.jar
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -118,6 +117,8 @@ jobs:
           distribution: temurin
           java-version: '17'
           cache: maven
+      - name: Set isolated artifact destination
+        run: echo "SPMF_JAR_PATH=$RUNNER_TEMP/spmf.jar" >> "$GITHUB_ENV"
       - name: Verify approved external artifact
         run: python3 .github/scripts/provision-spmf.py
       - name: Verify SPMF version before use

@@ -30,7 +30,7 @@ Files: `.github/workflows/backend-verification.yml`, `.github/scripts/provision-
 - [x] Require repository variable `PASPM_CI_SPMF_ARTIFACT_URL` pointing to an owner-approved HTTPS artifact; verify exact project SHA before execution. Do not download current unpinned upstream releases or redistribute the JAR.
 - [x] Provide matching MySQL8.4 CLI via ephemeral image wrappers and schema-scoped restore accounts. Test rejection of malformed provisioning inputs and actual account grants on the isolated server.
 - [x] Validate workflow syntax and negative missing/wrong artifact checks. Remote workflow execution remains NOT_RUN until GitHub actually runs it.
-- [ ] Publish scoped CI/docs branch and attempt a separate PR; record actual outcome.
+- [x] Published scoped CI/docs branch. PR creation returned 403; manual PR package provided. No merge.
 
 ## Task 4 — Gate report and progression
 Files: update readiness/compatibility/JPA migration verification; include a gate evidence JSON and current migration-plan gate note.

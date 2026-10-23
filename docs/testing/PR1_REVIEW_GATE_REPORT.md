@@ -10,7 +10,7 @@ Execution date: 2026-10-23, Asia/Ho_Chi_Minh. Overall progression: **BLOCKED**. 
 |---|---|
 | Recovery PR | MERGED externally; existing PR #1 reused for audit |
 | Independent human reviewer | REVIEWER_PENDING |
-| GitHub CI | NOT_RUN; SPMF_INTEGRATION_CI_BLOCKED |
+| GitHub CI | Initial workflow validation FAIL; Backend jobs NOT_RUN; SPMF_INTEGRATION_CI_BLOCKED |
 | Recovery merge by this task | NOT_PERFORMED; pre-existing merge was not reverted |
 | Product integration onto current dev | BLOCKED_REVIEW_AND_CI |
 | Product PR | NOT_CREATED; repository PR search found none |
@@ -57,3 +57,11 @@ The configured original MySQL remained V5, empty of catalog/matrix rows, accesse
 Before further integration: verify an eligible independent human reviewer; complete genuine review; approve lawful artifact hosting and the exact immutable URL; execute all remote CI jobs against the latest proposed head; establish required review/check policy or an explicit Team Lead equivalent. The latest user instruction prohibits merge, deployment and source database changes even after these technical tasks. Product integration and Category require a subsequent authorized progression decision.
 
 Delivery and test-instance cleanup are recorded in [delivery status](evidence/pr1_review_gates/DELIVERY.json) and [cleanup](evidence/pr1_review_gates/CLEANUP.json).
+
+## Publication outcome
+
+The dedicated CI branch was pushed successfully. Creating its draft PR returned **403 Resource not accessible by integration**; no CI PR was created. GitHub recorded a failed workflow validation run at the first published head before any jobs executed. Use the [manual comparison](https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/compare/dev...Khoi%2Fchore%2Frecovery-review-ci-gates?expand=1) with the [prepared description](../architecture/BACKEND_CI_PR_DESCRIPTION.md). Remote CI remains NOT_RUN; reviewer and artifact prerequisites remain pending. No retries through alternate identities, merge or deployment occurred.
+
+### Workflow validation correction
+
+[Run 39878437809](https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/actions/runs/39878437809) at `fde0322` ended FAILURE with zero jobs and zero check runs. Inspection found `runner.temp` in job-level env, where GitHub does not allow the runner context ([official context availability](https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#context-availability)). The workflow now exports SPMF_JAR_PATH from a runtime shell step using RUNNER_TEMP and GITHUB_ENV. YAML/Bash checks pass after correction. This was a CI configuration defect; no Backend tests ran remotely. Full GitHub runtime verification remains required.

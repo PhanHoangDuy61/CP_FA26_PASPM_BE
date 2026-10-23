@@ -1,7 +1,20 @@
 {
+  "checkedAt": "2026-10-23T07:30:24.043065+07:00",
   "branch": "Khoi/chore/recovery-review-ci-gates",
-  "baseCommit": "691371b9a283208f41269f0956b1386a045fe27a",
-  "status": "PREPARED_PUBLICATION_PENDING",
+  "verifiedPublishedHead": "fde0322f626e7cda6ff76880f20741215c448b24",
+  "remoteDev": "691371b9a283208f41269f0956b1386a045fe27a",
+  "push": "SUCCESS",
+  "prCreation": "403 Resource not accessible by integration",
+  "ciPrCreated": false,
+  "manualPrUrl": "https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/compare/dev...Khoi%2Fchore%2Frecovery-review-ci-gates?expand=1",
+  "actionsRunsAtPublishedHead": 1,
+  "remoteCi": "WORKFLOW_VALIDATION_FAILED_BEFORE_JOBS",
+  "reviewer": "REVIEWER_PENDING",
+  "spmfIntegrationCi": "SPMF_INTEGRATION_CI_BLOCKED",
   "mergePerformed": false,
-  "deploymentPerformed": false
+  "deploymentPerformed": false,
+  "note": "Final documentation-only bookkeeping commit follows this verified publication; final head is verified by delivery command output.",
+  "failedRunUrl": "https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/actions/runs/39878437809",
+  "executedJobs": 0,
+  "correction": "Move unsupported runner.temp from job env to runtime GITHUB_ENV step; remote execution still required."
 }

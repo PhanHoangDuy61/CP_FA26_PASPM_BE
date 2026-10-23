@@ -9,3 +9,5 @@ Validation: fresh local Maven clean verify 254 PASS; repeated Backend/MySQL subs
 Remote jobs and Linux Docker wrapper execution are NOT_RUN. No approved artifact URL is available: SPMF_INTEGRATION_CI_BLOCKED. Candidate reviewer eligibility and distinct human identities remain unverified: REVIEWER_PENDING. The older detached 299-test Product run is historical; Pilot-specific JPA tests are absent on current dev. This PR must not be treated as approval to merge or deploy.
 
 See docs/testing/PR1_REVIEW_GATE_REPORT.md and docs/setup/BACKEND_CI.md for evidence and safe artifact publication instructions. Do not commit or upload the JAR until the team approves its distribution and location.
+
+Initial remote workflow validation at fde0322 failed before jobs. Corrected an unsupported runner context in job-level env by exporting the artifact path in a runtime step. Remote Backend jobs still require execution; see the gate report for the original failure.
