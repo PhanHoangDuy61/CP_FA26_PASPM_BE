@@ -84,3 +84,10 @@ F06 must not derive supportCount/confidence or retail association evidence from 
 See [recovery design](V5_V7_HISTORICAL_MATRIX_RECOVERY_DESIGN.md) and [test plan/results](../testing/V5_V10_POPULATED_MATRIX_RECOVERY_TEST_PLAN.md) for actual implementation status, acceptance evidence and remaining risks.
 
 Final isolated verification on2026-10-23:254 feature tests and299 detached Product compatibility tests passed without skips; both Maven verify processes exited0. See the test inventory for service/HTTP/mock and crash-simulation limits.
+
+## 2026-10-23 review-gate reverification
+
+Recovery PR #1 was externally merged as `691371b`; this task performed no merge. Fresh full Maven verification at that application revision: **254 PASS, 0 failures/errors/skips**, with Java 17 Backend, Java 25 SPMF 2.67a and disposable MySQL 8.4.11. Backend/MySQL CI subsets separately passed 135/33 cases without SPMF (overlapping cases); 13 Python helper tests passed. Earlier detached Product compatibility counts are historical, not a new Product integration. The registered populated-V5 recovery and preservation assertions passed; the unsupported original-V7 failure remains an explicit negative test. Original configured V5 source/configuration/migration hashes are unchanged. All populated fixtures are synthetic.
+
+Human review remains **REVIEWER_PENDING**; remote CI **NOT_RUN**, exact-artifact provisioning **SPMF_INTEGRATION_CI_BLOCKED**. Product integration and Category progression remain blocked. No production repair, deployment or source mutation was performed.
+Current authoritative gate evidence: [report](../testing/PR1_REVIEW_GATE_REPORT.md).

@@ -1,32 +1,13 @@
-# Product Pilot readiness after independent historical recovery
+# Product Pilot readiness after Recovery PR #1 audit
 
-Updated:2026-10-23T00:34:04.776583+07:00. **Recovery READY_FOR_REVIEW; READY_FOR_MERGE: NO.**
+Updated 2026-10-23 (Asia/Ho_Chi_Minh). **Product progression BLOCKED; not ready for merge.**
 
-## Independent branch
+Recovery PR #1 was merged externally into dev as `691371b9a283208f41269f0956b1386a045fe27a` before this audit. Earlier delivery notes describing PR creation as blocked describe an earlier attempt and are superseded by this observed state. This task neither merged nor reverted it.
 
-`Khoi/Fear/fix-legacy-utility-matrix-migration` starts from dev3d58a73. It contains the B+C callback/preflight/backup workflow, additiveV11, protected archival/routing schema, compatible F03/F05 reads and F06 provenance refusal. It has no Product/Category JPA implementation dependency and does not merge the Pilot.
+Fresh recovery verification at the dev merge passed 254 tests with no failures, errors or skips. The CI Backend/MySQL subsets passed 135/33 cases without SPMF; 13 CI helper tests passed. No application code, existing migrations or configured V5 data changed in this task. Populated fixtures are synthetic; REAL_DATA_BLOCKED remains.
 
-The previous populated-V5 1452 engineering gap is resolved for the supported registered migration path in isolated verification. A plain unregistered Flyway builder remains unsupported for populated legacy upgrades and is negatively characterized. This is not permission to mutate the configured V5 source or deploy.
+Human review is REVIEWER_PENDING. GitHub CI is NOT_RUN and the full integration job is SPMF_INTEGRATION_CI_BLOCKED until an approved immutable 2.67a artifact URL is configured. Different account names do not verify independent people; collaborator permission lookup failed. Agent review is not a human approval.
 
-## Executed gates
+The Product Pilot remains on `Khoi/Fear/jpa-product-metadata-pilot` at `12d348e`. The previous detached 299-test compatibility run is historical evidence, not current dev integration. This task did not create a Product PR, merge Product or begin Category. Current dev does not contain the Pilot-specific JPA tests. No merge/deployment is authorized by the latest instruction.
 
-| Gate | Actual status |
-|---|---|
-|Feature Maven verify|254PASS,zero failures/errors/skips|
-|Detached Pilot +scoped patch|299PASS,zero failures/errors/skips|
-|Original V1–V10 bytes/checksums|Unchanged|
-|Historical rows/hashes/Store identity|Preserved; six-table fingerprint and exact mining checks|
-|Actual partialV7 failure/recovery|Failed copy retained; separate verified clean target succeeds|
-|Original source|SELECT-only/read-only; V5 schema/history/data/config unchanged|
-|Independent agent review|Findings corrected/retested; record linked below|
-|Human review and remote CI|PENDING; not implied by local tests|
-|Production operations/genuine backfill|NOT_AUTHORIZED / NOT_RUN|
-|Automatic Product merge / Category migration|NOT_PERFORMED|
-
-F06 historical recommendations remain limited by verified transaction-membership evidence. No association confidence/support is fabricated. Controlled interruption tests do not represent exhaustive OS-crash or production-scale operational proof.
-
-PR status is recorded in the [migration manifest](../testing/evidence/historical_matrix_recovery/implementation/MIGRATION_MANIFEST.json); use [recovery design](V5_V7_HISTORICAL_MATRIX_RECOVERY_DESIGN.md), [operations](LEGACY_UTILITY_MATRIX_COMPATIBILITY.md), [test report](../testing/V5_V10_POPULATED_MATRIX_RECOVERY_TEST_PLAN.md) and [review history](../testing/evidence/historical_matrix_recovery/implementation/REVIEW_SUMMARY.md) for review. If API PR creation is403, a manual compare link and exact PR body are provided; no merge follows automatically.
-
-## Delivery status
-
-Feature branch pushed successfully. The actual GitHub API PR creation attempt returned **403 Resource not accessible by integration**; no PR was created and nothing was merged. [Create the PR manually](https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/compare/dev...Khoi%2FFear%2Ffix-legacy-utility-matrix-migration?expand=1) into `dev`, using the [prepared exact title and description](HISTORICAL_MATRIX_RECOVERY_PR_DESCRIPTION.md). Human review and remote CI remain pending. Dedicated test MySQL is stopped and temporary plaintext credentials are removed.
+See the [complete gate report](../testing/PR1_REVIEW_GATE_REPORT.md), [operational compatibility guide](LEGACY_UTILITY_MATRIX_COMPATIBILITY.md), [CI preparation](../setup/BACKEND_CI.md) and [migration progression plan](JDBC_TO_JPA_MIGRATION_PLAN.md). Existing engineering recovery acceptance does not replace review, remote CI, real-data rehearsal or release approval.

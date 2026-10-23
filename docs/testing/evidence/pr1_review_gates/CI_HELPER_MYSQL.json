@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "actualDedicatedMySql": true,
+  "restoreIdentitySchemaOnlyGrant": true,
+  "noSuperOrGrantOption": true,
+  "sourceDatabaseUsed": false,
+  "initialHarnessCorrection": "SHOW GRANTS in batch mode escapes backslashes; raw mode used for exact scope assertion. Provisioner code unchanged."
+}

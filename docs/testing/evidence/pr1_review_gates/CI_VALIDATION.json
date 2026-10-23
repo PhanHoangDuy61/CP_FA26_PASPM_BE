@@ -1,0 +1,16 @@
+{
+  "yamlParse": "PASS",
+  "embeddedBashSyntax": "PASS",
+  "jobs": [
+    "backend",
+    "mysql",
+    "integration",
+    "required-verification"
+  ],
+  "pullRequestTarget": "dev",
+  "tokenPermissions": "contents:read",
+  "remoteExecution": "NOT_RUN",
+  "linuxDockerWrapperExecution": "NOT_RUN",
+  "SPMF_INTEGRATION_CI_BLOCKED": true,
+  "reason": "No team-approved immutable artifact URL available. Local SPMF binary not uploaded."
+}
