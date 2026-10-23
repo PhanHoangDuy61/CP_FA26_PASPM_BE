@@ -1,0 +1,23 @@
+{
+  "tests": 13,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "note": "In-process test harness; approved local SPMF bytes, mock HTTPS transport. No external artifact URL configured or fetched.",
+  "groups": {
+    "provisioning": 8,
+    "testSummary": 5
+  },
+  "summaryCoverage": [
+    "missing reports",
+    "zero tests",
+    "skips/errors/failures",
+    "omit private JUnit properties",
+    "fixture cannot append synthetic results to actual GitHub summary"
+  ],
+  "regression": {
+    "issue": "LOW: inherited GITHUB_STEP_SUMMARY polluted real job summary",
+    "beforeFix": "1 expected regression failure among 5 summary tests",
+    "afterFix": "13 PASS; 0 failures/errors/skips"
+  }
+}
