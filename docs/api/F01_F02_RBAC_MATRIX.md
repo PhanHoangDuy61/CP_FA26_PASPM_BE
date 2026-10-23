@@ -1,6 +1,6 @@
-# F01 / F02 / F03 RBAC Matrix
+# F01 / F02 / F03 / F06 RBAC Matrix
 
-Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and F01/F02/F03 service/repository checks (updated2026-10-21 for Catalog/current F03 reads). “Public” means the Spring security route is explicitly permitted; “authenticated” requires a valid active bearer token. An authenticated-but-wrong role is 403. F02/F03 foreign or absent Store-scoped resources are hidden as 404 after the controller role gate.
+Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and feature service/repository checks (updated2026-10-23 for F06). “Public” means the Spring security route is explicitly permitted; “authenticated” requires a valid active bearer token. An authenticated-but-wrong role is 403. Store-scoped foreign or absent resources are hidden as 404 after the controller role gate.
 
 | Feature | Endpoint | System Admin | Store Admin | Merchandiser | End Customer |
 |---|---|---|---|---|---|
@@ -56,6 +56,14 @@ Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and F01
 | F03 Snapshot matrix | GET `/api/utility/snapshots/{id}/matrix` | Forbidden | Forbidden | Allowed, own Store; foreign snapshot→404 | Forbidden |
 | F03 Independent expiry pushes | GET `/api/utility/expiry-push-batches` | Forbidden | Allowed, own Store | Allowed, own Store | Forbidden |
 | F03 Snapshot history list | GET `/api/utility/snapshots` | NOT IMPLEMENTED | NOT IMPLEMENTED | NOT IMPLEMENTED | NOT IMPLEMENTED |
+| F06 Generate recommendations | POST `/api/recommendations/generate` | Forbidden | Forbidden | Allowed, own Store; completed own-Store mining run required | Forbidden |
+| F06 List recommendations | GET `/api/recommendations` | Forbidden | Allowed, own Store | Allowed, own Store | Forbidden |
+| F06 Recommendation detail | GET `/api/recommendations/{id}` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign→404 | Forbidden |
+| F06 Approve recommendation | POST `/api/recommendations/{id}/approve` | Forbidden | Forbidden | Allowed, own Store; pending state/version and current eligibility required | Forbidden |
+| F06 Reject recommendation | POST `/api/recommendations/{id}/reject` | Forbidden | Forbidden | Allowed, own Store; pending state/version required | Forbidden |
+| F06 Read recommendation policy | GET `/api/recommendations/config` | Forbidden | Allowed, own Store | Allowed, own Store | Forbidden |
+| F06 Update recommendation policy | PUT `/api/recommendations/config` | Forbidden | Allowed, own Store; expectedVersion required | Forbidden | Forbidden |
+| F06 Independent expiry push | GET `/api/recommendations/expiry-push` | Forbidden | Allowed, own Store | Allowed, own Store | Forbidden |
 
 ## Authorization details
 
@@ -69,7 +77,7 @@ The database identity claims one Store and no request accepts a Store selector. 
 
 ## Readiness evidence
 
-The current runtime OpenAPI export contains24 F01,15 F02,12 F03 and6 F04 operations. The original F01/F02 table below was a historical baseline; v1.2 verifies that existing authentication/RBAC stays intact rather than claiming a new browser run of every F01 operation. Existing automated tests exercise F01 login/current-user/self-registration/OTP/invitation/password-change/role and token-revocation behavior, and F02 authentication, category/product, batch, summary and Store isolation behavior; not every individual operation was separately tested in a live browser for this documentation task. F02 browser verification from the prior F02 QA run is summarized in `docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_SWAGGER_TEST_REPORT.md`.
+The runtime OpenAPI export records24 F01,15 F02,12 F03,6 F04,8 F05 and8 F06 operations (73 total). The original F01/F02 table below was a historical baseline; v1.2 verifies that existing authentication/RBAC stays intact rather than claiming a new browser run of every F01 operation. Existing automated tests exercise F01 login/current-user/self-registration/OTP/invitation/password-change/role and token-revocation behavior, and F02 authentication, category/product, batch, summary and Store isolation behavior; not every individual operation was separately tested in a live browser for this documentation task. F02 browser verification from the prior F02 QA run is summarized in `docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_SWAGGER_TEST_REPORT.md`.
 
 Integration-ready: F01 password/OTP/user APIs and F02 all 15 operations. Google operations are conditional on the Google client ID, mail delivery and valid Google-issued ID tokens. Browser cross-origin use is blocked until a same-origin proxy or deployment CORS policy is provided; Backend source contains no CORS mapping. Missing F01 operations: logout, refresh and general self-profile editing beyond the documented avatar operations. F02 delete and stock-movement/adjustment history APIs do not exist and are not implied by the implemented contract.
 
@@ -79,11 +87,14 @@ Integration-ready: F01 password/OTP/user APIs and F02 all 15 operations. Google 
 |---|---:|---:|---:|---|---|
 | F01 | 24 | 24 routes in runtime export | 24 implemented | Google register/login/link require Google client configuration and mail for OTP; in the default unconfigured setup those return 503 | logout, refresh token, general profile editing |
 | F02 | 15 | 15 | 15 | Browser cross-origin integration needs a same-origin proxy or deployment CORS policy; API endpoints themselves are available | delete endpoints, stock adjustment/movement history |
-| F03 | 12 | 12 | 12 (one deprecated) | Preview/Snapshot need persisted eligible F04 rows and valid config; snapshot reads need a known ID | snapshot history list, F05 Mining Request/export/engine, F06 Recommendation Engine |
+| F03 | 12 | 12 | 12 (one deprecated) | Preview/Snapshot need persisted eligible F04 rows and valid config; snapshot reads need a known ID | snapshot history list |
+| F04 | 6 | 6 | 6 | Requires valid Store-scoped transaction data | Excel import, external POS synchronization |
+| F05 | 8 | 8 | 8 | Mining execution requires the configured SPMF runtime; see F05 setup/verification | recurring scheduling |
+| F06 | 8 | 8 | 8 (backend handoff) | Generation requires a completed own-Store F05 run; expiry-push is independent of Mining | frontend implementation, scheduling, reservation, campaign/publication workflows |
 
-“Contract verified” means route, method, request/response model and security declaration were compared with the maintained OpenAPI plus controller/service source. Existing MockMvc tests cover F01 authentication/OTP/invite/password change/token revocation and F02 CRUD/Store isolation/summary. This is not a claim that each endpoint was separately called through a live Swagger UI during this doc task. Current v1.2 verification ran `mvn -Dpaspm.avatar.directory=/tmp/paspm-test-avatars -Dpaspm.v12.export-dir=/tmp/paspm-v12-examples verify`; see its report for actual results. Historical baseline coverage counts below are not new interactive-execution claims.
+“Contract verified” means route, method, request/response model and security declaration were compared with the maintained OpenAPI plus controller/service source. Existing MockMvc tests cover F01 authentication/OTP/invite/password change/token revocation and F02 CRUD/Store isolation/summary. F06's recorded verification is in [F06_VERIFICATION.md](../requirements/F06_VERIFICATION.md); its 27 Swagger UI cases are recorded evidence, not a new UI execution in this documentation update. Current v1.2 verification ran `mvn -Dpaspm.avatar.directory=/tmp/paspm-test-avatars -Dpaspm.v12.export-dir=/tmp/paspm-v12-examples verify`; see its report for actual results. Historical baseline coverage counts below are not new interactive-execution claims.
 
-F03 v1.2 contains12 operations including the independent Store-scoped expiry-push query. F04_DATABASE_V1 is connected to persisted validated transaction data; the older unimplemented-provider limitation no longer applies. New Preview/Snapshot use Product-level binary expiry and frozen evidence; old snapshots remain readable. The current v1.2 automated test/evidence report is authoritative for execution status. No complete F05/F06 engine is present.
+F03 v1.2 contains12 operations including the independent Store-scoped expiry-push query. F04_DATABASE_V1 is connected to persisted validated transaction data; the older unimplemented-provider limitation no longer applies. New Preview/Snapshot use Product-level binary expiry and frozen evidence; old snapshots remain readable. F05 provides eight Store-scoped mining operations. F06 provides eight Store-scoped recommendation operations; Merchandiser generates/reviews, Store Admin manages policy, both read own-Store recommendations, and System Admin/End Customer are denied. F06's expiry-push endpoint does not depend on Mining. Frontend integration remains unrun; see the F06 verification report for its separate execution channels and limitations.
 
 ## Per-operation readiness matrix
 
@@ -124,3 +135,11 @@ F03 v1.2 contains12 operations including the independent Store-scoped expiry-pus
 | F01 | `GET /api/roles` | PASS | PASS | Yes | No direct MockMvc request in current tests. |
 | F02 | `GET /api/products/{id}/inventory-summary` | PASS | PASS | Yes | Covered by existing MockMvc/service suite. |
 | F01 | `GET /api/auth/me` | PASS | PASS | Yes | Covered by existing MockMvc/service suite. |
+| F06 | `POST /api/recommendations/generate` | PASS | PASS | Yes | Merchandiser only; recorded F06 automated verification and Swagger UI evidence. |
+| F06 | `GET /api/recommendations` | PASS | PASS | Yes | Store Admin/Merchandiser, own Store; recorded F06 pagination and isolation coverage. |
+| F06 | `GET /api/recommendations/{id}` | PASS | PASS | Yes | Store Admin/Merchandiser, own Store; foreign records return 404. |
+| F06 | `POST /api/recommendations/{id}/approve` | PASS | PASS | Yes | Merchandiser only; pending/version and live eligibility checks. |
+| F06 | `POST /api/recommendations/{id}/reject` | PASS | PASS | Yes | Merchandiser only; pending/version check; rejection allowed when ineligible. |
+| F06 | `GET /api/recommendations/config` | PASS | PASS | Yes | Store Admin/Merchandiser, own Store. |
+| F06 | `PUT /api/recommendations/config` | PASS | PASS | Yes | Store Admin only; own Store and expectedVersion required. |
+| F06 | `GET /api/recommendations/expiry-push` | PASS | PASS | Yes | Store Admin/Merchandiser; current Store-local date, independent of Mining. |
