@@ -1,0 +1,60 @@
+{
+  "checkedAt": "2026-10-23T13:11:51.955405+07:00",
+  "testedHead": "9f362db344ba40a3d1c1c79970931ae5e5c069f3",
+  "before": {
+    "runId": 39879145935,
+    "url": "https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/actions/runs/39879145935",
+    "foundation": "SUCCESS",
+    "mysql": {
+      "conclusion": "FAILURE",
+      "tests": 33,
+      "failures": 0,
+      "errors": 6,
+      "skipped": 0
+    },
+    "fullIntegration": "FAILURE_ARTIFACT_PREREQUISITE",
+    "aggregate": "FAILURE"
+  },
+  "after": {
+    "runId": 39909707415,
+    "url": "https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/actions/runs/39909707415",
+    "foundation": {
+      "jobId": 120269595637,
+      "conclusion": "SUCCESS",
+      "tests": 135,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "mysql": {
+      "jobId": 120269595757,
+      "conclusion": "SUCCESS",
+      "tests": 34,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "legacyRecoveryCases": 11
+    },
+    "fullIntegration": {
+      "jobId": 120269595807,
+      "conclusion": "FAILURE",
+      "reason": "SPMF_INTEGRATION_CI_BLOCKED; approved URL missing",
+      "backendTestsExecuted": false,
+      "subsequentStepsSkipped": true
+    },
+    "aggregate": {
+      "jobId": 120270145323,
+      "conclusion": "FAILURE"
+    }
+  },
+  "overallGate": "BLOCKED",
+  "reviewer": "REVIEWER_PENDING",
+  "distinctHumansVerified": false,
+  "candidatePermissionProbe": "403 Resource not accessible by integration",
+  "prCreation": "403 Resource not accessible by integration",
+  "fixPrCreated": false,
+  "manualPrUrl": "https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/compare/dev...Khoi%2Ffix%2Fbackend-ci-remote-verification?expand=1",
+  "mergePerformed": false,
+  "deployPerformed": false,
+  "productIntegrationMayResume": false
+}

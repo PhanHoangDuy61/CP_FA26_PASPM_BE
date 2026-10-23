@@ -1,6 +1,6 @@
 # PASPM Backend CI setup and remaining gates
 
-Status update (2026-10-23, Asia/Ho_Chi_Minh): CI PR #2 was merged externally into dev783725c. Remote run39879145935 passed foundation but failed six MySQL restore fixtures; repair verification is recorded in [remote CI report](../testing/BACKEND_CI_REMOTE_VERIFICATION.md). Earlier local counts below are historical baselines, not proof of the repaired remote head. **SPMF_INTEGRATION_CI_BLOCKED** and **REVIEWER_PENDING**. No merge, deployment or original-database change is authorized.
+Status update (2026-10-23, Asia/Ho_Chi_Minh): CI PR #2 was merged externally into dev783725c. Remote run39879145935 passed foundation but failed six MySQL restore fixtures; the repair is verified in hosted run39909707415 (foundation135 PASS, MySQL34 PASS; full integration still blocked). Details are in [remote CI report](../testing/BACKEND_CI_REMOTE_VERIFICATION.md). Earlier local counts below are historical baselines, not proof of the repaired remote head. **SPMF_INTEGRATION_CI_BLOCKED** and **REVIEWER_PENDING**. No merge, deployment or original-database change is authorized.
 
 ## Verification groups
 

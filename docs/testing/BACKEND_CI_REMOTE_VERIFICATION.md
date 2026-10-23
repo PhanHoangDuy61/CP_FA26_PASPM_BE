@@ -36,3 +36,33 @@ The workflow also triggers on pushes to this exact repair branch to allow genuin
 After correction, the full Ubuntu/MySQL group completed Maven clean verify with **34 PASS, 0 failures, 0 errors, 0 skipped**. LegacyRecoveryMySqlTest completed all 11 cases, including the original six failing cases and the new actual-client probe. The six-case fixture failure is resolved in this container reproduction. Positive migration, populated V5 recovery, archive integrity, partial-V7 refusal/clean-copy recovery, ownership/backup guards and F04 transaction tests all executed. The unsupported original V7 failure remains an expected negative assertion; it is not presented as a successful unsupported migration. Per-case evidence: [after MySQL results](evidence/backend_ci_remote/AFTER_MYSQL_RESULTS.json).
 
 Agent review found no critical/important issue; a minor probe timeout cleanup was applied. Agent review is not human GitHub approval.
+
+## Completed regression and remote outcomes
+
+Full local Maven clean verify under Java17 with separate Java25/exact local SPMF and disposable MySQL8.4.13: **255 PASS, 0 failures, 0 errors, 0 skipped**. This run was on macOS with Docker CLI, distinct from the Ubuntu group reproduction and the GitHub-hosted run. All existing F01–F06 regressions were discovered; Product JPA suites are absent from this dev revision and cannot be claimed. [Per-case full results](evidence/backend_ci_remote/FULL_LOCAL_RESULTS.json).
+
+| GitHub job | Before: run39879145935 | After: run39909707415, commit9f362db |
+|---|---|---|
+| Java17 foundation | SUCCESS | SUCCESS; 135 tests, zero failures/errors/skips |
+| MySQL/Flyway/F04 | FAILURE; 33 tests, six errors | SUCCESS; 34 tests, zero failures/errors/skips |
+| LegacyRecoveryMySqlTest | Ten cases, six errors | Eleven cases PASS, including all original six and added probe |
+| Full integration | Failed missing artifact prerequisite | Still fails missing artifact prerequisite; Backend tests NOT_RUN |
+| Required aggregate | FAILURE | FAILURE; intentionally requires full integration |
+
+[Before run](https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/actions/runs/39879145935), [verified repaired run](https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/actions/runs/39909707415), [sanitized remote evidence](evidence/backend_ci_remote/REMOTE_RESULTS.json). Documentation-only delivery commits may follow; check the exact head of the latest run before reviewing a PR. Local repeated groups overlap the 255-case full suite and must not be added as unique cases.
+
+## SPMF and independent-review readiness
+
+The existing local artifact was rechecked: exact SHA256 `4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a`, real banner `-- SPMF version 2.67a --`, Java25 child. No binary was uploaded, published or committed. The team has not supplied an approved immutable HTTPS artifact URL/host: **SPMF_INTEGRATION_CI_BLOCKED** remains. Follow [safe publication procedure](../setup/BACKEND_CI.md#publish-the-approved-spmf-artifact-safely): record provenance/distribution authorization, approve the host and immutable object path, publish only after owner approval, independently verify the downloaded bytes/banner, then set PASPM_CI_SPMF_ARTIFACT_URL and run full CI. The local hash check is not hosting authorization.
+
+Both PR#1 and PR#2 are already merged and have zero submitted reviews in the current API inspection. Public dev protected=false, rules/rulesets empty; authenticated protection lookup401, candidate permission lookup403. Candidate PhanHoangDuy61 and author khoinm04 are different accounts; distinct humans and eligible independent permissions remain unverified: **REVIEWER_PENDING**. No self approval, review request or retroactive approval of the previous merges was created. Agent source review does not satisfy this human gate.
+
+## Delivery, preservation and remaining blockers
+
+Scoped changes: workflow forked-JVM options and exact-branch push verification; one actual-client regression in LegacyRecoveryMySqlTest; CI setup/report and sanitized evidence. mysql-client.sh, provision-restore.py and LegacyBackupVerifier production content are unchanged. No existing migration V1–V11 or F03–F06 business logic changed.
+
+The fix branch is `Khoi/fix/backend-ci-remote-verification`. Draft PR creation returned **403 Resource not accessible by integration**. No fix PR was created by this task. Use the [manual PR creation link](https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/compare/dev...Khoi%2Ffix%2Fbackend-ci-remote-verification?expand=1) and [prepared PR description](BACKEND_CI_REMOTE_FIX_PR_DESCRIPTION.md). No merge/deployment occurred.
+
+The original configured MySQL source remains V5. SELECT/ROLLBACK read-only before/after snapshots of schema/history/counts match; original Product branch/head remains12d348e. Populated fixtures are synthetic and REAL_DATA_BLOCKED remains. [Source preservation](evidence/backend_ci_remote/SOURCE_PRESERVATION.json). Dedicated reproduction containers were stopped/removed after execution; no shared container/data was reset. Private diagnostic/source snapshots remain outside Git; no raw dumps, option files, credentials or raw JUnit properties were published.
+
+**Product JPA integration must not resume yet.** The MySQL technical blocker is fixed and verified remotely, but approved SPMF provisioning, successful full hosted integration, eligible independent human review and required progression authorization remain outstanding. Category remains NOT_STARTED.

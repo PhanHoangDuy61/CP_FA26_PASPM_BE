@@ -1,0 +1,31 @@
+{
+  "beforeAfterEqual": true,
+  "mode": "READ_ONLY_SELECT_ROLLBACK",
+  "connectionReadOnly": true,
+  "mysqlVersion": "8.4.11",
+  "versions": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5"
+  ],
+  "counts": {
+    "category": 0,
+    "inventory_batch": 0,
+    "mining_request": -1,
+    "mining_run": -1,
+    "product": 0,
+    "recommendation": -1,
+    "sales_transaction": -1,
+    "store": 0,
+    "transaction_item": -1,
+    "utility_matrix_item": 0,
+    "utility_snapshot": 0
+  },
+  "originalHead": "12d348e73caccde8e2985ad58b311c0b1cbed308",
+  "originalBranch": "Khoi/Fear/jpa-product-metadata-pilot",
+  "applicationConfigurationSha256": "85ff4ee097dc017b63bc402effe17b70d1882be23231de19c64aaac2272cf86f",
+  "applicationOrMigrationChangesInFix": false,
+  "dataQualification": "REAL_DATA_BLOCKED; all populated test fixtures synthetic"
+}
