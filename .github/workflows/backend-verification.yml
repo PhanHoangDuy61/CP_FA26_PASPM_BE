@@ -4,6 +4,9 @@ on:
   pull_request:
     branches: [dev]
   workflow_dispatch:
+  # Verify this repair remotely even when the GitHub App cannot create a PR.
+  push:
+    branches: [Khoi/fix/backend-ci-remote-verification]
 
 permissions:
   contents: read
@@ -73,7 +76,7 @@ jobs:
         run: |
           mvn --batch-mode --no-transfer-progress clean verify \
             -Dtest="$(python3 .github/scripts/test-groups.py mysql)" \
-            -Djava.io.tmpdir="$RUNNER_TEMP/paspm-tmp" \
+            -DargLine="-Djava.io.tmpdir=$RUNNER_TEMP/paspm-tmp" \
             -Dpaspm.test.mysql=true -Dlogging.level.root=ERROR
       - name: Publish sanitized counts
         if: always()
@@ -144,7 +147,7 @@ jobs:
           java -version
           "$SPMF_JAVA_PATH" -version
           mvn --batch-mode --no-transfer-progress clean verify \
-            -Djava.io.tmpdir="$RUNNER_TEMP/paspm-tmp" \
+            -DargLine="-Djava.io.tmpdir=$RUNNER_TEMP/paspm-tmp" \
             -Dpaspm.test.mysql=true \
             -Dpaspm.test.java17-backend=true \
             -Dpaspm.test.java17="$JAVA_HOME/bin/java" \
