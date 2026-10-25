@@ -1,6 +1,6 @@
 # F06 Recommendation API
 
-Source-derived contract, 2026-10-20. F06 turns a completed own-Store F05 run into persisted, reviewable candidates. It reads frozen F03/F05 evidence and current F02 inventory without executing SPMF again. Actual exported request/response examples from executed integration tests are linked below. Verified: Java17 clean verify 210/210 (63 new F06 +147 regression), isolated MySQL migrations and27 actual Swagger UI cases. See [verification report](../requirements/F06_VERIFICATION.md).
+Source-derived contract, 2026-10-20. F06 turns a completed own-Store F05 run into persisted, reviewable candidates. It reads frozen F03/F05 evidence and current F02 inventory without executing SPMF again. Actual exported request/response examples from executed integration tests are linked below. Verified: Java17 clean verify 210/210 (63 new F06 +147 regression), isolated MySQL migrations and27 actual Swagger UI cases. See [verification report](../testing/reports/F06_VERIFICATION.md).
 
 Local default base URL: `http://localhost:8080` (override using Spring Boot `server.port` / `SERVER_PORT`; a deployment-specific `PORT` requires existing application mapping). Swagger entry: `/swagger`, UI: `/swagger-ui/index.html`, runtime OpenAPI: `/v3/api-docs`. The shared [OpenAPI export](openapi.json) was refreshed from the actual isolated backend at `http://localhost:18086/v3/api-docs`: 59 paths,73 operations,8 F06 operations. Its server entry is that test origin; configure the target origin in the integration environment.
 

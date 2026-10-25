@@ -1,3 +1,7 @@
+<!-- docs-reorganization:notice -->
+> **NEEDS_REVIEW — documentation review 2026-10-26.** Product/Category JPA are integrated; old development gates and not-started clauses need reconciliation. See [current navigation](README.md). Original results and business-rule text below are retained; this notice is not a new execution or approval.
+<!-- /docs-reorganization:notice -->
+
 # Controlled Hybrid persistence progression — owner policy 2026-10-25
 
 Selective JPA metadata CRUD with JDBC retained for catalog/inventory/analytics/F03–F06 is the approved architecture. The latest owner instruction authorizes ongoing implementation and isolated local verification while SPMF hosting and human review are separately resolved. Merge gates stay independent.

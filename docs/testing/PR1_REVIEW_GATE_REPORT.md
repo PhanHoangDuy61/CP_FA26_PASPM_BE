@@ -60,7 +60,7 @@ Delivery and test-instance cleanup are recorded in [delivery status](evidence/pr
 
 ## Publication outcome
 
-The dedicated CI branch was pushed successfully. Creating its draft PR returned **403 Resource not accessible by integration**; no CI PR was created. GitHub recorded a failed workflow validation run at the first published head before any jobs executed. Use the [manual comparison](https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/compare/dev...Khoi%2Fchore%2Frecovery-review-ci-gates?expand=1) with the [prepared description](../architecture/BACKEND_CI_PR_DESCRIPTION.md). Remote CI remains NOT_RUN; reviewer and artifact prerequisites remain pending. No retries through alternate identities, merge or deployment occurred.
+The dedicated CI branch was pushed successfully. Creating its draft PR returned **403 Resource not accessible by integration**; no CI PR was created. GitHub recorded a failed workflow validation run at the first published head before any jobs executed. Use the [manual comparison](https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/compare/dev...Khoi%2Fchore%2Frecovery-review-ci-gates?expand=1) with the [prepared description](../archive/review_packages/BACKEND_CI_PR_DESCRIPTION.md). Remote CI remains NOT_RUN; reviewer and artifact prerequisites remain pending. No retries through alternate identities, merge or deployment occurred.
 
 ### Workflow validation correction
 

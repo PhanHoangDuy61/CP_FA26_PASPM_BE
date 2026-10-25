@@ -7,7 +7,7 @@ The existing Product POST/PUT request accepts optional `expiryPushDays: integer|
 F03 uses only this Product threshold: no Store fallback. The legacy Store expiry-window endpoint is deprecated. New E is binary from the earliest-expiring ACTIVE positive-quantity batch with expiry strictly after the analysis date. Batch expiring today is not sellable in the current summary. `GET /api/utility/expiry-push-batches` provides a Store Admin/Merchandiser current push view independently of mining; see the F03 contract.
 
 
-For React + TypeScript. Exact DTOs and validation are in [`../api/F02_PRODUCT_INVENTORY_API.md`](../api/F02_PRODUCT_INVENTORY_API.md); synthetic payloads are in [`F02_examples/`](F02_examples/). Full runtime contract: [`../api/openapi.json`](../api/openapi.json).
+For React + TypeScript. Exact DTOs and validation are in [`../api/F02_PRODUCT_INVENTORY_API.md`](../api/F02_PRODUCT_INVENTORY_API.md); synthetic payloads are in [`F02_examples/`](F02_examples). Full runtime contract: [`../api/openapi.json`](../api/openapi.json).
 
 ## Base URL and authentication
 

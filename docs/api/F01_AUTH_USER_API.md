@@ -1,3 +1,7 @@
+<!-- docs-reorganization:notice -->
+> **NEEDS_REVIEW — documentation review 2026-10-26.** Source AuthController returns409 for duplicate registration while generic202 prose below conflicts; this task changes no authentication behavior. See [current navigation](../features/F01/README.md). Original results and business-rule text below are retained; this notice is not a new execution or approval.
+<!-- /docs-reorganization:notice -->
+
 # F01 Authentication and User API Contract
 
 Contract checked against the running application OpenAPI export and current source on 2026-10-17. In endpoint table, PASS means the operation and DTO match the runtime OpenAPI and source; it does not mean a separate Swagger UI request was executed for every operation in this documentation task. Full shared OpenAPI is [`openapi.json`](openapi.json). Every protected request uses `Authorization: Bearer <accessToken>`. Public registration never accepts a role or Store. Examples are synthetic; OTP and Google token examples are placeholders and cannot authenticate.
@@ -71,7 +75,7 @@ Search parameters: `q`, `role`, `status` default empty; `page` defaults 0, range
 
 ## Examples
 
-Examples are in [`../frontend_handoff/F01_examples/`](../frontend_handoff/F01_examples/). Representative success response:
+Examples are in [`../frontend_handoff/F01_examples/`](../frontend_handoff/F01_examples). Representative success response:
 
 ```json
 {"accessToken":"<synthetic JWT omitted>","expiresIn":900,"tokenType":"Bearer"}

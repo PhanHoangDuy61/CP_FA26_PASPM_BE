@@ -1,0 +1,54 @@
+{
+  "executedAt": "2026-10-26T01:15:49+07:00",
+  "timezone": "Asia/Ho_Chi_Minh",
+  "baselineCommit": "6601f62d49aa5bc61027f1c7ad418ac8e1e3c3ec",
+  "scope": "Documentation structure only; no backend, database or external HTTP calls",
+  "status": "PASS",
+  "counts": {
+    "originalFilesPresent": 349,
+    "nonMarkdownChecked": 221,
+    "originalFilesByteIdentical": 300,
+    "changedMarkdownChecked": 49,
+    "evidenceFilesChecked": 146,
+    "protectedSourceAndToolingFiles": 182,
+    "duplicateGroupsChecked": 4,
+    "localJsonPointersChecked": 236,
+    "drawioXmlChecked": 3,
+    "archiveCrcChecked": 2,
+    "openApiOperations": 73
+  },
+  "markdown": {
+    "files": 153,
+    "internalLinks": 570,
+    "brokenInternalLinks": 0,
+    "externalLinksNotChecked": 36,
+    "privateMachineLinksNotChecked": 0
+  },
+  "jsonFilesParsed": 160,
+  "recordedJsonPaths": {
+    "checked": 65,
+    "resolvedByMapOrExistingPath": 65,
+    "historicalMissingTargets": []
+  },
+  "originalRootReadmePreserved": true,
+  "knownDocumentationReviewGroups": [
+    "DG01",
+    "DG02",
+    "DG03",
+    "DG04",
+    "DG05",
+    "DG06",
+    "DG07",
+    "DG08"
+  ],
+  "missingTrackedSources": [
+    "docs/requirements/F03_WEIGHT_RULES_v1_2.md",
+    "docs/requirements/F03_WEIGHT_RULES_v1_2_VERIFICATION.md",
+    "docs/requirements/PASPM_Weight_Report.pdf",
+    "docs/frontend_handoff/F03_examples/legacy_linear_snapshot_response.json",
+    "docs/frontend_handoff/F03_examples/legacy_linear_matrix_response.json"
+  ],
+  "externalUrls": "NOT_RUN",
+  "backendMavenSwaggerTests": "NOT_RUN (documentation-only scope)",
+  "failures": []
+}

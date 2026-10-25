@@ -1,3 +1,7 @@
+<!-- docs-reorganization:notice -->
+> **NEEDS_REVIEW — documentation review 2026-10-26.** Endpoint coverage counts/prose describe older test stages and do not certify every current route. See [current navigation](README.md). Original results and business-rule text below are retained; this notice is not a new execution or approval.
+<!-- /docs-reorganization:notice -->
+
 # F01 / F02 / F03 RBAC Matrix
 
 Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and F01/F02/F03 service/repository checks (updated2026-10-21 for Catalog/current F03 reads). “Public” means the Spring security route is explicitly permitted; “authenticated” requires a valid active bearer token. An authenticated-but-wrong role is 403. F02/F03 foreign or absent Store-scoped resources are hidden as 404 after the controller role gate.

@@ -1,3 +1,7 @@
+<!-- docs-reorganization:notice -->
+> **HISTORICAL — documentation review 2026-10-26.** Pre-F06/pre-recovery findings retain original scope and are not current implementation availability. See [current navigation](README.md). Original results and business-rule text below are retained; this notice is not a new execution or approval.
+<!-- /docs-reorganization:notice -->
+
 # F05 Audit Against the FA26_SE048 Project Document
 
 **Audit date:** 2026-10-20 (Asia/Ho_Chi_Minh)

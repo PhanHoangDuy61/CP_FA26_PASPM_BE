@@ -1,3 +1,7 @@
+<!-- docs-reorganization:notice -->
+> **HISTORICAL — documentation review 2026-10-26.** This P0 execution report is preserved; current acceptance and source-database recovery are separate. See [current navigation](README.md). Original results and business-rule text below are retained; this notice is not a new execution or approval.
+<!-- /docs-reorganization:notice -->
+
 # F05 P0 Deployment Fix Report
 
 Ngày kiểm chứng: 2026-10-20, Asia/Ho_Chi_Minh. Branch: Khoi/Fear/F05-high-utility-mining-engine, nền commit 19f94be. Phạm vi: P0-01 Flyway V7 và P0-02 runtime SPMF.

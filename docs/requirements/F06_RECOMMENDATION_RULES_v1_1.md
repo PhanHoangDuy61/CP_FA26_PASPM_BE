@@ -1,7 +1,7 @@
 # F06 Recommendation Rules v1.1
 
 Status: **IMPLEMENTED AND VERIFIED — Backend API + Swagger; Frontend handoff delivered.**
-Approved policy package: explicit user reply “Duyệt bộ đề xuất trên”, 2026-10-20. Verification: [F06_VERIFICATION.md](F06_VERIFICATION.md).
+Approved policy package: explicit user reply “Duyệt bộ đề xuất trên”, 2026-10-20. Verification: [F06_VERIFICATION.md](../testing/reports/F06_VERIFICATION.md).
 
 ## Approved rules and configurable initial policy
 

@@ -1,6 +1,10 @@
+<!-- docs-reorganization:notice -->
+> **NEEDS_REVIEW — documentation review 2026-10-26.** Duplicate-registration response prose must be reconciled with source 409; no contract is silently changed here. See [current navigation](../features/F01/README.md). Original results and business-rule text below are retained; this notice is not a new execution or approval.
+<!-- /docs-reorganization:notice -->
+
 # F01 Frontend Handoff
 
-For React + TypeScript. Contract and synthetic JSON files: [`../api/F01_AUTH_USER_API.md`](../api/F01_AUTH_USER_API.md), [`F01_examples/`](F01_examples/), and shared [`../api/openapi.json`](../api/openapi.json).
+For React + TypeScript. Contract and synthetic JSON files: [`../api/F01_AUTH_USER_API.md`](../api/F01_AUTH_USER_API.md), [`F01_examples/`](F01_examples), and shared [`../api/openapi.json`](../api/openapi.json).
 
 ## Base URL and development setup
 

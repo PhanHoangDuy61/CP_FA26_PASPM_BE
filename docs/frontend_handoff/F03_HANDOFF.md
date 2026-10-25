@@ -1,6 +1,10 @@
+<!-- docs-reorganization:notice -->
+> **NEEDS_REVIEW — documentation review 2026-10-26.** Final v1.2 source and some referenced examples are absent from tracked dev; untracked originals are not imported. See [current navigation](../features/F03/README.md). Original results and business-rule text below are retained; this notice is not a new execution or approval.
+<!-- /docs-reorganization:notice -->
+
 # F03 React/TypeScript handoff — v1.2
 
-Use [F03 API contract](../api/F03_UTILITY_API.md), [actual OpenAPI](../api/openapi.json) and [business rules](../requirements/F03_WEIGHT_RULES_v1_2.md). This handoff supersedes earlier Store-window/linear examples for new results. Frontend code was not modified.
+Use [F03 API contract](../api/F03_UTILITY_API.md), [actual OpenAPI](../api/openapi.json) and [business rules](../requirements/README.md#f03-v12-source-gap). This handoff supersedes earlier Store-window/linear examples for new results. Frontend code was not modified.
 
 ## Environment
 

@@ -1,10 +1,14 @@
+<!-- docs-reorganization:notice -->
+> **NEEDS_REVIEW — documentation review 2026-10-26.** Old absent-F06 and V7-blocker statements do not describe all current source/recovery state. See [current navigation](../features/F06/README.md). Original results and business-rule text below are retained; this notice is not a new execution or approval.
+<!-- /docs-reorganization:notice -->
+
 # F03 v1.2 → F05/F06 integration contract
 
 ## Implemented boundaries
 
 F04 DatabaseTransactionSource supplies Store-scoped eligible COMPLETED transaction IDs, Product IDs, quantities and historical unit_price/unit_cost to F03. No ingestion change is required for v1.2. F03's six-decimal BigDecimal base/weighted item utilities and transaction/dataset totals are frozen in snapshots. Product IDs remain algorithmItemId under PRODUCT_ID_V1. Snapshot sourceHash identifies historical input; matrixHash identifies frozen scoring configuration, date, scores and batch evidence.
 
-F05 P0 now consumes frozen snapshots through a Store-scoped JDBC adapter, creates durable requests/runs and executes HUI-Miner/EFIM through the verified external SPMF2.67a runner. See [implemented Mining API](F05_MINING_API.md) and [F05 → F06 contract](../PASPM_F05_High_Utility_Mining/F05_F06_HANDOFF.md). No F03 calculation behavior changed. Native clean MySQL provisioning still has the documented preexisting V7 blocker.
+F05 P0 now consumes frozen snapshots through a Store-scoped JDBC adapter, creates durable requests/runs and executes HUI-Miner/EFIM through the verified external SPMF2.67a runner. See [implemented Mining API](F05_MINING_API.md) and [F05 → F06 contract](../features/F05/reference/F05_F06_HANDOFF.md). No F03 calculation behavior changed. Native clean MySQL provisioning still has the documented preexisting V7 blocker.
 
 ## F05 consumer obligations
 

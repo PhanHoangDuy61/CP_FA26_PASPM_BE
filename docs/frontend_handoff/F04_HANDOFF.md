@@ -29,7 +29,7 @@ This handoff documents the implemented F04 P0 API from the Backend controllers a
 
 ## Sample data
 
-The synthetic CSV file is [`transactions.csv`](../PASPM_F04_Transaction_Data_Pipeline/examples/transactions.csv). It contains two completed lines grouped into one order and one cancelled order. `MILK` and `COFFEE` are illustrative SKUs; replace them with Product SKUs belonging to the target Store. The fixture date is `2026-10-19T09:00:00+07:00` and is sample-only, not a current-date rule.
+The synthetic CSV file is [`transactions.csv`](../features/F04/reference/examples/transactions.csv). It contains two completed lines grouped into one order and one cancelled order. `MILK` and `COFFEE` are illustrative SKUs; replace them with Product SKUs belonging to the target Store. The fixture date is `2026-10-19T09:00:00+07:00` and is sample-only, not a current-date rule.
 
 The completed order with sale prices at or above costs is marked `f03Eligible=true`. Cancelled/refunded orders or completed orders with any below-cost line are stored as history but are not eligible for F03. F04 does not calculate F03 utility scores.
 
