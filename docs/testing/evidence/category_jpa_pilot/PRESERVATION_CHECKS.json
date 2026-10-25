@@ -1,0 +1,8 @@
+{
+  "headUnchanged": true,
+  "branchUnchanged": true,
+  "statusUnchanged": true,
+  "applicationConfigUnchanged": true,
+  "originalMigrationHashesUnchanged": true,
+  "sourceDatabaseAccess": "No connection or mutation during this task; not a new real-data audit"
+}
