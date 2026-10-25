@@ -59,3 +59,10 @@ NOT READY_FOR_MERGE: no PR merge, deployment, source repair or SPMF upload perfo
 3. Assign an eligible independent human reviewer and inspect the committed technical evidence.
 4. Authorize merge only after actual remote gates pass. Then authorize Category retarget/rebase todev; do not mix Product changes into an undisclosed Category/dev PR.
 5. Supply an authorized real dataset/clone later if genuine data acceptance is required.
+
+
+## Publication outcome
+
+Product pushed202761a81abf8ce627f55a4dd2eaa8194070546b. Category implementation/evidence pushed4d5cf4283ec2821ad87fd289039f7dec0e1b0f6b, with only this publication note added afterwards. Actual Category PR attempt used base `Khoi/feat/product-jpa-integration`, head `Khoi/feat/category-jpa-crud-pilot`, draft=true, and returned GitHub403 `Resource not accessible by integration`. No Product or Category PR was created; use both exact manual links above. No permission workaround or automatic merge was used.
+
+Remote refs checked after Category push: dev783725c, original Pilot12d348e, CI3 brancha8cbc42, Product202761a, Category4d5cf42. Product is an ancestor of Category; migration diff againstdev is empty; CodeGraph DB is ignored. Scoped worktree was clean at this check. Documentation-only follow-up does not alter the tested application/test tree. A final remote-head check follows its push.
