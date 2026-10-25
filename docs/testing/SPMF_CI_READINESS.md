@@ -43,3 +43,21 @@ Unchanged foundation/MySQL modules are not rerun locally. Latest observed existi
 PR#3 remains the existing dev-targeted PR; no duplicate is created. Public protection/rules report no required checks, but the explicit task review requirements remain. Candidate PhanHoangDuy61 and author khoinm04 have different account names; distinct humans and eligible permissions are unverified (permission API403). Zero reviews/threads at inspection: **REVIEWER_PENDING**. No review request/self approval/fake review or retrospective approval of PRs#1/#2 occurs.
 
 READY_FOR_MERGE: **NO**. Full hosted integration, approved artifact hosting and eligible actual independent review must all complete. Product JPA integration remains blocked; Category remains not started. No merge or deployment is performed.
+
+## Publication and PR metadata
+
+Implementation was pushed to existing PR#3 branch as b0cf027; hosted jobs were triggered. GitHub App rejected title/body update with403 Resource not accessible by integration; the PR remains open and its metadata is not falsely reported as updated. A ready-to-paste [current PR title/body](BACKEND_CI_REMOTE_FIX_PR_DESCRIPTION.md) is maintained for the owner. No duplicate PR, merge or review mutation was created. The temporary branch-specific push trigger is removed in the final update because PR#3 synchronize events now provide actual latest-head verification without duplicate push/PR runs.
+
+## Executed GitHub checks at b0cf027
+
+[Run40167457094](https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/actions/runs/40167457094) completed:
+
+| Job | Actual result |
+|---|---|
+| SPMF downloader security | SUCCESS;20 unit/security tests, zero failures/errors/skips; no external JAR required |
+| Java17 foundation | SUCCESS;135 tests, zero failures/errors/skips |
+| MySQL/FlywayV1–V11 | SUCCESS;34 tests, zero failures/errors/skips |
+| Full F01–F06/SPMF | FAILURE at missing approved artifact prerequisite; Backend test step NOT_RUN |
+| Required aggregate | FAILURE; no overall CI PASS |
+
+[Sanitized hosted results](evidence/spmf_ci_readiness/GITHUB_RESULTS.json). Later commit removes only the temporary duplicate push trigger and updates documentation; its latest-head PR run is still required. Do not treat unit/security success as a real approved SPMF hosting/download verification. The upstream download page currently links moving spmf.zip/spmf.jar and lists2.67 release notes; it does not establish immutable exact2.67a source correspondence. No upstream binary/source ZIP was downloaded.

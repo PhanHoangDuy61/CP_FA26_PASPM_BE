@@ -19,7 +19,7 @@ Selectors are in `.github/scripts/test-groups.py`. Full integration has no `-Dte
 
 ## Isolation and runtime
 
-Workflow triggers on PRs into dev, manual dispatch, and pushes to the exact repair branch Khoi/fix/backend-ci-remote-verification so the fix can be verified remotely despite PR creation permission failures. It uses read-only contents permission, pinned official checkout/setup-java commits and disables persisted checkout credentials. No privileged pull_request_target event or deployment step exists.
+Workflow triggers on PRs into dev and manual dispatch. The temporary branch-specific push trigger is removed now that PR#3 exists; synchronize events provide latest-head checks without duplicate push/PR executions. It uses read-only contents permission, pinned official checkout/setup-java commits and disables persisted checkout credentials. No privileged pull_request_target event or deployment step exists.
 
 The Backend compiles/tests under Java17; Java25 is separately provisioned for the exact SPMF child process. The full job checks SHA-256 then the real version entrypoint before tests. setup-java provisions Temurin from its supported publisher integration; backend/child Java versions are logged separately. [Official setup-java documentation](https://github.com/actions/setup-java).
 

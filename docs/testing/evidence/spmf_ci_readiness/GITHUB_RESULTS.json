@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-25",
+  "runId": 40167457094,
+  "url": "https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/actions/runs/40167457094",
+  "testedHead": "b0cf02787838afbb6c6ca5c36e78e371e115f5b9",
+  "jobs": {
+    "security": {
+      "id": 121091324181,
+      "conclusion": "SUCCESS",
+      "tests": 20,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "scope": "Artifact-independent unit/security tests, not a real SPMF download"
+    },
+    "foundation": {
+      "id": 121091324153,
+      "conclusion": "SUCCESS",
+      "tests": 135,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "mysql": {
+      "id": 121091324062,
+      "conclusion": "SUCCESS",
+      "tests": 34,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "integration": {
+      "id": 121091324186,
+      "conclusion": "FAILURE",
+      "stage": "Missing artifact prerequisite",
+      "backendTests": "NOT_RUN",
+      "status": "SPMF_INTEGRATION_CI_BLOCKED"
+    },
+    "aggregate": {
+      "id": 121091604319,
+      "conclusion": "FAILURE"
+    }
+  },
+  "readyForMerge": false,
+  "reviewerStatus": "REVIEWER_PENDING",
+  "artifactApproval": "NEEDS_OWNER_APPROVAL",
+  "artifactUpload": "NOT_PERFORMED",
+  "prNumber": 3,
+  "duplicatePrCreated": false,
+  "prTitleBodyUpdate": "403 Resource not accessible by integration",
+  "reviewThreads": 0,
+  "submittedReviews": 0,
+  "ownerUiPackage": "docs/setup/SPMF_ARTIFACT_HOSTING.md",
+  "mergeOrDeployment": "NOT_PERFORMED"
+}

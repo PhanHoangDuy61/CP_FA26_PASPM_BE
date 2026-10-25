@@ -4,9 +4,6 @@ on:
   pull_request:
     branches: [dev]
   workflow_dispatch:
-  # Verify this repair remotely even when the GitHub App cannot create a PR.
-  push:
-    branches: [Khoi/fix/backend-ci-remote-verification]
 
 permissions:
   contents: read
