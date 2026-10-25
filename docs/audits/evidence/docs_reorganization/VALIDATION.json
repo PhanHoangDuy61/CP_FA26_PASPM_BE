@@ -1,5 +1,5 @@
 {
-  "executedAt": "2026-10-26T01:15:49+07:00",
+  "executedAt": "2026-10-26T01:17:29+07:00",
   "timezone": "Asia/Ho_Chi_Minh",
   "baselineCommit": "6601f62d49aa5bc61027f1c7ad418ac8e1e3c3ec",
   "scope": "Documentation structure only; no backend, database or external HTTP calls",
@@ -19,9 +19,9 @@
   },
   "markdown": {
     "files": 153,
-    "internalLinks": 570,
+    "internalLinks": 571,
     "brokenInternalLinks": 0,
-    "externalLinksNotChecked": 36,
+    "externalLinksNotChecked": 37,
     "privateMachineLinksNotChecked": 0
   },
   "jsonFilesParsed": 160,

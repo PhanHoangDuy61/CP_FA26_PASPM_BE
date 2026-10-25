@@ -128,7 +128,7 @@ git diff --check
 git diff --cached --check
 ```
 
-The [validation evidence](evidence/docs_reorganization/VALIDATION.json) records PASS: **153 Markdown files, 570 internal links, zero broken internal links**, 160 JSON files parsed and 236 local JSON pointers checked. All three Draw.io XML files and both ZIP/DOCX CRC checks pass. It gives full preservation counts and failure details. It checks Markdown links and heading anchors, image/diagram/evidence targets, all original paths, hash preservation, allowed-only historical Markdown edits, duplicates, JSON syntax/local pointers, Draw.io XML and ZIP/DOCX CRC. The API index includes F01–F06 contracts; the unchanged OpenAPI export contains **73 business operations**. It remains a captured export, not a freshly generated Swagger run.
+The [validation evidence](evidence/docs_reorganization/VALIDATION.json) records PASS: **153 Markdown files, 571 internal links, zero broken internal links**, 160 JSON files parsed and 236 local JSON pointers checked. All three Draw.io XML files and both ZIP/DOCX CRC checks pass. It gives full preservation counts and failure details. It checks Markdown links and heading anchors, image/diagram/evidence targets, all original paths, hash preservation, allowed-only historical Markdown edits, duplicates, JSON syntax/local pointers, Draw.io XML and ZIP/DOCX CRC. The API index includes F01–F06 contracts; the unchanged OpenAPI export contains **73 business operations**. It remains a captured export, not a freshly generated Swagger run.
 
 External HTTP URLs: **NOT RUN**. Maven, backend/API/Swagger tests: **NOT RUN**, as no application/build/tooling behavior changes and no executable consumer of the moved paths was found. No database connection, migration or source-data operation was performed. Previous test successes remain scoped historical results.
 
@@ -136,7 +136,7 @@ Validation is considered successful only with zero broken actual internal naviga
 
 ## Git delivery and risk
 
-Branch: `Khoi/docs/reorganize-documentation`, based on verified `origin/dev` baseline above. Intended PR title: `docs: reorganize PASPM documentation and improve navigation`, base `dev`. Push/PR result is reported with final delivery; no automatic merge/deployment.
+Branch: `Khoi/docs/reorganize-documentation`, based on verified `origin/dev` baseline above. Intended PR title: `docs: reorganize PASPM documentation and improve navigation`, base `dev`. Implementation commit `f39d7a4` was pushed successfully to `origin/Khoi/docs/reorganize-documentation`. The GitHub integration returned **403 — Resource not accessible by integration** when creating a draft PR; no PR was created and no permissions were bypassed. Use this [manual PR creation link](https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/compare/dev...Khoi%2Fdocs%2Freorganize-documentation?expand=1) with the prepared [PR description](DOCS_REORGANIZATION_PR.md). The remote dev SHA was checked and remains the baseline above. No automatic merge/deployment.
 
 Risks: external deep links may need the path map; legacy manifests retain old paths intentionally; requirements and observed source can still conflict. Canonical API/handoff/runbook locations stay stable, changes are reversible through Git, and no binary/evidence is rewritten. The original user checkout and unrelated local changes are outside this worktree and remain preserved.
 

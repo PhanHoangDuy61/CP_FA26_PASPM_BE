@@ -103,7 +103,7 @@ def main():
                 failures.append({'check': 'duplicate_changed', 'path': name})
     json_docs = {}
     for name in paths:
-        if name.endswith('.json') and name != Path(args.output).as_posix():
+        if name.endswith('.json') and name != 'docs/audits/evidence/docs_reorganization/VALIDATION.json':
             try:
                 json_docs[name] = json.loads((repo / name).read_text())
             except (ValueError, OSError):
