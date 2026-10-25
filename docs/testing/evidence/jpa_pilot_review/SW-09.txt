@@ -1,0 +1,26 @@
+SW-09 | POST /api/products | role=STORE_ADMIN_A | data=SIMULATED | 2026-10-22T05:08:33.875770+07:00
+Actual Swagger UI accessibility observation (credential-free response excerpt):
+heading Server response, Value: 4
+					975 text Server response
+				976 table
+					977 row
+						978 cell
+							979 text Code
+						980 cell
+							981 text Details
+					982 row
+						983 cell
+							984 text 409
+						985 cell
+							1074 text Error: response status is 409
+							986 heading Response body, Value: 5
+								987 text Response body
+							988 container
+								989 button
+								990 button Download
+								991 container
+									992 text {
+ "error" :  "Resource already exists or violates a data constraint" }
+							993 heading Response headers, Value: 5
+								994 text Response headers
+							995 text cache-control :  no-cache,no-store,max-age=0,must-revalidate connection :  keep-alive content-type :  application/json date :  Wed,21 Oct 2026 22:08:33 GMT expires :  0 keep-alive :  timeout=60 pragma :  no-cache transfer-encoding :  chunked x-content-type-options :  nosniff x-frame-options :  DENY x-xss-protection :  0

@@ -5,13 +5,12 @@ import java.util.List;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import vn.edu.fpt.paspm.catalog.CatalogContracts.CategoryView;
 import vn.edu.fpt.paspm.catalog.CatalogContracts.ProductPage;
 import vn.edu.fpt.paspm.catalog.CatalogContracts.ProductView;
+import vn.edu.fpt.paspm.catalog.product.persistence.ProductMetadataPersistence;
 
 @Repository
 public class ProductRepository {
@@ -27,6 +26,7 @@ public class ProductRepository {
             """;
 
     private final JdbcTemplate jdbc;
+    private final ProductMetadataPersistence metadata;
     private final RowMapper<ProductView> mapper = (rs, row) -> {
         Integer categoryId = rs.getObject("category_id", Integer.class);
         CategoryView category = categoryId == null ? null : new CategoryView(
@@ -37,7 +37,10 @@ public class ProductRepository {
                 rs.getString("status"), rs.getLong("stock_quantity"), rs.getInt("expiry_push_days"));
     };
 
-    public ProductRepository(JdbcTemplate jdbc) { this.jdbc = jdbc; }
+    public ProductRepository(JdbcTemplate jdbc, ProductMetadataPersistence metadata) {
+        this.jdbc = jdbc;
+        this.metadata = metadata;
+    }
 
     public ProductView find(int storeId, int productId) {
         return jdbc.query(SELECT_PRODUCT + " WHERE p.store_id=? AND p.product_id=?", mapper, storeId, productId)
@@ -70,32 +73,14 @@ public class ProductRepository {
     public ProductView create(int storeId, String sku, String name, Integer categoryId, String unit,
                               boolean requiresExpiry, java.math.BigDecimal sellingPrice,
                               java.math.BigDecimal costPrice, String status, int expiryPushDays) {
-        KeyHolder key = new GeneratedKeyHolder();
-        jdbc.update(connection -> {
-            var statement = connection.prepareStatement("""
-                    INSERT INTO product(store_id, category_id, sku, name, unit, requires_expiry,
-                                        selling_price, cost_price, status, expiry_push_days)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    """, new String[] {"product_id"});
-            statement.setInt(1, storeId);
-            if (categoryId == null) statement.setNull(2, java.sql.Types.INTEGER); else statement.setInt(2, categoryId);
-            statement.setString(3, sku.trim()); statement.setString(4, name.trim()); statement.setString(5, unit.trim());
-            statement.setBoolean(6, requiresExpiry); statement.setBigDecimal(7, sellingPrice);
-            statement.setBigDecimal(8, costPrice); statement.setString(9, status); statement.setInt(10, expiryPushDays);
-            return statement;
-        }, key);
-        return find(storeId, key.getKey().intValue());
+        int id = metadata.create(storeId,sku,name,categoryId,unit,requiresExpiry,sellingPrice,costPrice,status,expiryPushDays);
+        return find(storeId,id);
     }
 
     public boolean update(int storeId, int id, String sku, String name, Integer categoryId, String unit,
                           boolean requiresExpiry, java.math.BigDecimal sellingPrice,
                           java.math.BigDecimal costPrice, String status, int expiryPushDays) {
-        return jdbc.update("""
-                UPDATE product SET category_id=?, sku=?, name=?, unit=?, requires_expiry=?,
-                                   selling_price=?, cost_price=?, status=?, expiry_push_days=?
-                WHERE store_id=? AND product_id=?
-                """, categoryId, sku.trim(), name.trim(), unit.trim(), requiresExpiry,
-                sellingPrice, costPrice, status, expiryPushDays, storeId, id) == 1;
+        return metadata.update(storeId,id,sku,name,categoryId,unit,requiresExpiry,sellingPrice,costPrice,status,expiryPushDays);
     }
 
     public boolean hasExpirylessBatches(int productId) {
@@ -105,6 +90,6 @@ public class ProductRepository {
     }
 
     public boolean updateStatus(int storeId, int id, String status) {
-        return jdbc.update("UPDATE product SET status=? WHERE store_id=? AND product_id=?", status, storeId, id) == 1;
+        return metadata.updateStatus(storeId,id,status);
     }
 }
