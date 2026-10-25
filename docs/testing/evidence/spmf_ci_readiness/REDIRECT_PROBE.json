@@ -1,0 +1,10 @@
+{
+  "probe": "HEAD only, fixed public GitHub CLI release checksum asset; no artifact body downloaded",
+  "referenceUrl": "https://github.com/cli/cli/releases/download/v2.83.0/gh_2.83.0_checksums.txt",
+  "httpStatus": 302,
+  "destinationScheme": "https",
+  "destinationHost": "release-assets.githubusercontent.com",
+  "hasQuery": true,
+  "signedUrlRecorded": false,
+  "currentDownloader": "REJECT"
+}

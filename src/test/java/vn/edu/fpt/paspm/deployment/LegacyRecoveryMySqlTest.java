@@ -17,6 +17,32 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfSystemProperty(named="paspm.test.mysql",matches="true")
 class LegacyRecoveryMySqlTest {
  @TempDir Path dir;
+ @Test void verifierTemporaryOptionsAreReadableByActualMysqlClient() throws Exception {
+  Path options=Files.createTempFile("paspm-ci-options-", ".cnf",
+   java.nio.file.attribute.PosixFilePermissions.asFileAttribute(java.nio.file.attribute.PosixFilePermissions.fromString("rw-------")));
+  Process process=null;
+  try {
+   Files.writeString(options,"[client]\n");
+   ProcessBuilder builder=new ProcessBuilder("mysql","--defaults-file="+options,"--no-login-paths","--version");
+   builder.environment().remove("MYSQL_PWD");
+   builder.environment().put("MYSQL_HISTFILE","/dev/null");
+   process=builder.start();
+   assertTrue(process.waitFor(20,java.util.concurrent.TimeUnit.SECONDS),"MySQL CLI compatibility probe timed out");
+   String stderr=new String(process.getErrorStream().readAllBytes(),java.nio.charset.StandardCharsets.UTF_8);
+   String stdout=new String(process.getInputStream().readAllBytes(),java.nio.charset.StandardCharsets.UTF_8);
+   String shared=System.getenv("RUNNER_TEMP");
+   boolean sharedPath=shared==null || options.toAbsolutePath().startsWith(Path.of(shared).toAbsolutePath());
+   String safe="exit="+process.exitValue()+", hostFileReadable="+Files.isReadable(options)
+    +", withinSharedTemp="+sharedPath+", defaultsFileError="+stderr.contains("Failed to open required defaults file");
+   System.out.println("MYSQL_CLI_OPTIONS_PROBE "+safe);
+   assertEquals(0,process.exitValue(),safe);
+   assertTrue(stdout.contains("Ver 8.4."),"MySQL 8.4 client required; raw client output suppressed");
+  } finally {
+   if(process!=null && process.isAlive()) process.destroyForcibly();
+   Files.deleteIfExists(options);
+  }
+ }
+
  record Fixture(MySqlTestDatabase target,MySqlTestDatabase restored,Path dump,Path manifest,LegacyDataset before){}
  @Test void springBootDiscoversGuardAndRefusesWithoutOptInBeforeV7Ddl()throws Exception {
   var db=MySqlTestDatabase.create();at5(db);seed(db);

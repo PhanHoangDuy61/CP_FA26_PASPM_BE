@@ -1,0 +1,9 @@
+# fix(ci): verify MySQL restore and secure pinned SPMF provisioning
+
+MySQL restore fixtures failed because private defaults files were created outside the CLI container mount. Configure the temporary directory at forked JVM startup through Surefire argLine and verify actual MySQL defaults-file access. Earlier hosted checks at5412178: foundation135 PASS, MySQL34 PASS, zero failures/errors/skips.
+
+SPMF provisioning also rejected legitimate signed GitHub Release redirects. Keep owner-configured input HTTPS/query-free/userinfo-free; allow fixed-tag GitHub Release sources to use only the exact release-assets.githubusercontent.com CDN. Custom hosts stay same-origin. Recheck final URLs and preserve exact hash, size limit, private temporary staging/atomic publication and Java25 banner checks. Add a required artifact-independent downloader security job; remove the temporary duplicate branch-push trigger because this PR now exists.
+
+Executed2026-10-25: actual HEAD-only reference redirect rejected before/HTTP200 after;34 local helper tests PASS; Maven clean verify of runtime/mining suites13 PASS with zero failures/errors/skips. Local approved SPMF2.67a hash/banner verified; HUI-Miner/EFIM each match eight expected patterns. Prior full local255 PASS is historical2026-10-23 and was not rerun. Inspect actual latest-head hosted checks in Actions and docs/testing/SPMF_CI_READINESS.md.
+
+No binary upload/publication/commit, source database connection/write, production Java/business logic, V1–V11 or JPA changes. No merge/deploy. Full integration remains BLOCKED without owner-approved immutable URL and verified corresponding-source/license package; human independent review remains REVIEWER_PENDING. READY_FOR_MERGE:NO. Agent review is not approval. Owner instructions: docs/setup/SPMF_ARTIFACT_HOSTING.md.

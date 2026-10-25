@@ -1,0 +1,11 @@
+{
+  "sourceDatabaseWrites": "NONE",
+  "sourceDatabaseConnectionByThisTask": "NONE",
+  "schemaMigrationOrRepair": "NOT_RUN",
+  "existingApplicationConfigSha256": "85ff4ee097dc017b63bc402effe17b70d1882be23231de19c64aaac2272cf86f",
+  "originalBranch": "Khoi/Fear/jpa-product-metadata-pilot",
+  "originalHead": "12d348e73caccde8e2985ad58b311c0b1cbed308",
+  "productionAndMigrationDiffFrom5412178": "",
+  "newTestsUseDatabase": false,
+  "qualification": "No new DB test run; unchanged MySQL behavior is supported by actual hosted results and prior isolated evidence, not a new source data audit."
+}
