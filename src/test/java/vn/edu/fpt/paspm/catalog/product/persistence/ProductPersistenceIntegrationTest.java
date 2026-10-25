@@ -79,8 +79,8 @@ class ProductPersistenceIntegrationTest {
 
     @Test void productMappingContainsOnlyOwnedMetadata() {
         var entities = emf.getMetamodel().getEntities();
-        assertEquals(Set.of("ProductEntity"), entities.stream().map(e -> e.getName()).collect(Collectors.toSet()));
-        var entity = entities.iterator().next();
+        assertEquals(Set.of("ProductEntity", "CategoryEntity"), entities.stream().map(e -> e.getName()).collect(Collectors.toSet()));
+        var entity = entities.stream().filter(e -> e.getName().equals("ProductEntity")).findFirst().orElseThrow();
         assertEquals(Set.of("productId", "storeId", "categoryId", "sku", "name", "unit", "requiresExpiry",
                 "sellingPrice", "costPrice", "status", "expiryPushDays"),
                 entity.getAttributes().stream().map(a -> a.getName()).collect(Collectors.toSet()));

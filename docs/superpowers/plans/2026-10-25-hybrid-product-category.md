@@ -20,17 +20,20 @@ Files: existing ProductEntity/ProductJpaRepository/ProductMetadataPersistence, P
 - [x] Execute existing Product JPA/H2/MySQL transaction tests; adapt obsolete V10-only assertions to V11 without weakening constraints. Preserve unsupported-original-V7 negative characterization; supported registered callback positive recovery must also run.
 - [x] Reuse/add missing tests for scoped writes, Store immutability, S/M and inventory integrity, JDBC/JPA shared commit/rollback and stale context behavior.
 - [x] Run full Maven clean verify with real local SPMF, all required MySQL/Java17/Pilot opt-ins and zero unexpected skipped tests; review verified issues and fix narrowly.
-- [ ] Publish Product branch/PR package after documented local acceptance. Never merge.
+- [x] Publish Product branch/PR package after documented local acceptance. Never merge.
 
 ## Task2 — Category implementation after Product local acceptance
 Files: catalog/category/persistence/CategoryEntity.java, CategoryJpaRepository.java, CategoryPersistence.java; existing CategoryRepository; Category persistence/MySQL/API tests.
-- [ ] Inspect schema/contracts. Existing Category API has list/detail/create/update/status; no delete endpoint and no uniqueness constraint inferred from names.
-- [ ] Write meaningful failing tests for scoped CRUD/status, JDBC/JPA mixed rollback/staleness, referenced Product preservation/no cascade, duplicate/invalid behavior matching actual schema.
-- [ ] Implement package-local entity with immutable Store column and no cascade relationship; scoped Spring Data repository plus transaction/DTO bridge. Keep service/controller/DTO behavior and Product JDBC queries intact.
-- [ ] Run targeted MySQL tests, existing Product tests and full regression/Flyway/replay; fix actual regressions.
-- [ ] Create dependent Category branch from verified Product head, commit Category separately, push and prepare Category PR targeting Product branch until authorized retarget after merge.
+- [x] Inspect schema/contracts. Existing Category API has list/detail/create/update/status; no delete endpoint and no uniqueness constraint inferred from names.
+- [x] Write meaningful failing tests for scoped CRUD/status, JDBC/JPA mixed rollback/staleness, referenced Product preservation/no cascade, duplicate/invalid behavior matching actual schema.
+- [x] Implement package-local entity with immutable Store column and no cascade relationship; scoped Spring Data repository plus transaction/DTO bridge. Keep service/controller/DTO behavior and Product JDBC queries intact.
+- [x] Run targeted MySQL tests, existing Product tests and full regression/Flyway/replay; fix actual regressions.
+- [x] Create dependent Category branch from verified Product head, commit Category separately, push and prepare Category PR targeting Product branch until authorized retarget after merge.
 
 ## Task3 — Final review/delivery
-- [ ] Independent agent review transaction safety, ownership, cache staleness, schema/migration/replay, F04 and API invariants. Record agent findings separately from human GitHub approval.
-- [ ] Update Hybrid architecture decision summary, both PR bodies, actual counts/commands, branch/head/URLs and CI/reviewer blockers.
-- [ ] Verify branch ancestry, remote heads, clean scoped checkout and original checkout/config/migration preservation. Stop at review-ready branches; no PR merges.
+- [x] Independent agent review transaction safety, ownership, cache staleness, schema/migration/replay, F04 and API invariants. Record agent findings separately from human GitHub approval.
+- [x] Update Hybrid architecture decision summary, both PR bodies, actual counts/commands, branch/head/URLs and CI/reviewer blockers.
+- [x] Verify branch ancestry, remote heads, clean scoped checkout and original checkout/config/migration preservation. Stop at review-ready branches; no PR merges.
+
+
+Final local acceptance: Product302 PASS; dependent Category full330 PASS; zero failures/errors/skips. Product pushed202761a; PR App403/manual creation prepared. Category push/PR outcome recorded in HYBRID_JPA_DELIVERY_STATUS.md. Optional review suggestions are documented, not observed failures. External remote/human/real-data gates remain unmet and no merge is authorized.
