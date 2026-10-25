@@ -1,3 +1,7 @@
+<!-- docs-reorganization:notice -->
+> **NEEDS_REVIEW — documentation review 2026-10-26.** Technical Hybrid choices remain useful; dated branch-dependency clauses are not current merge status. See [current navigation](README.md). Original results and business-rule text below are retained; this notice is not a new execution or approval.
+<!-- /docs-reorganization:notice -->
+
 # Hybrid persistence decisions — 2026-10-25
 
 - Reuse Product's existing scoped entity/repository/transactional bridge. JPA owns Product metadata writes; Product catalog/projections and Inventory remain JDBC. F03 S/M fields are unmapped, avoiding dirty-write overwrite.

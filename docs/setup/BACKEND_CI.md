@@ -1,3 +1,7 @@
+<!-- docs-reorganization:notice -->
+> **NEEDS_REVIEW — documentation review 2026-10-26.** CI3/Product/Category are merged in baseline6601f62; prior open/not-started statements are dated observations, not current hosted acceptance. See [current navigation](README.md). Original results and business-rule text below are retained; this notice is not a new execution or approval.
+<!-- /docs-reorganization:notice -->
+
 > SPMF readiness update2026-10-25: see [current report](../testing/SPMF_CI_READINESS.md) and [owner hosting/approval package](SPMF_ARTIFACT_HOSTING.md). PR#3 is still open; no approved artifact URL/publication or independent review exists. Earlier counts below retain their original dates.
 
 # PASPM Backend CI setup and remaining gates

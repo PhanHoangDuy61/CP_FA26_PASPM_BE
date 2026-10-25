@@ -65,7 +65,7 @@ F02 Product create/update owns `expiryPushDays`, `requiresExpiry`, SKU, category
 
 ## Request and response examples
 
-Synthetic JSON examples are available under [`../frontend_handoff/F02_examples/`](../frontend_handoff/F02_examples/). Example Product response:
+Synthetic JSON examples are available under [`../frontend_handoff/F02_examples/`](../frontend_handoff/F02_examples). Example Product response:
 
 ```json
 {"id":21,"sku":"MILK-01","name":"Fresh Milk","unit":"bottle","requiresExpiry":true,"category":{"id":4,"name":"Dairy","status":"ACTIVE"},"sellingPrice":2.5,"costPrice":1.25,"status":"ACTIVE","stockQuantity":12,"expiryPushDays":7}

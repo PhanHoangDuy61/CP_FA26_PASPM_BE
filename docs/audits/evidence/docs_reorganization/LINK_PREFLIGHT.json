@@ -1,0 +1,208 @@
+{
+  "brokenLinks": [
+    {
+      "file": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_F05_HANDOFF.md",
+      "line": 3,
+      "target": "../requirements/F03_WEIGHT_RULES_v1_2.md",
+      "resolved": "docs/requirements/F03_WEIGHT_RULES_v1_2.md",
+      "reason": "Existing internal Markdown link target is absent at baseline."
+    },
+    {
+      "file": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_IMPLEMENTATION_SUMMARY.md",
+      "line": 3,
+      "target": "../requirements/F03_WEIGHT_RULES_v1_2.md",
+      "resolved": "docs/requirements/F03_WEIGHT_RULES_v1_2.md",
+      "reason": "Existing internal Markdown link target is absent at baseline."
+    },
+    {
+      "file": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_SWAGGER_TEST_REPORT.md",
+      "line": 3,
+      "target": "../requirements/F03_WEIGHT_RULES_v1_2.md",
+      "resolved": "docs/requirements/F03_WEIGHT_RULES_v1_2.md",
+      "reason": "Existing internal Markdown link target is absent at baseline."
+    },
+    {
+      "file": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_TECHNICAL_DECISIONS.md",
+      "line": 3,
+      "target": "../requirements/F03_WEIGHT_RULES_v1_2.md",
+      "resolved": "docs/requirements/F03_WEIGHT_RULES_v1_2.md",
+      "reason": "Existing internal Markdown link target is absent at baseline."
+    },
+    {
+      "file": "docs/api/F03_UTILITY_API.md",
+      "line": 3,
+      "target": "../requirements/F03_WEIGHT_RULES_v1_2.md",
+      "resolved": "docs/requirements/F03_WEIGHT_RULES_v1_2.md",
+      "reason": "Existing internal Markdown link target is absent at baseline."
+    },
+    {
+      "file": "docs/frontend_handoff/F03_HANDOFF.md",
+      "line": 3,
+      "target": "../requirements/F03_WEIGHT_RULES_v1_2.md",
+      "resolved": "docs/requirements/F03_WEIGHT_RULES_v1_2.md",
+      "reason": "Existing internal Markdown link target is absent at baseline."
+    },
+    {
+      "file": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_SWAGGER_TEST_CASES.md",
+      "line": 5,
+      "target": "../requirements/F03_WEIGHT_RULES_v1_2_VERIFICATION.md",
+      "resolved": "docs/requirements/F03_WEIGHT_RULES_v1_2_VERIFICATION.md",
+      "reason": "Existing plain-text file reference is absent from tracked baseline; original workspace has this file untracked. Not caused by reorganization."
+    },
+    {
+      "file": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_TECHNICAL_DECISIONS.md",
+      "line": 38,
+      "target": "docs/requirements/PASPM_Weight_Report.pdf",
+      "resolved": "docs/requirements/PASPM_Weight_Report.pdf",
+      "reason": "Existing plain-text file reference is absent from tracked baseline; original workspace has this file untracked. Not caused by reorganization."
+    },
+    {
+      "file": "docs/frontend_handoff/F03_examples/README.md",
+      "line": 9,
+      "target": "legacy_linear_snapshot_response.json",
+      "resolved": "docs/frontend_handoff/F03_examples/legacy_linear_snapshot_response.json",
+      "reason": "Existing plain-text file reference is absent from tracked baseline; original workspace has this file untracked. Not caused by reorganization."
+    },
+    {
+      "file": "docs/frontend_handoff/F03_examples/README.md",
+      "line": 9,
+      "target": "legacy_linear_matrix_response.json",
+      "resolved": "docs/frontend_handoff/F03_examples/legacy_linear_matrix_response.json",
+      "reason": "Existing plain-text file reference is absent from tracked baseline; original workspace has this file untracked. Not caused by reorganization."
+    }
+  ],
+  "constraints": [
+    {
+      "type": "baseline",
+      "detail": "Baseline has 349 tracked docs: 128 Markdown,155 JSON,55 TXT,3 DRAWIO,3 PNG,2 JPG,1 DOCX,1 ZIP,1 CSV. Six broken actual Markdown links resolve to one absent F03 specification; four additional explicit plain-file references resolve to four other absent tracked targets."
+    },
+    {
+      "type": "rewrite",
+      "detail": "Resolve each original local Markdown destination against its original file directory, then map both source and target, then compute destination relative to new source directory. Preserve fragment and query suffixes. For absent targets, preserve their original resolved identity instead of leaving a now-wrong relative destination."
+    },
+    {
+      "type": "frozen-manifest",
+      "file": "docs/PASPM_F05_High_Utility_Mining/F05_FILE_MANIFEST.json",
+      "detail": "This historical task inventory contains 62 docs paths,40 of which point into the legacy feature folders or ERD_Diagram and will move. Every listed target exists at baseline. Preserve JSON bytes; explain historical old-path semantics in a nearby README and publish an old-to-new path map. Do not claim these are current live links or silently rewrite their historical payload."
+    },
+    {
+      "type": "frozen-payloads",
+      "detail": "Preserve every existing JSON,CSV,image,ZIP,DOCX,DRAWIO and raw evidence file byte-for-byte. Markdown raw review evidence can also contain execution paths and should keep historical meaning. Retain both F02 DRAWIO copies as independent existing files; do not deduplicate."
+    },
+    {
+      "type": "diagrams",
+      "detail": "All three tracked DRAWIO XML files have zero href/src/link attributes; no diagram-internal filesystem links need updates. Moving central ERD_Diagram to diagrams still requires updating human-readable path references."
+    },
+    {
+      "type": "scope",
+      "detail": "No filesystem docs references were found in source,tests,scripts or .github; /v3/api-docs strings are API endpoints. Root README line109 is the only non-doc Markdown plain-path consumer found. No source/script/workflow edits are required for these moves."
+    },
+    {
+      "type": "canonical",
+      "detail": "Keep docs/api,frontend_handoff,setup and superpowers paths stable as requested. Other JSON docs path references point only to canonical openapi.json,architecture/HISTORICAL_MATRIX_RECOVERY_PR_DESCRIPTION.md and setup/SPMF_ARTIFACT_HOSTING.md, which remain valid."
+    },
+    {
+      "type": "historical-context",
+      "detail": "F02_CODEX_SWAGGER_TEST_PROMPT.md contains instructions requiring the old F02 directory. Label it as historical in the feature landing page; do not allow its embedded historical instructions to govern new documentation placement."
+    },
+    {
+      "type": "missing-authority",
+      "detail": "Do not create dummy approved business specifications, substitute a new document as the missing F03 spec, or silently import original untracked files. Report tracked-package omissions honestly. Original untracked F03 rules,verification,PDF and legacy examples exist but remain outside this task scope."
+    },
+    {
+      "type": "verification",
+      "detail": "For zero NEW broken links, compare normalized resolved target identities before/after using the move map, not just counts. A six-to-six broken-link count can hide one fixed and one newly broken target. Check all previously valid Markdown links and plain docs paths, and separately document frozen historical path inventories."
+    }
+  ],
+  "ambiguousReferences": [
+    {
+      "file": "docs/frontend_handoff/F03_examples/README.md",
+      "line": 3,
+      "detail": "Text mentions threshold3/0 preview outputs without explicit filenames; original workspace contains untracked utility_preview_threshold_0_response.json and utility_preview_threshold_3_response.json, absent from baseline. Do not represent them as tracked available fixtures."
+    },
+    {
+      "file": "docs/PASPM_F01_AUTH_SERVICE/TEST_RESULTS.md",
+      "line": 5,
+      "target": "./mvnw.cmd",
+      "detail": "Command runs from repository root, not a relative document link. Do not rewrite as a doc-relative file."
+    },
+    {
+      "file": "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_CODEX_SWAGGER_TEST_PROMPT.md",
+      "line": 29,
+      "target": "docs/screenshots",
+      "detail": "Generic prose expression docs/screenshots, not a claimed existing directory. Line46 evidence/ is an optional future destination absent at baseline."
+    },
+    {
+      "file": "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_SWAGGER_TEST_CASES.md",
+      "line": 29,
+      "target": "../inventory-summary",
+      "detail": "Abbreviated API endpoint, also in F02_SWAGGER_TEST_REPORT.md line154. Do not treat as a filesystem link."
+    },
+    {
+      "file": "docs/PASPM_F04_Transaction_Data_Pipeline/F04_IMPLEMENTATION_PLAN.md",
+      "line": 162,
+      "target": "docs/report",
+      "detail": "Generic final docs/report wording, not an actual path."
+    },
+    {
+      "file": "docs/audits/F05_DOCUMENT_COMPLIANCE_AUDIT.md",
+      "line": 232,
+      "target": "../spmf_run/README.md",
+      "resolved": "LOCAL_PATH",
+      "detail": "Explicit standalone research artifacts outside Backend repository; interpret relative to Backend root rather than Markdown location. Not a missing repo doc."
+    },
+    {
+      "file": "docs/setup/SPMF_ARTIFACT_HOSTING.md",
+      "line": 7,
+      "target": "../spmf_run/spmf.jar",
+      "resolved": "LOCAL_PATH",
+      "detail": "Explicit Backend-relative external artifact path. Preserve its operational meaning; do not rewrite relative to document."
+    },
+    {
+      "file": "docs/superpowers/plans/2026-10-21-retail-catalog-utility.md",
+      "line": 46,
+      "target": "docs/frontend_handoff/F03_HANDOFF.md/F02_HANDOFF.md",
+      "detail": "Shorthand for two files; preserve/clarify as two canonical paths if editing prose. Line52 docs/evidence is a broad commit-category phrase, not a real directory."
+    },
+    {
+      "file": "docs/testing/JPA_PILOT_REAL_DATA_VERIFICATION.md",
+      "line": 56,
+      "target": "source-preservation.json / clone-provisioning.json",
+      "resolved": "LOCAL_PATH",
+      "detail": "Explicit transient external log directory in preceding prose; not promised tracked documents."
+    },
+    {
+      "file": "docs/testing/evidence/backend_ci_remote/AGENT_REVIEW.md",
+      "line": 14,
+      "target": "before-mysql-results.json",
+      "detail": "Historical reviewer log basename differs in case from tracked BEFORE_MYSQL_RESULTS.json. Preserve raw review evidence; current human landing page should link the tracked uppercase file."
+    }
+  ],
+  "readmeNotes": [
+    {
+      "file": "README.md",
+      "line": 109,
+      "detail": "Replace two old F01 plain paths using the move map or link the new docs landing page. Both targets exist before move and must remain reachable after it."
+    },
+    {
+      "file": "README.md",
+      "line": 1,
+      "detail": "Title/opening state first F01 implementation and modules F02-F11 unimplemented; that is stale against current tracked F02-F06 APIs. A docs-only refresh should describe current documented backend scope with links rather than imply an initial scaffold."
+    },
+    {
+      "file": "README.md",
+      "line": 7,
+      "detail": "Stack paragraph says no JPA/Hibernate and no real mining adapter; current tracked implementation/docs include Product/Category JPA and real HUI-Miner/EFIM. Refresh factual overview or explicitly date it as historical."
+    },
+    {
+      "file": "README.md",
+      "line": 3,
+      "detail": "Named original source DOCX and DRAWIO are not tracked files. SOURCE_BASELINE.json records their source filenames/hashes. Preserve source provenance without making false downloadable-file links."
+    },
+    {
+      "file": "docs/frontend_handoff/F03_examples/README.md",
+      "line": 9,
+      "detail": "Both explicit legacy_linear JSON examples exist only untracked in original workspace. Add a packaging-gap note in central docs navigation; never fabricate them or claim tracked availability."
+    }
+  ]
+}

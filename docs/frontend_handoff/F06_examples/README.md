@@ -10,4 +10,4 @@ Exported from the actual Java17/MySQL integration tests, not hand-written API cl
 - conflict_response: resolved-state/version conflict.
 - expiry_push_response: current eligible batch warning/quantity/date contract.
 
-Shared OpenAPI: [docs/api/openapi.json](../../api/openapi.json). Interactive Swagger results are separate in [F06_VERIFICATION.md](../../requirements/F06_VERIFICATION.md).
+Shared OpenAPI: [docs/api/openapi.json](../../api/openapi.json). Interactive Swagger results are separate in [F06_VERIFICATION.md](../../testing/reports/F06_VERIFICATION.md).

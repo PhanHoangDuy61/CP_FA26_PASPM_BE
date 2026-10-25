@@ -1,6 +1,10 @@
+<!-- docs-reorganization:notice -->
+> **NEEDS_REVIEW — documentation review 2026-10-26.** Useful endpoint contracts coexist with dated deployment/verification summaries; source availability is separate from historical failure evidence. See [current navigation](../features/F05/README.md). Original results and business-rule text below are retained; this notice is not a new execution or approval.
+<!-- /docs-reorganization:notice -->
+
 # F05 Mining API Contract
 
-Verified implementation: JDBC/Flyway V9, F03 frozen snapshots, external SPMF 2.67a. This contract is based on implemented DTOs/controllers and the runtime OpenAPI export, not proposed routes. All eight operations executed via Swagger UI. See [verification and deployment blocker](../PASPM_F05_High_Utility_Mining/F05_VERIFICATION.md).
+Verified implementation: JDBC/Flyway V9, F03 frozen snapshots, external SPMF 2.67a. This contract is based on implemented DTOs/controllers and the runtime OpenAPI export, not proposed routes. All eight operations executed via Swagger UI. See [verification and deployment blocker](../features/F05/reference/F05_VERIFICATION.md).
 
 ## Authentication and authorization
 
@@ -396,4 +400,4 @@ The 2026-10-20 P0 correction quotes row_number in V7 and F04 SQL. Fresh MySQL8.4
 
 Before admitting new work, runtime preflight validates the pinned JAR, separately configured Java25+, actual SPMF version entrypoint and temporary storage. Invalid runtime returns HTTP503 using the existing error envelope, with diagnostic prefixes SPMF_JAR_NOT_CONFIGURED, SPMF_JAR_NOT_FOUND, SPMF_JAR_NOT_READABLE, SPMF_JAR_HASH_MISMATCH, SPMF_JAVA_NOT_FOUND, SPMF_JAVA_VERSION_UNSUPPORTED or SPMF_RUNTIME_UNAVAILABLE. Historical read APIs remain available. See [portable setup](../setup/F05_SPMF_RUNTIME_SETUP.md) for environment variables, caching and bounds.
 
-F06 raw-pattern semantics and deferred scheduling are documented in [F05_F06_HANDOFF.md](../PASPM_F05_High_Utility_Mining/F05_F06_HANDOFF.md). No Frontend or F06 implementation was changed.
+F06 raw-pattern semantics and deferred scheduling are documented in [F05_F06_HANDOFF.md](../features/F05/reference/F05_F06_HANDOFF.md). No Frontend or F06 implementation was changed.
