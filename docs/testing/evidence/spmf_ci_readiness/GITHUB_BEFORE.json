@@ -1,0 +1,59 @@
+{
+  "/pulls/3": {
+    "state": "open",
+    "merged": false,
+    "merged_at": null,
+    "merge_commit_sha": "4528fcb80e2cce0fa6e05de8bf35019975a3d935",
+    "draft": false,
+    "html_url": "https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/pull/3",
+    "head": {
+      "ref": "Khoi/fix/backend-ci-remote-verification",
+      "sha": "541217847ee4c6068b6ed61877b5ba58548ab227"
+    },
+    "base": {
+      "ref": "dev",
+      "sha": "783725c7c8aac810f43fce4971a3b45ce6562a94"
+    },
+    "requested_reviewers": [],
+    "user": "khoinm04"
+  },
+  "/pulls/3/reviews": [],
+  "/branches/dev": {
+    "name": "dev",
+    "protected": false,
+    "protection": {
+      "enabled": false,
+      "required_status_checks": {
+        "enforcement_level": "off",
+        "contexts": [],
+        "checks": []
+      }
+    }
+  },
+  "/rules/branches/dev": [],
+  "/rulesets": [],
+  "/actions/runs?branch=Khoi%2Ffix%2Fbackend-ci-remote-verification&per_page=3": [
+    {
+      "id": 39981570789,
+      "head_sha": "541217847ee4c6068b6ed61877b5ba58548ab227",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/actions/runs/39981570789"
+    },
+    {
+      "id": 39910083811,
+      "head_sha": "541217847ee4c6068b6ed61877b5ba58548ab227",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/actions/runs/39910083811"
+    },
+    {
+      "id": 39909707415,
+      "head_sha": "9f362db344ba40a3d1c1c79970931ae5e5c069f3",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/actions/runs/39909707415"
+    }
+  ],
+  "/releases": []
+}

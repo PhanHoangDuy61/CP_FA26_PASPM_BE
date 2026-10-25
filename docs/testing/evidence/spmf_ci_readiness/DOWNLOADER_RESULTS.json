@@ -1,0 +1,19 @@
+{
+  "tests": 34,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "independentNoArtifactJobTests": 20,
+  "originalRedirectRegressionBefore": {
+    "tests": 19,
+    "failures": 2,
+    "errors": 2
+  },
+  "emptyUserinfoBefore": {
+    "tests": 20,
+    "failures": 1,
+    "errors": 0
+  },
+  "approvedBytesTests": "Existing exact local JAR, including mocked signed-final-response transport; no publication/download of SPMF",
+  "transportFixtures": "Mock transport except separately recorded real HEAD-only reference probe"
+}

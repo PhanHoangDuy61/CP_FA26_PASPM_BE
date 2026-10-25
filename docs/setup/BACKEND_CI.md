@@ -1,3 +1,5 @@
+> SPMF readiness update2026-10-25: see [current report](../testing/SPMF_CI_READINESS.md) and [owner hosting/approval package](SPMF_ARTIFACT_HOSTING.md). PR#3 is still open; no approved artifact URL/publication or independent review exists. Earlier counts below retain their original dates.
+
 # PASPM Backend CI setup and remaining gates
 
 Status update (2026-10-23, Asia/Ho_Chi_Minh): CI PR #2 was merged externally into dev783725c. Remote run39879145935 passed foundation but failed six MySQL restore fixtures; the repair is verified in hosted run39909707415 (foundation135 PASS, MySQL34 PASS; full integration still blocked). Details are in [remote CI report](../testing/BACKEND_CI_REMOTE_VERIFICATION.md). Earlier local counts below are historical baselines, not proof of the repaired remote head. **SPMF_INTEGRATION_CI_BLOCKED** and **REVIEWER_PENDING**. No merge, deployment or original-database change is authorized.
@@ -6,11 +8,12 @@ Status update (2026-10-23, Asia/Ho_Chi_Minh): CI PR #2 was merged externally int
 
 | Job | Actual scope | Prerequisites / current limitation |
 |---|---|---|
+| SPMF downloader security |20 artifact-independent URL/redirect/checksum/error-isolation tests |Runs even when the full external artifact prerequisite is blocked; does not test real mining or replace full integration. |
 | Java17 Backend foundation | 22 named existing suites: F01 auth, F02 catalog, F03/weight v1.2, F04 parser/validation/transactions, pure F05/F06 logic, H2 guards | No SPMF required. Locally executed 135 PASS, zero failures/errors/skips. This is not remote CI PASS. |
 | MySQL8.4 / FlywayV1–V11 / F04 | Six named existing suites: fresh/upgrade migrations, populated archive/partialV7/restore guards, F04 REQUIRES_NEW/idempotency, retail utility | Disposable MySQL+matching CLI. Locally executed 33 PASS, zero failures/errors/skips with a deliberately absent SPMF path. |
 | Full F01–F06 / SPMF | Unfiltered Maven clean verify; every existing MySQL/Java17 opt-in; HUI-Miner+EFIM, legacy replay, F06 refusal and HTTP mining | Approved external exact JAR required. Local full run 254 PASS. Remote integration remains BLOCKED without the artifact URL. |
 | JPA/JDBC shared transactions | Full job will discover existing test suites when a separately accepted Product Pilot integration adds them | No Product JPA suites exist at current dev691371b. NOT_AVAILABLE_IN_THIS_REVISION, not PASS or silently implemented. Prior detached compatibility299 is historical local evidence only. |
-| Required Backend verification | Requires every technical job to succeed; skips/cancellation/missing dependency fail it | Does not replace independent eligible human review or approval of progression. No overall readiness claim while reviewer/artifact gate is pending. |
+| Required Backend verification | Requires downloader security plus every Backend/MySQL/full integration job to succeed; skips/cancellation/missing dependency fail it | Does not replace independent eligible human review or approval of progression. No overall readiness claim while reviewer/artifact gate is pending. |
 
 Selectors are in `.github/scripts/test-groups.py`. Full integration has no `-Dtest` filter. `.github/scripts/test-summary.py` fails on missing reports, zero tests, any skipped/failed/error tests, and publishes only sanitized counts. Intentional reduced job scopes are documented above; they are not called the complete regression suite.
 
@@ -34,7 +37,7 @@ No approved CI artifact URL exists yet. The workflow deliberately fails its arti
 2. Record provenance and approve redistribution/access according to the existing [SPMF setup/license guidance](F05_SPMF_RUNTIME_SETUP.md). The local pin establishes reviewed binary identity; it is not an independently authenticated upstream signature.
 3. Publish only after authorization to an owner-managed HTTPS artifact store at an immutable content/version path. Do not replace the object at that path. No binary publication has been performed by this task.
 4. Download from that approved location independently and verify the same checksum and version. Preserve the owner approval reference. Do not upload tokens, connection details, reports, backups or datasets alongside it.
-5. A repository administrator sets the Actions repository variable `PASPM_CI_SPMF_ARTIFACT_URL` to the approved credential-free HTTPS object URL. Do not store passwords/tokens in the URL, repository variable or documentation. Query strings, fragments and embedded credentials are rejected. If authenticated private storage is required, stop and obtain approval for a dedicated least-privilege retrieval design; the current workflow does not borrow developer credentials.
+5. A repository administrator sets the Actions repository variable `PASPM_CI_SPMF_ARTIFACT_URL` to the approved credential-free HTTPS object URL. Do not store passwords/tokens in the URL, repository variable or documentation. Input query strings, fragments and userinfo are rejected. Fixed-tag GitHub Release sources may follow signed HTTPS redirects only to exact release-assets.githubusercontent.com; custom storage stays same-origin and query-free. Signed CDN URLs are never configuration or log output. If authenticated private storage is required, stop and obtain approval for a dedicated least-privilege retrieval design; the current workflow does not borrow developer credentials.
 6. Open/review the separate CI PR and run all jobs. Verify the exact latest commit SHA, zero skipped tests and actual SPMF outputs. Until this occurs retain SPMF_INTEGRATION_CI_BLOCKED / NOT_RUN. Never loosen the pin to accept a newly downloaded binary.
 
 ## Review and progression policy

@@ -58,6 +58,19 @@ class CiHelpersTest(unittest.TestCase):
             self.assertEqual(content, destination.read_bytes())
             self.assertEqual(0o600, destination.stat().st_mode & 0o777)
 
+    def test_approved_bytes_via_signed_release_response(self):
+        content = Path(os.environ["SPMF_JAR_PATH"]).read_bytes()
+        self.assertEqual(spmf.APPROVED_SHA256, hashlib.sha256(content).hexdigest())
+        class SignedResponse(Response):
+            def geturl(self):
+                return "https://release-assets.githubusercontent.com/github-production-release-asset/1/asset?sig=FIXTURE"
+        with tempfile.TemporaryDirectory() as directory, patch.object(spmf.urllib.request, "build_opener") as opener:
+            opener.return_value.open.return_value = SignedResponse(content)
+            destination = Path(directory) / "spmf.jar"
+            spmf.provision("https://github.com/approved-owner/runtime/releases/download/spmf-2.67a/spmf.jar", destination)
+            self.assertEqual(content, destination.read_bytes())
+            self.assertEqual(0o600, destination.stat().st_mode & 0o777)
+
     def test_existing_destination_not_overwritten(self):
         with tempfile.TemporaryDirectory() as directory:
             destination = Path(directory) / "spmf.jar"

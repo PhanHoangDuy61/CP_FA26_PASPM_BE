@@ -16,6 +16,16 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  provisioning-security:
+    name: SPMF downloader security
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: URL, redirect, checksum and failure-isolation tests without external artifact
+        run: python3 -m unittest discover -s .github/scripts/tests -p 'test_spmf_download.py' -v
   backend:
     name: Java 17 Backend foundation
     runs-on: ubuntu-24.04
@@ -163,17 +173,18 @@ jobs:
   required-verification:
     name: Required Backend verification
     if: always()
-    needs: [backend, mysql, integration]
+    needs: [provisioning-security, backend, mysql, integration]
     runs-on: ubuntu-24.04
     permissions: {}
     steps:
       - name: Require every technical verification group
         env:
+          PROVISIONING_RESULT: ${{ needs.provisioning-security.result }}
           BACKEND_RESULT: ${{ needs.backend.result }}
           MYSQL_RESULT: ${{ needs.mysql.result }}
           INTEGRATION_RESULT: ${{ needs.integration.result }}
         run: |
-          if [[ "$BACKEND_RESULT" != success || "$MYSQL_RESULT" != success || "$INTEGRATION_RESULT" != success ]]; then
+          if [[ "$PROVISIONING_RESULT" != success || "$BACKEND_RESULT" != success || "$MYSQL_RESULT" != success || "$INTEGRATION_RESULT" != success ]]; then
             echo "::error::Backend verification incomplete or failed. Missing approved SPMF provisioning is SPMF_INTEGRATION_CI_BLOCKED, never a full PASS."
             exit 1
           fi

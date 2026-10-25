@@ -1,0 +1,8 @@
+{
+  "probe": "Fixed public reference asset HEAD only; no SPMF source configured or binary downloaded",
+  "signedUrlsLogged": false,
+  "httpStatus": 200,
+  "finalHost": "release-assets.githubusercontent.com",
+  "hasQuery": true,
+  "policy": "ACCEPT"
+}
