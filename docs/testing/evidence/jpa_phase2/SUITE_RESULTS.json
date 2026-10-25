@@ -1,0 +1,1750 @@
+{
+  "date": "2026-10-22",
+  "timezone": "Asia/Ho_Chi_Minh",
+  "backendJava": "17.0.20.1",
+  "spmfJava": "25.0.1",
+  "mysqlVersion": "8.4.11",
+  "mysqlPort": 13316,
+  "counts": {
+    "tests": 277,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 277
+  },
+  "disjointExecutionGroups": {
+    "H2": 147,
+    "unit_or_runtime": 49,
+    "MySQL": 81
+  },
+  "knownBusinessMigrationFailure": "V5 with historical utility_matrix_item rows fails at V7 fk_utility_matrix_transaction; the characterization test asserts this failure, not migration success.",
+  "suites": [
+    {
+      "class": "vn.edu.fpt.paspm.AuthIntegrationTest",
+      "tests": 22,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "passwordChangeRejectsWrongCurrentPasswordAndSamePassword",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "passwordResetIsGenericSingleUseAndRevokesExistingTokens",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "adminInviteActivatesWithInitialPassword",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "invalidOtpAttemptsPersistAndLockChallenge",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "passwordResetCooldownIsGenericAndAllowsRequestAfterExpiry",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "registrationCannotChooseRoleAndOtpIsSingleUse",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "disablingUserRevokesToken",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "swaggerContractAvailableAndPasswordsHashed",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "loginRejectsUnavailableAccountsAndInvalidFields",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "loginMeAndAnonymousAccess",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "googleFailsClosedWithoutClientConfiguration",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "passwordChangeRejectsInactiveAndPasswordlessAccounts",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "passwordResetOtpExpiryAttemptsAndSendLimitsApply",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "roleChangeRevokesExistingToken",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "passwordChangeRequiresAuthenticationAndRevokesCurrentToken",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "smtpFailureRollsBackRegistration",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "currentUserUsesTokenIdentityAndRejectsMissingOrExpiredToken",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "resendRevokesOldChallengeAndCooldownApplies",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "expiredOtpAndManualActivationAreDenied",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "profileAvatarIsSelfScopedAndValidatesImageContents",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "storeBoundaryIsEnforced",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "passwordResetMailFailureDoesNotDiscloseAccountAndRollsBackChallenge",
+          "status": "PASS",
+          "engine": "H2"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.auth.GoogleRegistrationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "rejectsGoogleIdentityWithoutVerifiedEmail",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "registersGoogleIdentityAsPendingCustomerAndSendsOtp",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "doesNotAutomaticallyLinkGoogleIdentityToExistingEmail",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.CatalogDevSeederTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "developmentSeedCreatesTwoStoresAndIsIdempotent",
+          "status": "PASS",
+          "engine": "H2"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.CatalogIntegrationTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "openApiListsF02Endpoints",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "categoryAndProductAreScopedToAuthenticatedStore",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "rejectsDuplicateSkuNegativePriceAndInvalidBatchQuantities",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "databaseConstraintsRejectCrossStoreCategoriesAndInvalidInventory",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "catalogRequiresAuthenticationAndAuthorizedStoreRole",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "inventorySummarySeparatesExpiredBlockedAndSellableBatches",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "productWriteHidesCategoryOwnedByAnotherStore",
+          "status": "PASS",
+          "engine": "H2"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceIntegrationTest",
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "repeatedConcurrentNativeScoresAndPriceSurviveStatusWritesFromStaleJpaState",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "jdbcAndJpaShareTheActualTransactionalConnectionAndIsolation",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "repeatedConcurrentF03ScoreWritesSurviveJpaMetadataUpdates",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "forcedFailureRollsBackProductJpaAndInventoryJdbcFromIndependentConnection",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "controlledFailureRollsBackExistingManagedProductAndExistingJdbcBatchUpdates",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "f04RequiresNewTemplateKeepsInnerJdbcCommitAfterOuterJpaRollback",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "directForeignStoreCategoryViolatesCompositeForeignKeyAndRemainsTranslated",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "productJpaAndInventoryJdbcCommitTogetherWithReadYourWrites",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "statusOnlyWriteDoesNotOverwriteNativePriceOnPreviouslyManagedProduct",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "writesAreStoreScopedAndDuplicateConstraintsRemainTranslated",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "productMappingContainsOnlyOwnedMetadata",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "nativeUpdateIsStaleUntilExplicitRefreshAndMetadataAdapterRefreshesItsBoundary",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "existingManagedProductAndExistingJdbcBatchUpdatesCommitTogether",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "sharedPersistenceUsesOneJpaTransactionManager",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "metadataUpdatesFlushBeforeJdbcReadbackAndPreserveNativeScoresAndInventory",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "productFacadeActuallyUsesJpaForCreateAndMetadataUpdate",
+          "status": "PASS",
+          "engine": "H2"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceMySqlIntegrationTest",
+      "tests": 17,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "repeatedConcurrentNativeScoresAndPriceSurviveStatusWritesFromStaleJpaState",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "jdbcAndJpaShareTheActualTransactionalConnectionAndIsolation",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "repeatedConcurrentF03ScoreWritesSurviveJpaMetadataUpdates",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "forcedFailureRollsBackProductJpaAndInventoryJdbcFromIndependentConnection",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "controlledFailureRollsBackExistingManagedProductAndExistingJdbcBatchUpdates",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "f04RequiresNewTemplateKeepsInnerJdbcCommitAfterOuterJpaRollback",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "directForeignStoreCategoryViolatesCompositeForeignKeyAndRemainsTranslated",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "productJpaAndInventoryJdbcCommitTogetherWithReadYourWrites",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "statusOnlyWriteDoesNotOverwriteNativePriceOnPreviouslyManagedProduct",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "writesAreStoreScopedAndDuplicateConstraintsRemainTranslated",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "productMappingContainsOnlyOwnedMetadata",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "nativeUpdateIsStaleUntilExplicitRefreshAndMetadataAdapterRefreshesItsBoundary",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "existingManagedProductAndExistingJdbcBatchUpdatesCommitTogether",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "sharedPersistenceUsesOneJpaTransactionManager",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "metadataUpdatesFlushBeforeJdbcReadbackAndPreserveNativeScoresAndInventory",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "productFacadeActuallyUsesJpaForCreateAndMetadataUpdate",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "repeatableReadJdbcSnapshotSurvivesIndependentNativeCommit",
+          "status": "PASS",
+          "engine": "MySQL"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.deployment.FlywayRecoveryTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "existingMySqlV7UpgradesWithoutReplayingOrDeletingData",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "oldAppliedChecksumRequiresExplicitRepairAndPreservesData",
+          "status": "PASS",
+          "engine": "H2"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.mining.MiningHttpMySqlTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "java17BackendMinesRealSnapshotOverHttpWithJava25Child",
+          "status": "PASS",
+          "engine": "MySQL"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.mining.MiningInputTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "rejectsEmptyNegativeDuplicatePrecisionOverflowAndBadTotals",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "validatesThresholdsAndZeroPolicy",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "convertsExactlyAndMapsSortedProductsDeterministically",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.mining.MiningIntegrationTest",
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "unavailableRuntimeRejectsNewWorkAndPreservesReadableHistory",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "enforcesRolesOwnershipPaginationAndStrictInput",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "concurrentDuplicateSubmissionsCreateOnlyOneRequestAndOneRunPerAlgorithm",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "databasePreventsCrossStorePatternItems",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "openApiIncludesEveryMiningRoute",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "invalidSnapshotsFailBeforeDurableRequestIsCreated",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "partialPatternWriteRollsBackWithRunStillRunning",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "durableFailureAndTimeoutStatusesContainNoPartialPatterns",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "exactResultMismatchIsNotReportedAsSuccessfulBenchmark",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "boundedQueueRejectsExcessWorkDurably",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "realSnapshotToBothAlgorithmsPersistsEightPatternsAndBenchmark",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "restartRecoveryAndCompareAndSetPreventDuplicateExecution",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "workerReadsFrozenRequestCopyInsteadOfReloadingMutableSource",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "oldScoringMetadataCanBeMinedWithoutRecalculation",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "validEmptyResultIsCompletedWithZeroPatterns",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "historicalProvenanceUsesPersistedVersionsAndMeasurementMethods",
+          "status": "PASS",
+          "engine": "H2"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.mining.MiningMySqlIntegrationTest",
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "unavailableRuntimeRejectsNewWorkAndPreservesReadableHistory",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "enforcesRolesOwnershipPaginationAndStrictInput",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "concurrentDuplicateSubmissionsCreateOnlyOneRequestAndOneRunPerAlgorithm",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "databasePreventsCrossStorePatternItems",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "openApiIncludesEveryMiningRoute",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "invalidSnapshotsFailBeforeDurableRequestIsCreated",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "partialPatternWriteRollsBackWithRunStillRunning",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "durableFailureAndTimeoutStatusesContainNoPartialPatterns",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "exactResultMismatchIsNotReportedAsSuccessfulBenchmark",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "boundedQueueRejectsExcessWorkDurably",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "realSnapshotToBothAlgorithmsPersistsEightPatternsAndBenchmark",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "restartRecoveryAndCompareAndSetPreventDuplicateExecution",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "workerReadsFrozenRequestCopyInsteadOfReloadingMutableSource",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "oldScoringMetadataCanBeMinedWithoutRecalculation",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "validEmptyResultIsCompletedWithZeroPatterns",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "historicalProvenanceUsesPersistedVersionsAndMeasurementMethods",
+          "status": "PASS",
+          "engine": "MySQL"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.mining.SpmfMiningEngineTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "parserRejectsDuplicatesUnknownIdsAndWrongUtility",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "actualZeroUtilityAndEmptyResultsAreValid",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "actualAlgorithmsProduceKnownEightPatternsAndEqualUtilities",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "interruptionCleansTemporaryFilesAndPreservesInterruptFlag",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "missingDependencyAndTimeoutAreDistinguished",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.mining.SpmfRuntimeTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "childExitAfterSuccessfulPreflightStillFailsWithoutSuccess",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "sameSizeSameTimestampJarChangeCannotBypassCachedPreflight",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "missingJarAndJavaHaveActionableDistinctCodes",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "actualJava17IsRejectedBeforeMiningAdmission",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "boundedPreflightTerminatesHungExecutableAndRemovesFiles",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "entrypointFailureAndChangedJavaAreDetectedWithCleanup",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "verifiedJava25AndJarPassAndPreflightFilesAreRemoved",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "unreadableJarAndUnrunnableExecutableAreRejected",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.persistence.JpaPilotMigrationMySqlTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "v5CatalogAndEmptySnapshotUpgradePreservesRowsAndJpaJdbcTransactions",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "v5HistoricalMatrixRequiresReconciliationBeforeV7AndOriginalRowsStayIntact",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "freshV1ToV10ValidatesJpaConstraintsAndActualCategoryProductHttpApis",
+          "status": "PASS",
+          "engine": "MySQL"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.persistence.PilotCloneApiIntegrationTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "duplicateSkuAndValidationKeepExistingErrorContract",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "simulatedFoodStoreKeepsExactInventoryFixtureAfterJpaMetadataWrites",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "metadataAndStatusPreserveScoresAndBatchInventory",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "productRoundtripDefaultsAndDatabaseMetadataMatch",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "foreignStoreAndRolesCannotModifyProduct",
+          "status": "PASS",
+          "engine": "MySQL"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.persistence.PilotCloneSafetyTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "acceptsMatchingDisposableIdentity",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "rejectsMissingMutationConsent",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "rejectsSourceCollision",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "rejectsRemoteAndUnmarkedTargets",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.recommendation.FrozenEvidenceReaderTest",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "readsFrozenMembershipIncludingZeroUtilityAndIgnoresNullableSpmfSupportAndLiveEdits",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "rejectsNonCompletedRun",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "rejectsCompletedRunWithPartiallyMissingPatterns",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "missingOrForeignRunRemains404",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "rejectsCompletedRunWithNegativeRecordedPatternCount",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "rejectsPatternWithNoActualCooccurrence",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "rejectsForeignPatternItems",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "rejectsSnapshotMismatch",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "rejectsHashMismatch",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "completedZeroPatternsIsValid",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "rejectsFrozenMatrixMembershipMismatch",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "rejectsCompletedRunWithAllRecordedPatternsMissing",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "rejectsCompletedRunWithNullRecordedPatternCount",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "rejectsMissingOrWrongDenseMapping",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "malformedPersistedJsonIsSanitizedConflict",
+          "status": "PASS",
+          "engine": "H2"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.recommendation.RecommendationExpiryIntegrationTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "missingMetadataWarningsSurviveWithKnownPushBatches",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "accessAndCurrentOnlyValidation",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "fefoAcrossProductsAndPaginationIgnoreReceiptOrder",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "thresholdsAndCalendarBoundariesFilterCurrentSellableBatches",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "noMiningNeededAndReadDoesNotMutateData",
+          "status": "PASS",
+          "engine": "H2"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.recommendation.RecommendationExpiryMySqlIntegrationTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "missingMetadataWarningsSurviveWithKnownPushBatches",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "accessAndCurrentOnlyValidation",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "fefoAcrossProductsAndPaginationIgnoreReceiptOrder",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "thresholdsAndCalendarBoundariesFilterCurrentSellableBatches",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "noMiningNeededAndReadDoesNotMutateData",
+          "status": "PASS",
+          "engine": "MySQL"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.recommendation.RecommendationIntegrationTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "rolesStoreIsolationAndStrictRequestsAreEnforced",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "expiryPushWorksWithCompletedZeroPatternRun",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "frozenEvidenceAndHistoricalUtilityStayUnchangedAfterLiveEdits",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "currentEligibilityExcludesInactiveExpiredBlockedAndMissingExpiry",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "configIsStoreAdminOwnedVersionedAndFrozenOnExistingCandidates",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "nonCompletedEmptyAndMalformedSourceRunsNeverProduceUnsupportedCandidates",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "openApiExposesActualRecommendationOperations",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "concurrentGenerationRemainsIdempotentAndConfigHasSingleVersionWinner",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "rankingIsDeterministicAndCrossSnapshotHistoryIsChronological",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "completedRealMiningGeneratesFourTypesAndDirectionalFrozenEvidence",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "exportsExecutedApiExamplesForHandoff",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "reviewPreservesHistoryAndRejectsStaleInventoryAndResolvedTransitions",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "concurrentReviewHasSingleWinnerAndRejectedCannotBeApproved",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "generationIsIdempotentAcrossEquivalentAlgorithmsButNotDifferentSnapshots",
+          "status": "PASS",
+          "engine": "H2"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.recommendation.RecommendationMigrationTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "freshMySqlMigratesAllTenVersions",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "mysqlV9UpgradePreservesHistoricalSnapshotAndStoreConfiguration",
+          "status": "PASS",
+          "engine": "MySQL"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.recommendation.RecommendationMySqlIntegrationTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "rolesStoreIsolationAndStrictRequestsAreEnforced",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "expiryPushWorksWithCompletedZeroPatternRun",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "frozenEvidenceAndHistoricalUtilityStayUnchangedAfterLiveEdits",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "currentEligibilityExcludesInactiveExpiredBlockedAndMissingExpiry",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "configIsStoreAdminOwnedVersionedAndFrozenOnExistingCandidates",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "nonCompletedEmptyAndMalformedSourceRunsNeverProduceUnsupportedCandidates",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "openApiExposesActualRecommendationOperations",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "concurrentGenerationRemainsIdempotentAndConfigHasSingleVersionWinner",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "rankingIsDeterministicAndCrossSnapshotHistoryIsChronological",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "completedRealMiningGeneratesFourTypesAndDirectionalFrozenEvidence",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "exportsExecutedApiExamplesForHandoff",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "reviewPreservesHistoryAndRejectsStaleInventoryAndResolvedTransitions",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "concurrentReviewHasSingleWinnerAndRejectedCannotBeApproved",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "generationIsIdempotentAcrossEquivalentAlgorithmsButNotDifferentSnapshots",
+          "status": "PASS",
+          "engine": "MySQL"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.recommendation.RecommendationRulesTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "bundleUsesFullPatternAndApprovedMaximumWhileBannerAllowsSingleton",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "missingEvidenceNeverClaimsCrossSellOrFrequentlyBoughtTogether",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "fbtUsesBothExactCountAndRatioAndInclusiveBoundary",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "confidenceQualificationDoesNotRoundTwoThirdsUpToThreshold",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.recommendation.TransactionEvidenceTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "zeroAnchorHasUndefinedConfidence",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "copiesInputAndCountsRepeatedPresenceOnce",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "emptyEvidenceHasNoFabricatedCountsOrRatios",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "countsPresenceAndDirectionalConfidenceFromSixTransactions",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.transaction.DatabaseTransactionSourceTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "dateRangeIsInclusiveInAsiaHoChiMinhAndEmptyWhenNoEligibleRowsExist",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "loadsOnlyEligibleCompletedTransactionsWithinStoreLocalDateBoundaries",
+          "status": "PASS",
+          "engine": "H2"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.transaction.TransactionImportIntegrationTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "stagesRawRowsPersistsCompleteOrdersAndNeverMutatesInventory",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "importAndTransactionReadsAreRoleCheckedAndStoreScoped",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "rejectsEntireOrderWhenAnyLineFailsButPersistsOtherOrdersInTheBatch",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "duplicateFileIsIdempotentAndConflictingOrderDoesNotOverwriteHistory",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "openApiAdvertisesCsvUploadAsMultipartBinary",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "acceptsCsvContentTypeWithCharsetParameter",
+          "status": "PASS",
+          "engine": "H2"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.transaction.TransactionImportMySqlIntegrationTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "stagesRawRowsPersistsCompleteOrdersAndNeverMutatesInventory",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "importAndTransactionReadsAreRoleCheckedAndStoreScoped",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "rejectsEntireOrderWhenAnyLineFailsButPersistsOtherOrdersInTheBatch",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "duplicateFileIsIdempotentAndConflictingOrderDoesNotOverwriteHistory",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "openApiAdvertisesCsvUploadAsMultipartBinary",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "acceptsCsvContentTypeWithCharsetParameter",
+          "status": "PASS",
+          "engine": "MySQL"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.transaction.TransactionImportSchemaTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "flywayCreatesStoreScopedImportAndTransactionTables",
+          "status": "PASS",
+          "engine": "H2"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.transaction.importing.TransactionCsvParserTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "skipsBlankLinesWithoutCountingThemAgainstDataRowLimit",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "rejectsMalformedQuotedCsv",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "rejectsFilesBeyondConfiguredDataRowLimit",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "parsesBomQuotedCommasEscapedQuotesAndEmbeddedNewline",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "rejectsHeaderThatDoesNotMatchTheContract",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.transaction.importing.TransactionOrderValidatorTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "invalidQuantityRejectsTheCompleteOrderAndIdentifiesTheRow",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "storeScopedSkuLookupRejectsUnknownAndForeignStoreProducts",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "aggregatesMatchingRepeatedProductLinesAndKeepsSourceRows",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "nonCompletedAndBelowCostOrdersRemainValidButAreNotF03Eligible",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "rejectsWholeOrderWhenRepeatedSkuHasDifferentPrice",
+          "status": "PASS",
+          "engine": "H2"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.utility.ExpiryBinaryRulesTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "officialSevenDayThresholdProduces17220ForTheWholeProduct",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "threeDayAndDisabledThresholdProduce16020",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "nullThresholdIsDisabledWithoutInventingADefault",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "fefoEvidenceIncludesEveryPushBatchAndIgnoresQuantityRatios",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "negativeThresholdIsInvalid",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "noSellableMissingAndNonExpiringStatesRemainExplicitEvenWithZeroThreshold",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "thresholdBoundaryIsInclusiveAndOneDayAfterIsOutside",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.utility.RetailCatalogUtilityIntegrationTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "scorePatchRejectsInvalidOrCalculatedInputsWithoutChangingSavedValues",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "openApiMarksCalculatedFieldsReadOnlyAndNullable",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "merchandiserReadsOnlyTheirStoreCatalogWithFiltersAndPagination",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "partialBoundaryWritesRecalculateButNeverChangeInventory",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "sharedExpiryAndDisabledCriteriaRulesRemainIntact",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "scoreReadAndWritePermissionsStaySeparatedAndStoreScoped",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "missingEnabledInputsReturnExplicitIncompleteCurrentPreview",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "catalogRejectsUnauthenticatedAndNonStoreBusinessRoles",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "policyChangesInvalidateCurrentWeightWithoutClampingStoredLambda",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "catalogReadDoesNotGrantProductCategoryOrInventoryWrites",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "currentScoresUseBackendFormulaWithoutTransactionHistory",
+          "status": "PASS",
+          "engine": "H2"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.utility.RetailCatalogUtilityMySqlIntegrationTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "scorePatchRejectsInvalidOrCalculatedInputsWithoutChangingSavedValues",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "openApiMarksCalculatedFieldsReadOnlyAndNullable",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "merchandiserReadsOnlyTheirStoreCatalogWithFiltersAndPagination",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "partialBoundaryWritesRecalculateButNeverChangeInventory",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "sharedExpiryAndDisabledCriteriaRulesRemainIntact",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "scoreReadAndWritePermissionsStaySeparatedAndStoreScoped",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "missingEnabledInputsReturnExplicitIncompleteCurrentPreview",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "catalogRejectsUnauthenticatedAndNonStoreBusinessRoles",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "policyChangesInvalidateCurrentWeightWithoutClampingStoredLambda",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "catalogReadDoesNotGrantProductCategoryOrInventoryWrites",
+          "status": "PASS",
+          "engine": "MySQL"
+        },
+        {
+          "name": "currentScoresUseBackendFormulaWithoutTransactionHistory",
+          "status": "PASS",
+          "engine": "MySQL"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.utility.UtilityCalculationTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "expiryUsesEarliestEligibleBatchAndBinaryProductThreshold",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "excludesBlockedExpiredTodayAndEmptyBatches",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "disabledAndSingleCriteriaHaveCorrectContributions",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "supportsFrozenHistoricalDecimalScoresWithoutChangingMath",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "reportsMissingExpiryAndNonExpiringProductsWithoutInventingDates",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        },
+        {
+          "name": "rejectsUnsafeNegativeOrMissingBusinessValues",
+          "status": "PASS",
+          "engine": "unit_or_runtime"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.utility.UtilityFixtureTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "explicitFixtureProfilesProvideStoreIsolatedIdempotentData",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "diagnosticDateRangesProvideMissingExpiryNegativeUtilityAndDuplicateItems",
+          "status": "PASS",
+          "engine": "H2"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.utility.UtilityIntegrationTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "matrixHashIgnoresPreparedSourceOrdering",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "separatesPolicyWindowAndWeightPermissionsAndPreservesOwnedSettings",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "previewRejectsMissingEnabledScoresAndSkipsIneligibleSourceRows",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "weightReportExamplesFlowThroughPreviewForProductSevenAndThreeDayThresholds",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "missingExpiryIsPreviewWarningAndPreventsReadySnapshotOnlyWhenEnabled",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "expirySnapshotsKeepOriginalDateProductThresholdAndBatchScore",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "persistenceFailureRollsBackSnapshotHeader",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "scorePatchIsPartialValidatedAndStoreScoped",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "rejectsDuplicateNegativeAndForeignSourceRowsAndInvalidRanges",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "snapshotFreezesPolicyWindowScoresAndHistoricalUtilityAndRejectsStaleLambda",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "rejectsInvalidBoundsWindowsAndCoefficientsWithoutChangingValues",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "openApiAndDatabaseConstraintsCoverF03",
+          "status": "PASS",
+          "engine": "H2"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.utility.WeightRulesV12IntegrationTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "independentPushQueryUsesFefoAndIgnoresMiningOrHistoricalTransactions",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "officialExamplesUseProductThresholdAndHistoricalF04ValuesWithoutStoreFallback",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "missingMetadataIsReportedAndCannotBecomeAnEnabledReadySnapshot",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "snapshotFreezesEvidenceAndWarningsAfterProductAndInventoryChanges",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "storeAdminCanConfigureThresholdAndInventoryIsUnchanged",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "oldLinearSnapshotsStayReadableAndTheirStoredValuesNeverChange",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "productThresholdEnforcesRolesAndStoreScope",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "nullAndOmittedThresholdHaveEffectiveZero",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "inactiveHistoricalProductWarningIsFrozenEvenWhenExpiryIsNotApplicable",
+          "status": "PASS",
+          "engine": "H2"
+        },
+        {
+          "name": "actualOpenApiShowsThresholdAndIndependentPushContract",
+          "status": "PASS",
+          "engine": "H2"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.utility.WeightRulesV12MigrationTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "upgradesPopulatedV7WithoutRewritingHistoricalSnapshotsOrBackfillingStoreThreshold",
+          "status": "PASS",
+          "engine": "H2"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "mode" : "READ_ONLY",
+  "connectionReadOnly" : true,
+  "databaseVersion" : "8.4.11",
+  "counts" : {
+    "category" : 0,
+    "inventory_batch" : 0,
+    "mining_request" : -1,
+    "mining_run" : -1,
+    "product" : 0,
+    "recommendation" : -1,
+    "sales_transaction" : -1,
+    "store" : 0,
+    "transaction_item" : -1,
+    "utility_matrix_item" : 0,
+    "utility_snapshot" : 0
+  },
+  "migrations" : [ {
+    "success" : true,
+    "version" : "1",
+    "checksum" : -1085163770
+  }, {
+    "success" : true,
+    "version" : "2",
+    "checksum" : -358034917
+  }, {
+    "success" : true,
+    "version" : "3",
+    "checksum" : -880187789
+  }, {
+    "success" : true,
+    "version" : "4",
+    "checksum" : 383713285
+  }, {
+    "success" : true,
+    "version" : "5",
+    "checksum" : 828269243
+  } ],
+  "columns" : [ "category.category_id int nullable=NO", "category.store_id int nullable=NO", "category.name varchar(150) nullable=NO", "category.status varchar(20) nullable=NO", "inventory_batch.batch_id int nullable=NO", "inventory_batch.product_id int nullable=NO", "inventory_batch.batch_code varchar(80) nullable=NO", "inventory_batch.received_at datetime nullable=NO", "inventory_batch.expiry_date date nullable=YES", "inventory_batch.initial_quantity int nullable=NO", "inventory_batch.remaining_quantity int nullable=NO", "inventory_batch.status varchar(20) nullable=NO", "inventory_batch.created_at timestamp nullable=NO", "inventory_batch.updated_at timestamp nullable=NO", "product.product_id int nullable=NO", "product.store_id int nullable=NO", "product.category_id int nullable=YES", "product.sku varchar(80) nullable=NO", "product.name varchar(180) nullable=NO", "product.unit varchar(40) nullable=NO", "product.requires_expiry tinyint(1) nullable=NO", "product.selling_price decimal(12,2) nullable=NO", "product.cost_price decimal(12,2) nullable=NO", "product.status varchar(20) nullable=NO", "product.stock_priority_score decimal(7,6) nullable=YES", "product.seasonal_priority_score decimal(7,6) nullable=YES", "store.store_id int nullable=NO", "store.name varchar(150) nullable=NO", "store.utility_config json nullable=YES", "store.mining_schedule varchar(200) nullable=YES" ]
+}

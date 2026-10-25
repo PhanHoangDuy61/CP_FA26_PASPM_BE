@@ -24,3 +24,7 @@ Recovery PR #1 was externally merged as `691371b`; this task performed no merge.
 
 Human review remains **REVIEWER_PENDING**; remote CI **NOT_RUN**, exact-artifact provisioning **SPMF_INTEGRATION_CI_BLOCKED**. Product integration and Category progression remain blocked. No production repair, deployment or source mutation was performed.
 Current authoritative gate evidence: [report](PR1_REVIEW_GATE_REPORT.md).
+
+## Current Product integration — 2026-10-25
+
+The owner now authorizes local development before remote review/hosting gates. Existing Pilot is integrated from latest dev783725c on `Khoi/feat/product-jpa-integration`. Full locally available verification: **302 PASS,0 failures/errors/skips** with explicit safe clone/MySQL/Java17/SPMF opt-ins. Old V10-only expectations are updated to additiveV11; unsupported-V7 negative characterization is preserved. A new positive actual-backup/restricted-restore/registered populated-V5 recovery test boots JPA and verifies frozen history through Product writes. No original source connection or migration byte change. See [current report](../architecture/PRODUCT_JPA_INTEGRATION_REPORT.md). Local development success does not establish GitHub CI/human merge approval.

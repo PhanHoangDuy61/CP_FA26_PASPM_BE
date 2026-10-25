@@ -1,0 +1,39 @@
+{
+  "baseline": {
+    "CatalogIntegrationTest": 7,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "firstPilotRun": {
+    "tests": 45,
+    "failures": 2,
+    "errors": 5,
+    "skipped": 0,
+    "causes": [
+      "Old V10-only assertions after additive V11",
+      "Fresh restricted clone attempted trigger DDL with MySQL binary log enabled"
+    ]
+  },
+  "targetedRetest": {
+    "tests": 47,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "fullFinal": {
+    "tests": 302,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "resolution": [
+    "V11 expectations updated without modifying migrations",
+    "Failed synthetic clone retained; new clone migrated by disposable DBA, runtime user still exact-schema only",
+    "Added direct managed Store immutability proof and supported recovery-to-Boot/JPA positive"
+  ],
+  "sourceDatabaseConnection": "NONE",
+  "realData": "BLOCKED; all populated data synthetic",
+  "remoteCi": "BLOCKED_REMOTE_CI; CI3 unmerged, approved external artifact URL and Pilot clone test provisioning needed",
+  "humanReview": "REVIEW_PENDING"
+}

@@ -1,0 +1,57 @@
+SW-16 | GET /api/utility/products/{productId}/scores | role=MERCHANDISER | data=SIMULATED | 2026-10-22T05:11:07.378187+07:00
+Actual Swagger UI accessibility observation (credential-free response excerpt):
+heading Server response, Value: 4
++					1056 text Server response
++				1057 table
++					1058 row
++						1059 cell
++							1060 text Code
++						1061 cell
++							1062 text Details
++					1063 row
++						1064 cell
++							1065 text 200
++						1066 cell
++							1067 heading Response body, Value: 5
++								1068 text Response body
++							1069 container
++								1070 button
++								1071 button Download
++								1072 container
++									1073 text {
+ "productId" :  31 ,
+ "stockPriorityScore" :  0.8 ,
+ "seasonalPriorityScore" :  0.9 ,
+ "expiryScore" :  1 ,
+ "weightValue" :  1 ,
+ "expiryStatus" :  "AVAILABLE" ,
+ "expiryEvidence" : {
+ "expiryPushDays" :  7 ,
+ "earliestEligibleExpiryDate" :  "2026-10-27" ,
+ "daysRemaining" :  5 ,
+ "asOfDate" :  "2026-10-22" ,
+ "reason" :  "WITHIN_THRESHOLD" ,
+ "batches" : [
+       {
+ "productId" :  31 ,
+ "batchId" :  15 ,
+ "expiryDate" :  "2026-10-27" ,
+ "remainingQuantity" :  8 ,
+ "expiryPushDays" :  7 ,
+ "daysRemaining" :  5 ,
+ "pushRequired" :  true ,
+ "pushRequiredQuantity" :  8 ,
+ "asOfDate" :  "2026-10-22"       }
+     ]
+   },
+ "expiryPushDays" :  7 ,
+ "asOfDate" :  "2026-10-22" ,
+ "timeZone" :  "Asia/Ho_Chi_Minh" ,
+ "configVersion" :  1 ,
+ "lambdaValid" :  true ,
+ "ready" :  true ,
+ "warnings" : []
+ }
++							1074 heading Response headers, Value: 5
++								1075 text Response headers
++							1076 text cache-control :  no-cache,no-store,max-age=0,must-revalidate connection :  keep-alive content-type :  application/json date :  Wed,21 Oct 2026 22:11:07 GMT expires :  0 keep-alive :  timeout=60 pragma :  no-cache transfer-encoding :  chunked x-content-type-options :  nosniff x-frame-options :  DENY x-xss-protection :  0

@@ -41,8 +41,7 @@ import vn.edu.fpt.paspm.user.UserRepository;
 @SpringBootTest(properties={
  "spring.datasource.url=jdbc:h2:mem:paspm;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1;NON_KEYWORDS=USER",
  "spring.datasource.username=sa","spring.datasource.password=",
- "spring.flyway.enabled=false","spring.sql.init.mode=always",
- "spring.sql.init.schema-locations=classpath:db/migration/V1__shared_store_and_f01.sql,classpath:db/migration/V2__allow_name_after_email_verification.sql,classpath:db/migration/V6__f01_profile_avatar.sql",
+ "spring.flyway.enabled=true","spring.sql.init.mode=never",
  "paspm.jwt-secret=test-only-signing-key-with-at-least-thirty-two-bytes",
  "paspm.otp-secret=test-only-otp-key-with-at-least-thirty-two-bytes",
  "paspm.avatar.directory=${java.io.tmpdir}/paspm-avatar-integration-${random.uuid}",
