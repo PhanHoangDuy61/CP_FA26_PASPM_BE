@@ -1,0 +1,209 @@
+{
+  "executionDate": "2026-10-26",
+  "timezone": "Asia/Ho_Chi_Minh",
+  "baselineCommit": "c06d43ec59269b8190f5920b5db526ee4e7f19d7",
+  "fixture": "AuthenticatedHTTPGET;25/100recommendations shareoneProductgroup,onehistoryrow; medianof3trials. Test-onlyJDBCwrappercountsactualpreparedSELECTexecutions withoutretainingparameters.",
+  "baseline": [
+    {
+      "medianMillis": 13.37925,
+      "candidates": 25,
+      "queryCounts": {
+        "recommendation": 2,
+        "inventory_batch": 1,
+        "recommendation_review_history": 25,
+        "app_user": 3,
+        "product": 1,
+        "recommendation_item": 25,
+        "recommendation_source": 25
+      },
+      "relationQueries": 77,
+      "database": "H2",
+      "allSelects": 82
+    },
+    {
+      "medianMillis": 21.75825,
+      "candidates": 100,
+      "queryCounts": {
+        "recommendation": 2,
+        "inventory_batch": 1,
+        "recommendation_review_history": 100,
+        "app_user": 3,
+        "product": 1,
+        "recommendation_item": 100,
+        "recommendation_source": 100
+      },
+      "relationQueries": 302,
+      "database": "H2",
+      "allSelects": 307
+    },
+    {
+      "relationQueries": 77,
+      "queryCounts": {
+        "app_user": 3,
+        "recommendation_review_history": 25,
+        "inventory_batch": 1,
+        "recommendation": 2,
+        "recommendation_source": 25,
+        "recommendation_item": 25,
+        "product": 1
+      },
+      "candidates": 25,
+      "medianMillis": 22.886083,
+      "allSelects": 82,
+      "database": "MySQL"
+    },
+    {
+      "relationQueries": 302,
+      "queryCounts": {
+        "app_user": 3,
+        "recommendation_review_history": 100,
+        "inventory_batch": 1,
+        "recommendation": 2,
+        "recommendation_source": 100,
+        "recommendation_item": 100,
+        "product": 1
+      },
+      "candidates": 100,
+      "medianMillis": 44.409708,
+      "allSelects": 307,
+      "database": "MySQL"
+    }
+  ],
+  "optimizedFocusedRun": [
+    {
+      "medianMillis": 5.920708,
+      "allSelects": 10,
+      "database": "MySQL",
+      "relationQueries": 5,
+      "queryCounts": {
+        "recommendation": 2,
+        "recommendation_source": 1,
+        "recommendation_item": 1,
+        "product": 1,
+        "app_user": 3,
+        "recommendation_review_history": 1,
+        "inventory_batch": 1
+      },
+      "candidates": 25
+    },
+    {
+      "medianMillis": 10.50625,
+      "allSelects": 10,
+      "database": "MySQL",
+      "relationQueries": 5,
+      "queryCounts": {
+        "recommendation": 2,
+        "recommendation_source": 1,
+        "recommendation_item": 1,
+        "product": 1,
+        "app_user": 3,
+        "recommendation_review_history": 1,
+        "inventory_batch": 1
+      },
+      "candidates": 100
+    },
+    {
+      "medianMillis": 1.955792,
+      "allSelects": 10,
+      "database": "H2",
+      "relationQueries": 5,
+      "queryCounts": {
+        "recommendation": 2,
+        "recommendation_source": 1,
+        "recommendation_item": 1,
+        "product": 1,
+        "app_user": 3,
+        "recommendation_review_history": 1,
+        "inventory_batch": 1
+      },
+      "candidates": 25
+    },
+    {
+      "medianMillis": 4.166458,
+      "allSelects": 10,
+      "database": "H2",
+      "relationQueries": 5,
+      "queryCounts": {
+        "recommendation": 2,
+        "recommendation_source": 1,
+        "recommendation_item": 1,
+        "product": 1,
+        "app_user": 3,
+        "recommendation_review_history": 1,
+        "inventory_batch": 1
+      },
+      "candidates": 100
+    }
+  ],
+  "generationBaseline": [
+    {
+      "database": "H2",
+      "queryCounts": {
+        "inventory_batch": 1,
+        "app_user": 28,
+        "product": 1,
+        "recommendation_rule_config": 1,
+        "recommendation_source": 25,
+        "recommendation": 25,
+        "store": 1
+      },
+      "millis": 107.127375,
+      "candidates": 25
+    }
+  ],
+  "generationOptimized": [
+    {
+      "candidates": 25,
+      "millis": 107.727625,
+      "queryCounts": {
+        "store": 1,
+        "recommendation": 25,
+        "recommendation_source": 25,
+        "recommendation_rule_config": 1,
+        "product": 1,
+        "app_user": 4,
+        "inventory_batch": 1
+      },
+      "database": "MySQL"
+    },
+    {
+      "candidates": 25,
+      "millis": 7.293625,
+      "queryCounts": {
+        "store": 1,
+        "recommendation": 25,
+        "recommendation_source": 25,
+        "recommendation_rule_config": 1,
+        "product": 1,
+        "app_user": 4,
+        "inventory_batch": 1
+      },
+      "database": "H2"
+    }
+  ],
+  "tdd": {
+    "listBoundedQueryAssertionsBeforeFix": {
+      "tests": 4,
+      "failures": 4,
+      "errors": 0,
+      "skipped": 0
+    },
+    "actorLookupAssertionBeforeFix": {
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "notMeasured": [
+    "F06CPU",
+    "F06RAM",
+    "p95/p99",
+    "concurrentload",
+    "diverseProductgroupeligibilitycost"
+  ],
+  "notes": [
+    "Timingisillustrativelocalmeasurement,notproductionSLO. SQLcountregressionisthedeterministicacceptancecriterion.",
+    "Noindexormigrationadded."
+  ]
+}

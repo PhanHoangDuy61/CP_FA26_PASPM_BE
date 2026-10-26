@@ -22,3 +22,7 @@ Follow the endpoint/use-case sequence in the canonical contract and handoff; no 
 ## Historical references and known issues
 
 Historical F03/F05 texts saying F06 absent are not authoritative current availability. Use this index and the actual F06 contract.
+
+## Current reliability review
+
+[Hardening report](F06_HARDENING_REPORT.md) documents the candidate cap, rollback, authorization, source-policy review and current local regression results. [Performance measurements](../../testing/F04_F06_PERFORMANCE_REPORT.md) include the measured relation-query optimization and remaining workload limits. Historical verification above keeps its original execution scope.
