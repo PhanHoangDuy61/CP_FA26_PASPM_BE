@@ -228,6 +228,26 @@ class RecommendationIntegrationTest {
         jdbc.update("UPDATE inventory_batch SET expiry_date=? WHERE product_id=?",day.plusDays(5),products.get(0));
         getJson("/api/recommendations/expiry-push",merchant).andExpect(status().isOk()).andExpect(jsonPath("$.totalElements").value(1)).andExpect(jsonPath("$.items[0].pushRequired").value(true));
     }
+    @Test void completedIndividualRunRemainsEligibleAcrossComparisonPolicies()throws Exception {
+        long run=mine(snapshot)[0];long request=jdbc.queryForObject("SELECT request_id FROM mining_run WHERE run_id=?",Long.class,run);
+        String frozen=jdbc.queryForObject("SELECT frozen_input FROM mining_request WHERE request_id=?",String.class,request);
+        String snapshotHash=jdbc.queryForObject("SELECT matrix_hash FROM utility_snapshot WHERE snapshot_id=?",String.class,snapshot);
+        for(String comparison:List.of("MATCH","NOT_REQUESTED","FAILED")) {
+            jdbc.update("UPDATE mining_request SET comparison_status=?,status=? WHERE request_id=?",comparison,comparison.equals("FAILED")?"FAILED":"COMPLETED",request);
+            generate(run,merchant).andExpect(status().isOk()).andExpect(jsonPath("$.recommendationIds.length()").value(8));
+            assertEquals(frozen,jdbc.queryForObject("SELECT frozen_input FROM mining_request WHERE request_id=?",String.class,request));
+            assertEquals(snapshotHash,jdbc.queryForObject("SELECT matrix_hash FROM utility_snapshot WHERE snapshot_id=?",String.class,snapshot));
+        }
+        assertEquals(8,jdbc.queryForObject("SELECT COUNT(*) FROM recommendation WHERE store_id=?",Integer.class,store));
+    }
+    @Test void inconsistentFrozenProductMappingIsRejectedWithoutPersistingCandidates()throws Exception {
+        long run=mine(snapshot)[0];
+        long pattern=jdbc.queryForObject("SELECT MIN(pattern_id) FROM high_utility_pattern WHERE run_id=?",Long.class,run);
+        int product=jdbc.queryForObject("SELECT MIN(product_id) FROM pattern_item WHERE pattern_id=?",Integer.class,pattern);
+        jdbc.update("UPDATE pattern_item SET algorithm_item_id=999 WHERE pattern_id=? AND product_id=?",pattern,product);
+        generate(run,merchant).andExpect(status().isConflict());
+        assertEquals(0,jdbc.queryForObject("SELECT COUNT(*) FROM recommendation WHERE store_id=?",Integer.class,store));
+    }
     @Test void exportsExecutedApiExamplesForHandoff()throws Exception {
         if(System.getProperty("paspm.f06.export-dir")==null)return;
         java.nio.file.Path dir=java.nio.file.Path.of(System.getProperty("paspm.f06.export-dir"));java.nio.file.Files.createDirectories(dir);
