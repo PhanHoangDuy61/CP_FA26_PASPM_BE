@@ -17,6 +17,8 @@ Follow the endpoint/use-case sequence in the canonical contract and handoff; no 
 
 ## Testing and evidence
 
+[Current hardening and full regression report](F06_HARDENING_REPORT.md) · [F04/F06 measurements and combined proof](../../testing/F04_F06_PERFORMANCE_REPORT.md). These distinguish local results, skipped clone cases and pending hosted/human review.
+
 [Verification](../../testing/reports/F06_VERIFICATION.md), [captured evidence](../../testing/evidence/feature_verification), [implementation summary](F06_IMPLEMENTATION_SUMMARY.md). These are dated execution records; no new test claim here.
 
 ## Historical references and known issues
