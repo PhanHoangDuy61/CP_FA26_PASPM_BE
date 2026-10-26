@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-26",
+  "initialMcpLookup": "Existing workspacegraph located TransactionImportService and insertStagingRows; actual source inspected separately.",
+  "worktreeReindex": "codegraph init .",
+  "status": "VERIFIED",
+  "files": 169,
+  "nodes": 3923,
+  "edges": 9879,
+  "symbols": [
+    {
+      "name": "insertStagingRows",
+      "file": "src/main/java/vn/edu/fpt/paspm/transaction/importing/TransactionImportRepository.java",
+      "line": 48
+    }
+  ]
+}

@@ -57,12 +57,12 @@ class JpaPilotMigrationMySqlTest {
             "--logging.level.root=ERROR");
     }
 
-    @Test void freshV1ToV11ValidatesJpaConstraintsAndActualCategoryProductHttpApis() {
+    @Test void freshV1ToV12ValidatesJpaConstraintsAndActualCategoryProductHttpApis() {
         var db=MySqlTestDatabase.create();
         var flyway=Flyway.configure().dataSource(db.url(),db.user(),db.password()).load();
-        assertEquals(11,flyway.migrate().migrationsExecuted);flyway.validate();
+        assertEquals(12,flyway.migrate().migrationsExecuted);flyway.validate();
         var jdbc=jdbc(db);
-        assertEquals("11",flyway.info().current().getVersion().toString());
+        assertEquals("12",flyway.info().current().getVersion().toString());
         assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM information_schema.statistics WHERE table_schema=DATABASE() AND table_name='product' AND index_name='uq_product_store_sku' AND column_name='sku' AND non_unique=0",Integer.class));
         assertEquals(2,jdbc.queryForObject("SELECT COUNT(*) FROM information_schema.key_column_usage WHERE constraint_schema=DATABASE() AND constraint_name='fk_product_category_store'",Integer.class));
         try(var context=application(db)) {
@@ -88,7 +88,7 @@ class JpaPilotMigrationMySqlTest {
             assertCheckViolation(()->jdbc.update("UPDATE product SET selling_price=-1 WHERE product_id=?",product));
             assertCheckViolation(()->jdbc.update("UPDATE category SET status='INVALID' WHERE category_id=?",categoryId));
         }
-        System.out.println("JPA_MIGRATION_FRESH migrations=1,2,3,4,5,6,7,8,9,10,11 schemaValidation=PASS HTTP=PASS constraints=PASS");
+        System.out.println("JPA_MIGRATION_FRESH migrations=1,2,3,4,5,6,7,8,9,10,11,12 schemaValidation=PASS HTTP=PASS constraints=PASS");
     }
 
     @Test void v5CatalogAndEmptySnapshotUpgradePreservesRowsAndJpaJdbcTransactions() throws Exception {
@@ -96,8 +96,8 @@ class JpaPilotMigrationMySqlTest {
         assertEquals(5,Flyway.configure().dataSource(db.url(),db.user(),db.password()).target("5").load().migrate().migrationsExecuted);
         seedV5(jdbc,false);var before=fingerprints(jdbc);
         var current=Flyway.configure().dataSource(db.url(),db.user(),db.password()).load();
-        assertEquals(6,current.migrate().migrationsExecuted);current.validate();
-        assertEquals("11",current.info().current().getVersion().toString());
+        assertEquals(7,current.migrate().migrationsExecuted);current.validate();
+        assertEquals("12",current.info().current().getVersion().toString());
         assertEquals(before,fingerprints(jdbc));
         assertEquals(0,jdbc.queryForObject("SELECT expiry_push_days FROM product WHERE product_id=201",Integer.class));
         assertNull(jdbc.queryForObject("SELECT validation_warnings FROM utility_snapshot WHERE snapshot_id=401",String.class));
@@ -121,7 +121,7 @@ class JpaPilotMigrationMySqlTest {
             });
         }
         assertEquals(before,fingerprints(jdbc));
-        System.out.println("JPA_MIGRATION_V5_CATALOG before="+before+" after="+fingerprints(jdbc)+" preserved=PASS migrations=6,7,8,9,10,11 mixedRollback=PASS");
+        System.out.println("JPA_MIGRATION_V5_CATALOG before="+before+" after="+fingerprints(jdbc)+" preserved=PASS migrations=6,7,8,9,10,11,12 mixedRollback=PASS");
     }
 
     @Test void v5HistoricalMatrixRequiresReconciliationBeforeV7AndOriginalRowsStayIntact() throws Exception {
@@ -180,7 +180,7 @@ class JpaPilotMigrationMySqlTest {
         }
         var guarded=Flyway.configure().dataSource(target.url(),target.user(),target.password())
                 .callbacks(new LegacyRecoveryCallback(true,manifest.toString(),restored.url(),user,password)).load();
-        assertTrue(guarded.migrate().success);guarded.validate();assertEquals("11",guarded.info().current().getVersion().toString());
+        assertTrue(guarded.migrate().success);guarded.validate();assertEquals("12",guarded.info().current().getVersion().toString());
         try(var context=application(target)) {
             var products=context.getBean(ProductRepository.class);
             new TransactionTemplate(context.getBean(PlatformTransactionManager.class)).executeWithoutResult(status -> {
