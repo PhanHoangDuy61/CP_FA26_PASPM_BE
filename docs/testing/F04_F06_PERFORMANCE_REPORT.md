@@ -19,7 +19,7 @@ The padded file is approximately 98.4% of the 5MiB upload limit. Each case commi
 
 MySQL EXPLAIN ANALYZE on the tested unique order identity and Product lookup reports a constant lookup (`Rows fetched before execution`) using existing uniqueness/indexing. No missing index is demonstrated. The performance fixture contains no inventory; separate correctness tests are the evidence for nonempty inventory preservation.
 
-CSV parsing streams records, but the existing service retains parsed rows and validation grouping up to configured limits. Excel performance is **NOT_MEASURED** in this branch. Multiple-client throughput, database CPU, RSS, connection-pool saturation and p95/p99 are **NOT_MEASURED**.
+CSV parsing streams records, but the existing service retains parsed rows and validation grouping up to configured limits. Excel parser measurements were executed separately on the approved Excel branch; see the section below. This F06 branch does not import that parser source. Multiple-client throughput, database CPU, RSS, connection-pool saturation and p95/p99 are **NOT_MEASURED**.
 
 ## F06 — measured N+1 relation reads
 
@@ -45,3 +45,20 @@ Actual MySQL EXPLAIN ANALYZE plans for the base list and item/source/history bat
 Live eligibility still performs Product and batch reads for each unique Product group, and frozen source validation reads pattern mappings per pattern. These remain potential costs for diverse/large datasets; they were not proven dominant by the shared-group page fixture. A full 10,000-candidate ranked scope is functionally tested, but its p95/p99, CPU/RAM and concurrent-load behavior are **NOT_MEASURED**. The relation fetch uses bounded 500-ID IN clauses; total result content is still bounded by the existing 10,000-scope cap, not a new paging contract.
 
 Before production acceptance, execute realistic mixed-Product multi-client workloads, p95/p99 latency/throughput, memory/connection-pool pressure and server CPU/IO. Review the F05 comparison-veto ambiguity separately. Local results are **LOCAL_VERIFIED / REVIEW_PENDING**, not GitHub CI or production acceptance.
+
+## F04 Excel parser measurements and combined regression
+
+Actual parser-only measurements were executed on the stacked `Khoi/feat/f04-excel-import` branch with Java 17/POI 6.0.0/Commons IO 2.22.0. One 100-row warmup per format; workbook generation is excluded. An explicit GC is requested before each sample and heap is sampled every 5 ms. These measurements include parsing/normalization and no HTTP, order validation or persistence; they are not directly comparable to the CSV service throughput above.
+
+| Format | Rows | Upload bytes | Parse ms | Thread CPU ms | Sampled heap growth bytes |
+|---|---:|---:|---:|---:|---:|
+|xlsx|100|6,239|8.020|8.055|1,471,608|
+|xlsx|1,000|30,962|19.251|19.105|5,554,864|
+|xlsx|10,000|278,105|114.207|113.196|27,849,088|
+|xls|100|16,896|1.706|1.716|585,008|
+|xls|1,000|137,216|7.402|7.440|3,841,416|
+|xls|10,000|1,337,856|50.789|50.476|30,949,056|
+
+[Immutable Excel measurement artifact](https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/blob/332a39b/docs/testing/evidence/f04_excel_import/PARSER_PERFORMANCE.json). The 10,000-row fixtures are below the 5 MiB compressed limit; maximum-compressed-size hostile workbooks and production concurrency/p95/p99 remain NOT_MEASURED. Strict XML/ZIP/BIFF/string/style/row caps and 44 parser regressions reduce risk but are not a process sandbox.
+
+A separate detached patch composition of Excel commit 0f471aa with the F06 source/test delta through 29560fa passed **510 total = 505 PASS, 0 FAIL, 0 ERROR, 5 approved-clone SKIP**. It includes the additive F04 V12 migration, cross-format imports and new F06 regressions with actual local SPMF. [Combined execution evidence](https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/blob/332a39b/docs/testing/evidence/f04_excel_import/COMBINED_VERIFICATION.json). No Git branch was merged, no original database was accessed and no hosted/production acceptance is implied.
