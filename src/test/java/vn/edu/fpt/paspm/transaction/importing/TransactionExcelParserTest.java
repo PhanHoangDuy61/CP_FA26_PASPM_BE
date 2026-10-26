@@ -305,6 +305,34 @@ class TransactionExcelParserTest {
         });
     }
 
+    @Test void xlsMulBlankOnlyRowsCannotBypassScannedRowLimitWithoutRowRecords() {
+        var caps=new ExcelImportProperties(33554432,8388608,128,32767,100000,1024,3);
+        var rows=new ExcelRows(10,caps);
+        var reader=new TransactionXlsReader(rows,caps);
+        var strings=new org.apache.poi.hssf.record.SSTRecord();
+        reader.processRecord(strings);
+        reader.processRecord(org.apache.poi.hssf.record.BOFRecord.createSheetBOF());
+        for(int column=0;column<7;column++) sendXlsText(reader,strings,0,column,TransactionCsvParser.HEADERS.get(column));
+        String[] values={"id","2026-10-19T09:00:00Z","SKU-1","1","10","5","COMPLETED"};
+        for(int column=0;column<7;column++) sendXlsText(reader,strings,1,column,values[column]);
+        reader.processRecord(new org.apache.poi.hssf.record.MulBlankRecord(2,0,new short[]{0,0,0,0,0,0,0}));
+        ApiException error=assertThrows(ApiException.class, () -> reader.processRecord(
+            new org.apache.poi.hssf.record.MulBlankRecord(3,0,new short[]{0,0,0,0,0,0,0})));
+        assertTrue(error.getMessage().contains("scanned-row limit"));
+    }
+
+    @ParameterizedTest @ValueSource(strings={"array","shared"})
+    void rejectsOrphanArrayAndSharedFormulaRecords(String type) {
+        var caps=ExcelImportProperties.defaults();
+        var reader=new TransactionXlsReader(new ExcelRows(10,caps),caps);
+        org.apache.poi.hssf.record.Record record=type.equals("shared")
+            ? new org.apache.poi.hssf.record.SharedFormulaRecord()
+            : new org.apache.poi.hssf.record.ArrayRecord(org.apache.poi.ss.formula.Formula.create(
+                new org.apache.poi.ss.formula.ptg.Ptg[]{new org.apache.poi.ss.formula.ptg.IntPtg(1)}),
+                new org.apache.poi.hssf.util.CellRangeAddress8Bit(1,1,0,0));
+        assertThrows(ApiException.class, () -> reader.processRecord(record));
+    }
+
     static void sendXlsText(TransactionXlsReader reader,org.apache.poi.hssf.record.SSTRecord strings,int row,int column,String value) {
         var cell=new org.apache.poi.hssf.record.LabelSSTRecord();
         cell.setRow(row);cell.setColumn((short)column);
