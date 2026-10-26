@@ -1,0 +1,19 @@
+{
+  "source": "Actual Spring Boot Java17 MockMvc /v3/api-docs during focused executed integration tests",
+  "paths": 60,
+  "operations": 74,
+  "newRoutes": [
+    "POST /api/transactions/imports/excel"
+  ],
+  "existingOperationIdChanges": [],
+  "interactiveSwagger": "NOT_RUN; actual handler/OpenAPI checks executed through MockMvc, not browser Swagger",
+  "existingPathSchemasUnchanged": true,
+  "existingComponentSchemasUnchanged": true,
+  "exportServer": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Generated server url"
+    }
+  ],
+  "formatting": "Existing key ordering/indentation retained without semantic changes"
+}

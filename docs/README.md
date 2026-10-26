@@ -23,13 +23,13 @@ Product metadata và Category CRUD dùng JPA; Product catalog/inventory và anal
 | [F01](features/F01/README.md) | Authentication/User/RBAC | Source implemented; registration contract needs review | [API](api/F01_AUTH_USER_API.md) | [Scope](features/F01/README.md#requirements-and-authority) | [History](features/F01/README.md#testing-and-evidence) |
 | [F02](features/F02/README.md) | Product/Category/Inventory | Source implemented; Product/Category JPA integrated | [API](api/F02_PRODUCT_INVENTORY_API.md) | [Reference v3](features/F02/reference_v3/PASPM_F02_Inventory_Batch_API_Swagger_Backlog_v3.md) | [Tests](features/F02/README.md#testing-and-evidence) |
 | [F03](features/F03/README.md) | Utility/Weight Rules | Source implemented; final v1.2 authority missing from dev | [API](api/F03_UTILITY_API.md) | [Gap](requirements/README.md#f03-v12-source-gap) | [Tests](features/F03/README.md#testing-and-evidence) |
-| [F04](features/F04/README.md) | Transaction Import | File-based import; CSV available, Excel separately tracked; external ingestion excluded | [API](api/F04_TRANSACTION_API.md) | [Design](features/F04/reference/F04_DESIGN.md) | [History](features/F04/reference/F04_SWAGGER_TEST_REPORT.md) |
+| [F04](features/F04/README.md) | Transaction Import | CSV/XLS/XLSX source implemented; branch review pending; external ingestion excluded | [API](api/F04_TRANSACTION_API.md) | [Design](features/F04/reference/F04_DESIGN.md) | [History](features/F04/reference/F04_SWAGGER_TEST_REPORT.md) |
 | [F05](features/F05/README.md) | HUI-Miner/EFIM Mining | Source implemented; local SPMF configuration required | [API](api/F05_MINING_API.md) | [Scope](features/F05/README.md#requirements-and-authority) | [History](features/F05/reference/F05_VERIFICATION.md) |
 | [F06](features/F06/README.md) | Recommendation Engine | Backend v1.1 source implemented; downstream activation separate | [API](api/F06_RECOMMENDATION_API.md) | [Rules](requirements/F06_RECOMMENDATION_RULES_v1_1.md) | [History](testing/reports/F06_VERIFICATION.md) |
 
 ## API Reference
 
-[API index](api/README.md) · [OpenAPI export](api/openapi.json) · [RBAC](api/F01_F02_RBAC_MATRIX.md). Static mapping at the documented baseline contains 73 business operations. Swagger/framework routes are separate. The API Inventory package exists only on a separate local audit branch; see the index for provenance, not a broken link or an implied merge.
+[API index](api/README.md) · [OpenAPI export](api/openapi.json) · [RBAC](api/F01_F02_RBAC_MATRIX.md). The current feature-branch OpenAPI contains 74 business operations: the 73-operation baseline plus Excel import. Swagger/framework routes are separate. The API Inventory package exists only on a separate local audit branch; see the index for provenance, not a broken link or an implied merge.
 
 ## Frontend Integration
 

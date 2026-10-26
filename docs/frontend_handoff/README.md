@@ -7,7 +7,7 @@ Use the actual Backend contract together with its feature handoff. Role checks a
 | F01 | [F01](F01_HANDOFF.md) | [API](../api/F01_AUTH_USER_API.md) | Duplicate-registration 202/409 prose needs review |
 | F02 | [F02](F02_HANDOFF.md) | [API](../api/F02_PRODUCT_INVENTORY_API.md) | Current catalog-read roles and expiry boundary |
 | F03 | [F03](F03_HANDOFF.md) | [API](../api/F03_UTILITY_API.md) | Final spec/example gaps; old Store-window request is compatibility-only |
-| F04 | [F04](F04_HANDOFF.md) | [API](../api/F04_TRANSACTION_API.md) | CSV P0, no stock deduction; sample CSV moved with feature references |
+| F04 | [F04](F04_HANDOFF.md) | [API](../api/F04_TRANSACTION_API.md) | CSV/XLS/XLSX, no stock deduction; approved Excel templates linked from handoff |
 | F05 | [F05](F05_HANDOFF.md) | [API](../api/F05_MINING_API.md) | SPMF local runtime; dated blocker/F06 paragraphs need review |
 | F06 | [F06](F06_HANDOFF.md) | [API](../api/F06_RECOMMENDATION_API.md) | Candidate review is separate from downstream activation |
 

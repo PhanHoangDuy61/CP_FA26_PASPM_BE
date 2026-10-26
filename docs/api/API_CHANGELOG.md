@@ -110,3 +110,7 @@ No endpoint contract changes were made as part of this documentation export; thi
 ## 2026-10-26 — F04 CSV staging validation correction
 
 No endpoint, DTO, authorization or idempotency-key change. Invalid overlong order IDs use NULL in the staging lookup projection while raw row evidence remains exact; unrelated valid orders return the existing 201 summary contract. See [F04 improvement report](../features/F04/F04_IMPROVEMENT_REPORT.md). F04 is file-based CSV/Excel scope; external API/POS ingestion is excluded.
+
+## 2026-10-26 — F04 Excel import (stacked on CSV/V12 correction)
+
+Added `POST /api/transactions/imports/excel`, StoreAdmin multipart `file`, 201 ImportSummary. Reuses all CSV validation, history/error reads, transaction atomicity and CSV_UPLOAD idempotency; no historical label changes. Accepts one nonempty worksheet, seven ordered headers and text IDs/SKU/offset timestamp. [Approved contract and templates](../features/F04/F04_EXCEL_FORMAT_CONTRACT.md). Runtime OpenAPI now includes the actual new route. Shared-money bounds reject hostile exponent expansion before setScale while preserving valid DECIMAL(12,2) values.

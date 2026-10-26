@@ -1,0 +1,17 @@
+{
+  "source": "Actual final Surefire runtime classpath; Maven dependency tree also executed",
+  "java": "17.0.20.1",
+  "jars": [
+    "commons-codec-1.18.0.jar",
+    "poi-ooxml-6.0.0.jar",
+    "poi-6.0.0.jar",
+    "poi-ooxml-lite-6.0.0.jar",
+    "xmlbeans-5.4.1.jar",
+    "commons-compress-1.28.0.jar",
+    "log4j-api-2.24.3.jar",
+    "commons-collections4-4.6.0.jar",
+    "commons-io-2.22.0.jar"
+  ],
+  "licenseReview": "POI Apache2.0; official download/security references in Excel contract",
+  "vulnerabilityAudit": "NOT_RUN as a full transitive security scan; do not infer no vulnerabilities from passing tests"
+}
