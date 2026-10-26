@@ -52,7 +52,8 @@ final class TransactionXlsReader implements HSSFListener {
                 (int) HyperlinkRecord.sid, (int) DrawingRecord.sid, (int) DrawingGroupRecord.sid,
                 (int) ObjRecord.sid, (int) NameRecord.sid, (int) ExternalNameRecord.sid,
                 (int) CFRuleRecord.sid, (int) CFRule12Record.sid, (int) CFHeaderRecord.sid,
-                (int) CFHeader12Record.sid, (int) DVRecord.sid, (int) DVALRecord.sid);
+                (int) CFHeader12Record.sid, (int) DVRecord.sid, (int) DVALRecord.sid,
+                (int) ArrayRecord.sid, (int) SharedFormulaRecord.sid);
         int styleCount = 0;
         try (var stream = fs.createDocumentInputStream(workbook)) {
             while (true) {
@@ -95,7 +96,8 @@ final class TransactionXlsReader implements HSSFListener {
         else if (record instanceof FormulaRecord || record instanceof FilePassRecord || record instanceof HyperlinkRecord
                 || record instanceof DrawingRecord || record instanceof DrawingGroupRecord || record instanceof ObjRecord
                 || record instanceof NameRecord || record instanceof ExternalNameRecord
-                || record instanceof CFRuleBase || record instanceof CFHeaderBase || record instanceof DVRecord || record instanceof DVALRecord) {
+                || record instanceof CFRuleBase || record instanceof CFHeaderBase || record instanceof DVRecord || record instanceof DVALRecord
+                || record instanceof ArrayRecord || record instanceof SharedFormulaRecord) {
             throw ExcelRows.invalid("Excel formulas, external links and active workbook content are unsupported");
         } else if (record instanceof SupBookRecord book && !book.isInternalReferences()) {
             throw ExcelRows.invalid("Excel external workbook references are unsupported");
@@ -121,6 +123,12 @@ final class TransactionXlsReader implements HSSFListener {
         else if (inSheet && record instanceof MulRKRecord numbers) {
             for (int index = 0; index < numbers.getNumColumns(); index++)
                 put(numbers.getRow(), numbers.getFirstColumn() + index, numeric(numbers.getRKNumberAt(index)));
+        } else if (inSheet && record instanceof MulBlankRecord blanks) {
+            if (blanks.getFirstColumn() < 0 || blanks.getLastColumn() < blanks.getFirstColumn() || blanks.getLastColumn() > 255)
+                throw ExcelRows.invalid("Excel blank-cell column range is invalid");
+            scanRow(blanks.getRow());
+            for (int column = blanks.getFirstColumn(); column <= blanks.getLastColumn(); column++)
+                put(blanks.getRow(), column, new Cell(Kind.BLANK, ""));
         } else if (inSheet && record instanceof BlankRecord blank)
             put(blank.getRow(), blank.getColumn(), new Cell(Kind.BLANK, ""));
         else if (inSheet && record instanceof BoolErrRecord)
