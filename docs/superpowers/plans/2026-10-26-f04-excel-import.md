@@ -29,8 +29,10 @@
 - [x] Run full Java 17/MySQL/SPMF regression, fresh/legacy migration tests and Product/Category checks; distinguish authorized-clone skips.
 - [x] Measure Excel parser fixtures using actual XLS/XLSX, record local bounds and remaining containment risks.
 - [x] Update API/handoff/changelog/current reports with actual route, limits, templates and results. Preserve historical artifacts and immutable V1–V11.
-- [ ] Refresh CodeGraph, review diff, commit/push only after checks. Create stacked draft PR or provide manual URL on403. Never auto-merge/deploy.
+- [x] Refresh CodeGraph, review diff, commit/push only after checks. Create stacked draft PR or provide manual URL on403. Never auto-merge/deploy.
 
 ## Technical limits and review requirements
 
 Defaults: file5MiB, data10000rows, expanded32MiB total/8MiB per ZIPentry,128entries,32767UTF-16units per cell,100000shared strings,1024styles,100000scanned rows. Bound actual read bytes, not ZIPmetadata alone. Reject duplicate ZIPparts, unsafe compression, external XML/entities/relationships, macros/embedded/encrypted content, formulas/CF/DV, invalid roots/namespaces and unsupported advanced workbook parts. No per-request global POI limit mutation. In-process parsing retains residual hostile-document CPU/heap risk; limits are not a production sandbox guarantee.
+
+Final full branch verification: 477 tests / 472 PASS / 0 FAIL / 0 ERROR / 5 clone SKIP. Separate detached F04+F06 patch composition: 510 tests / 505 PASS / 0 FAIL / 0 ERROR / 5 clone SKIP. All three branches pushed; PR creation 403 recorded with manual comparison links. No auto-merge/deploy.
