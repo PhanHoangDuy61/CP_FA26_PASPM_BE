@@ -1,0 +1,118 @@
+{
+  "date": "2026-10-26",
+  "timezone": "Asia/Ho_Chi_Minh",
+  "scope": "Java17,H2 + dedicated MySQL8.4; real HTTP handlers viaMockMvc; parser-only benchmark included as1separatefixturetest",
+  "summary": {
+    "tests": 105,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 105
+  },
+  "suites": [
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.F04ExcelParserBenchmark",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 1.51
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.TransactionExcelImportIntegrationTest",
+      "tests": 26,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 2.193
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.TransactionExcelImportMySqlIntegrationTest",
+      "tests": 26,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 4.073
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.importing.TransactionExcelParserTest",
+      "tests": 41,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.213
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.importing.TransactionMoneyBoundsTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.06
+    }
+  ],
+  "red": {
+    "missingExcelEndpoint": {
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "expectedHttp": 201,
+      "actualHttp": 405
+    },
+    "moneyExponentBoundedWorker": {
+      "tests": 11,
+      "passed": 10,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "expectedExit": 0,
+      "actualExit": 2,
+      "cause": "Old BigDecimal scale expansion exhausted32MiB child heap; parent JVM stayedsafe."
+    },
+    "parserInitial": {
+      "tests": 23,
+      "failures": 21,
+      "errors": 2,
+      "skipped": 0,
+      "cause": "Preimplementation parser stub emitted no rows."
+    },
+    "parserSecurity": {
+      "tests": 41,
+      "failures": 6,
+      "errors": 0,
+      "skipped": 0,
+      "notes": "Includes reviewed exponent/formula/scanned-row/XML defects plus one corrected literal-encoding fixture; final41PASS."
+    }
+  },
+  "hosting": "LOCAL_VERIFIED; GITHUB_VERIFICATION_NOT_RUN",
+  "finalFull": {
+    "tests": 477,
+    "passed": 472,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 5,
+    "newExcelSafetyApiCases": 107,
+    "parserCases": 44,
+    "apiCases": 52,
+    "moneyCases": 11
+  },
+  "finalBiffReview": {
+    "red": {
+      "tests": 3,
+      "failures": 3,
+      "errors": 0,
+      "skipped": 0
+    },
+    "green": {
+      "parserTests": 44,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "fixes": [
+      "Count MulBlank-only rows without ROW records",
+      "Reject orphan ArrayRecord/SharedFormulaRecord in BIFF preflight and event handler"
+    ]
+  }
+}

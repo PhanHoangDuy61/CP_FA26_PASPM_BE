@@ -8,12 +8,14 @@ GROUPS = {
                 "TransactionEvidenceTest", "DatabaseTransactionSourceTest", "TransactionImportIntegrationTest",
                 "TransactionImportSchemaTest", "TransactionCsvParserTest", "TransactionOrderValidatorTest",
                 "TransactionImportCorrectnessIntegrationTest", "TransactionOrderIdentifierTest",
+                "TransactionExcelParserTest", "TransactionExcelImportIntegrationTest", "TransactionMoneyBoundsTest",
                 "ExpiryBinaryRulesTest", "RetailCatalogUtilityIntegrationTest", "UtilityCalculationTest",
                 "UtilityFixtureTest", "UtilityIntegrationTest", "UtilitySnapshotRoutingTest",
                 "WeightRulesV12IntegrationTest", "WeightRulesV12MigrationTest"],
     "mysql": ["FlywayRecoveryTest", "LegacyRecoveryMySqlTest", "LegacyRecoverySchemaTest",
               "RecommendationMigrationTest", "TransactionImportMySqlIntegrationTest",
               "TransactionImportCorrectnessMySqlIntegrationTest", "TransactionRawEvidenceMigrationMySqlTest",
+              "TransactionExcelImportMySqlIntegrationTest",
               "RetailCatalogUtilityMySqlIntegrationTest"],
 }
 

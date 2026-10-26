@@ -2,7 +2,7 @@
 
 ## Current scope
 
-6 mapped CSV/import/history operations; source has per-order persistence/idempotency and an F03 database adapter. The approved feature scope is file-based CSV/Excel. External API connections, POS, webhooks and realtime synchronization are excluded; their absence does not make F04 incomplete. Excel format policy/support is tracked separately from the CSV correction.
+7 mapped CSV/Excel/import/history operations; source has per-order persistence/idempotency and an F03 database adapter. The approved feature scope is file-based CSV/Excel. External API connections, POS, webhooks and realtime synchronization are excluded; their absence does not make F04 incomplete. Excel uses the explicitly approved [format contract and templates](F04_EXCEL_FORMAT_CONTRACT.md), delivered on a branch stacked on the CSV correction.
 
 [Current improvement and regression report](F04_IMPROVEMENT_REPORT.md).
 

@@ -37,13 +37,14 @@ The completed order with sale prices at or above costs is marked `f03Eligible=tr
 
 `ImportSummary` contains `importBatchId`, `status`, `filename`, UTC `startedAt`/`finishedAt`, row counts (`totalCount`, `validCount`, `rejectedCount`), order counts (`totalOrderCount`, `acceptedOrderCount`, `rejectedOrderCount`, `duplicateOrderCount`, `conflictOrderCount`) and nullable `errorSummary`.
 
-`TransactionView` contains transaction identifiers, UTC `occurredAt`, source system/order ID, status, `f03Eligible`, `totalAmount` and `items`. An item includes Product identifiers/name/SKU, quantity and captured unit price/cost. Treat returned historical values as a transaction snapshot; do not recompute them from the current catalog.
+`TransactionView` contains transaction identifiers, UTC `occurredAt`, source system/order ID, status, `f03Eligible`, `totalAmount` and `items`. An item includes Product identifiers/name/SKU, quantity and captured unit price/cost. Quantities and unit prices/costs are persisted historical facts; do not recompute them from the current catalog. SKU/name labels are joined from current Product data. Lists return `items: []`; fetch detail for lines.
 
 Use the shared Backend error format for request-level errors. Parsed CSV validation errors are batch row errors and are retrieved from the batch errors endpoint. Do not interpret an HTTP `201` as every row accepted; inspect counters and errors.
 
 ## APIs ready for integration
 
 - `POST /api/transactions/imports/csv`
+- `POST /api/transactions/imports/excel`
 - `GET /api/transactions/imports`
 - `GET /api/transactions/imports/{id}`
 - `GET /api/transactions/imports/{id}/errors`
@@ -52,10 +53,10 @@ Use the shared Backend error format for request-level errors. Parsed CSV validat
 
 ## Limits and known limitations
 
-- CSV only in this P0 scope; exact header order and UTF-8 are required.
+- CSV requires UTF-8 and exact header order. XLS/XLSX use the approved [Excel contract and templates](../features/F04/F04_EXCEL_FORMAT_CONTRACT.md).
 - Default upload limit is 5 MiB and the row limit is 10,000 nonblank rows. Backend values are configurable.
 - Import processing is synchronous and bounded; no background job progress endpoint exists.
-- API connection records are metadata-only. External POS API synchronization, external API ingestion, polling and webhooks are outside the approved F04 scope. The approved Excel format is a separate stacked implementation; this CSV branch does not advertise an unavailable route.
+- API connection records are metadata-only. External POS API synchronization, external API ingestion, polling and webhooks are outside the approved F04 scope. Excel is available through the dedicated multipart route on the stacked feature branch.
 - A duplicate order with identical normalized contents is counted as duplicate; a changed payload with the same Store/source/order ID is a conflict and does not overwrite history.
 - Import does not mutate inventory and does not implement F03 scoring or F05 mining.
 - Swagger UI can display and invoke endpoints, but authenticated end-to-end import requires an active Store Admin credential and matching Product SKUs in the target environment.
@@ -63,3 +64,11 @@ Use the shared Backend error format for request-level errors. Parsed CSV validat
 ## Mixed valid and invalid identifiers
 
 An invalid order ID must not hide an unrelated valid order. Inspect the 201 summary counters and GET import errors. An overlong staging identifier is returned as nullable `sourceOrderId`; `rowNumber` and `errorDetails` still identify the rejected row. Original parsed values are kept in database raw evidence, never shortened into another identity. The existing limit is 150 UTF-16 code units after `trim()`; this release preserves that rule.
+
+## Excel upload integration
+
+Send the XLSX/XLS file in FormData field `file` to `POST /api/transactions/imports/excel` with the same StoreAdmin Bearer token. Let the browser set the multipart boundary. Use the existing ImportSummary/error rendering and existing GET import history/error endpoints. 401/403/404 behavior is unchanged.
+
+Set source_order_id, sku and occurred_at columns to text; preserve leading zeros and include the timestamp offset. Numeric-ID/date-serial/formula/header/multiple-sheet problems are structural 400 errors. Valid workbook business errors return 201 with counters and per-order errors. CSV→Excel and Excel→CSV retries share the original order namespace and must not be presented as new accepted orders when duplicateOrderCount increases.
+
+The [actual sample templates and parser limits](../features/F04/F04_EXCEL_FORMAT_CONTRACT.md) define supported workbook content. No Frontend implementation is included in this Backend change.

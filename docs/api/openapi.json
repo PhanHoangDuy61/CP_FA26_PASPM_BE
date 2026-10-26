@@ -6,7 +6,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:18087",
+      "url": "http://localhost:8080",
       "description": "Generated server url"
     }
   ],
@@ -4339,6 +4339,67 @@
           },
           "401": {
             "description": "Authentication required / invalid"
+          }
+        }
+      }
+    },
+    "/api/transactions/imports/excel": {
+      "post": {
+        "tags": [
+          "transaction-import-controller"
+        ],
+        "summary": "Upload an XLSX or XLS transaction import using the shared file-import pipeline",
+        "operationId": "uploadExcel",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Excel workbook: one nonempty worksheet, approved seven-column F04 template"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportSummary"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }

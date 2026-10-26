@@ -120,9 +120,11 @@ public class TransactionOrderValidator {
         String text = trim(value);
         try {
             if (text == null || text.isEmpty()) throw new NumberFormatException();
-            BigDecimal amount = new BigDecimal(text).setScale(2, RoundingMode.UNNECESSARY);
-            if (amount.signum() < 0 || amount.precision() > 12) throw new NumberFormatException();
-            return amount;
+            BigDecimal amount = new BigDecimal(text).stripTrailingZeros();
+            // Reject impossible DECIMAL(12,2) values before scale conversion can expand an exponent.
+            if (amount.signum() < 0 || amount.scale() > 2
+                    || (long) amount.precision() - amount.scale() > 10) throw new NumberFormatException();
+            return amount.setScale(2, RoundingMode.UNNECESSARY);
         } catch (NumberFormatException | ArithmeticException exception) {
             addError(order, row.rowNumber(), field, field + " must be a nonnegative decimal with at most two fraction digits");
             return null;

@@ -46,6 +46,16 @@ public class TransactionImportController {
         return imports.importCsv(jwt, file);
     }
 
+    @Operation(summary = "Upload an XLSX or XLS transaction import using the shared file-import pipeline")
+    @PostMapping(path = "/api/transactions/imports/excel", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('STORE_ADMIN')")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ImportSummary uploadExcel(@AuthenticationPrincipal Jwt jwt,
+            @Parameter(description = "Excel workbook: one nonempty worksheet, approved seven-column F04 template")
+            @RequestPart("file") MultipartFile file) {
+        return imports.importExcel(jwt, file);
+    }
+
     @Operation(summary = "List transaction imports for the authenticated Store")
     @GetMapping("/api/transactions/imports")
     @PreAuthorize("hasAnyRole('STORE_ADMIN','MERCHANDISER')")

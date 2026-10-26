@@ -1,6 +1,6 @@
 # F04 File Import Improvement Report
 
-Date: 2026-10-26 — Asia/Ho_Chi_Minh. Base: dev `c 06d 43e`. Status: CSV correctness LOCAL_VERIFIED; Excel contract APPROVED on 2026-10-26; implementation and verification continue on the separate stacked Excel branch. Human review and GitHub-hosted verification remain separate.
+Date: 2026-10-26 — Asia/Ho_Chi_Minh. Base: dev `c 06d 43e`. Status: CSV and Excel LOCAL_VERIFIED on their isolated stacked branches; human review and GitHub-hosted checks remain pending. Human review and GitHub-hosted verification remain separate.
 
 ## Approved scope
 
@@ -49,11 +49,25 @@ The run performed 10,000 per-order transactions and 10,004 SELECT executions:10,
 
 The benchmark is an opt-in harness named `F04ImportPerformanceMySqlBenchmark`; default CI discovery does not add a skipped performance test. Run explicitly with `-Dtest=F04ImportPerformanceMySqlBenchmark -Dpaspm.test.performance=true` and the isolated MySQL test environment.
 
-## Excel contract approval and separate delivery
+## Excel implementation and approved contract
 
-The user explicitly approved the Excel contract on 2026-10-26: exactly one nonempty worksheet (empty sheets permitted), the same seven ordered headers, ISO8601 text with explicit UTC offset, text order IDs/SKUs preserving leading zeros, and shared cross-format order identity. Existing source_system=CSV_UPLOAD remains the compatibility namespace; historical rows are not relabeled or rewritten. A separate Excel endpoint will reuse the common validation/persistence/error pipeline on the stacked Excel branch. No Excel API is claimed available by this CSV commit.
+The user approved the Excel format on 2026-10-26. `POST /api/transactions/imports/excel` is implemented for STORE_ADMIN multipart uploads and returns the existing 201 ImportSummary. XLS/XLSX normalize to the same ParsedCsvRow model and enter the existing validator, staging, idempotency and independent order transactions. The CSV endpoint and existing history/error reads are preserved.
 
-The library review verified official Apache POI 6.0.0 availability, Java 17 baseline and Apache 2.0 license. No POI dependency is installed on the CSV branch. The independent Excel contract proposal documents actual source references and library safety requirements. Excel feature/API verification is delivered by the separate Excel branch after implementation; this CSV report does not count unexecuted Excel tests as PASS.
+Exactly one nonempty worksheet is accepted; extra blank sheets are allowed. Header row 1 uses the exact seven CSV columns. Order ID/SKU/occurred_at are text, leading zeros are retained and timestamps require an explicit offset. Both formats deliberately retain source_system=CSV_UPLOAD as the same compatibility namespace. CSV→Excel and Excel→CSV equal-content uploads are duplicates; changed content conflicts without relabeling or rewriting history.
+
+[Approved Excel contract and actual XLS/XLSX templates](F04_EXCEL_FORMAT_CONTRACT.md) describe structural 400 versus per-order 201 errors, allowed cell types, limits and unsupported advanced workbook content. The actual templates are exercised through both real HTTP handlers in regression fixtures.
+
+POI 6.0.0 uses bounded file-backed XSSF/SAX and HSSF event parsing with BIFF preflight; no full user-model workbook is constructed in production. Independent review found and corrected large numeric-exponent expansion, blank-row counting bypasses, non-cell formula carriers and malformed XML root/namespace handling. The parser now has 44 passing cases. Formulas/conditional formatting/data validation, external links, macros/embedded/encrypted content and unsupported parts are rejected. Limits reduce risk; in-process parsing is not a process sandbox or complete malicious-document CPU/heap guarantee.
+
+The shared money validator also materialized a huge exponent before checking DECIMAL12,2. A 32 MiB child-JVM regression reproduced an OutOfMemoryError in the old code while the parent remained safe. Normalizing trailing zeros and checking scale/sign/integer precision before setScale now rejects hostile values without expansion. Eleven money tests preserve valid scientific/trailing-zero behavior and invalid-range errors; endpoint tests verify invalid money remains an order error while a valid peer succeeds.
+
+[Excel regression evidence](../../testing/evidence/f04_excel_import/REGRESSION_RESULTS.json) records the initial 105 PASS focused execution (including one parser benchmark), subsequent safety RED/GREEN results and final full-suite verification. [Final full Maven results](../../testing/evidence/f04_excel_import/FULL_VERIFICATION_RESULTS.json): **477 total = 472 PASS, 0 FAIL, 0 ERROR, 5 SKIP**, including 107 Excel/API/money cases (44 parser, 52 API, 11 money). They cover Java 17, H2,dedicated MySQL 8.4, local SPMF, Product/Category and fresh/legacy migration scenarios. Five separately gated clone tests remain SKIP, not real-data acceptance. An intermediate MySQL connection-refused run is retained separately; it did not fall back to the original database.
+
+[Excel parser measurements](../../testing/evidence/f04_excel_import/PARSER_PERFORMANCE.json) measure 100/1000/10000 rows in both formats, with fixture creation excluded and sampled heap/current-thread CPU. They exclude HTTP, business validation and database persistence and are not comparable to end-to-end import throughput. Production concurrency and p95/p99 remain NOT_MEASURED.
+
+The actual runtime OpenAPI export has 60 paths/74 operations. Every previous 59 path contract and component schema remains semantically identical; only the Excel route and export server metadata are added/updated, with existing key ordering retained. Interactive browser Swagger verification is NOT_RUN; actual handlers/OpenAPI were executed via Spring Boot MockMvc.
+
+The dependency assessment checked official POI Java 17/license/security guidance and actual dependency tree. POI 6.0.0 is pinned; Commons IO 2.22.0 is pinned to avoid Commons CSV's nearer 2.20.0 downgrading POI's declared IO dependency. Spring Boot continues to manage Log4j. Executed compatibility tests do not constitute a complete dependency vulnerability audit. Excel support does not require external API/POS integration, public SPMF hosting, inventory mutation or new mining logic.
 
 ## Verification commands and delivery
 

@@ -33,16 +33,18 @@ public class TransactionImportService {
     private static final String SOURCE_SYSTEM = "CSV_UPLOAD";
     private final CatalogAccess access;
     private final TransactionCsvParser parser;
+    private final TransactionExcelParser excelParser;
     private final TransactionOrderValidator validator;
     private final TransactionImportRepository imports;
     private final TransactionImportProperties properties;
     private final TransactionTemplate orderTransaction;
 
-    public TransactionImportService(CatalogAccess access, TransactionCsvParser parser,
+    public TransactionImportService(CatalogAccess access, TransactionCsvParser parser, TransactionExcelParser excelParser,
             TransactionOrderValidator validator, TransactionImportRepository imports,
             TransactionImportProperties properties, PlatformTransactionManager transactionManager) {
         this.access = access;
         this.parser = parser;
+        this.excelParser = excelParser;
         this.validator = validator;
         this.imports = imports;
         this.properties = properties;
@@ -51,19 +53,29 @@ public class TransactionImportService {
     }
 
     public ImportSummary importCsv(Jwt jwt, MultipartFile file) {
+        return importFile(jwt, file, false);
+    }
+
+    public ImportSummary importExcel(Jwt jwt, MultipartFile file) {
+        return importFile(jwt, file, true);
+    }
+
+    private ImportSummary importFile(Jwt jwt, MultipartFile file, boolean excel) {
         int storeId = access.currentStoreId(jwt);
-        validateFile(file);
+        validateFile(file, excel);
+        String format = excel ? "Excel" : "CSV";
         int batchId = imports.createBatch(storeId, filename(file.getOriginalFilename()));
         List<ParsedCsvRow> rows = new ArrayList<>();
         try (var stream = file.getInputStream()) {
-            parser.parse(stream, rows::add);
-            if (rows.isEmpty()) throw new ApiException(400, "CSV must contain at least one data row");
+            if (excel) excelParser.parse(stream, rows::add);
+            else parser.parse(stream, rows::add);
+            if (rows.isEmpty()) throw new ApiException(400, format + " must contain at least one data row");
         } catch (ApiException exception) {
             imports.failBatch(batchId, exception.getMessage());
             throw exception;
         } catch (IOException exception) {
-            imports.failBatch(batchId, "Unable to read uploaded CSV");
-            throw new ApiException(400, "Unable to read uploaded CSV");
+            imports.failBatch(batchId, "Unable to read uploaded " + format);
+            throw new ApiException(400, "Unable to read uploaded " + format);
         }
 
         try {
@@ -170,18 +182,22 @@ public class TransactionImportService {
         }
     }
 
-    private void validateFile(MultipartFile file) {
-        if (file == null || file.isEmpty()) throw new ApiException(400, "CSV file is required and cannot be empty");
+    private void validateFile(MultipartFile file, boolean excel) {
+        String format = excel ? "Excel" : "CSV";
+        if (file == null || file.isEmpty()) throw new ApiException(400, format + " file is required and cannot be empty");
         String originalName = file.getOriginalFilename();
-        if (originalName == null || !originalName.toLowerCase(Locale.ROOT).endsWith(".csv")) {
-            throw new ApiException(400, "Only .csv files are supported");
+        String filename = originalName == null ? "" : originalName.toLowerCase(Locale.ROOT);
+        if (excel ? !(filename.endsWith(".xlsx") || filename.endsWith(".xls")) : !filename.endsWith(".csv")) {
+            throw new ApiException(400, excel ? "Only .xlsx and .xls files are supported" : "Only .csv files are supported");
         }
         if (file.getSize() > properties.maxFileBytes()) throw new ApiException(413, "Uploaded file exceeds the configured limit");
         String contentType = file.getContentType();
         String mediaType = contentType == null ? null : contentType.split(";", 2)[0].trim().toLowerCase(Locale.ROOT);
-        if (mediaType != null && !List.of("text/csv", "application/csv", "application/vnd.ms-excel", "application/octet-stream")
-                .contains(mediaType)) {
-            throw new ApiException(400, "Uploaded file must have a CSV content type");
+        List<String> allowed = excel
+                ? List.of("application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/octet-stream")
+                : List.of("text/csv", "application/csv", "application/vnd.ms-excel", "application/octet-stream");
+        if (mediaType != null && !allowed.contains(mediaType)) {
+            throw new ApiException(400, "Uploaded file must have a " + format + " content type");
         }
     }
 

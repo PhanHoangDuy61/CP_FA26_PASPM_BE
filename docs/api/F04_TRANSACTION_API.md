@@ -1,12 +1,12 @@
 # F04 Transaction Data API
 
-This contract describes the current F04 file-import implementation in the Spring Boot backend. F04 requires file-based CSV/Excel imports; external transaction APIs, POS integration, polling and webhooks are outside the approved scope. CSV is available; The Excel format contract is approved; endpoint implementation is delivered on a separate stacked branch. The runtime OpenAPI document is [`openapi.json`](openapi.json), generated from `/v3/api-docs` after Flyway V7 started successfully.
+This contract describes the current F04 file-import implementation in the Spring Boot backend. F04 requires file-based CSV/Excel imports; external transaction APIs, POS integration, polling and webhooks are outside the approved scope. CSV and Excel are implemented on this stacked feature branch. The runtime OpenAPI document is [`openapi.json`](openapi.json), exported from the actual Java17 Spring Boot `/v3/api-docs` test runtime with Flyway V1–V12. Interactive Swagger UI testing is not claimed by this change.
 
 ## Authentication and Store scope
 
 Send `Authorization: Bearer <access-token>` for every endpoint below. The Store is taken from the authenticated F01 identity; request parameters and CSV fields cannot choose a Store.
 
-| Role | Import CSV | Read imports/errors | Read transactions |
+| Role | Import CSV/Excel | Read imports/errors | Read transactions |
 |---|---|---|---|
 | `STORE_ADMIN` | Yes | Yes | Yes |
 | `MERCHANDISER` | No | Yes | Yes |
@@ -61,6 +61,12 @@ Example response:
 
 `totalCount`, `validCount` and `rejectedCount` count CSV rows. The separately named `*OrderCount` fields count grouped orders. Import status is `PROCESSING`, `COMPLETED`, `COMPLETED_WITH_ERRORS`, or `FAILED`.
 
+### `POST /api/transactions/imports/excel`
+
+Uploads one `.xlsx` or `.xls` workbook as multipart field `file`. Role: `STORE_ADMIN`. Success: `201 Created` with the same `ImportSummary` as CSV. Only one nonempty worksheet is allowed; blank additional sheets are supported. Header row 1 uses the same exact seven ordered names. Order ID/SKU/timestamp cells must be text; timestamps require ISO8601 with explicit offset. Numeric IDs/date serials/formulas/unsupported workbook content are structural 400 errors. Structurally valid rows use the shared per-order validator and can return partial acceptance 201.
+
+CSV/Excel intentionally share `CSV_UPLOAD` identity: equal canonical order content is duplicate across both formats; different content is conflict. Historical source labels and transactions are never rewritten. [Approved format, limits and real templates](../features/F04/F04_EXCEL_FORMAT_CONTRACT.md) define the exact supported input. No external API/POS ingestion is required.
+
 ### `GET /api/transactions/imports`
 
 Lists import batches for the authenticated Store. Roles: `STORE_ADMIN`, `MERCHANDISER`. Query fields: `page` (integer, default 0, minimum 0) and `pageSize` (integer, default 20, range 1–100). Returns `Page<ImportSummary>`.
@@ -77,13 +83,13 @@ Lists rejected/conflicted staging rows for one Store-owned batch. Roles: `STORE_
 
 ### `GET /api/transactions`
 
-Lists transactions for the authenticated Store. Roles: `STORE_ADMIN`, `MERCHANDISER`. Optional query fields: `status` (`COMPLETED`, `CANCELLED`, `REFUNDED`, `PARTIAL_REFUND`), `from` and `to` (ISO-8601 instants, inclusive), `page` (default 0), `pageSize` (default 20, range 1–100). Returns `Page<TransactionView>`.
+Lists transactions for the authenticated Store. Roles: `STORE_ADMIN`, `MERCHANDISER`. Optional query fields: `status` (`COMPLETED`, `CANCELLED`, `REFUNDED`, `PARTIAL_REFUND`), `from` and `to` (ISO-8601 instants, inclusive), `page` (default 0), `pageSize` (default 20, range 1–100). Returns `Page<TransactionView>`. List rows deliberately contain `items: []`; retrieve detail for lines.
 
 ### `GET /api/transactions/{id}`
 
 Returns one Store-owned transaction with its historical lines as `TransactionView`; roles: `STORE_ADMIN`, `MERCHANDISER`. A missing or other-Store ID returns `404`.
 
-`TransactionView` fields: `transactionId` (integer), `sourceSystem` (string), `sourceOrderId` (string), `occurredAt` (ISO-8601 UTC instant), `status` (string), `f03Eligible` (boolean), `totalAmount` (decimal), `items` (array of `TransactionLine`). Each line has `transactionItemId`, `productId`, `sku`, `productName`, `quantity`, `unitPrice`, and `unitCost`.
+`TransactionView` fields: `transactionId` (integer), `sourceSystem` (string), `sourceOrderId` (string), `occurredAt` (ISO-8601 UTC instant), `status` (string), `f03Eligible` (boolean), `totalAmount` (decimal), `items` (array of `TransactionLine`). Quantities and unit prices/costs are persisted historical facts; detail SKU/name labels are joined from the current Product. Each line has `transactionItemId`, `productId`, `sku`, `productName`, `quantity`, `unitPrice`, and `unitCost`.
 
 Example transaction detail:
 
