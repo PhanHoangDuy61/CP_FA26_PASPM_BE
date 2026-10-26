@@ -3,7 +3,7 @@
 > Updated 2026-11-12: additive async CSV submit/progress API and Flyway V22; the existing synchronous route remains supported.
 
 ## 1. Purpose and scope
-File-based import of historical sales into Store-scoped transactions that feed F03. Current `dev` scope includes synchronous and asynchronous CSV uploads. Excel, external APIs, POS integration and webhooks remain outside this branch.
+File-based import of historical sales into Store-scoped transactions that feed F03. Current scope includes synchronous and asynchronous CSV uploads and synchronous XLS/XLSX uploads under the approved [format contract and templates](F04_EXCEL_FORMAT_CONTRACT.md) of 2026-10-26. External APIs, POS integration and webhooks remain outside scope.
 
 ## 2. Actors and effective RBAC
 | Role | Capability |

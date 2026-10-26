@@ -1,0 +1,490 @@
+{
+  "scope": "Full Java17/H2/disposableMySQL8.4/SPMF before final3BIFFreviewregressions; finalretestrequired",
+  "collectedFrom": "Completed full Maven log, not XML subsequently overwritten by focused tests",
+  "summary": {
+    "tests": 474,
+    "passed": 469,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 5
+  },
+  "suites": [
+    {
+      "suite": "vn.edu.fpt.paspm.recommendation.RecommendationExpiryMySqlIntegrationTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 3.298,
+      "passed": 5
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.recommendation.RecommendationExpiryIntegrationTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 1.642,
+      "passed": 5
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.recommendation.RecommendationMySqlIntegrationTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 7.275,
+      "passed": 14
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.recommendation.TransactionEvidenceTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.001,
+      "passed": 4
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.recommendation.RecommendationIntegrationTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 7.012,
+      "passed": 14
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.recommendation.RecommendationMigrationTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.731,
+      "passed": 2
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.recommendation.RecommendationRulesTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.002,
+      "passed": 4
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.recommendation.FrozenEvidenceReaderTest",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.108,
+      "passed": 15
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.TransactionImportSchemaTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 1.045,
+      "passed": 1
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.TransactionImportCorrectnessMySqlIntegrationTest",
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 1.088,
+      "passed": 16
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.TransactionRawEvidenceMigrationMySqlTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.502,
+      "passed": 1
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.TransactionImportIntegrationTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 1.186,
+      "passed": 6
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.TransactionImportMySqlIntegrationTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 1.058,
+      "passed": 6
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.TransactionExcelImportMySqlIntegrationTest",
+      "tests": 26,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 1.875,
+      "passed": 26
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.TransactionExcelImportIntegrationTest",
+      "tests": 26,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 1.367,
+      "passed": 26
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.TransactionImportCorrectnessIntegrationTest",
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.99,
+      "passed": 16
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.DatabaseTransactionSourceTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.003,
+      "passed": 2
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.importing.TransactionCsvParserTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.002,
+      "passed": 5
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.importing.TransactionMoneyBoundsTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.059,
+      "passed": 11
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.importing.TransactionExcelParserTest",
+      "tests": 41,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.222,
+      "passed": 41
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.importing.TransactionOrderIdentifierTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.008,
+      "passed": 6
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.importing.TransactionOrderValidatorTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.004,
+      "passed": 5
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.auth.GoogleRegistrationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.03,
+      "passed": 3
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.catalog.category.persistence.CategoryPersistenceIntegrationTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 1.157,
+      "passed": 14
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.catalog.category.persistence.CategoryPersistenceMySqlIntegrationTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.87,
+      "passed": 14
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceMySqlIntegrationTest",
+      "tests": 18,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.849,
+      "passed": 18
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceIntegrationTest",
+      "tests": 17,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.935,
+      "passed": 17
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.catalog.CatalogIntegrationTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 4.921,
+      "passed": 7
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.catalog.CatalogDevSeederTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 1.646,
+      "passed": 1
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.SpmfMiningEngineTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 1.382,
+      "passed": 5
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.MiningInputTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.002,
+      "passed": 3
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.MiningHttpMySqlTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 1.546,
+      "passed": 1
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.SpmfRuntimeTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 6.801,
+      "passed": 8
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.MiningMySqlIntegrationTest",
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 4.774,
+      "passed": 16
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.MiningIntegrationTest",
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 4.404,
+      "passed": 16
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.deployment.LegacyRecoveryMySqlTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 10.91,
+      "passed": 11
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.deployment.LegacyReaderMySqlTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 3.174,
+      "passed": 2
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.deployment.LegacyPreflightTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.02,
+      "passed": 2
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.deployment.LegacyRecoverySchemaTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.494,
+      "passed": 2
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.deployment.FlywayRecoveryTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.968,
+      "passed": 2
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.AuthIntegrationTest",
+      "tests": 22,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 12.31,
+      "passed": 22
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.persistence.JpaPilotMigrationMySqlTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 2.962,
+      "passed": 4
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.persistence.PilotCloneSafetyTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.001,
+      "passed": 4
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.persistence.PilotCloneApiIntegrationTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 5,
+      "seconds": 0.0,
+      "passed": 0
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.UtilityCalculationTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.001,
+      "passed": 6
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.RetailCatalogUtilityMySqlIntegrationTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.964,
+      "passed": 11
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.UtilityFixtureTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 2.783,
+      "passed": 2
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.UtilitySnapshotRoutingTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.017,
+      "passed": 6
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.WeightRulesV12MigrationTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.566,
+      "passed": 1
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.ExpiryBinaryRulesTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.002,
+      "passed": 7
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.WeightRulesV12IntegrationTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 1.055,
+      "passed": 10
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.RetailCatalogUtilityIntegrationTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 1.095,
+      "passed": 11
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.UtilityIntegrationTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 1.095,
+      "passed": 12
+    }
+  ]
+}

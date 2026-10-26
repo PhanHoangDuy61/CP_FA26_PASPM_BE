@@ -8,6 +8,7 @@ GROUPS = {
                 "TransactionEvidenceTest", "DatabaseTransactionSourceTest", "TransactionImportIntegrationTest",
                 "TransactionImportSchemaTest", "TransactionCsvParserTest", "TransactionOrderValidatorTest",
                 "TransactionImportCorrectnessIntegrationTest", "TransactionOrderIdentifierTest",
+                "TransactionExcelParserTest", "TransactionExcelImportIntegrationTest", "TransactionMoneyBoundsTest",
                 "ExpiryBinaryRulesTest", "RetailCatalogUtilityIntegrationTest", "UtilityCalculationTest",
                 "UtilityFixtureTest", "UtilityIntegrationTest", "UtilitySnapshotRoutingTest", "MigrationVersioningTest", "MiningOccurrenceDispatcherFlagTest",
                 "F03F05RbacMatrixTest", "ScheduledMiningDisabledByDefaultTest", "SystemStoreReadPolicyTest",
@@ -20,6 +21,7 @@ GROUPS = {
     "mysql": ["SessionMySqlIntegrationTest", "SessionV21MigrationMySqlTest", "FlywayRecoveryTest", "LegacyRecoveryMySqlTest", "LegacyRecoverySchemaTest",
               "RecommendationMigrationTest", "TransactionImportMySqlIntegrationTest",
               "TransactionImportCorrectnessMySqlIntegrationTest", "TransactionRawEvidenceMigrationMySqlTest",
+              "TransactionExcelImportMySqlIntegrationTest",
               "RetailCatalogUtilityMySqlIntegrationTest", "MiningMigrationMySqlTest"],
 }
 
