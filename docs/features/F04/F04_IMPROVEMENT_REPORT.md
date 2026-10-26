@@ -83,3 +83,15 @@ The full verification uses `mvn clean verify`, MySQL and Java 17 Backend→Java 
 API consumers should use [F04 contract](../../api/F04_TRANSACTION_API.md) and [handoff](../../frontend_handoff/F04_HANDOFF.md). Source fields/DTOs and the six routes are preserved. V12 requires a normal reviewed migration rollout; downgrade is not automatic because larger raw evidence might no longer fit TEXT. Do not alter an applied migration or silently narrow the column on rollback.
 
 CodeGraph was queried before analysis and initialized/refreshed for this isolated implementation: 169 files, 3,923 nodes, 9,879 edges; `insertStagingRows` is discoverable at the updated source location. [Graph execution metadata](../../testing/evidence/f04_csv_correctness/CODEGRAPH.json) contains no index database or credentials.
+
+## Combined F04 and F06 verification and delivery
+
+[Actual combined verification](../../testing/evidence/f04_excel_import/COMBINED_VERIFICATION.json) passed **510 total = 505 PASS, 0 FAIL, 0 ERROR, 5 SKIP**. A detached checkout of Excel commit 0f471aa was overlaid with only the recommendation source/test patch from F06 commit 29560fa; this was a test composition, not a Git branch merge. It exercises new Excel/V12 and F06 hardening together with real local SPMF. Five approved-clone-gated cases remain explicitly skipped. Human review and actual hosted CI remain pending.
+
+Branches pushed: `Khoi/fix/f04-csv-validation` (base dev), `Khoi/feat/f04-excel-import` (base CSV branch), and independently `Khoi/test/f06-hardening` (base dev). GitHub draft PR creation returned 403 Resource not accessible by integration for each; no PR was created and no permission bypass attempted. Manual comparison links:
+
+- [CSV → dev](https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/compare/dev...Khoi%2Ffix%2Ff04-csv-validation?expand=1)
+- [Excel → CSV branch](https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/compare/Khoi%2Ffix%2Ff04-csv-validation...Khoi%2Ffeat%2Ff04-excel-import?expand=1) — retarget to dev only after CSV merges
+- [F06 → dev](https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/compare/dev...Khoi%2Ftest%2Ff06-hardening?expand=1)
+
+No automatic merge or deployment was performed. Original V5 data was not accessed. The existing local-work stash is preserved. No current local PASS is asserted to be a hosted CI PASS or production acceptance.

@@ -9,7 +9,7 @@ Use the [feature index](../features/README.md) for scoped requirements, [API ind
 | F01 | [Original decisions](../features/F01/reference/DECISIONS.md), [API](../api/F01_AUTH_USER_API.md) | Early JDBC-only scope is historical; registration 202/409 prose needs reconciliation |
 | F02 | [Original v3 backlog](../features/F02/reference_v3/PASPM_F02_Inventory_Batch_API_Swagger_Backlog_v3.md), [current API](../api/F02_PRODUCT_INVENTORY_API.md) | Original all-StoreAdmin/expiry-today clauses are superseded for current source |
 | F03 | [Original v4](../features/F03/reference_v4/PASPM_F03_Three_Weights_v4_API_Swagger_Backlog.md), [current API](../api/F03_UTILITY_API.md) | Current Product-T/binary behavior differs from retained linear history; final approved source is missing |
-| F04 | [Design](../features/F04/reference/F04_DESIGN.md), [API](../api/F04_TRANSACTION_API.md) | CSV P0 policy; original design's discovery statements are historical |
+| F04 | [Original design](../features/F04/reference/F04_DESIGN.md), [approved Excel format](../features/F04/F04_EXCEL_FORMAT_CONTRACT.md), [API](../api/F04_TRANSACTION_API.md) | File-based CSV/Excel scope; external API/POS excluded; original discovery statements are historical |
 | F05 | [API](../api/F05_MINING_API.md), [original gap/scope](../features/F05/reference/F05_GAP_ANALYSIS.md) | Working source differs from dated pre-fix/deferred notes; wider research acceptance separate |
 | F06 | [Approved v1.1 rules](F06_RECOMMENDATION_RULES_v1_1.md), [approval history](../archive/F06/F06_IMPLEMENTATION_READINESS.md) | Implemented Backend scope; no publication/activation side effects |
 
