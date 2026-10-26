@@ -2,7 +2,9 @@
 
 ## Current scope
 
-6 mapped CSV/import/history operations; source has per-order persistence/idempotency and F03 database adapter. Broader Excel/external ingestion is not implemented by the CSV P0 contract.
+6 mapped CSV/import/history operations; source has per-order persistence/idempotency and an F03 database adapter. The approved feature scope is file-based CSV/Excel. External API connections, POS, webhooks and realtime synchronization are excluded; their absence does not make F04 incomplete. Excel format policy/support is tracked separately from the CSV correction.
+
+[Current improvement and regression report](F04_IMPROVEMENT_REPORT.md).
 
 - [Canonical API](../../api/F04_TRANSACTION_API.md) · [Frontend handoff](../../frontend_handoff/F04_HANDOFF.md).
 - [Architecture](../../architecture/README.md) · [diagrams](../../diagrams/README.md) · [documentation map](../../DOCUMENTATION_MAP.md).

@@ -36,7 +36,7 @@ class FlywayRecoveryTest {
         corrected.validate();
         int after=jdbc.queryForObject("SELECT checksum FROM flyway_schema_history WHERE version='7'",Integer.class);
         assertNotEquals(before,after);
-        assertEquals(4,flyway(url,"sa","",corrected(),"latest").migrate().migrationsExecuted);
+        assertEquals(5,flyway(url,"sa","",corrected(),"latest").migrate().migrationsExecuted);
         assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM import_staging_row WHERE import_batch_id=?",Integer.class,batch));
         assertEquals(2,jdbc.queryForObject("SELECT `row_number` FROM import_staging_row WHERE import_batch_id=?",Integer.class,batch));
         System.out.println("P0_CHECKSUM original="+before+" corrected="+after+" dataPreserved=true");
@@ -49,10 +49,10 @@ class FlywayRecoveryTest {
         var jdbc=new JdbcTemplate(new DriverManagerDataSource(db.url(),db.user(),db.password()));
         int batch=seed(jdbc);
         var latest=flyway(db.url(),db.user(),db.password(),corrected(),"latest");
-        assertEquals(4,latest.migrate().migrationsExecuted);latest.validate();
+        assertEquals(5,latest.migrate().migrationsExecuted);latest.validate();
         assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM import_staging_row WHERE import_batch_id=?",Integer.class,batch));
-        assertEquals(11,jdbc.queryForObject("SELECT COUNT(*) FROM flyway_schema_history WHERE success=TRUE",Integer.class));
-        System.out.println("P0_MYSQL_UPGRADE preservedBatch="+batch+" migrationsExecuted=4 validation=PASS");
+        assertEquals(12,jdbc.queryForObject("SELECT COUNT(*) FROM flyway_schema_history WHERE success=TRUE",Integer.class));
+        System.out.println("P0_MYSQL_UPGRADE preservedBatch="+batch+" migrationsExecuted=5 validation=PASS");
     }
     private int seed(JdbcTemplate jdbc) {
         jdbc.update("INSERT INTO store(name) VALUES ('P0 recovery fixture')");

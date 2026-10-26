@@ -52,7 +52,11 @@ public class TransactionImportRepository {
                     statement.setInt(2, batchId);
                     statement.setInt(3, row.rowNumber());
                     String orderId = row.values().get("source_order_id");
-                    statement.setString(4, orderId == null || orderId.isBlank() ? null : orderId.trim());
+                    String normalizedOrderId = orderId == null ? null : orderId.trim();
+                    // This nullable lookup projection must not reject a row before business validation.
+                    // Keep the complete original value in raw_data; never truncate an order identity.
+                    statement.setString(4, normalizedOrderId == null || normalizedOrderId.isBlank()
+                            || normalizedOrderId.length() > 150 ? null : normalizedOrderId);
                     statement.setString(5, writeJson(row.values()));
                 });
         jdbc.update("UPDATE import_batch SET total_count=? WHERE import_batch_id=?", rows.size(), batchId);
