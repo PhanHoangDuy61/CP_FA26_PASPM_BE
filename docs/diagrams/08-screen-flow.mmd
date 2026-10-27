@@ -1,0 +1,50 @@
+flowchart TB
+  login["Login · /login"] -->|"role-based landing"| role{Role}
+  login --> register["Register · /register"]
+  login --> activate["Activate · /activate"]
+  login --> forgot["Forgot Password · /forgot-password"]
+  forgot -. "view exists; path omitted from explicit screen map" .-> login
+  role --> sa["System Admin"]
+  role --> sta["Store Admin"]
+  role --> merch["Merchandiser"]
+  role --> cust["End Customer"]
+  profile["Profile · /profile"]
+  sa --> a1["S01 Overview · /admin/overview"]
+  a1 --> a2["S02 Mining Setup · /admin/setup"]
+  a2 -->|"run completes"| a5["S05 Results · /admin/results"]
+  a2 -->|"run fails"| a7["S07 Failure & Retry · /admin/failure"]
+  a1 --> a6["S06 Benchmark · /admin/benchmark"]
+  sa --> users["Users & Roles · /admin/users"]
+  sa --> connections["API Connections · /admin/api-connections"]
+  sa --> profile
+  sta --> inventory["Products & Inventory · /store/inventory"]
+  inventory --> edit["Edit Product · /store/edit-product"]
+  sta --> categories["Categories · /store/categories"]
+  sta --> batches["Inventory Batches · /store/batches"]
+  sta --> utility["F03 Utility workspace · /f03/utility"]
+  utility --> expiry["Expiry Window · /f03/expiry-window"]
+  utility --> config["Utility Configuration · /f03/configuration"]
+  utility --> scores["Product Scores · /f03/product-scores"]
+  utility --> preview["Utility Preview · /f03/preview"]
+  preview --> snapshot["Utility Snapshot · /f03/snapshot"]
+  sta --> profile
+  merch --> recs["Recommendations · /merchandiser/recommendations"]
+  recs --> approve["Review & Approve · /merchandiser/approve"]
+  recs --> refine["Refine Criteria · /merchandiser/refine-criteria"]
+  merch --> utilityProfile["Utility Profile · /merchandiser/utility-profile"]
+  merch --> campaignDraft["Campaign Draft & Publish · /merchandiser/campaign-draft"]
+  campaignDraft --> simulation["A/B Simulation · /merchandiser/ab-simulation"]
+  simulation --> compare["Compare Simulation · /merchandiser/compare-simulation"]
+  compare --> keepA["Keep Layout A Review · /merchandiser/keep-layout-a"]
+  campaignDraft --> campaignStatus["Campaign Status · /merchandiser/campaign-status"]
+  merch --> profile
+  cust --> storefront["Storefront & Basket · /storefront"]
+  storefront --> checkout["Simulated checkout (same screen)"]
+  cust --> profile
+  ids["FE source labels only S01, S02, S05, S06 and S07. No S03/S04 or S08–S18 mapping appears in this FE source; other routes have no S-ID assignment."]:::note
+  gaps["Prototype/demo paths: mining run outcomes are local FE state; campaign/simulation and customer purchase have no matching BE endpoints. F04 CSV import exists in BE but has no corresponding FE route."]:::note
+  rbac["Role gap: SCREEN_OWNER_MAP assigns Merchandiser routes, but ROLE_PERMISSIONS and post-login role mapping grant F03 only, and its sidebar is disabled. BE mining/recommendation APIs allow Merchandiser or Store Admin; the FE mining console is grouped under System Admin."]:::note
+  ids -.-> role
+  gaps -.-> campaignDraft
+  rbac -.-> merch
+  classDef note fill:#fff4cc,stroke:#9a6700,color:#333

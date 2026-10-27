@@ -1,0 +1,26 @@
+flowchart TB
+  subgraph Frontend["Frontend · sibling repository FE-FA26"]
+    react["React + TypeScript SPA"] --> router["Path-to-screen map\nHistory API navigation + role screen guard"]
+    router --> views["Auth · F03 · Store Admin · Mining · Merchandiser · Storefront views"]
+    views --> http["fetch API clients\nBearer token in local storage"]
+    demo["Local/demo interactions\nmining jobs · campaign/simulation · storefront checkout"]
+  end
+  http -->|"Vite /api proxy in development; API requests"| api["Spring MVC REST controllers\nAuth · Users · Catalog · Inventory · Import · Utility · Mining · Recommendation"]
+  api --> security["Spring Security\nJWT authentication + role checks"]
+  security --> services["Application services\nvalidation · store scoping · transactions"]
+  services --> repos["JDBC repositories"]
+  repos --> mysql[("MySQL\nFlyway V1–V11")]
+  services --> utility["F03 utility calculation\nS/M product priorities; E from sellable batch expiry"]
+  utility --> source["TransactionSource\neligible F04 sales transactions"]
+  source --> mysql
+  utility --> frozen["Utility snapshot\nsource hash + matrix hash + frozen rows"]
+  frozen --> mysql
+  services --> input["F05 input builder\nnormalized frozen utility matrix"]
+  input --> worker["Mining worker\nrequest/run persistence and status updates"]
+  worker --> child["Isolated SPMF child process\nHUI-Miner / EFIM"]
+  child --> worker
+  worker --> mysql
+  services --> rec["F06 recommendation rules\nfrozen evidence + live product eligibility"]
+  rec --> mysql
+  services --> mail["Email / Google integrations\nwhen configured"]
+  views -. "interactions without matching API calls" .-> demo

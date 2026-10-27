@@ -1,0 +1,8 @@
+stateDiagram-v2
+  [*] --> PROCESSING: batch created
+  PROCESSING --> COMPLETED: all accepted; no errors
+  PROCESSING --> COMPLETED_WITH_ERRORS: row/order errors or conflicts
+  PROCESSING --> FAILED: batch processing fails
+  COMPLETED --> [*]
+  COMPLETED_WITH_ERRORS --> [*]
+  FAILED --> [*]

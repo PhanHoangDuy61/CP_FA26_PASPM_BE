@@ -1,0 +1,212 @@
+erDiagram
+  STORE ||--o{ APP_USER : scopes
+  ROLE ||--o{ APP_USER : assigns
+  APP_USER ||--o| VERIFICATION_CHALLENGE : verifies
+  APP_USER ||--o{ EXTERNAL_IDENTITY : links
+  STORE ||--o{ CATEGORY : owns
+  STORE ||--o{ PRODUCT : owns
+  CATEGORY o|--o{ PRODUCT : classifies
+  PRODUCT ||--o{ INVENTORY_BATCH : stocked_in
+  STORE ||--o{ API_CONNECTION : configures
+  STORE ||--o{ IMPORT_BATCH : receives
+  API_CONNECTION o|--o{ IMPORT_BATCH : source
+  IMPORT_BATCH o|--o{ SALES_TRANSACTION : imports
+  STORE ||--o{ SALES_TRANSACTION : owns
+  SALES_TRANSACTION ||--|{ TRANSACTION_ITEM : contains
+  PRODUCT ||--o{ TRANSACTION_ITEM : sold_as
+  IMPORT_BATCH ||--o{ IMPORT_STAGING_ROW : stages
+  SALES_TRANSACTION o|--o{ IMPORT_STAGING_ROW : materializes
+  STORE ||--o{ UTILITY_SNAPSHOT : owns
+  APP_USER ||--o{ UTILITY_SNAPSHOT : creates
+  UTILITY_SNAPSHOT ||--o{ UTILITY_MATRIX_ITEM : freezes
+  UTILITY_SNAPSHOT ||--o| UTILITY_SNAPSHOT_STORAGE : routes
+  UTILITY_SNAPSHOT ||--o{ UTILITY_MATRIX_ITEM_LEGACY_V5 : archives
+  PRODUCT ||--o{ UTILITY_MATRIX_ITEM_LEGACY_V5 : historical_product
+  SALES_TRANSACTION ||--o{ UTILITY_MATRIX_ITEM : contributes
+  PRODUCT ||--o{ UTILITY_MATRIX_ITEM : weighted_for
+  UTILITY_SNAPSHOT ||--o{ MINING_REQUEST : input_to
+  STORE ||--o{ MINING_REQUEST : owns
+  APP_USER ||--o{ MINING_REQUEST : requests
+  MINING_REQUEST ||--|{ MINING_RUN : executes
+  MINING_RUN ||--o{ HIGH_UTILITY_PATTERN : produces
+  HIGH_UTILITY_PATTERN ||--|{ PATTERN_ITEM : contains
+  PRODUCT ||--o{ PATTERN_ITEM : identifies
+  STORE ||--o{ RECOMMENDATION : owns
+  UTILITY_SNAPSHOT ||--o{ RECOMMENDATION : evidence_snapshot
+  RECOMMENDATION ||--|{ RECOMMENDATION_ITEM : contains
+  PRODUCT ||--o{ RECOMMENDATION_ITEM : recommended
+  RECOMMENDATION ||--o{ RECOMMENDATION_SOURCE : supported_by
+  MINING_RUN ||--o{ RECOMMENDATION_SOURCE : source_run
+  HIGH_UTILITY_PATTERN ||--o{ RECOMMENDATION_SOURCE : source_pattern
+  RECOMMENDATION ||--o{ RECOMMENDATION_REVIEW_HISTORY : records
+  STORE ||--o| RECOMMENDATION_RULE_CONFIG : configures
+
+  STORE {
+    int store_id PK
+    varchar name
+  }
+  ROLE {
+    int role_id PK
+    varchar code UK
+  }
+  APP_USER {
+    int user_id PK
+    int store_id FK
+    int role_id FK
+    varchar email UK
+    varchar status "PENDING_VERIFICATION / ACTIVE / INACTIVE"
+  }
+  CATEGORY {
+    int category_id PK
+    int store_id FK
+    varchar status "ACTIVE / INACTIVE"
+  }
+  PRODUCT {
+    int product_id PK
+    int store_id FK
+    int category_id FK
+    varchar sku
+    varchar status "ACTIVE / INACTIVE"
+    decimal stock_priority_score
+    decimal seasonal_priority_score
+  }
+  INVENTORY_BATCH {
+    int batch_id PK
+    int product_id FK
+    date expiry_date
+    int remaining_quantity
+    varchar status "ACTIVE / BLOCKED"
+  }
+  IMPORT_BATCH {
+    int import_batch_id PK
+    int store_id FK
+    varchar method "FILE / API"
+    varchar status "PROCESSING / COMPLETED / COMPLETED_WITH_ERRORS / FAILED"
+  }
+  IMPORT_STAGING_ROW {
+    int staging_row_id PK
+    int import_batch_id FK
+    int processed_transaction_id FK
+    varchar status "PENDING / VALID / REJECTED / PROCESSED"
+  }
+  SALES_TRANSACTION {
+    int transaction_id PK
+    int store_id FK
+    int import_batch_id FK
+    varchar source_system
+    varchar source_order_id
+    varchar status "COMPLETED / CANCELLED / REFUNDED / PARTIAL_REFUND"
+    boolean f03_eligible
+    char content_sha256
+  }
+  TRANSACTION_ITEM {
+    int transaction_item_id PK
+    int transaction_id FK
+    int product_id FK
+    int quantity
+    decimal unit_price
+    decimal unit_cost
+  }
+  UTILITY_SNAPSHOT {
+    int snapshot_id PK
+    int store_id FK
+    int created_by FK
+    varchar status "READY / FAILED"
+    char source_hash
+    char matrix_hash
+    json config_snapshot
+  }
+  UTILITY_MATRIX_ITEM {
+    int matrix_item_id PK
+    int snapshot_id FK
+    int transaction_id FK
+    int product_id FK
+    decimal base_utility
+    decimal stock_score
+    decimal expiry_score
+    decimal seasonal_score
+    decimal weight_value
+    decimal weighted_utility
+  }
+  UTILITY_SNAPSHOT_STORAGE {
+    int snapshot_id PK, FK
+    int store_id
+    varchar storage_kind "F04_LIVE / LEGACY_V5_ARCHIVE"
+    varchar source_namespace
+  }
+  UTILITY_MATRIX_ITEM_LEGACY_V5 {
+    int matrix_item_id PK
+    int snapshot_id FK
+    int transaction_id "historical identifier; not valid F04 transaction provenance"
+    int product_id
+    decimal weighted_utility
+  }
+  MINING_REQUEST {
+    bigint request_id PK
+    int store_id FK
+    int utility_snapshot_id FK
+    varchar status "PENDING / RUNNING / COMPLETED / FAILED"
+    json frozen_input
+  }
+  MINING_RUN {
+    bigint run_id PK
+    bigint request_id FK
+    varchar algorithm "HUI_MINER / EFIM"
+    varchar status "PENDING / RUNNING / COMPLETED / FAILED / TIMED_OUT"
+  }
+  HIGH_UTILITY_PATTERN {
+    bigint pattern_id PK
+    bigint run_id FK
+    decimal utility
+    int support_count
+  }
+  PATTERN_ITEM {
+    bigint pattern_id PK, FK
+    int product_id PK, FK
+  }
+  RECOMMENDATION {
+    bigint recommendation_id PK
+    int store_id FK
+    int utility_snapshot_id FK
+    varchar type "BUNDLE / CROSS_SELL / FBT / BANNER"
+    varchar review_status "PENDING_REVIEW / APPROVED / REJECTED"
+    json evidence
+    json generation_eligibility
+  }
+  RECOMMENDATION_ITEM {
+    bigint recommendation_id PK, FK
+    int product_id PK, FK
+  }
+  RECOMMENDATION_SOURCE {
+    bigint recommendation_id PK, FK
+    bigint run_id PK, FK
+    bigint pattern_id PK, FK
+    json provenance
+  }
+  RECOMMENDATION_REVIEW_HISTORY {
+    bigint history_id PK
+    bigint recommendation_id FK
+    varchar old_status
+    varchar new_status
+    int reviewed_by FK
+  }
+  RECOMMENDATION_RULE_CONFIG {
+    int store_id PK, FK
+    bigint config_version
+    json config_json
+  }
+  API_CONNECTION {
+    int connection_id PK
+    int store_id FK
+    varchar status
+  }
+  VERIFICATION_CHALLENGE {
+    int user_id PK, FK
+    varchar purpose
+    boolean consumed
+  }
+  EXTERNAL_IDENTITY {
+    int identity_id PK
+    int user_id FK
+    varchar provider
+  }
