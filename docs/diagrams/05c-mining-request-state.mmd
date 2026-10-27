@@ -1,0 +1,7 @@
+stateDiagram-v2
+  [*] --> PENDING: request and runs persisted
+  PENDING --> RUNNING: worker claims request
+  RUNNING --> COMPLETED: requested execution finishes successfully
+  RUNNING --> FAILED: request execution fails
+  COMPLETED --> [*]
+  FAILED --> [*]

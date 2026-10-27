@@ -1,0 +1,7 @@
+stateDiagram-v2
+  [*] --> PENDING_REVIEW: evidence-backed candidate generated
+  PENDING_REVIEW --> APPROVED: merchandiser approves; version matches
+  PENDING_REVIEW --> REJECTED: merchandiser rejects; version matches
+  APPROVED --> [*]
+  REJECTED --> [*]
+  note right of APPROVED: F06 does not publish a campaign or activate a storefront offer.

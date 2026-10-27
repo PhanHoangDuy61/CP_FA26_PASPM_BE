@@ -1,0 +1,28 @@
+sequenceDiagram
+  autonumber
+  actor User as Merchandiser / Store Admin
+  participant API as Mining API
+  participant Service as Mining service
+  participant Snapshot as Snapshot repository
+  participant Worker as Mining worker
+  participant Engine as HUI-Miner / EFIM runtime
+  participant DB as Database
+  User->>API: Create request(snapshot, algorithms, threshold, request key)
+  API->>Service: Validate role, store, snapshot and payload
+  Service->>Snapshot: Load READY snapshot and frozen matrix
+  Snapshot-->>Service: Frozen rows and hashes
+  Service->>Service: Build normalized immutable input
+  Service->>DB: Persist PENDING request and run rows
+  Service->>Worker: Enqueue request
+  API-->>User: Request ID / PENDING
+  Worker->>DB: Claim request and run as RUNNING
+  loop selected algorithms
+    Worker->>Engine: Execute on frozen input and threshold
+    Engine-->>Worker: Patterns, metrics or execution error
+    Worker->>DB: Persist patterns and terminal run status
+  end
+  Worker->>DB: Finalize request status
+  User->>API: Read request, runs and patterns
+  API->>DB: Query store-scoped persisted results
+  DB-->>API: Status and evidence
+  API-->>User: Mining results
