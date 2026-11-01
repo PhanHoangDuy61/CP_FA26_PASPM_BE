@@ -25,7 +25,7 @@ Backend source has no CORS mapping or allowed-origin configuration. A browser se
 | Google login/register | `POST /api/auth/google`, `/google/register`; requires Google client configured. Google registration still uses PASPM OTP |
 | Link Google identity | `POST /api/auth/google/link`; authenticated; never auto-links by matching email |
 | User profile | `GET /api/auth/me`; `POST /api/auth/password/change` changes only the caller's password after current-password verification |
-| User management | System Admin only: `GET /api/users`, `/api/users/{id}`, `GET /api/roles`, `POST /api/users`, `PUT /api/users/{id}`, `PATCH /api/users/{id}/status`, `PUT /api/users/{id}/role` |
+| User management | System Admin only: `GET /api/users`, `/api/users/{id}`, `GET /api/roles`, `POST /api/users`, `PUT /api/users/{id}`, `PATCH /api/users/{id}/status`, `PUT /api/users/{id}/role`. *(Scheduler branch: the machine role `SYSTEM_SCHEDULER` and its user are hidden from `GET /api/roles`, `GET /api/users` and `GET /api/users/{id}` (404), cannot be modified or assigned, and cannot log in; expect no such entry in lists.)* |
 | Create User | Admin invitation; user remains pending until `/api/auth/activate` succeeds |
 | Edit User | Only name can be changed through current PUT; no email/password edit |
 | Account activation | `/api/auth/activate` invitation flow or successful self-registration completion; no manual OTP bypass |
