@@ -17,4 +17,4 @@ Migration vật lý do Flyway quản lý; Hibernate chỉ validate schema. Tài 
 
 [README F01 ban đầu](docs/archive/F01/ROOT_README_BASELINE.md) được giữ nguyên như hồ sơ lịch sử.
 
-Docker Linux: xem [SPMF runtime và cách build image](docs/setup/F05_SPMF_RUNTIME_SETUP.md#linux-docker-image-working-tree-acceptance-pending). Scheduler vẫn trả 503 khi bật và bộ phát (dispatcher) mặc định tắt; xem [báo cáo sẵn sàng phát hành Core](docs/reports/F03_F05_CORE_RELEASE_READINESS_2026-11-02.md).
+Docker Linux: xem [SPMF runtime và cách build image](docs/setup/F05_SPMF_RUNTIME_SETUP.md#linux-docker-image-on-dev-production-acceptance-pending). Scheduler vẫn trả 503 khi bật và bộ phát (dispatcher) mặc định tắt; xem [báo cáo sẵn sàng phát hành Core](docs/reports/F03_F05_CORE_RELEASE_READINESS_2026-11-02.md).

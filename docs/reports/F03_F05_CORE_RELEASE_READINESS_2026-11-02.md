@@ -1,5 +1,7 @@
 # F03 / F05 Core release readiness — 2026-11-02
 
+> **Post-merge note (2026-11-02).** This document describes the state at the Core release candidate. The branch was merged into `dev` as PR #11 (`11973a0`); the Backend source tree on `dev` is identical to the verified commit `a4f1115`. Statements below such as "not pushed" or "GitHub CI NOT_RUN" describe the time of writing; the GitHub results of PR #11 were not inspected afterwards.
+
 **Result: CORE_RELEASE_READY as a candidate for a Draft PR** (local verification complete on commit `45dbd80` plus the documentation commit that follows it). **Merge is not established**: GitHub CI has not been run (the branch is not pushed and `gh` is not installed on this host), no human review exists, and the Product Owner decisions D1–D10 are open. This is not "Option B complete".
 
 Branch `Khoi/feat/f03-f05-admin-mining`; `origin/dev` = `6d91215` (already contained in the branch since merge `caa54b4`; fetched again 2026-11-02, no newer commit). The diagram work lives on `Khoi/docs/diagrams-27-uml2-f03-f05-sync` (`ae55fd9`) and is **not** part of this release.

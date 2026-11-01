@@ -1,4 +1,4 @@
-> **Status 2026-11-02 — branch `Khoi/feat/f03-f05-admin-mining`, not yet merged into `dev`.** Verified surface: see [OPTION_B_BACKEND_API_HANDOFF.md](OPTION_B_BACKEND_API_HANDOFF.md) (status table and the per-flow readiness table in its section 12). Closed by design: the five System Admin Store-read routes (403 until decision D1, per group) and schedule activation (503). This file explains how to build the F05 screens; the route/role truth is [F05_MINING_API.md](../api/F05_MINING_API.md).
+> **Status 2026-11-02 — F03/F05 Core is merged into `dev` (PR #11, `11973a0`).** Verified surface: see [OPTION_B_BACKEND_API_HANDOFF.md](OPTION_B_BACKEND_API_HANDOFF.md) (status table and the per-flow readiness table in its section 12). Closed by design: the five System Admin Store-read routes (403 until decision D1, per group) and schedule activation (503). This file explains how to build the F05 screens; the route/role truth is [F05_MINING_API.md](../api/F05_MINING_API.md).
 
 # F05 Mining — Frontend Integration Handoff
 

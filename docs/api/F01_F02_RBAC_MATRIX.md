@@ -4,7 +4,7 @@
 
 # F01 / F02 / F03 / F05 / F06 RBAC Matrix
 
-Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and feature service/repository checks (updated 2026-10-23 for F06; F05 rows added 2026-11-02 and generated from the runtime OpenAPI, effective rules checked by `F03F05RbacMatrixTest`). “Public” means the Spring security route is explicitly permitted; “authenticated” requires a valid active bearer token. An authenticated-but-wrong role is 403. Store-scoped foreign or absent resources are hidden as 404 after the controller role gate.
+Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and feature service/repository checks (updated 2026-10-23 for F06; F05 rows added 2026-11-02 and generated from the runtime OpenAPI; F04 rows added 2026-11-02 from the controller annotations and `F04_TRANSACTION_API.md`, effective rules checked by `F03F05RbacMatrixTest`). “Public” means the Spring security route is explicitly permitted; “authenticated” requires a valid active bearer token. An authenticated-but-wrong role is 403. Store-scoped foreign or absent resources are hidden as 404 after the controller role gate.
 
 | Feature | Endpoint | System Admin | Store Admin | Merchandiser | End Customer |
 |---|---|---|---|---|---|
@@ -60,6 +60,12 @@ Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and fea
 | F03 Snapshot matrix | GET `/api/utility/snapshots/{id}/matrix` | Forbidden | Forbidden | Allowed, own Store; foreign snapshot→404 | Forbidden |
 | F03 Independent expiry pushes | GET `/api/utility/expiry-push-batches` | Forbidden | Allowed, own Store | Allowed, own Store | Forbidden |
 | F03 Snapshot history list | GET `/api/utility/snapshots` | NOT IMPLEMENTED | NOT IMPLEMENTED | NOT IMPLEMENTED | NOT IMPLEMENTED |
+| F04 CSV import | POST `/api/transactions/imports/csv` | Forbidden | Allowed, own Store (multipart `file`) | Forbidden | Forbidden |
+| F04 Import list | GET `/api/transactions/imports` | Forbidden | Allowed, own Store | Allowed, own Store | Forbidden |
+| F04 Import detail | GET `/api/transactions/imports/{id}` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign→404 | Forbidden |
+| F04 Import errors | GET `/api/transactions/imports/{id}/errors` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign→404 | Forbidden |
+| F04 Transaction list | GET `/api/transactions` | Forbidden | Allowed, own Store | Allowed, own Store | Forbidden |
+| F04 Transaction detail | GET `/api/transactions/{id}` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign→404 | Forbidden |
 | F05 | GET `/api/mining/requests` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign→404 | Forbidden |
 | F05 | POST `/api/mining/requests` | Forbidden (`denyAll`) | Forbidden (`denyAll`) | Forbidden (`denyAll`) | Forbidden (`denyAll`) |
 | F05 | GET `/api/mining/requests/{id}` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign→404 | Forbidden |
@@ -119,7 +125,7 @@ Integration-ready: F01 password/OTP/user APIs and F02 all 15 operations. Google 
 | F05 | 23 | 23 | 16 open to integration; 5 System Admin Store reads gated (D1, 403), 2 legacy routes forbidden | Mining execution requires the configured SPMF runtime; schedule activation returns 503 | Store list for System Admin (D2), recurring scheduling |
 | F06 | 8 | 8 | 8 (backend handoff) | Generation requires a completed own-Store F05 run; expiry-push is independent of Mining | frontend implementation, scheduling, reservation, campaign/publication workflows |
 
-“Contract verified” means route, method, request/response model and security declaration were compared with the maintained OpenAPI plus controller/service source. Existing MockMvc tests cover F01 authentication/OTP/invite/password change/token revocation and F02 CRUD/Store isolation/summary. F06's recorded verification is in [F06_VERIFICATION.md](../requirements/F06_VERIFICATION.md); its 27 Swagger UI cases are recorded evidence, not a new UI execution in this documentation update. Current v1.2 verification ran `mvn -Dpaspm.avatar.directory=/tmp/paspm-test-avatars -Dpaspm.v12.export-dir=/tmp/paspm-v12-examples verify`; see its report for actual results. Historical baseline coverage counts below are not new interactive-execution claims.
+“Contract verified” means route, method, request/response model and security declaration were compared with the maintained OpenAPI plus controller/service source. Existing MockMvc tests cover F01 authentication/OTP/invite/password change/token revocation and F02 CRUD/Store isolation/summary. F06's recorded verification is in [F06_VERIFICATION.md](../testing/reports/F06_VERIFICATION.md); its 27 Swagger UI cases are recorded evidence, not a new UI execution in this documentation update. Current v1.2 verification ran `mvn -Dpaspm.avatar.directory=/tmp/paspm-test-avatars -Dpaspm.v12.export-dir=/tmp/paspm-v12-examples verify`; see its report for actual results. Historical baseline coverage counts below are not new interactive-execution claims.
 
 F03 v1.2 contains12 operations including the independent Store-scoped expiry-push query. F04_DATABASE_V1 is connected to persisted validated transaction data; the older unimplemented-provider limitation no longer applies. New Preview/Snapshot use Product-level binary expiry and frozen evidence; old snapshots remain readable. F05 provides eight Store-scoped mining operations. F06 provides eight Store-scoped recommendation operations; Merchandiser generates/reviews, Store Admin manages policy, both read own-Store recommendations, and System Admin/End Customer are denied. F06's expiry-push endpoint does not depend on Mining. Frontend integration remains unrun; see the F06 verification report for its separate execution channels and limitations.
 

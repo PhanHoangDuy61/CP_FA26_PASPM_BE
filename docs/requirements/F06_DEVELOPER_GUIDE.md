@@ -11,9 +11,9 @@ The implementation report records 210 automated tests and 27 Swagger UI cases as
 1. [F06 rules v1.1](F06_RECOMMENDATION_RULES_v1_1.md) — approved business semantics, thresholds, evidence, ranking and review rules.
 2. [F06 API contract](../api/F06_RECOMMENDATION_API.md) — exact routes, DTOs, nullability, validation, authorization and error behavior.
 3. [F06 frontend handoff](../frontend_handoff/F06_HANDOFF.md) — UI flow, examples, role behavior and client safety requirements.
-4. [F05 to F06 handoff](../PASPM_F05_High_Utility_Mining/F05_F06_HANDOFF.md) — raw mining pattern semantics and provenance available to F06.
+4. [F05 to F06 handoff](../features/F05/reference/F05_F06_HANDOFF.md) — raw mining pattern semantics and provenance available to F06.
 5. [F03/F05/F06 integration contract](../api/F03_V12_F05_F06_INTEGRATION.md) — frozen utility snapshots and independent expiry-push boundary.
-6. [F06 verification report](F06_VERIFICATION.md) and [implementation summary](F06_IMPLEMENTATION_SUMMARY.md) — recorded implementation and test evidence.
+6. [F06 verification report](../testing/reports/F06_VERIFICATION.md) and [implementation summary](../features/F06/F06_IMPLEMENTATION_SUMMARY.md) — recorded implementation and test evidence.
 
 Use the API contract and approved rules as the behavioral source of truth. The implementation-readiness audit is historical; its old `NOT IMPLEMENTED` labels predate the code now on `dev`.
 
