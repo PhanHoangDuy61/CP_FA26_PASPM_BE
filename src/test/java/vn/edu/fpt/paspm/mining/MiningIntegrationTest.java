@@ -49,7 +49,7 @@ class MiningIntegrationTest {
     @Autowired MiningOccurrenceLease occurrenceLeases;
     @Autowired MiningOccurrenceProcessor occurrenceProcessor;
     @Test void pollDiscoversPendingOccurrenceAndEventuallyCompletes() throws Exception {
-        int actor=jdbc.queryForObject("SELECT MAX(u.user_id) FROM app_user u JOIN role r ON r.role_id=u.role_id WHERE r.code='SYSTEM_ADMIN'",Integer.class);
+        int actor=jdbc.queryForObject("SELECT u.user_id FROM app_user u JOIN role r ON r.role_id=u.role_id WHERE r.code='SYSTEM_SCHEDULER'",Integer.class); // D9: occurrences run as the scheduler principal
         long version=jdbc.queryForObject("SELECT config_version FROM mining_config_head WHERE config_id=1",Long.class);
         jdbc.update("INSERT INTO mining_schedule(store_id,created_by,updated_by,frequency,day_of_week,local_time,time_zone,lookback_days,enabled) VALUES (?,?,?,'WEEKLY',1,'09:00','Asia/Ho_Chi_Minh',7,TRUE)",store,actor,actor);
         long schedule=jdbc.queryForObject("SELECT MAX(schedule_id) FROM mining_schedule",Long.class);
@@ -62,7 +62,7 @@ class MiningIntegrationTest {
         assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM mining_request WHERE store_id=?",Integer.class,store));
     }
     @Test void dispatcherCreatesFreshSnapshotAndReconcilesCompletedRequest() throws Exception {
-        int actor=jdbc.queryForObject("SELECT MAX(u.user_id) FROM app_user u JOIN role r ON r.role_id=u.role_id WHERE r.code='SYSTEM_ADMIN'",Integer.class);
+        int actor=jdbc.queryForObject("SELECT u.user_id FROM app_user u JOIN role r ON r.role_id=u.role_id WHERE r.code='SYSTEM_SCHEDULER'",Integer.class); // D9: occurrences run as the scheduler principal
         long version=jdbc.queryForObject("SELECT config_version FROM mining_config_head WHERE config_id=1",Long.class);
         jdbc.update("INSERT INTO mining_schedule(store_id,created_by,updated_by,frequency,day_of_week,local_time,time_zone,lookback_days,enabled) VALUES (?,?,?,'WEEKLY',1,'09:00','Asia/Ho_Chi_Minh',7,TRUE)",store,actor,actor);
         long schedule=jdbc.queryForObject("SELECT MAX(schedule_id) FROM mining_schedule",Long.class);
@@ -83,8 +83,53 @@ class MiningIntegrationTest {
         assertEquals("COMPLETED",jdbc.queryForObject("SELECT status FROM mining_schedule_occurrence WHERE occurrence_id=?",String.class,occurrence));
         assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM mining_request WHERE store_id=?",Integer.class,store));
     }
+    // D8 (confirmed 2026-11-02): once the Mining Request has committed it finishes, whatever happens to the schedule or the policy afterwards
+    long stageOccurrence() {
+        int actor=jdbc.queryForObject("SELECT u.user_id FROM app_user u JOIN role r ON r.role_id=u.role_id WHERE r.code='SYSTEM_SCHEDULER'",Integer.class);
+        long version=jdbc.queryForObject("SELECT config_version FROM mining_config_head WHERE config_id=1",Long.class);
+        jdbc.update("INSERT INTO mining_schedule(store_id,created_by,updated_by,frequency,day_of_week,local_time,time_zone,lookback_days,enabled) VALUES (?,?,?,'WEEKLY',1,'09:00','Asia/Ho_Chi_Minh',7,TRUE)",store,actor,actor);
+        long schedule=jdbc.queryForObject("SELECT MAX(schedule_id) FROM mining_schedule",Long.class);
+        jdbc.update("INSERT INTO mining_schedule_occurrence(schedule_id,store_id,scheduled_at,schedule_version,config_version,request_key,status,actor_id,range_start,range_end,analysis_date,time_zone,compare_algorithms) VALUES (?,?,CURRENT_TIMESTAMP,1,?,?,'PENDING',?,'2026-10-19','2026-10-19','2026-10-20','Asia/Ho_Chi_Minh',FALSE)",schedule,store,version,UUID.randomUUID().toString(),actor);
+        return jdbc.queryForObject("SELECT MAX(occurrence_id) FROM mining_schedule_occurrence",Long.class);
+    }
+    @Test void disablingTheScheduleAndChangingThePolicyAfterTheRequestCommittedDoesNotStopOrAlterIt() throws Exception {
+        long occurrence=stageOccurrence();
+        long version=jdbc.queryForObject("SELECT config_version FROM mining_config_head WHERE config_id=1",Long.class);
+        long schedule=jdbc.queryForObject("SELECT schedule_id FROM mining_schedule_occurrence WHERE occurrence_id=?",Long.class,occurrence);
+        occurrenceDispatcher.poll();
+        var committed=jdbc.queryForMap("SELECT request_id,status FROM mining_schedule_occurrence WHERE occurrence_id=?",occurrence);
+        assertEquals("DISPATCHED",committed.get("status"));
+        long request=((Number)committed.get("request_id")).longValue();
+        jdbc.update("UPDATE mining_schedule SET enabled=FALSE,next_fire_at=NULL,schedule_version=schedule_version+1 WHERE schedule_id=?",schedule);
+        configure(77);
+        assertTrue(jdbc.queryForObject("SELECT config_version FROM mining_config_head WHERE config_id=1",Long.class)>version);
+        await(request);occurrenceDispatcher.reconcile();
+        var finished=jdbc.queryForMap("SELECT status,failure_code,failure_message,config_version,schedule_version FROM mining_schedule_occurrence WHERE occurrence_id=?",occurrence);
+        assertEquals("COMPLETED",finished.get("status"),"the committed request ran to completion although the schedule was disabled meanwhile");
+        assertNull(finished.get("failure_code"));assertNull(finished.get("failure_message"));
+        assertEquals(version,((Number)finished.get("config_version")).longValue());
+        assertEquals(version,jdbc.queryForObject("SELECT config_version FROM mining_request WHERE request_id=?",Long.class,request),"the request keeps the policy it was created under");
+        assertEquals(1L,((Number)finished.get("schedule_version")).longValue());
+        assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM mining_request WHERE store_id=?",Integer.class,store));
+    }
+    @Test void aReplayedOccurrenceThatAlreadyOwnsItsRequestIsLinkedAgainEvenWhileTheScheduleIsDisabled() throws Exception {
+        long occurrence=stageOccurrence();
+        long schedule=jdbc.queryForObject("SELECT schedule_id FROM mining_schedule_occurrence WHERE occurrence_id=?",Long.class,occurrence);
+        occurrenceDispatcher.poll();
+        long request=jdbc.queryForObject("SELECT request_id FROM mining_schedule_occurrence WHERE occurrence_id=?",Long.class,occurrence);
+        // a crash between the request commit and the last bookkeeping step leaves the lease behind
+        jdbc.update("UPDATE mining_schedule_occurrence SET status='PROCESSING',lease_owner='crashed-owner',lease_until=TIMESTAMPADD(SECOND,-5,CURRENT_TIMESTAMP),attempt_count=1 WHERE occurrence_id=?",occurrence);
+        jdbc.update("UPDATE mining_schedule SET enabled=FALSE,next_fire_at=NULL,schedule_version=schedule_version+1 WHERE schedule_id=?",schedule);
+        occurrenceDispatcher.poll();
+        var row=jdbc.queryForMap("SELECT status,request_id FROM mining_schedule_occurrence WHERE occurrence_id=?",occurrence);
+        assertEquals("DISPATCHED",row.get("status"));
+        assertEquals(request,((Number)row.get("request_id")).longValue(),"no second request is created");
+        assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM mining_request WHERE store_id=?",Integer.class,store));
+        await(request);occurrenceDispatcher.reconcile();
+        assertEquals("COMPLETED",jdbc.queryForObject("SELECT status FROM mining_schedule_occurrence WHERE occurrence_id=?",String.class,occurrence));
+    }
     @Test void occurrenceCreatesFreshSnapshotOnceWithNewTransactions() throws Exception {
-        int actor=jdbc.queryForObject("SELECT MAX(u.user_id) FROM app_user u JOIN role r ON r.role_id=u.role_id WHERE r.code='SYSTEM_ADMIN'",Integer.class);
+        int actor=jdbc.queryForObject("SELECT u.user_id FROM app_user u JOIN role r ON r.role_id=u.role_id WHERE r.code='SYSTEM_SCHEDULER'",Integer.class); // D9: occurrences run as the scheduler principal
         long version=jdbc.queryForObject("SELECT config_version FROM mining_config_head WHERE config_id=1",Long.class);
         jdbc.update("INSERT INTO mining_schedule(store_id,created_by,updated_by,frequency,day_of_week,local_time,time_zone,lookback_days,enabled) VALUES (?,?,?,'WEEKLY',1,'09:00','Asia/Ho_Chi_Minh',7,TRUE)",store,actor,actor);
         long schedule=jdbc.queryForObject("SELECT MAX(schedule_id) FROM mining_schedule",Long.class);

@@ -33,7 +33,7 @@ public class MiningScheduleController {
     public record Update(@NotNull @Valid Request schedule,@NotNull Boolean enabled,@NotNull @Min(1) Long expectedVersion) {}
     public record OccurrenceView(long occurrenceId,long scheduleId,int storeId,Instant scheduledAt,long scheduleVersion,
         long configVersion,Integer actorId,LocalDate rangeStart,LocalDate rangeEnd,LocalDate analysisDate,String timeZone,
-        Boolean compareAlgorithms,Integer snapshotId,Long requestId,String status,String failureCode,int attemptCount,Instant nextRetryAt,Instant createdAt,Instant updatedAt) {}
+        Boolean compareAlgorithms,Integer snapshotId,Long requestId,@Schema(allowableValues={"PENDING","PROCESSING","DISPATCHED","COMPLETED","FAILED","SKIPPED"}) String status,String failureCode,@Schema(description="Actionable final cause of a FAILED occurrence (decision D7); null otherwise.",nullable=true) String failureMessage,@Schema(description="Set only for SKIPPED: a missed fire time superseded by a later one (decision D6).",nullable=true) String skipReason,int attemptCount,Instant nextRetryAt,Instant createdAt,Instant updatedAt) {}
     @PostMapping @ResponseStatus(HttpStatus.CREATED)
     public View create(@AuthenticationPrincipal Jwt jwt,@Valid @RequestBody Request request){return service.create(jwt,request);}
     @GetMapping

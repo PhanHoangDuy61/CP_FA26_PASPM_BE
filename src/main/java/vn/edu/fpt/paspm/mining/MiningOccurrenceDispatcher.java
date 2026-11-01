@@ -27,22 +27,28 @@ public class MiningOccurrenceDispatcher {
     public MiningOccurrenceDispatcher(JdbcTemplate jdbc,MiningScheduleReservation reservation,MiningOccurrenceLease leases,MiningOccurrenceProcessor processor,@Value("${paspm.mining.schedule-dispatch-enabled:false}") boolean enabled){this.jdbc=jdbc;this.reservation=reservation;this.leases=leases;this.processor=processor;this.enabled=enabled;}
     @EventListener(ApplicationReadyEvent.class) public void start(){if(enabled&&started.compareAndSet(false,true))poller.scheduleWithFixedDelay(this::poll,0,5,TimeUnit.SECONDS);}
     void poll(){
-        try {for(int i=0;i<5;i++)if(reservation.reserveOne(Instant.now()).isEmpty())break;}
+        try {for(int i=0;i<5;i++)if(!reservation.reserve(Instant.now()).progressed())break;}
         catch(Exception e){log.warn("Scheduled occurrence reservation failed; next poll will retry",e);}
         try {
-            jdbc.update("UPDATE mining_schedule_occurrence SET status='FAILED',failure_code='RETRY_EXHAUSTED',lease_owner=NULL,lease_until=NULL,updated_at=CURRENT_TIMESTAMP WHERE status='PROCESSING' AND lease_owner IS NOT NULL AND lease_until<=CURRENT_TIMESTAMP AND attempt_count>=?",MiningOccurrenceLease.MAX_ATTEMPTS);
+            jdbc.update("UPDATE mining_schedule_occurrence SET status='FAILED',failure_code='RETRY_EXHAUSTED',failure_message='Lease expired on the final attempt',lease_owner=NULL,lease_until=NULL,updated_at=CURRENT_TIMESTAMP WHERE status='PROCESSING' AND lease_owner IS NOT NULL AND lease_until<=CURRENT_TIMESTAMP AND attempt_count>=?",MiningOccurrenceLease.MAX_ATTEMPTS);
             var candidates=jdbc.queryForList("SELECT occurrence_id FROM mining_schedule_occurrence WHERE attempt_count<? AND ((status='PENDING' AND (next_retry_at IS NULL OR next_retry_at<=CURRENT_TIMESTAMP)) OR (status='PROCESSING' AND lease_owner IS NOT NULL AND lease_until<=CURRENT_TIMESTAMP)) ORDER BY occurrence_id LIMIT 5",Long.class,MiningOccurrenceLease.MAX_ATTEMPTS);
             for(long id:candidates){
                 var claim=leases.claim(id,owner);if(claim.isEmpty())continue;
                 try{processor.process(claim.get());}
-                catch(Exception e){boolean retry=e instanceof TransientDataAccessException || e instanceof ApiException api && api.status()>=500;String code=retry?"RETRYABLE_FAILURE":e instanceof ApiException api?"HTTP_"+api.status():"PROCESSING_FAILED";leases.fail(claim.get(),code,retry);log.warn("Scheduled occurrence {} failed; retryable={}",id,retry,e);}
+                catch(Exception e){boolean retry=e instanceof TransientDataAccessException || e instanceof ApiException api && api.status()>=500;String code=retry?"RETRYABLE_FAILURE":e instanceof ApiException api?"HTTP_"+api.status():"PROCESSING_FAILED";leases.fail(claim.get(),code,retry,visibleMessage(e));log.warn("Scheduled occurrence {} failed; retryable={}",id,retry,e);}
             }
         } catch(Exception e){log.warn("Scheduled occurrence dispatch failed; next poll will retry",e);}
         try{reconcile();}catch(Exception e){log.warn("Scheduled occurrence reconciliation failed; next poll will retry",e);}
     }
+    /** Administrator-visible cause: curated API messages as written, anything else only as a class name (details stay in the server log). */
+    static String visibleMessage(Exception e){
+        if(e instanceof ApiException api)return api.getMessage();
+        if(e instanceof TransientDataAccessException)return "Temporary database error";
+        return "Unexpected error ("+e.getClass().getSimpleName()+"); see the server log";
+    }
     void reconcile(){
         var ids=jdbc.queryForList("SELECT o.occurrence_id FROM mining_schedule_occurrence o JOIN mining_request r ON r.request_id=o.request_id AND r.store_id=o.store_id WHERE o.status='DISPATCHED' AND r.status IN ('COMPLETED','FAILED') ORDER BY o.occurrence_id LIMIT 100",Long.class);
-        for(long id:ids)jdbc.update("UPDATE mining_schedule_occurrence SET status=(SELECT CASE WHEN r.status='COMPLETED' THEN 'COMPLETED' ELSE 'FAILED' END FROM mining_request r WHERE r.request_id=mining_schedule_occurrence.request_id AND r.store_id=mining_schedule_occurrence.store_id),failure_code=(SELECT CASE WHEN r.status='FAILED' THEN 'MINING_FAILED' ELSE NULL END FROM mining_request r WHERE r.request_id=mining_schedule_occurrence.request_id AND r.store_id=mining_schedule_occurrence.store_id),updated_at=CURRENT_TIMESTAMP WHERE occurrence_id=? AND status='DISPATCHED' AND EXISTS (SELECT 1 FROM mining_request r WHERE r.request_id=mining_schedule_occurrence.request_id AND r.store_id=mining_schedule_occurrence.store_id AND r.status IN ('COMPLETED','FAILED'))",id);
+        for(long id:ids)jdbc.update("UPDATE mining_schedule_occurrence SET status=(SELECT CASE WHEN r.status='COMPLETED' THEN 'COMPLETED' ELSE 'FAILED' END FROM mining_request r WHERE r.request_id=mining_schedule_occurrence.request_id AND r.store_id=mining_schedule_occurrence.store_id),failure_code=(SELECT CASE WHEN r.status='FAILED' THEN 'MINING_FAILED' ELSE NULL END FROM mining_request r WHERE r.request_id=mining_schedule_occurrence.request_id AND r.store_id=mining_schedule_occurrence.store_id),failure_message=(SELECT CASE WHEN r.status='FAILED' THEN COALESCE((SELECT x.failure_message FROM mining_run x WHERE x.request_id=r.request_id AND x.store_id=r.store_id AND x.status='FAILED' ORDER BY x.run_id LIMIT 1),'Mining request failed') ELSE NULL END FROM mining_request r WHERE r.request_id=mining_schedule_occurrence.request_id AND r.store_id=mining_schedule_occurrence.store_id),updated_at=CURRENT_TIMESTAMP WHERE occurrence_id=? AND status='DISPATCHED' AND EXISTS (SELECT 1 FROM mining_request r WHERE r.request_id=mining_schedule_occurrence.request_id AND r.store_id=mining_schedule_occurrence.store_id AND r.status IN ('COMPLETED','FAILED'))",id);
     }
     @PreDestroy public void close(){poller.shutdownNow();}
 }

@@ -55,7 +55,11 @@ public class UserController {
     @Operation(summary = "Xem tài khoản", description = "SYSTEM_ADMIN: trả thông tin tài khoản theo ID.")
     @GetMapping("/api/users/{id}")
     public UserView getUser(@PathVariable int id) {
-        return userRepository.findById(id).view();
+        var user = userRepository.findById(id);
+        if (UserRepository.SYSTEM_PRINCIPAL_ROLE.equals(user.role())) {
+            throw new vn.edu.fpt.paspm.common.ApiException(404, "User not found");
+        }
+        return user.view();
     }
 
     @Operation(

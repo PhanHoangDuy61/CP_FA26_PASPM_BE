@@ -34,7 +34,9 @@ class MiningScheduleReservationTest {
         var row=jdbc.queryForMap("SELECT * FROM mining_schedule_occurrence WHERE schedule_id=?",schedule);
         assertEquals(store,((Number)row.get("store_id")).intValue());
         assertEquals(1L,((Number)row.get("config_version")).longValue());
-        assertEquals(actor,((Number)row.get("actor_id")).intValue());
+        int scheduler=jdbc.queryForObject("SELECT u.user_id FROM app_user u JOIN role r ON r.role_id=u.role_id WHERE r.code='SYSTEM_SCHEDULER'",Integer.class);
+        assertEquals(scheduler,((Number)row.get("actor_id")).intValue(),"D9: executed as the scheduler principal");
+        assertNotEquals(actor,((Number)row.get("actor_id")).intValue(),"not the System Admin who edited the schedule");
         assertEquals("2026-10-26",row.get("range_start").toString());
         assertEquals("2026-11-01",row.get("range_end").toString());
         assertEquals("2026-11-02",row.get("analysis_date").toString());

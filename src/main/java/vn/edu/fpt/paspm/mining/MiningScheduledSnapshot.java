@@ -19,8 +19,8 @@ import vn.edu.fpt.paspm.utility.UtilityTimeZone;
 @Service
 public class MiningScheduledSnapshot {
     private final JdbcTemplate jdbc;private final UtilitySettingsRepository settings;private final UtilityMatrixBuilder builder;
-    private final UtilitySnapshotRepository snapshots;private final UtilityTimeZone timeZone;private final TransactionTemplate transaction;
-    public MiningScheduledSnapshot(JdbcTemplate jdbc,UtilitySettingsRepository settings,UtilityMatrixBuilder builder,UtilitySnapshotRepository snapshots,UtilityTimeZone timeZone,PlatformTransactionManager manager){this.jdbc=jdbc;this.settings=settings;this.builder=builder;this.snapshots=snapshots;this.timeZone=timeZone;this.transaction=new TransactionTemplate(manager);this.transaction.setIsolationLevel(TransactionDefinition.ISOLATION_REPEATABLE_READ);}
+    private final UtilitySnapshotRepository snapshots;private final UtilityTimeZone timeZone;private final SchedulerPrincipal principal;private final TransactionTemplate transaction;
+    public MiningScheduledSnapshot(JdbcTemplate jdbc,UtilitySettingsRepository settings,UtilityMatrixBuilder builder,UtilitySnapshotRepository snapshots,UtilityTimeZone timeZone,SchedulerPrincipal principal,PlatformTransactionManager manager){this.jdbc=jdbc;this.settings=settings;this.builder=builder;this.snapshots=snapshots;this.timeZone=timeZone;this.principal=principal;this.transaction=new TransactionTemplate(manager);this.transaction.setIsolationLevel(TransactionDefinition.ISOLATION_REPEATABLE_READ);}
     private record Occurrence(int store,int actor,long version,String status,Integer snapshot,LocalDate start,LocalDate end,LocalDate date,String zone) {}
     public int prepare(long occurrenceId){
         var scheduleId=jdbc.query("SELECT schedule_id FROM mining_schedule_occurrence WHERE occurrence_id=?",(r,n)->r.getLong(1),occurrenceId).stream().findFirst().orElseThrow(()->new ApiException(404,"Occurrence not found"));
@@ -38,8 +38,7 @@ public class MiningScheduledSnapshot {
         if(row.snapshot()!=null){if(snapshots.find(row.store(),row.snapshot())==null)throw new ApiException(409,"Occurrence snapshot unavailable");return row.snapshot();}
         if(row.actor()<=0||row.start()==null||row.end()==null||row.date()==null||row.start().isAfter(row.end()))throw new ApiException(409,"Occurrence context unavailable");
         if(!timeZone.id().equals(row.zone()))throw new ApiException(409,"Occurrence time zone differs from the Store calendar zone "+timeZone.id());
-        int active=jdbc.queryForObject("SELECT COUNT(*) FROM app_user u JOIN role r ON r.role_id=u.role_id WHERE u.user_id=? AND u.status='ACTIVE' AND r.code='SYSTEM_ADMIN'",Integer.class,row.actor());
-        if(active!=1)throw new ApiException(403,"Schedule owner unavailable");
+        principal.require(row.actor());
         var policy=settings.policy(true);var config=settings.config(row.store(),true);
         UtilityConfigurationService.requireLambda(config.lambda(),policy,409);
         var range=new RangeRequest(row.start(),row.end(),row.date());

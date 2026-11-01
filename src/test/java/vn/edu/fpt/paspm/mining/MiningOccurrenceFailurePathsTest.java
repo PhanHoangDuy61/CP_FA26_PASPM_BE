@@ -17,7 +17,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * Drives the real occurrence pipeline deterministically through {@code MiningOccurrenceDispatcher.poll()} with the
  * dispatcher flag OFF (so no background thread runs). No SPMF runtime is configured, which makes the final submission
  * step fail with a retryable 503 after the F03 snapshot has been written inside the same transaction.
- * The expectations describe CURRENT behaviour (policies D6–D8 are not approved) and the technical guarantees that hold
+ * The expectations follow the confirmed decisions D3 and D7–D9 and the technical guarantees that hold
  * for every policy: failure classification, durable retry state, no orphan snapshot and no partial request.
  */
 @SpringBootTest(properties = {
@@ -46,7 +46,12 @@ class MiningOccurrenceFailurePathsTest {
         }
     }
 
-    Fixture fixture(boolean withTransactions, String actorStatus) {
+    int schedulerPrincipal() { return jdbc.queryForObject("SELECT u.user_id FROM app_user u JOIN role r ON r.role_id=u.role_id WHERE r.code='SYSTEM_SCHEDULER'", Integer.class); }
+
+    Fixture fixture(boolean withTransactions, String actorStatus) { return fixture(withTransactions, actorStatus, -1); }
+
+    /** {@code occurrenceActor} -1: the scheduler principal (D9); otherwise that user id. The schedule's creator and updater is a human System Admin with {@code actorStatus}. */
+    Fixture fixture(boolean withTransactions, String actorStatus, int occurrenceActor) {
         jdbc.update("INSERT INTO store(name) VALUES (?)", "OccFail " + UUID.randomUUID());
         int store = jdbc.queryForObject("SELECT MAX(store_id) FROM store", Integer.class);
         int actor = actor(actorStatus);
@@ -68,7 +73,7 @@ class MiningOccurrenceFailurePathsTest {
             store, actor, actor, Timestamp.from(Instant.parse("2100-01-01T00:00:00Z")));
         long schedule = jdbc.queryForObject("SELECT MAX(schedule_id) FROM mining_schedule", Long.class);
         jdbc.update("INSERT INTO mining_schedule_occurrence(schedule_id,store_id,scheduled_at,schedule_version,config_version,request_key,status,actor_id,range_start,range_end,analysis_date,time_zone,compare_algorithms) VALUES(?,?,?,1,1,?,'PENDING',?,?,?,?,'Asia/Ho_Chi_Minh',FALSE)",
-            schedule, store, Timestamp.from(Instant.parse("2026-11-02T02:00:00Z")), UUID.randomUUID().toString(), actor, today, today, today.plusDays(1));
+            schedule, store, Timestamp.from(Instant.parse("2026-11-02T02:00:00Z")), UUID.randomUUID().toString(), occurrenceActor == -1 ? schedulerPrincipal() : occurrenceActor, today, today, today.plusDays(1));
         long occurrence = jdbc.queryForObject("SELECT MAX(occurrence_id) FROM mining_schedule_occurrence", Long.class);
         return new Fixture(store, actor, schedule, occurrence);
     }
@@ -92,17 +97,30 @@ class MiningOccurrenceFailurePathsTest {
         assertEquals(1, ((Number) r.get("attempt_count")).intValue());
         assertNull(r.get("next_retry_at"));
         assertNull(r.get("lease_owner"));
+        assertEquals("No eligible transaction items in the selected range", r.get("failure_message"), "D3/D7: an explicit, administrator-visible reason");
         assertNothingPersistedForTheStore(f);
         dispatcher.poll();
         assertEquals(1, ((Number) row(f.occurrence()).get("attempt_count")).intValue(), "a terminal occurrence is not attempted again");
     }
 
-    @Test void anInactiveScheduleOwnerIsRefusedAndNothingIsCreated() {
+    // D9: the executor is the scheduler principal, so a deactivated creator/updater no longer stops a reserved occurrence
+    @Test void aDeactivatedScheduleCreatorAndUpdaterDoNotBlockTheAutomaticRun() {
         var f = fixture(true, "INACTIVE");
+        dispatcher.poll();
+        var r = row(f.occurrence());
+        assertEquals("PENDING", r.get("status"), "reached the SPMF submission step (no runtime configured here) instead of failing on the owner");
+        assertEquals("RETRYABLE_FAILURE", r.get("failure_code"));
+        assertEquals(schedulerPrincipal(), ((Number) r.get("actor_id")).intValue());
+        assertNothingPersistedForTheStore(f);
+    }
+
+    @Test void anOccurrenceNamingAHumanActorIsRefusedBecauseOnlyTheSchedulerPrincipalMayRunIt() {
+        var f = fixture(true, "ACTIVE", actor("ACTIVE"));
         dispatcher.poll();
         var r = row(f.occurrence());
         assertEquals("FAILED", r.get("status"));
         assertEquals("HTTP_403", r.get("failure_code"));
+        assertTrue(((String) r.get("failure_message")).contains("scheduler principal"), (String) r.get("failure_message"));
         assertNothingPersistedForTheStore(f);
     }
 
@@ -147,6 +165,7 @@ class MiningOccurrenceFailurePathsTest {
         assertNull(r.get("lease_owner"));
         long delay1 = (((Timestamp) r.get("next_retry_at")).getTime() - System.currentTimeMillis()) / 1000;
         assertTrue(delay1 > 5 && delay1 <= 16, "first retry after about 15 s, was " + delay1);
+        assertNotNull(r.get("failure_message"), "the cause of the pending retry is visible");
         assertNothingPersistedForTheStore(f);
 
         dispatcher.poll();
@@ -165,6 +184,8 @@ class MiningOccurrenceFailurePathsTest {
         dispatcher.poll();
         r = row(f.occurrence());
         assertEquals("FAILED", r.get("status"), "the third failed attempt is terminal");
+        assertEquals("RETRY_EXHAUSTED", r.get("failure_code"));
+        assertTrue(((String) r.get("failure_message")).startsWith("Retries exhausted after 3 attempts: "), (String) r.get("failure_message"));
         assertEquals(3, ((Number) r.get("attempt_count")).intValue());
         assertNull(r.get("next_retry_at"));
         assertNothingPersistedForTheStore(f);

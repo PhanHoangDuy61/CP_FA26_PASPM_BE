@@ -1,7 +1,6 @@
 package vn.edu.fpt.paspm.mining;
 
 import java.time.Instant;
-import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -39,11 +38,11 @@ class MiningOccurrenceDispatcherFlagTest {
 
     @Test void enabledDispatcherPollsSoTheDisabledAssertionCanActuallyFail() {
         var reservation = Mockito.mock(MiningScheduleReservation.class);
-        when(reservation.reserveOne(any(Instant.class))).thenReturn(Optional.empty());
+        when(reservation.reserve(any(Instant.class))).thenReturn(new MiningScheduleReservation.Outcome(null, 0));
         var dispatcher = new MiningOccurrenceDispatcher(emptyDb(), reservation, null, null, true);
         try {
             dispatcher.start();
-            verify(reservation, timeout(3000).atLeastOnce()).reserveOne(any(Instant.class));
+            verify(reservation, timeout(3000).atLeastOnce()).reserve(any(Instant.class));
         } finally {
             dispatcher.close();
         }

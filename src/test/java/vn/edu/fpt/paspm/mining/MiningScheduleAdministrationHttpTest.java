@@ -178,6 +178,32 @@ class MiningScheduleAdministrationHttpTest {
         mvc.perform(get("/api/system/mining/schedules/" + id + "/occurrences").header("Authorization", "Bearer " + system)).andExpect(jsonPath("$.totalElements").value(1)).andExpect(jsonPath("$.items[0].status").value("FAILED"));
     }
 
+    // D6/D7: the history API tells an administrator what was skipped and why a run failed
+    @Test void occurrenceHistoryExposesSkippedReasonsAndFinalFailureMessages() throws Exception {
+        long id = create(weekly());
+        jdbc.update("INSERT INTO mining_config_version(config_version,algorithm,min_util_mode,min_util_value,changed_by) SELECT COALESCE(MAX(config_version),0)+1,'EFIM','ABSOLUTE',1,(SELECT MAX(user_id) FROM app_user) FROM mining_config_version");
+        long cfg = jdbc.queryForObject("SELECT MAX(config_version) FROM mining_config_version", Long.class);
+        jdbc.update("INSERT INTO mining_schedule_occurrence(schedule_id,store_id,scheduled_at,schedule_version,config_version,request_key,status,skip_reason) VALUES(?,?,TIMESTAMP '2026-10-26 02:00:00',1,?,?,'SKIPPED',?)", id, store, cfg, UUID.randomUUID().toString(), MiningScheduleReservation.SKIP_SUPERSEDED);
+        jdbc.update("INSERT INTO mining_schedule_occurrence(schedule_id,store_id,scheduled_at,schedule_version,config_version,request_key,status,failure_code,failure_message,attempt_count) VALUES(?,?,TIMESTAMP '2026-11-02 02:00:00',1,?,?,'FAILED','HTTP_400','No eligible transaction items in the selected range',1)", id, store, cfg, UUID.randomUUID().toString());
+        var history = json.readTree(mvc.perform(get("/api/system/mining/schedules/" + id + "/occurrences").header("Authorization", "Bearer " + system)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString());
+        assertEquals(2, history.path("totalElements").asInt());
+        var failed = history.path("items").get(0);
+        assertEquals("FAILED", failed.path("status").asText());
+        assertEquals("HTTP_400", failed.path("failureCode").asText());
+        assertEquals("No eligible transaction items in the selected range", failed.path("failureMessage").asText());
+        assertTrue(failed.path("skipReason").isNull());
+        var skipped = history.path("items").get(1);
+        assertEquals("SKIPPED", skipped.path("status").asText());
+        assertEquals(MiningScheduleReservation.SKIP_SUPERSEDED, skipped.path("skipReason").asText());
+        assertTrue(skipped.path("failureMessage").isNull());
+        assertTrue(skipped.path("snapshotId").isNull() && skipped.path("requestId").isNull());
+        long skippedId = skipped.path("occurrenceId").asLong();
+        mvc.perform(get("/api/system/mining/schedules/" + id + "/occurrences/" + skippedId).header("Authorization", "Bearer " + system))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.status").value("SKIPPED")).andExpect(jsonPath("$.skipReason").value(MiningScheduleReservation.SKIP_SUPERSEDED));
+        assertThrows(org.springframework.dao.DataIntegrityViolationException.class, () -> jdbc.update("UPDATE mining_schedule_occurrence SET skip_reason=NULL WHERE occurrence_id=?", skippedId), "a SKIPPED row always carries its reason");
+        assertThrows(org.springframework.dao.DataIntegrityViolationException.class, () -> jdbc.update("UPDATE mining_schedule_occurrence SET skip_reason='X' WHERE occurrence_id<>?", skippedId), "only SKIPPED rows may carry one");
+    }
+
     @Test void listAndHistoryPaginationBoundsAreEnforced() throws Exception {
         long id = create(weekly());
         for (String path : new String[] {"/api/system/mining/schedules", "/api/system/mining/schedules/" + id + "/occurrences"}) {

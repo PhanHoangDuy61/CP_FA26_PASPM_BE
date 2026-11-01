@@ -56,25 +56,6 @@ class MiningScheduleReservationScenariosTest {
     List<Map<String, Object>> occurrences(long schedule) { return jdbc.queryForList("SELECT * FROM mining_schedule_occurrence WHERE schedule_id=? ORDER BY scheduled_at", schedule); }
     Instant nextFire(long schedule) { return jdbc.queryForObject("SELECT next_fire_at FROM mining_schedule WHERE schedule_id=?", Timestamp.class, schedule).toInstant(); }
 
-    @Test void currentBehaviourCatchUpAfterDowntimeCreatesOneOccurrencePerMissedFireInOrderThenStops() {
-        base();
-        // weekly Monday 09:00 Asia/Ho_Chi_Minh (UTC+7 = 02:00Z); backend was down for five fires
-        long s = schedule("WEEKLY", 1, null, "09:00", "Asia/Ho_Chi_Minh", 7, true, Instant.parse("2026-10-05T02:00:00Z"));
-        Instant now = Instant.parse("2026-11-02T03:00:00Z");
-        List<Long> ids = new ArrayList<>();
-        for (int i = 0; i < 10; i++) { var id = reservation.reserveOne(now); if (id.isEmpty()) break; ids.add(id.get()); }
-        assertEquals(5, ids.size(), "Oct 5, 12, 19, 26 and Nov 2");
-        var rows = occurrences(s);
-        assertEquals(List.of("2026-10-05T02:00:00Z", "2026-10-12T02:00:00Z", "2026-10-19T02:00:00Z", "2026-10-26T02:00:00Z", "2026-11-02T02:00:00Z"),
-            rows.stream().map(r -> ((Timestamp) r.get("scheduled_at")).toInstant().toString()).toList());
-        assertEquals(List.of("2026-10-05", "2026-10-12", "2026-10-19", "2026-10-26", "2026-11-02"), rows.stream().map(r -> r.get("analysis_date").toString()).toList());
-        assertEquals("2026-10-26", rows.get(4).get("range_start").toString());
-        assertEquals("2026-11-01", rows.get(4).get("range_end").toString());
-        assertEquals(Instant.parse("2026-11-09T02:00:00Z"), nextFire(s));
-        assertTrue(reservation.reserveOne(now).isEmpty(), "nothing is due any more");
-        assertEquals(5, occurrences(s).size());
-    }
-
     @Test void reservingAgainNeverDuplicatesALogicalOccurrenceAndTheRequestKeyIsDeterministic() {
         base();
         long s = schedule("WEEKLY", 1, null, "09:00", "Asia/Ho_Chi_Minh", 7, true, Instant.parse("2026-11-02T02:00:00Z"));
@@ -141,8 +122,8 @@ class MiningScheduleReservationScenariosTest {
     @Test void monthlyDay31ClampsToFebruaryEndThenReturnsToDay31() {
         base();
         long s = schedule("MONTHLY", null, 31, "09:00", "Asia/Ho_Chi_Minh", 7, true, Instant.parse("2027-01-31T02:00:00Z"));
-        Instant now = Instant.parse("2027-03-01T00:00:00Z");
-        while (reservation.reserveOne(now).isPresent()) { /* drain */ }
+        assertTrue(reservation.reserveOne(Instant.parse("2027-01-31T03:00:00Z")).isPresent());
+        assertTrue(reservation.reserveOne(Instant.parse("2027-02-28T03:00:00Z")).isPresent());
         var fires = occurrences(s).stream().map(r -> ((Timestamp) r.get("scheduled_at")).toInstant().toString()).toList();
         assertEquals(List.of("2027-01-31T02:00:00Z", "2027-02-28T02:00:00Z"), fires);
         assertEquals(Instant.parse("2027-03-31T02:00:00Z"), nextFire(s), "no drift: March keeps day 31");
@@ -152,16 +133,17 @@ class MiningScheduleReservationScenariosTest {
     @Test void monthlyDay29And30UseTheLastValidDayInLeapAndNonLeapFebruaryAndThirtyDayMonths() {
         base();
         long d29 = schedule("MONTHLY", null, 29, "09:00", "Asia/Ho_Chi_Minh", 7, true, Instant.parse("2027-01-29T02:00:00Z"));
-        long d30 = schedule("MONTHLY", null, 30, "10:00", "Asia/Ho_Chi_Minh", 7, true, Instant.parse("2028-01-30T03:00:00Z"));
-        Instant now = Instant.parse("2028-05-01T00:00:00Z");
-        // each reservation advances only the schedule it served, so drain per schedule by catching up one at a time
-        for (int i = 0; i < 40; i++) if (reservation.reserveOne(now).isEmpty()) break;
+        reservation.reserveOne(Instant.parse("2027-01-29T03:00:00Z"));
+        reservation.reserveOne(Instant.parse("2027-02-28T03:00:00Z"));
         var nonLeap = occurrences(d29).stream().map(r -> ((Timestamp) r.get("scheduled_at")).toInstant().toString()).toList();
-        assertTrue(nonLeap.contains("2027-02-28T02:00:00Z"), "non-leap February clamps to the 28th: " + nonLeap);
-        assertFalse(nonLeap.stream().anyMatch(t -> t.startsWith("2027-03-01") || t.startsWith("2027-03-02")), "never spills into March");
+        assertEquals(List.of("2027-01-29T02:00:00Z", "2027-02-28T02:00:00Z"), nonLeap, "non-leap February clamps to the 28th");
+        assertEquals(Instant.parse("2027-03-29T02:00:00Z"), nextFire(d29), "March returns to day 29: never spills into March 1-2");
+        base();
+        long d30 = schedule("MONTHLY", null, 30, "10:00", "Asia/Ho_Chi_Minh", 7, true, Instant.parse("2028-01-30T03:00:00Z"));
+        for (String at : List.of("2028-01-30T04:00:00Z", "2028-02-29T04:00:00Z", "2028-03-30T04:00:00Z", "2028-04-30T04:00:00Z")) reservation.reserveOne(Instant.parse(at));
         var leap = occurrences(d30).stream().map(r -> ((Timestamp) r.get("scheduled_at")).toInstant().toString()).toList();
         assertEquals(List.of("2028-01-30T03:00:00Z", "2028-02-29T03:00:00Z", "2028-03-30T03:00:00Z", "2028-04-30T03:00:00Z"), leap,
-            "leap February clamps to the 29th and 30-day April keeps day 30");
+            "leap February clamps to the 29th and the 30-day April keeps day 30");
         assertEquals(leap.size(), new java.util.HashSet<>(leap).size(), "every logical fire time is unique");
     }
 
