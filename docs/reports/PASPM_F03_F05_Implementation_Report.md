@@ -241,3 +241,9 @@ Raw SQL replay on a throwaway MySQL 8.0.46 (the project targets 8.4; Flyway and 
 - **Still open, not done**: Product Owner decisions D1–D10 (no approval exists), D2 Store list endpoint (needs D2), scheduler activation and its end-to-end acceptance (503 stays), the 10 opt-in tests were not re-run on `0a2d27e`, remote CI, native Linux, UML update, PR and merge into `dev`.
 - Default `mvn verify` with the new test (JDK 17, SPMF 2.67a, Java 25 child): exit 0, **450 run, 0 failures, 0 errors, 155 skipped** (447 + the 3 new tests; the skipped tests are the opt-in MySQL/SPMF/multi-JVM/clone classes, not counted as executed). Log: `outputs/verification-evidence/final-0a2d27e/verify-with-rbac-matrix.log`.
 - UML QA: [F03_F05_DIAGRAM_QA_2026-11-02.md](F03_F05_DIAGRAM_QA_2026-11-02.md) — corrected editable copy in `outputs/diagrams/` (not committed); pages R2-06.03/R2-06.04 contained a false PENDING → FAILED transition.
+
+## Core release candidate — 2026-11-02
+
+- Added `ScheduledMiningDisabledByDefaultTest` (red/green checked) and widened the CI `backend` group; the workflow's full job now also passes `-Dpaspm.test.multijvm=true`. A first run failed the new test because of a JVM-wide thread assertion (test defect, fixed in `45dbd80`).
+- Re-verified on `45dbd80`: script 23/23, macOS multi-JVM 6/6 and clone-API 5/5, Linux Docker 71/72 (the one failure is a root-user artefact of an inherited test, passing as uid 10001).
+- Result and open items: [F03_F05_CORE_RELEASE_READINESS_2026-11-02.md](F03_F05_CORE_RELEASE_READINESS_2026-11-02.md) — `CORE_RELEASE_READY` as a Draft PR candidate; CI NOT_RUN, D1–D10 open.

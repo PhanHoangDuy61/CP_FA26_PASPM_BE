@@ -2,9 +2,9 @@
 > **NEEDS_REVIEW — documentation review 2026-10-26.** Endpoint coverage counts/prose describe older test stages and do not certify every current route. See [current navigation](README.md). Original results and business-rule text below are retained; this notice is not a new execution or approval.
 <!-- /docs-reorganization:notice -->
 
-# F01 / F02 / F03 / F06 RBAC Matrix
+# F01 / F02 / F03 / F05 / F06 RBAC Matrix
 
-Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and feature service/repository checks (updated2026-10-23 for F06). “Public” means the Spring security route is explicitly permitted; “authenticated” requires a valid active bearer token. An authenticated-but-wrong role is 403. Store-scoped foreign or absent resources are hidden as 404 after the controller role gate.
+Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and feature service/repository checks (updated 2026-10-23 for F06; F05 rows added 2026-11-02 and generated from the runtime OpenAPI, effective rules checked by `F03F05RbacMatrixTest`). “Public” means the Spring security route is explicitly permitted; “authenticated” requires a valid active bearer token. An authenticated-but-wrong role is 403. Store-scoped foreign or absent resources are hidden as 404 after the controller role gate.
 
 | Feature | Endpoint | System Admin | Store Admin | Merchandiser | End Customer |
 |---|---|---|---|---|---|
@@ -60,6 +60,29 @@ Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and fea
 | F03 Snapshot matrix | GET `/api/utility/snapshots/{id}/matrix` | Forbidden | Forbidden | Allowed, own Store; foreign snapshot→404 | Forbidden |
 | F03 Independent expiry pushes | GET `/api/utility/expiry-push-batches` | Forbidden | Allowed, own Store | Allowed, own Store | Forbidden |
 | F03 Snapshot history list | GET `/api/utility/snapshots` | NOT IMPLEMENTED | NOT IMPLEMENTED | NOT IMPLEMENTED | NOT IMPLEMENTED |
+| F05 | GET `/api/mining/requests` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign→404 | Forbidden |
+| F05 | POST `/api/mining/requests` | Forbidden (`denyAll`) | Forbidden (`denyAll`) | Forbidden (`denyAll`) | Forbidden (`denyAll`) |
+| F05 | GET `/api/mining/requests/{id}` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign→404 | Forbidden |
+| F05 | GET `/api/mining/requests/{id}/runs` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign→404 | Forbidden |
+| F05 | GET `/api/mining/runs/{id}` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign→404 | Forbidden |
+| F05 | GET `/api/mining/runs/{id}/benchmark` | Forbidden (`denyAll`) | Forbidden (`denyAll`) | Forbidden (`denyAll`) | Forbidden (`denyAll`) |
+| F05 | GET `/api/mining/runs/{id}/patterns` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign→404 | Forbidden |
+| F05 | GET `/api/mining/snapshots` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign→404 | Forbidden |
+| F05 | GET `/api/system/mining/config` | Allowed | Forbidden | Forbidden | Forbidden |
+| F05 | PUT `/api/system/mining/config` | Allowed | Forbidden | Forbidden | Forbidden |
+| F05 | POST `/api/system/mining/requests` | Allowed | Forbidden | Forbidden | Forbidden |
+| F05 | GET `/api/system/mining/schedules` | Allowed | Forbidden | Forbidden | Forbidden |
+| F05 | POST `/api/system/mining/schedules` | Allowed | Forbidden | Forbidden | Forbidden |
+| F05 | GET `/api/system/mining/schedules/{id}` | Allowed | Forbidden | Forbidden | Forbidden |
+| F05 | PUT `/api/system/mining/schedules/{id}` | Disable/edit allowed; `enabled=true` → **503** | Forbidden | Forbidden | Forbidden |
+| F05 | GET `/api/system/mining/schedules/{id}/occurrences` | Allowed | Forbidden | Forbidden | Forbidden |
+| F05 | GET `/api/system/mining/schedules/{id}/occurrences/{occurrenceId}` | Allowed | Forbidden | Forbidden | Forbidden |
+| F05 | GET `/api/system/mining/stores/{storeId}/requests` | **403 by default** (D1 group `REQUESTS`); allowed only if the instance lists the group | Forbidden | Forbidden | Forbidden |
+| F05 | GET `/api/system/mining/stores/{storeId}/requests/{requestId}` | **403 by default** (D1 group `REQUESTS`); allowed only if the instance lists the group | Forbidden | Forbidden | Forbidden |
+| F05 | GET `/api/system/mining/stores/{storeId}/requests/{requestId}/runs` | **403 by default** (D1 group `RUNS`); allowed only if the instance lists the group | Forbidden | Forbidden | Forbidden |
+| F05 | GET `/api/system/mining/stores/{storeId}/runs/{runId}/benchmark` | Allowed; unknown Store or foreign run→404 | Forbidden | Forbidden | Forbidden |
+| F05 | GET `/api/system/mining/stores/{storeId}/runs/{runId}/patterns` | **403 by default** (D1 group `PATTERNS`); allowed only if the instance lists the group | Forbidden | Forbidden | Forbidden |
+| F05 | GET `/api/system/mining/stores/{storeId}/snapshots` | **403 by default** (D1 group `SNAPSHOTS`); allowed only if the instance lists the group | Forbidden | Forbidden | Forbidden |
 | F06 Generate recommendations | POST `/api/recommendations/generate` | Forbidden | Forbidden | Allowed, own Store; completed own-Store mining run required | Forbidden |
 | F06 List recommendations | GET `/api/recommendations` | Forbidden | Allowed, own Store | Allowed, own Store | Forbidden |
 | F06 Recommendation detail | GET `/api/recommendations/{id}` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign→404 | Forbidden |
@@ -81,7 +104,7 @@ The database identity claims one Store and no request accepts a Store selector. 
 
 ## Readiness evidence
 
-The runtime OpenAPI export records24 F01,15 F02,12 F03,6 F04,8 F05 and8 F06 operations (73 total). The original F01/F02 table below was a historical baseline; v1.2 verifies that existing authentication/RBAC stays intact rather than claiming a new browser run of every F01 operation. Existing automated tests exercise F01 login/current-user/self-registration/OTP/invitation/password-change/role and token-revocation behavior, and F02 authentication, category/product, batch, summary and Store isolation behavior; not every individual operation was separately tested in a live browser for this documentation task. F02 browser verification from the prior F02 QA run is summarized in `docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_SWAGGER_TEST_REPORT.md`.
+The runtime OpenAPI export records 24 F01, 15 F02, 12 F03, 6 F04, 23 F05 and 8 F06 operations (88 total; the earlier 73 predates F05 administration). The original F01/F02 table below was a historical baseline; v1.2 verifies that existing authentication/RBAC stays intact rather than claiming a new browser run of every F01 operation. Existing automated tests exercise F01 login/current-user/self-registration/OTP/invitation/password-change/role and token-revocation behavior, and F02 authentication, category/product, batch, summary and Store isolation behavior; not every individual operation was separately tested in a live browser for this documentation task. F02 browser verification from the prior F02 QA run is summarized in `docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_SWAGGER_TEST_REPORT.md`.
 
 Integration-ready: F01 password/OTP/user APIs and F02 all 15 operations. Google operations are conditional on the Google client ID, mail delivery and valid Google-issued ID tokens. Browser cross-origin use is blocked until a same-origin proxy or deployment CORS policy is provided; Backend source contains no CORS mapping. Missing F01 operations: logout, refresh and general self-profile editing beyond the documented avatar operations. F02 delete and stock-movement/adjustment history APIs do not exist and are not implied by the implemented contract.
 
@@ -93,7 +116,7 @@ Integration-ready: F01 password/OTP/user APIs and F02 all 15 operations. Google 
 | F02 | 15 | 15 | 15 | Browser cross-origin integration needs a same-origin proxy or deployment CORS policy; API endpoints themselves are available | delete endpoints, stock adjustment/movement history |
 | F03 | 12 | 12 | 12 (one deprecated) | Preview/Snapshot need persisted eligible F04 rows and valid config; snapshot reads need a known ID | snapshot history list |
 | F04 | 6 | 6 | 6 | Requires valid Store-scoped transaction data | Excel import, external POS synchronization |
-| F05 | 8 | 8 | 8 | Mining execution requires the configured SPMF runtime; see F05 setup/verification | recurring scheduling |
+| F05 | 23 | 23 | 16 open to integration; 5 System Admin Store reads gated (D1, 403), 2 legacy routes forbidden | Mining execution requires the configured SPMF runtime; schedule activation returns 503 | Store list for System Admin (D2), recurring scheduling |
 | F06 | 8 | 8 | 8 (backend handoff) | Generation requires a completed own-Store F05 run; expiry-push is independent of Mining | frontend implementation, scheduling, reservation, campaign/publication workflows |
 
 “Contract verified” means route, method, request/response model and security declaration were compared with the maintained OpenAPI plus controller/service source. Existing MockMvc tests cover F01 authentication/OTP/invite/password change/token revocation and F02 CRUD/Store isolation/summary. F06's recorded verification is in [F06_VERIFICATION.md](../requirements/F06_VERIFICATION.md); its 27 Swagger UI cases are recorded evidence, not a new UI execution in this documentation update. Current v1.2 verification ran `mvn -Dpaspm.avatar.directory=/tmp/paspm-test-avatars -Dpaspm.v12.export-dir=/tmp/paspm-v12-examples verify`; see its report for actual results. Historical baseline coverage counts below are not new interactive-execution claims.

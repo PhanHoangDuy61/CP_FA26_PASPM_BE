@@ -1,3 +1,5 @@
+> **Status 2026-11-02.** The 12 F03 operations are implemented, role-checked by `F03F05RbacMatrixTest` and covered by the F03 suites; see the [audit matrix](../../reports/F03_F05_API_AUDIT_MATRIX_2026-11-02.md) and the [Core release readiness report](../../reports/F03_F05_CORE_RELEASE_READINESS_2026-11-02.md). The Weight Rules v1.2 source file is not tracked; [F03_UTILITY_API.md](../../api/F03_UTILITY_API.md) is the written v1.2 contract.
+
 # F03 — Utility Profiling and Weight Rules
 
 ## Current scope

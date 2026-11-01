@@ -24,14 +24,16 @@ Product metadata và Category CRUD dùng JPA; Product catalog/inventory và anal
 | [F02](features/F02/README.md) | Product/Category/Inventory | Source implemented; Product/Category JPA integrated | [API](api/F02_PRODUCT_INVENTORY_API.md) | [Reference v3](features/F02/reference_v3/PASPM_F02_Inventory_Batch_API_Swagger_Backlog_v3.md) | [Tests](features/F02/README.md#testing-and-evidence) |
 | [F03](features/F03/README.md) | Utility/Weight Rules | Source implemented; final v1.2 authority missing from dev | [API](api/F03_UTILITY_API.md) | [Gap](requirements/README.md#f03-v12-source-gap) | [Tests](features/F03/README.md#testing-and-evidence) |
 | [F04](features/F04/README.md) | Transaction Import | File-based import; CSV available, Excel separately tracked; external ingestion excluded | [API](api/F04_TRANSACTION_API.md) | [Design](features/F04/reference/F04_DESIGN.md) | [History](features/F04/reference/F04_SWAGGER_TEST_REPORT.md) |
-| [F05](features/F05/README.md) | HUI-Miner/EFIM Mining | Source implemented; local SPMF configuration required | [API](api/F05_MINING_API.md) | [Scope](features/F05/README.md#requirements-and-authority) | [History](features/F05/reference/F05_VERIFICATION.md) |
+| [F05](features/F05/README.md) | HUI-Miner/EFIM Mining | Core implemented and verified; scheduler off (503); System Admin Store reads gated (D1); local SPMF configuration required | [API](api/F05_MINING_API.md) | [Scope](features/F05/README.md#requirements-and-authority) | [History](features/F05/reference/F05_VERIFICATION.md) |
 | [F06](features/F06/README.md) | Recommendation Engine | Backend v1.1 source implemented; downstream activation separate | [API](api/F06_RECOMMENDATION_API.md) | [Rules](requirements/F06_RECOMMENDATION_RULES_v1_1.md) | [History](testing/reports/F06_VERIFICATION.md) |
 
 ## API Reference
 
-[API index](api/README.md) · [OpenAPI export](api/openapi.json) · [RBAC](api/F01_F02_RBAC_MATRIX.md). Static mapping at the documented baseline contains 73 business operations. Swagger/framework routes are separate. The API Inventory package exists only on a separate local audit branch; see the index for provenance, not a broken link or an implied merge.
+[API index](api/README.md) · [OpenAPI export](api/openapi.json) · [RBAC](api/F01_F02_RBAC_MATRIX.md). The runtime export of the F03/F05 branch contains 88 operations (see the [RBAC matrix](api/F01_F02_RBAC_MATRIX.md)); the older 73 was the documented baseline before F05 administration. Swagger/framework routes are separate. The API Inventory package exists only on a separate local audit branch; see the index for provenance, not a broken link or an implied merge.
 
 ## Frontend Integration
+
+**Start with [OPTION_B_BACKEND_API_HANDOFF.md](frontend_handoff/OPTION_B_BACKEND_API_HANDOFF.md)** for F03/F05 (roles, flows, what is open, gated or unavailable). Release status: [F03/F05 Core release readiness](reports/F03_F05_CORE_RELEASE_READINESS_2026-11-02.md).
 
 [Frontend handoff index](frontend_handoff/README.md) links actual contracts and examples. Synthetic response fixtures retain their original dates and identifiers.
 

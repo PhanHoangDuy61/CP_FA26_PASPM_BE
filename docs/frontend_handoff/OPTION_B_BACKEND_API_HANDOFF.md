@@ -1,6 +1,6 @@
 # PASPM Backend API Handoff for Frontend — F03 Utility, F05 Mining (Option B baseline)
 
-Status (re-verified 2026-11-02 on exact HEAD `0a2d27e`, branch `Khoi/feat/f03-f05-admin-mining`, merge of `origin/dev` `6d91215`; section 11.3): **CORE_API_VERIFIED · FRONTEND_INTEGRATION_READY for the verified surface only · OPTION_B_NOT_READY.** The verified surface is everything in sections 1–4, 6, 7 and the System Admin configuration/manual-request/benchmark/schedule-administration routes; it was exercised by `scripts/verify-option-b-macos.sh --run` (evidence in section 11). Two things are deliberately **not** open to the Frontend: (1) the five System Admin read routes of section 5 are **disabled (HTTP 403 for every role)** until Product Owner decision D1; (2) schedule activation returns **503**. `docs/api/openapi.json` is the runtime export of this backend. No endpoint or field below is invented; every one was read from the controllers, records and `SecurityConfig` and cross-checked against the runtime OpenAPI.
+Status (re-verified 2026-11-02 on exact HEAD `45dbd80`, branch `Khoi/feat/f03-f05-admin-mining`, merge of `origin/dev` `6d91215`; sections 11.3 and 11.4): **CORE_API_VERIFIED · FRONTEND_INTEGRATION_READY for the verified surface only · OPTION_B_NOT_READY.** The verified surface is everything in sections 1–4, 6, 7 and the System Admin configuration/manual-request/benchmark/schedule-administration routes; it was exercised by `scripts/verify-option-b-macos.sh --run` (evidence in section 11). Two things are deliberately **not** open to the Frontend: (1) the five System Admin read routes of section 5 are **disabled (HTTP 403 for every role)** until Product Owner decision D1; (2) schedule activation returns **503**. `docs/api/openapi.json` is the runtime export of this backend. No endpoint or field below is invented; every one was read from the controllers, records and `SecurityConfig` and cross-checked against the runtime OpenAPI.
 
 | Status | Meaning here |
 |---|---|
@@ -87,24 +87,26 @@ Step 8 of the workflow above.
 3. **No Store picker endpoint exists.** The Backend has no Store-listing route. `GET /api/users` (System Admin) returns each user's `storeId` but no Store name, so it can at most supply raw ids. Until decision D2 is made, the Store field is a typed id.
 4. Snapshot listing loads each READY snapshot individually (pre-existing behaviour, at most 100 per page).
 
-## 10. End-to-end HTTP example
+## 10. End-to-end Core flow (F03 → F05 → F06) that works without any PO decision
+The same sequence is executed automatically by `RecommendationIntegrationTest.completedRealMiningGeneratesFourTypesAndDirectionalFrozenEvidence` (H2) and `RecommendationMySqlIntegrationTest` (MySQL) with the real SPMF child: configuration → snapshot → manual System Admin request → worker → COMPLETED/MATCH → patterns → F06 generation. Status and results are read through the **Store user's own routes**, which are open; the System Admin read routes are not needed.
 ```
-POST /api/auth/login                      (merchandiser)           -> token M
+POST /api/auth/login                      (merchandiser, own Store)                -> token M
 PUT  /api/utility/config                  M {"enableStock":true,"enableExpiry":true,"enableSeason":true,"alpha":0.5,"beta":0.2,"gamma":0.3,"lambda":0.5}
 PATCH /api/utility/products/12/scores     M {"stockPriorityScore":0.8,"seasonalPriorityScore":0.9}
-POST /api/utility/snapshots               M {"rangeStart":"2026-01-01","rangeEnd":"2026-03-31","asOfDate":"2026-03-31"}  -> 201 {snapshotId:7,status:"READY"}
-POST /api/auth/login                      (system admin)           -> token S
-PUT  /api/system/mining/config            S {"algorithm":"EFIM","minUtilMode":"PERCENTAGE","minUtilValue":0.5,"expectedVersion":0}
+POST /api/utility/preview                 M {"rangeStart":"2026-01-01","rangeEnd":"2026-03-31","asOfDate":"2026-03-31"}   -> MatrixPage (not saved)
+POST /api/utility/snapshots               M {"rangeStart":"2026-01-01","rangeEnd":"2026-03-31","asOfDate":"2026-03-31"}   -> 201 {snapshotId:7,status:"READY"}
+POST /api/auth/login                      (system admin)                           -> token S
+GET  /api/system/mining/config            S -> {version:0,...}                      (first use)
+PUT  /api/system/mining/config            S {"algorithm":"EFIM","minUtilMode":"ABSOLUTE","minUtilValue":30,"expectedVersion":0}
 POST /api/system/mining/requests          S {"storeId":3,"snapshotId":7,"requestKey":"<uuid>","compareAlgorithms":true} -> 202 {requestId:41,status:"PENDING"}
-# The next four reads are GATED per group (SNAPSHOTS, REQUESTS, RUNS, PATTERNS): 403 unless the backend lists the group in paspm.mining.system-store-read.routes (decision D1).
-GET  /api/system/mining/stores/3/snapshots                  S  -> READY snapshots (pick 7)
-GET  /api/system/mining/stores/3/requests/41                S  (poll) -> COMPLETED, comparisonStatus MATCH
-GET  /api/system/mining/stores/3/requests/41/runs           S  -> RunView[] (2)
-GET  /api/system/mining/stores/3/runs/{runId}/patterns?page=0&pageSize=20  S -> Page<PatternView>
-GET  /api/system/mining/stores/3/runs/{runId}/benchmark    S       -> BenchmarkView
-POST /api/recommendations/generate        M {"miningRunId":{runId},"types":["BUNDLE"]}
+GET  /api/mining/requests/41              M (poll every 1-2 s)                      -> COMPLETED, comparisonStatus MATCH
+GET  /api/mining/requests/41/runs         M -> RunView[2] (HUI_MINER, EFIM)         -> note the runIds
+GET  /api/mining/runs/{runId}/patterns?page=0&pageSize=20   M -> Page<PatternView>
+GET  /api/system/mining/stores/3/runs/{runId}/benchmark     S -> BenchmarkView      (the runId comes from the Merchandiser; see D1)
+POST /api/recommendations/generate        M {"miningRunId":{runId},"types":["BUNDLE","CROSS_SELL","FBT","BANNER"]}
+GET  /api/recommendations/{id}            M -> PENDING_REVIEW candidate with frozen evidence
 ```
-Values are illustrative; IDs differ per environment.
+Gated alternative (only on an instance that lists the groups in `paspm.mining.system-store-read.routes`, i.e. after decision D1): the System Admin may replace the Merchandiser reads with `GET /api/system/mining/stores/3/{snapshots,requests,requests/41,requests/41/runs,runs/{runId}/patterns}`; each group otherwise answers 403. Values are illustrative; IDs differ per environment.
 
 ## 11. Verification evidence (2026-11-01)
 Evidence directories are outside the repository (`outputs/verification-evidence/…`). Results of earlier or bare-branch runs are historical and are not evidence for the current code.
@@ -131,6 +133,8 @@ Evidence directories are outside the repository (`outputs/verification-evidence/
 A first Linux attempt failed in 2 s with `MySQL verification requires an empty local server URL`: my runner used a container DNS name instead of loopback. That was a test-environment fault, not a product defect; the corrected run shares the MySQL container's network namespace (`127.0.0.1`). Evidence of the failed attempt is kept.
 
 **11.3 Re-verification on exact HEAD `0a2d27e` (2026-11-02)** — `scripts/verify-option-b-macos.sh --run`, same toolchain as 11.1, evidence `final-0a2d27e/option-b-20261101T170051Z`: **23/23 stages PASS**, exit 0 (`mvn.verify` 447 run / 0 failed / 155 skipped; `test.flag` 6; `test.mysql_group` 51 / 0 skipped; `test.full_optin` 457 / 0 failed / 10 skipped; `jpa.validate`; `openapi.export`; Flyway fresh V1–V17, V11 Java migration, restart-identical history, upgrade from the dev schema). The fresh runtime OpenAPI has the same 88 operations and the same components as `docs/api/openapi.json`. The 10 skipped opt-in tests were **not** re-run in this pass (results of 11.2 stand for `d0522f1`). Added afterwards, outside that run: `F03F05RbacMatrixTest` (26 routes × anonymous, System Admin, Store Admin, Merchandiser, End Customer; 3 tests passing, red/green checked) — see the [audit matrix](../reports/F03_F05_API_AUDIT_MATRIX_2026-11-02.md).
+
+**11.4 Core release candidate, HEAD `45dbd80` (2026-11-02)** — the script passed 23/23 again (451 H2 tests, 461 full opt-in, 0 failures; 88 OpenAPI operations identical to the committed file); the 10 opt-in tests ran on the exported source: macOS multi-JVM 6/6 and clone-API 5/5, Linux Docker multi-JVM 6/6 with `orphan_alive_after_backend_sigkill=false`. The only Linux failure (`SpmfRuntimeTest`, container user is root) passes as a non-root user. Full table, safe defaults, CI facts and rollback: [Core release readiness](../reports/F03_F05_CORE_RELEASE_READINESS_2026-11-02.md).
 
 **Not verified:** Linux on native hardware or the final production image (the Linux run is amd64 under emulation), Windows and clean-machine setup, a remote GitHub CI run (the branch is not pushed), a real scheduler activation (503 by design), any Frontend end-to-end flow, and Product Owner decisions D1–D10.
 
