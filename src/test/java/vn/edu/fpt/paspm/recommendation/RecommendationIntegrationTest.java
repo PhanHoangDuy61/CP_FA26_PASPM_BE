@@ -43,8 +43,11 @@ class RecommendationIntegrationTest {
     }
     int createSnapshot()throws Exception {return body(postJson("/api/utility/snapshots",merchant,"{\"rangeStart\":\""+day+"\",\"rangeEnd\":\""+day+"\",\"asOfDate\":\""+day+"\"}").andExpect(status().isCreated())).path("snapshotId").asInt();}
     long[] mine(int snapshotId)throws Exception {
-        String payload=json.writeValueAsString(Map.of("requestKey",UUID.randomUUID(),"snapshotId",snapshotId,"algorithms",List.of("HUI_MINER","EFIM"),"minUtilMode","ABSOLUTE","minUtilValue",1));
-        long request=body(postJson("/api/mining/requests",merchant,payload).andExpect(status().isAccepted())).path("requestId").asLong();
+        long version=body(getJson("/api/system/mining/config",system)).path("version").asLong();
+        String config=json.writeValueAsString(Map.of("algorithm","HUI_MINER","minUtilMode","ABSOLUTE","minUtilValue",1,"expectedVersion",version));
+        mvc.perform(put("/api/system/mining/config").header("Authorization","Bearer "+system).contentType(MediaType.APPLICATION_JSON).content(config)).andExpect(status().isOk());
+        String payload=json.writeValueAsString(Map.of("requestKey",UUID.randomUUID(),"storeId",store,"snapshotId",snapshotId,"compareAlgorithms",true));
+        long request=body(postJson("/api/system/mining/requests",system,payload).andExpect(status().isAccepted())).path("requestId").asLong();
         long end=System.nanoTime()+java.util.concurrent.TimeUnit.SECONDS.toNanos(20);
         JsonNode result;
         do {result=body(getJson("/api/mining/requests/"+request,merchant));if(!List.of("PENDING","RUNNING").contains(result.path("status").asText()))break;Thread.sleep(25);}while(System.nanoTime()<end);

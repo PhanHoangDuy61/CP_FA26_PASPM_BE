@@ -73,7 +73,7 @@ final class SpmfRuntime {
     private String probe(List<String> command,Path log) throws IOException {
         Process process=null;boolean interrupted=false;
         try {
-            process=new ProcessBuilder(command).directory(log.getParent().toFile()).redirectErrorStream(true).redirectOutput(log.toFile()).start();
+            process=new ProcessBuilder(LinuxParentDeathLauncher.command(System.getProperty("os.name"),command,ProcessHandle.current().pid())).directory(log.getParent().toFile()).redirectErrorStream(true).redirectOutput(log.toFile()).start();
             long deadline=System.nanoTime()+TimeUnit.MILLISECONDS.toNanos(PROBE_TIMEOUT_MS);
             while(process.isAlive()) {
                 if(System.nanoTime()>=deadline||Files.size(log)>LOG_LIMIT)

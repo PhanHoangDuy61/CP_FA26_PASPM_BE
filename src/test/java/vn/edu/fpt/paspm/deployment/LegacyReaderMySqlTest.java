@@ -100,7 +100,7 @@ class LegacyReaderMySqlTest {
    assertEquals(404,assertThrows(ApiException.class,()->service.matrix(jwt,3-Integer.parseInt(jwt.getSubject()),0,1)).status());
    var auth=org.mockito.Mockito.mock(vn.edu.fpt.paspm.auth.AuthService.class);
    org.mockito.Mockito.when(auth.current(jwt)).thenReturn(new vn.edu.fpt.paspm.user.User(store,"test@example.test","Test","MERCHANDISER",store,"ACTIVE",null,Instant.EPOCH,1,null,null));
-   var miningRepository=new MiningRepository(jdbc,json);
+   var miningRepository=new MiningRepository(jdbc,json,new vn.edu.fpt.paspm.mining.MiningDispatchLease(jdbc,new org.springframework.jdbc.datasource.DataSourceTransactionManager(jdbc.getDataSource())));
    var miningService=new MiningService(miningRepository,builder,engine,org.mockito.Mockito.mock(MiningWorker.class),repository,access,auth,jdbc,new org.springframework.jdbc.datasource.DataSourceTransactionManager(jdbc.getDataSource()));
    var captured=miningService.create(jwt,new MiningContracts.CreateRequest(UUID.randomUUID(),store,List.of(MiningEngine.Algorithm.HUI_MINER,MiningEngine.Algorithm.EFIM),MiningContracts.MinUtilMode.ABSOLUTE,BigDecimal.ONE));
    assertEquals(before.get(store),json.read(jdbc.queryForObject("SELECT frozen_input FROM mining_request WHERE request_id=?",String.class,captured.requestId()),MiningInputBuilder.Dataset.class));

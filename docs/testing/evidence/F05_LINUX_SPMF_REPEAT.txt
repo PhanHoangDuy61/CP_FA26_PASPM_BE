@@ -1,0 +1,2 @@
+real_spmf_crash killed_A_pid=165 B_pid=274 spmf_java25_pid=395 other_spmf_pid=392 other_spmf_survived=true request=1 orphan_alive_after_backend_sigkill=false reaped_by_container_init=true orphan_test_cleanup=not_needed old_fence=1 new_fence=2 patterns=8 PASS
+real_spmf_crash killed_A_pid=481 B_pid=588 spmf_java25_pid=697 other_spmf_pid=693 other_spmf_survived=true request=1 orphan_alive_after_backend_sigkill=false reaped_by_container_init=true orphan_test_cleanup=not_needed old_fence=1 new_fence=2 patterns=8 PASS

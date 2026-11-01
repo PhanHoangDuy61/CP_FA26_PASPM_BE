@@ -1,0 +1,1 @@
+real_spmf_crash killed_A_pid=54871 B_pid=54874 spmf_java25_pid=54875 request=1 orphan_alive_after_backend_sigkill=true orphan_test_cleanup=SIGKILL old_fence=1 new_fence=2 patterns=8 PASS

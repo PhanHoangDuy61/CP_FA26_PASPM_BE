@@ -2,6 +2,10 @@
 
 | Guide | Status | Use |
 |---|---|---|
+| [Windows local setup](LOCAL_SETUP_WINDOWS.md) | NOT VERIFIED ON TARGET OS | PowerShell first-time setup |
+| [macOS local setup](LOCAL_SETUP_MACOS.md) | PARTIAL / clean install NOT VERIFIED | zsh first-time setup |
+| [Common setup](LOCAL_SETUP_COMMON.md) | Source-aligned / walkthrough pending | Variables, versions, API workflow |
+| [Troubleshooting](LOCAL_SETUP_TROUBLESHOOTING.md) | Source-aligned / target OS pending | Safe diagnostics |
 | [Local development](LOCAL_DEVELOPMENT.md) | CURRENT navigation | Existing launch scripts/environment and safe setup reading order |
 | [SPMF runtime](F05_SPMF_RUNTIME_SETUP.md) | CURRENT runtime reference | Exact approved binary hash and Java 17/Java 25 separation |
 | [V7 recovery](FLYWAY_MYSQL_V7_RECOVERY.md) | CURRENT targeted runbook | Controlled old checksum/identifier recovery; not a generic repair instruction |

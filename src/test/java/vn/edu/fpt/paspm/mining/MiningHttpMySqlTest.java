@@ -52,8 +52,14 @@ class MiningHttpMySqlTest {
         }
         var snapshot=http.exchange("/api/utility/snapshots",HttpMethod.POST,new HttpEntity<>("{\"rangeStart\":\"2026-10-19\",\"rangeEnd\":\"2026-10-19\",\"asOfDate\":\"2026-10-19\"}",headers),JsonNode.class);
         assertEquals(HttpStatus.CREATED,snapshot.getStatusCode());
-        String body=json.writeValueAsString(Map.of("requestKey",UUID.randomUUID(),"snapshotId",snapshot.getBody().path("snapshotId").asInt(),"algorithms",List.of("HUI_MINER","EFIM"),"minUtilMode","ABSOLUTE","minUtilValue",30));
-        var created=http.exchange("/api/mining/requests",HttpMethod.POST,new HttpEntity<>(body,headers),JsonNode.class);
+        var systemUser=users.createPendingUser("P0 System",UUID.randomUUID()+"@example.test","SYSTEM_ADMIN",null,null,null);
+        jdbc.update("UPDATE app_user SET status='ACTIVE',email_verified_at=CURRENT_TIMESTAMP WHERE user_id=?",systemUser.id());
+        var adminHeaders=new HttpHeaders();adminHeaders.setBearerAuth(auth.token(users.findById(systemUser.id())).accessToken());adminHeaders.setContentType(MediaType.APPLICATION_JSON);
+        String policy=json.writeValueAsString(Map.of("algorithm","HUI_MINER","minUtilMode","ABSOLUTE","minUtilValue",30,"expectedVersion",0));
+        assertEquals(HttpStatus.OK,http.exchange("/api/system/mining/config",HttpMethod.PUT,new HttpEntity<>(policy,adminHeaders),JsonNode.class).getStatusCode());
+        String body=json.writeValueAsString(Map.of("requestKey",UUID.randomUUID(),"storeId",store,"snapshotId",snapshot.getBody().path("snapshotId").asInt(),"compareAlgorithms",true));
+        assertEquals(HttpStatus.FORBIDDEN,http.exchange("/api/system/mining/requests",HttpMethod.POST,new HttpEntity<>(body,headers),JsonNode.class).getStatusCode());
+        var created=http.exchange("/api/system/mining/requests",HttpMethod.POST,new HttpEntity<>(body,adminHeaders),JsonNode.class);
         assertEquals(HttpStatus.ACCEPTED,created.getStatusCode());long id=created.getBody().path("requestId").asLong();
         long deadline=System.nanoTime()+java.util.concurrent.TimeUnit.SECONDS.toNanos(20);JsonNode request;
         do { request=get("/api/mining/requests/"+id,headers);if(!List.of("PENDING","RUNNING").contains(request.path("status").asText()))break;Thread.sleep(25); } while(System.nanoTime()<deadline);

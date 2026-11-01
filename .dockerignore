@@ -1,0 +1,16 @@
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+.DS_Store
+**/.DS_Store
+docs
+src
+.mvn
+mvnw
+mvnw.cmd
+scripts
+*.log
+target/*
+!target/paspm-backend-0.1.0.jar

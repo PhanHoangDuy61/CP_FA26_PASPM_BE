@@ -23,7 +23,8 @@ class TransactionRawEvidenceMigrationMySqlTest {
         String raw="{\"source_order_id\":\"Giữ nguyên \\n \\\" unicode\",\"quantity\":\"1\"}";
         jdbc.update("INSERT INTO import_staging_row(store_id,import_batch_id,`row_number`,source_order_id,raw_data,status) VALUES (?,?,2,NULL,?,'REJECTED')",store,batch,raw);
         var checksumBefore=jdbc.queryForList("SELECT version,checksum FROM flyway_schema_history WHERE success=TRUE ORDER BY installed_rank");
-        var latest=Flyway.configure().dataSource(db.url(),db.user(),db.password()).load();
+        // The subject of this test is V12 itself; later migrations (V13+) are covered by the Mining/Recommendation/JPA migration tests.
+        var latest=Flyway.configure().dataSource(db.url(),db.user(),db.password()).target("12").load();
         assertEquals(1,latest.migrate().migrationsExecuted);latest.validate();
         assertEquals("12",latest.info().current().getVersion().toString());
         assertEquals(raw,jdbc.queryForObject("SELECT raw_data FROM import_staging_row WHERE import_batch_id=?",String.class,batch));

@@ -1,11 +1,14 @@
 # F05 SPMF Runtime Setup
 
+> Current working-tree note: the F05 administrative execution contract below is superseded by [current F05 API](../api/F05_MINING_API.md) and [local setup](LOCAL_SETUP_COMMON.md). SYSTEM_ADMIN configures and submits Store-targeted mining requests. Scheduling remains disabled (503); this branch is NOT_READY for deployment. The Linux parent-death mechanism is under verification and Windows/macOS do not inherit its kernel guarantee.
+
 The backend targets Java 17. The approved SPMF binary runs as a separate Java 25+ process. Configure both paths independently; F05 no longer silently uses the backend's JVM for SPMF. Missing runtime configuration leaves other modules available and rejects new mining with HTTP 503.
 
 ## Approved artifact and prerequisites
 
 - Backend: JDK 17, Maven compatible with the existing pom.xml, MySQL 8.4.
 - SPMF child: JDK/JRE 25+ from a trusted publisher, separately installed/provisioned by the operator.
+- Linux container F05 additionally requires `python3` with its standard-library `ctypes` and permission to use `prctl(PR_SET_PDEATHSIG)`. The launcher fails closed if it cannot establish supervision; it does not use shell interpolation. This mechanism is still undergoing end-to-end Linux verification. macOS/Windows use the existing local-development path and do not obtain this Linux kernel guarantee.
 - SPMF: approved 2.67a JAR, class major 69. Obtain the exact approved artifact manually from the [official distribution](https://www.philippe-fournier-viger.com/spmf/download.php) or an approved internal artifact store.
 - SHA-256: 4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a.
 - The official download page may move to a newer release. A different checksum is NOT accepted; stop and request artifact approval instead of changing the pin.
@@ -26,7 +29,7 @@ Spring resolves the existing canonical properties from the environment; no addit
 | paspm.mining.timeout-millis | PASPM_MINING_TIMEOUT_MILLIS | 60000 (valid 1..300000) |
 | paspm.mining.max-patterns | PASPM_MINING_MAX_PATTERNS | 2000 (valid 1..10000) |
 
-Existing limits remain: one worker, queue of 8, log 64 KiB, pattern output 4 MiB. Actual mining uses a private paspm-mining-* directory in the backend JVM temp location; preflight uses paspm-spmf-preflight-*. Both are cleaned after execution. Set Java's java.io.tmpdir at startup only if the default system temp location is unsuitable.
+Existing limits remain: one worker, queue of 8, log 64 KiB, pattern output 4 MiB. Actual mining uses a private paspm-mining-* directory in the backend JVM temp location; preflight uses paspm-spmf-preflight-*. Normal completion/handled interruption attempts cleanup; abrupt Backend SIGKILL can leave temporary files and requires a separately managed, scoped cleanup policy. Set Java's java.io.tmpdir at startup only if the default system temp location is unsuitable.
 
 Spring Boot does not automatically load an arbitrary .env file. Set variables in the launching shell/service manager, or use established external Spring configuration. Keep database/auth/email secrets out of Git and shell output.
 
@@ -73,7 +76,7 @@ Expected versions: backend reports 17; child reports 25 or later; checksum exact
 ## Build, migration and startup
 
 1. Start MySQL 8.4 and provide an empty dedicated development schema plus the existing DB_URL, DB_USER, DB_PASSWORD and F01 secrets through your normal external configuration.
-2. For a fresh database, backend startup applies corrected V1–V9 and validates them automatically. For an existing database, first follow [V7 recovery](FLYWAY_MYSQL_V7_RECOVERY.md); old V7 checksums must not be silently repaired.
+2. For a fresh database, backend startup applies the current repository migrations in order (V1–V17 in this working tree; F05 mining migrations are V13–V17; V12 is F04 `f04_preserve_large_raw_import_rows`) and validates them automatically. For an existing database, first follow [V7 recovery](FLYWAY_MYSQL_V7_RECOVERY.md); old V7 checksums must not be silently repaired.
 3. Build with Maven under JAVA_HOME=JDK17. Tests requiring SPMF must receive the external test paths below.
 4. Start the packaged backend explicitly with JDK 17:
 
@@ -90,19 +93,15 @@ PowerShell equivalent:
 5. Verify startup logs show Java 17 and all Flyway migrations validate/apply.
 6. Check the independent version commands above. Backend preflight is lazy: it runs before a valid new mining request is persisted, and again before execution. It validates paths/readability, pinned hash, executable, Java major, real SPMF version entrypoint and temp create/write/delete.
 7. JAR and executable contents are SHA-256 checked on every preflight call. Successful expensive version probes are cached for at most 30 seconds with both content fingerprints and real paths. Changed binaries invalidate the cache even when size/timestamps match. Probes have a 5-second per-process timeout and 64 KiB log bound.
-8. Open /swagger (actual server port defaults to 8080 unless configured), authenticate with an authorized Merchandiser, and follow the workflow below. This is the API-level readiness check; no extra public health/config endpoint was added.
+8. Open /swagger (actual server port defaults to 8080 unless configured). Use the current role and endpoint workflow below. This is the API-level readiness check; no extra public health/config endpoint was added.
 
 ## Valid API workflow
 
 Use the implemented contracts in [F05 API](../api/F05_MINING_API.md) and [frontend handoff](../frontend_handoff/F05_HANDOFF.md).
 
-1. Create or select a valid persisted F03 Utility Snapshot in your Store.
-2. GET /api/mining/snapshots to select its snapshotId.
-3. POST /api/mining/requests with a new UUID requestKey, snapshotId, algorithms ["HUI_MINER","EFIM"], minUtilMode "ABSOLUTE" or "PERCENTAGE", and a valid minUtilValue.
-4. Expect 202, then poll GET /api/mining/requests/{id}.
-5. Read GET /api/mining/requests/{id}/runs. Both should be COMPLETED when their algorithms succeed.
-6. GET /api/mining/runs/{id}/patterns for each run and compare canonical Product sets/utilities.
-7. GET /api/mining/runs/{id}/benchmark for the real measured metrics/provenance. For a shared fixture, comparisonStatus should be MATCH.
+1. A Store Merchandiser creates or selects a valid READY F03 Utility Snapshot, using eligible F04 sales data.
+2. SYSTEM_ADMIN configures `/api/system/mining/config`, then submits `POST /api/system/mining/requests` with `storeId`, `snapshotId`, a new UUID `requestKey` and `compareAlgorithms`. See the current [contract](../api/F05_MINING_API.md) and Swagger for the actual DTO.
+3. Expect 202. A Store-authorized Merchandiser polls `/api/mining/requests/{id}`, reads `/runs` and the per-run `/patterns`; SYSTEM_ADMIN uses `/api/system/mining/stores/{storeId}/runs/{runId}/benchmark` for benchmark data. When comparing both algorithms successfully, `comparisonStatus` should be `MATCH`.
 
 The deterministic existing fixture has 5 transactions, total utility 96, and 8 matching patterns at absolute minUtil 30. Do not assume those values for arbitrary business snapshots.
 
@@ -149,3 +148,14 @@ mvn -Dpaspm.test.mysql=true \
 Run that command from an environment with JAVA_HOME selecting JDK17 and both PASPM_MINING_* variables exported. The HTTP smoke test explicitly checks backend Java 17 and actual environment-variable runtime configuration.
 
 Executed validation was on this workstation using isolated MySQL/H2 and a temporary downloaded/verified Corretto JDK17. Windows/Linux instructions were reviewed but not executed, and a pristine clean-machine installation was NOT performed. See the [P0 fix report](../audits/F05_P0_DEPLOYMENT_FIX_REPORT.md).
+
+## Linux Docker image (working tree, acceptance pending)
+
+The `Dockerfile` expects a Backend JAR already built with JDK 17 and two explicit BuildKit contexts: `java25` must be the root of a Linux Java 25+ runtime, and `spmf` must contain the approved `spmf.jar`. The build checks the approved SHA-256 and runs the bundled Java version check. Obtain the JAR through your team's approved channel; the repository does not supply a public artifact URL. Example from the Backend root, replacing both directory placeholders with local paths:
+
+```sh
+mvn -DskipTests package
+docker build --build-context java25="$JAVA25_RUNTIME_DIR" --build-context spmf="$SPMF_CONTEXT_DIR" -t paspm-backend:local .
+```
+
+The image uses a non-root account, JDK 17 for Spring Boot, Java 25+ for SPMF and Python 3 for Linux parent-death handling. `compose.backend.yml` is an optional overlay with `init: true` and memory/CPU limits. Set the values required by the existing `compose.yml`, then inspect `docker compose -f compose.yml -f compose.backend.yml config --services` before starting any disposable local services. Never point these commands at a production database. `init` reaps children; it does not by itself guarantee termination on a JVM SIGKILL. Final-image two-container crash/recovery verification is still outstanding. Windows/macOS host operation does not have the Linux kernel parent-death guarantee.

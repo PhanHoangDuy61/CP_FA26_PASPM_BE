@@ -1,6 +1,4 @@
-<!-- docs-reorganization:notice -->
-> **NEEDS_REVIEW — documentation review 2026-10-26.** The final v1.2 specification is not tracked; its former link leads to an explicit gap notice. F05/F06 source exists despite stale downstream text. See [current navigation](../features/F03/README.md). Original results and business-rule text below are retained; this notice is not a new execution or approval.
-<!-- /docs-reorganization:notice -->
+> **Status 2026-11-02.** This contract matches the controllers, DTOs and `SecurityConfig` of branch `Khoi/feat/f03-f05-admin-mining` and is exercised by the F03 suites (`UtilityIntegrationTest`, `WeightRulesV12IntegrationTest`, `UtilityCalculationTest`, `ExpiryBinaryRulesTest`, `ExpiryFefoOrderingTest`, `F03F05RbacMatrixTest`; see the [audit matrix](../reports/F03_F05_API_AUDIT_MATRIX_2026-11-02.md)). The stand-alone Weight Rules v1.2 specification file is **not tracked in the repository** ([gap notice](../requirements/README.md#f03-v12-source-gap)); this document is therefore the only written v1.2 contract and is an implementation reference, not an independent approval of the business rules.
 
 # F03 Utility API — Final Weight Rules v1.2
 
@@ -87,7 +85,7 @@ RangeRequest requires three ISO LocalDate strings rangeStart/rangeEnd/asOfDate; 
 
 The normal source is `F04_DATABASE_V1`: eligible COMPLETED Store transactions with historical item quantity/price/cost. Current Product prices never replace them. Duplicate or foreign prepared rows, missing prices/costs and negative/overflow utility are rejected. There is no CSV body, dataset ID, score override or arbitrary Product selector in Preview.
 
-For an ACTIVE Product requiring expiry, use ACTIVE positive-quantity INVENTORY_BATCH rows with known `expiryDate > asOfDate`. Select minimum expiry date (FEFO), then batchId for ties. `T=Product.expiryPushDays` (missing/null effective0); `E=1` iff T>0 and earliest daysRemaining<=T. Quantity ratios never dilute E. Non-expiring Product has E=0/NOT_APPLICABLE. Inactive Product has no current sellable batch for assessment; historical transaction rows are retained with NO_SELLABLE_BATCH warning.
+For an ACTIVE Product requiring expiry, use ACTIVE positive-quantity INVENTORY_BATCH rows with known `expiryDate > asOfDate`. Select minimum expiry date (FEFO), then oldest received_at and batchId for ties. `T=Product.expiryPushDays` (missing/null effective0); `E=1` iff T>0 and earliest daysRemaining<=T. Quantity ratios never dilute E. Non-expiring Product has E=0/NOT_APPLICABLE. Inactive Product has no current sellable batch for assessment; historical transaction rows are retained with NO_SELLABLE_BATCH warning.
 
 `W=1+lambda*(alpha*S+beta*E+gamma*M)`. Utilities are BigDecimal scale6 HALF_UP, weights scale18. The source hash fingerprints historical rows; matrix hash additionally fingerprints saved configuration, analysis date, scores and frozen batch evidence. Row/Product ordering is stable. `algorithmItemId=productId`, mapping PRODUCT_ID_V1. Item, transaction and dataset utilities must fit signed64 after multiplying by 10^6; no silent clamping.
 
@@ -124,7 +122,7 @@ New snapshot rows store JSON evidence and validation warnings. Configuration fre
 
 ## Independent current push query and F06
 
-`GET /api/utility/expiry-push-batches?productId=21&page=0&pageSize=20` defaults to today's configured Store-local date. Optional `asOfDate=YYYY-MM-DD` is an analytical query, not proof of current sellability. It returns only known-expiry ACTIVE positive-quantity batches of ACTIVE requires-expiry Products with positive T whose daysRemaining are 1..T. It uses the same calculator as Preview. Ordering: expiryDate, productId, batchId. It works with no transactions, snapshots, minUtil or Mining results. Product filter outside the Store gives404; unfiltered foreign Store sees only its own rows. Missing critical metadata on candidate Products is warned explicitly.
+`GET /api/utility/expiry-push-batches?productId=21&page=0&pageSize=20` defaults to today's configured Store-local date. Optional `asOfDate=YYYY-MM-DD` is an analytical query, not proof of current sellability. It returns only known-expiry ACTIVE positive-quantity batches of ACTIVE requires-expiry Products with positive T whose daysRemaining are 1..T. It uses the same calculator as Preview. Ordering: expiryDate, productId, received_at, batchId. It works with no transactions, snapshots, minUtil or Mining results. Product filter outside the Store gives404; unfiltered foreign Store sees only its own rows. Missing critical metadata on candidate Products is warned explicitly.
 
 F06 must use a fresh current-date query/check before recommending or presenting a bundle, then enforce FEFO fulfillment as appropriate. A historical snapshot push flag does not guarantee stock is still sellable or will clear before expiry.
 
@@ -141,4 +139,4 @@ F06 must use a fresh current-date query/check before recommending or presenting 
 
 Handled business/validation envelope: `{"error":"Enabled coefficients must sum exactly to 1"}` or `{"error":"Invalid request fields"}`. F01/Spring Security 401/403 may have an empty framework body; frontend must key off HTTP status. Never expect tokens/credentials in examples.
 
-F05 is currently only MiningEngine interface: no runnable snapshot export adapter, Mining Request APIs, HUI-Miner/EFIM or snapshot-list APIs are implemented. See [F03_F05_HANDOFF](../features/F03/reference_v4/F03_F05_HANDOFF.md) and [F05/F06 integration](F03_V12_F05_F06_INTEGRATION.md). Verification details are in the v1.2 report; endpoint descriptions are not claims of interactive Swagger execution.
+F05 consumes frozen snapshots: a Store user lists READY snapshots with `GET /api/mining/snapshots`, and the System Admin starts mining for a chosen Store with `POST /api/system/mining/requests` (see [F05 Mining API](F05_MINING_API.md)). F05 never recalculates F03 values. The F03 → F05 → F06 data flow is in [F03_V12_F05_F06_INTEGRATION.md](F03_V12_F05_F06_INTEGRATION.md).

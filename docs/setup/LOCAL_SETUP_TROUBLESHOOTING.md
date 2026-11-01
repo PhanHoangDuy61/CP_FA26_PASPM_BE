@@ -1,0 +1,26 @@
+# Local setup troubleshooting
+
+Start with [common setup](LOCAL_SETUP_COMMON.md), then [Windows](LOCAL_SETUP_WINDOWS.md) or [macOS](LOCAL_SETUP_MACOS.md). Never run repair, drop a schema, delete a volume or weaken security as the default fix.
+
+| Symptom | Likely cause → check → safe fix |
+|---|---|
+| Backend reports wrong Java or `JAVA_HOME` invalid | `java -version` and `javac -version` differ → select JDK 17 for `JAVA_HOME`, prepend its `bin` to PATH, reopen the terminal if necessary. On macOS check `/usr/libexec/java_home -V`; on Windows check `where.exe java`. |
+| Maven not found / wrapper cannot execute | Use `sh ./mvnw -version` on macOS and `.\mvnw.cmd -version` in PowerShell. First use needs access to the configured Maven distribution and dependencies; check network/proxy. Do not change system execution policy. |
+| Docker daemon unavailable | Run `docker info` and `docker compose version`; start Docker Desktop, wait for it to finish starting and verify host prerequisites. |
+| MySQL connection refused | `docker compose ps` and `docker compose logs mysql` → start the local MySQL service, then check `DB_URL`, `DB_USER`, matching `DB_PASSWORD` and port. Do not print or share environment secrets. |
+| 8080 already in use | macOS: `lsof -nP -iTCP:8080 -sTCP:LISTEN`; Windows: `Get-NetTCPConnection -LocalPort 8080 -State Listen` → stop only your own process or set local `PORT` to another free port. |
+| MySQL port 3306 occupied | macOS: `lsof -nP -iTCP:3306 -sTCP:LISTEN`; Windows: `Get-NetTCPConnection -LocalPort 3306 -State Listen` → stop only your own conflicting service or explicitly adjust local Compose port mapping and `DB_URL`. Confirm which database you are accessing. |
+| Flyway migration/checksum failure | Inspect startup logs and `flyway_schema_history`; confirm the database and branch, backup and review [V7 recovery](FLYWAY_MYSQL_V7_RECOVERY.md). Do not edit an applied migration or use `repair` without a separately approved recovery plan. |
+| Missing config / JWT key too short | Check that the variables described in [common setup](LOCAL_SETUP_COMMON.md#configuration-and-defaults) are set **in the Backend process environment**. Compose `.env` does not automatically load into Spring Boot. JWT/OTP secrets need at least 32 UTF-8 bytes; do not print them. |
+| 401 vs 403 vs 404 | 401: log in again and use current Bearer token; 403: confirm role and endpoint; 404: check requested ID and Store scope. Inspect `/api/auth/me` using the authorized token; never bypass security or send tokens to others. |
+| `SPMF_JAR_NOT_FOUND` or hash mismatch | Verify an **absolute** JAR path exists; use `shasum -a 256` on macOS or `Get-FileHash -LiteralPath ... -Algorithm SHA256` in PowerShell and compare with the approved pin. Obtain the approved artifact from your team; do not substitute the latest download. |
+| `SPMF_JAVA_VERSION_UNSUPPORTED` / Java child cannot start | Run the separately configured `PASPM_MINING_JAVA_EXECUTABLE -version`, quoting the full path. It must be Java 25+ while Backend uses JDK 17. Check temp-directory write/delete permissions and [runtime guide](F05_SPMF_RUNTIME_SETUP.md). |
+| Windows path contains spaces | Assign complete paths to PowerShell variables; invoke the executable with `& $env:PASPM_MINING_JAVA_EXECUTABLE` and pass each argument separately. Do not use Command Prompt syntax in PowerShell. |
+| Apple Silicon vs Intel binary error | Run `uname -m`, select the matching publisher build and check both `java -version` commands; never assume every Mac uses `/opt/homebrew`. |
+| Scheduler enable returns 503 | Expected while scheduler dispatch/recovery is incomplete. Read [F05 status](../features/F05/README.md); do not remove the guard. |
+| Mining remains PENDING/RUNNING | Inspect request/run status, Backend logs and runtime readiness. Poll/lease periods are code constants, not configurable environment variables. Historical unowned RUNNING requests require the [review procedure](../architecture/F05_LEGACY_RUNNING_RECONCILIATION.md); do not globally reset them. |
+| Linux container reports process supervision unavailable | Check that Python 3 and the `ctypes` module are present, Linux `prctl` is allowed and the Java executable is not setuid/setgid or capability-bearing. The Linux parent-death path fails closed rather than launching unprotected. Verify the actual container policy; macOS/Windows do not have this guarantee. |
+
+To stop local services without deleting the named volume: `docker compose down`. A destructive reset is intentionally not part of this guide.
+
+The current working tree adds V13–V17 for F05 (V12 is F04). **Renumbering notice (2026-11-01):** earlier builds of this branch numbered the F05 migrations V12–V16. A *disposable local* database that already applied them will fail Flyway validation (history shows V12 `mining_administration_config`). Recreate that local schema (it holds no shared data); do not use `repair` and never touch a shared, staging or production database this way. Verify schema identity and Flyway history before investigating a migration error. Never use `repair` or reset as a first response. Linux Docker image acceptance is still pending; the scheduler activation 503 is expected.

@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 /** SPMF is an external GPLv3 dependency, deliberately not bundled into the backend artifact. */
 @Component
 public class SpmfMiningEngine implements MiningEngine {
+    private static final org.slf4j.Logger log=org.slf4j.LoggerFactory.getLogger(SpmfMiningEngine.class);
+    private final ThreadLocal<ExecutionIdentity> identity=new ThreadLocal<>();
     public static final String VERSION="SPMF_2.67a";
     public static final String JAR_HASH="4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a";
     public static final String MEMORY_METHOD="SPMF_SAMPLED_JAVA_HEAP_MIB_NOT_RSS";
@@ -31,17 +33,24 @@ public class SpmfMiningEngine implements MiningEngine {
     @Override public void requireAvailable(){
         runtime.requireAvailable();
     }
+    @Override public Output execute(Algorithm algorithm,MiningInputBuilder.Dataset input,int minUtility,ExecutionIdentity context)throws Exception {
+        identity.set(Objects.requireNonNull(context));
+        try{return execute(algorithm,input,minUtility);}finally{identity.remove();}
+    }
     @Override public Output execute(Algorithm algorithm,MiningInputBuilder.Dataset input,int minUtility)throws Exception {
         if(Thread.currentThread().isInterrupted())throw new ExecutionFailure("INTERRUPTED","Mining execution interrupted");
         requireAvailable();
         Path jar=runtime.jar(),java=runtime.javaExecutable();
         if(minUtility<1||!MiningInputBuilder.sha(input.text()).equals(input.hash()))throw new ExecutionFailure("INVALID_INPUT","Frozen mining input failed integrity validation");
-        Path dir=Files.createTempDirectory("paspm-mining-");Process process=null;
+        Path dir=Files.createTempDirectory("paspm-mining-");Process process=null;boolean success=false;
         try{
             Path source=dir.resolve("input.txt"),output=dir.resolve("patterns.txt"),log=dir.resolve("process.log");
             Files.writeString(source,input.text(),StandardCharsets.UTF_8);
             var command=List.of(java.toString(),"-Xmx"+heapMiB+"m","-Djava.awt.headless=true","-jar",jar.toString(),"run",algorithm==Algorithm.HUI_MINER?"HUI-Miner":"EFIM",source.toString(),output.toString(),Integer.toString(minUtility));
-            long started=System.nanoTime();process=new ProcessBuilder(command).directory(dir.toFile()).redirectErrorStream(true).redirectOutput(log.toFile()).start();
+            if(!"Linux".equalsIgnoreCase(System.getProperty("os.name")))SpmfMiningEngine.log.warn("SPMF local development: Linux parent-death protection is unavailable on this platform");
+            long started=System.nanoTime();process=new ProcessBuilder(LinuxParentDeathLauncher.command(System.getProperty("os.name"),command,ProcessHandle.current().pid())).directory(dir.toFile()).redirectErrorStream(true).redirectOutput(log.toFile()).start();
+            var job=identity.get();
+            if(job!=null)SpmfMiningEngine.log.info("SPMF_PROCESS_STARTED store={} request={} run={} owner={} fence={} pid={} startedAt={} linuxParentDeathRequested={}",job.storeId(),job.requestId(),job.runId(),job.owner(),job.fence(),process.pid(),process.info().startInstant().orElse(null),"Linux".equalsIgnoreCase(System.getProperty("os.name")));
             long deadline=started+TimeUnit.MILLISECONDS.toNanos(timeoutMillis);
             while(process.isAlive()){
                 if(System.nanoTime()>=deadline)throw new ExecutionFailure("TIMED_OUT","Mining exceeded its execution time limit");
@@ -56,8 +65,9 @@ public class SpmfMiningEngine implements MiningEngine {
             if(!memory.find())throw new ExecutionFailure("INVALID_METRICS","SPMF memory measurement is missing");
             double heap=Double.parseDouble(memory.group(1));
             if(!Double.isFinite(heap)||heap<0)throw new ExecutionFailure("INVALID_METRICS","SPMF memory measurement is invalid");
-            return new Output(parse(Files.readString(output),input,minUtility,deadline),elapsed,heap,
+            var result=new Output(parse(Files.readString(output),input,minUtility,deadline),elapsed,heap,
                 "SPMF="+VERSION+";jarSha256="+JAR_HASH+";heapMiB="+heapMiB+";os="+System.getProperty("os.name")+";arch="+System.getProperty("os.arch")+";javaExecutableSha256="+executableHash());
+            success=true;return result;
         }catch(InterruptedException e){Thread.currentThread().interrupt();throw new ExecutionFailure("INTERRUPTED","Mining execution interrupted");}
         catch(IOException e){throw new ExecutionFailure("SPMF_FAILED","Mining dependency or temporary IO failed");}
         finally{
@@ -65,9 +75,11 @@ public class SpmfMiningEngine implements MiningEngine {
             boolean interrupted=Thread.interrupted();
             try {
                 if(process!=null&&process.isAlive()){
-                    process.destroyForcibly();
-                    try { process.waitFor(5,TimeUnit.SECONDS); } catch(InterruptedException e){interrupted=true;}
+                    process.destroy();
+                    try { if(!process.waitFor(2,TimeUnit.SECONDS)){process.destroyForcibly();process.waitFor(5,TimeUnit.SECONDS);} }
+                    catch(InterruptedException e){interrupted=true;process.destroyForcibly();try{process.waitFor(5,TimeUnit.SECONDS);}catch(InterruptedException again){interrupted=true;}}
                 }
+                var job=identity.get();if(job!=null && process!=null)SpmfMiningEngine.log.info("SPMF_PROCESS_ENDED store={} request={} run={} owner={} fence={} pid={} alive={} success={} interrupted={}",job.storeId(),job.requestId(),job.runId(),job.owner(),job.fence(),process.pid(),process.isAlive(),success,interrupted);
             } finally {
                 try(var paths=Files.walk(dir)){
                     for(Path path:paths.sorted(Comparator.reverseOrder()).toList())Files.deleteIfExists(path);
