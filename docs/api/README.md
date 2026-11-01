@@ -11,7 +11,7 @@ Canonical contract locations stay stable in this directory. `CURRENT` describes 
 | F05 | [Mining](F05_MINING_API.md) | NEEDS_REVIEW: dated deployment/acceptance summaries | [F05](../frontend_handoff/F05_HANDOFF.md) |
 | F06 | [Recommendation](F06_RECOMMENDATION_API.md) | CURRENT Backend v1.1 contract; historical test statements retain dates | [F06](../frontend_handoff/F06_HANDOFF.md) |
 
-[OpenAPI export](openapi.json) has 59 paths/73 operations and is preserved byte-for-byte. It is an exported schema, not a new runtime result; generic error annotations/role prose still need source-based interpretation. [RBAC matrix](F01_F02_RBAC_MATRIX.md) and [integration notes](F03_V12_F05_F06_INTEGRATION.md) have review notices. [API changelog](API_CHANGELOG.md) remains append-only history.
+[OpenAPI export](openapi.json) is the runtime export of `dev` @ `11973a0` (88 operations: F01 24, F02 15, F03 12, F04 6, F05 23, F06 8); it was identical to the export of the verified Core build. The earlier 59 paths/73 operations belonged to the pre-F05-administration baseline. Role prose still needs source-based interpretation; use the [RBAC matrix](F01_F02_RBAC_MATRIX.md). [RBAC matrix](F01_F02_RBAC_MATRIX.md) and [integration notes](F03_V12_F05_F06_INTEGRATION.md) have review notices. [API changelog](API_CHANGELOG.md) remains append-only history.
 
 ## API Inventory provenance
 

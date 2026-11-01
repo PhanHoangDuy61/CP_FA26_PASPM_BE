@@ -1,6 +1,6 @@
 # F05 SPMF Runtime Setup
 
-> Current working-tree note: the F05 administrative execution contract below is superseded by [current F05 API](../api/F05_MINING_API.md) and [local setup](LOCAL_SETUP_COMMON.md). SYSTEM_ADMIN configures and submits Store-targeted mining requests. Scheduling remains disabled (503); this branch is NOT_READY for deployment. The Linux parent-death mechanism is under verification and Windows/macOS do not inherit its kernel guarantee.
+> Note (2026-11-02, `dev` @ `11973a0`): the F05 administrative execution contract below is superseded by [current F05 API](../api/F05_MINING_API.md) and [local setup](LOCAL_SETUP_COMMON.md). SYSTEM_ADMIN configures and submits Store-targeted mining requests. Scheduling remains disabled (503) and nothing here authorises a deployment. The Linux parent-death launcher passed multi-JVM SIGKILL tests in a Linux Docker container (amd64, emulated); native-hardware and production-image acceptance is still pending, and Windows/macOS do not inherit its kernel guarantee.
 
 The backend targets Java 17. The approved SPMF binary runs as a separate Java 25+ process. Configure both paths independently; F05 no longer silently uses the backend's JVM for SPMF. Missing runtime configuration leaves other modules available and rejects new mining with HTTP 503.
 
@@ -76,7 +76,7 @@ Expected versions: backend reports 17; child reports 25 or later; checksum exact
 ## Build, migration and startup
 
 1. Start MySQL 8.4 and provide an empty dedicated development schema plus the existing DB_URL, DB_USER, DB_PASSWORD and F01 secrets through your normal external configuration.
-2. For a fresh database, backend startup applies the current repository migrations in order (V1–V17 in this working tree; F05 mining migrations are V13–V17; V12 is F04 `f04_preserve_large_raw_import_rows`) and validates them automatically. For an existing database, first follow [V7 recovery](FLYWAY_MYSQL_V7_RECOVERY.md); old V7 checksums must not be silently repaired.
+2. For a fresh database, backend startup applies the current repository migrations in order (V1–V17 on `dev`; F05 mining migrations are V13–V17; V12 is F04 `f04_preserve_large_raw_import_rows`) and validates them automatically. For an existing database, first follow [V7 recovery](FLYWAY_MYSQL_V7_RECOVERY.md); old V7 checksums must not be silently repaired.
 3. Build with Maven under JAVA_HOME=JDK17. Tests requiring SPMF must receive the external test paths below.
 4. Start the packaged backend explicitly with JDK 17:
 
@@ -149,7 +149,7 @@ Run that command from an environment with JAVA_HOME selecting JDK17 and both PAS
 
 Executed validation was on this workstation using isolated MySQL/H2 and a temporary downloaded/verified Corretto JDK17. Windows/Linux instructions were reviewed but not executed, and a pristine clean-machine installation was NOT performed. See the [P0 fix report](../audits/F05_P0_DEPLOYMENT_FIX_REPORT.md).
 
-## Linux Docker image (working tree, acceptance pending)
+## Linux Docker image (on dev; production acceptance pending)
 
 The `Dockerfile` expects a Backend JAR already built with JDK 17 and two explicit BuildKit contexts: `java25` must be the root of a Linux Java 25+ runtime, and `spmf` must contain the approved `spmf.jar`. The build checks the approved SHA-256 and runs the bundled Java version check. Obtain the JAR through your team's approved channel; the repository does not supply a public artifact URL. Example from the Backend root, replacing both directory placeholders with local paths:
 

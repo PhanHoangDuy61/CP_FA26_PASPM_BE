@@ -19,7 +19,7 @@ Backend source has no CORS mapping or allowed-origin configuration. A browser se
 | Screen | Implemented API and notes |
 |---|---|
 | Login | `POST /api/auth/login`; active, verified account required |
-| Register | `POST /api/auth/register` with email only; generic 202 response |
+| Register | `POST /api/auth/register` with email only; 202 for a new email, **409 `Email already exists`** for an existing one |
 | Email OTP verification | `POST /api/auth/otp/verify` for SELF_REGISTER; then `POST /api/auth/register/complete` for name/password |
 | Invite activation | `POST /api/auth/activate` for ADMIN_INVITE OTP + new password |
 | Google login/register | `POST /api/auth/google`, `/google/register`; requires Google client configured. Google registration still uses PASPM OTP |

@@ -1,5 +1,11 @@
 # API Changelog
 
+## 2026-11-02 — F03/F05 Core merged into `dev` (PR #11, `11973a0`)
+
+- F05 administration is on `dev`: System Admin mining configuration (versioned), manual Store-targeted request, benchmark, durable lease/fencing dispatch, schedule administration (activation returns 503, dispatcher off by default), five System Admin Store-read routes gated by `paspm.mining.system-store-read.routes` (default none, decision D1). `POST /api/mining/requests` and `GET /api/mining/runs/{id}/benchmark` are forbidden for every role. Flyway V13–V17 added; V1–V12 unchanged.
+- OpenAPI now has 88 operations (F05 23). F01 registration duplicate answer documented as 409; F04 role rows added to the RBAC matrix. No endpoint was added or removed by the documentation synchronisation itself.
+- Details: [F05 API](F05_MINING_API.md), [RBAC matrix](F01_F02_RBAC_MATRIX.md), [Core release readiness](../reports/F03_F05_CORE_RELEASE_READINESS_2026-11-02.md).
+
 ## 2026-10-21 — Backend Retail Catalog access and current F03 Product Weight
 
 - GET Product/Category list/detail now permits Store Admin and Merchandiser in their own Store. Product/Category mutations and batch/summary APIs remain StoreAdmin-only; SystemAdmin/customer remain denied.

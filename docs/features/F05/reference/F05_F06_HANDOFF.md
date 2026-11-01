@@ -4,9 +4,9 @@
 
 # F05 → F06 Raw Mining Contract
 
-F06 Recommendation Engine is implemented on `dev`. This document defines the Store-scoped source evidence it consumes; see the [F06 API contract](../api/F06_RECOMMENDATION_API.md), [approved rules](../requirements/F06_RECOMMENDATION_RULES_v1_1.md), and [frontend handoff](../frontend_handoff/F06_HANDOFF.md) for the current recommendation behavior and review workflow.
+F06 Recommendation Engine is implemented on `dev`. This document defines the Store-scoped source evidence it consumes; see the [F06 API contract](../../../api/F06_RECOMMENDATION_API.md), [approved rules](../../../requirements/F06_RECOMMENDATION_RULES_v1_1.md), and [frontend handoff](../../../frontend_handoff/F06_HANDOFF.md) for the current recommendation behavior and review workflow.
 
-Use Store-scoped `GET /api/mining/runs/{id}` and `GET /api/mining/runs/{id}/patterns`, then the run's `requestId` with `GET /api/mining/requests/{id}`. Store Admin/Merchandiser can read; F06 authorization is defined separately in the [F06 API contract](../api/F06_RECOMMENDATION_API.md). Cross-Store reads return 404. The implemented F06 in-process consumer uses Store-scoped mining reads; do not add an unscoped “all patterns” query.
+Use Store-scoped `GET /api/mining/runs/{id}` and `GET /api/mining/runs/{id}/patterns`, then the run's `requestId` with `GET /api/mining/requests/{id}`. Store Admin/Merchandiser can read; F06 authorization is defined separately in the [F06 API contract](../../../api/F06_RECOMMENDATION_API.md). Cross-Store reads return 404. The implemented F06 in-process consumer uses Store-scoped mining reads; do not add an unscoped “all patterns” query.
 
 | F06 information | Real field/source |
 |---|---|

@@ -1,6 +1,6 @@
 # Local setup — common reference
 
-This guide describes the current working tree. Uncommitted branch changes will not appear in a fresh clone until they are published. Windows and macOS fresh-machine procedures have **not** been fully verified on their target OS; see [Windows](LOCAL_SETUP_WINDOWS.md), [macOS](LOCAL_SETUP_MACOS.md), and [troubleshooting](LOCAL_SETUP_TROUBLESHOOTING.md).
+This guide describes `dev` as of PR #11 (`11973a0`). Branches that are not merged, and uncommitted local changes, will not appear in a fresh clone. Windows and macOS fresh-machine procedures have **not** been fully verified on their target OS; see [Windows](LOCAL_SETUP_WINDOWS.md), [macOS](LOCAL_SETUP_MACOS.md), and [troubleshooting](LOCAL_SETUP_TROUBLESHOOTING.md).
 
 ## What you need
 
@@ -34,7 +34,7 @@ Current worker capacity is one active request and eight queued per instance; pol
 
 ## Flyway, accounts and verification
 
-Flyway runs automatically on Backend startup; the current working tree includes V1–V17. F05 mining migrations are V13–V17; V12 is F04 `f04_preserve_large_raw_import_rows`. Hibernate validates rather than creates schema. On a **new isolated schema**, inspect startup logs and `flyway_schema_history` for successful migrations. For an existing database check its identity and migration history first; see [V7 recovery](FLYWAY_MYSQL_V7_RECOVERY.md). Do not run `repair`, delete a schema or remove a volume as a routine fix.
+Flyway runs automatically on Backend startup; `dev` includes V1–V17. F05 mining migrations are V13–V17; V12 is F04 `f04_preserve_large_raw_import_rows`. Hibernate validates rather than creates schema. On a **new isolated schema**, inspect startup logs and `flyway_schema_history` for successful migrations. For an existing database check its identity and migration history first; see [V7 recovery](FLYWAY_MYSQL_V7_RECOVERY.md). Do not run `repair`, delete a schema or remove a volume as a routine fix.
 
 Bootstrap SYSTEM_ADMIN logs in via Swagger `POST /api/auth/login` with the locally configured email/password, then uses the returned `accessToken` in **Authorize**. `GET /api/auth/me` verifies the token. `GET /api/system/utility/lambda-policy` checks an F03 System Admin endpoint; `GET /api/system/mining/config` checks F05 administration. Missing token is 401; an authenticated wrong role is 403. Do not paste tokens into reports.
 
