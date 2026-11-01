@@ -13,11 +13,14 @@ GROUPS = {
                 "F03F05RbacMatrixTest", "ScheduledMiningDisabledByDefaultTest", "SystemStoreReadPolicyTest",
                 "MiningSystemStoreReadGateTest", "MiningSystemStoreReadGranularGateTest", "MiningAdminConfigurationTest",
                 "MiningScheduleTimeEdgeCasesTest", "MiningScheduleReservationScenariosTest", "MiningOccurrenceFailurePathsTest", "MiningScheduleAdministrationHttpTest",
+                "ScheduledMiningZoneGuardTest", "SystemStoreListHttpTest", "MiningScheduleCatchUpTest", "MiningScheduleChangeSemanticsTest",
+                "SchedulerPrincipalHttpTest", "ScheduledMiningActivationGateTest", "MiningScheduleReservationTest",
+                "MiningOccurrenceLeaseTest", "MiningOccurrenceReconciliationTest",
                 "WeightRulesV12IntegrationTest", "WeightRulesV12MigrationTest"],
     "mysql": ["FlywayRecoveryTest", "LegacyRecoveryMySqlTest", "LegacyRecoverySchemaTest",
               "RecommendationMigrationTest", "TransactionImportMySqlIntegrationTest",
               "TransactionImportCorrectnessMySqlIntegrationTest", "TransactionRawEvidenceMigrationMySqlTest",
-              "RetailCatalogUtilityMySqlIntegrationTest"],
+              "RetailCatalogUtilityMySqlIntegrationTest", "MiningMigrationMySqlTest"],
 }
 
 if __name__ == "__main__":
