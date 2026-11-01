@@ -355,9 +355,11 @@ else
       export PASPM_TEST_MYSQL_SERVER="jdbc:mysql://127.0.0.1:$PORT/" PASPM_TEST_MYSQL_USER=root PASPM_TEST_MYSQL_PASSWORD="" PASPM_CI_DISPOSABLE_MYSQL=true
       # The CI helper runs the mysql CLI in a container on the host network; make sure that works before using it.
       WRAP="$(mktemp -d)"; mkdir -p "$WRAP/bin" "$WRAP/tmp"; export RUNNER_TEMP="$WRAP"
-      chmod +x "$REPO/.github/scripts/mysql-client.sh" "$REPO/.github/scripts/provision-restore.py" 2>/dev/null
-      ln -s "$REPO/.github/scripts/mysql-client.sh" "$WRAP/bin/mysql"; ln -s "$REPO/.github/scripts/mysql-client.sh" "$WRAP/bin/mysqldump"
-      export PASPM_TEST_RESTORE_PROVISIONER="$REPO/.github/scripts/provision-restore.py"
+      # Executable copies live in the throwaway $WRAP: chmod on the repo files would leave tracked mode changes (644 -> 755) behind.
+      mkdir -p "$WRAP/helpers"; cp "$REPO/.github/scripts/mysql-client.sh" "$REPO/.github/scripts/provision-restore.py" "$WRAP/helpers/"
+      chmod +x "$WRAP/helpers/mysql-client.sh" "$WRAP/helpers/provision-restore.py"
+      ln -s "$WRAP/helpers/mysql-client.sh" "$WRAP/bin/mysql"; ln -s "$WRAP/helpers/mysql-client.sh" "$WRAP/bin/mysqldump"
+      export PASPM_TEST_RESTORE_PROVISIONER="$WRAP/helpers/provision-restore.py"
       if docker run --rm --network host -e MYSQL_PWD="" "$MYSQL_IMAGE" mysqladmin ping -h127.0.0.1 -P"$PORT" -uroot --silent >/dev/null 2>&1; then WRAP_OK=1; else WRAP_OK=0; fi
       if [ "$WRAP_OK" = 1 ] && need "test.mysql_group" java17 maven python3 mysql; then
         mvn_stage "test.mysql_group" "CI 'mysql' test group with -Dpaspm.test.mysql=true" "$EVID/mysql-group" clean verify -Dtest="$(python3 "$REPO/.github/scripts/test-groups.py" mysql)" -DargLine="-Djava.io.tmpdir=$WRAP/tmp" -Dpaspm.test.mysql=true -Dlogging.level.root=ERROR
