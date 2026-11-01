@@ -200,8 +200,8 @@ class MiningScheduleAdministrationHttpTest {
         long skippedId = skipped.path("occurrenceId").asLong();
         mvc.perform(get("/api/system/mining/schedules/" + id + "/occurrences/" + skippedId).header("Authorization", "Bearer " + system))
             .andExpect(status().isOk()).andExpect(jsonPath("$.status").value("SKIPPED")).andExpect(jsonPath("$.skipReason").value(MiningScheduleReservation.SKIP_SUPERSEDED));
-        assertThrows(org.springframework.dao.DataIntegrityViolationException.class, () -> jdbc.update("UPDATE mining_schedule_occurrence SET skip_reason=NULL WHERE occurrence_id=?", skippedId), "a SKIPPED row always carries its reason");
-        assertThrows(org.springframework.dao.DataIntegrityViolationException.class, () -> jdbc.update("UPDATE mining_schedule_occurrence SET skip_reason='X' WHERE occurrence_id<>?", skippedId), "only SKIPPED rows may carry one");
+        assertThrows(org.springframework.dao.DataAccessException.class, () -> jdbc.update("UPDATE mining_schedule_occurrence SET skip_reason=NULL WHERE occurrence_id=?", skippedId), "a SKIPPED row always carries its reason");
+        assertThrows(org.springframework.dao.DataAccessException.class, () -> jdbc.update("UPDATE mining_schedule_occurrence SET skip_reason='X' WHERE occurrence_id<>?", skippedId), "only SKIPPED rows may carry one");
     }
 
     @Test void listAndHistoryPaginationBoundsAreEnforced() throws Exception {
