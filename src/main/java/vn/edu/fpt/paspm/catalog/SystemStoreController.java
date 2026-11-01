@@ -26,7 +26,7 @@ public class SystemStoreController {
     @GetMapping
     @Operation(summary = "System Admin: page through all Stores (id and name only), ordered by name then storeId",
         description = "Read-only picker. page is zero-based (default 0), pageSize 1..100 (default 20). A page past the end returns an empty items list.")
-    public MiningContracts.Page<StoreView> list(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int pageSize) {
+    public MiningContracts.Page<StoreView> listStores(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int pageSize) {
         if (page < 0 || page > 100_000 || pageSize < 1 || pageSize > MAX_PAGE_SIZE) throw new ApiException(400, "Invalid pagination");
         List<StoreView> items = jdbc.query("SELECT store_id,name FROM store ORDER BY name,store_id LIMIT ? OFFSET ?",
             (rs, n) -> new StoreView(rs.getInt(1), rs.getString(2)), pageSize, (long) page * pageSize);

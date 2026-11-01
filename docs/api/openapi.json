@@ -3957,7 +3957,7 @@
         "tags": [
           "mining-system-controller"
         ],
-        "summary": "PENDING_BUSINESS_APPROVAL (HTTP 403 unless SNAPSHOTS is listed in paspm.mining.system-store-read.routes) - System Admin: list READY Utility Snapshots of an explicitly selected Store",
+        "summary": "System Admin: list READY Utility Snapshots of an explicitly selected Store (decision D1; HTTP 403 only if the operator removed SNAPSHOTS from paspm.mining.system-store-read.routes)",
         "description": "Read-only. Same representation as GET /api/mining/snapshots. Unknown Store returns 404.",
         "operationId": "snapshots",
         "parameters": [
@@ -4032,8 +4032,8 @@
         "tags": [
           "mining-system-controller"
         ],
-        "summary": "PENDING_BUSINESS_APPROVAL (HTTP 403 unless PATTERNS is listed in paspm.mining.system-store-read.routes) - System Admin: page raw high-utility patterns of a run in the selected Store",
-        "description": "Utility descending, canonical Product IDs ascending; empty while pending/failed. 404 when the run does not belong to the Store in the path.",
+        "summary": "Always HTTP 403 for System Admin (decision D1): raw high-utility patterns are read through the Store-scoped route GET /api/mining/runs/{runId}/patterns",
+        "description": "Kept only so the refusal is explicit and independent of Store existence.",
         "operationId": "patterns",
         "parameters": [
           {
@@ -4180,7 +4180,7 @@
         "tags": [
           "mining-system-controller"
         ],
-        "summary": "PENDING_BUSINESS_APPROVAL (HTTP 403 unless REQUESTS is listed in paspm.mining.system-store-read.routes) - System Admin: list a Store's mining requests, newest first",
+        "summary": "System Admin: list a Store's mining requests, newest first, including scheduled ones (decision D1)",
         "operationId": "requests_1",
         "parameters": [
           {
@@ -4254,7 +4254,7 @@
         "tags": [
           "mining-system-controller"
         ],
-        "summary": "PENDING_BUSINESS_APPROVAL (HTTP 403 unless REQUESTS is listed in paspm.mining.system-store-read.routes) - System Admin: read one request's status and immutable input provenance",
+        "summary": "System Admin: read one request's status and immutable input provenance (decision D1)",
         "description": "404 when the request does not belong to the Store in the path.",
         "operationId": "request",
         "parameters": [
@@ -4319,7 +4319,7 @@
         "tags": [
           "mining-system-controller"
         ],
-        "summary": "PENDING_BUSINESS_APPROVAL (HTTP 403 unless RUNS is listed in paspm.mining.system-store-read.routes) - System Admin: read the algorithm runs of a request in the selected Store",
+        "summary": "System Admin: read the algorithm runs of a request in the selected Store (decision D1)",
         "operationId": "runs",
         "parameters": [
           {
@@ -5272,6 +5272,71 @@
           }
         }
       }
+    },
+    "/api/system/stores": {
+      "get": {
+        "tags": [
+          "system-store-controller"
+        ],
+        "summary": "System Admin: page through all Stores (id and name only), ordered by name then storeId",
+        "description": "Read-only picker. page is zero-based (default 0), pageSize 1..100 (default 20). A page past the end returns an empty items list.",
+        "operationId": "listStores",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageStoreView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "403": {
+            "description": "Permission denied"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -5517,13 +5582,16 @@
           },
           "timeZone": {
             "type": "string",
-            "minLength": 1
+            "minLength": 1,
+            "description": "Must equal the Store calendar zone, Asia/Ho_Chi_Minh in this release (decision D4).",
+            "example": "Asia/Ho_Chi_Minh"
           },
           "lookbackDays": {
             "type": "integer",
             "format": "int32",
-            "maximum": 3660,
-            "minimum": 1
+            "maximum": 365,
+            "minimum": 7,
+            "description": "Complete calendar days analysed, ending the day before the analysis date. 7..365 inclusive (decision D3, amended 2026-11-02). Omitted: 30 for WEEKLY, 90 for MONTHLY. UI presets: 30, 60, 90, 180."
           },
           "compareAlgorithms": {
             "type": "boolean"
@@ -5532,7 +5600,6 @@
         "required": [
           "frequency",
           "localTime",
-          "lookbackDays",
           "storeId",
           "timeZone"
         ]
@@ -7834,7 +7901,15 @@
             "format": "int64"
           },
           "status": {
-            "type": "string"
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "PROCESSING",
+              "DISPATCHED",
+              "COMPLETED",
+              "FAILED",
+              "SKIPPED"
+            ]
           },
           "failureCode": {
             "type": "string"
@@ -7854,6 +7929,14 @@
           "updatedAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "failureMessage": {
+            "type": "string",
+            "description": "Actionable final cause of a FAILED occurrence (decision D7); null otherwise."
+          },
+          "skipReason": {
+            "type": "string",
+            "description": "Set only for SKIPPED: a missed fire time superseded by a later one (decision D6)."
           }
         }
       },
@@ -8045,6 +8128,41 @@
             "type": "integer",
             "format": "int64",
             "description": "Sellable quantity expiring strictly after today through the inclusive lookahead date"
+          }
+        }
+      },
+      "PageStoreView": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StoreView"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "StoreView": {
+        "type": "object",
+        "properties": {
+          "storeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
           }
         }
       }
