@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import vn.edu.fpt.paspm.auth.AuthService;
 import vn.edu.fpt.paspm.user.UserRepository;
@@ -21,7 +22,7 @@ import vn.edu.fpt.paspm.user.UserRepository;
 /**
  * Release safety for the Core release: with the shipped configuration (no
  * {@code paspm.mining.schedule-dispatch-enabled}) a schedule that is already enabled and due in the database must stay
- * inert, i.e. nothing is reserved, no snapshot or request is created and no dispatcher thread exists. This is the
+ * inert, i.e. nothing is reserved, no snapshot or request is created and this context's dispatcher never starts. This is the
  * "restart with an enabled schedule" situation; the HTTP enable path stays 503.
  */
 @SpringBootTest(properties = {
@@ -36,6 +37,7 @@ class ScheduledMiningDisabledByDefaultTest {
     @Autowired JdbcTemplate jdbc;
     @Autowired UserRepository users;
     @Autowired AuthService auth;
+    @Autowired MiningOccurrenceDispatcher dispatcher;
 
     String token(String role, Integer store) {
         var user = users.createPendingUser("Sched off", UUID.randomUUID() + "@example.test", role, store, null, null);
@@ -62,8 +64,9 @@ class ScheduledMiningDisabledByDefaultTest {
         assertEquals(0, jdbc.queryForObject("SELECT COUNT(*) FROM mining_schedule_occurrence WHERE schedule_id=?", Integer.class, schedule));
         assertEquals(snapshotsBefore, jdbc.queryForObject("SELECT COUNT(*) FROM utility_snapshot", Integer.class));
         assertEquals(requestsBefore, jdbc.queryForObject("SELECT COUNT(*) FROM mining_request", Integer.class));
-        assertFalse(Thread.getAllStackTraces().keySet().stream().anyMatch(t -> t.getName().equals("paspm-schedule-dispatch")),
-            "the schedule dispatcher thread must not exist when the flag is off");
+        // scoped to this application context: other contexts of the same JVM may legitimately run a dispatcher
+        assertFalse(((java.util.concurrent.atomic.AtomicBoolean) ReflectionTestUtils.getField(dispatcher, "started")).get(),
+            "this context's schedule dispatcher must not have started polling when the flag is off");
         // the due time was not advanced either: nothing touched the schedule
         assertEquals(1L, jdbc.queryForObject("SELECT schedule_version FROM mining_schedule WHERE schedule_id=?", Long.class, schedule));
 
