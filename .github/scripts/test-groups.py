@@ -10,6 +10,8 @@ GROUPS = {
                 "TransactionImportCorrectnessIntegrationTest", "TransactionOrderIdentifierTest",
                 "ExpiryBinaryRulesTest", "RetailCatalogUtilityIntegrationTest", "UtilityCalculationTest",
                 "UtilityFixtureTest", "UtilityIntegrationTest", "UtilitySnapshotRoutingTest", "MigrationVersioningTest", "MiningOccurrenceDispatcherFlagTest",
+                "F03F05RbacMatrixTest", "ScheduledMiningDisabledByDefaultTest", "SystemStoreReadPolicyTest",
+                "MiningSystemStoreReadGateTest", "MiningSystemStoreReadGranularGateTest", "MiningAdminConfigurationTest",
                 "WeightRulesV12IntegrationTest", "WeightRulesV12MigrationTest"],
     "mysql": ["FlywayRecoveryTest", "LegacyRecoveryMySqlTest", "LegacyRecoverySchemaTest",
               "RecommendationMigrationTest", "TransactionImportMySqlIntegrationTest",

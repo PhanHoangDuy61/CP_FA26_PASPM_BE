@@ -157,6 +157,7 @@ jobs:
             -DargLine="-Djava.io.tmpdir=$RUNNER_TEMP/paspm-tmp" \
             -Dpaspm.test.mysql=true \
             -Dpaspm.test.java17-backend=true \
+            -Dpaspm.test.multijvm=true \
             -Dpaspm.test.java17="$JAVA_HOME/bin/java" \
             -Dpaspm.test.spmf-jar="$SPMF_JAR_PATH" \
             -Dpaspm.test.spmf-java="$SPMF_JAVA_PATH" \
