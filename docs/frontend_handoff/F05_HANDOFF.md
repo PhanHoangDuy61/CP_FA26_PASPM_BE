@@ -1,71 +1,57 @@
-> **WORK IN PROGRESS — 2026-10-31, NOT MERGE READY.** The F05 administrative RBAC and API are being changed on this branch. The historical endpoint descriptions below are not the current branch contract. `POST /api/mining/requests` and the former Store benchmark route are forbidden; System Admin endpoints are under verification. Scheduling is incomplete: schedules are created disabled and enable requests return 503; the internal dispatcher is disabled by default and scheduler activation remains blocked pending acceptance. See [implementation report](../reports/PASPM_F03_F05_Implementation_Report.md). OpenAPI was exported from the current test container; scheduler acceptance and complete handoff verification remain pending.
-
-<!-- docs-reorganization:notice -->
-> **NEEDS_REVIEW — documentation review 2026-10-26.** Pre-fix deployment/downstream statements need reconciliation against current F06 and recovery references. See [current navigation](../features/F05/README.md). Original results and business-rule text below are retained; this notice is not a new execution or approval.
-<!-- /docs-reorganization:notice -->
+> **Status 2026-11-02 — branch `Khoi/feat/f03-f05-admin-mining`, not yet merged into `dev`.** Verified surface: see [OPTION_B_BACKEND_API_HANDOFF.md](OPTION_B_BACKEND_API_HANDOFF.md) (status table and the per-flow readiness table in its section 12). Closed by design: the five System Admin Store-read routes (403 until decision D1, per group) and schedule activation (503). This file explains how to build the F05 screens; the route/role truth is [F05_MINING_API.md](../api/F05_MINING_API.md).
 
 # F05 Mining — Frontend Integration Handoff
 
-> **Use the route table in [F05_MINING_API.md → CURRENT BRANCH CONTRACT](../api/F05_MINING_API.md#current-branch-contract--frontend-handoff-2026-11-01).** Mining submission and benchmark are System Admin only; Merchandiser and Store Admin have read-only access. Schedule enable returns 503 by design. System Admin also has five new, **unverified, PENDING_BUSINESS_APPROVAL** Store-explicit read routes (integration testing only) (`/api/system/mining/stores/{storeId}/snapshots|requests|requests/{requestId}|requests/{requestId}/runs|runs/{runId}/patterns`) so the whole System Admin workflow can run without a Store account.
+## Who does what
+
+| Actor | Does | Cannot |
+|---|---|---|
+| SYSTEM_ADMIN | Sets the global mining policy (algorithm, minUtil), starts a mining request for a chosen Store, reads benchmarks, manages schedules (disabled) and their history | Use the Store-scoped `/api/mining/**` routes (403). Read Store results unless the instance has opened the D1 groups |
+| MERCHANDISER | Creates F03 snapshots; reads own-Store snapshots, requests, runs and patterns | Submit mining (403), read benchmarks (403) |
+| STORE_ADMIN | Reads own-Store snapshots, requests, runs and patterns | Submit mining, read benchmarks |
+| END_CUSTOMER | – | Everything (403) |
+
+Send the F01 JWT in `Authorization: Bearer <token>`. Store users never send `storeId`; the System Admin routes carry `storeId` explicitly. Missing or invalid JWT: 401. A foreign or unknown snapshot/request/run: 404. Do not infer mining access from a role's F01 permissions.
 
 ## Readiness and environment
 
-Eight implemented F05 operations are ready for integration against a migrated development backend with the verified SPMF dependency configured. All eight were invoked with Swagger UI; see the [executed verification report](../features/F05/reference/F05_VERIFICATION.md). The 2026-10-20 P0 patch resolves fresh MySQL V1–V9 startup; existing applied V7 checksums require the [controlled reconciliation procedure](../setup/FLYWAY_MYSQL_V7_RECOVERY.md). Runtime configuration and diagnostic HTTP503 codes are documented in [SPMF setup](../setup/F05_SPMF_RUNTIME_SETUP.md). Backend remains Java17 with an explicitly configured Java25+ child executable.
-
-Default local base URL follows the existing backend configuration, normally `http://localhost:8080`; the actual isolated QA run used `http://127.0.0.1:18085`. Configure the React API base URL for the target environment. OpenAPI: `GET /v3/api-docs`; Swagger: `/swagger-ui/index.html`. The committed [OpenAPI export](../api/openapi.json) contains the actual QA server URL; override that server URL when generating/using the client elsewhere.
-
-Send the existing F01 JWT in `Authorization: Bearer <token>`. Reuse the F01 login/current-user flow and error handling. Store ownership comes from the authenticated user; never send `storeId`. No additional Frontend authentication or upload API is needed. Backend configuration and dependency paths are deployment concerns, not form inputs.
-
-## Role differences
-
-| Role | Select/read Store snapshots | Create mining request | Read requests, runs, patterns, benchmark |
-|---|---|---|---|
-| MERCHANDISER | Own Store | Own Store | Own Store |
-| STORE_ADMIN | Own Store | Forbidden, 403 | Own Store |
-| SYSTEM_ADMIN | Forbidden, 403 | Forbidden, 403 | Forbidden, 403 |
-| END_CUSTOMER | Forbidden, 403 | Forbidden, 403 | Forbidden, 403 |
-
-Missing/invalid JWT: 401. A permitted Store user requesting another Store's snapshot/request/run/patterns/benchmark gets 404. Cross-Store list results contain only the caller's Store. Do not infer that System Admin has mining access from their F01 account-management permissions.
+Mining runs asynchronously on a Java 17 backend with an external Java 25 SPMF child ([SPMF setup](../setup/F05_SPMF_RUNTIME_SETUP.md)). When the runtime is not configured, submitting returns HTTP 503 with a diagnostic prefix and history stays readable. Default base URL `http://localhost:8080`; OpenAPI `GET /v3/api-docs`, Swagger `/swagger-ui/index.html`; the committed [OpenAPI export](../api/openapi.json) is a runtime export of this backend.
 
 ## Integration sequence and screen mapping
 
-| Screen/action | Actual API | What to show |
-|---|---|---|
-| Snapshot picker | GET `/api/mining/snapshots?page=0&pageSize=20` | READY snapshots: range, analysis date, frozen scoring version, utility total, warnings |
-| Configure algorithms and minUtil | Local form; no separate configuration endpoint | HUI_MINER, EFIM, or both; PERCENTAGE/ABSOLUTE; positive decimal value |
-| Run button, Merchandiser only | POST `/api/mining/requests` | Persist UUID requestKey locally before submission; use same key on transport retry |
-| History | GET `/api/mining/requests?page=0&pageSize=20` | Newest request first; status and comparisonStatus |
-| Poll status | GET `/api/mining/requests/{id}` | Poll every 1–2 seconds while PENDING/RUNNING; stop when COMPLETED/FAILED |
-| Algorithm run panel | GET `/api/mining/requests/{id}/runs` | Separate HUI-Miner and EFIM statuses/metrics |
-| Run detail | GET `/api/mining/runs/{id}` | FailureCode/message, timestamps, patternCount |
-| Raw pattern table | GET `/api/mining/runs/{id}/patterns?page=0&pageSize=20` | Product IDs, utility, size; support shown as “not measured” |
-| Comparison panel | GET `/api/mining/runs/{id}/benchmark` for each run | Runtime ms, sampled Java heap MiB, methodology, input/threshold provenance, exact comparison status |
+| Screen / action | API | Role | State |
+|---|---|---|---|
+| Global policy form | `GET`/`PUT /api/system/mining/config` (send `expectedVersion`) | System Admin | Ready |
+| Store selection | none — type or paste a `storeId` (no Store list endpoint; decision D2) | System Admin | Missing |
+| Snapshot choice | System Admin: `GET /api/system/mining/stores/{storeId}/snapshots` (**locked, D1**); otherwise take the `snapshotId` from the Merchandiser's F03 snapshot response | System Admin | Limited |
+| Run button | `POST /api/system/mining/requests` body `{storeId,snapshotId,requestKey,compareAlgorithms?}` | System Admin | Ready |
+| Status polling | System Admin: `GET /api/system/mining/stores/{storeId}/requests/{requestId}` (**locked, D1**); Store users: `GET /api/mining/requests/{id}` | both | Locked / Ready |
+| Algorithm runs | System Admin `…/requests/{requestId}/runs` (**locked, D1**); Store users `GET /api/mining/requests/{id}/runs` | both | Locked / Ready |
+| Patterns | System Admin `…/runs/{runId}/patterns` (**locked, D1**); Store users `GET /api/mining/runs/{id}/patterns` | both | Locked / Ready |
+| Benchmark | `GET /api/system/mining/stores/{storeId}/runs/{runId}/benchmark` (open; needs a known `runId`) | System Admin | Limited |
+| Schedules | `POST`/`GET /api/system/mining/schedules`, `GET`/`PUT …/{id}`, `GET …/{id}/occurrences` | System Admin | Disabled schedules only; enabling returns 503 |
 
-F03 snapshot creation remains `POST /api/utility/snapshots` for Merchandiser, using F03's real date-range DTO. F05 never automatically creates a snapshot. Snapshot selection is available to Store Admin through the F05 picker even though F03 snapshot endpoints remain Merchandiser-only. A READY snapshot can still fail F05 numerical/size validation; display the Backend error.
+"Locked" means the route answers `403 {"error":"System Admin reads of Store mining results (<GROUP>) are pending Product Owner approval (decision D1)"}`; hide or disable that part of the screen and show "not yet available". Do not call `POST /api/mining/requests` or `GET /api/mining/runs/{id}/benchmark` (403 for every role).
 
-All list endpoints accept `page >= 0`, `pageSize = 1..100`, defaults 0/20. Pattern order is utility descending then canonical Product-key lexical ascending. History is request ID descending. There are no server status/Product/size filters and no custom sort parameter in this P0. Filter the loaded page locally only if labeled as such; do not imply that filtering one page searches the entire dataset. “Top N” can use page 0/pageSize N up to 100 and only limits display, never minUtil.
+F03 snapshot creation remains `POST /api/utility/snapshots` for the Merchandiser. F05 never creates a snapshot by itself (the disabled scheduler would). A READY snapshot can still fail F05 numerical or size validation; display the Backend error.
+
+All list endpoints accept `page >= 0`, `pageSize = 1..100`, defaults 0/20. Patterns: utility descending, then canonical Product key ascending. History: request ID descending. There are no server filters or custom sort. "Top N" is page 0 with `pageSize` N and only limits display, never minUtil.
 
 ## Form and response examples
 
-[create_request.json](F05_examples/create_request.json) and [create_response.json](F05_examples/create_response.json) are actual sanitized Swagger request/response from QA. Replace snapshotId and UUID for the target Store. The captured create response was PENDING; another execution may already be RUNNING/COMPLETED when returned. The API always returns persisted IDs.
-
 ```json
-{
-  "requestKey": "009f3ef1-d4ba-4291-9854-b74c6878d26b",
-  "snapshotId": 2,
-  "algorithms": ["HUI_MINER", "EFIM"],
-  "minUtilMode": "ABSOLUTE",
-  "minUtilValue": 30
-}
+{"algorithm":"EFIM","minUtilMode":"PERCENTAGE","minUtilValue":0.5,"expectedVersion":0}
 ```
 
-Use `crypto.randomUUID()` once per deliberate submission. Retrying the identical payload with that key returns the existing request (202) and does not enqueue duplicate work. The same key with a changed snapshot/algorithm set/minUtil yields 409. To rerun a failed/completed request intentionally, create a new UUID. There is no retry/cancel/delete endpoint. Algorithm order is normalized for idempotency; duplicate algorithms are invalid.
+```json
+{"storeId":3,"snapshotId":7,"requestKey":"009f3ef1-d4ba-4291-9854-b74c6878d26b","compareAlgorithms":true}
+```
 
-Percentage is in percent units: `0.5` means 0.5%, not 50%. Allowed `(0,100]`, at most 6 decimal places. Absolute is original frozen weighted utility units, positive and at most 6 places. Suggested presets 0.2%, 0.5%, 1% are optional UI choices. The API returns `minUtilSpmf`, `effectiveMinUtility`, `divisor`, `utilityScale`, `totalScaledUtility` so the UI can display the exact effective threshold, including upward rounding. For the executed 96-unit fixture, 31.25% became 30 and matched absolute 30.
+Use `crypto.randomUUID()` once per deliberate submission and keep it for transport retries: the same key with the same `snapshotId`/`compareAlgorithms` returns the existing request (202) without enqueueing duplicate work; the same key with different values is 409. A deliberate rerun needs a new UUID. There is no cancel, retry or delete route. A missing configuration answers 409 `Configure mining policy before execution`.
 
-Do not recalculate the conversion, Product weights or expiry scores in React. Backend uses exact scale-6 conversion and lossless GCD normalization; if an input is outside the common SPMF int32 range, submission fails with 400. Some legacy READY matrices may not fit. An all-zero dataset has no meaningful positive percentage threshold; positive absolute mode may complete with zero results.
+Percentage is in percent units (`0.5` = 0.5%, allowed `(0,100]`, at most 6 decimals); absolute is frozen weighted utility units. The response shows `minUtilSpmf`, `effectiveMinUtility`, `divisor`, `utilityScale`, `totalScaledUtility` so the UI can display the exact effective threshold, including upward rounding. Do not recompute conversions, Product weights or expiry scores in React.
 
-Full response field/type tables, statuses and validations are in [F05_MINING_API.md](../api/F05_MINING_API.md). Examples include [request detail](F05_examples/request_response.json), [runs](F05_examples/runs_response.json), [patterns](F05_examples/patterns_response.json), [benchmark](F05_examples/benchmark_response.json), [snapshot list](F05_examples/snapshot_list_response.json) and [percentage input](F05_examples/percentage_request.json).
+Sample responses (captured against synthetic data): [create_response.json](F05_examples/create_response.json), [request_response.json](F05_examples/request_response.json), [runs_response.json](F05_examples/runs_response.json), [patterns_response.json](F05_examples/patterns_response.json), [benchmark_response.json](F05_examples/benchmark_response.json), [snapshot_list_response.json](F05_examples/snapshot_list_response.json). The older `create_request.json` and `percentage_request.json` show the retired Merchandiser body and must not be used. Full field tables: [F05_MINING_API.md](../api/F05_MINING_API.md).
 
 ## State and error handling
 
@@ -75,7 +61,7 @@ Full response field/type tables, statuses and validations are in [F05_MINING_API
 - Request `FAILED`, comparisonStatus `FAILED`: algorithms completed but exact itemsets/utilities did not match. Do not show a successful comparison.
 - Comparison `PENDING`: wait; `NOT_REQUESTED`: only one algorithm selected; `BLOCKED`: at least one algorithm did not complete or capacity/recovery prevented comparison.
 - Queue full: a committed PENDING request remains eligible for durable polling; do not interpret 202 alone as a completed mining success. Monitor request and run status and consult the current worker architecture for recovery limitations.
-- Restart: unfinished persisted runs become FAILED/INTERRUPTED. A deliberate retry requires a new UUID; the Backend does not silently resume jobs.
+- Restart or instance loss: a request whose worker lease expires is recovered and re-run by another (or the restarted) instance, with a higher fencing token so the stale worker cannot write results; poll the status instead of resubmitting. Legacy RUNNING rows without a lease owner are never assumed abandoned and need operator investigation. A terminal FAILED request is not replayed automatically; a deliberate retry needs a new UUID.
 - 400: fix inputs or select a compatible snapshot. 401: use existing login/session recovery. 403: hide/disable forbidden actions. 404: unavailable/foreign record, do not disclose Store details. 409: resolve requestKey conflict. 503: deployment dependency unavailable; keep configuration details out of user forms.
 
 Common application error envelope is `{"error":"message"}`. Authentication middleware may return an empty 401 body; handle both JSON and empty responses. Unknown JSON fields (including storeId) are rejected. No credential is present in handoff examples.
@@ -90,15 +76,11 @@ Java long IDs/divisor and decimal utility values are JSON numbers. Preserve prec
 
 ## Operational limits and known limitations
 
-- Maximum snapshot rows 20,000; distinct Products 256. Conversion must fit signed 64-bit before GCD and signed 32-bit dataset total/threshold after GCD. No silent rounding beyond the frozen scale or filtering to fit limits.
-- One active request worker, up to 8 queued requests. Algorithms selected together execute sequentially. Single backend instance only; distributed workers/leases are not implemented.
-- Default timeout 60 seconds per algorithm including bounded output verification; default child heap 256 MiB; at most 2,000 patterns. File output cap 4 MiB; process log cap 64 KiB. Backend configuration may adjust timeout/heap/pattern limits within documented bounds.
-- Historical snapshots remain usable if valid; active Product/configuration changes affect only new F03 snapshots. F05 captures its own frozen execution copy.
-- SPMF is externally configured, not bundled. The verified 2.67a JAR requires a Java 25 child executable; Backend classes are compiled for Java 17. See Backend setup in the API contract.
-- Recurring scheduling, cancellation, automatic retries and clustering are not implemented. F06 recommendations are implemented separately; see the [F06 frontend handoff](F06_HANDOFF.md). F06 combines raw patterns with current inventory/business rules and Merchandiser review. E_i=1 does not guarantee appearance in a pattern.
-- Full clean MySQL startup is blocked by preexisting V7; V9 and APIs were independently validated on a prepared isolated baseline8 QA schema. H2 full V1–V9 migrations and existing F01–F04 regression tests pass.
-
-
-Scheduler administration is SYSTEM_ADMIN-only. Schedule and occurrence history/detail may be read, but enabling a schedule currently returns 503 by design. Do not present scheduling as operational until the acceptance gate is closed. See the current [API description](../api/F05_MINING_API.md#scheduler-administration-on-this-branch-2026-11-01).
-
-The tested administrative scheduler endpoints remain suitable only for disabled-schedule management/history while this branch is under review; enabling continues to return 503. Explain the state to users and do not present scheduled execution as operational. Timezone, recurrence, catch-up, retry and configuration-change policies are awaiting Product Owner decisions in the [policy register](../reports/F05_SCHEDULER_POLICY_DECISIONS.md).
+- Maximum snapshot rows 20,000; distinct Products 256. Conversion must fit signed 64-bit before GCD and signed 32-bit dataset total/threshold after GCD. No silent rounding or filtering.
+- Each backend instance has one worker and eight waiting slots; the database is the durable dispatch authority, so a full queue leaves a PENDING request for a later poll. Several instances may run against one database: work is claimed with a time-limited lease and fencing token, and an expired lease is recovered by another instance ([worker architecture](../architecture/F05_WORKER_DISPATCH.md)). Algorithms of one request run sequentially.
+- Default timeout 60 s per algorithm, child heap 256 MiB, at most 2,000 patterns; output cap 4 MiB; process log cap 64 KiB.
+- Historical snapshots remain usable if valid; later F03 changes affect only new snapshots. F05 keeps its own frozen execution copy.
+- SPMF is not bundled. The verified 2.67a JAR needs a Java 25 child executable; the backend is compiled for Java 17.
+- Scheduling: administration and history only. Enabling a schedule returns 503 and the dispatcher is off by default; lookback, time zone, monthly overflow, catch-up, retry and configuration-change policies await Product Owner decisions ([decision package](../decisions/PO_DECISION_PACKAGE_D1_D10_2026-11-01.md)). Do not present scheduled execution as operational.
+- F06 recommendations are separate ([F06 handoff](F06_HANDOFF.md)); they combine COMPLETED raw patterns with current inventory and Merchandiser review. `E_i=1` does not guarantee appearance in a pattern.
+- Not verified: Frontend end-to-end flows, native Linux production image, remote CI.

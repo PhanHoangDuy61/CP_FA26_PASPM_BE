@@ -1,4 +1,4 @@
-> **Branch note — 2026-10-31:** The F03 FEFO tie order is expiry date, oldest receipt, then batch ID. Historical snapshots are unchanged. F03/F05 administrative changes are not merge ready; see [implementation report](../reports/PASPM_F03_F05_Implementation_Report.md).
+> **Status 2026-11-02.** FEFO tie order is expiry date, oldest receipt, then batch ID; historical snapshots are unchanged. The routes and roles in this file are checked by `F03F05RbacMatrixTest` and the F03 suites listed in the [audit matrix](../reports/F03_F05_API_AUDIT_MATRIX_2026-11-02.md). The Weight Rules v1.2 source file is not tracked in the repository, so [F03_UTILITY_API.md](../api/F03_UTILITY_API.md) is the only written v1.2 contract.
 
 <!-- docs-reorganization:notice -->
 > **NEEDS_REVIEW — documentation review 2026-10-26.** Final v1.2 source and some referenced examples are absent from tracked dev; untracked originals are not imported. See [current navigation](../features/F03/README.md). Original results and business-rule text below are retained; this notice is not a new execution or approval.
@@ -24,7 +24,7 @@ The normal transaction provider is now F04_DATABASE_V1, reading validated persis
 6. Merchandiser selects transaction range and fixed asOfDate, then POSTs `/api/utility/preview`. Save settings/scores first; Preview accepts dates/page fields only. Display warnings/ready and null fields explicitly. E is binary for new scoring; W follows the three-weight formula.
 7. If ready and nonempty, POST `/api/utility/snapshots` with the same date range/asOfDate. Backend recalculates atomically against current saved state, so handle400/409 if inputs changed since Preview.
 8. Save returned snapshotId, then GET metadata and matrix pages. There is no snapshot-history list endpoint. Preserve/display scoringVersion; old F03_LINEAR_V1 snapshots remain decimal and must not be relabeled or recalculated in React.
-9. Pass the frozen snapshot identity to the implemented F05 Mining APIs. Mining/Recommendation execution uses their separate contracts, not the Product score endpoints. Never hide the independent push list because an item was absent from HUI/EFIM output.
+9. Hand the frozen `snapshotId` to the System Admin, who starts mining for that Store with `POST /api/system/mining/requests` (Merchandisers and Store Admins only read results through `GET /api/mining/**`; see the [F05 handoff](F05_HANDOFF.md)). Mining/Recommendation execution uses their separate contracts, not the Product score endpoints. Never hide the independent push list because an item was absent from HUI/EFIM output.
 
 SYSTEM_ADMIN cannot edit Store/Product utility inputs. STORE_ADMIN may read current Product scores/E/W but cannot configure weights, edit manual scores or use Preview/snapshots. MERCHANDISER cannot edit Product expiryPushDays or global bounds. END_CUSTOMER has no F03 permissions. Missing token401, wrong role403, foreign record404. No request accepts storeId.
 

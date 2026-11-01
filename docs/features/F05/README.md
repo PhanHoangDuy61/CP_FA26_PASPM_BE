@@ -1,10 +1,10 @@
-> **WORK IN PROGRESS — 2026-10-31, NOT MERGE READY.** The F05 administrative RBAC and API are being changed on this branch. The historical endpoint descriptions below are not the current branch contract. `POST /api/mining/requests` and the former Store benchmark route are forbidden; System Admin endpoints are under verification. Scheduling is partial: schedules are created disabled, the dispatcher defaults off, and activation returns 503 pending acceptance and policy approval. See [implementation report](../../reports/PASPM_F03_F05_Implementation_Report.md).
+> **Status 2026-11-02.** Branch `Khoi/feat/f03-f05-admin-mining`, not yet merged into `dev`. The administrative F05 API is implemented and verified (23/23 stages of `scripts/verify-option-b-macos.sh --run` on `0a2d27e`; [audit matrix](../../reports/F03_F05_API_AUDIT_MATRIX_2026-11-02.md)). Closed by design: the five System Admin Store-read routes (403, decision D1) and schedule activation (503, decisions D3–D10). `POST /api/mining/requests` and the Store benchmark route are forbidden for every role.
 
 # F05 — HUI-Miner and EFIM Mining
 
 ## Current scope
 
-8 mapped async request/run/pattern/benchmark operations; actual SPMF child-process adapter exists. Local runtime configuration is distinct from public hosting and from research/production acceptance.
+System Admin configuration, manual Store-targeted requests, benchmark and schedule administration; Store-scoped reads for Merchandiser and Store Admin; a real SPMF child-process adapter with durable lease/fencing dispatch (see the audit matrix for the full operation list). Local runtime configuration is distinct from public hosting and from research/production acceptance.
 
 - [Canonical API](../../api/F05_MINING_API.md) · [Frontend handoff](../../frontend_handoff/F05_HANDOFF.md).
 - [Architecture](../../architecture/README.md) · [diagrams](../../diagrams/README.md) · [documentation map](../../DOCUMENTATION_MAP.md).

@@ -1,6 +1,4 @@
-<!-- docs-reorganization:notice -->
-> **NEEDS_REVIEW — documentation review 2026-10-26.** The final v1.2 specification is not tracked; its former link leads to an explicit gap notice. F05/F06 source exists despite stale downstream text. See [current navigation](../features/F03/README.md). Original results and business-rule text below are retained; this notice is not a new execution or approval.
-<!-- /docs-reorganization:notice -->
+> **Status 2026-11-02.** This contract matches the controllers, DTOs and `SecurityConfig` of branch `Khoi/feat/f03-f05-admin-mining` and is exercised by the F03 suites (`UtilityIntegrationTest`, `WeightRulesV12IntegrationTest`, `UtilityCalculationTest`, `ExpiryBinaryRulesTest`, `ExpiryFefoOrderingTest`, `F03F05RbacMatrixTest`; see the [audit matrix](../reports/F03_F05_API_AUDIT_MATRIX_2026-11-02.md)). The stand-alone Weight Rules v1.2 specification file is **not tracked in the repository** ([gap notice](../requirements/README.md#f03-v12-source-gap)); this document is therefore the only written v1.2 contract and is an implementation reference, not an independent approval of the business rules.
 
 # F03 Utility API — Final Weight Rules v1.2
 
@@ -141,4 +139,4 @@ F06 must use a fresh current-date query/check before recommending or presenting 
 
 Handled business/validation envelope: `{"error":"Enabled coefficients must sum exactly to 1"}` or `{"error":"Invalid request fields"}`. F01/Spring Security 401/403 may have an empty framework body; frontend must key off HTTP status. Never expect tokens/credentials in examples.
 
-F05 is currently only MiningEngine interface: no runnable snapshot export adapter, Mining Request APIs, HUI-Miner/EFIM or snapshot-list APIs are implemented. See [F03_F05_HANDOFF](../features/F03/reference_v4/F03_F05_HANDOFF.md) and [F05/F06 integration](F03_V12_F05_F06_INTEGRATION.md). Verification details are in the v1.2 report; endpoint descriptions are not claims of interactive Swagger execution.
+F05 consumes frozen snapshots: a Store user lists READY snapshots with `GET /api/mining/snapshots`, and the System Admin starts mining for a chosen Store with `POST /api/system/mining/requests` (see [F05 Mining API](F05_MINING_API.md)). F05 never recalculates F03 values. The F03 → F05 → F06 data flow is in [F03_V12_F05_F06_INTEGRATION.md](F03_V12_F05_F06_INTEGRATION.md).
