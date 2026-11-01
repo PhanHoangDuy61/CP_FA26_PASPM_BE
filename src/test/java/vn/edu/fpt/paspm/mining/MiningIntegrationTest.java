@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import vn.edu.fpt.paspm.auth.AuthService;
 import vn.edu.fpt.paspm.user.UserRepository;
 
-@SpringBootTest(properties={"spring.datasource.url=jdbc:h2:mem:mining;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1","spring.datasource.username=sa","spring.datasource.password=","spring.flyway.enabled=true","paspm.jwt-secret=01234567890123456789012345678901","paspm.otp-secret=01234567890123456789012345678901","paspm.bootstrap-email=","paspm.bootstrap-password=","paspm.mining.system-store-read.routes=SNAPSHOTS,REQUESTS,RUNS,PATTERNS","paspm.mining.spmf-jar=${paspm.test.spmf-jar:${user.dir}/../spmf_run/spmf.jar}","paspm.mining.java-executable=${paspm.test.spmf-java:${java.home}/bin/java}","paspm.avatar.directory=/tmp/paspm-test-avatars"})
+@SpringBootTest(properties={"spring.datasource.url=jdbc:h2:mem:mining;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1","spring.datasource.username=sa","spring.datasource.password=","spring.flyway.enabled=true","paspm.jwt-secret=01234567890123456789012345678901","paspm.otp-secret=01234567890123456789012345678901","paspm.bootstrap-email=","paspm.bootstrap-password=","paspm.mining.spmf-jar=${paspm.test.spmf-jar:${user.dir}/../spmf_run/spmf.jar}","paspm.mining.java-executable=${paspm.test.spmf-java:${java.home}/bin/java}","paspm.avatar.directory=/tmp/paspm-test-avatars"})
 @AutoConfigureMockMvc
 class MiningIntegrationTest {
     @Autowired MockMvc mvc; @Autowired JdbcTemplate jdbc; @Autowired ObjectMapper json;
@@ -231,18 +231,18 @@ class MiningIntegrationTest {
         var runs=json.readTree(getJson(base+"/requests/"+id+"/runs",system).andExpect(status().isOk()).andReturn().getResponse().getContentAsString());
         assertEquals(2,runs.size());for(var run:runs){assertEquals(id,run.path("requestId").asLong());assertEquals(store,run.path("storeId").asInt());}
         long runId=runs.get(0).path("runId").asLong();
-        var adminPatterns=getJson(base+"/runs/"+runId+"/patterns?page=0&pageSize=3",system).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-        var tree=json.readTree(adminPatterns);assertEquals(3,tree.path("items").size());assertEquals(3,tree.path("pageSize").asInt());assertTrue(tree.path("totalElements").asLong()>=3);
-        assertEquals(adminPatterns,getJson("/api/mining/runs/"+runId+"/patterns?page=0&pageSize=3",merchant).andExpect(status().isOk()).andReturn().getResponse().getContentAsString(),"administrative and Store-scoped reads share one representation");
+        // decision D1: raw patterns are not released to System Admin; the Store-scoped route stays available to the Store's staff
+        getJson(base+"/runs/"+runId+"/patterns?page=0&pageSize=3",system).andExpect(status().isForbidden());
+        var tree=json.readTree(getJson("/api/mining/runs/"+runId+"/patterns?page=0&pageSize=3",merchant).andExpect(status().isOk()).andReturn().getResponse().getContentAsString());assertEquals(3,tree.path("items").size());assertEquals(3,tree.path("pageSize").asInt());assertTrue(tree.path("totalElements").asLong()>=3);
         String wrong="/api/system/mining/stores/"+other;
         getJson(wrong+"/requests/"+id,system).andExpect(status().isNotFound());
         getJson(wrong+"/requests/"+id+"/runs",system).andExpect(status().isNotFound());
-        getJson(wrong+"/runs/"+runId+"/patterns",system).andExpect(status().isNotFound());
+        getJson(wrong+"/runs/"+runId+"/patterns",system).andExpect(status().isForbidden());
         getJson(wrong+"/runs/"+runId+"/benchmark",system).andExpect(status().isNotFound());
-        for(String path:List.of("/snapshots","/requests","/requests/"+id,"/requests/"+id+"/runs","/runs/"+runId+"/patterns"))getJson("/api/system/mining/stores/99999999"+path,system).andExpect(status().isNotFound());
+        for(String path:List.of("/snapshots","/requests","/requests/"+id,"/requests/"+id+"/runs"))getJson("/api/system/mining/stores/99999999"+path,system).andExpect(status().isNotFound());
+        getJson("/api/system/mining/stores/99999999/runs/"+runId+"/patterns",system).andExpect(status().isForbidden());
         getJson(base+"/requests/99999999",system).andExpect(status().isNotFound());
-        getJson(base+"/runs/99999999/patterns",system).andExpect(status().isNotFound());
-        for(String query:List.of("?page=-1","?pageSize=0","?pageSize=101"))for(String path:List.of("/snapshots","/requests","/runs/"+runId+"/patterns"))getJson(base+path+query,system).andExpect(status().isBadRequest());
+        for(String query:List.of("?page=-1","?pageSize=0","?pageSize=101"))for(String path:List.of("/snapshots","/requests"))getJson(base+path+query,system).andExpect(status().isBadRequest());
         getJson(base+"/requests/abc",system).andExpect(status().isBadRequest());
         getJson("/api/system/mining/stores/0/requests",system).andExpect(status().isBadRequest());
         // The two legacy routes and Store-scoped denial of System Admin stay closed.

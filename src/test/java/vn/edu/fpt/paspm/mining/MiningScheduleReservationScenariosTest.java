@@ -18,9 +18,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import vn.edu.fpt.paspm.common.ApiException;
 
 /**
- * Occurrence reservation scenarios on the real schema. Expectations that depend on unapproved policy are named
- * "currentBehaviour…": they pin what the code does today (D3 lookback, D4 zone, D5 clamp, D6 catch-up) and are not
- * Product Owner approval of those policies.
+ * Occurrence reservation scenarios on the real schema. D3 (lookback 7..365), D4 (Store calendar zone) and D5 (month-end clamp) are
+ * confirmed decisions. Catch-up (D6) is covered by its own scenarios.
  */
 @SpringBootTest(properties = {
     "spring.datasource.url=jdbc:h2:mem:reservationscenarios;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1",
@@ -89,34 +88,57 @@ class MiningScheduleReservationScenariosTest {
         assertEquals(1, occurrences(s).size());
     }
 
-    @Test void currentBehaviourTheAnalysisDateFollowsTheScheduleZoneNotUtc() {
+    // D4: the Store calendar zone is the only zone the scheduler runs in; a schedule stored in another zone is kept but inert
+    @Test void aLegacyScheduleInAnotherZoneIsNeverReservedAndKeepsItsFireTime() {
         base();
-        // Monday 2026-11-02 00:30 in Auckland (UTC+13) is still Sunday 2026-11-01 11:30 UTC
-        long s = schedule("WEEKLY", 1, null, "00:30", "Pacific/Auckland", 3, true, Instant.parse("2026-11-01T11:30:00Z"));
-        reservation.reserveOne(Instant.parse("2026-11-01T12:00:00Z"));
-        var row = occurrences(s).get(0);
-        assertEquals("2026-11-02", row.get("analysis_date").toString());
-        assertEquals("2026-10-30", row.get("range_start").toString());
-        assertEquals("2026-11-01", row.get("range_end").toString());
-        assertEquals("Pacific/Auckland", row.get("time_zone"));
+        Instant due = Instant.parse("2026-11-01T11:30:00Z");
+        long s = schedule("WEEKLY", 1, null, "00:30", "Pacific/Auckland", 7, true, due);
+        assertTrue(reservation.reserveOne(Instant.parse("2026-11-01T12:00:00Z")).isEmpty());
+        assertEquals(0, occurrences(s).size());
+        assertEquals(due, nextFire(s), "nothing consumed or reinterpreted");
     }
 
-    @Test void currentBehaviourLookbackBoundariesOneDayAndTheMaximum() {
+    @Test void theAnalysisDateIsTheStoreCalendarDateEvenWhenUtcIsStillTheDayBefore() {
         base();
-        long one = schedule("MONTHLY", null, 15, "09:00", "Asia/Ho_Chi_Minh", 1, true, Instant.parse("2026-11-15T02:00:00Z"));
-        long max = schedule("MONTHLY", null, 15, "10:00", "Asia/Ho_Chi_Minh", 3660, true, Instant.parse("2026-11-15T03:00:00Z"));
+        // Monday 2026-11-02 00:30 in Ho Chi Minh (UTC+7) is still Sunday 2026-11-01 17:30 UTC
+        long s = schedule("WEEKLY", 1, null, "00:30", "Asia/Ho_Chi_Minh", 7, true, Instant.parse("2026-11-01T17:30:00Z"));
+        reservation.reserveOne(Instant.parse("2026-11-01T18:00:00Z"));
+        var row = occurrences(s).get(0);
+        assertEquals("2026-11-02", row.get("analysis_date").toString());
+        assertEquals("2026-10-26", row.get("range_start").toString());
+        assertEquals("2026-11-01", row.get("range_end").toString());
+        assertEquals("Asia/Ho_Chi_Minh", row.get("time_zone"));
+    }
+
+    // D3 (amended 2026-11-02): lookback 7..365; out-of-range rows are kept exactly as stored and never truncated into a window
+    @Test void lookbackBoundariesSevenAndThreeHundredSixtyFiveGiveTheExactWindow() {
+        base();
+        long seven = schedule("MONTHLY", null, 15, "09:00", "Asia/Ho_Chi_Minh", 7, true, Instant.parse("2026-11-15T02:00:00Z"));
+        long max = schedule("MONTHLY", null, 15, "10:00", "Asia/Ho_Chi_Minh", 365, true, Instant.parse("2026-11-15T03:00:00Z"));
         Instant now = Instant.parse("2026-11-16T00:00:00Z");
         reservation.reserveOne(now); reservation.reserveOne(now);
-        var a = occurrences(one).get(0);
-        assertEquals("2026-11-14", a.get("range_start").toString());
+        var a = occurrences(seven).get(0);
+        assertEquals("2026-11-08", a.get("range_start").toString());
         assertEquals("2026-11-14", a.get("range_end").toString());
         var b = occurrences(max).get(0);
-        LocalDate end = LocalDate.parse("2026-11-14");
-        assertEquals(end.minusDays(3659).toString(), b.get("range_start").toString());
+        assertEquals(LocalDate.parse("2026-11-14").minusDays(364).toString(), b.get("range_start").toString());
         assertEquals("2026-11-14", b.get("range_end").toString());
     }
 
-    @Test void currentBehaviourMonthlyDay31ClampsToFebruaryEndThenReturnsToDay31() {
+    @Test void aLegacyLookbackOutsideTheApprovedRangeIsNeverReservedOrTruncated() {
+        base();
+        Instant due = Instant.parse("2026-11-02T02:00:00Z");
+        List<Long> legacy = new ArrayList<>();
+        for (int days : new int[] {1, 6, 366, 3660}) legacy.add(schedule("WEEKLY", 1, null, "09:00", "Asia/Ho_Chi_Minh", days, true, due));
+        long valid = schedule("WEEKLY", 1, null, "09:00", "Asia/Ho_Chi_Minh", 7, true, due.plusSeconds(60));
+        Instant now = Instant.parse("2026-11-02T03:00:00Z");
+        assertTrue(reservation.reserveOne(now).isPresent(), "the valid schedule behind the legacy rows is still served");
+        assertTrue(reservation.reserveOne(now).isEmpty());
+        for (long id : legacy) { assertEquals(0, occurrences(id).size()); assertEquals(due, nextFire(id)); }
+        assertEquals(1, occurrences(valid).size());
+    }
+
+    @Test void monthlyDay31ClampsToFebruaryEndThenReturnsToDay31() {
         base();
         long s = schedule("MONTHLY", null, 31, "09:00", "Asia/Ho_Chi_Minh", 7, true, Instant.parse("2027-01-31T02:00:00Z"));
         Instant now = Instant.parse("2027-03-01T00:00:00Z");
@@ -124,6 +146,23 @@ class MiningScheduleReservationScenariosTest {
         var fires = occurrences(s).stream().map(r -> ((Timestamp) r.get("scheduled_at")).toInstant().toString()).toList();
         assertEquals(List.of("2027-01-31T02:00:00Z", "2027-02-28T02:00:00Z"), fires);
         assertEquals(Instant.parse("2027-03-31T02:00:00Z"), nextFire(s), "no drift: March keeps day 31");
+    }
+
+    // D5 (confirmed 2026-11-02): a missing day runs on the last valid day of the month; each logical fire time is unique
+    @Test void monthlyDay29And30UseTheLastValidDayInLeapAndNonLeapFebruaryAndThirtyDayMonths() {
+        base();
+        long d29 = schedule("MONTHLY", null, 29, "09:00", "Asia/Ho_Chi_Minh", 7, true, Instant.parse("2027-01-29T02:00:00Z"));
+        long d30 = schedule("MONTHLY", null, 30, "10:00", "Asia/Ho_Chi_Minh", 7, true, Instant.parse("2028-01-30T03:00:00Z"));
+        Instant now = Instant.parse("2028-05-01T00:00:00Z");
+        // each reservation advances only the schedule it served, so drain per schedule by catching up one at a time
+        for (int i = 0; i < 40; i++) if (reservation.reserveOne(now).isEmpty()) break;
+        var nonLeap = occurrences(d29).stream().map(r -> ((Timestamp) r.get("scheduled_at")).toInstant().toString()).toList();
+        assertTrue(nonLeap.contains("2027-02-28T02:00:00Z"), "non-leap February clamps to the 28th: " + nonLeap);
+        assertFalse(nonLeap.stream().anyMatch(t -> t.startsWith("2027-03-01") || t.startsWith("2027-03-02")), "never spills into March");
+        var leap = occurrences(d30).stream().map(r -> ((Timestamp) r.get("scheduled_at")).toInstant().toString()).toList();
+        assertEquals(List.of("2028-01-30T03:00:00Z", "2028-02-29T03:00:00Z", "2028-03-30T03:00:00Z", "2028-04-30T03:00:00Z"), leap,
+            "leap February clamps to the 29th and 30-day April keeps day 30");
+        assertEquals(leap.size(), new java.util.HashSet<>(leap).size(), "every logical fire time is unique");
     }
 
     @Test void disabledFutureOrUnscheduledSchedulesAreNeverReserved() {

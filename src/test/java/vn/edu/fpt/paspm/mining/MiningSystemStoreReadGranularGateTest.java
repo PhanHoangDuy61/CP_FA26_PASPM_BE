@@ -14,8 +14,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
- * Decision D1 option "b" (status and runs only): exactly REQUESTS and RUNS are opened, SNAPSHOTS and PATTERNS stay refused.
- * Opening one group must never open another.
+ * An operator may close a released group (here SNAPSHOTS) by listing only the others; PATTERNS stay refused regardless.
+ * Closing one group must never close or open another.
  */
 @SpringBootTest(properties={"spring.datasource.url=jdbc:h2:mem:miningreadgranular;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1","spring.datasource.username=sa","spring.datasource.password=","spring.flyway.enabled=true","paspm.jwt-secret=01234567890123456789012345678901","paspm.otp-secret=01234567890123456789012345678901","paspm.bootstrap-email=","paspm.bootstrap-password=","paspm.avatar.directory=/tmp/paspm-readgranular-avatars","paspm.mining.system-store-read.routes=REQUESTS,RUNS"})
 @AutoConfigureMockMvc
@@ -41,9 +41,9 @@ class MiningSystemStoreReadGranularGateTest {
         // closed groups: 403 with the decision reference, identical for a known and an unknown Store
         for(String prefix:List.of(base,unknown)) {
             mvc.perform(get(prefix+"/snapshots").header("Authorization",bearer)).andExpect(status().isForbidden())
-                .andExpect(jsonPath("$.error").value(org.hamcrest.Matchers.allOf(org.hamcrest.Matchers.containsString("pending Product Owner approval"),org.hamcrest.Matchers.containsString("SNAPSHOTS"))));
+                .andExpect(jsonPath("$.error").value(org.hamcrest.Matchers.allOf(org.hamcrest.Matchers.containsString("disabled by configuration"),org.hamcrest.Matchers.containsString("SNAPSHOTS"))));
             mvc.perform(get(prefix+"/runs/1/patterns").header("Authorization",bearer)).andExpect(status().isForbidden())
-                .andExpect(jsonPath("$.error").value(org.hamcrest.Matchers.allOf(org.hamcrest.Matchers.containsString("pending Product Owner approval"),org.hamcrest.Matchers.containsString("PATTERNS"))));
+                .andExpect(jsonPath("$.error").value(org.hamcrest.Matchers.allOf(org.hamcrest.Matchers.containsString("raw mining patterns"),org.hamcrest.Matchers.containsString("D1"))));
         }
         // roles are unchanged: opening a group for System Admin never opens it for anyone else
         for(String role:List.of("MERCHANDISER","STORE_ADMIN","END_CUSTOMER")) {

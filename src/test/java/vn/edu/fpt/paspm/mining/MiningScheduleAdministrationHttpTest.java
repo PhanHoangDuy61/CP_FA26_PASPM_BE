@@ -73,8 +73,8 @@ class MiningScheduleAdministrationHttpTest {
         postSchedule(weekly().replace("\"dayOfWeek\":1", "\"dayOfMonth\":5")).andExpect(status().isBadRequest());
         postSchedule(weekly().replace("\"dayOfWeek\":1", "\"dayOfWeek\":1,\"dayOfMonth\":5")).andExpect(status().isBadRequest());
         postSchedule(monthly().replace("\"dayOfMonth\":31", "\"dayOfWeek\":2")).andExpect(status().isBadRequest());
-        postSchedule(weekly().replace("\"lookbackDays\":7", "\"lookbackDays\":0")).andExpect(status().isBadRequest());
-        postSchedule(weekly().replace("\"lookbackDays\":7", "\"lookbackDays\":3661")).andExpect(status().isBadRequest());
+        for (String bad : new String[] {"-1", "0", "1", "6", "366", "3660", "3661", "\"30\""})
+            postSchedule(weekly().replace("\"lookbackDays\":7", "\"lookbackDays\":" + bad)).andExpect(status().isBadRequest());
         postSchedule(weekly().replace("\"lookbackDays\":7", "\"lookbackDays\":7.5")).andExpect(status().isBadRequest());
         postSchedule(weekly().replace("\"09:00\"", "\"09:00:30\"")).andExpect(status().isBadRequest());
         postSchedule(weekly().replace("\"09:00\"", "\"25:00\"")).andExpect(status().isBadRequest());
@@ -84,6 +84,48 @@ class MiningScheduleAdministrationHttpTest {
         postSchedule(weekly().replace("\"storeId\":" + store, "\"storeId\":\"1\"")).andExpect(status().isBadRequest());
         postSchedule(weekly().replace("\"storeId\":" + store, "\"storeId\":0")).andExpect(status().isBadRequest());
         postSchedule(weekly().replace("\"storeId\":" + store, "\"storeId\":987654321")).andExpect(status().isNotFound());
+    }
+
+    // D3 (confirmed 2026-11-02, amended): lookbackDays 7..365 inclusive; omitted -> 30 for WEEKLY and 90 for MONTHLY
+    @Test void lookbackAcceptsTheInclusiveBoundariesAndDefaultsByFrequency() throws Exception {
+        for (String ok : new String[] {"7", "30", "60", "90", "180", "365"})
+            postSchedule(weekly().replace("\"lookbackDays\":7", "\"lookbackDays\":" + ok)).andExpect(status().isCreated()).andExpect(jsonPath("$.lookbackDays").value(Integer.parseInt(ok)));
+        postSchedule(weekly().replace(",\"lookbackDays\":7", "")).andExpect(status().isCreated()).andExpect(jsonPath("$.lookbackDays").value(30));
+        postSchedule(monthly().replace(",\"lookbackDays\":30", "")).andExpect(status().isCreated()).andExpect(jsonPath("$.lookbackDays").value(90));
+        postSchedule(weekly().replace("\"lookbackDays\":7", "\"lookbackDays\":null")).andExpect(status().isCreated()).andExpect(jsonPath("$.lookbackDays").value(30));
+        long id = create(monthly());
+        putSchedule(id, monthly().replace(",\"lookbackDays\":30", ""), false, 1).andExpect(status().isOk()).andExpect(jsonPath("$.lookbackDays").value(90));
+        putSchedule(id, monthly().replace("\"lookbackDays\":30", "\"lookbackDays\":6"), false, 2).andExpect(status().isBadRequest());
+        putSchedule(id, monthly().replace("\"lookbackDays\":30", "\"lookbackDays\":366"), false, 2).andExpect(status().isBadRequest());
+    }
+
+    // D3: schedules stored before the range was narrowed are kept exactly as stored and are never silently clamped
+    @Test void aScheduleStoredWithALegacyLookbackIsReadUnchangedAndCanOnlyBeRepairedByAValidEdit() throws Exception {
+        long id = create(weekly());
+        jdbc.update("UPDATE mining_schedule SET lookback_days=3660 WHERE schedule_id=?", id);
+        mvc.perform(get("/api/system/mining/schedules/" + id).header("Authorization", "Bearer " + system)).andExpect(jsonPath("$.lookbackDays").value(3660));
+        putSchedule(id, weekly().replace("\"lookbackDays\":7", "\"lookbackDays\":3660"), false, 1).andExpect(status().isBadRequest());
+        mvc.perform(get("/api/system/mining/schedules/" + id).header("Authorization", "Bearer " + system)).andExpect(jsonPath("$.lookbackDays").value(3660)).andExpect(jsonPath("$.version").value(1));
+        putSchedule(id, weekly().replace("\"lookbackDays\":7", "\"lookbackDays\":365"), false, 1).andExpect(status().isOk()).andExpect(jsonPath("$.lookbackDays").value(365));
+    }
+
+    // D4 (confirmed 2026-11-02): the scheduler uses the Store calendar zone, Asia/Ho_Chi_Minh in this release
+    @Test void aTimeZoneThatDiffersFromTheStoreCalendarZoneIsRejectedOnCreateAndUpdate() throws Exception {
+        for (String zone : new String[] {"UTC", "America/New_York", "Pacific/Auckland", "Asia/Bangkok", "Asia/Saigon"}) {
+            postSchedule(weekly().replace("Asia/Ho_Chi_Minh", zone)).andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value(org.hamcrest.Matchers.containsString("Asia/Ho_Chi_Minh")));
+        }
+        long id = create(weekly());
+        putSchedule(id, weekly().replace("Asia/Ho_Chi_Minh", "UTC"), false, 1).andExpect(status().isBadRequest());
+        mvc.perform(get("/api/system/mining/schedules/" + id).header("Authorization", "Bearer " + system)).andExpect(jsonPath("$.timeZone").value("Asia/Ho_Chi_Minh")).andExpect(jsonPath("$.version").value(1));
+    }
+
+    @Test void aLegacyScheduleInAnotherZoneIsReadUnchangedAndCanOnlyBeRepairedByEditingItToTheStoreZone() throws Exception {
+        long id = create(weekly());
+        jdbc.update("UPDATE mining_schedule SET time_zone='Pacific/Auckland' WHERE schedule_id=?", id);
+        mvc.perform(get("/api/system/mining/schedules/" + id).header("Authorization", "Bearer " + system)).andExpect(jsonPath("$.timeZone").value("Pacific/Auckland"));
+        putSchedule(id, weekly().replace("Asia/Ho_Chi_Minh", "Pacific/Auckland"), false, 1).andExpect(status().isBadRequest());
+        putSchedule(id, weekly(), false, 1).andExpect(status().isOk()).andExpect(jsonPath("$.timeZone").value("Asia/Ho_Chi_Minh"));
     }
 
     @Test void updateWithAStaleVersionIs409AndTheScheduleIsUnchanged() throws Exception {

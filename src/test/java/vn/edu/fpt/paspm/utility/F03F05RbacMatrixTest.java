@@ -88,6 +88,14 @@ class F03F05RbacMatrixTest {
         r.add(new Route(HttpMethod.GET, "/api/system/mining/config", null, admin));
         r.add(new Route(HttpMethod.POST, "/api/system/mining/requests", MINING, admin));
         r.add(new Route(HttpMethod.GET, "/api/system/mining/stores/999999/runs/999999/benchmark", null, admin));
+        // D1 (confirmed 2026-11-02): System Admin reads snapshots, requests and runs of an explicit Store; raw patterns stay closed to everyone on this prefix
+        r.add(new Route(HttpMethod.GET, "/api/system/mining/stores/999999/snapshots", null, admin));
+        r.add(new Route(HttpMethod.GET, "/api/system/mining/stores/999999/requests", null, admin));
+        r.add(new Route(HttpMethod.GET, "/api/system/mining/stores/999999/requests/1", null, admin));
+        r.add(new Route(HttpMethod.GET, "/api/system/mining/stores/999999/requests/1/runs", null, admin));
+        r.add(new Route(HttpMethod.GET, "/api/system/mining/stores/999999/runs/1/patterns", null, none));
+        // D2: Store picker
+        r.add(new Route(HttpMethod.GET, "/api/system/stores", null, admin));
         r.add(new Route(HttpMethod.GET, "/api/system/mining/schedules", null, admin));
         r.add(new Route(HttpMethod.GET, "/api/system/mining/schedules/999999", null, admin));
         r.add(new Route(HttpMethod.GET, "/api/system/mining/schedules/999999/occurrences", null, admin));
@@ -116,7 +124,7 @@ class F03F05RbacMatrixTest {
         }
         int expected = routes().stream().mapToInt(r -> 1 + (int) ROLES.stream().filter(x -> !r.allowed().contains(x)).count()).sum();
         org.junit.jupiter.api.Assertions.assertEquals(expected, checked);
-        org.junit.jupiter.api.Assertions.assertEquals(26, routes().size(), "route table must list every F03 route and every ungated F05 route");
+        org.junit.jupiter.api.Assertions.assertEquals(32, routes().size(), "route table must list every F03 route and every ungated F05 route");
     }
 
     @Test void everyDocumentedRolePassesAuthorizationOnReadRoutes() throws Exception {

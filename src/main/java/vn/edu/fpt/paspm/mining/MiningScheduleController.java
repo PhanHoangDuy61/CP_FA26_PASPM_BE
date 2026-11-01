@@ -1,5 +1,6 @@
 package vn.edu.fpt.paspm.mining;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import java.time.*;
@@ -18,9 +19,13 @@ public class MiningScheduleController {
     private final MiningScheduleService service;
     public MiningScheduleController(MiningScheduleService service){this.service=service;}
     public enum Frequency { WEEKLY, MONTHLY }
+    public static final int MIN_LOOKBACK_DAYS=7,MAX_LOOKBACK_DAYS=365,DEFAULT_WEEKLY_LOOKBACK_DAYS=30,DEFAULT_MONTHLY_LOOKBACK_DAYS=90;
     public record Request(@NotNull @Positive @JsonDeserialize(using=StrictIntegerDeserializer.class) Integer storeId,@NotNull Frequency frequency,
         @Min(1) @Max(7) @JsonDeserialize(using=StrictIntegerDeserializer.class) Integer dayOfWeek,@Min(1) @Max(31) @JsonDeserialize(using=StrictIntegerDeserializer.class) Integer dayOfMonth,
-        @NotNull LocalTime localTime,@NotBlank String timeZone,@NotNull @Min(1) @Max(3660) @JsonDeserialize(using=StrictIntegerDeserializer.class) Integer lookbackDays,
+        @NotNull LocalTime localTime,
+        @Schema(description="Must equal the Store calendar zone, Asia/Ho_Chi_Minh in this release (decision D4).",example="Asia/Ho_Chi_Minh") @NotBlank String timeZone,
+        @Schema(description="Complete calendar days analysed, ending the day before the analysis date. 7..365 inclusive (decision D3, amended 2026-11-02). Omitted: 30 for WEEKLY, 90 for MONTHLY. UI presets: 30, 60, 90, 180.",minimum="7",maximum="365",nullable=true)
+        @Min(MIN_LOOKBACK_DAYS) @Max(MAX_LOOKBACK_DAYS) @JsonDeserialize(using=StrictIntegerDeserializer.class) Integer lookbackDays,
         Boolean compareAlgorithms) {}
     public record View(long scheduleId,int storeId,int createdBy,int updatedBy,Frequency frequency,
         Integer dayOfWeek,Integer dayOfMonth,LocalTime localTime,String timeZone,int lookbackDays,

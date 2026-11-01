@@ -64,7 +64,7 @@ class MiningOccurrenceFailurePathsTest {
                 for (int i : ids) jdbc.update("INSERT INTO transaction_item(store_id,transaction_id,product_id,quantity,unit_price,unit_cost) VALUES (?,?,?,1,10,0)", store, tx, products.get(i));
             }
         }
-        jdbc.update("INSERT INTO mining_schedule(store_id,created_by,updated_by,frequency,day_of_week,local_time,time_zone,lookback_days,enabled,next_fire_at) VALUES (?,?,?,'WEEKLY',1,'09:00','Asia/Ho_Chi_Minh',1,TRUE,?)",
+        jdbc.update("INSERT INTO mining_schedule(store_id,created_by,updated_by,frequency,day_of_week,local_time,time_zone,lookback_days,enabled,next_fire_at) VALUES (?,?,?,'WEEKLY',1,'09:00','Asia/Ho_Chi_Minh',7,TRUE,?)",
             store, actor, actor, Timestamp.from(Instant.parse("2100-01-01T00:00:00Z")));
         long schedule = jdbc.queryForObject("SELECT MAX(schedule_id) FROM mining_schedule", Long.class);
         jdbc.update("INSERT INTO mining_schedule_occurrence(schedule_id,store_id,scheduled_at,schedule_version,config_version,request_key,status,actor_id,range_start,range_end,analysis_date,time_zone,compare_algorithms) VALUES(?,?,?,1,1,?,'PENDING',?,?,?,?,'Asia/Ho_Chi_Minh',FALSE)",
@@ -123,6 +123,17 @@ class MiningOccurrenceFailurePathsTest {
         var r = row(f.occurrence());
         assertEquals("FAILED", r.get("status"));
         assertEquals("HTTP_409", r.get("failure_code"));
+        assertNothingPersistedForTheStore(f);
+    }
+
+    @Test void anOccurrenceRecordedInAnotherZoneIsRefusedRatherThanAnalysedOnTheWrongCalendarDay() {
+        var f = fixture(true, "ACTIVE");
+        jdbc.update("UPDATE mining_schedule_occurrence SET time_zone='Pacific/Auckland' WHERE occurrence_id=?", f.occurrence());
+        dispatcher.poll();
+        var r = row(f.occurrence());
+        assertEquals("FAILED", r.get("status"));
+        assertEquals("HTTP_409", r.get("failure_code"));
+        assertEquals("Pacific/Auckland", r.get("time_zone"), "the historical zone is not rewritten");
         assertNothingPersistedForTheStore(f);
     }
 

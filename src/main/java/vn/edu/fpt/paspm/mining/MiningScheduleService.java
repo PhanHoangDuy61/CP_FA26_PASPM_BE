@@ -9,14 +9,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.edu.fpt.paspm.auth.AuthService;
 import vn.edu.fpt.paspm.common.ApiException;
+import vn.edu.fpt.paspm.utility.UtilityTimeZone;
 import static vn.edu.fpt.paspm.mining.MiningScheduleController.*;
 
 @Service
 public class MiningScheduleService {
-    private final JdbcTemplate jdbc; private final AuthService auth;
-    public MiningScheduleService(JdbcTemplate jdbc,AuthService auth){this.jdbc=jdbc;this.auth=auth;}
+    private final JdbcTemplate jdbc; private final AuthService auth; private final UtilityTimeZone storeZone;
+    public MiningScheduleService(JdbcTemplate jdbc,AuthService auth,UtilityTimeZone storeZone){this.jdbc=jdbc;this.auth=auth;this.storeZone=storeZone;}
+    /** Omitted lookback: 30 days for WEEKLY and 90 days for MONTHLY (decision D3). */
+    static int lookback(Request r){return r.lookbackDays()!=null?r.lookbackDays():r.frequency()==Frequency.WEEKLY?DEFAULT_WEEKLY_LOOKBACK_DAYS:DEFAULT_MONTHLY_LOOKBACK_DAYS;}
     private void validate(Request r){
         if(!ZoneId.getAvailableZoneIds().contains(r.timeZone()))throw new ApiException(400,"Invalid IANA timezone");
+        if(!r.timeZone().equals(storeZone.id()))throw new ApiException(400,"Schedule timeZone must be the Store calendar zone "+storeZone.id());
         if((r.frequency()==Frequency.WEEKLY&&(r.dayOfWeek()==null||r.dayOfMonth()!=null)) ||
            (r.frequency()==Frequency.MONTHLY&&(r.dayOfMonth()==null||r.dayOfWeek()!=null)))throw new ApiException(400,"Invalid recurrence day");
         if(r.localTime().getSecond()!=0||r.localTime().getNano()!=0)throw new ApiException(400,"Schedule time must have minute precision");
@@ -25,7 +29,7 @@ public class MiningScheduleService {
     @Transactional public View create(Jwt jwt,Request r){
         validate(r);int actor=auth.current(jwt).id();var key=new GeneratedKeyHolder();
         jdbc.update(c->{var p=c.prepareStatement("INSERT INTO mining_schedule(store_id,created_by,updated_by,frequency,day_of_week,day_of_month,local_time,time_zone,lookback_days,compare_algorithms) VALUES(?,?,?,?,?,?,?,?,?,?)",new String[]{"schedule_id"});
-            p.setInt(1,r.storeId());p.setInt(2,actor);p.setInt(3,actor);p.setString(4,r.frequency().name());p.setObject(5,r.dayOfWeek());p.setObject(6,r.dayOfMonth());p.setString(7,r.localTime().toString());p.setString(8,r.timeZone());p.setInt(9,r.lookbackDays());p.setBoolean(10,Boolean.TRUE.equals(r.compareAlgorithms()));return p;},key);
+            p.setInt(1,r.storeId());p.setInt(2,actor);p.setInt(3,actor);p.setString(4,r.frequency().name());p.setObject(5,r.dayOfWeek());p.setObject(6,r.dayOfMonth());p.setString(7,r.localTime().toString());p.setString(8,r.timeZone());p.setInt(9,lookback(r));p.setBoolean(10,Boolean.TRUE.equals(r.compareAlgorithms()));return p;},key);
         return get(key.getKey().longValue());
     }
     @Transactional(readOnly=true) public View get(long id){
@@ -56,7 +60,7 @@ public class MiningScheduleService {
         // Fail closed until the durable dispatcher and fresh-snapshot recovery are implemented.
         if(u.enabled())throw new ApiException(503,"Scheduled mining dispatch is not available");
         Instant next=u.enabled()?next(r,Instant.now()):null;
-        jdbc.update("UPDATE mining_schedule SET updated_by=?,frequency=?,day_of_week=?,day_of_month=?,local_time=?,time_zone=?,lookback_days=?,compare_algorithms=?,enabled=?,next_fire_at=?,schedule_version=schedule_version+1,updated_at=CURRENT_TIMESTAMP WHERE schedule_id=?",auth.current(jwt).id(),r.frequency().name(),r.dayOfWeek(),r.dayOfMonth(),r.localTime().toString(),r.timeZone(),r.lookbackDays(),Boolean.TRUE.equals(r.compareAlgorithms()),u.enabled(),next==null?null:Timestamp.from(next),id);
+        jdbc.update("UPDATE mining_schedule SET updated_by=?,frequency=?,day_of_week=?,day_of_month=?,local_time=?,time_zone=?,lookback_days=?,compare_algorithms=?,enabled=?,next_fire_at=?,schedule_version=schedule_version+1,updated_at=CURRENT_TIMESTAMP WHERE schedule_id=?",auth.current(jwt).id(),r.frequency().name(),r.dayOfWeek(),r.dayOfMonth(),r.localTime().toString(),r.timeZone(),lookback(r),Boolean.TRUE.equals(r.compareAlgorithms()),u.enabled(),next==null?null:Timestamp.from(next),id);
         return get(id);
     }
     static Instant next(Request r,Instant after){var zone=ZoneId.of(r.timeZone());return r.frequency()==Frequency.WEEKLY?MiningScheduleTime.nextWeekly(after,zone,DayOfWeek.of(r.dayOfWeek()),r.localTime()):MiningScheduleTime.nextMonthly(after,zone,r.dayOfMonth(),r.localTime());}
