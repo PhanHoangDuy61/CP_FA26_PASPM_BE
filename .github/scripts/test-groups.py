@@ -12,6 +12,7 @@ GROUPS = {
                 "UtilityFixtureTest", "UtilityIntegrationTest", "UtilitySnapshotRoutingTest", "MigrationVersioningTest", "MiningOccurrenceDispatcherFlagTest",
                 "F03F05RbacMatrixTest", "ScheduledMiningDisabledByDefaultTest", "SystemStoreReadPolicyTest",
                 "MiningSystemStoreReadGateTest", "MiningSystemStoreReadGranularGateTest", "MiningAdminConfigurationTest",
+                "MiningScheduleTimeEdgeCasesTest", "MiningScheduleReservationScenariosTest", "MiningOccurrenceFailurePathsTest", "MiningScheduleAdministrationHttpTest",
                 "WeightRulesV12IntegrationTest", "WeightRulesV12MigrationTest"],
     "mysql": ["FlywayRecoveryTest", "LegacyRecoveryMySqlTest", "LegacyRecoverySchemaTest",
               "RecommendationMigrationTest", "TransactionImportMySqlIntegrationTest",
