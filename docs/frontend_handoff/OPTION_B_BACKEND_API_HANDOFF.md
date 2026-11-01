@@ -136,6 +136,8 @@ A first Linux attempt failed in 2 s with `MySQL verification requires an empty l
 
 **11.4 Core release candidate, HEAD `45dbd80` (2026-11-02)** — the script passed 23/23 again (451 H2 tests, 461 full opt-in, 0 failures; 88 OpenAPI operations identical to the committed file); the 10 opt-in tests ran on the exported source: macOS multi-JVM 6/6 and clone-API 5/5, Linux Docker multi-JVM 6/6 with `orphan_alive_after_backend_sigkill=false`. The only Linux failure (`SpmfRuntimeTest`, container user is root) passes as a non-root user. Full table, safe defaults, CI facts and rollback: [Core release readiness](../reports/F03_F05_CORE_RELEASE_READINESS_2026-11-02.md).
 
+**11.5 Scheduler coverage on `164a22b` (2026-11-02)** — no endpoint, DTO or role changed (OpenAPI still 88 identical operations). Script 23/23, macOS multi-JVM 6/6 and clone-API 5/5, Linux Docker 109/110 (root-user artefact). Schedule administration validation, occurrence retry and failure codes (`HTTP_400`, `HTTP_403`, `HTTP_409`, `RETRYABLE_FAILURE`) are now pinned by tests; activation stays 503. See the [acceptance matrix](../reports/F05_SCHEDULER_ACCEPTANCE_MATRIX.md).
+
 **Not verified:** Linux on native hardware or the final production image (the Linux run is amd64 under emulation), Windows and clean-machine setup, a remote GitHub CI run (the branch is not pushed), a real scheduler activation (503 by design), any Frontend end-to-end flow, and Product Owner decisions D1–D10.
 
 ## 12. Integration readiness by flow (F03 / F05)

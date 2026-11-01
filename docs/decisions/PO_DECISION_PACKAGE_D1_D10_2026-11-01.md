@@ -132,7 +132,7 @@ Nothing in this package is approved. Approving means filling the DECISION box (d
 
 ## D8 — Effect of changing configuration or a schedule
 
-**CURRENT.** An occurrence freezes the schedule version and the mining-config version when it is reserved; later edits affect future occurrences only. Disabling stops future reservations; an already reserved occurrence still runs (a changed or disabled schedule version is rejected at preparation).
+**CURRENT.** An occurrence freezes the schedule version and the mining-config version when it is reserved; later edits affect future occurrences only. Disabling stops future reservations. For an occurrence that is already reserved: if the schedule is disabled or edited **before** the occurrence is prepared (a few seconds at most), the occurrence ends `FAILED` with `HTTP_409` and creates nothing; once its snapshot and request exist the request runs to completion. There is no `CANCELLED` status (verified by tests, 2026-11-02; this corrects the earlier wording "an already reserved occurrence still runs").
 
 **Options.** Freeze (current) vs apply latest at execution; whether disabling cancels pending occurrences.
 

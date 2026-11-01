@@ -47,6 +47,8 @@ F01 (roles), F02 (Products), F03 (frozen snapshots), F04 (via F03), external SPM
 ## 9. Tests and evidence
 Mining suites under `src/test/java/.../mining` (configuration, gate policy, scheduler-off, lease, worker queue, multi-JVM, SPMF engine/runtime, MySQL integration), `F03F05RbacMatrixTest`, `RecommendationIntegrationTest` (F03→F05→F06). Results: script 23/23; macOS multi-JVM 6/6 and clone-API 5/5; Linux Docker 71/72 (the one failure is a root-user artefact that passes as non-root). Scheduler crash and recovery evidence: [acceptance matrix](../../reports/F05_SCHEDULER_ACCEPTANCE_MATRIX.md), [policy proposals](../../reports/F05_SCHEDULER_POLICY_DECISIONS.md). The GitHub CI results of PR #11 were not inspected in this documentation task.
 
+**Scheduler coverage added 2026-11-02:** recurrence edge cases, reservation scenarios, occurrence failure paths, administration HTTP tests ([acceptance matrix update](../../reports/F05_SCHEDULER_ACCEPTANCE_MATRIX.md), [gap matrix and exact change sets per decision](../../reports/F05_SCHEDULER_GAP_MATRIX_2026-11-02.md)). They pin current behaviour; no policy was approved and the scheduler is still not operational.
+
 ## 10. Known limitations
 System Admin cannot discover run ids through its own routes until D1 opens `REQUESTS,RUNS`; one worker per instance with eight queued; at most 256 products and 20,000 matrix rows per input; kernel-level cleanup of the SPMF child exists on Linux only; the SPMF jar is external (GPLv3, pinned by SHA-256) and not bundled.
 
