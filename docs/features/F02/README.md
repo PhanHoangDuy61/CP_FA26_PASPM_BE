@@ -47,7 +47,7 @@ No delete endpoints and no stock movement or adjustment history (only batch `PAT
 None recorded for F02.
 
 ## 12. Related diagrams
-`docs/diagrams/README.md` indexes the 27-page Draw.io pack: Use Case UC17–UC20, AD01; the F02 ERD is `docs/diagrams/PASPM_Complete_ERD_F02_Inventory_Batch_v3.drawio` (preserved unchanged).
+[Diagram index](../../diagrams/README.md) and the editable [27-page Draw.io pack](../../diagrams/PASPM_Unified_27_Diagrams_UML2_Editable.drawio) (QA: [UML27 report](../../reports/UML27_DIAGRAM_QA_2026-11-02.md)); relevant pages: Use Case UC17–UC20, AD01; the F02 ERD is `docs/diagrams/PASPM_Complete_ERD_F02_Inventory_Batch_v3.drawio` (preserved unchanged).
 
 ## 13. Historical references
 [Original v3 backlog](reference_v3/PASPM_F02_Inventory_Batch_API_Swagger_Backlog_v3.md), [issues](reference_v3/F02_GitHub_Issues/README.md), [Product JPA report](../../architecture/PRODUCT_JPA_INTEGRATION_REPORT.md), [Category JPA report](../../architecture/CATEGORY_JPA_IMPLEMENTATION_REPORT.md). Old all-StoreAdmin and expiry-today clauses are superseded.

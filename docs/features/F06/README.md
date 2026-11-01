@@ -47,7 +47,7 @@ No layout publication, reservation, campaign or scheduling workflow; candidate g
 None for F06. Whether a comparison-FAILED request may feed generation is recorded as "policy under review" in the diagrams and rules text; no approval changes it.
 
 ## 12. Related diagrams
-`docs/diagrams/README.md` indexes the 27-page Draw.io pack: Use Case UC10–UC11, AD05, State R2-06.05 (Recommendation Review), Sequence AD05, Context (M3, S3 flows).
+[Diagram index](../../diagrams/README.md) and the editable [27-page Draw.io pack](../../diagrams/PASPM_Unified_27_Diagrams_UML2_Editable.drawio) (QA: [UML27 report](../../reports/UML27_DIAGRAM_QA_2026-11-02.md)); relevant pages: Use Case UC10–UC11, AD05, State R2-06.05 (Recommendation Review), Sequence AD05, Context (M3, S3 flows).
 
 ## 13. Historical references
 [Readiness plan with appended approval](../../archive/F06/F06_IMPLEMENTATION_READINESS.md). Historical F03/F05 texts saying F06 is absent are not authoritative.

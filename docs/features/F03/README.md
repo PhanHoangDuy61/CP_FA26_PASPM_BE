@@ -51,7 +51,7 @@ No snapshot list/update/delete endpoint; no database trigger enforcing immutabil
 None for F03 itself. Business sign-off of the v1.2 text depends on the missing source.
 
 ## 12. Related diagrams
-`docs/diagrams/README.md` indexes the 27-page Draw.io pack: Use Case UC09 and UC31, AD01 (F03 snapshot step), State R2-06.02 (Utility Snapshot), Context (M1, A2 flows), System Architecture.
+[Diagram index](../../diagrams/README.md) and the editable [27-page Draw.io pack](../../diagrams/PASPM_Unified_27_Diagrams_UML2_Editable.drawio) (QA: [UML27 report](../../reports/UML27_DIAGRAM_QA_2026-11-02.md)); relevant pages: Use Case UC09 and UC31, AD01 (F03 snapshot step), State R2-06.02 (Utility Snapshot), Context (M1, A2 flows), System Architecture.
 
 ## 13. Historical references
 [Original v4 backlog](reference_v4/PASPM_F03_Three_Weights_v4_API_Swagger_Backlog.md), [issues](reference_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/README.md), [original F03→F05 handoff](reference_v4/F03_F05_HANDOFF.md) (stale downstream text), [legacy matrix compatibility](../../architecture/LEGACY_UTILITY_MATRIX_COMPATIBILITY.md).

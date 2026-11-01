@@ -54,7 +54,7 @@ System Admin cannot discover run ids through its own routes until D1 opens `REQU
 [D1–D10 package](../../decisions/PO_DECISION_PACKAGE_D1_D10_2026-11-01.md) and [register](../../decisions/PO_DECISION_REGISTER_F05_2026-11-01.md): D1 System Admin read access, D2 Store selection, D3 lookback, D4 time zone, D5 monthly overflow, D6 catch-up, D7 retry/backoff, D8 effect of configuration/schedule changes, D9 actor of automatic runs, D10 activation acceptance. All DECISION boxes are blank; nothing is approved.
 
 ## 12. Related diagrams
-`docs/diagrams/README.md` indexes the 27-page Draw.io pack: Use Case UC04–UC08, AD03 (mining), AD04 (benchmark), State R2-06.03 (request) and R2-06.04 (run), Sequence AD03 and AD04, System Architecture.
+[Diagram index](../../diagrams/README.md) and the editable [27-page Draw.io pack](../../diagrams/PASPM_Unified_27_Diagrams_UML2_Editable.drawio) (QA: [UML27 report](../../reports/UML27_DIAGRAM_QA_2026-11-02.md)); relevant pages: Use Case UC04–UC08, AD03 (mining), AD04 (benchmark), State R2-06.03 (request) and R2-06.04 (run), Sequence AD03 and AD04, System Architecture.
 
 ## 13. Historical references
 [Gap analysis](reference/F05_GAP_ANALYSIS.md), [original verification](reference/F05_VERIFICATION.md) (retired Merchandiser flow, dated), [F05→F06 handoff](reference/F05_F06_HANDOFF.md), [P0 deployment fix report](../../audits/F05_P0_DEPLOYMENT_FIX_REPORT.md), [legacy RUNNING reconciliation](../../architecture/F05_LEGACY_RUNNING_RECONCILIATION.md).

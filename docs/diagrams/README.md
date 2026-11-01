@@ -1,5 +1,13 @@
 # Diagrams and Database Models
 
+## Editable UML 2.0 pack (27 pages) — current
+
+[`PASPM_Unified_27_Diagrams_UML2_Editable.drawio`](PASPM_Unified_27_Diagrams_UML2_Editable.drawio) is the maintained, editable source (open with diagrams.net). It covers requirements, context, use cases, eight activity diagrams, screen flow, architecture, six state machines and eight sequence diagrams (F07–F11 pages are marked PLANNED). It was audited page by page against the Backend on `dev` @ `11973a0`: see the [27-page audit](../reports/UML27_DIAGRAM_QA_2026-11-02.md) for per-page results, the pages that are informal rather than UML, and the known gaps. Edit the `.drawio` file; never replace it with exported images.
+
+## Legacy Mermaid pack (Review 2) — not synchronised after PR #11
+
+The `.mmd` files and `rendered/*.svg` below predate the F05 administration work. They are kept unchanged as history and are **stale in places**: `02-use-cases.mmd` lets Store roles create mining requests (System Admin owns it now), `03-system-architecture.mmd` says Flyway V1–V11 (now V1–V17), `04-logical-erd-v1-v11.mmd` has no V12–V17 tables, `05c`/`05d` lack the lease-reclaim transitions. Use the Draw.io pack above for F05 behaviour.
+
 ## Existing editable models
 
 | Model | Status | Scope |

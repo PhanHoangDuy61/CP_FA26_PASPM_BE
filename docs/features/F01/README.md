@@ -48,7 +48,7 @@ No logout, token refresh or general profile editing. Rate limits are in-memory a
 None recorded for F01. (F05's pending items D1–D10 do not change F01.)
 
 ## 12. Related diagrams
-`docs/diagrams/README.md` indexes the 27-page Draw.io pack: Use Case (UC01, UC02), Context (A1 flows), AD01 overall workflow. F01 has no state-machine page.
+[Diagram index](../../diagrams/README.md) and the editable [27-page Draw.io pack](../../diagrams/PASPM_Unified_27_Diagrams_UML2_Editable.drawio) (QA: [UML27 report](../../reports/UML27_DIAGRAM_QA_2026-11-02.md)); relevant pages: Use Case (UC01, UC02), Context (A1 flows), AD01 overall workflow. F01 has no state-machine page.
 
 ## 13. Historical references
 [Original decisions](reference/DECISIONS.md), [implementation baseline](reference/IMPLEMENTATION_STATUS.md), [Swagger checklist](reference/SWAGGER_CHECKLIST.md); early JDBC-only/F01-only statements are historical. [README baseline](../../archive/F01/ROOT_README_BASELINE.md).

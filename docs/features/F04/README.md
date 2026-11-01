@@ -47,7 +47,7 @@ No Excel endpoint on `dev`; no external ingestion by design; upload is limited t
 Excel endpoint delivery and merge (tracked on its own branch). No Product Owner decision is pending for CSV.
 
 ## 12. Related diagrams
-`docs/diagrams/README.md` indexes the 27-page Draw.io pack: Use Case UC21 (includes UC30), AD02 transaction processing, State R2-06.01 (Import Batch) and R2-06.06 (Staging Row), Sequence AD02, Context (S2 flows).
+[Diagram index](../../diagrams/README.md) and the editable [27-page Draw.io pack](../../diagrams/PASPM_Unified_27_Diagrams_UML2_Editable.drawio) (QA: [UML27 report](../../reports/UML27_DIAGRAM_QA_2026-11-02.md)); relevant pages: Use Case UC21 (includes UC30), AD02 transaction processing, State R2-06.01 (Import Batch) and R2-06.06 (Staging Row), Sequence AD02, Context (S2 flows).
 
 ## 13. Historical references
 [Design and approved CSV policy](reference/F04_DESIGN.md), [implementation plan](reference/F04_IMPLEMENTATION_PLAN.md), [Swagger report](reference/F04_SWAGGER_TEST_REPORT.md), [original gap analysis](reference/F04_GAP_ANALYSIS.md) (pre-implementation baseline, not current absence).
