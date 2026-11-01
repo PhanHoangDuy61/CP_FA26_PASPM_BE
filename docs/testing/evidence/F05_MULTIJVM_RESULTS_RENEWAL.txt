@@ -1,0 +1,6 @@
+healthy A_pid=54424 B_pid=54435 A_port=49769 B_port=49993 request=1 owner=b035cf25-a5a9-43d8-820c-4fcb453a4c44 fence=1 expiry_before=2026-11-01 01:05:54.0 expiry_after=2026-11-01 01:06:04.0 patterns=8 PASS
+renewal_failure A_pid=54424 B_pid=54435 request=2 old_owner=b035cf25-a5a9-43d8-820c-4fcb453a4c44 old_fence=1 simulated_revoke=true worker_interrupted=true stale_patterns=0 recovered_patterns=8 PASS
+stale A_pid=54424 B_pid=54435 request=3 owner=b035cf25-a5a9-43d8-820c-4fcb453a4c44 old_fence=1 new_fence=2 actual_repository_rejection=Mining_lease_is_no_longer_active patterns=8 PASS
+crash killed_A_pid=54424 B_pid=54435 request=4 old_owner=b035cf25-a5a9-43d8-820c-4fcb453a4c44 old_fence=1 old_expiry=2026-11-01 01:06:44.0 new_fence=2 patterns=8 PASS (barrier after real SPMF exited; orphan-child test NOT RUN)
+post_commit_pre_enqueue killed_C_pid=54598 B_pid=54435 request=5 initial_status=PENDING final_status=COMPLETED patterns=8 PASS
+queue_saturation killed_D_pid=54604 B_pid=54435 request_ids=[6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16] pending_before_kill=10 completed=11 patterns_per_request=8 PASS

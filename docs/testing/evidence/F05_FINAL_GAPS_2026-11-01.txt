@@ -1,0 +1,58 @@
+F05 final gaps: execution 2026-11-01 Asia/Ho_Chi_Minh; synthetic MySQL 8.4 and final local Linux/amd64 image under macOS ARM emulation.
+Queue instrumentation: DEBUG MINING_QUEUE_REJECTED includes only Store and request IDs; default log level does not turn it on. Unit test failed before instrumentation and passed after.
+Queue experiment: 20 committed requests, two active workers held, 18 requests PENDING.
+Observed rejected by both container A and B while workers held: 11,12,13,14,15,16,17,18,19.
+Observed rejected by at least one container: 10,11,12,13,14,15,16,17,18,19,20.
+All 20 occurrences, requests and distinct snapshots completed; each request 10–20 was independently queried and had status COMPLETED, lease fence 1 and exactly one completed run.
+Simultaneous startup: both final-image Backend containers started against empty shared schema, all V1–V16 migrations successful once each. A later simultaneous restart recovered synthetic PENDING request 21 and due schedule 21; request 21 and generated request 22 completed, with one occurrence for schedule 21 and fence 1. Both requests were observed under the same worker owner in that run; no claim of distribution across both instances.
+
+Natural retry exhaustion, no timestamp adjustment:
+{"case": "natural_retry_exhaustion", "phase": "attempt1", "schedule": 22, "row": ["PENDING", "1", "RETRYABLE_FAILURE", "15", "0", "0"]}
+{"case": "natural_retry_exhaustion", "phase": "attempt2", "row": ["PENDING", "2", "RETRYABLE_FAILURE", "30", "0", "0"]}
+{"case": "natural_retry_exhaustion", "phase": "terminal", "row": ["FAILED", "3", "RETRYABLE_FAILURE", "-1", "0", "0"], "timestamps_modified": false, "result": "PASS"}
+
+Actual TCP disconnection and reconnection, no lease timestamp adjustment:
+{"case": "mysql_tcp_disconnect_reconnect", "phase": "disconnected", "active_requests": ["23\tRUNNING\t1", "24\tRUNNING\t1", "25\tPENDING\t0"], "dropped_tcp_connections": 20, "new_due_schedule": 26}
+{"case": "mysql_tcp_disconnect_reconnect", "phase": "recovered", "counts": ["4", "4", "4", "4", "4"], "requests": ["23\t23\tCOMPLETED\t2\t1", "24\t24\tCOMPLETED\t2\t1", "25\t25\tCOMPLETED\t1\t1", "26\t26\tCOMPLETED\t1\t2"], "test_only_modified_lease_timestamps": false, "result": "PASS"}
+The proxy was a test-only network shim between both Backend containers and the disposable MySQL instance. It closed existing TCP sockets and rejected new connections while DOWN; the database server itself was not stopped. During the interruption a new due schedule was inserted directly only in the disposable DB. After proxy UP both previously RUNNING requests recovered with fence 2, the PENDING request completed, and the new schedule generated a request; no lease timestamp was changed. Four occurrences, requests and snapshots were distinct and completed. Request 26 had two completed runs because it requested both algorithms; the others had one each.
+
+Pre-registration startup-race first attempt: the test observer mistakenly stopped the Python parent-death launcher before it executed Java SPMF. Backend A JVM was killed while the wrapper kept its container alive; launcher PID 251 remained stopped and was reparented to PID 1, while B's launcher PID 247 was initially still stopped under its own JVM. After SIGCONT, A's launcher disappeared without starting SPMF. The initial harness expected immediate disappearance and reported timeout; B's intentionally stopped launcher later timed out before it was resumed, so the two requests did not both pass in that attempt. This is separate from the corrected post-registration Java isolation test.
+
+Actual Java SPMF isolation across two separate Backend containers:
+{"case": "independent_container_spmf_isolation", "phase": "both_children_stopped", "first": ["29", "DISPATCHED", "31", "29", "1", "1", "1", "RUNNING", "PENDING", "1"], "first_pid_parent": [252, 8], "second": ["30", "DISPATCHED", "32", "30", "1", "1", "1", "RUNNING", "PENDING", "1"], "second_pid_parent": [246, 8]}
+{"phase": "first_parent_killed", "first_child_state": "absent", "second_child_state": "T", "first_container_alive": true}
+{"case": "independent_container_spmf_isolation", "phase": "recovered", "first": ["29", "COMPLETED", "31", "29", "1", "1", "1", "COMPLETED", "MATCH", "2"], "second": ["30", "COMPLETED", "32", "30", "1", "1", "1", "COMPLETED", "MATCH", "1"], "result": "PASS", "lease_expiry_modified": false}
+
+Pre-registration deterministic rerun used the same final image and a test-only PATH wrapper that waited before executing the Python launcher. The first setup attempt omitted the image Java directory from PATH and never started; it was corrected and is not counted as an application failure or test pass. The rerun held the wrapper until Backend A JVM was killed, checked it was reparented to PID 1, released it and observed that it exited with no SPMF Java process. The other Backend recovered the same request after natural worker lease expiry. The wrapper fault injection does not expose the launcher's numeric exit status.
+{"case": "parent_dies_before_prctl", "phase": "held_after_kill", "schedule": 31, "wrapper_pid": 241, "original_parent": 8, "reparented": "S 1", "occurrence": ["31", "DISPATCHED", "33", "31", "1", "1", "1", "RUNNING", "PENDING", "1"]}
+{"case": "parent_dies_before_prctl", "phase": "launcher_exit", "wrapper_pid": 241, "wrapper_absent": true, "spmf_java_processes": 0}
+{"case": "parent_dies_before_prctl", "phase": "recovered", "occurrence": ["31", "COMPLETED", "33", "31", "1", "1", "1", "COMPLETED", "MATCH", "2"], "same_snapshot_and_request": true, "test_only_wrapper": true, "lease_timestamps_modified": false, "result": "PASS"}
+
+Actual queue log excerpts (UTC, Backend A, DEBUG):
+2026-11-01T12:48:22.520Z MINING_QUEUE_REJECTED store=1 request=11
+2026-11-01T12:48:22.522Z MINING_QUEUE_REJECTED store=1 request=12
+2026-11-01T12:48:22.523Z MINING_QUEUE_REJECTED store=1 request=13
+
+Commands and execution notes:
+- Java 17: `mvn -q -Dtest=MiningWorkerQueueRejectionTest test`; red before DEBUG event and green after it.
+- Java 17: `mvn -q -DskipTests package`; then `docker build --platform linux/amd64 --build-context java25=<approved-linux-java25-runtime> --build-context spmf=<approved-jar-directory> -t paspm-f05-gaps:verification .`.
+- Two actual Backend containers were started with `docker run -d --init`, sharing the disposable MySQL network namespace, with scheduler dispatch and package DEBUG logging enabled only for this test. Public schedule activation remained 503; enabled schedules were seeded only in disposable MySQL.
+- Local test harnesses used real MySQL named-lock triggers to hold workers and detect row contention. For TCP disconnect, a disposable test-only Python TCP proxy closed live backend sockets and rejected connections while DOWN; the MySQL server was not stopped. Restoring the proxy UP required no lease timestamp changes.
+- Java 17 full verification: `mvn -q -Dpaspm.test.mysql=true -Dpaspm.test.spmf-jar=<approved-local-jar> -Dpaspm.test.spmf-java=<java25-executable> verify`, using the real MySQL CLI, disposable restore provisioner and loopback-only proxy. Exit 0: 371 tests, 0 failures/errors, 12 skipped. The opt-in groups are recorded separately.
+
+The final instrumented image used by these gap tests is `sha256:4366b539a5ea3ecdc660758161f6eab92e5c46408ed870377636d88b84695603`. The earlier crash matrix used an image built before the DEBUG-only logging addition; its earlier evidence retains that original image hash. The dedicated pre-registration wrapper is a fault-injection aid and was not included in the image.
+
+Within the final 371-test Maven verify, relevant MySQL opt-in report counts were: `MiningAutomaticSchedulerMySqlTest` 1/1, `MiningScheduleReservationMySqlTest` 1/1, `MiningDispatchLeaseMySqlTest` 1/1 and `MiningMySqlIntegrationTest` 23/23; all had zero failures/errors/skips. `MiningWorkerQueueRejectionTest` also passed 1/1. Separate final-source clone API 5/5, Java 17 HTTP/SPMF 1/1, and Java 17 rejection 1/1 passed with no skips.
+
+Natural backoff recovery after restart, no timestamp adjustment:
+{"case": "natural_retry_recovery", "phase": "first_failure", "schedule": 32, "row": ["PENDING", "1", "RETRYABLE_FAILURE", "1"]}
+{"phase": "restart_started", "row": ["PENDING", "1", "1"]}
+{"case": "natural_retry_recovery", "phase": "recovered", "occurrence": ["32", "COMPLETED", "35", "32", "2", "2", "1", "COMPLETED", "MATCH", "1"], "timestamps_modified": false, "result": "PASS"}
+
+Final-source Linux two-JVM opt-in rerun: Maven exit 0; tests=6 failures=0 errors=0 skipped=0.
+- independentProcessesRenewRecoverAndDiscoverCommittedWork: PASS (180.647s)
+- revokedLeaseStopsActiveSpmfAndAllowsRecovery: PASS (43.4s)
+- gracefulShutdownStopsActiveSpmfAndAllowsRecovery: PASS (47.188s)
+- processKilledBeforeCommitLeavesNoRequest: PASS (15.999s)
+- killedDuringRealSpmfRecoversAndInspectsOrphan()[1]: PASS (62.238s)
+- killedDuringRealSpmfRecoversAndInspectsOrphan()[2]: PASS (55.438s)

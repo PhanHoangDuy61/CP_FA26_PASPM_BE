@@ -1,8 +1,38 @@
+> **WORK IN PROGRESS — 2026-10-31, NOT MERGE READY.** The F05 administrative RBAC and API are being changed on this branch. The historical endpoint descriptions below are not the current branch contract. `POST /api/mining/requests` and the former Store benchmark route are forbidden; System Admin endpoints are under verification. Scheduling is incomplete: schedules are created disabled and enable requests return 503; the internal dispatcher is disabled by default and scheduler activation remains blocked pending acceptance. See [implementation report](../reports/PASPM_F03_F05_Implementation_Report.md). OpenAPI was exported from the current test container; scheduler acceptance and complete handoff verification remain pending.
+
 <!-- docs-reorganization:notice -->
 > **NEEDS_REVIEW — documentation review 2026-10-26.** Useful endpoint contracts coexist with dated deployment/verification summaries; source availability is separate from historical failure evidence. See [current navigation](../features/F05/README.md). Original results and business-rule text below are retained; this notice is not a new execution or approval.
 <!-- /docs-reorganization:notice -->
 
 # F05 Mining API Contract
+
+## CURRENT BRANCH CONTRACT — Frontend handoff (2026-11-01)
+
+This block supersedes any older text below that says a Merchandiser may submit mining or read benchmarks. Verified against `SecurityConfig` and the `@PreAuthorize` annotations; the runtime OpenAPI export is still pending a rebuild (Maven Central was unreachable when this was written), so `openapi.json` may still list the forbidden operations.
+
+| Method | Route | Allowed role | Status |
+|---|---|---|---|
+| GET | `/api/mining/snapshots` | MERCHANDISER, STORE_ADMIN (own Store) | Ready |
+| GET | `/api/mining/requests`, `/api/mining/requests/{id}`, `/api/mining/requests/{id}/runs` | MERCHANDISER, STORE_ADMIN (own Store) | Ready |
+| GET | `/api/mining/runs/{id}`, `/api/mining/runs/{id}/patterns` | MERCHANDISER, STORE_ADMIN (own Store) | Ready |
+| POST | `/api/mining/requests` | nobody (`denyAll`, always 403) | **Forbidden — do not call** |
+| GET | `/api/mining/runs/{id}/benchmark` | nobody (`denyAll`, always 403) | **Forbidden — use the System Admin route** |
+| GET / PUT | `/api/system/mining/config` | SYSTEM_ADMIN | Ready (versioned configuration) |
+| GET | `/api/system/mining/stores/{storeId}/snapshots` | SYSTEM_ADMIN | **New, UNVERIFIED, PENDING_BUSINESS_APPROVAL** — READY snapshots of the selected Store (`Page<SnapshotView>`) |
+| GET | `/api/system/mining/stores/{storeId}/requests`, `/requests/{requestId}` | SYSTEM_ADMIN | **New, UNVERIFIED, PENDING_BUSINESS_APPROVAL** — Store history and request status (`Page<RequestView>`, `RequestView`) |
+| GET | `/api/system/mining/stores/{storeId}/requests/{requestId}/runs` | SYSTEM_ADMIN | **New, UNVERIFIED, PENDING_BUSINESS_APPROVAL** — `RunView[]` |
+| GET | `/api/system/mining/stores/{storeId}/runs/{runId}/patterns` | SYSTEM_ADMIN | **New, UNVERIFIED, PENDING_BUSINESS_APPROVAL** — `Page<PatternView>`, utility DESC then canonical key ASC |
+| POST | `/api/system/mining/requests` | SYSTEM_ADMIN | Ready; 202, idempotent per Store by `requestKey` |
+| GET | `/api/system/mining/stores/{storeId}/runs/{runId}/benchmark` | SYSTEM_ADMIN | Ready |
+| POST / GET | `/api/system/mining/schedules`, `/api/system/mining/schedules/{id}` | SYSTEM_ADMIN | Ready; new schedules are created **disabled** |
+| PUT | `/api/system/mining/schedules/{id}` | SYSTEM_ADMIN | Disable/edit works; **`enabled=true` returns 503** |
+| GET | `/api/system/mining/schedules/{id}/occurrences`, `.../occurrences/{occurrenceId}` | SYSTEM_ADMIN | Ready (history/read-only) |
+
+System Admin read routes (added 2026-11-01): the Store is explicit in the path; an unknown Store, or a request or run that belongs to another Store, returns 404; `page>=0`, `pageSize` 1..100 else 400; DTOs are the same as the Store-scoped routes. They are read-only and extend the System Admin's existing mining authority; the approved requirements contain no explicit sentence authorizing them, so Product Owner confirmation is pending (**PENDING_BUSINESS_APPROVAL**, decision D1 in [the register](../decisions/PO_DECISION_REGISTER_F05_2026-11-01.md)). Tests exist in `MiningIntegrationTest` but have **not been run**; `openapi.json` lists the routes provisionally. Full workflow: [OPTION_B_BACKEND_API_HANDOFF.md](../frontend_handoff/OPTION_B_BACKEND_API_HANDOFF.md).
+
+Scheduler state: the background dispatcher starts only when the instance sets `paspm.mining.schedule-dispatch-enabled=true` (default `false`). Leave it unset; no scheduled run happens and the enable API stays 503. Retry/backoff, lookback, time-zone, monthly-overflow, catch-up and config-change policies still await Product Owner approval and are not applied.
+
+Frontend rule: a 403 on a role's own allowed route means a Store or role mismatch; never offer "Run mining" to a Merchandiser or Store Admin.
 
 Verified implementation: JDBC/Flyway V9, F03 frozen snapshots, external SPMF 2.67a. This contract is based on implemented DTOs/controllers and the runtime OpenAPI export, not proposed routes. All eight operations executed via Swagger UI. See [verification and deployment blocker](../features/F05/reference/F05_VERIFICATION.md).
 
@@ -372,11 +402,11 @@ Application exceptions use the existing format:
 
 404 covers unknown/foreign records. Example 409: `{"error":"requestKey already used for a different mining request"}`. Example 400: `{"error":"Percentage minUtil must be in (0,100]"}`. Examples captured from Swagger are in `F05_examples/error_*_response.json`. Security middleware may return an empty 401 body; do not require a JSON error body for every 401.
 
-POST validation may fail with 400 before creating a request. Once accepted, execution failures are durable run statuses rather than a later HTTP error on the original POST. Examples: SPMF_FAILED, TIMED_OUT, OUTPUT_LIMIT, INVALID_OUTPUT, INVALID_METRICS, INTERRUPTED, QUEUE_FULL, EXECUTION_FAILED. GET itself still returns200 for an owned FAILED/TIMED_OUT run. Messages are sanitized and do not expose process logs, server paths, credentials or tokens.
+POST validation may fail with 400 before creating a request. Once accepted, execution failures are durable run statuses rather than a later HTTP error on the original POST. Examples: SPMF_FAILED, TIMED_OUT, OUTPUT_LIMIT, INVALID_OUTPUT, INVALID_METRICS, INTERRUPTED, EXECUTION_FAILED. GET itself still returns200 for an owned FAILED/TIMED_OUT run. Messages are sanitized and do not expose process logs, server paths, credentials or tokens.
 
 ## Lifecycle and benchmark methodology
 
-Single bounded worker with eight waiting slots. POST commits request/runs before enqueueing. Database compare-and-set claims prevent duplicate processing; requestKey + normalized payload handles HTTP retries. If queueing fails, persist FAILED/QUEUE_FULL. Terminal requests are not replayed. Startup recovery changes unfinished PENDING/RUNNING jobs to FAILED/INTERRUPTED; retry intentionally with a new UUID. Worker is enabled with Flyway; F01-only test contexts with Flyway disabled do not require mining tables. This MVP is single-instance; a shared database with multiple backend workers requires a future lease design.
+Each Backend instance has one worker and eight waiting slots. The database is the durable dispatch authority: a full local queue leaves a PENDING request eligible for a later poll, rather than automatically failing it. Workers claim a time-limited database lease with a fencing token; expired owned RUNNING work can be recovered, while unowned historical RUNNING records require investigation. Terminal requests are not automatically replayed. HTTP requests use requestKey and normalized payload for idempotency. Worker startup requires Flyway. See the [worker architecture](../architecture/F05_WORKER_DISPATCH.md) for transaction boundaries, recovery limitations and the still-disabled scheduler.
 
 Each successful run persists the complete normalized pattern batch and COMPLETED status atomically. Failed parsing/transaction rollback leaves no partial successful patterns. Pattern uniqueness uses per-run canonical-key hash; each pattern item has a Store-scoped Product FK.
 
@@ -401,3 +431,12 @@ The 2026-10-20 P0 correction quotes row_number in V7 and F04 SQL. Fresh MySQL8.4
 Before admitting new work, runtime preflight validates the pinned JAR, separately configured Java25+, actual SPMF version entrypoint and temporary storage. Invalid runtime returns HTTP503 using the existing error envelope, with diagnostic prefixes SPMF_JAR_NOT_CONFIGURED, SPMF_JAR_NOT_FOUND, SPMF_JAR_NOT_READABLE, SPMF_JAR_HASH_MISMATCH, SPMF_JAVA_NOT_FOUND, SPMF_JAVA_VERSION_UNSUPPORTED or SPMF_RUNTIME_UNAVAILABLE. Historical read APIs remain available. See [portable setup](../setup/F05_SPMF_RUNTIME_SETUP.md) for environment variables, caching and bounds.
 
 F06 raw-pattern semantics and deferred scheduling are documented in [F05_F06_HANDOFF.md](../features/F05/reference/F05_F06_HANDOFF.md). No Frontend or F06 implementation was changed.
+
+
+## Scheduler administration on this branch (2026-11-01)
+
+All routes require a valid SYSTEM_ADMIN bearer token. `POST /api/system/mining/schedules` creates a disabled schedule; `GET /api/system/mining/schedules?page=0&pageSize=20` lists schedules; `GET /api/system/mining/schedules/{id}` reads one; `PUT /api/system/mining/schedules/{id}` updates it with `schedule`, `enabled` and optimistic `expectedVersion`. An enable request returns **503** until acceptance is complete. `GET /api/system/mining/schedules/{id}/occurrences` lists history; `GET /api/system/mining/schedules/{id}/occurrences/{occurrenceId}` reads an occurrence. A missing or mismatched ID returns 404. Unauthorized users receive 401 or 403.
+
+A schedule requires positive integer `storeId`, `frequency` WEEKLY or MONTHLY, `localTime`, IANA `timeZone`, integer `lookbackDays` 1–3660, and the matching `dayOfWeek` (1–7) or `dayOfMonth` (1–31); `compareAlgorithms` is optional. Occurrence details include the saved schedule/config version, Store, time window, analysis date, snapshot/request IDs, status, failure code, `attemptCount` and `nextRetryAt`. This describes source behavior; independent multi-container and interactive Swagger acceptance remain outstanding.
+
+The acceptance continuation exercised real HTTP with synthetic, test-signed System Admin and other-role JWTs: create 201; list/detail/history 200; missing occurrence 404; disable update 200; activation 503; STORE_ADMIN, MERCHANDISER and END_CUSTOMER each received 403 across six administrative operations. See [test evidence](../testing/evidence/F05_SCHEDULER_CRASH_ACCEPTANCE_2026-11-01.txt). These results do not approve scheduler activation or scheduling policies.

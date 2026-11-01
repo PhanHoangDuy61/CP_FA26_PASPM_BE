@@ -1,0 +1,11 @@
+Final-source Linux/amd64 Docker two-JVM opt-in run, 2026-11-01 Asia/Ho_Chi_Minh.
+Environment: MySQL 8.4.13 disposable schema; Java 17 Backend; real Java 25 SPMF; --init; emulated linux/amd64 on macOS ARM.
+Surefire: tests=6 failures=0 errors=0 skipped=0; Maven exit=0.
+Cases:
+- independentProcessesRenewRecoverAndDiscoverCommittedWork: PASS (179.118 s)
+- revokedLeaseStopsActiveSpmfAndAllowsRecovery: PASS (36.983 s)
+- gracefulShutdownStopsActiveSpmfAndAllowsRecovery: PASS (47.678 s)
+- processKilledBeforeCommitLeavesNoRequest: PASS (21.345 s)
+- killedDuringRealSpmfRecoversAndInspectsOrphan()[1]: PASS (70.787 s)
+- killedDuringRealSpmfRecoversAndInspectsOrphan()[2]: PASS (73.644 s)
+This group tests independent JVMs within a Linux container; it does not by itself establish the remaining occurrence crash cases on two actual Backend containers.

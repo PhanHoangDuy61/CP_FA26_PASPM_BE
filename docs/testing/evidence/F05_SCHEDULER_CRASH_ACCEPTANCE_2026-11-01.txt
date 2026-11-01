@@ -1,0 +1,112 @@
+F05 scheduler crash-point acceptance evidence; execution 2026-11-01, Asia/Ho_Chi_Minh; Docker Linux/amd64 emulation on macOS ARM.
+Backend A/B are independent final-image containers, Java 17; MySQL 8.4.13 disposable schema; Java 25 SPMF. Synthetic data and test-only DB-enabled schedules; public API remains 503.
+A test-only MySQL trigger blocks on a named lock at the selected statement. Backend A is killed or stopped only after MySQL reports User lock. Post-crash lease expiry is advanced via SQL for PROCESSING cases rather than waiting 300 seconds; this does not prove natural lease expiration or robustness under clock changes.
+Array fields: occurrenceId,status,snapshotId,requestId,occurrenceFence,attemptCount,configVersion,requestStatus,comparisonStatus,requestFence.
+Two initial stale-owner attempts were invalid: first had an embedded-null error in the process observer; the second failed to acquire the intended advisory lock because an old test connection owned it. Neither is counted as a pass. Retest explicitly verified guard lock ownership.
+
+--- paspm-f05-crash-harness.log ---
+{"case": "before_reservation_commit", "phase": "barrier", "schedule": 1, "visible_occurrence": null, "snapshot_count": 0}
+{"case": "before_reservation_commit", "phase": "after_kill", "visible_occurrence": null, "committed_snapshot_count": 0}
+{"case": "before_reservation_commit", "phase": "recovered", "occurrence": ["2", "COMPLETED", "1", "1", "1", "1", "1", "COMPLETED", "MATCH", "1"], "completed_runs": 2, "snapshot_delta": 1, "result": "PASS"}
+{"case": "after_reservation_commit", "phase": "barrier", "schedule": 2, "visible_occurrence": ["3", "PENDING", "0", "0", "0", "0", "1", "-", "-", "0"], "snapshot_count": 1}
+{"case": "after_reservation_commit", "phase": "after_kill", "visible_occurrence": ["3", "PENDING", "0", "0", "0", "0", "1", "-", "-", "0"], "committed_snapshot_count": 1}
+{"case": "after_reservation_commit", "phase": "recovered", "occurrence": ["3", "COMPLETED", "2", "2", "1", "1", "1", "COMPLETED", "MATCH", "1"], "completed_runs": 2, "snapshot_delta": 1, "result": "PASS"}
+{"case": "during_snapshot_preparation", "phase": "barrier", "schedule": 3, "visible_occurrence": ["4", "PROCESSING", "0", "0", "1", "1", "1", "-", "-", "0"], "snapshot_count": 2}
+{"case": "during_snapshot_preparation", "phase": "after_kill", "visible_occurrence": ["4", "PROCESSING", "0", "0", "1", "1", "1", "-", "-", "0"], "committed_snapshot_count": 2}
+{"case": "during_snapshot_preparation", "phase": "test_only_advance_lease_expiry"}
+{"case": "during_snapshot_preparation", "phase": "recovered", "occurrence": ["4", "COMPLETED", "4", "3", "2", "2", "1", "COMPLETED", "MATCH", "1"], "completed_runs": 2, "snapshot_delta": 1, "result": "PASS"}
+{"case": "before_request_persistence", "phase": "barrier", "schedule": 4, "visible_occurrence": ["5", "PROCESSING", "0", "0", "1", "1", "1", "-", "-", "0"], "snapshot_count": 3}
+{"case": "before_request_persistence", "phase": "after_kill", "visible_occurrence": ["5", "PROCESSING", "0", "0", "1", "1", "1", "-", "-", "0"], "committed_snapshot_count": 3}
+{"case": "before_request_persistence", "phase": "test_only_advance_lease_expiry"}
+{"case": "before_request_persistence", "phase": "recovered", "occurrence": ["5", "COMPLETED", "6", "5", "2", "2", "1", "COMPLETED", "MATCH", "1"], "completed_runs": 2, "snapshot_delta": 1, "result": "PASS"}
+{"case": "before_occurrence_finalization", "phase": "barrier", "schedule": 5, "visible_occurrence": ["6", "DISPATCHED", "7", "6", "1", "1", "1", "COMPLETED", "MATCH", "1"], "snapshot_count": 4}
+{"case": "before_occurrence_finalization", "phase": "after_kill", "visible_occurrence": ["6", "COMPLETED", "7", "6", "1", "1", "1", "COMPLETED", "MATCH", "1"], "committed_snapshot_count": 5}
+{"case": "before_occurrence_finalization", "phase": "recovered", "occurrence": ["6", "COMPLETED", "7", "6", "1", "1", "1", "COMPLETED", "MATCH", "1"], "completed_runs": 2, "snapshot_delta": 1, "result": "PASS"}
+ALL_CASES_PASS
+
+--- paspm-f05-crash-link.log ---
+{"case": "after_request_link_before_commit", "phase": "barrier", "schedule": 6, "visible_occurrence": ["7", "PROCESSING", "0", "0", "1", "1", "1", "-", "-", "0"], "snapshot_count": 5}
+{"case": "after_request_link_before_commit", "phase": "after_kill", "visible_occurrence": ["7", "PROCESSING", "0", "0", "1", "1", "1", "-", "-", "0"], "committed_snapshot_count": 5}
+{"case": "after_request_link_before_commit", "phase": "test_only_advance_lease_expiry"}
+{"case": "after_request_link_before_commit", "phase": "recovered", "occurrence": ["7", "COMPLETED", "9", "8", "2", "2", "1", "COMPLETED", "MATCH", "1"], "completed_runs": 2, "snapshot_delta": 1, "result": "PASS"}
+ALL_CASES_PASS
+
+--- paspm-f05-stale-owner-retest2.log ---
+{"case": "stale_owner_resumes", "phase": "paused", "pid": 7, "mysql_connection": 306, "occurrence": ["10", "PROCESSING", "0", "0", "1", "1", "1", "-", "-", "0"]}
+{"phase": "test_only_expire_lease_and_disconnect_stale_transaction"}
+{"case": "stale_owner_resumes", "phase": "recovered", "occurrence": ["10", "COMPLETED", "13", "11", "2", "2", "1", "COMPLETED", "MATCH", "1"], "after_resume": ["10", "COMPLETED", "13", "11", "2", "2", "1", "COMPLETED", "MATCH", "1"], "snapshot_delta": 1, "result": "PASS"}
+
+--- paspm-f05-config-pinning.log ---
+{"case": "config_change_during_preparation", "phase": "policy_changed", "occurrence": ["11", "PROCESSING", "0", "0", "1", "1", "1", "-", "-", "0"], "new_config_version": 2}
+{"case": "config_change_during_preparation", "phase": "recovered", "occurrence": ["11", "COMPLETED", "14", "12", "1", "1", "1", "COMPLETED", "MATCH", "1"], "request": ["1", "1.000000", "COMPLETED"], "snapshot_delta": 1, "result": "PASS"}
+
+Independent read after the scenarios, for schedule IDs 1,2,3,4,5,6,9,10: each had one occurrence, one request matched by Store/request key, one snapshot and two completed runs; all were COMPLETED and pinned config version 1.
+In before_occurrence_finalization, the pending autocommit UPDATE finished on MySQL after the Backend JVM was killed and before B started; this is not proof that B performed the reconciliation.
+Transaction boundary note: snapshot creation/link, request creation/link and dispatch state are in one outer Spring transaction. There is no separate committed snapshot-before-link or committed request-before-link point in the tested scheduled path. The AFTER UPDATE trigger case stops after request linking but before that outer transaction commits; the database rollback was observed.
+
+--- paspm-f05-concurrent-poll.log ---
+{"case": "concurrent_schedule_poll", "phase": "both_blocked", "schedule": 11, "row_lock_waits": 1}
+{"case": "concurrent_schedule_poll", "phase": "recovered", "occurrence": ["12", "COMPLETED", "15", "13", "1", "1", "2", "COMPLETED", "MATCH", "1"], "snapshot_delta": 1, "result": "PASS"}
+
+--- paspm-f05-disable-dispatch.log ---
+{"case": "disable_during_dispatch", "phase": "update_waiting", "schedule": 12, "occurrence": ["13", "PROCESSING", "0", "0", "1", "1", "2", "-", "-", "0"], "row_lock_waits": 1}
+{"case": "disable_during_dispatch", "phase": "finished", "http_status": 200, "schedule": ["0", "2", "1"], "occurrence": ["13", "COMPLETED", "16", "14", "1", "1", "2", "COMPLETED", "MATCH", "1"], "result": "PASS"}
+
+--- paspm-f05-api-lifecycle-retest2.log ---
+{"case": "scheduler_real_http_lifecycle", "system_statuses": {"create": 201, "list": 200, "detail": 200, "history": 200, "missing_occurrence": 404, "disable_update": 200, "enable": 503}, "roles_denied": ["qa-role-admin@example.test", "qa-role-customer@example.test", "qa-role-merchant@example.test"], "forbidden_assertions": 18, "post_enable_persisted_enabled": false, "result": "PASS"}
+
+--- paspm-f05-spmf-retry.log ---
+{"case": "spmf_failure_restart_during_backoff", "phase": "retry_persisted", "schedule": 16, "retry": ["PENDING", "1", "RETRYABLE_FAILURE", "1", "2"]}
+{"phase": "test_only_extended_then_advanced_backoff"}
+{"case": "spmf_failure_restart_during_backoff", "phase": "recovered", "occurrence": ["14", "COMPLETED", "18", "15", "2", "2", "2", "COMPLETED", "MATCH", "1"], "snapshot_delta": 1, "result": "PASS"}
+
+API tests used valid test-only JWTs signed with a temporary disposable environment key and roles stored in the synthetic MySQL schema; no test token or key is recorded here. The first two API client attempts failed because the test client tried to parse empty HTTP 403 bodies as JSON; the corrected client produced the recorded result. No Security setting was changed.
+
+Direct HTTP on the Backend container: GET /api/system/mining/schedules without Authorization returned 401; the same request with a deliberately invalid bearer token returned 401. No token value is recorded.
+
+--- two-container queue backlog experiment ---
+{"case": "two_container_queue_saturation", "phase": "blocked", "request_counts_total_pending_running": ["20", "18", "2"], "workers_waiting": 2, "per_worker_queue_capacity": 8}
+{"case": "two_container_queue_saturation", "phase": "recovered", "counts_total_completed_occurrences_completed_requests_unique_requests_unique_snapshots": ["20", "20", "20", "20", "20"], "result": "PASS", "note": "capacity saturation inferred from configured 2*(1 active+8 queued) vs 20 persisted work items; queue rejection counter not exposed"}
+
+--- FAILED reconciliation test ---
+Created a fresh synthetic FAILED mining request 37, linked to synthetic DISPATCHED occurrence 36 / disabled schedule 38. After starting the actual Backend B container, database query observed occurrence_id=36, status=FAILED, failure_code=MINING_FAILED, request_id=37. This exercises reconciliation from a pre-existing failed request; it does not simulate a live SPMF error during execution.
+
+--- simulated transient MySQL transaction failure ---
+{"case": "mysql_transient_transaction_error", "phase": "retry_persisted", "schedule": 37, "retry": ["PENDING", "1", "RETRYABLE_FAILURE", "1", "2"]}
+{"case": "mysql_transient_transaction_error", "phase": "recovered", "occurrence": ["35", "COMPLETED", "39", "36", "2", "2", "2", "COMPLETED", "MATCH", "1"], "snapshot_delta": 1, "result": "PASS", "note": "SQLSTATE 40001 injected; not a MySQL server outage; backoff advanced only in disposable database"}
+
+--- committed request before worker claim ---
+{"case": "committed_request_before_worker_claim", "phase": "barrier", "schedule": 39, "occurrence": ["37", "DISPATCHED", "40", "38", "1", "1", "2", "PENDING", "PENDING", "0"]}
+{"case": "committed_request_before_worker_claim", "phase": "after_kill", "occurrence": ["37", "DISPATCHED", "40", "38", "1", "1", "2", "PENDING", "PENDING", "0"]}
+{"case": "committed_request_before_worker_claim", "phase": "recovered", "occurrence": ["37", "COMPLETED", "40", "38", "1", "1", "2", "COMPLETED", "MATCH", "1"], "same_snapshot_and_request": true, "result": "PASS"}
+
+--- actual SPMF SIGKILL with natural worker lease expiry ---
+{"case": "sigkill_during_real_spmf", "phase": "killed", "schedule": 40, "observer": "backend_pid=8 spmf_pid=240 spmf_state_after_2s=absent", "container_alive": true, "occurrence": ["38", "DISPATCHED", "41", "39", "1", "1", "2", "RUNNING", "PENDING", "1"]}
+{"case": "sigkill_during_real_spmf", "phase": "recovered", "occurrence": ["38", "COMPLETED", "41", "39", "1", "1", "2", "COMPLETED", "MATCH", "2"], "same_snapshot_and_request": true, "result": "PASS", "note": "natural 30-second worker lease expiry; occurrence lease not modified"}
+
+--- real disposable MySQL process pause ---
+{"case": "mysql_container_pause", "phase": "database_unavailable", "schedule": 41, "occurrence": ["39", "PROCESSING", "0", "0", "1", "1", "2", "-", "-", "0"], "probe_unavailable": true}
+{"case": "mysql_container_pause", "phase": "recovered", "occurrence": ["39", "COMPLETED", "42", "40", "1", "1", "2", "COMPLETED", "MATCH", "1"], "snapshot_delta": 1, "result": "PASS", "note": "short process pause without forced TCP disconnect"}
+
+--- controlled connection loss and B finalization ---
+{"case": "crash_before_finalization_db_kill", "phase": "unfinalized_after_connection_kill", "pid": 7, "mysql_connection": 2981, "occurrence": ["40", "DISPATCHED", "43", "41", "1", "1", "2", "COMPLETED", "MATCH", "1"]}
+{"case": "crash_before_finalization_db_kill", "phase": "recovered_by_B", "occurrence": ["40", "COMPLETED", "43", "41", "1", "1", "2", "COMPLETED", "MATCH", "1"], "same_snapshot_and_request": true, "result": "PASS"}
+
+--- schedule update during dispatch ---
+{"case": "schedule_update_during_dispatch", "phase": "update_waiting", "schedule": 43, "occurrence": ["41", "PROCESSING", "0", "0", "1", "1", "2", "-", "-", "0"], "row_lock_waits": 1}
+{"case": "schedule_update_during_dispatch", "phase": "finished", "http_status": 200, "schedule": ["0", "2", "1"], "occurrence": ["41", "COMPLETED", "44", "42", "1", "1", "2", "COMPLETED", "MATCH", "1"], "result": "PASS"}
+The System Admin PUT changed the stored weekday from 1 to 2 and lookback from 7 to 8 while disabling the schedule. The already-reserved occurrence retained its original seven-day range and completed; the new schedule values apply to the updated schedule. The HTTP request waited for the in-flight schedule row lock before committing.
+
+--- duplicate-output query ---
+At the time of inspection, grouping synthetic scheduled completed runs by `(request_id, algorithm)` yielded 0 groups with count > 1. Grouping synthetic scheduled patterns by `(run_id, canonical_hash)` yielded 0 groups with count > 1. This does not assert that distinct algorithms must have different patterns; HUI-Miner and EFIM may correctly produce equivalent results.
+
+Container identities for this continuation: Backend A 826e5f4e44b6, Backend B 86ce28955ab2, test-wrapped SPMF crash Backend ed07ce1a311c, disposable MySQL 632ce75b28c2. All Backend containers use image sha256:ea81feeff192c89edab436eb5743fc9983af1cedfa997c7d0d08c58aed6cdfa2. Their process IDs inside containers are given in the applicable case logs above; IDs can be reused after restart and are not used for production recovery.
+
+--- natural occurrence lease expiry ---
+{"case": "natural_occurrence_lease_expiry", "phase": "after_kill", "schedule": 44, "lease_seconds_remaining": 299, "occurrence": ["42", "PROCESSING", "0", "0", "1", "1", "2", "-", "-", "0"]}
+{"case": "natural_occurrence_lease_expiry", "phase": "recovered", "occurrence": ["42", "COMPLETED", "46", "43", "2", "2", "2", "COMPLETED", "MATCH", "1"], "snapshot_delta": 1, "lease_expiry_modified": false, "result": "PASS"}
+
+--- worker lease loss while real SPMF is active ---
+{"case": "two_container_worker_lease_loss", "phase": "lease_revoked", "schedule": 45, "spmf_pid": 262, "occurrence": ["43", "DISPATCHED", "47", "44", "1", "1", "2", "RUNNING", "PENDING", "1"]}
+{"case": "two_container_worker_lease_loss", "phase": "child_cleanup", "state": "absent"}
+{"case": "two_container_worker_lease_loss", "phase": "recovered", "occurrence": ["43", "COMPLETED", "47", "44", "1", "1", "2", "COMPLETED", "MATCH", "3"], "child_state": "absent", "same_snapshot_and_request": true, "test_only_expiry_advanced": true, "result": "PASS"}

@@ -1,0 +1,1 @@
+pre_commit killed_A_pid=54740 administrative_api_transaction_blocked=true request_rows_after_kill=0 PASS

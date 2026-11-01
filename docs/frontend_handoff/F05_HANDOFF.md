@@ -1,8 +1,12 @@
+> **WORK IN PROGRESS — 2026-10-31, NOT MERGE READY.** The F05 administrative RBAC and API are being changed on this branch. The historical endpoint descriptions below are not the current branch contract. `POST /api/mining/requests` and the former Store benchmark route are forbidden; System Admin endpoints are under verification. Scheduling is incomplete: schedules are created disabled and enable requests return 503; the internal dispatcher is disabled by default and scheduler activation remains blocked pending acceptance. See [implementation report](../reports/PASPM_F03_F05_Implementation_Report.md). OpenAPI was exported from the current test container; scheduler acceptance and complete handoff verification remain pending.
+
 <!-- docs-reorganization:notice -->
 > **NEEDS_REVIEW — documentation review 2026-10-26.** Pre-fix deployment/downstream statements need reconciliation against current F06 and recovery references. See [current navigation](../features/F05/README.md). Original results and business-rule text below are retained; this notice is not a new execution or approval.
 <!-- /docs-reorganization:notice -->
 
 # F05 Mining — Frontend Integration Handoff
+
+> **Use the route table in [F05_MINING_API.md → CURRENT BRANCH CONTRACT](../api/F05_MINING_API.md#current-branch-contract--frontend-handoff-2026-11-01).** Mining submission and benchmark are System Admin only; Merchandiser and Store Admin have read-only access. Schedule enable returns 503 by design. System Admin also has five new, **unverified, PENDING_BUSINESS_APPROVAL** Store-explicit read routes (integration testing only) (`/api/system/mining/stores/{storeId}/snapshots|requests|requests/{requestId}|requests/{requestId}/runs|runs/{runId}/patterns`) so the whole System Admin workflow can run without a Store account.
 
 ## Readiness and environment
 
@@ -70,7 +74,7 @@ Full response field/type tables, statuses and validations are in [F05_MINING_API
 - Run `FAILED` or `TIMED_OUT`: show the sanitized failure; do not render partial patterns as successful output.
 - Request `FAILED`, comparisonStatus `FAILED`: algorithms completed but exact itemsets/utilities did not match. Do not show a successful comparison.
 - Comparison `PENDING`: wait; `NOT_REQUESTED`: only one algorithm selected; `BLOCKED`: at least one algorithm did not complete or capacity/recovery prevented comparison.
-- Queue full: POST may return 202 with an already FAILED persisted request and `QUEUE_FULL` runs. Do not interpret 202 alone as a completed mining success.
+- Queue full: a committed PENDING request remains eligible for durable polling; do not interpret 202 alone as a completed mining success. Monitor request and run status and consult the current worker architecture for recovery limitations.
 - Restart: unfinished persisted runs become FAILED/INTERRUPTED. A deliberate retry requires a new UUID; the Backend does not silently resume jobs.
 - 400: fix inputs or select a compatible snapshot. 401: use existing login/session recovery. 403: hide/disable forbidden actions. 404: unavailable/foreign record, do not disclose Store details. 409: resolve requestKey conflict. 503: deployment dependency unavailable; keep configuration details out of user forms.
 
@@ -93,3 +97,8 @@ Java long IDs/divisor and decimal utility values are JSON numbers. Preserve prec
 - SPMF is externally configured, not bundled. The verified 2.67a JAR requires a Java 25 child executable; Backend classes are compiled for Java 17. See Backend setup in the API contract.
 - Recurring scheduling, cancellation, automatic retries, clustering and F06 recommendations are not implemented. F06 separately combines raw patterns with current inventory/business rules and Merchandiser review. E_i=1 does not guarantee appearance in a pattern.
 - Full clean MySQL startup is blocked by preexisting V7; V9 and APIs were independently validated on a prepared isolated baseline8 QA schema. H2 full V1–V9 migrations and existing F01–F04 regression tests pass.
+
+
+Scheduler administration is SYSTEM_ADMIN-only. Schedule and occurrence history/detail may be read, but enabling a schedule currently returns 503 by design. Do not present scheduling as operational until the acceptance gate is closed. See the current [API description](../api/F05_MINING_API.md#scheduler-administration-on-this-branch-2026-11-01).
+
+The tested administrative scheduler endpoints remain suitable only for disabled-schedule management/history while this branch is under review; enabling continues to return 503. Explain the state to users and do not present scheduled execution as operational. Timezone, recurrence, catch-up, retry and configuration-change policies are awaiting Product Owner decisions in the [policy register](../reports/F05_SCHEDULER_POLICY_DECISIONS.md).

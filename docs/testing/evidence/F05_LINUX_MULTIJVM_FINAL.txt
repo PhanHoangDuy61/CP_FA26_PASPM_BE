@@ -1,0 +1,8 @@
+healthy A_pid=165 B_pid=296 A_port=38087 B_port=35401 request=1 owner=add27280-e65b-406f-a574-8ec79af985ef fence=1 expiry_before=2026-10-31 18:52:49.0 expiry_after=2026-10-31 18:52:59.0 patterns=8 PASS
+renewal_failure A_pid=165 B_pid=296 request=2 old_owner=add27280-e65b-406f-a574-8ec79af985ef old_fence=1 simulated_revoke=true worker_interrupted=true stale_patterns=0 recovered_patterns=8 PASS
+stale A_pid=165 B_pid=296 request=3 owner=add27280-e65b-406f-a574-8ec79af985ef old_fence=1 new_fence=2 actual_repository_rejection=Mining_lease_is_no_longer_active patterns=8 PASS
+crash killed_A_pid=165 B_pid=296 request=4 old_owner=add27280-e65b-406f-a574-8ec79af985ef old_fence=1 old_expiry=2026-10-31 18:53:56.0 new_fence=2 patterns=8 PASS (barrier after real SPMF exited; orphan-child test NOT RUN)
+post_commit_pre_enqueue killed_C_pid=732 B_pid=296 request=5 initial_status=PENDING final_status=COMPLETED patterns=8 PASS
+queue_saturation killed_D_pid=860 B_pid=296 request_ids=[6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16] pending_before_kill=10 completed=11 patterns_per_request=8 PASS
+pre_commit killed_A_pid=1346 administrative_api_transaction_blocked=true request_rows_after_kill=0 PASS
+real_spmf_crash killed_A_pid=1481 B_pid=1585 spmf_java25_pid=1692 other_spmf_pid=1688 other_spmf_survived=true request=1 orphan_alive_after_backend_sigkill=false orphan_test_cleanup=not_needed old_fence=1 new_fence=2 patterns=8 PASS

@@ -1,3 +1,5 @@
+> **Branch note — 2026-10-31:** The F03 FEFO tie order is expiry date, oldest receipt, then batch ID. Historical snapshots are unchanged. F03/F05 administrative changes are not merge ready; see [implementation report](../reports/PASPM_F03_F05_Implementation_Report.md).
+
 <!-- docs-reorganization:notice -->
 > **NEEDS_REVIEW — documentation review 2026-10-26.** Final v1.2 source and some referenced examples are absent from tracked dev; untracked originals are not imported. See [current navigation](../features/F03/README.md). Original results and business-rule text below are retained; this notice is not a new execution or approval.
 <!-- /docs-reorganization:notice -->

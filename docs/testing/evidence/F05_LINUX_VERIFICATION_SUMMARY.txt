@@ -1,0 +1,13 @@
+Execution date: 2026-11-01 Asia/Ho_Chi_Minh (Linux application logs in UTC)
+Target exercised: Linux Docker, x86_64 under emulation on an Apple Silicon macOS host; disposable MySQL 8.4.13; Backend Java 17.0.20.1; SPMF Java 25.0.1.
+SPMF artifact: version 2.67a, SHA-256 4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a.
+Temporary Linux Java 25 archive: publisher checksum verified (SHA-256 126c7f59b91df97b2e930b0a456422ce29af7f2385117e1c04297eba962b0b1c); not committed.
+Linux kernel probe: 3 cycles; parent mismatch refused, missing Python failed closed, stopped owned child terminated, unrelated process survived, init reaped child.
+Linux MySQL multijvm: 3 test methods in grouped run, PASS, no skipped. See F05_LINUX_MULTIJVM_FINAL.txt.
+Linux MySQL SPMF lease loss and crash: 2 test methods, PASS, no skipped. See F05_LINUX_SUPERVISION_FINAL.txt.
+Linux MySQL actual SPMF SIGKILL repeat: 2 invocations, PASS, no skipped, each child reaped and unrelated instance unaffected. See F05_LINUX_SPMF_REPEAT.txt.
+Linux MySQL graceful shutdown while SPMF was active: 1 invocation, PASS, child terminated and second Backend recovered. See F05_LINUX_GRACEFUL.txt.
+Linux F03-F06 MySQL regression: 59 tests, 0 failures, 0 errors, 0 skipped. Actual HTTP F05 HUI-Miner and EFIM: 8 patterns each, comparison MATCH.
+macOS Backend Java 17 Maven verify: 362 tests, 0 failures, 0 errors, 127 skipped. Of the skipped test methods, 59 MySQL and 5 multi-JVM methods were separately exercised on Linux; 63 other gated cases remain not independently rerun.
+Initial Linux attempts: offline Maven missed plexus-utils, then a test fixture did not observe an actual running SPMF PID. The scanner was updated to use the Backend process-start log plus parent/argument verification; later tests above passed.
+MySQL and test Backend containers were disposable and removed. No production database was accessed. SIGKILL may leave temporary files; production image, seccomp, Python and init configuration must be verified separately.

@@ -1,0 +1,2 @@
+lease_loss A_pid=165 B_pid=274 spmf_pid=270 request=1 old_owner=c7a408a4-a007-4e2c-8b2b-33ccce11e6ae old_fence=1 active_spmf_terminated=true stale_patterns=0 recovered_patterns=8 PASS
+real_spmf_crash killed_A_pid=437 B_pid=541 spmf_java25_pid=650 other_spmf_pid=647 other_spmf_survived=true request=1 orphan_alive_after_backend_sigkill=false reaped_by_container_init=true orphan_test_cleanup=not_needed old_fence=1 new_fence=2 patterns=8 PASS

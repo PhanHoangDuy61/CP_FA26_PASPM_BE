@@ -1,0 +1,10 @@
+Final-source Linux/amd64 Docker multi-JVM opt-in run, 2026-11-01 Asia/Ho_Chi_Minh.
+Environment: disposable MySQL 8.4.13, Java 17 Backend, Java 25 SPMF, Linux/amd64 emulation on macOS ARM.
+Surefire XML: tests=6 failures=0 errors=0 skipped=0. The interrupted shell session is unavailable; the Maven process exit code was not recovered.
+- independentProcessesRenewRecoverAndDiscoverCommittedWork: PASS (204.311 seconds)
+- revokedLeaseStopsActiveSpmfAndAllowsRecovery: PASS (68.341 seconds)
+- gracefulShutdownStopsActiveSpmfAndAllowsRecovery: PASS (83.641 seconds)
+- processKilledBeforeCommitLeavesNoRequest: PASS (38.118 seconds)
+- killedDuringRealSpmfRecoversAndInspectsOrphan()[1]: PASS (92.624 seconds)
+- killedDuringRealSpmfRecoversAndInspectsOrphan()[2]: PASS (78.812 seconds)
+These are independent JVMs in a Linux container; they complement, but do not substitute for, the final-image two-container scheduler experiments.

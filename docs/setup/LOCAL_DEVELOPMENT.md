@@ -1,5 +1,7 @@
 # Local Backend Development
 
+For a first-time walkthrough use [Windows PowerShell](LOCAL_SETUP_WINDOWS.md) or [macOS zsh](LOCAL_SETUP_MACOS.md), together with the [common configuration reference](LOCAL_SETUP_COMMON.md). The Windows and clean-machine macOS walkthroughs are not yet verified end-to-end.
+
 ## Prerequisites
 
 Use Java 17 for Backend/Maven, an approved development or disposable MySQL 8.4 schema, and configured JWT/OTP/SMTP settings. Flyway owns schema, including Java V11; Hibernate validates only. Review existing database history and the [recovery guide](FLYWAY_MYSQL_V7_RECOVERY.md) before any startup that could migrate a populated schema. This guide does not authorize source-database mutation.

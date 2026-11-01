@@ -1,0 +1,20 @@
++------------+----------+---------------------+-----------+------------+---------------+----------------+-------------+--------+------------+---------------+-----------------+
+| request_id | store_id | utility_snapshot_id | status    | algorithms | min_util_spmf | config_version | lease_fence | run_id | run_status | itemset_count | actual_patterns |
++------------+----------+---------------------+-----------+------------+---------------+----------------+-------------+--------+------------+---------------+-----------------+
+|          1 |        1 |                   1 | COMPLETED | HUI_MINER  |            30 |              1 |           1 |      1 | COMPLETED  |             8 |               8 |
+|          2 |        1 |                   1 | COMPLETED | HUI_MINER  |            30 |              1 |           3 |      2 | COMPLETED  |             8 |               8 |
+|          3 |        1 |                   1 | COMPLETED | HUI_MINER  |            30 |              1 |           2 |      3 | COMPLETED  |             8 |               8 |
+|          4 |        1 |                   1 | COMPLETED | HUI_MINER  |            30 |              1 |           2 |      4 | COMPLETED  |             8 |               8 |
+|          5 |        1 |                   1 | COMPLETED | HUI_MINER  |            30 |              1 |           1 |      5 | COMPLETED  |             8 |               8 |
+|          6 |        1 |                   1 | COMPLETED | HUI_MINER  |            30 |              1 |           2 |      6 | COMPLETED  |             8 |               8 |
+|          7 |        1 |                   1 | COMPLETED | HUI_MINER  |            30 |              1 |           1 |      7 | COMPLETED  |             8 |               8 |
+|          8 |        1 |                   1 | COMPLETED | HUI_MINER  |            30 |              1 |           1 |      8 | COMPLETED  |             8 |               8 |
+|          9 |        1 |                   1 | COMPLETED | HUI_MINER  |            30 |              1 |           1 |      9 | COMPLETED  |             8 |               8 |
+|         10 |        1 |                   1 | COMPLETED | HUI_MINER  |            30 |              1 |           1 |     10 | COMPLETED  |             8 |               8 |
+|         11 |        1 |                   1 | COMPLETED | HUI_MINER  |            30 |              1 |           1 |     11 | COMPLETED  |             8 |               8 |
+|         12 |        1 |                   1 | COMPLETED | HUI_MINER  |            30 |              1 |           1 |     12 | COMPLETED  |             8 |               8 |
+|         13 |        1 |                   1 | COMPLETED | HUI_MINER  |            30 |              1 |           1 |     13 | COMPLETED  |             8 |               8 |
+|         14 |        1 |                   1 | COMPLETED | HUI_MINER  |            30 |              1 |           1 |     14 | COMPLETED  |             8 |               8 |
+|         15 |        1 |                   1 | COMPLETED | HUI_MINER  |            30 |              1 |           1 |     15 | COMPLETED  |             8 |               8 |
+|         16 |        1 |                   1 | COMPLETED | HUI_MINER  |            30 |              1 |           1 |     16 | COMPLETED  |             8 |               8 |
++------------+----------+---------------------+-----------+------------+---------------+----------------+-------------+--------+------------+---------------+-----------------+
