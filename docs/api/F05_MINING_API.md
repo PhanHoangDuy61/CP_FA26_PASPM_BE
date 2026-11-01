@@ -8,7 +8,7 @@
 
 ## CURRENT BRANCH CONTRACT — Frontend handoff (2026-11-01)
 
-This block supersedes any older text below that says a Merchandiser may submit mining or read benchmarks. Verified against `SecurityConfig` and the `@PreAuthorize` annotations; the runtime OpenAPI export is still pending a rebuild (Maven Central was unreachable when this was written), so `openapi.json` may still list the forbidden operations.
+This block supersedes any older text below that says a Merchandiser may submit mining or read benchmarks. Verified against `SecurityConfig`, the `@PreAuthorize` annotations and the merged-tree test run recorded in the [implementation report](../reports/PASPM_F03_F05_Implementation_Report.md); `openapi.json` is the runtime export of the merged backend (the two forbidden operations are marked `deprecated`).
 
 | Method | Route | Allowed role | Status |
 |---|---|---|---|
@@ -18,17 +18,17 @@ This block supersedes any older text below that says a Merchandiser may submit m
 | POST | `/api/mining/requests` | nobody (`denyAll`, always 403) | **Forbidden — do not call** |
 | GET | `/api/mining/runs/{id}/benchmark` | nobody (`denyAll`, always 403) | **Forbidden — use the System Admin route** |
 | GET / PUT | `/api/system/mining/config` | SYSTEM_ADMIN | Ready (versioned configuration) |
-| GET | `/api/system/mining/stores/{storeId}/snapshots` | SYSTEM_ADMIN | **New, UNVERIFIED, PENDING_BUSINESS_APPROVAL** — READY snapshots of the selected Store (`Page<SnapshotView>`) |
-| GET | `/api/system/mining/stores/{storeId}/requests`, `/requests/{requestId}` | SYSTEM_ADMIN | **New, UNVERIFIED, PENDING_BUSINESS_APPROVAL** — Store history and request status (`Page<RequestView>`, `RequestView`) |
-| GET | `/api/system/mining/stores/{storeId}/requests/{requestId}/runs` | SYSTEM_ADMIN | **New, UNVERIFIED, PENDING_BUSINESS_APPROVAL** — `RunView[]` |
-| GET | `/api/system/mining/stores/{storeId}/runs/{runId}/patterns` | SYSTEM_ADMIN | **New, UNVERIFIED, PENDING_BUSINESS_APPROVAL** — `Page<PatternView>`, utility DESC then canonical key ASC |
+| GET | `/api/system/mining/stores/{storeId}/snapshots` | SYSTEM_ADMIN | **PENDING_BUSINESS_APPROVAL — disabled by default (HTTP 403 for every role)**; READY snapshots of the selected Store (`Page<SnapshotView>`) |
+| GET | `/api/system/mining/stores/{storeId}/requests`, `/requests/{requestId}` | SYSTEM_ADMIN | **PENDING_BUSINESS_APPROVAL — disabled by default (403)**; Store history and request status (`Page<RequestView>`, `RequestView`) |
+| GET | `/api/system/mining/stores/{storeId}/requests/{requestId}/runs` | SYSTEM_ADMIN | **PENDING_BUSINESS_APPROVAL — disabled by default (403)**; `RunView[]` |
+| GET | `/api/system/mining/stores/{storeId}/runs/{runId}/patterns` | SYSTEM_ADMIN | **PENDING_BUSINESS_APPROVAL — disabled by default (403)**; `Page<PatternView>`, utility DESC then canonical key ASC |
 | POST | `/api/system/mining/requests` | SYSTEM_ADMIN | Ready; 202, idempotent per Store by `requestKey` |
 | GET | `/api/system/mining/stores/{storeId}/runs/{runId}/benchmark` | SYSTEM_ADMIN | Ready |
 | POST / GET | `/api/system/mining/schedules`, `/api/system/mining/schedules/{id}` | SYSTEM_ADMIN | Ready; new schedules are created **disabled** |
 | PUT | `/api/system/mining/schedules/{id}` | SYSTEM_ADMIN | Disable/edit works; **`enabled=true` returns 503** |
 | GET | `/api/system/mining/schedules/{id}/occurrences`, `.../occurrences/{occurrenceId}` | SYSTEM_ADMIN | Ready (history/read-only) |
 
-System Admin read routes (added 2026-11-01): the Store is explicit in the path; an unknown Store, or a request or run that belongs to another Store, returns 404; `page>=0`, `pageSize` 1..100 else 400; DTOs are the same as the Store-scoped routes. They are read-only and extend the System Admin's existing mining authority; the approved requirements contain no explicit sentence authorizing them, so Product Owner confirmation is pending (**PENDING_BUSINESS_APPROVAL**, decision D1 in [the register](../decisions/PO_DECISION_REGISTER_F05_2026-11-01.md)). Tests exist in `MiningIntegrationTest` but have **not been run**; `openapi.json` lists the routes provisionally. Full workflow: [OPTION_B_BACKEND_API_HANDOFF.md](../frontend_handoff/OPTION_B_BACKEND_API_HANDOFF.md).
+System Admin read routes (added 2026-11-01): the Store is explicit in the path; an unknown Store, or a request or run that belongs to another Store, returns 404; `page>=0`, `pageSize` 1..100 else 400; DTOs are the same as the Store-scoped routes. They are read-only. The approved requirements contain no explicit sentence authorizing System Admin to read Store results, so Product Owner confirmation is pending (**PENDING_BUSINESS_APPROVAL**, decision D1 in [the register](../decisions/PO_DECISION_REGISTER_F05_2026-11-01.md)). **Access control:** besides `SYSTEM_ADMIN` RBAC, the five routes are refused with `403 {"error":"System Admin reads of Store mining results are pending Product Owner approval (decision D1)"}` unless the instance sets `paspm.mining.system-store-read-enabled=true` (env `PASPM_MINING_SYSTEM_STORE_READ_ENABLED`, default `false`). The refusal happens before any Store lookup, so it does not reveal which Store ids exist. Enable it only in development/integration environments; do not enable it in a released environment until D1 is approved. Tests: `MiningSystemStoreReadGateTest` (default refusal, role matrix, benchmark unaffected) and `MiningIntegrationTest.systemAdminReadsExplicitStoreSnapshots…` (behaviour with the flag on); both run in the merged-tree verification. The benchmark route is not gated. Full workflow: [OPTION_B_BACKEND_API_HANDOFF.md](../frontend_handoff/OPTION_B_BACKEND_API_HANDOFF.md).
 
 Scheduler state: the background dispatcher starts only when the instance sets `paspm.mining.schedule-dispatch-enabled=true` (default `false`). Leave it unset; no scheduled run happens and the enable API stays 503. Retry/backoff, lookback, time-zone, monthly-overflow, catch-up and config-change policies still await Product Owner approval and are not applied.
 

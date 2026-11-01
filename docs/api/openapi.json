@@ -44,9 +44,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -64,6 +61,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       },
@@ -94,9 +94,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -114,6 +111,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -146,9 +146,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -166,6 +163,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         },
         "deprecated": true
@@ -201,9 +201,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -221,6 +218,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       },
@@ -263,9 +263,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -283,6 +280,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -327,9 +327,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -347,6 +344,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -388,9 +388,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -408,6 +405,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       },
@@ -428,9 +428,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -448,6 +445,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -470,9 +470,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -490,6 +487,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       },
@@ -520,9 +520,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -540,6 +537,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -572,9 +572,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -592,6 +589,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       },
@@ -632,9 +632,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -652,6 +649,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -673,9 +673,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -693,6 +690,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       },
@@ -722,9 +722,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -742,6 +739,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -764,9 +764,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -784,6 +781,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       },
@@ -815,9 +815,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -835,6 +832,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -868,9 +868,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -888,6 +885,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       },
@@ -929,9 +929,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -949,6 +946,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -982,9 +982,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -1002,6 +999,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       },
@@ -1043,9 +1043,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -1063,6 +1060,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -1095,9 +1095,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -1115,6 +1112,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -1147,9 +1147,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -1167,6 +1164,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -1242,9 +1242,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -1262,6 +1259,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       },
@@ -1293,9 +1293,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -1313,6 +1310,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -1354,9 +1354,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -1374,6 +1371,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -1417,9 +1417,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -1437,6 +1434,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       },
@@ -1466,9 +1466,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -1486,6 +1483,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -1517,9 +1517,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -1537,6 +1534,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -1580,9 +1580,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -1600,6 +1597,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -1643,9 +1643,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -1663,6 +1660,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -1696,9 +1696,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -1716,6 +1713,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -1805,9 +1805,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -1825,6 +1822,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       },
@@ -1855,9 +1855,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -1875,6 +1872,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -1911,9 +1911,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -1931,6 +1928,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       },
@@ -1972,9 +1972,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -1992,6 +1989,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -2036,9 +2036,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -2056,6 +2053,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       },
@@ -2087,9 +2087,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -2107,6 +2104,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         },
         "deprecated": true
@@ -2133,9 +2133,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -2153,6 +2150,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       },
@@ -2183,9 +2183,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -2203,6 +2200,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -2239,9 +2239,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -2259,6 +2256,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -2295,9 +2295,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -2315,6 +2312,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -2351,9 +2351,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -2371,6 +2368,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -2407,9 +2407,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -2427,6 +2424,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -2463,9 +2463,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -2483,6 +2480,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -2519,9 +2519,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -2539,6 +2536,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -2575,9 +2575,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -2595,6 +2592,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -2631,9 +2631,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -2651,6 +2648,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -2684,9 +2684,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -2704,6 +2701,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -2737,9 +2737,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -2757,6 +2754,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -2793,9 +2793,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -2813,6 +2810,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -2849,9 +2849,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -2869,6 +2866,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -2905,9 +2905,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -2925,6 +2922,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -2959,9 +2959,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -2979,6 +2976,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       },
@@ -3021,9 +3021,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -3041,6 +3038,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -3085,9 +3085,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -3105,6 +3102,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -3148,9 +3148,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -3168,6 +3165,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -3201,9 +3201,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -3221,6 +3218,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       },
@@ -3262,9 +3262,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -3282,6 +3279,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -3325,9 +3325,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -3345,6 +3342,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -3378,9 +3378,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -3398,6 +3395,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -3451,9 +3451,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -3471,6 +3468,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -3534,9 +3534,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -3554,6 +3551,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -3589,9 +3589,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -3609,6 +3606,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -3679,9 +3679,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -3699,6 +3696,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -3732,9 +3732,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -3752,6 +3749,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -3799,9 +3799,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -3819,6 +3816,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -3852,9 +3852,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -3872,6 +3869,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -3928,9 +3928,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -3948,6 +3945,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -3957,7 +3957,7 @@
         "tags": [
           "mining-system-controller"
         ],
-        "summary": "PENDING_BUSINESS_APPROVAL (not released) - System Admin: list READY Utility Snapshots of an explicitly selected Store",
+        "summary": "PENDING_BUSINESS_APPROVAL (disabled: HTTP 403 unless paspm.mining.system-store-read-enabled=true) - System Admin: list READY Utility Snapshots of an explicitly selected Store",
         "description": "Read-only. Same representation as GET /api/mining/snapshots. Unknown Store returns 404.",
         "operationId": "snapshots",
         "parameters": [
@@ -4003,9 +4003,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -4023,6 +4020,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -4032,7 +4032,7 @@
         "tags": [
           "mining-system-controller"
         ],
-        "summary": "PENDING_BUSINESS_APPROVAL (not released) - System Admin: page raw high-utility patterns of a run in the selected Store",
+        "summary": "PENDING_BUSINESS_APPROVAL (disabled: HTTP 403 unless paspm.mining.system-store-read-enabled=true) - System Admin: page raw high-utility patterns of a run in the selected Store",
         "description": "Utility descending, canonical Product IDs ascending; empty while pending/failed. 404 when the run does not belong to the Store in the path.",
         "operationId": "patterns",
         "parameters": [
@@ -4088,9 +4088,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -4108,6 +4105,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -4151,9 +4151,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -4171,6 +4168,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -4180,7 +4180,7 @@
         "tags": [
           "mining-system-controller"
         ],
-        "summary": "PENDING_BUSINESS_APPROVAL (not released) - System Admin: list a Store's mining requests, newest first",
+        "summary": "PENDING_BUSINESS_APPROVAL (disabled: HTTP 403 unless paspm.mining.system-store-read-enabled=true) - System Admin: list a Store's mining requests, newest first",
         "operationId": "requests_1",
         "parameters": [
           {
@@ -4225,9 +4225,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -4245,6 +4242,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -4254,7 +4254,7 @@
         "tags": [
           "mining-system-controller"
         ],
-        "summary": "PENDING_BUSINESS_APPROVAL (not released) - System Admin: read one request's status and immutable input provenance",
+        "summary": "PENDING_BUSINESS_APPROVAL (disabled: HTTP 403 unless paspm.mining.system-store-read-enabled=true) - System Admin: read one request's status and immutable input provenance",
         "description": "404 when the request does not belong to the Store in the path.",
         "operationId": "request",
         "parameters": [
@@ -4290,9 +4290,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -4310,6 +4307,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -4319,7 +4319,7 @@
         "tags": [
           "mining-system-controller"
         ],
-        "summary": "PENDING_BUSINESS_APPROVAL (not released) - System Admin: read the algorithm runs of a request in the selected Store",
+        "summary": "PENDING_BUSINESS_APPROVAL (disabled: HTTP 403 unless paspm.mining.system-store-read-enabled=true) - System Admin: read the algorithm runs of a request in the selected Store",
         "operationId": "runs",
         "parameters": [
           {
@@ -4357,9 +4357,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -4377,6 +4374,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -4429,9 +4429,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -4449,6 +4446,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -4490,9 +4490,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -4510,6 +4507,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -4537,9 +4537,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -4557,6 +4554,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -4647,9 +4647,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -4667,6 +4664,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -4701,9 +4701,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -4721,6 +4718,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -4786,9 +4786,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -4806,6 +4803,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -4851,9 +4851,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -4871,6 +4868,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -4915,9 +4915,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -4935,6 +4932,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -4968,9 +4968,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -4988,6 +4985,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -5042,9 +5042,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -5062,6 +5059,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -5096,9 +5096,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -5116,6 +5113,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         },
         "deprecated": true
@@ -5150,9 +5150,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -5170,6 +5167,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -5206,9 +5206,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -5226,6 +5223,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
@@ -5249,9 +5249,6 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           },
@@ -5269,6 +5266,9 @@
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
           }
         }
       }
