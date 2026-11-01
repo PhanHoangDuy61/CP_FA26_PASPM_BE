@@ -2,6 +2,7 @@ package vn.edu.fpt.paspm.utility;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -12,8 +13,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class ExpiryScoreCalculator {
     public static final String SCORING_VERSION="EXPIRY_PRODUCT_EARLIEST_BATCH_BINARY_V1";
-    public record Batch(int batchId,LocalDate expiryDate,long remainingQuantity,String status) {
-        public Batch(LocalDate expiryDate,long remainingQuantity,String status) { this(0,expiryDate,remainingQuantity,status); }
+    public record Batch(int batchId,LocalDate expiryDate,long remainingQuantity,String status,LocalDateTime receivedAt) {
+        public Batch(int batchId,LocalDate expiryDate,long remainingQuantity,String status) { this(batchId,expiryDate,remainingQuantity,status,null); }
+        public Batch(LocalDate expiryDate,long remainingQuantity,String status) { this(0,expiryDate,remainingQuantity,status,null); }
     }
     public record PushBatch(int productId,int batchId,LocalDate expiryDate,long remainingQuantity,
         int expiryPushDays,long daysRemaining,boolean pushRequired,long pushRequiredQuantity,LocalDate asOfDate) {}
@@ -30,7 +32,11 @@ public class ExpiryScoreCalculator {
         if(!requiresExpiry)return result(BigDecimal.ZERO,"NOT_APPLICABLE",threshold,null,asOfDate,"PRODUCT_NOT_REQUIRING_EXPIRY",List.of());
         List<PushBatch> eligible=new ArrayList<>();
         boolean missing=false;
-        for(var batch:batches) {
+        var ordered = new ArrayList<>(batches);
+        ordered.sort(Comparator.comparing(Batch::expiryDate,Comparator.nullsLast(Comparator.naturalOrder()))
+            .thenComparing(Batch::receivedAt,Comparator.nullsLast(Comparator.naturalOrder()))
+            .thenComparingInt(Batch::batchId));
+        for(var batch:ordered) {
             if(!"ACTIVE".equals(batch.status())||batch.remainingQuantity()<=0)continue;
             if(batch.expiryDate()==null) { missing=true;continue; }
             long days=ChronoUnit.DAYS.between(asOfDate,batch.expiryDate());
@@ -39,7 +45,6 @@ public class ExpiryScoreCalculator {
             eligible.add(new PushBatch(productId,batch.batchId(),batch.expiryDate(),batch.remainingQuantity(),
                 threshold,days,push,push?batch.remainingQuantity():0,asOfDate));
         }
-        eligible.sort(Comparator.comparing(PushBatch::expiryDate).thenComparingInt(PushBatch::batchId));
         LocalDate earliest=eligible.isEmpty()?null:eligible.get(0).expiryDate();
         if(missing)return result(threshold==0?BigDecimal.ZERO:null,"MISSING_METADATA",threshold,earliest,asOfDate,"MISSING_EXPIRY_METADATA",eligible);
         if(eligible.isEmpty())return result(BigDecimal.ZERO,"NO_SELLABLE_BATCH",threshold,null,asOfDate,"NO_ELIGIBLE_BATCH",eligible);

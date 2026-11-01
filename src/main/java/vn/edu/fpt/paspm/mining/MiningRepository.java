@@ -15,7 +15,8 @@ import static vn.edu.fpt.paspm.mining.MiningContracts.*;
 public class MiningRepository {
     private final JdbcTemplate jdbc;
     private final UtilitySettingsRepository json;
-    public MiningRepository(JdbcTemplate jdbc,UtilitySettingsRepository json){this.jdbc=jdbc;this.json=json;}
+    private final MiningDispatchLease leases;
+    public MiningRepository(JdbcTemplate jdbc,UtilitySettingsRepository json,MiningDispatchLease leases){this.jdbc=jdbc;this.json=json;this.leases=leases;}
     record Stored(RequestView view,MiningInputBuilder.Dataset input,String payloadHash) {}
     Stored find(int store,long id){return jdbc.query("SELECT * FROM mining_request WHERE store_id=? AND request_id=?",this::stored,store,id).stream().findFirst().orElseThrow(()->new ApiException(404,"Mining request not found"));}
     Stored byKey(int store,UUID key){return jdbc.query("SELECT * FROM mining_request WHERE store_id=? AND request_key=?",this::stored,store,key.toString()).stream().findFirst().orElse(null);}
@@ -43,16 +44,18 @@ public class MiningRepository {
         Timestamp start=r.getTimestamp("started_at"),end=r.getTimestamp("completed_at");
         return new RunView(r.getLong("run_id"),r.getLong("request_id"),r.getInt("store_id"),r.getInt("utility_snapshot_id"),MiningEngine.Algorithm.valueOf(r.getString("algorithm")),r.getInt("attempt_no"),r.getString("library_version"),r.getString("status"),r.getInt("min_util_spmf"),r.getString("input_snapshot_hash"),r.getString("conversion_version"),start==null?null:start.toInstant(),end==null?null:end.toInstant(),r.getObject("runtime_ms",Long.class),r.getObject("memory_mib",Double.class),r.getString("memory_method"),r.getString("runtime_method"),r.getString("environment"),r.getObject("itemset_count",Integer.class),r.getString("failure_code"),r.getString("failure_message"));
     }
-    boolean claimRequest(int store,long id){return jdbc.update("UPDATE mining_request SET status='RUNNING' WHERE store_id=? AND request_id=? AND status='PENDING'",store,id)==1;}
-    boolean claimRun(int store,long id){return jdbc.update("UPDATE mining_run SET status='RUNNING',started_at=CURRENT_TIMESTAMP WHERE store_id=? AND run_id=? AND status='PENDING'",store,id)==1;}
-    @Transactional
-    public void complete(int store,long run,MiningInputBuilder.Dataset input,MiningEngine.Output output){
-        var status=jdbc.queryForObject("SELECT status FROM mining_run WHERE store_id=? AND run_id=? FOR UPDATE",String.class,store,run);
+    record DispatchCandidate(int storeId,long requestId) {}
+    List<DispatchCandidate> dispatchCandidates(){return jdbc.query("SELECT store_id,request_id FROM mining_request WHERE status='PENDING' OR (status='RUNNING' AND lease_owner IS NOT NULL AND lease_until<=CURRENT_TIMESTAMP) ORDER BY request_id LIMIT 100",(r,n)->new DispatchCandidate(r.getInt(1),r.getLong(2)));}
+    void resetAbandonedRuns(MiningDispatchLease.Claim c){leases.guarded(c,()->jdbc.update("UPDATE mining_run SET status='PENDING',started_at=NULL WHERE store_id=? AND request_id=? AND status='RUNNING'",c.storeId(),c.requestId()));}
+    boolean claimRun(MiningDispatchLease.Claim c,long id){var claimed=new java.util.concurrent.atomic.AtomicBoolean();leases.guarded(c,()->claimed.set(jdbc.update("UPDATE mining_run SET status='RUNNING',started_at=CURRENT_TIMESTAMP WHERE store_id=? AND request_id=? AND run_id=? AND status='PENDING'",c.storeId(),c.requestId(),id)==1));return claimed.get();}
+    void complete(MiningDispatchLease.Claim c,long run,MiningInputBuilder.Dataset input,MiningEngine.Output output){leases.guarded(c,()->completeGuarded(c.storeId(),c.requestId(),run,input,output));}
+    private void completeGuarded(int store,long request,long run,MiningInputBuilder.Dataset input,MiningEngine.Output output){
+        var status=jdbc.queryForObject("SELECT status FROM mining_run WHERE store_id=? AND request_id=? AND run_id=? FOR UPDATE",String.class,store,request,run);
         if(!"RUNNING".equals(status))throw new IllegalStateException("Mining run is not claimed");
         persistPatterns(store,run,input,output.patterns());
         jdbc.update("UPDATE mining_run SET status='COMPLETED',completed_at=CURRENT_TIMESTAMP,runtime_ms=?,memory_mib=?,environment=?,itemset_count=? WHERE store_id=? AND run_id=?",output.runtimeMillis(),output.memoryMiB(),output.environment(),output.patterns().size(),store,run);
     }
-    void persistPatterns(int store,long run,MiningInputBuilder.Dataset input,Map<String,Integer> patterns){
+    private void persistPatterns(int store,long run,MiningInputBuilder.Dataset input,Map<String,Integer> patterns){
         var reverse=new HashMap<Integer,Integer>();input.products().forEach((id,product)->reverse.put(product,id));
         for(var pattern:patterns.entrySet()){
             var ids=Arrays.stream(pattern.getKey().split(",")).map(Integer::parseInt).toList();
@@ -65,12 +68,6 @@ public class MiningRepository {
         return new Page<>(jdbc.query("SELECT * FROM high_utility_pattern WHERE store_id=? AND run_id=? ORDER BY utility_spmf DESC,canonical_key ASC LIMIT ? OFFSET ?",(r,n)->new PatternView(r.getLong("pattern_id"),run,Arrays.stream(r.getString("canonical_key").split(",")).map(Integer::parseInt).toList(),r.getBigDecimal("utility"),r.getInt("utility_spmf"),r.getInt("pattern_size"),r.getObject("support_count",Integer.class)),store,run,size,(long)page*size),page,size,jdbc.queryForObject("SELECT COUNT(*) FROM high_utility_pattern WHERE store_id=? AND run_id=?",Long.class,store,run));
     }
     Map<String,Integer> canonical(int store,long run){var map=new TreeMap<String,Integer>();jdbc.query("SELECT canonical_key,utility_spmf FROM high_utility_pattern WHERE store_id=? AND run_id=?",(org.springframework.jdbc.core.RowCallbackHandler)r->map.put(r.getString(1),r.getInt(2)),store,run);return map;}
-    void failRun(int store,long id,String code,String message){jdbc.update("UPDATE mining_run SET status=?,failure_code=?,failure_message=?,completed_at=CURRENT_TIMESTAMP WHERE store_id=? AND run_id=? AND status IN ('PENDING','RUNNING')",code.equals("TIMED_OUT")?"TIMED_OUT":"FAILED",code,message,store,id);}
-    void finish(int store,long request,String status,String comparison){jdbc.update("UPDATE mining_request SET status=?,comparison_status=? WHERE store_id=? AND request_id=? AND status IN ('PENDING','RUNNING')",status,comparison,store,request);}
-    @Transactional
-    public void recoverInterrupted(){
-        jdbc.update("UPDATE mining_run SET status='FAILED',failure_code='INTERRUPTED',failure_message='Backend restarted before completion; submit a new requestKey to retry',completed_at=CURRENT_TIMESTAMP WHERE status IN ('PENDING','RUNNING')");
-        jdbc.update("UPDATE mining_request SET status='FAILED',comparison_status=CASE WHEN comparison_status='PENDING' THEN 'BLOCKED' ELSE comparison_status END WHERE status IN ('PENDING','RUNNING')");
-    }
+    void failRun(MiningDispatchLease.Claim c,long id,String code,String message){leases.guarded(c,()->jdbc.update("UPDATE mining_run SET status=?,failure_code=?,failure_message=?,completed_at=CURRENT_TIMESTAMP WHERE store_id=? AND request_id=? AND run_id=? AND status IN ('PENDING','RUNNING')",code.equals("TIMED_OUT")?"TIMED_OUT":"FAILED",code,message,c.storeId(),c.requestId(),id));}
     private long insert(String sql,String key,Object... args){var holder=new GeneratedKeyHolder();jdbc.update(c->{var ps=c.prepareStatement(sql,new String[]{key});for(int i=0;i<args.length;i++)ps.setObject(i+1,args[i]);return ps;},holder);return Objects.requireNonNull(holder.getKey()).longValue();}
 }

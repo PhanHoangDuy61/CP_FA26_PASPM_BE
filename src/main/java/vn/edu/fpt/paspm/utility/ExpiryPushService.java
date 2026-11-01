@@ -35,7 +35,8 @@ public class ExpiryPushService {
             rows.addAll(result.evidence().batches().stream().filter(PushBatch::pushRequired).toList());
             if("MISSING_METADATA".equals(result.status()))warnings.add("Product "+product.id()+": missing required expiry metadata");
         }
-        rows.sort(Comparator.comparing(PushBatch::expiryDate).thenComparingInt(PushBatch::productId).thenComparingInt(PushBatch::batchId));
+        // Stable sort retains the calculator's received-at/batch-id order for ties within a Product.
+        rows.sort(Comparator.comparing(PushBatch::expiryDate).thenComparingInt(PushBatch::productId));
         int start=(int)Math.min((long)page*pageSize,rows.size());
         return new PushPage(List.copyOf(rows.subList(start,Math.min(start+pageSize,rows.size()))),page,pageSize,rows.size(),date,timeZone.id(),List.copyOf(warnings));
     }

@@ -25,7 +25,8 @@ public class UtilityProductRepository {
             :jdbc.query(sql+" AND product_id=?",mapper,storeId,productId);
     }
     public List<ExpiryScoreCalculator.Batch> batches(int storeId,int productId) {
-        return jdbc.query("SELECT b.batch_id,b.expiry_date,b.remaining_quantity,b.status FROM inventory_batch b JOIN product p ON p.product_id=b.product_id WHERE p.store_id=? AND b.product_id=? ORDER BY b.expiry_date,b.batch_id",
-            (rs,row)->new ExpiryScoreCalculator.Batch(rs.getInt(1),rs.getObject(2,LocalDate.class),rs.getLong(3),rs.getString(4)),storeId,productId);
+        return jdbc.query("SELECT b.batch_id,b.expiry_date,b.remaining_quantity,b.status,b.received_at FROM inventory_batch b JOIN product p ON p.product_id=b.product_id WHERE p.store_id=? AND b.product_id=? ORDER BY b.expiry_date,b.received_at,b.batch_id",
+            (rs,row)->new ExpiryScoreCalculator.Batch(rs.getInt(1),rs.getObject(2,LocalDate.class),rs.getLong(3),rs.getString(4),
+                java.util.Objects.requireNonNull(rs.getObject(5,java.time.LocalDateTime.class),"inventory_batch.received_at is required")),storeId,productId);
     }
 }
