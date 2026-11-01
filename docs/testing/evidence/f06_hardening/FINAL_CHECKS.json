@@ -1,0 +1,68 @@
+{
+  "executionDate": "2026-10-26",
+  "chunkAssociationStrengtheningRetest": [
+    {
+      "suite": "vn.edu.fpt.paspm.recommendation.RecommendationHardeningIntegrationTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.recommendation.RecommendationHardeningMySqlIntegrationTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "internalLinksChecked": 585,
+  "brokenInternalLinks": [],
+  "originalFlywayFiles": [
+    {
+      "path": "src/main/java/db/migration/V11__historical_utility_matrix_storage.java",
+      "unchanged": true
+    },
+    {
+      "path": "src/main/resources/db/migration/V10__f06_recommendations.sql",
+      "unchanged": true
+    },
+    {
+      "path": "src/main/resources/db/migration/V1__shared_store_and_f01.sql",
+      "unchanged": true
+    },
+    {
+      "path": "src/main/resources/db/migration/V2__allow_name_after_email_verification.sql",
+      "unchanged": true
+    },
+    {
+      "path": "src/main/resources/db/migration/V3__f02_catalog_inventory_batch.sql",
+      "unchanged": true
+    },
+    {
+      "path": "src/main/resources/db/migration/V4__f03_configuration_and_scores.sql",
+      "unchanged": true
+    },
+    {
+      "path": "src/main/resources/db/migration/V5__f03_immutable_utility_snapshots.sql",
+      "unchanged": true
+    },
+    {
+      "path": "src/main/resources/db/migration/V6__f01_profile_avatar.sql",
+      "unchanged": true
+    },
+    {
+      "path": "src/main/resources/db/migration/V7__f04_transaction_import_pipeline.sql",
+      "unchanged": true
+    },
+    {
+      "path": "src/main/resources/db/migration/V8__product_binary_expiry_priority.sql",
+      "unchanged": true
+    },
+    {
+      "path": "src/main/resources/db/migration/V9__f05_mining_engine.sql",
+      "unchanged": true
+    }
+  ],
+  "scope": "Only F06 source/tests/currentdocs; no sourceDB orinventorymutation."
+}

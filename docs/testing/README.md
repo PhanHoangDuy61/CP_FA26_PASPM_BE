@@ -28,3 +28,7 @@ File names V5_TO_V10/v4 are retained identifiers, not a promise that their conte
 Existing testing evidence directories remain in place. Raw F06/Catalog verification evidence formerly under requirements moved together to `testing/evidence/feature_verification`; links were updated, bytes were not. Captured manifests can contain original paths; resolve them through [DOCUMENTATION_MAP](../DOCUMENTATION_MAP.md), not by rewriting frozen metadata.
 
 The docs reorganization runs link/hash/structure validation only. No new Maven, Swagger Execute, database or UI workflow verification is claimed. [Reorganization report](../audits/DOCS_REORGANIZATION_REPORT.md).
+
+## F04 / F06 improvement verification
+
+[Combined performance review](F04_F06_PERFORMANCE_REPORT.md) and [F06 hardening report](../features/F06/F06_HARDENING_REPORT.md) distinguish measured local results, injected failures, the successful retest and the five populated-clone cases not run. [F06 current counts](evidence/f06_hardening/FULL_VERIFY_RETEST.json) do not certify GitHub-hosted CI or production acceptance.

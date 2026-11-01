@@ -1,6 +1,6 @@
 # F04 Transaction Data API
 
-This contract describes the F04 P0 implementation in the Spring Boot backend. The runtime OpenAPI document is [`openapi.json`](openapi.json), generated from `/v3/api-docs` after Flyway V7 started successfully.
+This contract describes the current F04 file-import implementation in the Spring Boot backend. F04 requires file-based CSV/Excel imports; external transaction APIs, POS integration, polling and webhooks are outside the approved scope. CSV is available; The Excel format contract is approved; endpoint implementation is delivered on a separate stacked branch. The runtime OpenAPI document is [`openapi.json`](openapi.json), generated from `/v3/api-docs` after Flyway V7 started successfully.
 
 ## Authentication and Store scope
 
@@ -115,3 +115,9 @@ Example transaction detail:
 - `413`: file exceeds configured size limit.
 
 Validation errors for parsed orders are returned through the import batch error endpoint, not as one HTTP failure for the whole CSV. The runtime OpenAPI JSON declares the shared error responses and request/response schemas.
+
+## CSV validation correction — 2026-10-26
+
+The staging order-ID column is a nullable lookup projection. If the normalized ID is blank or exceeds the existing validator limit, that projection is NULL while `raw_data` retains the complete original parsed field values. IDs are never silently truncated. The existing validator uses `String.trim()` and a 150 UTF-16 code-unit limit; this correction does not change normalization or identity rules.
+
+A file containing one valid order and an unrelated 151-unit ID returns 201 with `COMPLETED_WITH_ERRORS`, one accepted order and one rejected order. `ImportError.sourceOrderId` can be NULL for an unrepresentable ID; use its row number and error details. Database raw evidence remains retained; no new raw-data API is introduced. An infrastructure write failure still fails the batch and rolls back the affected order; previously committed independent orders retain their existing semantics.

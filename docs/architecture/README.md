@@ -21,3 +21,5 @@ Flyway [SQL migrations](../../src/main/resources/db/migration) and [Java V11 mig
 SPMF is an external pinned binary with a separately configured Java 25 child process; Backend remains Java 17. [Runtime setup](../setup/F05_SPMF_RUNTIME_SETUP.md), [mining contract](../api/F05_MINING_API.md), [recommendation contract](../api/F06_RECOMMENDATION_API.md). No public binary hosting is needed for this documentation task.
 
 [Archived PR/delivery packages](../archive/README.md) retain original decisions and branch identities. They do not define current merge status. [Testing index](../testing/README.md) separates local/CI/real-data evidence.
+
+F04 adds [V12 raw-evidence capacity](../features/F04/F04_IMPROVEMENT_REPORT.md) after the immutable V1–V11 migrations. It widens the existing staging raw_data column only; order identity, snapshots and history are preserved.

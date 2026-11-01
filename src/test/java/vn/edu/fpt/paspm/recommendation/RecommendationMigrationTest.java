@@ -12,8 +12,9 @@ import vn.edu.fpt.paspm.deployment.MySqlTestDatabase;
 @EnabledIfSystemProperty(named="paspm.test.mysql",matches="true")
 class RecommendationMigrationTest {
     @Test void freshMySqlMigratesAllElevenVersions() {
-        var db=MySqlTestDatabase.create();var flyway=Flyway.configure().dataSource(db.url(),db.user(),db.password()).target("12").load();
-        assertEquals(12,flyway.migrate().migrationsExecuted);flyway.validate();
+        var db=MySqlTestDatabase.create();var flyway=Flyway.configure().dataSource(db.url(),db.user(),db.password()).load();
+        assertEquals(17,flyway.migrate().migrationsExecuted);flyway.validate();
+        assertEquals("17",flyway.info().current().getVersion().toString());
         var jdbc=new JdbcTemplate(new DriverManagerDataSource(db.url(),db.user(),db.password()));
         for(String table:List.of("recommendation","recommendation_item","recommendation_source","recommendation_review_history","recommendation_rule_config"))
             assertEquals(0,jdbc.queryForObject("SELECT COUNT(*) FROM "+table,Integer.class));
@@ -28,7 +29,8 @@ class RecommendationMigrationTest {
         jdbc.update("INSERT INTO utility_snapshot(store_id,created_by,range_start,range_end,as_of_date,config_snapshot,source_hash,matrix_hash,total_weighted_utility,rounding_scale,status) VALUES (?,?,CURRENT_DATE,CURRENT_DATE,CURRENT_DATE,'{\"legacy\":true}',?,?,123,6,'READY')",store,user,"a".repeat(64),"b".repeat(64));
         String configuration=jdbc.queryForObject("SELECT utility_config FROM store WHERE store_id=?",String.class,store);
         String snapshot=jdbc.queryForObject("SELECT config_snapshot FROM utility_snapshot WHERE store_id=?",String.class,store);
-        var current=Flyway.configure().dataSource(db.url(),db.user(),db.password()).target("12").load();assertEquals(3,current.migrate().migrationsExecuted);current.validate();
+        var current=Flyway.configure().dataSource(db.url(),db.user(),db.password()).load();assertEquals(8,current.migrate().migrationsExecuted);current.validate();
+        assertEquals("17",current.info().current().getVersion().toString());
         assertEquals(configuration,jdbc.queryForObject("SELECT utility_config FROM store WHERE store_id=?",String.class,store));
         assertEquals(snapshot,jdbc.queryForObject("SELECT config_snapshot FROM utility_snapshot WHERE store_id=?",String.class,store));
         assertEquals(123,jdbc.queryForObject("SELECT total_weighted_utility FROM utility_snapshot WHERE store_id=?",Integer.class,store));

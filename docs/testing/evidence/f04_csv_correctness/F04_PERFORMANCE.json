@@ -1,0 +1,86 @@
+{
+  "scope": "Synthetic bounded service invocation, single client, warmup100; heap sampled10ms, fixture bytes allocated before measurement; no network/RBAC timing; SELECT execute counts only, not server-wide statement counters",
+  "java": "17.0.20.1",
+  "mysql": "8.4.11",
+  "samples": [
+    {
+      "rows": 100,
+      "paddingPerIdentifier": 0,
+      "uploadBytes": 6059,
+      "elapsedMs": 101.314625,
+      "rowsPerSecond": 987.024331383549,
+      "requestThreadCpuMs": 50.14,
+      "sampledHeapGrowthBytes": 11534296,
+      "averageOrderTransactionMs": 0.58078037,
+      "committedOrderTransactions": 100,
+      "selectExecutions": {
+        "sales_transaction": 100,
+        "app_user": 2,
+        "import_batch": 1,
+        "product": 1
+      }
+    },
+    {
+      "rows": 1000,
+      "paddingPerIdentifier": 0,
+      "uploadBytes": 61959,
+      "elapsedMs": 817.146333,
+      "rowsPerSecond": 1223.7710182565306,
+      "requestThreadCpuMs": 314.221,
+      "sampledHeapGrowthBytes": 49283048,
+      "averageOrderTransactionMs": 0.462669635,
+      "committedOrderTransactions": 1000,
+      "selectExecutions": {
+        "sales_transaction": 1000,
+        "app_user": 2,
+        "import_batch": 1,
+        "product": 1
+      }
+    },
+    {
+      "rows": 10000,
+      "paddingPerIdentifier": 0,
+      "uploadBytes": 638959,
+      "elapsedMs": 6621.550833,
+      "rowsPerSecond": 1510.2202266820534,
+      "requestThreadCpuMs": 1686.744,
+      "sampledHeapGrowthBytes": 52284360,
+      "averageOrderTransactionMs": 0.3752619555,
+      "committedOrderTransactions": 10000,
+      "selectExecutions": {
+        "sales_transaction": 10000,
+        "app_user": 2,
+        "import_batch": 1,
+        "product": 1
+      }
+    },
+    {
+      "rows": 10000,
+      "paddingPerIdentifier": 450,
+      "uploadBytes": 5158959,
+      "elapsedMs": 6524.4745,
+      "rowsPerSecond": 1532.690487180232,
+      "requestThreadCpuMs": 1572.856,
+      "sampledHeapGrowthBytes": 91988480,
+      "averageOrderTransactionMs": 0.35297773320000003,
+      "committedOrderTransactions": 10000,
+      "selectExecutions": {
+        "sales_transaction": 10000,
+        "app_user": 2,
+        "import_batch": 1,
+        "product": 1
+      }
+    }
+  ],
+  "idempotencyPlan": [
+    {
+      "EXPLAIN": "-> Rows fetched before execution  (cost=0..0 rows=1) (actual time=0..41e-6 rows=1 loops=1)\n"
+    }
+  ],
+  "productLookupPlan": [
+    {
+      "EXPLAIN": "-> Rows fetched before execution  (cost=0..0 rows=1) (actual time=0..42e-6 rows=1 loops=1)\n"
+    }
+  ],
+  "inventoryRows": 0
+}

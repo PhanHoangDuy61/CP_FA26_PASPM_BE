@@ -106,3 +106,7 @@ No endpoint contract changes were made as part of this documentation export; thi
 - Missing F01 endpoints: logout, refresh and self-profile editing. Authenticated password change and OTP reset are implemented in source; Google operations are conditional on external Google/SMTP configuration.
 - Missing F02 endpoints: deletion and stock adjustment/movement history. No cross-origin CORS mapping is present in current Backend source.
 - OpenAPI does not mark nullable `UserView.name`, `UserView.storeId`, `ProductView.category`, or `BatchView.expiryDate`; handoff types document actual null behavior.
+
+## 2026-10-26 — F04 CSV staging validation correction
+
+No endpoint, DTO, authorization or idempotency-key change. Invalid overlong order IDs use NULL in the staging lookup projection while raw row evidence remains exact; unrelated valid orders return the existing 201 summary contract. See [F04 improvement report](../features/F04/F04_IMPROVEMENT_REPORT.md). F04 is file-based CSV/Excel scope; external API/POS ingestion is excluded.

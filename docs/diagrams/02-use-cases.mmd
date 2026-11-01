@@ -1,0 +1,45 @@
+flowchart LR
+  systemAdmin["System Admin"]
+  storeAdmin["Store Admin"]
+  merch["Merchandiser"]
+  operator["Store staff with authorized store access"]
+  customer["End Customer"]
+  idp["Email / Google identity provider"]
+  subgraph PASPM["PASPM FE + BE use cases"]
+    auth(["Register, verify, sign in and manage profile"])
+    users(["Manage users and store-scoped roles"])
+    catalog(["Manage categories, products and inventory batches"])
+    config(["Manage utility settings and priorities"])
+    imports(["Import CSV, validate rows/orders and inspect results"])
+    snapshots(["Preview and create immutable utility snapshots"])
+    mining(["Create mining request and inspect runs/patterns"])
+    recgen(["Generate candidates from mining evidence"])
+    expiry(["Generate expiry-push candidates"])
+    review(["Approve or reject recommendation candidate"])
+    policy(["Manage recommendation rules"])
+    storefront(["Browse storefront, basket and simulated checkout (FE prototype)"])
+    campaigns(["Draft/publish campaigns and run A/B simulation (FE prototype)"])
+  end
+  systemAdmin --> auth
+  systemAdmin --> users
+  storeAdmin --> auth
+  storeAdmin --> catalog
+  storeAdmin --> config
+  storeAdmin --> imports
+  storeAdmin --> snapshots
+  storeAdmin --> mining
+  storeAdmin --> recgen
+  storeAdmin --> expiry
+  storeAdmin --> policy
+  merch --> auth
+  merch --> imports
+  merch --> snapshots
+  merch --> mining
+  merch --> recgen
+  merch --> expiry
+  merch --> review
+  merch --> policy
+  merch --> campaigns
+  operator --> imports
+  customer --> storefront
+  auth -. "verification / federated login" .-> idp

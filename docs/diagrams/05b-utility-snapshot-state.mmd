@@ -1,0 +1,8 @@
+stateDiagram-v2
+  [*] --> Capture: preview/create request
+  Capture --> READY: complete non-empty matrix persisted
+  Capture --> Rejected: incomplete data or no eligible transaction items
+  READY --> [*]: frozen config, hashes and rows; immutable
+  Rejected --> [*]: request returns validation error
+  note right of READY: Schema permits READY or FAILED; current create path persists READY only.
+  note right of Rejected: Invalid input returns before a snapshot record is persisted; no DRAFT/BUILDING state.

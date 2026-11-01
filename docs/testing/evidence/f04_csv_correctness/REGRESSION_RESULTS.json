@@ -1,0 +1,109 @@
+{
+  "executionDate": "2026-10-26",
+  "timezone": "Asia/Ho_Chi_Minh",
+  "scope": "Synthetic fixtures only. H2 MySQL mode and fresh schemas on dedicated disposable MySQL8.4.11 instance; no source database connection.",
+  "red": {
+    "baseline": "c06d43e",
+    "test": "validOrderSurvivesUnrelated151CharacterIdentifierAndRawEvidenceIsExact",
+    "h2": {
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "expectedStatus": 201,
+      "actualStatus": 409
+    },
+    "mysql": {
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "expectedStatus": 201,
+      "actualStatus": 409
+    },
+    "largeRawIdentifier": {
+      "test": "largeIdentifierBeyondMysqlTextCapacityDoesNotDiscardValidOrder",
+      "database": "MySQL8.4.11",
+      "identifierCharacters": 70000,
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "expectedStatus": 201,
+      "actualStatus": 409,
+      "condition": "Projection fix was present, but V12 was absent; raw_data was still TEXT."
+    }
+  },
+  "green": [
+    {
+      "suite": "TransactionImportCorrectnessIntegrationTest",
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 1.706
+    },
+    {
+      "suite": "TransactionImportCorrectnessMySqlIntegrationTest",
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 3.587
+    },
+    {
+      "suite": "TransactionOrderIdentifierTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.012
+    },
+    {
+      "suite": "TransactionRawEvidenceMigrationMySqlTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 0.447
+    }
+  ],
+  "coverage": [
+    "Original151-character identifier is preserved exactly in raw_data; its unsafe searchable staging projection is NULL.",
+    "ASCII150/151; trimmed150; BMP Unicode150/151; supplementary Unicode UTF-16 length150/152; empty and blank identifiers.",
+    "Valid orders survive independent invalid orders; any invalid line rejects that whole order.",
+    "Duplicate file is idempotent; conflicting content never overwrites transaction history.",
+    "Two concurrent imports with the same identity persist one order and report one duplicate.",
+    "Injected failure after real item insertion rolls back the affected order and marks the batch FAILED; a previous independently committed order remains.",
+    "401 for missing/invalid token;403 for insufficient role;404 for cross-Store batch/error access; Store-scoped list isolation.",
+    "Inventory remains unchanged; no fabricated sales history is created.",
+    "Direct validator tests cover null, empty and trimmed blank required-ID errors.",
+    "Raw evidence larger than MySQL TEXT capacity is preserved exactly, while valid unrelated order succeeds; additive V12 widens only raw_data."
+  ],
+  "notes": [
+    "Identifier length tests characterize existing String.trim and UTF-16 code-unit validation. No Unicode policy changes.",
+    "An initial MySQL invocation was blocked by sandbox local-socket restrictions; it was rerun with permitted loopback access.",
+    "An initial new unit fixture closed its H2 database between connections; DB_CLOSE_DELAY was corrected before the final GREEN run.",
+    "GitHub-hosted CI was not executed as part of this local verification."
+  ],
+  "java": "Amazon Corretto17.0.20.1 (Backend Java17)",
+  "migrationJustification": {
+    "version": "12",
+    "originalDefinition": "raw_data TEXT NOT NULL",
+    "newDefinition": "raw_data LONGTEXT NOT NULL",
+    "reason": "A single permitted5MiB file can contain decoded row evidence larger than MySQL TEXT64KiB. JSON escaping can expand input further, so storing complete evidence requires additive widening rather than truncation.",
+    "verified": [
+      "V11→V12 executes exactly one migration.",
+      "Existing raw evidence content remains identical.",
+      "Existing V1–V11 recorded checksums remain identical.",
+      "No sales transactions or inventory rows are fabricated by migration.",
+      "70,000-character invalid ID survives exactly in raw_data while valid peer order is accepted."
+    ]
+  },
+  "totals": {
+    "tests": 39,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

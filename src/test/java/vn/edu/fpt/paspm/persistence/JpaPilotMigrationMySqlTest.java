@@ -57,7 +57,7 @@ class JpaPilotMigrationMySqlTest {
             "--logging.level.root=ERROR");
     }
 
-    @Test void freshV1ToV11ValidatesJpaConstraintsAndActualCategoryProductHttpApis() {
+    @Test void freshV1ToV17ValidatesJpaConstraintsAndActualCategoryProductHttpApis() {
         var db=MySqlTestDatabase.create();
         var flyway=Flyway.configure().dataSource(db.url(),db.user(),db.password()).load();
         assertEquals(17,flyway.migrate().migrationsExecuted);flyway.validate();
@@ -88,7 +88,7 @@ class JpaPilotMigrationMySqlTest {
             assertCheckViolation(()->jdbc.update("UPDATE product SET selling_price=-1 WHERE product_id=?",product));
             assertCheckViolation(()->jdbc.update("UPDATE category SET status='INVALID' WHERE category_id=?",categoryId));
         }
-        System.out.println("JPA_MIGRATION_FRESH migrations=1,2,3,4,5,6,7,8,9,10,11 schemaValidation=PASS HTTP=PASS constraints=PASS");
+        System.out.println("JPA_MIGRATION_FRESH migrations=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17 schemaValidation=PASS HTTP=PASS constraints=PASS");
     }
 
     @Test void v5CatalogAndEmptySnapshotUpgradePreservesRowsAndJpaJdbcTransactions() throws Exception {
@@ -121,7 +121,7 @@ class JpaPilotMigrationMySqlTest {
             });
         }
         assertEquals(before,fingerprints(jdbc));
-        System.out.println("JPA_MIGRATION_V5_CATALOG before="+before+" after="+fingerprints(jdbc)+" preserved=PASS migrations=6,7,8,9,10,11 mixedRollback=PASS");
+        System.out.println("JPA_MIGRATION_V5_CATALOG before="+before+" after="+fingerprints(jdbc)+" preserved=PASS migrations=6,7,8,9,10,11,12,13,14,15,16,17 mixedRollback=PASS");
     }
 
     @Test void v5HistoricalMatrixRequiresReconciliationBeforeV7AndOriginalRowsStayIntact() throws Exception {

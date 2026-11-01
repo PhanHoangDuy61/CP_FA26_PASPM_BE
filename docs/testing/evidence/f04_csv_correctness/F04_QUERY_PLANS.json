@@ -1,0 +1,100 @@
+{
+  "scope": "Dedicated disposable MySQL8.4; synthetic benchmark fixtures; no new indexes. FORMAT JSON complements ANALYZE constant-row shortcut.",
+  "mysql": "8.4.11",
+  "plans": {
+    "idempotency": {
+      "analyze": "-> Rows fetched before execution  (cost=0..0 rows=1) (actual time=84e-6..84e-6 rows=1 loops=1)",
+      "json": {
+        "query_block": {
+          "select_id": 1,
+          "cost_info": {
+            "query_cost": "1.00"
+          },
+          "table": {
+            "table_name": "sales_transaction",
+            "access_type": "const",
+            "possible_keys": [
+              "uq_sales_transaction_store_id",
+              "uq_sales_transaction_idempotency",
+              "ix_sales_transaction_store_occurred"
+            ],
+            "key": "uq_sales_transaction_idempotency",
+            "used_key_parts": [
+              "store_id",
+              "source_system",
+              "source_order_id"
+            ],
+            "key_length": "768",
+            "ref": [
+              "const",
+              "const",
+              "const"
+            ],
+            "rows_examined_per_scan": 1,
+            "rows_produced_per_join": 1,
+            "filtered": "100.00",
+            "cost_info": {
+              "read_cost": "0.00",
+              "eval_cost": "0.10",
+              "prefix_cost": "0.00",
+              "data_read_per_join": "1K"
+            },
+            "used_columns": [
+              "transaction_id",
+              "store_id",
+              "source_system",
+              "source_order_id",
+              "content_sha256"
+            ]
+          }
+        }
+      }
+    },
+    "products": {
+      "analyze": "-> Rows fetched before execution  (cost=0..0 rows=1) (actual time=42e-6..42e-6 rows=1 loops=1)",
+      "json": {
+        "query_block": {
+          "select_id": 1,
+          "cost_info": {
+            "query_cost": "1.00"
+          },
+          "table": {
+            "table_name": "product",
+            "access_type": "const",
+            "possible_keys": [
+              "uq_product_store_sku",
+              "uq_product_store_id",
+              "ix_product_store_category",
+              "ix_product_store_name"
+            ],
+            "key": "uq_product_store_sku",
+            "used_key_parts": [
+              "store_id",
+              "sku"
+            ],
+            "key_length": "326",
+            "ref": [
+              "const",
+              "const"
+            ],
+            "rows_examined_per_scan": 1,
+            "rows_produced_per_join": 1,
+            "filtered": "100.00",
+            "using_index": true,
+            "cost_info": {
+              "read_cost": "0.00",
+              "eval_cost": "0.10",
+              "prefix_cost": "0.00",
+              "data_read_per_join": "1K"
+            },
+            "used_columns": [
+              "product_id",
+              "store_id",
+              "sku"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

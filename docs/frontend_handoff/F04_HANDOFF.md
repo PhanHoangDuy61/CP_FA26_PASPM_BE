@@ -55,7 +55,11 @@ Use the shared Backend error format for request-level errors. Parsed CSV validat
 - CSV only in this P0 scope; exact header order and UTF-8 are required.
 - Default upload limit is 5 MiB and the row limit is 10,000 nonblank rows. Backend values are configurable.
 - Import processing is synchronous and bounded; no background job progress endpoint exists.
-- API connection records are metadata-only. External POS API synchronization and Excel import are deferred to P1.
+- API connection records are metadata-only. External POS API synchronization, external API ingestion, polling and webhooks are outside the approved F04 scope. The approved Excel format is a separate stacked implementation; this CSV branch does not advertise an unavailable route.
 - A duplicate order with identical normalized contents is counted as duplicate; a changed payload with the same Store/source/order ID is a conflict and does not overwrite history.
 - Import does not mutate inventory and does not implement F03 scoring or F05 mining.
 - Swagger UI can display and invoke endpoints, but authenticated end-to-end import requires an active Store Admin credential and matching Product SKUs in the target environment.
+
+## Mixed valid and invalid identifiers
+
+An invalid order ID must not hide an unrelated valid order. Inspect the 201 summary counters and GET import errors. An overlong staging identifier is returned as nullable `sourceOrderId`; `rowNumber` and `errorDetails` still identify the rejected row. Original parsed values are kept in database raw evidence, never shortened into another identity. The existing limit is 150 UTF-16 code units after `trim()`; this release preserves that rule.

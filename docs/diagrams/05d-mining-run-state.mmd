@@ -1,0 +1,9 @@
+stateDiagram-v2
+  [*] --> PENDING: run persisted
+  PENDING --> RUNNING: worker claims run
+  RUNNING --> COMPLETED: results persisted
+  RUNNING --> FAILED: execution/persistence fails
+  RUNNING --> TIMED_OUT: execution deadline exceeded
+  COMPLETED --> [*]
+  FAILED --> [*]
+  TIMED_OUT --> [*]
