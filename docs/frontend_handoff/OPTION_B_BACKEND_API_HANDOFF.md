@@ -61,11 +61,11 @@ All System Admin routes carry the Store explicitly in the path or body. An unkno
 
 Store users (Merchandiser, Store Admin) keep their unchanged Store-scoped read routes: `GET /api/mining/{snapshots,requests,requests/{id},requests/{id}/runs,runs/{id},runs/{id}/patterns}`. System Admin receives 403 on those. The two legacy routes in section 3 stay closed.
 
-**Release status: PENDING_BUSINESS_APPROVAL — gated.** A System Admin token is **not enough**: unless the backend instance is started with `paspm.mining.system-store-read-enabled=true` (env `PASPM_MINING_SYSTEM_STORE_READ_ENABLED=true`, default `false`), every call to the five routes answers `403 {"error":"System Admin reads of Store mining results are pending Product Owner approval (decision D1)"}`, also for unknown Store ids. Enable the flag only in a development/integration backend. The Frontend must treat this 403 as "feature not released" (hide or disable the System Admin results screen), not as a role error. Do not ship the screen until the Product Owner approves decision D1 in `docs/decisions/PO_DECISION_REGISTER_F05_2026-11-01.md`.
+**Release status: PENDING_BUSINESS_APPROVAL — gated per route group.** A System Admin token is **not enough**. Each group is refused with `403 {"error":"System Admin reads of Store mining results (<GROUP>) are pending Product Owner approval (decision D1)"}` — also for unknown Store ids — unless the backend instance lists the group in `paspm.mining.system-store-read.routes` (env `PASPM_MINING_SYSTEM_STORE_READ_ROUTES`; default empty = nothing open; unknown names stop the backend at startup). Groups: `SNAPSHOTS` (`/snapshots`), `REQUESTS` (`/requests`, `/requests/{requestId}`), `RUNS` (`/requests/{requestId}/runs`), `PATTERNS` (`/runs/{runId}/patterns`). Opening one group never opens another. Decision D1 maps to: (a) all four groups; (b) `REQUESTS,RUNS`; (c) none. The Frontend must treat this 403 as "feature not released" (hide or disable that part of the System Admin results screen), not as a role error. Do not ship the screen until the Product Owner approves decision D1 (see `docs/decisions/PO_DECISION_PACKAGE_D1_D10_2026-11-01.md`); for development, run a non-released backend with the groups you are building against.
 
-**Consequence the Frontend and the Product Owner must know:** with the gate closed, a System Admin can submit a manual request (step 4, `202` with the `requestId`) and read the benchmark of a run that is already known (section 6), but cannot poll the request status (step 5), list its runs or read patterns (steps 6–7) — and without the run list there is no `runId` to ask the benchmark route for. The Benchmark Hub screen therefore cannot be completed from System Admin routes alone until D1 (at least option "b": status and runs) is approved or the flag is enabled in a non-released environment. Store users (Merchandiser, Store Admin) are unaffected: they keep their own Store-scoped reads.
+**Consequence the Frontend and the Product Owner must know:** with the gate closed, a System Admin can submit a manual request (step 4, `202` with the `requestId`) and read the benchmark of a run that is already known (section 6), but cannot poll the request status (step 5), list its runs or read patterns (steps 6–7) — and without the run list there is no `runId` to ask the benchmark route for. The Benchmark Hub screen therefore cannot be completed from System Admin routes alone until D1 (at least option "b": `REQUESTS,RUNS`) is approved or those groups are opened in a non-released environment. Store users (Merchandiser, Store Admin) are unaffected: they keep their own Store-scoped reads.
 
-*Authorization note:* the approved requirements name System Admin as the mining operator (configuration, manual execution, benchmark) but contain no explicit sentence authorizing System Admin to read Store mining results. The five read routes are therefore treated as a not-yet-granted permission: they exist and are tested (`MiningSystemStoreReadGateTest` for the default refusal, `MiningIntegrationTest` with the flag on for the behaviour), but the code does not release them.
+*Authorization note:* the approved requirements name System Admin as the mining operator (configuration, manual execution, benchmark) but contain no explicit sentence authorizing System Admin to read Store mining results. The five read routes are therefore treated as a not-yet-granted permission: they exist and are tested (`SystemStoreReadPolicyTest` for parsing, `MiningSystemStoreReadGateTest` for the default refusal, `MiningSystemStoreReadGranularGateTest` for option b, `MiningIntegrationTest` with all groups open for the behaviour), but the code does not release them.
 
 ## 6. F05 Benchmark (System Admin)
 Step 8 of the workflow above.
@@ -96,7 +96,7 @@ POST /api/utility/snapshots               M {"rangeStart":"2026-01-01","rangeEnd
 POST /api/auth/login                      (system admin)           -> token S
 PUT  /api/system/mining/config            S {"algorithm":"EFIM","minUtilMode":"PERCENTAGE","minUtilValue":0.5,"expectedVersion":0}
 POST /api/system/mining/requests          S {"storeId":3,"snapshotId":7,"requestKey":"<uuid>","compareAlgorithms":true} -> 202 {requestId:41,status:"PENDING"}
-# The next four reads (snapshots, requests/{id}, requests/{id}/runs, runs/{runId}/patterns) are GATED: 403 unless the backend runs with paspm.mining.system-store-read-enabled=true (decision D1).
+# The next four reads are GATED per group (SNAPSHOTS, REQUESTS, RUNS, PATTERNS): 403 unless the backend lists the group in paspm.mining.system-store-read.routes (decision D1).
 GET  /api/system/mining/stores/3/snapshots                  S  -> READY snapshots (pick 7)
 GET  /api/system/mining/stores/3/requests/41                S  (poll) -> COMPLETED, comparisonStatus MATCH
 GET  /api/system/mining/stores/3/requests/41/runs           S  -> RunView[] (2)
@@ -106,16 +106,56 @@ POST /api/recommendations/generate        M {"miningRunId":{runId},"types":["BUN
 ```
 Values are illustrative; IDs differ per environment.
 
-## 11. Verification evidence (merged tree, 2026-11-01)
-Run: `scripts/verify-option-b-macos.sh --run` against merge commit `caa54b4` plus the uncommitted gate for the five read routes and the script fix; JDK 17.0.21 Temurin for the backend, Java 25 + SPMF 2.67a for the child, disposable MySQL 8.4.13. Evidence directory: `outputs/verification-evidence/final/option-b-20261101T160402Z` (outside the repository). A first run on `caa54b4` alone (before the gate) also passed 23/23: `…/merged/option-b-20261101T155351Z`. Results of the bare-branch runs before the merge are historical and are not evidence for this tree.
+## 11. Verification evidence (2026-11-01)
+Evidence directories are outside the repository (`outputs/verification-evidence/…`). Results of earlier or bare-branch runs are historical and are not evidence for the current code.
+
+**11.1 Full script on merge commit `caa54b4` + the code described in this handoff** — `scripts/verify-option-b-macos.sh --run`, JDK 17.0.21 Temurin for the backend, Java 25 + SPMF 2.67a for the child, disposable MySQL 8.4.13; evidence `final2/option-b-20261101T163334Z`:
 
 | Stage | Result | Counts |
 |---|---|---|
-| `mvn.verify` (H2) | PASS | 443 run, 0 failed, 0 errors, **155 SKIPPED** (MySQL-only suites) |
+| `mvn.verify` (H2) | PASS | 447 run, 0 failed, 0 errors, **155 SKIPPED** (MySQL-only suites) |
 | `test.flag` | PASS | 6 run |
 | `test.mysql_group` | PASS | 51 run, 0 skipped |
-| `test.full_optin` (MySQL + SPMF) | PASS | 453 run, 0 failed, **10 SKIPPED** = 5 `MiningMultiJvmMySqlTest` + 5 `PilotCloneApiIntegrationTest`; not executed on this tree |
+| `test.full_optin` (MySQL + SPMF) | PASS | 457 run, 0 failed, **10 SKIPPED** (the two suites of 11.2, run separately) |
 | `flyway.fresh`, `flyway.v11`, `flyway.rerun`, `flyway.upgrade` | PASS | V1–V17 once each; second start identical; upgrade from the `origin/dev` schema keeps seeded data and checksums |
 | `jpa.validate`, `openapi.export` | PASS | 88 operations in the runtime OpenAPI |
 
-Not verified: Windows and clean-machine setup, Linux/Docker multi-JVM and SIGKILL cleanup on the merged tree (earlier Linux evidence predates the merge), a real scheduler activation (503 by design), any Frontend end-to-end flow, and Product Owner decisions D1–D10.
+**11.2 The 10 opt-in tests, run separately on the exported source of commit `d0522f1`** (`git archive`, so no working-tree content; the later per-group gate does not touch these suites). Evidence `optin-d0522f1/`:
+
+| Suite | Environment | Result |
+|---|---|---|
+| `MiningMultiJvmMySqlTest` (5 methods; the real-SPMF SIGKILL case repeats twice = 6 executions) | macOS, JDK 17, Java 25 child, MySQL 8.4.13 | **PASS 6/6**, 245 s. macOS has no kernel parent-death guarantee, so this proves lease, fencing, recovery and durable dispatch only |
+| same | Linux amd64 container (Docker Desktop on Apple Silicon, emulated), `--init`, `PASPM_TEST_REQUIRE_REAP=true`, JDK 17.0.20.1, JRE 25.0.1, MySQL 8.4.13 | **PASS 6/6**, 402 s. After SIGKILL of Backend A: `orphan_alive_after_backend_sigkill=false`, `reaped_by_container_init=true`, the other instance's SPMF `survived=true`, fence 1→2, 8 patterns |
+| `PilotCloneApiIntegrationTest` (5) | macOS, MySQL 8.4.13 with `log_bin_trust_function_creators=1`, restricted user confined to one disposable schema | **PASS 5/5** |
+
+A first Linux attempt failed in 2 s with `MySQL verification requires an empty local server URL`: my runner used a container DNS name instead of loopback. That was a test-environment fault, not a product defect; the corrected run shares the MySQL container's network namespace (`127.0.0.1`). Evidence of the failed attempt is kept.
+
+**Not verified:** Linux on native hardware or the final production image (the Linux run is amd64 under emulation), Windows and clean-machine setup, a remote GitHub CI run (the branch is not pushed), a real scheduler activation (503 by design), any Frontend end-to-end flow, and Product Owner decisions D1–D10.
+
+## 12. Integration readiness by flow (F03 / F05)
+
+Legend — **NOW**: verified and open, integrate. **LIMITED**: works, with the stated limit. **LOCKED**: answers 403 by design until Product Owner decision D1 (gate in section 5). **503**: refused by design until scheduler activation. **FORBIDDEN**: always 403 for every role, never call. **DEPRECATED**: still answers but has no effect, do not build. **MISSING**: no Backend endpoint exists. Evidence per row is the named automated test class on the merged tree (section 11); no row has been exercised through a real Frontend yet.
+
+| # | Flow | Role | Endpoints | State | Notes / evidence |
+|---|---|---|---|---|---|
+| 1 | Sign in, current account | all | `POST /api/auth/login`, `GET /api/auth/me` | NOW | `AuthIntegrationTest` |
+| 2 | Read Store utility settings and lambda range | Merchandiser, Store Admin | `GET /api/utility/config` | NOW | `UtilityIntegrationTest` |
+| 3 | Change Store weights and lambda | Merchandiser | `PUT /api/utility/config` | NOW | weights 0..1, enabled weights sum to 1, lambda inside policy |
+| 4 | Manual S/M product scores, read E/W | Merchandiser (write), Store Admin (read) | `GET`/`PATCH /api/utility/products/{productId}/scores` | NOW | only `stockPriorityScore`/`seasonalPriorityScore` accepted |
+| 5 | Utility preview (not saved) | Merchandiser | `POST /api/utility/preview` | NOW | |
+| 6 | Create / read immutable snapshot and matrix | Merchandiser | `POST /api/utility/snapshots`, `GET …/{id}`, `GET …/{id}/matrix` | NOW | snapshot must be `READY` to be mined; a new setting needs a new snapshot |
+| 7 | Expiry-push batches | Merchandiser, Store Admin | `GET /api/utility/expiry-push-batches` | NOW | independent of mining |
+| 8 | Global lambda policy | System Admin | `GET`/`PUT /api/system/utility/lambda-policy` | NOW | |
+| 9 | Deprecated expiry window | Store Admin | `PUT /api/utility/config/expiry-window` | DEPRECATED | answers normally but is ignored by scoring; do not build UI |
+| 10 | Mining configuration (algorithm, minUtil) | System Admin | `GET`/`PUT /api/system/mining/config` | NOW | send `expectedVersion`; stale → 409; first use is version 0 |
+| 11 | Submit a manual mining request | System Admin | `POST /api/system/mining/requests` | LIMITED | 202, idempotent by `requestKey`; `storeId` must be typed (MISSING Store picker, D2); the `snapshotId` must come from the Merchandiser's snapshot response because the System Admin snapshot list is LOCKED; `MiningIntegrationTest` |
+| 12 | Follow a request, its runs and results as a Store user | Merchandiser, Store Admin | `GET /api/mining/snapshots`, `/requests`, `/requests/{id}`, `/requests/{id}/runs`, `/runs/{id}`, `/runs/{id}/patterns` | NOW | own Store only; this is how status and patterns of a System Admin request are visible today |
+| 13 | Benchmark of a run | System Admin | `GET /api/system/mining/stores/{storeId}/runs/{runId}/benchmark` | LIMITED | route is open, but the `runId` has to be known: the run list is LOCKED (row 14) |
+| 14 | Status polling, run list, snapshot list, patterns for System Admin | System Admin | `GET /api/system/mining/stores/{storeId}/requests`, `…/requests/{requestId}`, `…/requests/{requestId}/runs`, `…/snapshots`, `…/runs/{runId}/patterns` | LOCKED | groups `REQUESTS`, `RUNS`, `SNAPSHOTS`, `PATTERNS`; tested with the groups open and closed (`MiningSystemStoreReadGateTest`, `MiningSystemStoreReadGranularGateTest`, `MiningIntegrationTest`) |
+| 15 | Create, list, view, edit, disable a schedule | System Admin | `POST`/`GET /api/system/mining/schedules`, `GET`/`PUT …/{id}` | LIMITED | schedules are created disabled; `PUT` with `enabled=true` → 503; `MiningAdminConfigurationTest` |
+| 16 | Enable a schedule | System Admin | `PUT /api/system/mining/schedules/{id}` with `enabled=true` | 503 | show "not yet available"; the dispatcher is off by default |
+| 17 | Schedule run history | System Admin | `GET …/{id}/occurrences`, `GET …/{id}/occurrences/{occurrenceId}` | NOW | read-only; includes status, attempt count, retry time, linked snapshot/request ids |
+| 18 | Legacy merchant submit and Store benchmark | any | `POST /api/mining/requests`, `GET /api/mining/runs/{id}/benchmark` | FORBIDDEN | `deprecated` in OpenAPI; 403 for every role |
+| 19 | Recommendations from a COMPLETED run | Merchandiser | `POST /api/recommendations/generate` and the F06 review routes | NOW | `RecommendationIntegrationTest`, `RecommendationHardeningIntegrationTest`; see the F06 handoff |
+
+**What the Frontend can build now:** rows 1–8, 10, 12, 15 (disabled schedules only), 17, 19, plus the submit button of row 11. **What it must hide or disable:** rows 14 (until D1) and 16 (until activation); never build rows 9 and 18. **What is missing in the Backend:** a Store list for System Admin (row 11, decision D2).
