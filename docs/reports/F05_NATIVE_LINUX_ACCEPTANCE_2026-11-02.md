@@ -48,7 +48,7 @@ Dependencies for the approved host: Linux x86-64 (or arm64) kernel on bare metal
 | Environment | Commit (source tree) | Result |
 |---|---|---|
 | macOS 26.5 arm64, JDK 17.0.21 Backend, JDK 25 SPMF child, MySQL 8.4.13 in Docker | production code as at `28fac97`; tests as of the commits listed in the readiness report | multi-instance and crash suites: see 4–6 |
-| Docker Desktop Linux 6.10.14-linuxkit, **linux/amd64 emulated, uid 10001**, Ubuntu 24.04, OpenJDK 17.0.20 / 25.0.1, MySQL 8.4.13 | `501f980` (final run) | {{LINUX_FINAL}} |
+| Docker Desktop Linux 6.10.14-linuxkit, **linux/amd64 emulated, uid 10001**, Ubuntu 24.04, OpenJDK 17.0.20 / 25.0.1, MySQL 8.4.13 | `501f980` (final run) | **197 run, 0 failures, 0 errors, 2 skipped** (the two natural-lease tests, which need `-Dpaspm.test.natural-lease=true` and were run on macOS). 28 classes: both multi-JVM suites, the upgrade/compatibility class, the E2E and outage tests, `SpmfRuntimeTest` 8/8 and `LinuxParentDeathLauncherTest` 2/2 as a non-root user, the scheduler suites, `MiningIntegrationTest`, `MiningMySqlIntegrationTest`, `RecommendationMySqlIntegrationTest`. **Not native Linux.** Two earlier runs of the same environment found the test defects listed in section 7; they were fixed and this run is the clean one |
 
 Evidence directory (not committed): `outputs/verification-evidence/sched-p2/`.
 
