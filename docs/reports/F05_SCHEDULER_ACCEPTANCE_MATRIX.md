@@ -73,3 +73,21 @@ Final-gap results: actual TCP connections to disposable MySQL were forcibly drop
 | Final review and explicit release sign-off; verification of the confirmer's PO identity | **RELEASE_SIGNOFF_PENDING** | |
 
 Deleted: `MiningAutomaticSchedulerMySqlTest` (asserted that enabling returns 503 with the dispatcher on); superseded by the E2E test above.
+
+## Update 2026-11-02 (c) — native Linux readiness, V18/V19 review, D8/D9/D10 acceptance (tested source tree `501f980`; nothing pushed)
+
+**Decision state:** unchanged — D1–D10 `BUSINESS_CHOICE_CONFIRMED`, implemented, locally verified; **`NATIVE_LINUX_NOT_RUN`, `CI_NOT_RUN`, `RELEASE_SIGNOFF_PENDING`**. Production code changed in one file since `89e6ee5` (`28fac97`, dispatcher log lines). Details: [native Linux acceptance](F05_NATIVE_LINUX_ACCEPTANCE_2026-11-02.md), [V18/V19 and roll-forward](F05_V18_V19_SCHEMA_ROLLFORWARD_2026-11-02.md), [D8/D9/D10 readiness and sign-off record](F05_D8_D9_D10_RELEASE_READINESS_2026-11-02.md).
+
+| Acceptance case | Result | Evidence and qualification |
+|---|---|---|
+| Full script on the final tree | **PASS 23/23** | default Maven verify 552 run / 0 failed / 179 skipped (opt-in); flag tests 6/6; CI `mysql` group 56/56; full opt-in 562 run / 0 failed / 27 skipped (the four opt-in classes, run below); Flyway fresh, V11, rerun, upgrade; JPA validate; OpenAPI 89 operations identical |
+| Nine crash points with real `kill -9` (before reservation commit · after reservation commit before claim · snapshot preparation · after request commit · before worker claim · during real SPMF · occurrence finalization · retry backoff · reconciliation) | **PASS** (macOS and Linux emulated) | `MiningSchedulerMultiJvmMySqlTest` 12/12 incl. natural lease expiry; zero duplicates, zero orphans, one snapshot and one request after every recovery. **Supersedes** the 2026-11-01 rows "Crash after snapshot commit, before link" and "after request commit, before occurrence link": still `BLOCKED` as separate commit boundaries because they are one transaction, covered by the enclosing points |
+| Lease expiry by itself | **PASS (macOS)** | recovery 309 s after the kill with `lease_until` never edited; stalled owner resumed after 385 s was refused by the fence and the other instance completed with fence 2. Artificial expiry (one test) is labelled as such |
+| SPMF child on Backend SIGKILL | **Linux (emulated, uid 10001): killed by the kernel** · macOS: orphan survives (no parent-death facility; test cleans up) | `crash_point=6_during_spmf`, `real_spmf_crash` ×2 (the independent child B survives) |
+| V17 schema with in-flight rows → new Backend | **PASS** | `DISPATCHED`+request → `COMPLETED`; human-owned `PENDING` → `FAILED/HTTP_403`; unowned `PROCESSING` untouched; no new request/snapshot |
+| Two Backends started together on an empty schema | **PASS** | V1–V19 once, one scheduler principal, stable after restart |
+| Old executable (`origin/dev`) on the V19 schema | **starts, unsafe** (characterised) | exposes the principal in `/api/users`; with its dispatcher on it runs as the human editor. Rollback of the executable is unsupported |
+| Shipped default configuration, real Backend | **PASS** | activation 503, `schedule_version` unchanged, an overdue enabled row is never run, `/api/system/mining/config` 200; flag on with another Store zone → exit code 1 |
+| Linux, **emulated** amd64, uid 10001 | **197 run / 0 failed / 2 skipped** (opt-in natural-lease tests) | not native; supersedes the earlier 179/179 for the new suites |
+| Native Linux | **`NATIVE_LINUX_NOT_RUN`** | `scripts/verify-native-linux.sh` prepared; its preflight rejects macOS and the emulated container |
+| GitHub CI · release sign-off | `CI_NOT_RUN` · `RELEASE_SIGNOFF_PENDING` | |

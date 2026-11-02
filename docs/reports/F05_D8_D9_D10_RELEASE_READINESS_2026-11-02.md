@@ -21,9 +21,9 @@ This report is evidence, not an approval. It records what was run, on which comm
 | Option B implementation (D1–D10) | `ce419d0` … `89e6ee5` (12 commits, see the register) |
 | This task, **production code** | `28fac97` — the dispatcher logs a catch-up (WARN with the number of skipped fire times) and each reservation (INFO). No other production file changed |
 | This task, tests | `884a83c` (crash-point matrix, natural-lease and stale-owner tests, upgrade/compatibility class, D9 credential-flow tests, partial-V18 characterisation) |
-| This task, scripts/docs | `9dfe2d9`, `5b5f4f4`, `bc259a4` and later documentation commits |
+| This task, scripts/docs | `9dfe2d9`, `5b5f4f4`, `bc259a4`, `792b450`, `4e7e995`, `1d28c60`, `a107c33` and later documentation commits |
 
-**Tested source commit** for every run below: the source tree of `9dfe2d9` (identical in `5b5f4f4`; only `docs/`, `scripts/verify-native-linux.sh` and `docs/diagrams/` differ in later commits). The earlier `e8bd0fe`-based Linux run in the acceptance matrix is superseded by the Linux run in this task. If the commit hash differs from a report's text, compare with `git diff <tested>..HEAD -- src pom.xml` (empty).
+**Tested source commit** for the final runs below: the source tree of `501f980` (identical in `1d28c60`; later commits change only `docs/`). Test files changed after `9dfe2d9` (`24ab3e5`, `f8eab83`, `a84a279`, `501f980`), production code did not; every run in section 8 is on the final test tree. The earlier `e8bd0fe`-based Linux run in the acceptance matrix is superseded. To check that a later commit changed no source: `git diff 501f980..HEAD -- src pom.xml` (empty).
 
 ## 2. D8 — schedule edits and disabling
 
@@ -117,7 +117,7 @@ Nothing below is filled in on anyone's behalf.
 |---|---|---|
 | Business decisions D1–D10 | `BUSINESS_CHOICE_CONFIRMED` | working-conversation instructions of 2026-11-02, D3 amended the same day |
 | Approval authority verification | **NOT VERIFIED** | whether the confirmer is the formal Product Owner / authorised release approver must be checked by the project |
-| Tested Backend commit | source tree of `9dfe2d9` (see §1) | branch not pushed |
+| Tested Backend commit | source tree of `501f980` (see §1) | branch not pushed |
 | Technical verification | `TECHNICALLY_VERIFIED` (local) | [final regression](#8-final-regression) |
 | Native Linux acceptance | `NATIVE_LINUX_NOT_RUN` | [report](F05_NATIVE_LINUX_ACCEPTANCE_2026-11-02.md) |
 | V18/V19 migration review | `MIGRATION_REVIEWED` · `ROLLFORWARD_DOCUMENTED` | [report](F05_V18_V19_SCHEMA_ROLLFORWARD_2026-11-02.md) |
@@ -132,4 +132,29 @@ Nothing below is filled in on anyone's behalf.
 
 `RELEASE_APPROVED` may be written only after an authorised human has completed the last four rows and the CI and native-Linux rows are green.
 
-<!--FINAL-REGRESSION-->
+## 8. Final regression
+
+Tested source tree: `501f980` (= `1d28c60`; every later commit changes only `docs/`). Production code relative to the previously reported baseline `89e6ee5`: one file, `MiningOccurrenceDispatcher.java` (`28fac97`). `git diff 89e6ee5..HEAD -- src/main pom.xml` lists only that file; no migration, API or OpenAPI change, so `docs/api/openapi.json` is unchanged.
+
+| Run | Environment | Result |
+|---|---|---|
+| `scripts/verify-option-b-macos.sh --run` (all 23 stages) | macOS arm64, JDK 17 / JDK 25 child, MySQL 8.4.13, SPMF 2.67a (SHA-256 pinned) | **PASS 23/23**. Default Maven verify: 552 run, 0 failed, **179 skipped** (opt-in classes; skipped is not passed). Flag + migration-version tests 6/6. CI "mysql" group 56/56. Full opt-in: 562 run, 0 failed, **27 skipped** = the four classes below, run separately. Flyway: fresh V1–V19 once each, V11 Java, re-run byte-identical, upgrade V12+seeded rows→V19 with unchanged history checksums. JPA `ddl-auto=validate` passes. Runtime OpenAPI: 89 operations, `paths` and `components` identical to `docs/api/openapi.json` |
+| Opt-in multi-process, natural lease included | macOS arm64, `-Dpaspm.test.multijvm=true -Dpaspm.test.natural-lease=true` | `MiningMultiJvmMySqlTest` 6/6 · `MiningSchedulerMultiJvmMySqlTest` **12/12** (nine crash points, natural lease expiry, stale owner, D8 update-while-preparing) · `MiningSchedulerUpgradeCompatibilityMySqlTest` **5/5** (including the origin/dev executable on the V19 schema) |
+| Clone API | macOS arm64 | `PilotCloneApiIntegrationTest` 5/5 |
+| MySQL scheduler E2E and outage | macOS and Linux | `MiningScheduledActivationE2EMySqlTest` 3/3, `MiningScheduledDatabaseOutageMySqlTest` 1/1 |
+| Linux, **emulated** amd64, uid 10001, MySQL 8.4.13 | Docker Desktop VM, **not native** | **197 run, 0 failed, 0 errors, 2 skipped** (the two natural-lease tests, opt-in) in 28 classes; `SpmfRuntimeTest` 8/8 and `LinuxParentDeathLauncherTest` 2/2 as non-root; SPMF child killed by the kernel on Backend SIGKILL (`orphan_alive_after_backend_sigkill=false`, uid 10001) |
+| **Native Linux** | – | **`NATIVE_LINUX_NOT_RUN`** |
+| **GitHub CI** | – | **`CI_NOT_RUN`** |
+
+Skipped tests, classified: the 179/27 skips above are opt-in classes (MySQL integration, multi-process, clone-API) that need switches the default build does not set; every one of them was executed in the runs listed in this table. The two Linux skips are the natural-lease tests, executed on macOS. None of the skips is counted as a pass anywhere in this report.
+
+Other checks: no migration was edited (V1–V17 byte-identical to `origin/dev`); the Draw.io ERDs and the 27-page UML pack are untouched (`git diff --stat 89e6ee5..HEAD` shows no `.drawio` file); activation stays HTTP 503 and the dispatcher stays off by default (real-process test); no secret was added (test accounts are synthetic and local; the reports contain no credential).
+
+### Test defects found and fixed while running on Linux
+
+| Defect (in the new tests) | Commit |
+|---|---|
+| crash point 6 stopped the parent-death launcher instead of the SPMF java | `24ab3e5` |
+| upgrade test reused a keep-alive connection the server had closed | `f8eab83` |
+| two simultaneous Backends raced on the bootstrap administrator (pre-existing `Bootstrap` behaviour, out of scope) | `501f980` |
+
