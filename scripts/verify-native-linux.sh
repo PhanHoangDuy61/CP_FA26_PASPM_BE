@@ -95,17 +95,18 @@ rm -rf "$OUT/surefire"; cp -R "$REPO/target/surefire-reports" "$OUT/surefire" 2>
 python3 - "$OUT" "$MVN" "$NATIVE" "$COMMIT" "$NATURAL" "$LEGACY_JAR" <<'PY'
 import sys, glob, json, xml.etree.ElementTree as ET
 out, mvn, native, commit, natural, legacy = sys.argv[1:7]
-t = f = e = s = 0; skipped = []
+import collections
+t = f = e = s = 0; skipped = collections.Counter()
 for p in glob.glob(out + "/surefire/TEST-*.xml"):
     r = ET.parse(p).getroot()
     for case in r.iter("testcase"):
         t += 1
         if case.find("failure") is not None: f += 1
         elif case.find("error") is not None: e += 1
-        elif case.find("skipped") is not None: s += 1; skipped.append(r.get("name").split(".")[-1] + "#" + case.get("name"))
+        elif case.find("skipped") is not None: s += 1; skipped[r.get("name").split(".")[-1]] += 1
 ok = mvn == "0" and f == 0 and e == 0 and t > 0
 verdict = "NATIVE_LINUX_VERIFIED" if ok and native == "true" else "NATIVE_LINUX_NOT_RUN" if native != "true" else "BLOCKED"
-res = {"commit": commit, "testsRun": t, "failures": f, "errors": e, "skipped": s, "skippedTests": skipped, "mavenExit": int(mvn), "naturalLeaseIncluded": natural == "true", "legacyJarIncluded": bool(legacy), "verdict": verdict}
+res = {"commit": commit, "testsRun": t, "failures": f, "errors": e, "skipped": s, "skippedByClass": dict(sorted(skipped.items())), "mavenExit": int(mvn), "naturalLeaseIncluded": natural == "true", "legacyJarIncluded": bool(legacy), "verdict": verdict}
 json.dump(res, open(out + "/result.json", "w"), indent=2); print(json.dumps(res, indent=2))
 PY
 echo "evidence directory: $OUT (preflight.json, result.json, multijvm-evidence.txt, maven.log, surefire/)"
