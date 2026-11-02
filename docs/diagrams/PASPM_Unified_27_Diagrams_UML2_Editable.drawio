@@ -3313,8 +3313,8 @@
         <mxCell id="r2-02-node-repos" value="Hybrid JPA / JDBC persistence" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fontSize=14;fillColor=#ffffff;strokeColor=#28253d;strokeWidth=1.3;spacing=6;rounded=0;" vertex="1" parent="1" semanticKind="square" mermaidId="repos">
           <mxGeometry x="58.0" y="1765.0" width="152.0" height="66.0" as="geometry" />
         </mxCell>
-        <mxCell id="r2-02-node-mysql" value="«database»&lt;br&gt;MySQL 8.4&lt;br&gt;Flyway V1–V19" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fontSize=14;fillColor=#ffffff;strokeColor=#28253d;strokeWidth=1.3;spacing=6;shape=cylinder3;size=12;" vertex="1" parent="1" semanticKind="cylinder" mermaidId="mysql">
-          <mxGeometry x="487.26" y="1932.0" width="144.0" height="106.149" as="geometry" />
+        <mxCell id="r2-02-node-mysql" value="«database»&lt;br&gt;MySQL 8.4&lt;br&gt;Flyway V1–V19&lt;br&gt;(V18: SKIPPED status · V19: scheduler principal)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fontSize=14;fillColor=#ffffff;strokeColor=#28253d;strokeWidth=1.3;spacing=6;shape=cylinder3;size=12;" vertex="1" parent="1" semanticKind="cylinder" mermaidId="mysql">
+          <mxGeometry x="462" y="1920" width="190" height="130" as="geometry" />
         </mxCell>
         <mxCell id="r2-02-node-utility" value="«component»&lt;br&gt;F03 utility calculation&lt;br&gt;S/M product priorities, E from sellable batch expiry" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fontSize=14;fillColor=#ffffff;strokeColor=#28253d;strokeWidth=1.3;spacing=6;rounded=0;" vertex="1" parent="1" semanticKind="square" mermaidId="utility">
           <mxGeometry x="386.594" y="1554.0" width="152.0" height="150.0" as="geometry" />
@@ -3546,8 +3546,8 @@
         <mxCell id="r2-02-edge-label-21" value="interactions without matching API calls" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;spacing=2;align=center;" vertex="1" parent="r2-02-edge-21" semanticKind="edge-label" ownerEdge="r2-02-edge-21">
           <mxGeometry x="330.094" y="608.5" width="208.0" height="48.0" as="geometry" />
         </mxCell>
-      <mxCell id="r2-02-node-sched" value="«component»&lt;br&gt;Mining scheduler&lt;br&gt;GATED: off by default; enable = HTTP 503 unless allowed" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fontSize=14;fillColor=#ffffff;strokeColor=#28253d;strokeWidth=1.3;spacing=6;rounded=0;" vertex="1" parent="1" semanticKind="component">
-          <mxGeometry x="776.094" y="1744" width="152" height="108" as="geometry" />
+      <mxCell id="r2-02-node-sched" value="«component»&lt;br&gt;Mining scheduler (dispatcher)&lt;br&gt;GATED: off by default; enable = HTTP 503 unless allowed&lt;br&gt;Runs as the SYSTEM_SCHEDULER principal (D9)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fontSize=14;fillColor=#ffffff;strokeColor=#28253d;strokeWidth=1.3;spacing=6;rounded=0;" vertex="1" parent="1" semanticKind="component">
+          <mxGeometry x="768" y="1730" width="170" height="150" as="geometry" />
         </mxCell>
         <mxCell id="r2-02-edge-sched-1" value="" style="html=1;rounded=0;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=1.0;exitY=0.5;exitPerimeter=0;entryX=0.5;entryY=0.0;entryPerimeter=0;" edge="1" parent="1" source="r2-02-node-services" target="r2-02-node-sched">
           <mxGeometry relative="1" as="geometry">
@@ -3845,7 +3845,7 @@
 <mxCell id="r2-05b-divider" value="" style="html=1;rounded=0;endArrow=none;dashed=1;strokeColor=#9AA5B1;strokeWidth=1.2;" edge="1" parent="1">
   <mxGeometry relative="1" as="geometry">
     <mxPoint x="720" y="20" as="sourcePoint" />
-    <mxPoint x="720" y="840" as="targetPoint" />
+    <mxPoint x="720" y="888" as="targetPoint" />
     <Array as="points" />
   </mxGeometry>
 </mxCell>
@@ -3987,8 +3987,8 @@
     <Array as="points"><mxPoint x="1470" y="206" /><mxPoint x="1470" y="730" /><mxPoint x="1110" y="730" /></Array>
   </mxGeometry>
 </mxCell>
-<mxCell id="r2-05b-note" value="SKIPPED never owns an actor, snapshot, request or run. A reserved occurrence of a schedule that is disabled or edited before preparation ends FAILED / HTTP_409; once the request exists (DISPATCHED) disabling the schedule does not stop it. FAILED carries failureCode and failureMessage. Schedule and configuration versions are frozen at reservation." style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;shape=note;size=14;fillColor=#FFF4CC;strokeColor=#9A6700;spacing=10;align=left;" vertex="1" parent="1" semanticKind="note" mermaidId="occ-note">
-  <mxGeometry x="770" y="740" width="700" height="96" as="geometry" />
+<mxCell id="r2-05b-note" value="SKIPPED never owns an actor, snapshot, request or run. A reserved occurrence of a schedule that is disabled or edited before preparation ends FAILED / HTTP_409; once the request exists (DISPATCHED) disabling the schedule does not stop it (D8). FAILED carries failureCode and failureMessage (V18). Schedule and configuration versions are frozen at reservation. Execution identity (D9): the machine principal SYSTEM_SCHEDULER, not the last editor. Everything on this panel is GATED: off by default (D10)." style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;shape=note;size=14;fillColor=#FFF4CC;strokeColor=#9A6700;spacing=10;align=left;" vertex="1" parent="1" semanticKind="note" mermaidId="occ-note">
+  <mxGeometry x="770" y="752" width="700" height="136" as="geometry" />
 </mxCell>
         </root>
     </mxGraphModel>
