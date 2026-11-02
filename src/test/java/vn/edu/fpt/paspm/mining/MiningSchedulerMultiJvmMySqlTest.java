@@ -276,7 +276,9 @@ class MiningSchedulerMultiJvmMySqlTest {
         var pattern = java.util.regex.Pattern.compile("SPMF_PROCESS_STARTED [^\\n]*pid=([0-9]+)");
         while (System.nanoTime() < end) {
             var match = pattern.matcher(Files.readString(n.log)); long pid = -1; while (match.find()) pid = Long.parseLong(match.group(1));
-            if (pid > 0) { var child = ProcessHandle.of(pid); if (child.isPresent() && child.get().parent().map(p -> p.pid() == n.process.pid()).orElse(false)) return child.get(); }
+            // wait for the real SPMF java (HUI-Miner, no "-c"): on Linux the same pid first runs the Python parent-death launcher, and stopping it before its prctl registration would test the documented startup race, not the safety guarantee
+            if (pid > 0) { var child = ProcessHandle.of(pid); if (child.isPresent() && child.get().parent().map(p -> p.pid() == n.process.pid()).orElse(false)
+                && child.get().info().arguments().map(args -> java.util.Arrays.asList(args).contains("HUI-Miner") && !java.util.Arrays.asList(args).contains("-c")).orElse(false)) return child.get(); }
             Thread.sleep(2);
         }
         throw new AssertionError("actual SPMF child not observed in the process log and ancestry");
