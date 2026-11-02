@@ -2,11 +2,13 @@
 
 **Result: the project report documents found in the workspace do not describe the system that the Backend implements and the UML pack draws.** The mismatch is large, concentrated on the mining algorithms, the roles and the run lifecycle, and it must be resolved (or explicitly explained) before the review. This document lists the mismatches with evidence and gives paste-ready replacement wording. **No report file was edited**; nothing here changes an approved decision, and no test result or release status is invented.
 
+> **Status update (2026-11-02, later): this review is PROVISIONAL.** The report documents have since been moved to `report/` (workspace root), and another session is editing and synchronising them. This review analysed the earlier copies under the old `sprint_2/` path (Report 1 v5, Report 2 v5.1, ERD Description v4), **not** the files now in `report/` (`Report1_Project_Introduction_FA26_SE048.docx`, `Report2_Research_Proposal_and_Plan_FA26_SE048.docx`, `Report3…`–`Report5…`), which were not opened or analysed here and have a different file name and date. Treat the mismatch table as a checklist of what to verify, not as findings about the current reports. **The report-to-UML consistency check must be repeated on the `report/` files after the other session confirms completion.** This session does not edit, move or commit any report file.
+
 ## 1. What was reviewed
 
 | Document (workspace path) | Last modified | Notes |
 |---|---|---|
-| `sprint_2/Report2_Research_Proposal_and_Plan_v5_1_Architecture_Update.docx` | 2026-09-24 | latest Report 2 found; "v5.1 Architecture Update" |
+| (old path, now moved) `sprint_2/Report2_Research_Proposal_and_Plan_v5_1_Architecture_Update.docx` | 2026-09-24 | latest Report 2 found; "v5.1 Architecture Update" |
 | `sprint_2/Report1_Project_Introduction_v5_Official_Template.docx` (a non-template `…v5.docx` of the same date also exists) | 2026-09-23 | latest Report 1 found |
 | `sprint_2/ERD_Description_v4.docx` (Vietnamese) + `ERD_Conceptual_Logical_v4.drawio` | 2026-09-21 | conceptual/logical design, 32 logical tables |
 | Backend repository documents (`docs/api`, `docs/features/F01–F06`, `docs/architecture`, decision register, reports) | current at `c65daf2` | consistent with code per the 2026-11-02 audit; used as the reference |

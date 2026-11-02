@@ -17,7 +17,7 @@ Statuses that hold everywhere in this package: scheduling is **implemented but o
 
 ## Before Wednesday
 
-1. **Insert the adopted wording** ([`REPORT_ADDENDUM_ALGORITHMS_ROLES.md`](REPORT_ADDENDUM_ALGORITHMS_ROLES.md)) into Report 1/Report 2 and the other mismatches of the consistency review (R5–R9, R11–R13). The position is decided; the `.docx` files are still **not edited**, so until they are, the reports and the diagrams disagree.
+1. **Report files are owned by another session** (they live in `report/`; this package does not touch them). When that session confirms completion, **re-run the report-to-UML check** on the files in `report/`; the consistency review here is provisional (it analysed the older `sprint_2/` copies). Then insert the adopted wording ([`REPORT_ADDENDUM_ALGORITHMS_ROLES.md`](REPORT_ADDENDUM_ALGORITHMS_ROLES.md)) into Report 1/Report 2 and the other mismatches of the consistency review (R5–R9, R11–R13). The position is decided; the `.docx` files are still **not edited**, so until they are, the reports and the diagrams disagree.
 2. Open the two `.drawio` files once in the diagrams.net web editor (they were only rendered with the desktop engine) and print or share the PDF.
 3. Optional: re-run the PDF after any wording change (`draw.io -x -f pdf -p N --crop`, merge; cover is built from a small draw.io page).
 4. If the pull request for the Backend branch is opened or merged before the review, update the cover/README wording ("not merged") accordingly.
