@@ -39,6 +39,8 @@ class MiningSchedulerUpgradeCompatibilityMySqlTest {
     final List<String> evidence = new ArrayList<>();
     TestRestTemplate http = new TestRestTemplate();
     String storeZone = "Asia/Ho_Chi_Minh";
+    /** The bootstrap administrator is created by check-then-insert; two instances created together race on it (the loser exits, pre-existing, unrelated to F05), so only one gets the credentials. */
+    boolean bootstrapCredentials = true;
 
     static JdbcTemplate jdbc(MySqlTestDatabase db) { return new JdbcTemplate(new DriverManagerDataSource(db.url(), db.user(), db.password())); }
     interface Condition { boolean check() throws Exception; }
@@ -61,7 +63,7 @@ class MiningSchedulerUpgradeCompatibilityMySqlTest {
         var env = pb.environment();
         env.put("DB_URL", db.url()); env.put("DB_USER", db.user()); env.put("DB_PASSWORD", db.password());
         env.put("JWT_SECRET", "01234567890123456789012345678901"); env.put("OTP_SECRET", "01234567890123456789012345678901");
-        env.put("BOOTSTRAP_EMAIL", ADMIN_EMAIL); env.put("BOOTSTRAP_PASSWORD", ADMIN_PASSWORD);
+        if (bootstrapCredentials) { env.put("BOOTSTRAP_EMAIL", ADMIN_EMAIL); env.put("BOOTSTRAP_PASSWORD", ADMIN_PASSWORD); }
         env.put("PASPM_TEST_BARRIER_DIR", dir.toString());
         env.put("PASPM_MINING_SPMF_JAR", System.getProperty("paspm.test.spmf-jar")); env.put("PASPM_MINING_JAVA_EXECUTABLE", System.getProperty("paspm.test.spmf-java"));
         Path log = dir.resolve("backend.log");
@@ -104,7 +106,10 @@ class MiningSchedulerUpgradeCompatibilityMySqlTest {
         var db = MySqlTestDatabase.create(); var jdbc = jdbc(db);
         Path base = Files.createTempDirectory("paspm-fresh-start-");
         try {
-            var a = spawn(base.resolve("a"), db, null, false); var b = spawn(base.resolve("b"), db, null, false);   // launched before either is ready: they race on Flyway
+            var a = spawn(base.resolve("a"), db, null, false);
+            bootstrapCredentials = false;
+            var b = spawn(base.resolve("b"), db, null, false);   // launched before either is ready: they race on Flyway
+            bootstrapCredentials = true;
             assertTrue(awaitUp(a, 120000), "A up"); assertTrue(awaitUp(b, 120000), "B up");
             assertEquals(19, jdbc.queryForObject("SELECT COUNT(*) FROM flyway_schema_history WHERE success=1 AND version IS NOT NULL", Integer.class));
             assertEquals(19, jdbc.queryForObject("SELECT COUNT(DISTINCT version) FROM flyway_schema_history WHERE version IS NOT NULL", Integer.class));
