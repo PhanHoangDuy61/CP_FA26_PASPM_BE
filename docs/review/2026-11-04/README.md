@@ -10,13 +10,14 @@ Everything here is documentation prepared locally on branch `Khoi/docs/f05-sched
 | Concise UML QA report | [`UML_QA_REPORT_2026-11-04.md`](UML_QA_REPORT_2026-11-04.md) |
 | Summary of the major Backend changes with tested commits | [`BACKEND_CHANGES_SUMMARY.md`](BACKEND_CHANGES_SUMMARY.md) |
 | Known limitations and likely reviewer questions | [`LIMITATIONS_AND_REVIEWER_QUESTIONS.md`](LIMITATIONS_AND_REVIEWER_QUESTIONS.md) |
+| Report wording adopted for algorithms, roles and status (as supplied, checked against the code, two precision edits) | [`REPORT_ADDENDUM_ALGORITHMS_ROLES.md`](REPORT_ADDENDUM_ALGORITHMS_ROLES.md) |
 | Project report ↔ code ↔ UML consistency review | [`PROJECT_REPORT_CONSISTENCY_REVIEW.md`](PROJECT_REPORT_CONSISTENCY_REVIEW.md) |
 
 Statuses that hold everywhere in this package: scheduling is **implemented but off by default**; GitHub CI **NOT RUN**; native Linux **NOT RUN**; release sign-off **PENDING** (nobody recorded as approver). F07–F11 are **PLANNED**.
 
 ## Before Wednesday
 
-1. **Decide the report position on TKQ/FEACP vs HUI-Miner/EFIM and on the roles** (consistency review R1–R4). This is the largest open risk; the diagrams and code agree with each other, the `.docx` reports do not. Nothing in the reports was edited.
+1. **Insert the adopted wording** ([`REPORT_ADDENDUM_ALGORITHMS_ROLES.md`](REPORT_ADDENDUM_ALGORITHMS_ROLES.md)) into Report 1/Report 2 and the other mismatches of the consistency review (R5–R9, R11–R13). The position is decided; the `.docx` files are still **not edited**, so until they are, the reports and the diagrams disagree.
 2. Open the two `.drawio` files once in the diagrams.net web editor (they were only rendered with the desktop engine) and print or share the PDF.
 3. Optional: re-run the PDF after any wording change (`draw.io -x -f pdf -p N --crop`, merge; cover is built from a small draw.io page).
 4. If the pull request for the Backend branch is opened or merged before the review, update the cover/README wording ("not merged") accordingly.

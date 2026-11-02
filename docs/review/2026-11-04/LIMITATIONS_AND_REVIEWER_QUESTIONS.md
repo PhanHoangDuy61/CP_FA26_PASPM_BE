@@ -12,7 +12,7 @@
 | 6 | MySQL `TIMESTAMP` fire times end 2038-01-19 | schema doc |
 | 7 | No alerting beyond the stored `failureMessage`, logs and SQL queries (decision D7: no e-mail/SMS) | roll-forward plan §5 step 8 |
 | 8 | SPMF is an external GPLv3 jar pinned by SHA-256, run in a separate Java 25 process; kernel-level child cleanup exists on Linux only (macOS = development) | F05 setup docs |
-| 9 | Only HUI-Miner and EFIM are implemented (see report review: the reports describe TKQ/FEACP) | `PROJECT_REPORT_CONSISTENCY_REVIEW.md` |
+| 9 | Only HUI-Miner and EFIM are implemented; TKQ/FEACP in earlier report versions describe an earlier design and are not implemented or verified (adopted wording: `REPORT_ADDENDUM_ALGORITHMS_ROLES.md`; the `.docx` files are not yet updated) | `PROJECT_REPORT_CONSISTENCY_REVIEW.md` |
 | 10 | F07–F11 (layout, A/B, storefront, dashboards) and Excel import are PLANNED, not implemented; no cancellation of a running mining request exists | UML pages tagged PLANNED |
 | 11 | Two instances started together with bootstrap credentials race on the first administrator (pre-existing, unrelated to F05) | native Linux report §7 |
 | 12 | Diagrams: F02/F03 ERDs and the Mermaid ERD do not show V14–V19; the F05 ERD covers scheduler tables only; the draw.io files were not opened in the diagrams.net web editor | UML QA report §6 |
@@ -22,7 +22,7 @@
 
 | Question | Answer (with evidence) |
 |---|---|
-| Why does the system mine with HUI-Miner and EFIM when the report talks about TKQ and FEACP? | The Backend implements the two SPMF algorithms that Report 2 says the Capstone Project Register approved (HUI-Miner, EFIM) and compares their results (`comparisonStatus`). No TKQ/FEACP code exists. The reports are the open inconsistency — see `PROJECT_REPORT_CONSISTENCY_REVIEW.md`. Do not claim TKQ/FEACP are implemented |
+| Why does the system mine with HUI-Miner and EFIM when the report talks about TKQ and FEACP? | The Backend implements the two SPMF algorithms that Report 2 says the Capstone Project Register approved (HUI-Miner, EFIM) and compares their results (`comparisonStatus`). No TKQ/FEACP code exists. Earlier report versions referenced TKQ/FEACP as an earlier design; they are not implemented or verified. Say so explicitly (`REPORT_ADDENDUM_ALGORITHMS_ROLES.md`) and do not claim TKQ/FEACP results |
 | Why can System Admin not read patterns? | Decision D1: System Admin supervises (snapshots, requests, runs) but business results stay with Store roles; always HTTP 403, tested (`SystemStoreReadPolicyTest`, E2E) |
 | What happens if the server dies mid-run? | Nine kill points were tested with real `kill -9`: committed work is recovered by another instance; uncommitted work is rolled back; leases and fencing tokens stop stale owners; zero duplicates/orphans (readiness + native Linux reports, commit `501f980`) |
 | How do you stop duplicate scheduled runs? | unique `(schedule_id, scheduled_at)`; deterministic request key unique per Store; row lock on the schedule; lease + fence on the occurrence |
