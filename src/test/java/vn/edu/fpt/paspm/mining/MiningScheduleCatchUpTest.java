@@ -196,4 +196,20 @@ class MiningScheduleCatchUpTest {
         assertEquals(0, jdbc.queryForObject("SELECT COUNT(*) FROM utility_snapshot WHERE store_id=?", Integer.class, store));
         assertEquals(0, jdbc.queryForObject("SELECT COUNT(*) FROM mining_request WHERE store_id=?", Integer.class, store));
     }
+
+
+    @Test void aCatchUpThatSkipsMissedFiresIsVisibleInTheApplicationLogForOperators() {
+        base();
+        Instant first = Instant.now().minus(Duration.ofDays(22)).truncatedTo(java.time.temporal.ChronoUnit.MINUTES);
+        long s = weekly(first);
+        var logger = (ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory.getLogger(MiningOccurrenceDispatcher.class);
+        var appender = new ch.qos.logback.core.read.ListAppender<ch.qos.logback.classic.spi.ILoggingEvent>();
+        var previous = logger.getLevel();
+        appender.start(); logger.setLevel(ch.qos.logback.classic.Level.INFO); logger.addAppender(appender);
+        try { dispatcher.poll(); } finally { logger.detachAppender(appender); logger.setLevel(previous); }
+        assertEquals(3, count(s, "SKIPPED"));
+        var warnings = appender.list.stream().filter(e -> e.getLevel() == ch.qos.logback.classic.Level.WARN && e.getFormattedMessage().contains("skipped 3 older missed fire time")).toList();
+        assertEquals(1, warnings.size(), "one WARN names the number of skipped fire times: " + appender.list);
+        assertTrue(warnings.get(0).getFormattedMessage().contains("reserved occurrence"));
+    }
 }

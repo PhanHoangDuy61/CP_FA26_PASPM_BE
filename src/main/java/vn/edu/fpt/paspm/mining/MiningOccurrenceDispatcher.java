@@ -27,7 +27,7 @@ public class MiningOccurrenceDispatcher {
     public MiningOccurrenceDispatcher(JdbcTemplate jdbc,MiningScheduleReservation reservation,MiningOccurrenceLease leases,MiningOccurrenceProcessor processor,@Value("${paspm.mining.schedule-dispatch-enabled:false}") boolean enabled){this.jdbc=jdbc;this.reservation=reservation;this.leases=leases;this.processor=processor;this.enabled=enabled;}
     @EventListener(ApplicationReadyEvent.class) public void start(){if(enabled&&started.compareAndSet(false,true))poller.scheduleWithFixedDelay(this::poll,0,5,TimeUnit.SECONDS);}
     void poll(){
-        try {for(int i=0;i<5;i++)if(!reservation.reserve(Instant.now()).progressed())break;}
+        try {for(int i=0;i<5;i++){var outcome=reservation.reserve(Instant.now());if(!outcome.progressed())break;logReservation(outcome);}}
         catch(Exception e){log.warn("Scheduled occurrence reservation failed; next poll will retry",e);}
         try {
             jdbc.update("UPDATE mining_schedule_occurrence SET status='FAILED',failure_code='RETRY_EXHAUSTED',failure_message='Lease expired on the final attempt',lease_owner=NULL,lease_until=NULL,updated_at=CURRENT_TIMESTAMP WHERE status='PROCESSING' AND lease_owner IS NOT NULL AND lease_until<=CURRENT_TIMESTAMP AND attempt_count>=?",MiningOccurrenceLease.MAX_ATTEMPTS);
@@ -39,6 +39,11 @@ public class MiningOccurrenceDispatcher {
             }
         } catch(Exception e){log.warn("Scheduled occurrence dispatch failed; next poll will retry",e);}
         try{reconcile();}catch(Exception e){log.warn("Scheduled occurrence reconciliation failed; next poll will retry",e);}
+    }
+    /** Catch-up after downtime must not be silent: the skipped fire times are in the history API, and the operator log says that it happened (D6). */
+    static void logReservation(MiningScheduleReservation.Outcome outcome){
+        if(outcome.skipped()>0)log.warn("Scheduled mining skipped {} older missed fire time(s) (latest-only catch-up){}",outcome.skipped(),outcome.occurrenceId()==null?"; the backlog continues on the next poll":" and reserved occurrence "+outcome.occurrenceId());
+        else if(outcome.occurrenceId()!=null)log.info("Scheduled mining reserved occurrence {}",outcome.occurrenceId());
     }
     /** Administrator-visible cause: curated API messages as written, anything else only as a class name (details stay in the server log). */
     static String visibleMessage(Exception e){
