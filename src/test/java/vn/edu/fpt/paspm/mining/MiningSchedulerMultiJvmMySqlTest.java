@@ -289,6 +289,15 @@ class MiningSchedulerMultiJvmMySqlTest {
         try { if (Files.exists(stat) && Files.readString(stat).matches("(?s)^\\d+ \\(.*\\) Z .*")) return false; } catch (Exception ignored) { }
         return true;
     }
+    /** Numeric owner of a process: /proc on Linux, ps elsewhere ("?" if neither answers). */
+    String uid(long pid) {
+        try {
+            Path status = Path.of("/proc", Long.toString(pid), "status");
+            if (Files.exists(status)) for (String line : Files.readAllLines(status)) if (line.startsWith("Uid:")) return line.split("\\s+")[1];
+            var ps = new ProcessBuilder("ps", "-o", "uid=", "-p", Long.toString(pid)).start();
+            return new String(ps.getInputStream().readAllBytes()).trim();
+        } catch (Exception e) { return "?"; }
+    }
     void signal(long pid, String signal) throws Exception { assertEquals(0, new ProcessBuilder("kill", "-" + signal, Long.toString(pid)).start().waitFor()); }
 
     @Test void crashPoint1_killedBeforeTheReservationCommitsLeavesNoTraceAndAnotherInstanceReservesOnce() throws Exception {
@@ -420,8 +429,8 @@ class MiningSchedulerMultiJvmMySqlTest {
             child = spmfChild(c);
             signal(child.pid(), "STOP");                                  // keeps the real SPMF alive and observable until the Backend dies
             assertTrue(child.isAlive());
-            String childOwner = child.info().user().orElse("?"), backendOwner = c.process.info().user().orElse("?");
-            assertEquals(backendOwner, childOwner, "the SPMF child runs as the Backend's own (non-privileged) user");
+            String childOwner = uid(child.pid()), backendOwner = uid(c.process.pid());
+            assertNotEquals("?", childOwner); assertEquals(backendOwner, childOwner, "the SPMF child runs as the Backend's own user (uid), not a more privileged one");
             sigkill(c);
             boolean linux = "Linux".equalsIgnoreCase(System.getProperty("os.name"));
             if (linux) { ProcessHandle observed = child; waitFor(() -> !executing(observed), 15000, "kernel parent-death cleanup of the SPMF child"); }
@@ -435,7 +444,7 @@ class MiningSchedulerMultiJvmMySqlTest {
             assertEquals(16, count("SELECT COUNT(*) FROM high_utility_pattern p JOIN mining_run r ON p.run_id=r.run_id WHERE r.store_id=?", store));
             assertEquals(2, count("SELECT COUNT(*) FROM mining_run WHERE store_id=? AND status='COMPLETED'", store));
             String inv = integrity(id, 1);
-            evidence.add("crash_point=6_during_spmf killed_pid=" + c.process.pid() + " spmf_pid=" + childPid + " spmf_user=" + childOwner + " backend_user=" + backendOwner + " os=" + System.getProperty("os.name") + " orphan_alive_after_backend_sigkill=" + orphanAlive
+            evidence.add("crash_point=6_during_spmf killed_pid=" + c.process.pid() + " spmf_pid=" + childPid + " spmf_uid=" + childOwner + " backend_uid=" + backendOwner + " os=" + System.getProperty("os.name") + " orphan_alive_after_backend_sigkill=" + orphanAlive
                 + " parent_death_enforced_by_kernel=" + linux + " recovery_pid=" + b.process.pid() + " request=" + request + " old_fence=" + fenceBefore + " new_fence=" + fenceAfter + " occurrence=COMPLETED patterns=16 " + inv + " PASS");
         } finally {
             if (child != null && child.isAlive()) new ProcessBuilder("kill", "-KILL", Long.toString(child.pid())).start().waitFor();
