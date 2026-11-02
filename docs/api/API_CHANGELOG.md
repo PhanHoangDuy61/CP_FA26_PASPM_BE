@@ -1,5 +1,15 @@
 # API Changelog
 
+## 2026-11-02 — F05 Scheduler branch (`Khoi/feat/f05-scheduled-mining-option-b-completion`, not on `dev`)
+
+- **Added** `GET /api/system/stores` (SYSTEM_ADMIN, `Page<StoreView{storeId,name}>`, decision D2). OpenAPI 88 → 89 operations.
+- **Changed (D1)** System Admin `GET /api/system/mining/stores/{storeId}/snapshots`, `/requests`, `/requests/{requestId}`, `/requests/{requestId}/runs` are open by default; `GET …/runs/{runId}/patterns` is always 403 for System Admin. `paspm.mining.system-store-read.routes` now accepts only `SNAPSHOTS,REQUESTS,RUNS` (naming `PATTERNS` fails startup).
+- **Changed (D3, D4)** schedule `lookbackDays` is optional, 7–365 (was required, 1–3660); omitted → 30 weekly / 90 monthly. `timeZone` must be the Store calendar zone `Asia/Ho_Chi_Minh`.
+- **Changed (D10)** `PUT /api/system/mining/schedules/{id}` with `enabled=true` succeeds where `paspm.mining.schedule-dispatch-enabled=true`; default remains 503 (`Scheduled mining dispatch is not available`).
+- **Added fields (D6, D7)** `OccurrenceView.failureMessage`, `OccurrenceView.skipReason`; new occurrence status `SKIPPED`.
+- **Data (D9)** Flyway V18 (SKIPPED, skip_reason, failure_message) and V19 (role `SYSTEM_SCHEDULER` and its machine user, hidden from `/api/users` and `/api/roles`).
+- Details: [F05 API](F05_MINING_API.md), [register](../decisions/PO_DECISION_REGISTER_F05_2026-11-01.md).
+
 ## 2026-11-02 — F03/F05 Core merged into `dev` (PR #11, `11973a0`)
 
 - F05 administration is on `dev`: System Admin mining configuration (versioned), manual Store-targeted request, benchmark, durable lease/fencing dispatch, schedule administration (activation returns 503, dispatcher off by default), five System Admin Store-read routes gated by `paspm.mining.system-store-read.routes` (default none, decision D1). `POST /api/mining/requests` and `GET /api/mining/runs/{id}/benchmark` are forbidden for every role. Flyway V13–V17 added; V1–V12 unchanged.

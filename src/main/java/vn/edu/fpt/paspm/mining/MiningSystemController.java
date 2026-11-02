@@ -19,41 +19,45 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 public class MiningSystemController {
     private final MiningService mining;
     private final SystemStoreReadPolicy readPolicy;
+    private static final org.slf4j.Logger audit=org.slf4j.LoggerFactory.getLogger("paspm.audit.system-store-read");
     /**
-     * Decision D1 (docs/decisions/PO_DECISION_REGISTER_F05_2026-11-01.md) is PENDING: it is not approved that System Admin may read
-     * Store mining results. Each read group below is refused unless an operator lists it in paspm.mining.system-store-read.routes.
+     * Decision D1 (confirmed 2026-11-02, docs/decisions/PO_DECISION_REGISTER_F05_2026-11-01.md): System Admin may read Store snapshots,
+     * requests and runs; raw patterns stay closed. Every cross-Store read leaves an audit log line (actor, route, Store).
      */
     public MiningSystemController(MiningService mining,SystemStoreReadPolicy readPolicy) { this.mining=mining; this.readPolicy=readPolicy; }
+    private void read(Jwt jwt,SystemStoreReadPolicy.Route route,int storeId) {
+        readPolicy.require(route);
+        audit.info("system-admin read route={} storeId={} actor={}",route,storeId,jwt==null?"unknown":jwt.getSubject());
+    }
     public record ManualRequest(@NotNull @Positive @JsonDeserialize(using=StrictIntegerDeserializer.class) Integer storeId,
         @NotNull @Positive @JsonDeserialize(using=StrictIntegerDeserializer.class) Integer snapshotId,@NotNull UUID requestKey, Boolean compareAlgorithms) {}
     @PostMapping("/requests") @ResponseStatus(HttpStatus.ACCEPTED)
     public MiningContracts.RequestView create(@AuthenticationPrincipal Jwt jwt,@Valid @RequestBody ManualRequest request) {
         return mining.createAdministrative(jwt,request.storeId(),request.snapshotId(),request.requestKey(),Boolean.TRUE.equals(request.compareAlgorithms()));
     }
-    @GetMapping("/stores/{storeId}/snapshots") @Operation(summary="PENDING_BUSINESS_APPROVAL (HTTP 403 unless SNAPSHOTS is listed in paspm.mining.system-store-read.routes) - System Admin: list READY Utility Snapshots of an explicitly selected Store",description="Read-only. Same representation as GET /api/mining/snapshots. Unknown Store returns 404.")
-    public MiningContracts.Page<vn.edu.fpt.paspm.utility.UtilityMatrixContracts.SnapshotView> snapshots(@PathVariable @Positive int storeId,@RequestParam(defaultValue="0") int page,@RequestParam(defaultValue="20") int pageSize) {
-        readPolicy.require(SystemStoreReadPolicy.Route.SNAPSHOTS);
+    @GetMapping("/stores/{storeId}/snapshots") @Operation(summary="System Admin: list READY Utility Snapshots of an explicitly selected Store (decision D1; HTTP 403 only if the operator removed SNAPSHOTS from paspm.mining.system-store-read.routes)",description="Read-only. Same representation as GET /api/mining/snapshots. Unknown Store returns 404.")
+    public MiningContracts.Page<vn.edu.fpt.paspm.utility.UtilityMatrixContracts.SnapshotView> snapshots(@AuthenticationPrincipal Jwt jwt,@PathVariable @Positive int storeId,@RequestParam(defaultValue="0") int page,@RequestParam(defaultValue="20") int pageSize) {
+        read(jwt,SystemStoreReadPolicy.Route.SNAPSHOTS,storeId);
         return mining.snapshotsForStore(storeId,page,pageSize);
     }
-    @GetMapping("/stores/{storeId}/requests") @Operation(summary="PENDING_BUSINESS_APPROVAL (HTTP 403 unless REQUESTS is listed in paspm.mining.system-store-read.routes) - System Admin: list a Store's mining requests, newest first")
-    public MiningContracts.Page<MiningContracts.RequestView> requests(@PathVariable @Positive int storeId,@RequestParam(defaultValue="0") int page,@RequestParam(defaultValue="20") int pageSize) {
-        readPolicy.require(SystemStoreReadPolicy.Route.REQUESTS);
+    @GetMapping("/stores/{storeId}/requests") @Operation(summary="System Admin: list a Store's mining requests, newest first, including scheduled ones (decision D1)")
+    public MiningContracts.Page<MiningContracts.RequestView> requests(@AuthenticationPrincipal Jwt jwt,@PathVariable @Positive int storeId,@RequestParam(defaultValue="0") int page,@RequestParam(defaultValue="20") int pageSize) {
+        read(jwt,SystemStoreReadPolicy.Route.REQUESTS,storeId);
         return mining.requestsForStore(storeId,page,pageSize);
     }
-    @GetMapping("/stores/{storeId}/requests/{requestId}") @Operation(summary="PENDING_BUSINESS_APPROVAL (HTTP 403 unless REQUESTS is listed in paspm.mining.system-store-read.routes) - System Admin: read one request's status and immutable input provenance",description="404 when the request does not belong to the Store in the path.")
-    public MiningContracts.RequestView request(@PathVariable @Positive int storeId,@PathVariable @Positive long requestId) {
-        readPolicy.require(SystemStoreReadPolicy.Route.REQUESTS);
+    @GetMapping("/stores/{storeId}/requests/{requestId}") @Operation(summary="System Admin: read one request's status and immutable input provenance (decision D1)",description="404 when the request does not belong to the Store in the path.")
+    public MiningContracts.RequestView request(@AuthenticationPrincipal Jwt jwt,@PathVariable @Positive int storeId,@PathVariable @Positive long requestId) {
+        read(jwt,SystemStoreReadPolicy.Route.REQUESTS,storeId);
         return mining.requestForStore(storeId,requestId);
     }
-    @GetMapping("/stores/{storeId}/requests/{requestId}/runs") @Operation(summary="PENDING_BUSINESS_APPROVAL (HTTP 403 unless RUNS is listed in paspm.mining.system-store-read.routes) - System Admin: read the algorithm runs of a request in the selected Store")
-    public java.util.List<MiningContracts.RunView> runs(@PathVariable @Positive int storeId,@PathVariable @Positive long requestId) {
-        readPolicy.require(SystemStoreReadPolicy.Route.RUNS);
+    @GetMapping("/stores/{storeId}/requests/{requestId}/runs") @Operation(summary="System Admin: read the algorithm runs of a request in the selected Store (decision D1)")
+    public java.util.List<MiningContracts.RunView> runs(@AuthenticationPrincipal Jwt jwt,@PathVariable @Positive int storeId,@PathVariable @Positive long requestId) {
+        read(jwt,SystemStoreReadPolicy.Route.RUNS,storeId);
         return mining.runsForStore(storeId,requestId);
     }
-    @GetMapping("/stores/{storeId}/runs/{runId}/patterns") @Operation(summary="PENDING_BUSINESS_APPROVAL (HTTP 403 unless PATTERNS is listed in paspm.mining.system-store-read.routes) - System Admin: page raw high-utility patterns of a run in the selected Store",description="Utility descending, canonical Product IDs ascending; empty while pending/failed. 404 when the run does not belong to the Store in the path.")
+    @GetMapping("/stores/{storeId}/runs/{runId}/patterns") @Operation(summary="Always HTTP 403 for System Admin (decision D1): raw high-utility patterns are read through the Store-scoped route GET /api/mining/runs/{runId}/patterns",description="Kept only so the refusal is explicit and independent of Store existence.")
     public MiningContracts.Page<MiningContracts.PatternView> patterns(@PathVariable @Positive int storeId,@PathVariable @Positive long runId,@RequestParam(defaultValue="0") int page,@RequestParam(defaultValue="20") int pageSize) {
-        readPolicy.require(SystemStoreReadPolicy.Route.PATTERNS);
-        return mining.patternsForStore(storeId,runId,page,pageSize);
+        throw readPolicy.patternsRefusal();
     }
     @GetMapping("/stores/{storeId}/runs/{runId}/benchmark")
     public MiningContracts.BenchmarkView benchmark(@PathVariable @Positive int storeId,@PathVariable @Positive long runId) {

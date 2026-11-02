@@ -19,7 +19,16 @@ public class MiningMultiJvmBackend {
         private final Path dir=Path.of(System.getenv("PASPM_TEST_BARRIER_DIR"));
         @Bean @Primary MiningEngine controlledEngine(SpmfMiningEngine real) {
             return new MiningEngine() {
-                public void requireAvailable(){real.requireAvailable();}
+                public void requireAvailable(){
+                    // scheduled-occurrence barrier: the F03 snapshot is already written inside the still-open occurrence transaction here
+                    if(Files.exists(dir.resolve("hold-occurrence"))) {
+                        try {
+                            Files.writeString(dir.resolve("occurrence-held"),"held");
+                            while(Files.exists(dir.resolve("hold-occurrence")))Thread.sleep(10);
+                        } catch(Exception e){Thread.currentThread().interrupt();}
+                    }
+                    real.requireAvailable();
+                }
                 public Output execute(Algorithm algorithm,MiningInputBuilder.Dataset input,int minimum) throws Exception {
                     return controlled(algorithm,input,minimum,null);
                 }

@@ -8,9 +8,9 @@ Prepared 2026-11-01 for the Product Owner. Companion to the working register [PO
 |---|---|
 | **CURRENT** | What the code does today. It is an engineering default, **not** an approved policy. |
 | **PROPOSAL** | Engineering's suggested answer. It is **not** a decision and changes nothing until you approve it. |
-| **DECISION** | Your answer. Every DECISION box below is intentionally blank: **no decision has been taken**. |
+| **DECISION** | The answer. On **2026-11-02** the boxes were filled from the business choices the project owner confirmed in the working conversation (source: user instruction, no additional notes). **No approver name or signature is recorded and none is invented**; verifying that the confirmer is the formal Product Owner is an outstanding administrative step. CURRENT and PROPOSAL text below is the 2026-11-01 state and is kept as history. |
 
-Nothing in this package is approved. Approving means filling the DECISION box (decision, approver, date), after which engineering records it in the register, implements what is missing, and re-runs the acceptance evidence. The scheduler enable request stays **HTTP 503** and the dispatcher stays **OFF** until D3–D10 are decided and the activation acceptance of D10 passes.
+**Status 2026-11-02:** all ten business choices are confirmed (`BUSINESS_CHOICE_CONFIRMED`) and implemented on the Scheduler branch; the register tracks `IMPLEMENTED`, `TESTED` and `RELEASE_ACCEPTED` separately. `RELEASE_ACCEPTED` is **not** granted: activation stays HTTP 503 and the dispatcher stays OFF in every configuration that does not set `paspm.mining.schedule-dispatch-enabled=true`.
 
 ## Source of truth
 
@@ -58,7 +58,7 @@ Nothing in this package is approved. Approving means filling the DECISION box (d
 
 **Edge cases.** An approval must cover which roles besides System Admin (none today); whether audit logging of cross-Store reads is required; an unknown Store id answers the same 403 as a known one while a group is closed.
 
-**DECISION (D1):** option ____ · groups opened ____ · approver ____ · date ____
+**DECISION (D1):** confirmed 2026-11-02 — groups opened `SNAPSHOTS,REQUESTS,RUNS`; **`PATTERNS` stays closed to System Admin** (Store Admin/Merchandiser keep their Store-scoped pattern route) · approver: not recorded (confirmed in conversation; PO identity verification outstanding)
 
 ## D2 — Where does System Admin get the list of Stores?
 
@@ -72,7 +72,7 @@ Nothing in this package is approved. Approving means filling the DECISION box (d
 
 **PROPOSAL.** (a), SYSTEM_ADMIN only, id and name only, paginated. **Needs:** a new endpoint with RBAC and tests (separate small change).
 
-**DECISION (D2):** option ____ · approver ____ · date ____
+**DECISION (D2):** confirmed 2026-11-02 — option (a): read-only, paginated `GET /api/system/stores` (id and name) for System Admin · approver: not recorded (as D1)
 
 ## D3 — Lookback window
 
@@ -84,7 +84,7 @@ Nothing in this package is approved. Approving means filling the DECISION box (d
 
 **Edge cases.** New Store with little history; late imports that arrive after the window was frozen (the snapshot is immutable); a window crossing a time-zone change.
 
-**DECISION (D3):** presets ____ · max ____ · min-data rule ____ · approver ____ · date ____
+**DECISION (D3):** confirmed 2026-11-02, **amended the same day** — `lookbackDays` **7–365 inclusive**; UI presets 30, 60, 90, 180; default 30 (weekly) and 90 (monthly); insufficient or incomplete data is an explicit failure, never an empty successful snapshot (first confirmed as 1–3660 with presets 30/60/90; replaced) · approver: not recorded (as D1)
 
 ## D4 — Time zone
 
@@ -96,7 +96,7 @@ Nothing in this package is approved. Approving means filling the DECISION box (d
 
 **Needs.** API validation and documentation; no migration for (i).
 
-**DECISION (D4):** option ____ · zone ____ · approver ____ · date ____
+**DECISION (D4):** confirmed 2026-11-02 — one Store calendar zone, `Asia/Ho_Chi_Minh`, for F03, F04, scheduling, analysis date and window boundaries; inconsistent configuration is rejected · approver: not recorded (as D1)
 
 ## D5 — Monthly overflow (day 29–31)
 
@@ -106,7 +106,7 @@ Nothing in this package is approved. Approving means filling the DECISION box (d
 
 **PROPOSAL.** Clamp: one run every month, predictable. Document in the UI ("31 → last day").
 
-**DECISION (D5):** option ____ · approver ____ · date ____
+**DECISION (D5):** confirmed 2026-11-02 — clamp to the last valid day of the month; each logical fire time unique · approver: not recorded (as D1)
 
 ## D6 — Catch-up after downtime
 
@@ -118,7 +118,7 @@ Nothing in this package is approved. Approving means filling the DECISION box (d
 
 **Edge cases.** Outage longer than the schedule period; re-enabling after a long pause; two instances recovering at once.
 
-**DECISION (D6):** option ____ · max age ____ · approver ____ · date ____
+**DECISION (D6):** confirmed 2026-11-02 — run only the latest missed occurrence per schedule; older ones are history rows `SKIPPED` with a reason; no maximum catch-up age · approver: not recorded (as D1)
 
 ## D7 — Retry and backoff
 
@@ -128,17 +128,17 @@ Nothing in this package is approved. Approving means filling the DECISION box (d
 
 **PROPOSAL.** Keep 3 attempts and 15/30 s for **preparation** transients. Define who is alerted on a terminal failure and whether a manual re-run is the remedy. **Needs:** alerting/monitoring only.
 
-**DECISION (D7):** attempts ____ · delays ____ · alerting ____ · approver ____ · date ____
+**DECISION (D7):** confirmed 2026-11-02 — 3 total preparation attempts, 15 s then 30 s, terminal `FAILED`/`RETRY_EXHAUSTED`; non-retryable errors fail at once; recorded, administrator-visible errors; no external notification channel · approver: not recorded (as D1)
 
 ## D8 — Effect of changing configuration or a schedule
 
-**CURRENT.** An occurrence freezes the schedule version and the mining-config version when it is reserved; later edits affect future occurrences only. Disabling stops future reservations; an already reserved occurrence still runs (a changed or disabled schedule version is rejected at preparation).
+**CURRENT.** An occurrence freezes the schedule version and the mining-config version when it is reserved; later edits affect future occurrences only. Disabling stops future reservations. For an occurrence that is already reserved: if the schedule is disabled or edited **before** the occurrence is prepared (a few seconds at most), the occurrence ends `FAILED` with `HTTP_409` and creates nothing; once its snapshot and request exist the request runs to completion. There is no `CANCELLED` status (verified by tests, 2026-11-02; this corrects the earlier wording "an already reserved occurrence still runs").
 
 **Options.** Freeze (current) vs apply latest at execution; whether disabling cancels pending occurrences.
 
 **PROPOSAL.** Keep freeze (auditability). Decide explicitly whether "disable" must also cancel a reserved but unstarted occurrence. **Needs:** only if cancel is chosen (new terminal status).
 
-**DECISION (D8):** freeze/latest ____ · cancel on disable ____ · approver ____ · date ____
+**DECISION (D8):** confirmed 2026-11-02 — schedule and configuration versions frozen at reservation; disabling stops new reservations; committed requests finish; a reserved-but-unprepared occurrence of a disabled/edited schedule still ends `FAILED`/`HTTP_409` · approver: not recorded (as D1)
 
 ## D9 — Who is the recorded actor of an automatic run?
 
@@ -148,7 +148,7 @@ Nothing in this package is approved. Approving means filling the DECISION box (d
 
 **PROPOSAL.** A dedicated service account for automatic runs, so audit shows "scheduler" and a leaver does not silently stop jobs. **Needs:** an account type or seeded account, a migration or configuration, tests.
 
-**DECISION (D9):** option ____ · approver ____ · date ____
+**DECISION (D9):** confirmed 2026-11-02 — dedicated SYSTEM/SCHEDULER execution identity; schedule creator/updater remain audit fields · approver: not recorded (as D1)
 
 ## D10 — Activation acceptance
 
@@ -161,12 +161,12 @@ Nothing in this package is approved. Approving means filling the DECISION box (d
 4. One supervised activation in a non-production environment with real SPMF on MySQL 8.4 and a monitored run.
 5. Product Owner sign-off recorded in the register with date and approver.
 
-**DECISION (D10):** acceptance list accepted / amended ____ · approver ____ · date ____
+**DECISION (D10):** confirmed 2026-11-02 — the listed acceptance criteria are accepted; activation is gated by `paspm.mining.schedule-dispatch-enabled` (default off); release additionally needs final review and explicit release sign-off, which are **not** given · approver: not recorded (as D1)
 
 ---
 
-## After you decide
+## After you decide (historical wording; see the register for the 2026-11-02 state)
 
 1. Fill the DECISION boxes (decision, approver, date).
 2. Engineering updates the register, `F05_MINING_API.md`, the Option B handoff and the OpenAPI, implements the work marked "Needs", and re-runs verification.
-3. For D1 the change is a deployment setting (`paspm.mining.system-store-read.routes` / `PASPM_MINING_SYSTEM_STORE_READ_ROUTES`) recorded with the approval, not a code edit.
+3. For D1 the shipped default is now `SNAPSHOTS,REQUESTS,RUNS` (`paspm.mining.system-store-read.routes` / `PASPM_MINING_SYSTEM_STORE_READ_ROUTES` can only remove groups; naming `PATTERNS` fails startup).

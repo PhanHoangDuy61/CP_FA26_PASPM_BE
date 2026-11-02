@@ -29,13 +29,15 @@ class MigrationVersioningTest {
         return found;
     }
 
-    @Test void f05MiningMigrationsOccupyV13ToV17InOrder() throws IOException {
+    @Test void f05MiningMigrationsOccupyV13ToV19InOrder() throws IOException {
         Map<Integer, List<String>> v = versions();
         assertEquals(List.of("mining_administration_config"), v.get(13));
         assertEquals(List.of("scheduled_mining"), v.get(14));
         assertEquals(List.of("freeze_scheduled_occurrence_context"), v.get(15));
         assertEquals(List.of("mining_request_leases"), v.get(16));
         assertEquals(List.of("mining_occurrence_recovery"), v.get(17));
+        assertEquals(List.of("scheduler_skipped_status_and_failure_visibility"), v.get(18));
+        assertEquals(List.of("system_scheduler_principal"), v.get(19));
     }
 
     @Test void noFlywayVersionIsUsedTwice() throws IOException {

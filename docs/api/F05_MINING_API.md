@@ -1,4 +1,4 @@
-> **Status 2026-11-02 — merged into `dev` by PR #11 (`11973a0`).** The contract below is the current `dev` contract; the Core code was verified by `scripts/verify-option-b-macos.sh --run` (23/23 stages, see the [audit matrix](../reports/F03_F05_API_AUDIT_MATRIX_2026-11-02.md)). Two things are closed by design: the five System Admin Store-read routes answer **403** until Product Owner decision D1 (per-group gate), and schedule activation answers **503** until decisions D3–D10 and the activation acceptance are done. `POST /api/mining/requests` and `GET /api/mining/runs/{id}/benchmark` are forbidden for every role. Sections that still describe the retired Merchandiser submit flow are labelled *legacy*.
+> **Status 2026-11-02 — merged into `dev` by PR #11 (`11973a0`).** The contract below is the current `dev` contract; the Core code was verified by `scripts/verify-option-b-macos.sh --run` (23/23 stages, see the [audit matrix](../reports/F03_F05_API_AUDIT_MATRIX_2026-11-02.md)). **Update 2026-11-02 (Scheduler branch, not yet on `dev`):** business decisions D1–D10 are confirmed and implemented (Flyway V18–V19, `GET /api/system/stores`, System Admin reads of snapshots/requests/runs, `SKIPPED` history, scheduler machine principal, lookback 7–365). Schedule activation still answers **503** unless an instance explicitly sets `paspm.mining.schedule-dispatch-enabled=true`; release sign-off is pending. `POST /api/mining/requests` and `GET /api/mining/runs/{id}/benchmark` are forbidden for every role. Sections that still describe the retired Merchandiser submit flow are labelled *legacy*.
 
 <!-- docs-reorganization:notice -->
 > **NEEDS_REVIEW — documentation review 2026-10-26.** Useful endpoint contracts coexist with dated deployment/verification summaries; source availability is separate from historical failure evidence. See [current navigation](../features/F05/README.md). Original results and business-rule text below are retained; this notice is not a new execution or approval.
@@ -18,23 +18,24 @@ This block supersedes any older text below that says a Merchandiser may submit m
 | POST | `/api/mining/requests` | nobody (`denyAll`, always 403) | **Forbidden — do not call** |
 | GET | `/api/mining/runs/{id}/benchmark` | nobody (`denyAll`, always 403) | **Forbidden — use the System Admin route** |
 | GET / PUT | `/api/system/mining/config` | SYSTEM_ADMIN | Ready (versioned configuration) |
-| GET | `/api/system/mining/stores/{storeId}/snapshots` | SYSTEM_ADMIN | **PENDING_BUSINESS_APPROVAL — disabled by default (HTTP 403 for every role); group `SNAPSHOTS`**; READY snapshots of the selected Store (`Page<SnapshotView>`) |
-| GET | `/api/system/mining/stores/{storeId}/requests`, `/requests/{requestId}` | SYSTEM_ADMIN | **PENDING_BUSINESS_APPROVAL — disabled by default (403); group `REQUESTS`**; Store history and request status (`Page<RequestView>`, `RequestView`) |
-| GET | `/api/system/mining/stores/{storeId}/requests/{requestId}/runs` | SYSTEM_ADMIN | **PENDING_BUSINESS_APPROVAL — disabled by default (403); group `RUNS`**; `RunView[]` |
-| GET | `/api/system/mining/stores/{storeId}/runs/{runId}/patterns` | SYSTEM_ADMIN | **PENDING_BUSINESS_APPROVAL — disabled by default (403); group `PATTERNS`**; `Page<PatternView>`, utility DESC then canonical key ASC |
+| GET | `/api/system/mining/stores/{storeId}/snapshots` | SYSTEM_ADMIN | **Ready (decision D1 confirmed 2026-11-02; default-enabled)**; READY snapshots of the selected Store (`Page<SnapshotView>`). 403 only if an operator removed group `SNAPSHOTS` |
+| GET | `/api/system/mining/stores/{storeId}/requests`, `/requests/{requestId}` | SYSTEM_ADMIN | **Ready (D1, default-enabled)**; Store history (scheduled and manual) and request status (`Page<RequestView>`, `RequestView`) |
+| GET | `/api/system/mining/stores/{storeId}/requests/{requestId}/runs` | SYSTEM_ADMIN | **Ready (D1, default-enabled)**; `RunView[]` |
+| GET | `/api/system/mining/stores/{storeId}/runs/{runId}/patterns` | nobody | **Always 403 for System Admin (D1: patterns stay closed).** Use `GET /api/mining/runs/{id}/patterns` as a Store Admin or Merchandiser of the Store |
 | POST | `/api/system/mining/requests` | SYSTEM_ADMIN | Ready; 202, idempotent per Store by `requestKey` |
 | GET | `/api/system/mining/stores/{storeId}/runs/{runId}/benchmark` | SYSTEM_ADMIN | Ready |
-| POST / GET | `/api/system/mining/schedules`, `/api/system/mining/schedules/{id}` | SYSTEM_ADMIN | Ready; new schedules are created **disabled** |
-| PUT | `/api/system/mining/schedules/{id}` | SYSTEM_ADMIN | Disable/edit works; **`enabled=true` returns 503** |
-| GET | `/api/system/mining/schedules/{id}/occurrences`, `.../occurrences/{occurrenceId}` | SYSTEM_ADMIN | Ready (history/read-only) |
+| GET | `/api/system/stores` | SYSTEM_ADMIN | **Ready (D2)**; `Page<StoreView>` `{storeId,name}` ordered by name then id; `page` 0.., `pageSize` 1..100 (default 20); a page past the end is an empty `items` list |
+| POST / GET | `/api/system/mining/schedules`, `/api/system/mining/schedules/{id}` | SYSTEM_ADMIN | Ready; new schedules are created **disabled**; `lookbackDays` optional (7–365; default 30 weekly / 90 monthly); `timeZone` must be the Store calendar zone `Asia/Ho_Chi_Minh` |
+| PUT | `/api/system/mining/schedules/{id}` | SYSTEM_ADMIN | Edit / disable always work. **`enabled=true`: 200 only where the instance sets `paspm.mining.schedule-dispatch-enabled=true` (default `false` → 503 `Scheduled mining dispatch is not available`, nothing written)**; also 409 if no mining policy is configured |
+| GET | `/api/system/mining/schedules/{id}/occurrences`, `.../occurrences/{occurrenceId}` | SYSTEM_ADMIN | Ready (history/read-only); statuses incl. `SKIPPED`; fields `failureMessage`, `skipReason` |
 
-System Admin read routes (added 2026-11-01): the Store is explicit in the path; an unknown Store, or a request or run that belongs to another Store, returns 404; `page>=0`, `pageSize` 1..100 else 400; DTOs are the same as the Store-scoped routes. They are read-only. The approved requirements contain no explicit sentence authorizing System Admin to read Store results, so Product Owner confirmation is pending (**PENDING_BUSINESS_APPROVAL**, decision D1 in [the register](../decisions/PO_DECISION_REGISTER_F05_2026-11-01.md)). **Access control:** besides `SYSTEM_ADMIN` RBAC, each route group is refused with `403 {"error":"System Admin reads of Store mining results (<GROUP>) are pending Product Owner approval (decision D1)"}` unless the instance lists the group in `paspm.mining.system-store-read.routes` (env `PASPM_MINING_SYSTEM_STORE_READ_ROUTES`, default empty). Groups: `SNAPSHOTS`, `REQUESTS` (list and detail), `RUNS`, `PATTERNS`; opening one never opens another; an unknown name stops the backend at startup. Decision D1 options: (a) all four, (b) `REQUESTS,RUNS`, (c) none. The refusal happens before any Store lookup, so it does not reveal which Store ids exist. Do not open groups in a released environment until D1 is approved. Tests: `SystemStoreReadPolicyTest`, `MiningSystemStoreReadGateTest` (default refusal, role matrix), `MiningSystemStoreReadGranularGateTest` (option b) and `MiningIntegrationTest.systemAdminReadsExplicitStoreSnapshots…` (all groups open). The benchmark route is not gated. Full workflow: [OPTION_B_BACKEND_API_HANDOFF.md](../frontend_handoff/OPTION_B_BACKEND_API_HANDOFF.md).
+System Admin read routes: the Store is explicit in the path; an unknown Store, or a request or run that belongs to another Store, returns 404; `page>=0`, `pageSize` 1..100 else 400; DTOs are the same as the Store-scoped routes. They are read-only. **Decision D1 (confirmed 2026-11-02):** `SNAPSHOTS`, `REQUESTS` and `RUNS` are released to System Admin by default; **raw patterns are never released to System Admin** (that route answers 403 for every Store, known or not). An operator may only *remove* groups via `paspm.mining.system-store-read.routes` (`PASPM_MINING_SYSTEM_STORE_READ_ROUTES`); naming `PATTERNS` or an unknown group fails startup. Every cross-Store read writes an audit log line (`paspm.audit.system-store-read`: route, storeId, actor). Other roles keep 403 on these routes.
 
-Scheduler state: the background dispatcher starts only when the instance sets `paspm.mining.schedule-dispatch-enabled=true` (default `false`). Leave it unset; no scheduled run happens and the enable API stays 503. Retry/backoff, lookback, time-zone, monthly-overflow, catch-up and config-change policies still await Product Owner approval and are not applied.
+Scheduler state (decisions D3–D10 confirmed 2026-11-02, implemented, locally tested, **not release accepted**): the background dispatcher starts, and a schedule can be activated, only when the instance sets `paspm.mining.schedule-dispatch-enabled=true` (default `false`). Leave it unset in ordinary development and production: no scheduled run happens and the enable API answers 503. Policies: lookback 7–365 days (D3), Store calendar zone `Asia/Ho_Chi_Minh` (D4), month-end clamp (D5), latest-only catch-up with `SKIPPED` history (D6), 3 attempts at 15 s / 30 s with a stored final error (D7), frozen schedule/configuration versions (D8), executed as the scheduler machine principal (D9). See [the register](../decisions/PO_DECISION_REGISTER_F05_2026-11-01.md) and the [acceptance matrix](../reports/F05_SCHEDULER_ACCEPTANCE_MATRIX.md).
 
 Frontend rule: a 403 on a role's own allowed route means a Store or role mismatch; never offer "Run mining" to a Merchandiser or Store Admin.
 
-Verified implementation: Flyway V1–V17 (F05 tables from V9; configuration, durable dispatch and scheduling from V13–V17), F03 frozen snapshots, external SPMF 2.67a. This contract is based on the controllers, `SecurityConfig` and the runtime OpenAPI export (`openapi.json`), not on proposed routes. The older statement that "all eight operations executed via Swagger UI" is a dated 2026-10 result for the retired Merchandiser flow; see [verification](../features/F05/reference/F05_VERIFICATION.md) for that history only.
+Verified implementation: Flyway V1–V19 (F05 tables from V9; configuration, durable dispatch and scheduling from V13–V19), F03 frozen snapshots, external SPMF 2.67a. This contract is based on the controllers, `SecurityConfig` and the runtime OpenAPI export (`openapi.json`), not on proposed routes. The older statement that "all eight operations executed via Swagger UI" is a dated 2026-10 result for the retired Merchandiser flow; see [verification](../features/F05/reference/F05_VERIFICATION.md) for that history only.
 
 ## Authentication and authorization
 
@@ -42,7 +43,7 @@ All routes require the F01 Bearer JWT (`Authorization: Bearer <accessToken>`). R
 
 | Role | Allowed F05 operations |
 |---|---|
-| SYSTEM_ADMIN | Mining configuration (read/write), manual Store-targeted mining request, benchmark, schedule administration and history. The five Store-read routes only when the instance lists the group in `paspm.mining.system-store-read.routes` (decision D1). **No** access to the Store-scoped `/api/mining/**` routes (403). |
+| SYSTEM_ADMIN | Mining configuration (read/write), manual Store-targeted mining request, benchmark, schedule administration and history. Store reads of snapshots, requests and runs (decision D1, default-enabled; raw patterns never), the Store picker `GET /api/system/stores` (D2), and schedule activation only on an explicitly enabled instance (D10). **No** access to the Store-scoped `/api/mining/**` routes (403). |
 | MERCHANDISER | Read-only, own Store: snapshots, requests, runs, patterns. May create the F03 snapshots that F05 consumes. **Cannot** submit mining or read benchmarks. |
 | STORE_ADMIN | Read-only, own Store, same routes as Merchandiser. |
 | END_CUSTOMER | None. |
@@ -59,12 +60,13 @@ Base URL depends on the environment (local default `http://localhost:8080`). Ope
 | PUT | `/api/system/mining/config` | SYSTEM_ADMIN | `ConfigView` | Append a new version (`expectedVersion` optimistic lock; stale → 409). Existing requests keep their own frozen inputs |
 | POST | `/api/system/mining/requests` | SYSTEM_ADMIN | `RequestView` | Durably capture frozen input under the current configuration version; enqueue bounded async work; 202; idempotent by `requestKey` |
 | GET | `/api/system/mining/stores/{storeId}/runs/{runId}/benchmark` | SYSTEM_ADMIN | `BenchmarkView` | Measurement metadata and exact comparison status |
-| GET | `/api/system/mining/stores/{storeId}/snapshots` | SYSTEM_ADMIN + D1 group `SNAPSHOTS` | `Page<SnapshotView>` | READY snapshots of the Store — **403 by default** |
-| GET | `/api/system/mining/stores/{storeId}/requests`, `/requests/{requestId}` | SYSTEM_ADMIN + `REQUESTS` | `Page<RequestView>`, `RequestView` | Store history and status — **403 by default** |
-| GET | `/api/system/mining/stores/{storeId}/requests/{requestId}/runs` | SYSTEM_ADMIN + `RUNS` | `RunView[]` | Algorithm runs — **403 by default** |
-| GET | `/api/system/mining/stores/{storeId}/runs/{runId}/patterns` | SYSTEM_ADMIN + `PATTERNS` | `Page<PatternView>` | Raw patterns — **403 by default** |
+| GET | `/api/system/mining/stores/{storeId}/snapshots` | SYSTEM_ADMIN + D1 group `SNAPSHOTS` | `Page<SnapshotView>` | READY snapshots of the Store (D1; default-enabled) |
+| GET | `/api/system/mining/stores/{storeId}/requests`, `/requests/{requestId}` | SYSTEM_ADMIN + `REQUESTS` | `Page<RequestView>`, `RequestView` | Store history and status (D1; default-enabled) |
+| GET | `/api/system/mining/stores/{storeId}/requests/{requestId}/runs` | SYSTEM_ADMIN + `RUNS` | `RunView[]` | Algorithm runs (D1; default-enabled) |
+| GET | `/api/system/mining/stores/{storeId}/runs/{runId}/patterns` | nobody | `Page<PatternView>` | **Always 403 for System Admin (D1)**; Store users read patterns on `/api/mining/runs/{id}/patterns` |
 | POST, GET | `/api/system/mining/schedules`, `/{id}` | SYSTEM_ADMIN | schedule `View` | Create (always disabled) / read |
-| PUT | `/api/system/mining/schedules/{id}` | SYSTEM_ADMIN | schedule `View` | Edit / disable; `enabled=true` → 503 |
+| GET | `/api/system/stores` | SYSTEM_ADMIN | `Page<StoreView>` | Store picker (D2): `{storeId,name}` only |
+| PUT | `/api/system/mining/schedules/{id}` | SYSTEM_ADMIN | schedule `View` | Edit / disable; `enabled=true` → 503 unless the instance enables scheduling (D10) |
 | GET | `/api/system/mining/schedules/{id}/occurrences`, `/{occurrenceId}` | SYSTEM_ADMIN | `Page<OccurrenceView>`, `OccurrenceView` | Read-only history |
 | GET | `/api/mining/snapshots` | MERCHANDISER, STORE_ADMIN | `Page<SnapshotView>` | READY snapshot picker (own Store) |
 | GET | `/api/mining/requests`, `/requests/{id}`, `/requests/{id}/runs` | MERCHANDISER, STORE_ADMIN | `Page<RequestView>`, `RequestView`, `RunView[]` | Own-Store history, status, runs (run ID ascending) |
@@ -78,9 +80,10 @@ GET routes return 200. `POST /api/system/mining/requests` returns 202 with durab
 
 | State | Routes | Behaviour |
 |---|---|---|
-| Implemented and verified | config, manual request, benchmark, Store-scoped reads, schedule create/read/edit/disable, occurrence history | Works with the right role |
-| Approved but disabled by configuration | – | None: no decision in D1–D10 has been approved |
-| Unapproved-policy dependent | five System Admin Store reads (D1), Store picker endpoint (D2, not built), schedule activation and background dispatch (D3–D10) | 403 / absent / 503; dispatcher off unless `paspm.mining.schedule-dispatch-enabled=true` on that instance |
+| Implemented and enabled by default | config, manual request, benchmark, Store-scoped reads, System Admin Store reads of snapshots / requests / runs (D1), Store picker `GET /api/system/stores` (D2), schedule create/read/edit/disable, occurrence history | Works with the right role |
+| Implemented, closed by design | System Admin raw patterns `GET /api/system/mining/stores/{storeId}/runs/{runId}/patterns` (D1) | 403 always |
+| Implemented but default-disabled | schedule activation (`enabled=true`) and the background dispatcher (D10) | 503 / thread not started unless `paspm.mining.schedule-dispatch-enabled=true` |
+| Locally verified | all of the above (default suite, MySQL 8.4 + real SPMF, two-process crash/concurrency, macOS) | see the acceptance matrix; **GitHub CI not run**, native Linux not run, release sign-off pending |
 | Deprecated or forbidden | `POST /api/mining/requests`, `GET /api/mining/runs/{id}/benchmark` | 403 for every role; `deprecated` in OpenAPI |
 
 
@@ -497,10 +500,42 @@ Before admitting new work, runtime preflight validates the pinned JAR, separatel
 F06 raw-pattern semantics and deferred scheduling are documented in [F05_F06_HANDOFF.md](../features/F05/reference/F05_F06_HANDOFF.md). No Frontend or F06 implementation was changed.
 
 
-## Scheduler administration on this branch (2026-11-01, unchanged 2026-11-02)
+## Scheduler administration (decisions D1–D10 confirmed 2026-11-02; activation gated)
 
-All routes require a valid SYSTEM_ADMIN bearer token. `POST /api/system/mining/schedules` creates a disabled schedule; `GET /api/system/mining/schedules?page=0&pageSize=20` lists schedules; `GET /api/system/mining/schedules/{id}` reads one; `PUT /api/system/mining/schedules/{id}` updates it with `schedule`, `enabled` and optimistic `expectedVersion`. An enable request returns **503** until acceptance is complete. `GET /api/system/mining/schedules/{id}/occurrences` lists history; `GET /api/system/mining/schedules/{id}/occurrences/{occurrenceId}` reads an occurrence. A missing or mismatched ID returns 404. Unauthorized users receive 401 or 403.
+All routes require a valid SYSTEM_ADMIN bearer token (anonymous 401; other roles 403).
 
-A schedule requires positive integer `storeId`, `frequency` WEEKLY or MONTHLY, `localTime`, IANA `timeZone`, integer `lookbackDays` 1–3660, and the matching `dayOfWeek` (1–7) or `dayOfMonth` (1–31); `compareAlgorithms` is optional. Occurrence details include the saved schedule/config version, Store, time window, analysis date, snapshot/request IDs, status, failure code, `attemptCount` and `nextRetryAt`. This describes source behavior; independent multi-container and interactive Swagger acceptance remain outstanding.
+| Operation | Behaviour |
+|---|---|
+| `POST /api/system/mining/schedules` | 201; the schedule is created **disabled** (`enabled=false`, no `nextFireAt`, `version=1`) |
+| `GET /api/system/mining/schedules?page=0&pageSize=20`, `GET .../{id}` | List (newest first) / read; `pageSize` 1..100 |
+| `PUT /api/system/mining/schedules/{id}` | Body `{schedule, enabled, expectedVersion}`. Stale `expectedVersion` → 409; Store cannot change (400). `enabled=false` clears `nextFireAt`. `enabled=true` → see "Activation gate" |
+| `GET .../{id}/occurrences?page&pageSize`, `GET .../{id}/occurrences/{occurrenceId}` | History, newest first |
 
-The acceptance continuation exercised real HTTP with synthetic, test-signed System Admin and other-role JWTs: create 201; list/detail/history 200; missing occurrence 404; disable update 200; activation 503; STORE_ADMIN, MERCHANDISER and END_CUSTOMER each received 403 across six administrative operations. See [test evidence](../testing/evidence/F05_SCHEDULER_CRASH_ACCEPTANCE_2026-11-01.txt). These results do not approve scheduler activation or scheduling policies.
+**Schedule body** — `storeId` (positive int, must exist, else 404), `frequency` `WEEKLY`|`MONTHLY`, `dayOfWeek` 1–7 (weekly only) or `dayOfMonth` 1–31 (monthly only), `localTime` `HH:mm` (no seconds), `timeZone` (must equal the Store calendar zone, `Asia/Ho_Chi_Minh`; anything else → 400 naming the zone), `lookbackDays` (**optional**, integer 7–365; omitted → **30 weekly / 90 monthly**; outside the range → 400; UI presets 30, 60, 90, 180), `compareAlgorithms` (optional boolean; true runs HUI-Miner and EFIM and compares them).
+
+**Recurrence** — the next fire time is the next occurrence of the rule strictly after the moment of activation/edit, in `Asia/Ho_Chi_Minh`. A month without day 29/30/31 fires on the month's last day, without drift. The analysis date is the Store calendar date of the fire time; the window is the `lookbackDays` complete days ending the day before it.
+
+**Legacy rows** — a schedule stored with a lookback outside 7–365 or a zone other than the Store zone is returned unchanged by the read APIs, is **never reserved or run**, and becomes usable only after a valid edit (PUT with in-range values). Nothing is truncated or reinterpreted.
+
+**Activation gate (D10)** — `enabled=true` is accepted only on an instance started with `paspm.mining.schedule-dispatch-enabled=true` (default `false`). Otherwise the answer is 503 `Scheduled mining dispatch is not available` before any write. With the gate on it also requires a configured mining policy (else 409). On success the schedule is persisted enabled with `nextFireAt` set and `version` incremented. The same flag starts the dispatcher (polls every 5 s). In a multi-instance deployment set the flag identically on every instance behind the API. With the flag on, `paspm.store-time-zone` must be `Asia/Ho_Chi_Minh` or the process refuses to start (D4).
+
+**OccurrenceView** — `occurrenceId, scheduleId, storeId, scheduledAt, scheduleVersion, configVersion, actorId, rangeStart, rangeEnd, analysisDate, timeZone, compareAlgorithms, snapshotId, requestId, status, failureCode, failureMessage, skipReason, attemptCount, nextRetryAt, createdAt, updatedAt`.
+
+| `status` | Meaning |
+|---|---|
+| `PENDING` | Reserved (or waiting for a retry at `nextRetryAt`); not yet prepared |
+| `PROCESSING` | An instance holds the lease and is preparing the snapshot and request |
+| `DISPATCHED` | The fresh F03 snapshot and the Mining Request exist; the request is running |
+| `COMPLETED` | The request completed (HUI-Miner / EFIM runs and, if requested, the comparison) |
+| `FAILED` | Terminal. `failureCode`: `HTTP_400` (e.g. no eligible data, incomplete F03 scoring inputs), `HTTP_403`, `HTTP_409` (reserved occurrence of a schedule that was disabled or edited before preparation; occurrence in another zone), `RETRY_EXHAUSTED` (3 attempts used), `MINING_FAILED` (the request failed), `PROCESSING_FAILED`. `failureMessage` is the final actionable cause (≤500 chars) |
+| `SKIPPED` | A missed fire time superseded by a later one (D6). `skipReason` = `MISSED_SUPERSEDED_BY_LATER_OCCURRENCE`. No `actorId`, `snapshotId`, `requestId`, range or attempts |
+
+Retry (D7): a retryable failure (HTTP 5xx such as an unavailable SPMF runtime, or a transient database error) returns the occurrence to `PENDING` with `failureCode=RETRYABLE_FAILURE`, `failureMessage` and `nextRetryAt` = +15 s after attempt 1 and +30 s after attempt 2; the third failed attempt is terminal `RETRY_EXHAUSTED`. Business errors are not retried. No e-mail or other notification exists; failures are visible here and in the server log.
+
+**Executor (D9)** — `actorId` is the scheduler machine principal (`system-scheduler@paspm.invalid`, role `SYSTEM_SCHEDULER`), as are `utility_snapshot.created_by` and `mining_request.requested_by` of scheduled work. It never appears in `/api/users` or `/api/roles`. `createdBy`/`updatedBy` on the schedule remain the human audit fields.
+
+**Changes while running (D8)** — every occurrence freezes `scheduleVersion` and `configVersion` when it is reserved. Disabling stops new reservations. A Mining Request that already exists runs to completion. A reserved occurrence that has not yet been prepared when its schedule is disabled or edited ends `FAILED/HTTP_409`.
+
+**Catch-up (D6)** — after downtime only the latest missed fire time becomes `PENDING`; each older one is recorded `SKIPPED` in the same transaction that advances the cursor. A very long backlog is recorded in batches of at most 500 per transaction and continues until the latest fire time is reserved. There is no maximum catch-up age.
+
+Evidence: [acceptance matrix](../reports/F05_SCHEDULER_ACCEPTANCE_MATRIX.md). Real-HTTP weekly and monthly activation, SKIPPED history, failure visibility, RBAC and Store isolation ran on MySQL 8.4 with the pinned SPMF 2.67a (Java 25) in `MiningScheduledActivationE2EMySqlTest`; two Backend processes and `kill -9` recovery in `MiningSchedulerMultiJvmMySqlTest`. These are local, opt-in results: they do not constitute release acceptance.

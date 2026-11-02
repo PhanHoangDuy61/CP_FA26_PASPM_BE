@@ -34,8 +34,8 @@ F06 Recommendation Engine is implemented; see the [F06 API contract](F06_RECOMME
 | 4 | System Admin | `PUT /api/system/mining/config` | Versioned algorithm and minUtil policy |
 | 5 | System Admin | `POST /api/system/mining/requests` `{storeId,snapshotId,requestKey,compareAlgorithms?}` | Mining request pinned to the snapshot and config version; frozen SPMF input and threshold; one run per algorithm |
 | 6 | Worker (every backend instance) | database polling, lease + fencing token, SPMF child (Java 25) | Run status, metrics, patterns written atomically with COMPLETED |
-| 7 | Merchandiser, Store Admin (and System Admin once D1 opens the groups) | `GET /api/mining/requests/{id}`, `…/runs`, `…/patterns` | Read-only |
+| 7 | Merchandiser, Store Admin (System Admin reads requests and runs but **not** patterns, decision D1) | `GET /api/mining/requests/{id}`, `…/runs`, `…/patterns` | Read-only |
 | 8 | System Admin | `GET /api/system/mining/stores/{storeId}/runs/{runId}/benchmark` | Read-only comparison of the two runs |
 | 9 | Merchandiser | `POST /api/recommendations/generate` `{miningRunId,types}` with a COMPLETED run | F06 recommendations built from the raw patterns plus current inventory; Merchandiser approves or rejects |
 
-The disabled scheduler would replace steps 3 and 5 for a schedule: occurrence reservation → fresh snapshot → mining request → worker → completion reconciliation. It is not operational (activation returns 503; decisions D3–D10 pending).
+The scheduler replaces steps 3 and 5 for a schedule: occurrence reservation → fresh F03 snapshot (created by the scheduler principal, not by a Merchandiser) → mining request → worker → completion reconciliation. It is implemented on the Scheduler branch, locally verified and off by default (activation returns 503 unless `paspm.mining.schedule-dispatch-enabled=true`); the F03 snapshot it creates is as immutable as a manual one and its F06 consumption is unchanged. Policies D3–D10 are confirmed ([register](../decisions/PO_DECISION_REGISTER_F05_2026-11-01.md)).

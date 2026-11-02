@@ -27,6 +27,7 @@ Mermaid source diagrams are derived from backend code and migrations in this rep
 | `02-use-cases.mmd` | FE/BE use cases, with prototype-only functions labeled |
 | `03-system-architecture.mmd` | Runtime components and main data paths |
 | `04-logical-erd-v1-v11.mmd` | Logical schema represented by migrations V1–V11, including the historical matrix archive and routing registry |
+| `09-f05-scheduler-erd-v14-v19.mmd` | Focused F05 scheduler schema after V14–V19 (current; not part of the stale Review 2 pack). Reference: [F05_SCHEDULER_SCHEMA_V14_V19.md](../architecture/F05_SCHEDULER_SCHEMA_V14_V19.md) |
 | `05a-import-batch-state.mmd` – `05f-staging-row-state.mmd` | Persisted entity state machines |
 | `06-activity-workflows.mmd` | Eight principal backend workflows |
 | `07a-import-sequence.mmd` – `07c-recommendation-sequence.mmd` | Import, mining, and recommendation sequences |

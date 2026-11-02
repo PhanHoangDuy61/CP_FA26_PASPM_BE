@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import vn.edu.fpt.paspm.auth.AuthService;
 import vn.edu.fpt.paspm.user.UserRepository;
 
-@SpringBootTest(properties={"spring.datasource.url=jdbc:h2:mem:mining;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1","spring.datasource.username=sa","spring.datasource.password=","spring.flyway.enabled=true","paspm.jwt-secret=01234567890123456789012345678901","paspm.otp-secret=01234567890123456789012345678901","paspm.bootstrap-email=","paspm.bootstrap-password=","paspm.mining.system-store-read.routes=SNAPSHOTS,REQUESTS,RUNS,PATTERNS","paspm.mining.spmf-jar=${paspm.test.spmf-jar:${user.dir}/../spmf_run/spmf.jar}","paspm.mining.java-executable=${paspm.test.spmf-java:${java.home}/bin/java}","paspm.avatar.directory=/tmp/paspm-test-avatars"})
+@SpringBootTest(properties={"spring.datasource.url=jdbc:h2:mem:mining;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1","spring.datasource.username=sa","spring.datasource.password=","spring.flyway.enabled=true","paspm.jwt-secret=01234567890123456789012345678901","paspm.otp-secret=01234567890123456789012345678901","paspm.bootstrap-email=","paspm.bootstrap-password=","paspm.mining.spmf-jar=${paspm.test.spmf-jar:${user.dir}/../spmf_run/spmf.jar}","paspm.mining.java-executable=${paspm.test.spmf-java:${java.home}/bin/java}","paspm.avatar.directory=/tmp/paspm-test-avatars"})
 @AutoConfigureMockMvc
 class MiningIntegrationTest {
     @Autowired MockMvc mvc; @Autowired JdbcTemplate jdbc; @Autowired ObjectMapper json;
@@ -49,7 +49,7 @@ class MiningIntegrationTest {
     @Autowired MiningOccurrenceLease occurrenceLeases;
     @Autowired MiningOccurrenceProcessor occurrenceProcessor;
     @Test void pollDiscoversPendingOccurrenceAndEventuallyCompletes() throws Exception {
-        int actor=jdbc.queryForObject("SELECT MAX(u.user_id) FROM app_user u JOIN role r ON r.role_id=u.role_id WHERE r.code='SYSTEM_ADMIN'",Integer.class);
+        int actor=jdbc.queryForObject("SELECT u.user_id FROM app_user u JOIN role r ON r.role_id=u.role_id WHERE r.code='SYSTEM_SCHEDULER'",Integer.class); // D9: occurrences run as the scheduler principal
         long version=jdbc.queryForObject("SELECT config_version FROM mining_config_head WHERE config_id=1",Long.class);
         jdbc.update("INSERT INTO mining_schedule(store_id,created_by,updated_by,frequency,day_of_week,local_time,time_zone,lookback_days,enabled) VALUES (?,?,?,'WEEKLY',1,'09:00','Asia/Ho_Chi_Minh',7,TRUE)",store,actor,actor);
         long schedule=jdbc.queryForObject("SELECT MAX(schedule_id) FROM mining_schedule",Long.class);
@@ -62,7 +62,7 @@ class MiningIntegrationTest {
         assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM mining_request WHERE store_id=?",Integer.class,store));
     }
     @Test void dispatcherCreatesFreshSnapshotAndReconcilesCompletedRequest() throws Exception {
-        int actor=jdbc.queryForObject("SELECT MAX(u.user_id) FROM app_user u JOIN role r ON r.role_id=u.role_id WHERE r.code='SYSTEM_ADMIN'",Integer.class);
+        int actor=jdbc.queryForObject("SELECT u.user_id FROM app_user u JOIN role r ON r.role_id=u.role_id WHERE r.code='SYSTEM_SCHEDULER'",Integer.class); // D9: occurrences run as the scheduler principal
         long version=jdbc.queryForObject("SELECT config_version FROM mining_config_head WHERE config_id=1",Long.class);
         jdbc.update("INSERT INTO mining_schedule(store_id,created_by,updated_by,frequency,day_of_week,local_time,time_zone,lookback_days,enabled) VALUES (?,?,?,'WEEKLY',1,'09:00','Asia/Ho_Chi_Minh',7,TRUE)",store,actor,actor);
         long schedule=jdbc.queryForObject("SELECT MAX(schedule_id) FROM mining_schedule",Long.class);
@@ -83,8 +83,53 @@ class MiningIntegrationTest {
         assertEquals("COMPLETED",jdbc.queryForObject("SELECT status FROM mining_schedule_occurrence WHERE occurrence_id=?",String.class,occurrence));
         assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM mining_request WHERE store_id=?",Integer.class,store));
     }
+    // D8 (confirmed 2026-11-02): once the Mining Request has committed it finishes, whatever happens to the schedule or the policy afterwards
+    long stageOccurrence() {
+        int actor=jdbc.queryForObject("SELECT u.user_id FROM app_user u JOIN role r ON r.role_id=u.role_id WHERE r.code='SYSTEM_SCHEDULER'",Integer.class);
+        long version=jdbc.queryForObject("SELECT config_version FROM mining_config_head WHERE config_id=1",Long.class);
+        jdbc.update("INSERT INTO mining_schedule(store_id,created_by,updated_by,frequency,day_of_week,local_time,time_zone,lookback_days,enabled) VALUES (?,?,?,'WEEKLY',1,'09:00','Asia/Ho_Chi_Minh',7,TRUE)",store,actor,actor);
+        long schedule=jdbc.queryForObject("SELECT MAX(schedule_id) FROM mining_schedule",Long.class);
+        jdbc.update("INSERT INTO mining_schedule_occurrence(schedule_id,store_id,scheduled_at,schedule_version,config_version,request_key,status,actor_id,range_start,range_end,analysis_date,time_zone,compare_algorithms) VALUES (?,?,CURRENT_TIMESTAMP,1,?,?,'PENDING',?,'2026-10-19','2026-10-19','2026-10-20','Asia/Ho_Chi_Minh',FALSE)",schedule,store,version,UUID.randomUUID().toString(),actor);
+        return jdbc.queryForObject("SELECT MAX(occurrence_id) FROM mining_schedule_occurrence",Long.class);
+    }
+    @Test void disablingTheScheduleAndChangingThePolicyAfterTheRequestCommittedDoesNotStopOrAlterIt() throws Exception {
+        long occurrence=stageOccurrence();
+        long version=jdbc.queryForObject("SELECT config_version FROM mining_config_head WHERE config_id=1",Long.class);
+        long schedule=jdbc.queryForObject("SELECT schedule_id FROM mining_schedule_occurrence WHERE occurrence_id=?",Long.class,occurrence);
+        occurrenceDispatcher.poll();
+        var committed=jdbc.queryForMap("SELECT request_id,status FROM mining_schedule_occurrence WHERE occurrence_id=?",occurrence);
+        assertEquals("DISPATCHED",committed.get("status"));
+        long request=((Number)committed.get("request_id")).longValue();
+        jdbc.update("UPDATE mining_schedule SET enabled=FALSE,next_fire_at=NULL,schedule_version=schedule_version+1 WHERE schedule_id=?",schedule);
+        configure(77);
+        assertTrue(jdbc.queryForObject("SELECT config_version FROM mining_config_head WHERE config_id=1",Long.class)>version);
+        await(request);occurrenceDispatcher.reconcile();
+        var finished=jdbc.queryForMap("SELECT status,failure_code,failure_message,config_version,schedule_version FROM mining_schedule_occurrence WHERE occurrence_id=?",occurrence);
+        assertEquals("COMPLETED",finished.get("status"),"the committed request ran to completion although the schedule was disabled meanwhile");
+        assertNull(finished.get("failure_code"));assertNull(finished.get("failure_message"));
+        assertEquals(version,((Number)finished.get("config_version")).longValue());
+        assertEquals(version,jdbc.queryForObject("SELECT config_version FROM mining_request WHERE request_id=?",Long.class,request),"the request keeps the policy it was created under");
+        assertEquals(1L,((Number)finished.get("schedule_version")).longValue());
+        assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM mining_request WHERE store_id=?",Integer.class,store));
+    }
+    @Test void aReplayedOccurrenceThatAlreadyOwnsItsRequestIsLinkedAgainEvenWhileTheScheduleIsDisabled() throws Exception {
+        long occurrence=stageOccurrence();
+        long schedule=jdbc.queryForObject("SELECT schedule_id FROM mining_schedule_occurrence WHERE occurrence_id=?",Long.class,occurrence);
+        occurrenceDispatcher.poll();
+        long request=jdbc.queryForObject("SELECT request_id FROM mining_schedule_occurrence WHERE occurrence_id=?",Long.class,occurrence);
+        // a crash between the request commit and the last bookkeeping step leaves the lease behind
+        jdbc.update("UPDATE mining_schedule_occurrence SET status='PROCESSING',lease_owner='crashed-owner',lease_until=TIMESTAMPADD(SECOND,-5,CURRENT_TIMESTAMP),attempt_count=1 WHERE occurrence_id=?",occurrence);
+        jdbc.update("UPDATE mining_schedule SET enabled=FALSE,next_fire_at=NULL,schedule_version=schedule_version+1 WHERE schedule_id=?",schedule);
+        occurrenceDispatcher.poll();
+        var row=jdbc.queryForMap("SELECT status,request_id FROM mining_schedule_occurrence WHERE occurrence_id=?",occurrence);
+        assertEquals("DISPATCHED",row.get("status"));
+        assertEquals(request,((Number)row.get("request_id")).longValue(),"no second request is created");
+        assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM mining_request WHERE store_id=?",Integer.class,store));
+        await(request);occurrenceDispatcher.reconcile();
+        assertEquals("COMPLETED",jdbc.queryForObject("SELECT status FROM mining_schedule_occurrence WHERE occurrence_id=?",String.class,occurrence));
+    }
     @Test void occurrenceCreatesFreshSnapshotOnceWithNewTransactions() throws Exception {
-        int actor=jdbc.queryForObject("SELECT MAX(u.user_id) FROM app_user u JOIN role r ON r.role_id=u.role_id WHERE r.code='SYSTEM_ADMIN'",Integer.class);
+        int actor=jdbc.queryForObject("SELECT u.user_id FROM app_user u JOIN role r ON r.role_id=u.role_id WHERE r.code='SYSTEM_SCHEDULER'",Integer.class); // D9: occurrences run as the scheduler principal
         long version=jdbc.queryForObject("SELECT config_version FROM mining_config_head WHERE config_id=1",Long.class);
         jdbc.update("INSERT INTO mining_schedule(store_id,created_by,updated_by,frequency,day_of_week,local_time,time_zone,lookback_days,enabled) VALUES (?,?,?,'WEEKLY',1,'09:00','Asia/Ho_Chi_Minh',7,TRUE)",store,actor,actor);
         long schedule=jdbc.queryForObject("SELECT MAX(schedule_id) FROM mining_schedule",Long.class);
@@ -231,18 +276,18 @@ class MiningIntegrationTest {
         var runs=json.readTree(getJson(base+"/requests/"+id+"/runs",system).andExpect(status().isOk()).andReturn().getResponse().getContentAsString());
         assertEquals(2,runs.size());for(var run:runs){assertEquals(id,run.path("requestId").asLong());assertEquals(store,run.path("storeId").asInt());}
         long runId=runs.get(0).path("runId").asLong();
-        var adminPatterns=getJson(base+"/runs/"+runId+"/patterns?page=0&pageSize=3",system).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-        var tree=json.readTree(adminPatterns);assertEquals(3,tree.path("items").size());assertEquals(3,tree.path("pageSize").asInt());assertTrue(tree.path("totalElements").asLong()>=3);
-        assertEquals(adminPatterns,getJson("/api/mining/runs/"+runId+"/patterns?page=0&pageSize=3",merchant).andExpect(status().isOk()).andReturn().getResponse().getContentAsString(),"administrative and Store-scoped reads share one representation");
+        // decision D1: raw patterns are not released to System Admin; the Store-scoped route stays available to the Store's staff
+        getJson(base+"/runs/"+runId+"/patterns?page=0&pageSize=3",system).andExpect(status().isForbidden());
+        var tree=json.readTree(getJson("/api/mining/runs/"+runId+"/patterns?page=0&pageSize=3",merchant).andExpect(status().isOk()).andReturn().getResponse().getContentAsString());assertEquals(3,tree.path("items").size());assertEquals(3,tree.path("pageSize").asInt());assertTrue(tree.path("totalElements").asLong()>=3);
         String wrong="/api/system/mining/stores/"+other;
         getJson(wrong+"/requests/"+id,system).andExpect(status().isNotFound());
         getJson(wrong+"/requests/"+id+"/runs",system).andExpect(status().isNotFound());
-        getJson(wrong+"/runs/"+runId+"/patterns",system).andExpect(status().isNotFound());
+        getJson(wrong+"/runs/"+runId+"/patterns",system).andExpect(status().isForbidden());
         getJson(wrong+"/runs/"+runId+"/benchmark",system).andExpect(status().isNotFound());
-        for(String path:List.of("/snapshots","/requests","/requests/"+id,"/requests/"+id+"/runs","/runs/"+runId+"/patterns"))getJson("/api/system/mining/stores/99999999"+path,system).andExpect(status().isNotFound());
+        for(String path:List.of("/snapshots","/requests","/requests/"+id,"/requests/"+id+"/runs"))getJson("/api/system/mining/stores/99999999"+path,system).andExpect(status().isNotFound());
+        getJson("/api/system/mining/stores/99999999/runs/"+runId+"/patterns",system).andExpect(status().isForbidden());
         getJson(base+"/requests/99999999",system).andExpect(status().isNotFound());
-        getJson(base+"/runs/99999999/patterns",system).andExpect(status().isNotFound());
-        for(String query:List.of("?page=-1","?pageSize=0","?pageSize=101"))for(String path:List.of("/snapshots","/requests","/runs/"+runId+"/patterns"))getJson(base+path+query,system).andExpect(status().isBadRequest());
+        for(String query:List.of("?page=-1","?pageSize=0","?pageSize=101"))for(String path:List.of("/snapshots","/requests"))getJson(base+path+query,system).andExpect(status().isBadRequest());
         getJson(base+"/requests/abc",system).andExpect(status().isBadRequest());
         getJson("/api/system/mining/stores/0/requests",system).andExpect(status().isBadRequest());
         // The two legacy routes and Store-scoped denial of System Admin stay closed.

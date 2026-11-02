@@ -279,7 +279,7 @@ flyway_stages() {
   nver="$(awk -F'\t' 'NR>1 && $2!="-"{print $2}' "$out/fresh-history-1.tsv" | sort -n | uniq | tr '\n' ' ')"
   local dup; dup="$(awk -F'\t' 'NR>1 && $2!="-"{print $2}' "$out/fresh-history-1.tsv" | sort | uniq -d | tr '\n' ' ')"
   local order_ok; order_ok="$(awk -F'\t' 'NR>1 && $2!="-"{v=$2+0; if(v<last){bad=1}; last=v} END{print bad?"NO":"YES"}' "$out/fresh-history-1.tsv")"
-  if [ "$bad" = 0 ] && [ -z "$dup" ] && [ "$order_ok" = YES ] && [ "$nver" = "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 " ]; then record "flyway.fresh" PASS "versions 1-17 each applied once, in ascending order, success=1 for every row ($out/fresh-history-1.tsv)"
+  if [ "$bad" = 0 ] && [ -z "$dup" ] && [ "$order_ok" = YES ] && [ "$nver" = "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 " ]; then record "flyway.fresh" PASS "versions 1-19 each applied once, in ascending order, success=1 for every row ($out/fresh-history-1.tsv)"
   else record "flyway.fresh" FAIL "failed_rows=$bad duplicates='$dup' ascending=$order_ok versions='$nver' ($out/fresh-history-1.tsv)"; fi
   if awk -F'\t' 'NR>1 && $2=="11" && $4=="JDBC" && $6==1{f=1} END{exit f?0:1}' "$out/fresh-history-1.tsv"; then record "flyway.v11" PASS "Java migration V11 (type JDBC) executed successfully on the fresh database"; else record "flyway.v11" FAIL "V11 Java migration missing or failed in $out/fresh-history-1.tsv"; fi
 
@@ -305,9 +305,9 @@ flyway_stages() {
           prefix_ok="NO"; head -n "$(wc -l < "$out/upgrade-history-dev.tsv")" "$out/upgrade-history-after.tsv" | cmp -s - "$out/upgrade-history-dev.tsv" && prefix_ok="YES"
           cmp -s "$out/upgrade-data-before.txt" "$out/upgrade-data-after.txt" && data_ok="YES" || data_ok="NO"
           bad2="$(awk -F'\t' 'NR>1 && $6!=1' "$out/upgrade-history-after.tsv" | wc -l | tr -d ' ')"
-          newv="$(awk -F'\t' 'NR>1 && $2!="-"{print $2}' "$out/upgrade-history-after.tsv" | tail -n 5 | tr '\n' ' ')"
-          if [ "$prefix_ok" = YES ] && [ "$data_ok" = YES ] && [ "$bad2" = 0 ] && [ "$newv" = "13 14 15 16 17 " ]; then record "flyway.upgrade" PASS "origin/dev schema (V1-V12) + seeded rows upgraded by V13-V17: earlier history rows and checksums unchanged, seeded data fingerprints identical, no failed rows"
-          else record "flyway.upgrade" FAIL "prefix_unchanged=$prefix_ok data_unchanged=$data_ok failed_rows=$bad2 last5='$newv' (see $out/upgrade-*)"; fi
+          newv="$(awk -F'\t' 'NR>1 && $2!="-"{print $2}' "$out/upgrade-history-after.tsv" | tail -n 7 | tr '\n' ' ')"
+          if [ "$prefix_ok" = YES ] && [ "$data_ok" = YES ] && [ "$bad2" = 0 ] && [ "$newv" = "13 14 15 16 17 18 19 " ]; then record "flyway.upgrade" PASS "origin/dev schema (V1-V12) + seeded rows upgraded by V13-V19: earlier history rows and checksums unchanged, seeded data fingerprints identical, no failed rows"
+          else record "flyway.upgrade" FAIL "prefix_unchanged=$prefix_ok data_unchanged=$data_ok failed_rows=$bad2 last7='$newv' (see $out/upgrade-*)"; fi
         else stop_app; record "flyway.upgrade" FAIL "candidate failed to start on the dev schema; see $out/upgrade-candidate-start.log"; fi
       else record "flyway.upgrade" FAIL "seeding representative data failed; see $out/sql-errors.log"; fi
     else stop_app; record "flyway.upgrade" BLOCKED "origin/dev jar did not start on a fresh database; see $out/upgrade-dev-start.log"; fi

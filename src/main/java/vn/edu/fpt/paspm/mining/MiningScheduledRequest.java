@@ -15,9 +15,9 @@ import static vn.edu.fpt.paspm.mining.MiningContracts.*;
 @Service
 public class MiningScheduledRequest {
     private final JdbcTemplate jdbc;private final MiningRepository repository;private final UtilitySnapshotRepository snapshots;
-    private final MiningInputBuilder builder;private final MiningEngine engine;private final MiningWorker worker;private final TransactionTemplate tx;
-    public MiningScheduledRequest(JdbcTemplate jdbc,MiningRepository repository,UtilitySnapshotRepository snapshots,MiningInputBuilder builder,MiningEngine engine,MiningWorker worker,PlatformTransactionManager manager){
-        this.jdbc=jdbc;this.repository=repository;this.snapshots=snapshots;this.builder=builder;this.engine=engine;this.worker=worker;
+    private final MiningInputBuilder builder;private final MiningEngine engine;private final MiningWorker worker;private final SchedulerPrincipal principal;private final TransactionTemplate tx;
+    public MiningScheduledRequest(JdbcTemplate jdbc,MiningRepository repository,UtilitySnapshotRepository snapshots,MiningInputBuilder builder,MiningEngine engine,MiningWorker worker,SchedulerPrincipal principal,PlatformTransactionManager manager){
+        this.jdbc=jdbc;this.repository=repository;this.snapshots=snapshots;this.builder=builder;this.engine=engine;this.worker=worker;this.principal=principal;
         tx=new TransactionTemplate(manager);tx.setIsolationLevel(TransactionDefinition.ISOLATION_REPEATABLE_READ);
     }
     private record Result(RequestView view,boolean created) {}
@@ -33,8 +33,7 @@ public class MiningScheduledRequest {
             if(o.request()!=null)return new Result(repository.find(o.store(),o.request()).view(),false);
             if(schedule[1]!=1||schedule[2]!=o.scheduleVersion())throw new ApiException(409,"Schedule is disabled or has changed");
             if((!"PENDING".equals(o.status())&&!"PROCESSING".equals(o.status()))||o.snapshot()==null||o.actor()<=0||o.configVersion()<=0)throw new ApiException(409,"Occurrence is not ready to submit");
-            int active=jdbc.queryForObject("SELECT COUNT(*) FROM app_user u JOIN role r ON r.role_id=u.role_id WHERE u.user_id=? AND u.status='ACTIVE' AND r.code='SYSTEM_ADMIN'",Integer.class,o.actor());
-            if(active!=1)throw new ApiException(403,"Schedule owner unavailable");
+            principal.require(o.actor());
             engine.requireAvailable();
             var request=jdbc.query("SELECT algorithm,min_util_mode,min_util_value FROM mining_config_version WHERE config_version=?",(r,n)->new CreateRequest(o.key(),o.snapshot(),o.compare()?List.of(MiningEngine.Algorithm.HUI_MINER,MiningEngine.Algorithm.EFIM):List.of(MiningEngine.Algorithm.valueOf(r.getString(1))),MinUtilMode.valueOf(r.getString(2)),r.getBigDecimal(3)),o.configVersion()).stream().findFirst().orElseThrow(()->new ApiException(409,"Occurrence policy unavailable"));
             var snapshot=snapshots.find(o.store(),o.snapshot());if(snapshot==null)throw new ApiException(404,"Utility snapshot not found");

@@ -6,7 +6,7 @@
 
 | Actor | Does | Cannot |
 |---|---|---|
-| SYSTEM_ADMIN | Sets the global mining policy (algorithm, minUtil), starts a mining request for a chosen Store, reads benchmarks, manages schedules (disabled) and their history | Use the Store-scoped `/api/mining/**` routes (403). Read Store results unless the instance has opened the D1 groups |
+| SYSTEM_ADMIN | Sets the global mining policy (algorithm, minUtil), starts a mining request for a chosen Store, reads benchmarks, reads Store snapshots / requests / runs (not patterns), picks a Store, manages schedules and their history | Use the Store-scoped `/api/mining/**` routes (403); read raw patterns (403 by decision D1) |
 | MERCHANDISER | Creates F03 snapshots; reads own-Store snapshots, requests, runs and patterns | Submit mining (403), read benchmarks (403) |
 | STORE_ADMIN | Reads own-Store snapshots, requests, runs and patterns | Submit mining, read benchmarks |
 | END_CUSTOMER | – | Everything (403) |
@@ -22,16 +22,20 @@ Mining runs asynchronously on a Java 17 backend with an external Java 25 SPMF ch
 | Screen / action | API | Role | State |
 |---|---|---|---|
 | Global policy form | `GET`/`PUT /api/system/mining/config` (send `expectedVersion`) | System Admin | Ready |
-| Store selection | none — type or paste a `storeId` (no Store list endpoint; decision D2) | System Admin | Missing |
-| Snapshot choice | System Admin: `GET /api/system/mining/stores/{storeId}/snapshots` (**locked, D1**); otherwise take the `snapshotId` from the Merchandiser's F03 snapshot response | System Admin | Limited |
+| Store selection | `GET /api/system/stores?page=0&pageSize=100` → `{items:[{storeId,name}],page,pageSize,totalElements}` ordered by name | System Admin | Ready (D2) |
+| Snapshot choice | System Admin: `GET /api/system/mining/stores/{storeId}/snapshots` (D1); or take the `snapshotId` from the Merchandiser's F03 snapshot response | System Admin | Ready |
 | Run button | `POST /api/system/mining/requests` body `{storeId,snapshotId,requestKey,compareAlgorithms?}` | System Admin | Ready |
-| Status polling | System Admin: `GET /api/system/mining/stores/{storeId}/requests/{requestId}` (**locked, D1**); Store users: `GET /api/mining/requests/{id}` | both | Locked / Ready |
-| Algorithm runs | System Admin `…/requests/{requestId}/runs` (**locked, D1**); Store users `GET /api/mining/requests/{id}/runs` | both | Locked / Ready |
-| Patterns | System Admin `…/runs/{runId}/patterns` (**locked, D1**); Store users `GET /api/mining/runs/{id}/patterns` | both | Locked / Ready |
-| Benchmark | `GET /api/system/mining/stores/{storeId}/runs/{runId}/benchmark` (open; needs a known `runId`) | System Admin | Limited |
-| Schedules | `POST`/`GET /api/system/mining/schedules`, `GET`/`PUT …/{id}`, `GET …/{id}/occurrences` | System Admin | Disabled schedules only; enabling returns 503 |
+| Status polling | System Admin: `GET /api/system/mining/stores/{storeId}/requests/{requestId}` (D1); Store users: `GET /api/mining/requests/{id}` | both | Ready |
+| Algorithm runs | System Admin `…/requests/{requestId}/runs` (D1); Store users `GET /api/mining/runs…` as `GET /api/mining/requests/{id}/runs` | both | Ready |
+| Patterns | **Store users only**: `GET /api/mining/runs/{id}/patterns`. System Admin `…/runs/{runId}/patterns` always answers 403 (decision D1) — do not render a pattern table for System Admin | Store Admin, Merchandiser | Ready |
+| Benchmark | `GET /api/system/mining/stores/{storeId}/runs/{runId}/benchmark` (get `runId` from the runs route above) | System Admin | Ready |
+| Schedules | `POST`/`GET /api/system/mining/schedules`, `GET`/`PUT …/{id}`, `GET …/{id}/occurrences` | System Admin | Ready. Activation (`enabled:true`) works only where the Backend enables scheduling (default off → 503): show "scheduling is not enabled in this environment" on 503 |
 
-"Locked" means the route answers `403 {"error":"System Admin reads of Store mining results (<GROUP>) are pending Product Owner approval (decision D1)"}`; hide or disable that part of the screen and show "not yet available". Do not call `POST /api/mining/requests` or `GET /api/mining/runs/{id}/benchmark` (403 for every role).
+A 403 on a System Admin results route means an operator removed that group from the Backend configuration; the body is `{"error":"System Admin reads of Store mining results (<GROUP>) are disabled by configuration (decision D1)"}`. Do not call `POST /api/mining/requests` or `GET /api/mining/runs/{id}/benchmark` (403 for every role).
+
+**Schedule form (D3–D5):** `timeZone` is fixed to `Asia/Ho_Chi_Minh` (send it; any other value is a 400). `lookbackDays` is optional, 7–365; offer presets 30, 60, 90, 180 and a free input; leave it out for the default (30 weekly, 90 monthly). Monthly day 29/30/31 runs on the month's last day when the day does not exist — say so in the UI.
+
+**Occurrence history (D6–D9):** statuses `PENDING`, `PROCESSING`, `DISPATCHED`, `COMPLETED`, `FAILED`, `SKIPPED`. Show `failureMessage` for `FAILED` (final cause) and `skipReason` for `SKIPPED` ("missed while the scheduler was unavailable; a later run replaced it"). `PENDING` with `nextRetryAt` is a retry (3 attempts: 15 s, 30 s). `actorId` is the system scheduler, not a person — label it "Scheduler". See [F05_MINING_API.md](../api/F05_MINING_API.md#scheduler-administration-decisions-d1d10-confirmed-2026-11-02-activation-gated) for the full field list.
 
 F03 snapshot creation remains `POST /api/utility/snapshots` for the Merchandiser. F05 never creates a snapshot by itself (the disabled scheduler would). A READY snapshot can still fail F05 numerical or size validation; display the Backend error.
 
@@ -81,6 +85,6 @@ Java long IDs/divisor and decimal utility values are JSON numbers. Preserve prec
 - Default timeout 60 s per algorithm, child heap 256 MiB, at most 2,000 patterns; output cap 4 MiB; process log cap 64 KiB.
 - Historical snapshots remain usable if valid; later F03 changes affect only new snapshots. F05 keeps its own frozen execution copy.
 - SPMF is not bundled. The verified 2.67a JAR needs a Java 25 child executable; the backend is compiled for Java 17.
-- Scheduling: administration and history only. Enabling a schedule returns 503 and the dispatcher is off by default; lookback, time zone, monthly overflow, catch-up, retry and configuration-change policies await Product Owner decisions ([decision package](../decisions/PO_DECISION_PACKAGE_D1_D10_2026-11-01.md)). Do not present scheduled execution as operational.
+- Scheduling: implemented on the Scheduler branch (not yet on `dev`), locally verified, **not release accepted** and **off by default**: enabling a schedule returns 503 and the dispatcher does not run unless the Backend instance sets `paspm.mining.schedule-dispatch-enabled=true`. Decisions D1–D10 are confirmed ([register](../decisions/PO_DECISION_REGISTER_F05_2026-11-01.md)). Do not promise scheduled execution in production until release sign-off.
 - F06 recommendations are separate ([F06 handoff](F06_HANDOFF.md)); they combine COMPLETED raw patterns with current inventory and Merchandiser review. `E_i=1` does not guarantee appearance in a pattern.
 - Not verified: Frontend end-to-end flows, native Linux production image, remote CI.

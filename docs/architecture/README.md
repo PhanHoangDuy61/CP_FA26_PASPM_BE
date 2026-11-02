@@ -12,6 +12,7 @@ Source: [configuration](../../src/main/java/vn/edu/fpt/paspm/common/persistence/
 - [Migration plan](JDBC_TO_JPA_MIGRATION_PLAN.md): NEEDS_REVIEW where it describes unmerged/not-started work.
 - [Product integration report](PRODUCT_JPA_INTEGRATION_REPORT.md), [Category report](CATEGORY_JPA_IMPLEMENTATION_REPORT.md): historical local verification, not current hosted acceptance.
 - [Core foundation report](MIG_JPA_CORE_00_IMPLEMENTATION_REPORT.md), [Product Pilot report](MIG_JPA_F02_01_IMPLEMENTATION_REPORT.md): earlier implementation evidence.
+- [F05 scheduler schema V14–V19](F05_SCHEDULER_SCHEMA_V14_V19.md): tables, states, lease/fence columns, execution identity, invariants and the focused ERD ([`09-f05-scheduler-erd-v14-v19.mmd`](../diagrams/09-f05-scheduler-erd-v14-v19.mmd)); review and roll-forward plan: [report](../reports/F05_V18_V19_SCHEMA_ROLLFORWARD_2026-11-02.md).
 - [Legacy utility compatibility](LEGACY_UTILITY_MATRIX_COMPATIBILITY.md), [recovery design](V5_V7_HISTORICAL_MATRIX_RECOVERY_DESIGN.md): historical evidence/current routing boundaries.
 
 ## Database and mining
