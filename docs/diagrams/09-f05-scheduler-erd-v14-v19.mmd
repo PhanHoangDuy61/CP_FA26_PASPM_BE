@@ -1,0 +1,84 @@
+erDiagram
+    store ||--o{ mining_schedule : "owns (store_id)"
+    role ||--o{ app_user : "role_id"
+    app_user ||--o{ mining_schedule : "created_by / updated_by (human audit)"
+    mining_schedule ||--o{ mining_schedule_occurrence : "(store_id, schedule_id)"
+    app_user ||--o{ mining_schedule_occurrence : "actor_id = SYSTEM_SCHEDULER principal (V19)"
+    mining_config_version ||--o{ mining_schedule_occurrence : "config_version frozen at reservation"
+    utility_snapshot |o--o| mining_schedule_occurrence : "(store_id, snapshot_id) fresh F03 snapshot"
+    mining_request |o--o| mining_schedule_occurrence : "(store_id, request_id)"
+    utility_snapshot ||--o{ mining_request : "(store_id, utility_snapshot_id)"
+    app_user ||--o{ utility_snapshot : "created_by = principal for scheduled runs"
+    app_user ||--o{ mining_request : "requested_by = principal for scheduled runs"
+    mining_request ||--o{ mining_run : "(store_id, request_id)"
+
+    role {
+        int role_id PK
+        varchar code UK "SYSTEM_SCHEDULER added by V19"
+    }
+    app_user {
+        int user_id PK
+        int role_id FK
+        varchar email UK "system-scheduler@paspm.invalid (V19)"
+        varchar password_hash "NULL for the principal"
+        varchar status "INACTIVE for the principal"
+    }
+    mining_schedule {
+        bigint schedule_id PK
+        int store_id FK
+        int created_by FK
+        int updated_by FK
+        varchar frequency "WEEKLY|MONTHLY"
+        int lookback_days "CHECK 1..3660; API accepts 7..365"
+        boolean enabled
+        timestamp next_fire_at "cursor, idx with enabled"
+        bigint schedule_version "frozen into each occurrence"
+    }
+    mining_schedule_occurrence {
+        bigint occurrence_id PK
+        bigint schedule_id FK
+        int store_id FK
+        timestamp scheduled_at "UK with schedule_id"
+        bigint schedule_version
+        bigint config_version FK
+        varchar request_key "UK with store_id; reused as mining_request.request_key"
+        int actor_id FK "V15; principal since D9"
+        date range_start
+        date range_end
+        date analysis_date
+        varchar time_zone
+        boolean compare_algorithms
+        int snapshot_id FK "NULL until prepared"
+        bigint request_id FK "NULL until committed"
+        varchar status "PENDING|PROCESSING|DISPATCHED|COMPLETED|FAILED|SKIPPED (V18)"
+        varchar failure_code
+        varchar failure_message "V18, 500 chars, administrator visible"
+        varchar skip_reason "V18, only when SKIPPED"
+        varchar lease_owner "V17"
+        bigint lease_fence "V17, +1 per claim"
+        timestamp lease_until "V17, 300 s"
+        int attempt_count "V17, max 3"
+        timestamp next_retry_at "V17, 15 s then 30 s"
+    }
+    mining_request {
+        bigint request_id PK
+        int store_id
+        int requested_by FK
+        int utility_snapshot_id FK
+        varchar request_key "UK with store_id"
+        varchar status "PENDING|RUNNING|COMPLETED|FAILED"
+        varchar lease_owner "V16"
+        bigint lease_fence "V16"
+        timestamp lease_until "V16"
+    }
+    utility_snapshot {
+        int snapshot_id PK
+        int store_id
+        int created_by FK
+    }
+    mining_run {
+        bigint run_id PK
+        bigint request_id FK
+        varchar algorithm "HUI_MINER|EFIM"
+        varchar failure_message "250 chars"
+    }
