@@ -53,6 +53,26 @@ class MiningMigrationMySqlTest {
         assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM app_user u JOIN role r ON r.role_id=u.role_id WHERE r.code='SYSTEM_SCHEDULER' AND u.status='INACTIVE' AND u.password_hash IS NULL AND u.email='system-scheduler@paspm.invalid'",Integer.class));
         assertEquals("ACTIVE",jdbc.queryForObject("SELECT status FROM app_user WHERE user_id=94",String.class),"existing accounts are untouched");
     }
+    /** Operational fact behind the roll-forward plan: MySQL DDL is not transactional, so a V18 that stops half way is not rolled back. */
+    @Test void aV18ThatFailsHalfWayLeavesAPartlyChangedSchemaAndFlywayRefusesToContinueUntilItIsRestored() {
+        var db=MySqlTestDatabase.create();
+        var jdbc=new JdbcTemplate(new DriverManagerDataSource(db.url(),db.user(),db.password()));
+        Flyway.configure().dataSource(db.url(),db.user(),db.password()).target("17").load().migrate();
+        jdbc.execute("ALTER TABLE mining_schedule_occurrence ADD failure_message VARCHAR(500) NULL");      // drift: the 4th statement of V18 will collide with this column
+        var flyway=Flyway.configure().dataSource(db.url(),db.user(),db.password()).load();
+        var failure=assertThrows(org.flywaydb.core.api.FlywayException.class,flyway::migrate);
+        assertTrue(failure.getMessage().contains("18"),failure.getMessage());
+        assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='mining_schedule_occurrence' AND column_name='skip_reason'",Integer.class),"statements before the failure stay applied");
+        jdbc.update("INSERT INTO store(store_id,name) VALUES (95,'Partial store')");
+        jdbc.update("INSERT INTO app_user(user_id,role_id,email,name,status) SELECT 95,role_id,'synthetic95@example.test','Test','ACTIVE' FROM role WHERE code='SYSTEM_ADMIN'");
+        jdbc.update("INSERT INTO mining_config_version(config_version,algorithm,min_util_mode,min_util_value,changed_by) VALUES (1,'EFIM','ABSOLUTE',10,95)");
+        jdbc.update("INSERT INTO mining_schedule(schedule_id,store_id,created_by,updated_by,frequency,day_of_week,local_time,time_zone,lookback_days) VALUES (95,95,95,95,'WEEKLY',1,'09:00','Asia/Ho_Chi_Minh',7)");
+        jdbc.update("INSERT INTO mining_schedule_occurrence(schedule_id,store_id,scheduled_at,schedule_version,config_version,request_key,status,skip_reason) VALUES(95,95,'2026-01-01 00:00:00',1,1,'00000000-0000-0000-0000-000000000095','SKIPPED','X')");   // SKIPPED already accepted: the half-applied schema is NOT the V17 schema
+        var again=assertThrows(org.flywaydb.core.api.FlywayException.class,()->Flyway.configure().dataSource(db.url(),db.user(),db.password()).load().migrate());
+        assertTrue(again.getMessage().toLowerCase().contains("failed") || again.getMessage().contains("18"),again.getMessage());
+        assertEquals(0,jdbc.queryForObject("SELECT COUNT(*) FROM flyway_schema_history WHERE version='19'",Integer.class),"V19 was never applied");
+        assertEquals(0,jdbc.queryForObject("SELECT COUNT(*) FROM app_user u JOIN role r ON r.role_id=u.role_id WHERE r.code='SYSTEM_SCHEDULER'",Integer.class));
+    }
     @Test void upgradeFromV13AddsDisabledScheduleStorageWithoutChangingConfig() {
         var db=MySqlTestDatabase.create();
         var jdbc=new JdbcTemplate(new DriverManagerDataSource(db.url(),db.user(),db.password()));

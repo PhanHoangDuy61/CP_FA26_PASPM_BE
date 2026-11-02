@@ -86,4 +86,23 @@ class SchedulerPrincipalHttpTest {
         mvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON).content("{\"email\":\"" + SchedulerPrincipal.EMAIL + "\",\"password\":\"anything-at-all-123A!\"}")).andExpect(status().is4xxClientError());
         assertEquals(0, jdbc.queryForObject("SELECT COUNT(*) FROM verification_challenge WHERE user_id=?", Integer.class, principal.id()));
     }
+
+
+    @Test void passwordResetAndRegistrationFlowsNeverGiveThePrincipalACredentialOrAChallenge() throws Exception {
+        String email = SchedulerPrincipal.EMAIL;
+        mvc.perform(post("/api/auth/password-reset/request").contentType(MediaType.APPLICATION_JSON).content("{\"email\":\"" + email + "\"}"));
+        mvc.perform(post("/api/auth/password-reset/confirm").contentType(MediaType.APPLICATION_JSON).content("{\"email\":\"" + email + "\",\"otp\":\"123456\",\"password\":\"Brand-New-Password-123\"}")).andExpect(status().is4xxClientError());
+        mvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON).content("{\"email\":\"" + email + "\"}"));
+        var row = jdbc.queryForMap("SELECT status,password_hash,email_verified_at FROM app_user WHERE user_id=?", principal.id());
+        assertEquals("INACTIVE", row.get("status")); assertNull(row.get("password_hash")); assertNull(row.get("email_verified_at"));
+        assertEquals(0, jdbc.queryForObject("SELECT COUNT(*) FROM verification_challenge WHERE user_id=?", Integer.class, principal.id()));
+        mvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON).content("{\"email\":\"" + email + "\",\"password\":\"Brand-New-Password-123\"}")).andExpect(status().is4xxClientError());
+    }
+
+    @Test void aTokenMintedInternallyForThePrincipalAuthorizesNothing() throws Exception {
+        String token = "Bearer " + auth.token(users.findById(principal.id())).accessToken();
+        for (String path : new String[] {"/api/system/mining/schedules", "/api/system/mining/config", "/api/system/stores", "/api/users", "/api/mining/requests"})
+            mvc.perform(get(path).header("Authorization", token)).andExpect(status().is4xxClientError());
+        mvc.perform(post("/api/system/mining/schedules").header("Authorization", token).contentType(MediaType.APPLICATION_JSON).content("{}")).andExpect(status().is4xxClientError());
+    }
 }
