@@ -39,3 +39,5 @@ The two ERD files (`PASPM_Complete_ERD_F02_Inventory_Batch_v3.drawio`, `PASPM_Co
 
 ## Not done
 No new page, no ERD edit, no diagram for F07–F11, no Mermaid (`.mmd`) refresh (that pack is documented as stale), no Frontend screen. The diagrams state `RELEASE_SIGNOFF_PENDING` implicitly by drawing scheduling as gated; they must be revisited after release sign-off and when the Backend branch is merged.
+
+**Update 2026-11-04:** the pack was re-based on Backend `c65daf2`, pages R2-04 and R2-06.03 were extended (scheduler principal, V18/V19, D8–D10) and a separate F05 ERD file was added; see [`../review/2026-11-04/UML_QA_REPORT_2026-11-04.md`](../review/2026-11-04/UML_QA_REPORT_2026-11-04.md).

@@ -6,6 +6,8 @@
 
 **Scheduler synchronisation (2026-11-02, branch `Khoi/docs/f05-scheduler-uml2-final-sync`):** eleven pages were updated to the implemented, gated Scheduled Mining behaviour (D1–D10) and the occurrence lifecycle was added to the R2-06.03 page; see the [scheduler sync QA](../reports/UML27_F05_SCHEDULER_SYNC_QA_2026-11-02.md). The two ERD files are unchanged and do not show Flyway V18–V19.
 
+**Scheduler ERD and review edition (2026-11-04):** [`PASPM_F05_Scheduler_ERD_V14_V19.drawio`](PASPM_F05_Scheduler_ERD_V14_V19.drawio) is an editable ERD of the F05 scheduler tables after Flyway V14–V19 (a separate file, not a page of the 27-page pack). The review PDF, QA report and reviewer notes are in [`../review/2026-11-04/`](../review/2026-11-04/README.md).
+
 ## Legacy Mermaid pack (Review 2) — not synchronised after PR #11
 
 The `.mmd` files and `rendered/*.svg` below predate the F05 administration work. They are kept unchanged as history and are **stale in places**: `02-use-cases.mmd` lets Store roles create mining requests (System Admin owns it now), `03-system-architecture.mmd` says Flyway V1–V11 (now V1–V17), `04-logical-erd-v1-v11.mmd` has no V12–V17 tables, `05c`/`05d` lack the lease-reclaim transitions. Use the Draw.io pack above for F05 behaviour.
