@@ -37,7 +37,7 @@ class MiningSchedulerUpgradeCompatibilityMySqlTest {
     record Backend(Process process, int port, Path log) {}
     final List<Backend> backends = new ArrayList<>();
     final List<String> evidence = new ArrayList<>();
-    final TestRestTemplate http = new TestRestTemplate();
+    TestRestTemplate http = new TestRestTemplate();
     String storeZone = "Asia/Ho_Chi_Minh";
 
     static JdbcTemplate jdbc(MySqlTestDatabase db) { return new JdbcTemplate(new DriverManagerDataSource(db.url(), db.user(), db.password())); }
@@ -74,7 +74,7 @@ class MiningSchedulerUpgradeCompatibilityMySqlTest {
         long end = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(millis);
         while (System.nanoTime() < end) {
             if (!b.process.isAlive()) return false;
-            try { if (http.getForEntity(url(b) + "/api/users", String.class).getStatusCode().value() == 401) return true; } catch (Exception ignored) { }
+            try { if (http.getForEntity(url(b) + "/api/users", String.class).getStatusCode().value() == 401) { http = new TestRestTemplate(); return true; } } catch (Exception ignored) { }   // fresh client: a pooled keep-alive connection can be closed by the server while another slow Backend is still starting
             Thread.sleep(100);
         }
         return false;
