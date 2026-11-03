@@ -1,5 +1,54 @@
 # Diagrams and Database Models
 
+## Review 2 Mermaid pack — final diagrams (`mermaid/`)
+
+The files in [`mermaid/`](mermaid/) are transcribed from the **final clean** draw.io diagrams (UML: branch `Khoi/docs/diagrams-final-clean`, 36 pages; ERD: `PASPM_ERD_V1_V19_clean.drawio`, SHA-256 `64f9c7e712b8dfa2e3d81ac8f2c07167807f982470fa33be175330f300014c3a`). Names, states, transitions, guards, actors and steps follow the draw.io pages; nothing was added or dropped. SVG renders are in [`mermaid/rendered/`](mermaid/rendered/) (Mermaid CLI 12.2.0). The draw.io files remain the master; the figure numbers are those of Report 4 (SDD) and Report 3 (SRS) in `docs/review-2/`.
+
+| Mermaid source | draw.io page | Report figure |
+|---|---|---|
+| `architecture.mmd` | R2-04 — System Architecture | SDD Figure 1 |
+| `conceptual-erd.mmd` | Conceptual ERD (ERD file) | SDD Figure 3, SRS Figure 4 |
+| `logical-erd.mmd` | Logical ERD (ERD file); generated from the migrated schema (31 tables, 304 columns, 59 foreign keys) | SDD Figure 4, SRS Figure 5 |
+| `state-import-batch.mmd` | R2-06.01 — Import Batch State | SDD Figure 11 |
+| `state-utility-snapshot.mmd` | R2-06.02 — Utility Snapshot State | SDD Figure 13 |
+| `state-mining-request-and-schedule-occurrence.mmd` | R2-06.03 — Mining Request State, with the Schedule Occurrence State drawn on the same page | SDD Figure 14 |
+| `state-mining-run.mmd` | R2-06.04 — Mining Run State | SDD Figure 15 |
+| `state-recommendation-review.mmd` | R2-06.05 — Recommendation Review State | SDD Figure 16 |
+| `state-staging-row.mmd` | R2-06.06 — Staging Row State | SDD Figure 12 |
+| `activity-ad01-overall-system-workflow.mmd` | AD01 - Overall System Workflow | SDD Figure 19 |
+| `activity-ad02-transaction-data-processing.mmd` | AD02 - Transaction Data Processing | SDD Figure 22 |
+| `activity-ad03-mining-execution-configuration.mmd` | AD03 - Mining Execution & Configuration | SDD Figure 25 |
+| `activity-ad04-algorithm-benchmarking.mmd` | AD04 - Algorithm Benchmarking | SDD Figure 28 |
+| `activity-ad05-product-recommendation-approval.mmd` | AD05 - Product Recommendation & Approval | SDD Figure 31 |
+| `activity-ad06-layout-campaign-management.mmd` | AD06 - Layout & Campaign Management | SDD Figure 34 |
+| `activity-ad07-ab-testing-performance-evaluation.mmd` | AD07 - A/B Testing & Performance Evaluation | SDD Figure 37 |
+| `activity-ad08-customer-shopping-bundle.mmd` | AD08 - Customer Shopping & Bundle | SDD Figure 40 |
+
+Activity diagrams use one Mermaid `subgraph` per swimlane exactly as drawn (AD01 has one lane). Use cases, context, screen flow, package diagram, class and sequence diagrams are not part of this pack; they exist only as draw.io pages.
+
+Re-render with `PUPPETEER_SKIP_DOWNLOAD=1 npx -y @mermaid-js/mermaid-cli@12.2.0 -i mermaid/<file>.mmd -o mermaid/rendered/<file>.svg` (a Chrome executable can be passed with `-p <puppeteer-config.json>`).
+
+## Superseded legacy Mermaid files (top level `*.mmd`, `rendered/`)
+
+Kept unchanged as history; **do not use them for Review 2**. Comparison with the final draw.io pages (2026-11-04):
+
+| Legacy file | Final page | Status |
+|---|---|---|
+| `01-system-context.mmd` | Context | Differs: adds a "Store staff / data operator" actor and an identity-provider node that the final page does not have |
+| `02-use-cases.mmd` | Use Case | Differs: no use-case numbering, Store roles create mining requests (System Admin only now), operator actor |
+| `03-system-architecture.mmd` | R2-04 | Differs: says Flyway V1–V11, "JDBC repositories" only (final: hybrid JPA/JDBC), no scheduler component, feature codes in labels, dashed demo edge |
+| `04-logical-erd-v1-v11.mmd` | Logical ERD | Superseded: 26 tables (V1–V11); the final schema has 31 tables and 59 foreign keys |
+| `05a-import-batch-state.mmd` | R2-06.01 | Same states and transitions; guard wording differs |
+| `05b-utility-snapshot-state.mmd` | R2-06.02 | Differs: extra Capture/Rejected states and notes |
+| `05c-mining-request-state.mmd` | R2-06.03 | Differs: no lease-reclaim transition, no Schedule Occurrence machine |
+| `05d-mining-run-state.mmd` | R2-06.04 | Differs: no RUNNING → PENDING (lease reclaimed) transition |
+| `05e-recommendation-review-state.mmd` | R2-06.05 | Same states and transitions; guards differ, extra note |
+| `05f-staging-row-state.mmd` | R2-06.06 | Same states; the VALID → REJECTED reason differs (order-level validation vs conflicting content) |
+| `06-activity-workflows.mmd` | AD01–AD08 | Different set of eight diagrams (authentication, product, import, utility, mining, recommendation, review, expiry push) |
+| `07a/07b/07c-*-sequence.mmd` | R2-08.02, R2-08.03, R2-08.05 | Different participants (layers vs. the named classes of the final pages) |
+| `08-screen-flow.mmd` | R2-03 — Screen Flow | Same screens and paths; the legacy file adds explanatory notes and an `F03` label prefix |
+| `09-f05-scheduler-erd-v14-v19.mmd` | Mining & Scheduling (ERD file) | Subset of the final schema (7 tables) |
+
 ## Editable UML 2.0 pack (27 pages) — current
 
 [`PASPM_Unified_27_Diagrams_UML2_Editable.drawio`](PASPM_Unified_27_Diagrams_UML2_Editable.drawio) is the maintained, editable source (open with diagrams.net). It covers requirements, context, use cases, eight activity diagrams, screen flow, architecture, six state machines and eight sequence diagrams (F07–F11 pages are marked PLANNED). It was audited page by page against the Backend on `dev` @ `11973a0`: see the [27-page audit](../reports/UML27_DIAGRAM_QA_2026-11-02.md) for per-page results, the pages that are informal rather than UML, and the known gaps. Edit the `.drawio` file; never replace it with exported images.
