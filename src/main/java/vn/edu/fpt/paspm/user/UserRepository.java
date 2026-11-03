@@ -47,7 +47,8 @@ public class UserRepository {
                     ? null
                     : resultSet.getTimestamp("email_verified_at").toInstant(),
             resultSet.getInt("token_version"),
-            resultSet.getString("verification_purpose")
+            resultSet.getString("verification_purpose"),
+            resultSet.getString("avatar_key")
     );
 
     public User findById(int id) {
@@ -63,14 +64,24 @@ public class UserRepository {
                 .findFirst();
     }
 
+    /** D9: the scheduled-Mining machine principal is invisible to account management and can never be locked for change or login. */
+    public static final String SYSTEM_PRINCIPAL_ROLE = "SYSTEM_SCHEDULER";
+
     public User lockById(int id) {
-        return jdbc.query(SELECT + "WHERE user_id=? FOR UPDATE", mapper, id)
+        User user = jdbc.query(SELECT + "WHERE user_id=? FOR UPDATE", mapper, id)
                 .stream()
                 .findFirst()
                 .orElseThrow(() -> new ApiException(404, "User not found"));
+        if (SYSTEM_PRINCIPAL_ROLE.equals(user.role())) {
+            throw new ApiException(404, "User not found");
+        }
+        return user;
     }
 
     public int findRoleId(String code) {
+        if (SYSTEM_PRINCIPAL_ROLE.equals(code)) {
+            throw new ApiException(400, "Unknown role");
+        }
         return jdbc.query(
                         "SELECT role_id FROM role WHERE code=?",
                         (rs, rowNum) -> rs.getInt(1),
@@ -132,7 +143,7 @@ public class UserRepository {
 
         String sql = SELECT +
                 "WHERE (?='' OR LOWER(u.email) LIKE ? OR LOWER(u.name) LIKE ?) " +
-                "AND (?='' OR r.code=?) AND (?='' OR u.status=?) " +
+                "AND (?='' OR r.code=?) AND (?='' OR u.status=?) AND r.code<>'" + SYSTEM_PRINCIPAL_ROLE + "' " +
                 "ORDER BY user_id LIMIT ? OFFSET ?";
         String like = "%" + q.toLowerCase(Locale.ROOT) + "%";
 
@@ -143,7 +154,7 @@ public class UserRepository {
     }
 
     public List<Map<String, Object>> listRoles() {
-        return jdbc.queryForList("SELECT code,display_name FROM role ORDER BY role_id");
+        return jdbc.queryForList("SELECT code,display_name FROM role WHERE code<>'" + SYSTEM_PRINCIPAL_ROLE + "' ORDER BY role_id");
     }
 
     public void updateName(int id, String name) {
@@ -191,6 +202,18 @@ public class UserRepository {
                 passwordHash,
                 id
         );
+    }
+
+    public void updatePassword(int id, String passwordHash) {
+        jdbc.update(
+                "UPDATE app_user SET password_hash=?,token_version=token_version+1 WHERE user_id=?",
+                passwordHash,
+                id
+        );
+    }
+
+    public void updateAvatar(int id, String avatarKey) {
+        jdbc.update("UPDATE app_user SET avatar_key=? WHERE user_id=?", avatarKey, id);
     }
 
     public void activateBootstrapAdmin(int id, Instant verifiedAt) {

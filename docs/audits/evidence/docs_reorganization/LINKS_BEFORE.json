@@ -1,0 +1,2486 @@
+[
+  {
+    "file": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_F05_HANDOFF.md",
+    "line": 3,
+    "target": "../api/F03_V12_F05_F06_INTEGRATION.md",
+    "kind": "internal",
+    "resolved": "docs/api/F03_V12_F05_F06_INTEGRATION.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_F05_HANDOFF.md",
+    "line": 3,
+    "target": "../api/F03_UTILITY_API.md",
+    "kind": "internal",
+    "resolved": "docs/api/F03_UTILITY_API.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_F05_HANDOFF.md",
+    "line": 3,
+    "target": "../requirements/F03_WEIGHT_RULES_v1_2.md",
+    "kind": "internal",
+    "resolved": "docs/requirements/F03_WEIGHT_RULES_v1_2.md",
+    "valid": false,
+    "reason": "MISSING_TARGET"
+  },
+  {
+    "file": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_F05_HANDOFF.md",
+    "line": 9,
+    "target": "../api/F05_MINING_API.md",
+    "kind": "internal",
+    "resolved": "docs/api/F05_MINING_API.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_F05_HANDOFF.md",
+    "line": 9,
+    "target": "../PASPM_F05_High_Utility_Mining/F05_VERIFICATION.md",
+    "kind": "internal",
+    "resolved": "docs/PASPM_F05_High_Utility_Mining/F05_VERIFICATION.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_IMPLEMENTATION_SUMMARY.md",
+    "line": 3,
+    "target": "../requirements/F03_WEIGHT_RULES_v1_2.md",
+    "kind": "internal",
+    "resolved": "docs/requirements/F03_WEIGHT_RULES_v1_2.md",
+    "valid": false,
+    "reason": "MISSING_TARGET"
+  },
+  {
+    "file": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_IMPLEMENTATION_SUMMARY.md",
+    "line": 3,
+    "target": "../api/F03_UTILITY_API.md",
+    "kind": "internal",
+    "resolved": "docs/api/F03_UTILITY_API.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_IMPLEMENTATION_SUMMARY.md",
+    "line": 40,
+    "target": "F03_SWAGGER_TEST_REPORT.md",
+    "kind": "internal",
+    "resolved": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_SWAGGER_TEST_REPORT.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_IMPLEMENTATION_SUMMARY.md",
+    "line": 40,
+    "target": "F03_SWAGGER_ISSUES.md",
+    "kind": "internal",
+    "resolved": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_SWAGGER_ISSUES.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_IMPLEMENTATION_SUMMARY.md",
+    "line": 40,
+    "target": "evidence/F03_MAVEN_VERIFY.txt",
+    "kind": "internal",
+    "resolved": "docs/PASPM_F03_ERD_and_Tasks_v4/evidence/F03_MAVEN_VERIFY.txt",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_IMPLEMENTATION_SUMMARY.md",
+    "line": 40,
+    "target": "evidence/F03_SNAPSHOT_1.json",
+    "kind": "internal",
+    "resolved": "docs/PASPM_F03_ERD_and_Tasks_v4/evidence/F03_SNAPSHOT_1.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_IMPLEMENTATION_SUMMARY.md",
+    "line": 40,
+    "target": "evidence/F03_SNAPSHOT_1_MATRIX.json",
+    "kind": "internal",
+    "resolved": "docs/PASPM_F03_ERD_and_Tasks_v4/evidence/F03_SNAPSHOT_1_MATRIX.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_SWAGGER_TEST_REPORT.md",
+    "line": 3,
+    "target": "../requirements/F03_WEIGHT_RULES_v1_2.md",
+    "kind": "internal",
+    "resolved": "docs/requirements/F03_WEIGHT_RULES_v1_2.md",
+    "valid": false,
+    "reason": "MISSING_TARGET"
+  },
+  {
+    "file": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_SWAGGER_TEST_REPORT.md",
+    "line": 3,
+    "target": "../api/F03_UTILITY_API.md",
+    "kind": "internal",
+    "resolved": "docs/api/F03_UTILITY_API.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_SWAGGER_TEST_REPORT.md",
+    "line": 98,
+    "target": "evidence/F03_SNAPSHOT_1.json",
+    "kind": "internal",
+    "resolved": "docs/PASPM_F03_ERD_and_Tasks_v4/evidence/F03_SNAPSHOT_1.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_SWAGGER_TEST_REPORT.md",
+    "line": 98,
+    "target": "evidence/F03_SNAPSHOT_1_MATRIX.json",
+    "kind": "internal",
+    "resolved": "docs/PASPM_F03_ERD_and_Tasks_v4/evidence/F03_SNAPSHOT_1_MATRIX.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_TECHNICAL_DECISIONS.md",
+    "line": 3,
+    "target": "../requirements/F03_WEIGHT_RULES_v1_2.md",
+    "kind": "internal",
+    "resolved": "docs/requirements/F03_WEIGHT_RULES_v1_2.md",
+    "valid": false,
+    "reason": "MISSING_TARGET"
+  },
+  {
+    "file": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_TECHNICAL_DECISIONS.md",
+    "line": 3,
+    "target": "../api/F03_UTILITY_API.md",
+    "kind": "internal",
+    "resolved": "docs/api/F03_UTILITY_API.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/README.md",
+    "line": 19,
+    "target": "F03-01.md",
+    "kind": "internal",
+    "resolved": "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/F03-01.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/README.md",
+    "line": 20,
+    "target": "F03-02.md",
+    "kind": "internal",
+    "resolved": "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/F03-02.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/README.md",
+    "line": 21,
+    "target": "F03-03.md",
+    "kind": "internal",
+    "resolved": "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/F03-03.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/README.md",
+    "line": 22,
+    "target": "F03-04.md",
+    "kind": "internal",
+    "resolved": "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/F03-04.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/README.md",
+    "line": 23,
+    "target": "F03-05.md",
+    "kind": "internal",
+    "resolved": "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/F03-05.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/README.md",
+    "line": 24,
+    "target": "F03-06.md",
+    "kind": "internal",
+    "resolved": "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/F03-06.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/README.md",
+    "line": 25,
+    "target": "F03-07.md",
+    "kind": "internal",
+    "resolved": "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/F03-07.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/README.md",
+    "line": 26,
+    "target": "F03-08.md",
+    "kind": "internal",
+    "resolved": "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/F03-08.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/README.md",
+    "line": 27,
+    "target": "F03-09.md",
+    "kind": "internal",
+    "resolved": "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/F03-09.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/README.md",
+    "line": 28,
+    "target": "F03-10.md",
+    "kind": "internal",
+    "resolved": "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/F03-10.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/PASPM_F04_Transaction_Data_Pipeline/F04_SWAGGER_TEST_REPORT.md",
+    "line": 13,
+    "target": "../api/openapi.json",
+    "kind": "internal",
+    "resolved": "docs/api/openapi.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/PASPM_F05_High_Utility_Mining/F05_GAP_ANALYSIS.md",
+    "line": 32,
+    "target": "https://www.philippe-fournier-viger.com/spmf/HUI-Miner.php",
+    "kind": "external"
+  },
+  {
+    "file": "docs/PASPM_F05_High_Utility_Mining/F05_GAP_ANALYSIS.md",
+    "line": 32,
+    "target": "https://www.philippe-fournier-viger.com/spmf/EFIM.php",
+    "kind": "external"
+  },
+  {
+    "file": "docs/PASPM_F05_High_Utility_Mining/F05_GAP_ANALYSIS.md",
+    "line": 32,
+    "target": "https://www.philippe-fournier-viger.com/spmf/download.php",
+    "kind": "external"
+  },
+  {
+    "file": "docs/PASPM_F05_High_Utility_Mining/F05_GAP_ANALYSIS.md",
+    "line": 32,
+    "target": "https://www.philippe-fournier-viger.com/spmf/developers.php",
+    "kind": "external"
+  },
+  {
+    "file": "docs/api/API_CHANGELOG.md",
+    "line": 9,
+    "target": "../requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "kind": "internal",
+    "resolved": "docs/requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/API_CHANGELOG.md",
+    "line": 9,
+    "target": "F03_UTILITY_API.md",
+    "kind": "internal",
+    "resolved": "docs/api/F03_UTILITY_API.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/API_CHANGELOG.md",
+    "line": 9,
+    "target": "F01_F02_RBAC_MATRIX.md",
+    "kind": "internal",
+    "resolved": "docs/api/F01_F02_RBAC_MATRIX.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/API_CHANGELOG.md",
+    "line": 16,
+    "target": "../requirements/F06_VERIFICATION.md",
+    "kind": "internal",
+    "resolved": "docs/requirements/F06_VERIFICATION.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/API_CHANGELOG.md",
+    "line": 17,
+    "target": "F06_RECOMMENDATION_API.md",
+    "kind": "internal",
+    "resolved": "docs/api/F06_RECOMMENDATION_API.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/API_CHANGELOG.md",
+    "line": 17,
+    "target": "../frontend_handoff/F06_HANDOFF.md",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F06_HANDOFF.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/API_CHANGELOG.md",
+    "line": 21,
+    "target": "../setup/FLYWAY_MYSQL_V7_RECOVERY.md",
+    "kind": "internal",
+    "resolved": "docs/setup/FLYWAY_MYSQL_V7_RECOVERY.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/API_CHANGELOG.md",
+    "line": 24,
+    "target": "../audits/F05_P0_DEPLOYMENT_FIX_REPORT.md",
+    "kind": "internal",
+    "resolved": "docs/audits/F05_P0_DEPLOYMENT_FIX_REPORT.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/API_CHANGELOG.md",
+    "line": 24,
+    "target": "../setup/F05_SPMF_RUNTIME_SETUP.md",
+    "kind": "internal",
+    "resolved": "docs/setup/F05_SPMF_RUNTIME_SETUP.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F01_AUTH_USER_API.md",
+    "line": 3,
+    "target": "openapi.json",
+    "kind": "internal",
+    "resolved": "docs/api/openapi.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F01_AUTH_USER_API.md",
+    "line": 74,
+    "target": "../frontend_handoff/F01_examples/",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F01_examples",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F02_PRODUCT_INVENTORY_API.md",
+    "line": 10,
+    "target": "openapi.json",
+    "kind": "internal",
+    "resolved": "docs/api/openapi.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F02_PRODUCT_INVENTORY_API.md",
+    "line": 68,
+    "target": "../frontend_handoff/F02_examples/",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F02_examples",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F03_UTILITY_API.md",
+    "line": 3,
+    "target": "../requirements/F03_WEIGHT_RULES_v1_2.md",
+    "kind": "internal",
+    "resolved": "docs/requirements/F03_WEIGHT_RULES_v1_2.md",
+    "valid": false,
+    "reason": "MISSING_TARGET"
+  },
+  {
+    "file": "docs/api/F03_UTILITY_API.md",
+    "line": 140,
+    "target": "../PASPM_F03_ERD_and_Tasks_v4/F03_F05_HANDOFF.md",
+    "kind": "internal",
+    "resolved": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_F05_HANDOFF.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F03_UTILITY_API.md",
+    "line": 140,
+    "target": "F03_V12_F05_F06_INTEGRATION.md",
+    "kind": "internal",
+    "resolved": "docs/api/F03_V12_F05_F06_INTEGRATION.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F03_V12_F05_F06_INTEGRATION.md",
+    "line": 7,
+    "target": "F05_MINING_API.md",
+    "kind": "internal",
+    "resolved": "docs/api/F05_MINING_API.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F03_V12_F05_F06_INTEGRATION.md",
+    "line": 7,
+    "target": "../PASPM_F05_High_Utility_Mining/F05_F06_HANDOFF.md",
+    "kind": "internal",
+    "resolved": "docs/PASPM_F05_High_Utility_Mining/F05_F06_HANDOFF.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F04_TRANSACTION_API.md",
+    "line": 3,
+    "target": "openapi.json",
+    "kind": "internal",
+    "resolved": "docs/api/openapi.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F05_MINING_API.md",
+    "line": 3,
+    "target": "../PASPM_F05_High_Utility_Mining/F05_VERIFICATION.md",
+    "kind": "internal",
+    "resolved": "docs/PASPM_F05_High_Utility_Mining/F05_VERIFICATION.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F05_MINING_API.md",
+    "line": 277,
+    "target": "../frontend_handoff/F05_examples/snapshot_list_response.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F05_examples/snapshot_list_response.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F05_MINING_API.md",
+    "line": 287,
+    "target": "../frontend_handoff/F05_examples/create_response.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F05_examples/create_response.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F05_MINING_API.md",
+    "line": 297,
+    "target": "../frontend_handoff/F05_examples/request_list_response.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F05_examples/request_list_response.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F05_MINING_API.md",
+    "line": 309,
+    "target": "../frontend_handoff/F05_examples/request_response.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F05_examples/request_response.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F05_MINING_API.md",
+    "line": 321,
+    "target": "../frontend_handoff/F05_examples/runs_response.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F05_examples/runs_response.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F05_MINING_API.md",
+    "line": 333,
+    "target": "../frontend_handoff/F05_examples/run_response.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F05_examples/run_response.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F05_MINING_API.md",
+    "line": 345,
+    "target": "../frontend_handoff/F05_examples/patterns_response.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F05_examples/patterns_response.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F05_MINING_API.md",
+    "line": 357,
+    "target": "../frontend_handoff/F05_examples/benchmark_response.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F05_examples/benchmark_response.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F05_MINING_API.md",
+    "line": 383,
+    "target": "https://www.philippe-fournier-viger.com/spmf/developers.php",
+    "kind": "external"
+  },
+  {
+    "file": "docs/api/F05_MINING_API.md",
+    "line": 395,
+    "target": "../setup/FLYWAY_MYSQL_V7_RECOVERY.md",
+    "kind": "internal",
+    "resolved": "docs/setup/FLYWAY_MYSQL_V7_RECOVERY.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F05_MINING_API.md",
+    "line": 397,
+    "target": "../setup/F05_SPMF_RUNTIME_SETUP.md",
+    "kind": "internal",
+    "resolved": "docs/setup/F05_SPMF_RUNTIME_SETUP.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F05_MINING_API.md",
+    "line": 399,
+    "target": "../PASPM_F05_High_Utility_Mining/F05_F06_HANDOFF.md",
+    "kind": "internal",
+    "resolved": "docs/PASPM_F05_High_Utility_Mining/F05_F06_HANDOFF.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F06_RECOMMENDATION_API.md",
+    "line": 3,
+    "target": "../requirements/F06_VERIFICATION.md",
+    "kind": "internal",
+    "resolved": "docs/requirements/F06_VERIFICATION.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F06_RECOMMENDATION_API.md",
+    "line": 5,
+    "target": "openapi.json",
+    "kind": "internal",
+    "resolved": "docs/api/openapi.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F06_RECOMMENDATION_API.md",
+    "line": 7,
+    "target": "F01_AUTH_USER_API.md",
+    "kind": "internal",
+    "resolved": "docs/api/F01_AUTH_USER_API.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F06_RECOMMENDATION_API.md",
+    "line": 48,
+    "target": "../frontend_handoff/F06_examples/generate_request.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F06_examples/generate_request.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F06_RECOMMENDATION_API.md",
+    "line": 48,
+    "target": "../frontend_handoff/F06_examples/generate_response.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F06_examples/generate_response.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F06_RECOMMENDATION_API.md",
+    "line": 48,
+    "target": "../frontend_handoff/F06_examples/detail_response.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F06_examples/detail_response.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F06_RECOMMENDATION_API.md",
+    "line": 48,
+    "target": "../frontend_handoff/F06_examples/list_response.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F06_examples/list_response.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F06_RECOMMENDATION_API.md",
+    "line": 48,
+    "target": "../frontend_handoff/F06_examples/config_response.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F06_examples/config_response.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F06_RECOMMENDATION_API.md",
+    "line": 48,
+    "target": "../frontend_handoff/F06_examples/approve_request.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F06_examples/approve_request.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F06_RECOMMENDATION_API.md",
+    "line": 48,
+    "target": "../frontend_handoff/F06_examples/approve_response.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F06_examples/approve_response.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F06_RECOMMENDATION_API.md",
+    "line": 48,
+    "target": "../frontend_handoff/F06_examples/conflict_response.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F06_examples/conflict_response.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F06_RECOMMENDATION_API.md",
+    "line": 48,
+    "target": "../frontend_handoff/F06_examples/expiry_push_response.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F06_examples/expiry_push_response.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/api/F06_RECOMMENDATION_API.md",
+    "line": 163,
+    "target": "../frontend_handoff/F06_HANDOFF.md",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F06_HANDOFF.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/architecture/CATEGORY_JPA_IMPLEMENTATION_REPORT.md",
+    "line": 19,
+    "target": "../testing/evidence/category_jpa_pilot/FULL_RESULTS.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/category_jpa_pilot/FULL_RESULTS.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/architecture/CATEGORY_JPA_IMPLEMENTATION_REPORT.md",
+    "line": 23,
+    "target": "PRODUCT_JPA_INTEGRATION_REPORT.md",
+    "kind": "internal",
+    "resolved": "docs/architecture/PRODUCT_JPA_INTEGRATION_REPORT.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/architecture/CATEGORY_JPA_IMPLEMENTATION_REPORT.md",
+    "line": 27,
+    "target": "../testing/evidence/category_jpa_pilot/TECHNICAL_REVIEW.md",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/category_jpa_pilot/TECHNICAL_REVIEW.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/architecture/CATEGORY_JPA_IMPLEMENTATION_REPORT.md",
+    "line": 37,
+    "target": "HYBRID_JPA_DELIVERY_STATUS.md",
+    "kind": "internal",
+    "resolved": "docs/architecture/HYBRID_JPA_DELIVERY_STATUS.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/architecture/HYBRID_JPA_DELIVERY_STATUS.md",
+    "line": 8,
+    "target": "https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/compare/dev...Khoi%2Ffeat%2Fproduct-jpa-integration?expand=1",
+    "kind": "external"
+  },
+  {
+    "file": "docs/architecture/HYBRID_JPA_DELIVERY_STATUS.md",
+    "line": 8,
+    "target": "PRODUCT_JPA_INTEGRATION_PR.md",
+    "kind": "internal",
+    "resolved": "docs/architecture/PRODUCT_JPA_INTEGRATION_PR.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/architecture/HYBRID_JPA_DELIVERY_STATUS.md",
+    "line": 10,
+    "target": "https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/compare/Khoi%2Ffeat%2Fproduct-jpa-integration...Khoi%2Ffeat%2Fcategory-jpa-crud-pilot?expand=1",
+    "kind": "external"
+  },
+  {
+    "file": "docs/architecture/HYBRID_JPA_DELIVERY_STATUS.md",
+    "line": 10,
+    "target": "CATEGORY_JPA_PR.md",
+    "kind": "internal",
+    "resolved": "docs/architecture/CATEGORY_JPA_PR.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/architecture/JDBC_TO_JPA_MIGRATION_PLAN.md",
+    "line": 10,
+    "target": "PRODUCT_JPA_INTEGRATION_REPORT.md",
+    "kind": "internal",
+    "resolved": "docs/architecture/PRODUCT_JPA_INTEGRATION_REPORT.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/architecture/JPA_PILOT_CODE_REVIEW.md",
+    "line": 36,
+    "target": "../testing/evidence/jpa_pilot_review/fresh-test-results.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/jpa_pilot_review/fresh-test-results.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/architecture/JPA_PILOT_CODE_REVIEW.md",
+    "line": 36,
+    "target": "../testing/JPA_PILOT_SWAGGER_VERIFICATION.md",
+    "kind": "internal",
+    "resolved": "docs/testing/JPA_PILOT_SWAGGER_VERIFICATION.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/architecture/JPA_PILOT_PR_READINESS.md",
+    "line": 3,
+    "target": "PRODUCT_JPA_INTEGRATION_REPORT.md",
+    "kind": "internal",
+    "resolved": "docs/architecture/PRODUCT_JPA_INTEGRATION_REPORT.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/architecture/LEGACY_UTILITY_MATRIX_COMPATIBILITY.md",
+    "line": 84,
+    "target": "V5_V7_HISTORICAL_MATRIX_RECOVERY_DESIGN.md",
+    "kind": "internal",
+    "resolved": "docs/architecture/V5_V7_HISTORICAL_MATRIX_RECOVERY_DESIGN.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/architecture/LEGACY_UTILITY_MATRIX_COMPATIBILITY.md",
+    "line": 84,
+    "target": "../testing/V5_V10_POPULATED_MATRIX_RECOVERY_TEST_PLAN.md",
+    "kind": "internal",
+    "resolved": "docs/testing/V5_V10_POPULATED_MATRIX_RECOVERY_TEST_PLAN.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/architecture/LEGACY_UTILITY_MATRIX_COMPATIBILITY.md",
+    "line": 93,
+    "target": "../testing/PR1_REVIEW_GATE_REPORT.md",
+    "kind": "internal",
+    "resolved": "docs/testing/PR1_REVIEW_GATE_REPORT.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/architecture/MIG_JPA_CORE_00_IMPLEMENTATION_REPORT.md",
+    "line": 49,
+    "target": "../testing/evidence/jpa_pilot/JPA_PILOT_RESULTS.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/jpa_pilot/JPA_PILOT_RESULTS.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/architecture/MIG_JPA_F02_01_IMPLEMENTATION_REPORT.md",
+    "line": 3,
+    "target": "MIG_JPA_CORE_00_IMPLEMENTATION_REPORT.md",
+    "kind": "internal",
+    "resolved": "docs/architecture/MIG_JPA_CORE_00_IMPLEMENTATION_REPORT.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/architecture/MIG_JPA_F02_01_IMPLEMENTATION_REPORT.md",
+    "line": 24,
+    "target": "../testing/evidence/jpa_pilot/OPENAPI_COMPARISON.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/jpa_pilot/OPENAPI_COMPARISON.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/architecture/MIG_JPA_F02_01_IMPLEMENTATION_REPORT.md",
+    "line": 26,
+    "target": "../testing/evidence/jpa_pilot/PRODUCT_CONTRACT_COMPARISON.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/jpa_pilot/PRODUCT_CONTRACT_COMPARISON.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/architecture/MIG_JPA_F02_01_IMPLEMENTATION_REPORT.md",
+    "line": 26,
+    "target": "../testing/evidence/jpa_pilot/PRODUCT_CONTRACT_BEFORE.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/jpa_pilot/PRODUCT_CONTRACT_BEFORE.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/architecture/MIG_JPA_F02_01_IMPLEMENTATION_REPORT.md",
+    "line": 26,
+    "target": "../testing/evidence/jpa_pilot/PRODUCT_CONTRACT_AFTER.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/jpa_pilot/PRODUCT_CONTRACT_AFTER.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/architecture/MIG_JPA_F02_01_IMPLEMENTATION_REPORT.md",
+    "line": 50,
+    "target": "../testing/JPA_PILOT_REAL_DATA_VERIFICATION.md",
+    "kind": "internal",
+    "resolved": "docs/testing/JPA_PILOT_REAL_DATA_VERIFICATION.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/architecture/PRODUCT_JPA_INTEGRATION_REPORT.md",
+    "line": 40,
+    "target": "../testing/evidence/product_jpa_integration/FULL_RESULTS.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/product_jpa_integration/FULL_RESULTS.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/architecture/PRODUCT_JPA_INTEGRATION_REPORT.md",
+    "line": 40,
+    "target": "../testing/evidence/product_jpa_integration/INTEGRATION_RESULTS.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/product_jpa_integration/INTEGRATION_RESULTS.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/architecture/PRODUCT_JPA_INTEGRATION_REPORT.md",
+    "line": 40,
+    "target": "../testing/evidence/product_jpa_integration/TECHNICAL_REVIEW.md",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/product_jpa_integration/TECHNICAL_REVIEW.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/architecture/V5_V7_HISTORICAL_MATRIX_RECOVERY_DESIGN.md",
+    "line": 71,
+    "target": "../testing/V5_V10_POPULATED_MATRIX_RECOVERY_TEST_PLAN.md",
+    "kind": "internal",
+    "resolved": "docs/testing/V5_V10_POPULATED_MATRIX_RECOVERY_TEST_PLAN.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/architecture/V5_V7_HISTORICAL_MATRIX_RECOVERY_DESIGN.md",
+    "line": 71,
+    "target": "LEGACY_UTILITY_MATRIX_COMPATIBILITY.md",
+    "kind": "internal",
+    "resolved": "docs/architecture/LEGACY_UTILITY_MATRIX_COMPATIBILITY.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/architecture/V5_V7_HISTORICAL_MATRIX_RECOVERY_DESIGN.md",
+    "line": 71,
+    "target": "../testing/evidence/historical_matrix_recovery/implementation/SOURCE_PRESERVATION.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/historical_matrix_recovery/implementation/SOURCE_PRESERVATION.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/architecture/V5_V7_HISTORICAL_MATRIX_RECOVERY_DESIGN.md",
+    "line": 71,
+    "target": "../testing/evidence/historical_matrix_recovery/implementation/TEST_RESULTS.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/historical_matrix_recovery/implementation/TEST_RESULTS.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/architecture/V5_V7_HISTORICAL_MATRIX_RECOVERY_DESIGN.md",
+    "line": 73,
+    "target": "https://dev.mysql.com/doc/refman/8.4/en/implicit-commit.html",
+    "kind": "external"
+  },
+  {
+    "file": "docs/architecture/V5_V7_HISTORICAL_MATRIX_RECOVERY_DESIGN.md",
+    "line": 73,
+    "target": "https://dev.mysql.com/doc/refman/8.4/en/create-table-like.html",
+    "kind": "external"
+  },
+  {
+    "file": "docs/architecture/V5_V7_HISTORICAL_MATRIX_RECOVERY_DESIGN.md",
+    "line": 73,
+    "target": "https://documentation.red-gate.com/flyway/reference/callback-events",
+    "kind": "external"
+  },
+  {
+    "file": "docs/architecture/V5_V7_HISTORICAL_MATRIX_RECOVERY_DESIGN.md",
+    "line": 73,
+    "target": "https://documentation.red-gate.com/flyway/reference/commands/repair",
+    "kind": "external"
+  },
+  {
+    "file": "docs/audits/F05_P0_DEPLOYMENT_FIX_REPORT.md",
+    "line": 71,
+    "target": "../setup/FLYWAY_MYSQL_V7_RECOVERY.md",
+    "kind": "internal",
+    "resolved": "docs/setup/FLYWAY_MYSQL_V7_RECOVERY.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/audits/F05_P0_DEPLOYMENT_FIX_REPORT.md",
+    "line": 101,
+    "target": "../setup/F05_SPMF_RUNTIME_SETUP.md",
+    "kind": "internal",
+    "resolved": "docs/setup/F05_SPMF_RUNTIME_SETUP.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/audits/F05_P0_DEPLOYMENT_FIX_REPORT.md",
+    "line": 150,
+    "target": "evidence/f05-p0/verification-summary.json",
+    "kind": "internal",
+    "resolved": "docs/audits/evidence/f05-p0/verification-summary.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/audits/F05_P0_DEPLOYMENT_FIX_REPORT.md",
+    "line": 151,
+    "target": "evidence/f05-p0/verification-events.txt",
+    "kind": "internal",
+    "resolved": "docs/audits/evidence/f05-p0/verification-events.txt",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/audits/F05_P0_DEPLOYMENT_FIX_REPORT.md",
+    "line": 152,
+    "target": "evidence/f05-p0/mysql-readback.txt",
+    "kind": "internal",
+    "resolved": "docs/audits/evidence/f05-p0/mysql-readback.txt",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/audits/F05_P0_DEPLOYMENT_FIX_REPORT.md",
+    "line": 153,
+    "target": "evidence/f05-p0/review.txt",
+    "kind": "internal",
+    "resolved": "docs/audits/evidence/f05-p0/review.txt",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F01_HANDOFF.md",
+    "line": 3,
+    "target": "../api/F01_AUTH_USER_API.md",
+    "kind": "internal",
+    "resolved": "docs/api/F01_AUTH_USER_API.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F01_HANDOFF.md",
+    "line": 3,
+    "target": "F01_examples/",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F01_examples",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F01_HANDOFF.md",
+    "line": 3,
+    "target": "../api/openapi.json",
+    "kind": "internal",
+    "resolved": "docs/api/openapi.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F02_HANDOFF.md",
+    "line": 10,
+    "target": "../api/F02_PRODUCT_INVENTORY_API.md",
+    "kind": "internal",
+    "resolved": "docs/api/F02_PRODUCT_INVENTORY_API.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F02_HANDOFF.md",
+    "line": 10,
+    "target": "F02_examples/",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F02_examples",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F02_HANDOFF.md",
+    "line": 10,
+    "target": "../api/openapi.json",
+    "kind": "internal",
+    "resolved": "docs/api/openapi.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F03_HANDOFF.md",
+    "line": 3,
+    "target": "../api/F03_UTILITY_API.md",
+    "kind": "internal",
+    "resolved": "docs/api/F03_UTILITY_API.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F03_HANDOFF.md",
+    "line": 3,
+    "target": "../api/openapi.json",
+    "kind": "internal",
+    "resolved": "docs/api/openapi.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F03_HANDOFF.md",
+    "line": 3,
+    "target": "../requirements/F03_WEIGHT_RULES_v1_2.md",
+    "kind": "internal",
+    "resolved": "docs/requirements/F03_WEIGHT_RULES_v1_2.md",
+    "valid": false,
+    "reason": "MISSING_TARGET"
+  },
+  {
+    "file": "docs/frontend_handoff/F03_HANDOFF.md",
+    "line": 90,
+    "target": "../api/F05_MINING_API.md",
+    "kind": "internal",
+    "resolved": "docs/api/F05_MINING_API.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F03_HANDOFF.md",
+    "line": 90,
+    "target": "../api/F06_RECOMMENDATION_API.md",
+    "kind": "internal",
+    "resolved": "docs/api/F06_RECOMMENDATION_API.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F04_HANDOFF.md",
+    "line": 32,
+    "target": "../PASPM_F04_Transaction_Data_Pipeline/examples/transactions.csv",
+    "kind": "internal",
+    "resolved": "docs/PASPM_F04_Transaction_Data_Pipeline/examples/transactions.csv",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F05_HANDOFF.md",
+    "line": 5,
+    "target": "../PASPM_F05_High_Utility_Mining/F05_VERIFICATION.md",
+    "kind": "internal",
+    "resolved": "docs/PASPM_F05_High_Utility_Mining/F05_VERIFICATION.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F05_HANDOFF.md",
+    "line": 5,
+    "target": "../setup/FLYWAY_MYSQL_V7_RECOVERY.md",
+    "kind": "internal",
+    "resolved": "docs/setup/FLYWAY_MYSQL_V7_RECOVERY.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F05_HANDOFF.md",
+    "line": 5,
+    "target": "../setup/F05_SPMF_RUNTIME_SETUP.md",
+    "kind": "internal",
+    "resolved": "docs/setup/F05_SPMF_RUNTIME_SETUP.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F05_HANDOFF.md",
+    "line": 7,
+    "target": "../api/openapi.json",
+    "kind": "internal",
+    "resolved": "docs/api/openapi.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F05_HANDOFF.md",
+    "line": 42,
+    "target": "F05_examples/create_request.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F05_examples/create_request.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F05_HANDOFF.md",
+    "line": 42,
+    "target": "F05_examples/create_response.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F05_examples/create_response.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F05_HANDOFF.md",
+    "line": 60,
+    "target": "../api/F05_MINING_API.md",
+    "kind": "internal",
+    "resolved": "docs/api/F05_MINING_API.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F05_HANDOFF.md",
+    "line": 60,
+    "target": "F05_examples/request_response.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F05_examples/request_response.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F05_HANDOFF.md",
+    "line": 60,
+    "target": "F05_examples/runs_response.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F05_examples/runs_response.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F05_HANDOFF.md",
+    "line": 60,
+    "target": "F05_examples/patterns_response.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F05_examples/patterns_response.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F05_HANDOFF.md",
+    "line": 60,
+    "target": "F05_examples/benchmark_response.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F05_examples/benchmark_response.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F05_HANDOFF.md",
+    "line": 60,
+    "target": "F05_examples/snapshot_list_response.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F05_examples/snapshot_list_response.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F05_HANDOFF.md",
+    "line": 60,
+    "target": "F05_examples/percentage_request.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F05_examples/percentage_request.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F06_HANDOFF.md",
+    "line": 3,
+    "target": "../api/F06_RECOMMENDATION_API.md",
+    "kind": "internal",
+    "resolved": "docs/api/F06_RECOMMENDATION_API.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F06_HANDOFF.md",
+    "line": 3,
+    "target": "../setup/F05_SPMF_RUNTIME_SETUP.md",
+    "kind": "internal",
+    "resolved": "docs/setup/F05_SPMF_RUNTIME_SETUP.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F06_HANDOFF.md",
+    "line": 3,
+    "target": "../setup/FLYWAY_MYSQL_V7_RECOVERY.md",
+    "kind": "internal",
+    "resolved": "docs/setup/FLYWAY_MYSQL_V7_RECOVERY.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F06_HANDOFF.md",
+    "line": 7,
+    "target": "F01_HANDOFF.md",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F01_HANDOFF.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F06_HANDOFF.md",
+    "line": 19,
+    "target": "F05_HANDOFF.md",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F05_HANDOFF.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F06_HANDOFF.md",
+    "line": 82,
+    "target": "F06_examples/generate_request.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F06_examples/generate_request.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F06_HANDOFF.md",
+    "line": 82,
+    "target": "F06_examples/generate_response.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F06_examples/generate_response.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F06_HANDOFF.md",
+    "line": 82,
+    "target": "F06_examples/detail_response.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F06_examples/detail_response.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F06_HANDOFF.md",
+    "line": 82,
+    "target": "F06_examples/list_response.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F06_examples/list_response.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F06_HANDOFF.md",
+    "line": 82,
+    "target": "F06_examples/config_response.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F06_examples/config_response.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F06_HANDOFF.md",
+    "line": 82,
+    "target": "F06_examples/approve_request.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F06_examples/approve_request.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F06_HANDOFF.md",
+    "line": 82,
+    "target": "F06_examples/approve_response.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F06_examples/approve_response.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F06_HANDOFF.md",
+    "line": 82,
+    "target": "F06_examples/conflict_response.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F06_examples/conflict_response.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F06_HANDOFF.md",
+    "line": 82,
+    "target": "F06_examples/expiry_push_response.json",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F06_examples/expiry_push_response.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F06_HANDOFF.md",
+    "line": 84,
+    "target": "../requirements/F06_VERIFICATION.md",
+    "kind": "internal",
+    "resolved": "docs/requirements/F06_VERIFICATION.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F06_examples/README.md",
+    "line": 13,
+    "target": "../../api/openapi.json",
+    "kind": "internal",
+    "resolved": "docs/api/openapi.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/frontend_handoff/F06_examples/README.md",
+    "line": 13,
+    "target": "../../requirements/F06_VERIFICATION.md",
+    "kind": "internal",
+    "resolved": "docs/requirements/F06_VERIFICATION.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/requirements/F06_IMPLEMENTATION_READINESS.md",
+    "line": 4,
+    "target": "F06_IMPLEMENTATION_SUMMARY.md",
+    "kind": "internal",
+    "resolved": "docs/requirements/F06_IMPLEMENTATION_SUMMARY.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/requirements/F06_IMPLEMENTATION_READINESS.md",
+    "line": 4,
+    "target": "F06_VERIFICATION.md",
+    "kind": "internal",
+    "resolved": "docs/requirements/F06_VERIFICATION.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/requirements/F06_IMPLEMENTATION_READINESS.md",
+    "line": 106,
+    "target": "evidence/f06-readiness.json",
+    "kind": "internal",
+    "resolved": "docs/requirements/evidence/f06-readiness.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/requirements/F06_IMPLEMENTATION_SUMMARY.md",
+    "line": 97,
+    "target": "../api/F06_RECOMMENDATION_API.md",
+    "kind": "internal",
+    "resolved": "docs/api/F06_RECOMMENDATION_API.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/requirements/F06_IMPLEMENTATION_SUMMARY.md",
+    "line": 97,
+    "target": "../api/openapi.json",
+    "kind": "internal",
+    "resolved": "docs/api/openapi.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/requirements/F06_IMPLEMENTATION_SUMMARY.md",
+    "line": 97,
+    "target": "../frontend_handoff/F06_HANDOFF.md",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F06_HANDOFF.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/requirements/F06_IMPLEMENTATION_SUMMARY.md",
+    "line": 101,
+    "target": "F06_VERIFICATION.md",
+    "kind": "internal",
+    "resolved": "docs/requirements/F06_VERIFICATION.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/requirements/F06_IMPLEMENTATION_SUMMARY.md",
+    "line": 102,
+    "target": "evidence/f06-automated-results.json",
+    "kind": "internal",
+    "resolved": "docs/requirements/evidence/f06-automated-results.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/requirements/F06_IMPLEMENTATION_SUMMARY.md",
+    "line": 102,
+    "target": "evidence/f06-swagger-ui.json",
+    "kind": "internal",
+    "resolved": "docs/requirements/evidence/f06-swagger-ui.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/requirements/F06_IMPLEMENTATION_SUMMARY.md",
+    "line": 102,
+    "target": "evidence/f06-mysql-readback.txt",
+    "kind": "internal",
+    "resolved": "docs/requirements/evidence/f06-mysql-readback.txt",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/requirements/F06_IMPLEMENTATION_SUMMARY.md",
+    "line": 102,
+    "target": "evidence/f06-erd-schema-check.json",
+    "kind": "internal",
+    "resolved": "docs/requirements/evidence/f06-erd-schema-check.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/requirements/F06_IMPLEMENTATION_SUMMARY.md",
+    "line": 102,
+    "target": "evidence/f06-codegraph.json",
+    "kind": "internal",
+    "resolved": "docs/requirements/evidence/f06-codegraph.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/requirements/F06_RECOMMENDATION_RULES_v1_1.md",
+    "line": 4,
+    "target": "F06_VERIFICATION.md",
+    "kind": "internal",
+    "resolved": "docs/requirements/F06_VERIFICATION.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/requirements/F06_RECOMMENDATION_RULES_v1_1.md",
+    "line": 48,
+    "target": "../api/F06_RECOMMENDATION_API.md",
+    "kind": "internal",
+    "resolved": "docs/api/F06_RECOMMENDATION_API.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/requirements/F06_VERIFICATION.md",
+    "line": 12,
+    "target": "evidence/f06-automated-results.json",
+    "kind": "internal",
+    "resolved": "docs/requirements/evidence/f06-automated-results.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/requirements/F06_VERIFICATION.md",
+    "line": 50,
+    "target": "evidence/f06-swagger-ui.json",
+    "kind": "internal",
+    "resolved": "docs/requirements/evidence/f06-swagger-ui.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/requirements/F06_VERIFICATION.md",
+    "line": 50,
+    "target": "evidence/f06-swagger-approved.png",
+    "kind": "internal",
+    "resolved": "docs/requirements/evidence/f06-swagger-approved.png",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/requirements/F06_VERIFICATION.md",
+    "line": 52,
+    "target": "evidence/f06-mysql-readback.txt",
+    "kind": "internal",
+    "resolved": "docs/requirements/evidence/f06-mysql-readback.txt",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/requirements/F06_VERIFICATION.md",
+    "line": 75,
+    "target": "evidence/f06-erd-schema-check.json",
+    "kind": "internal",
+    "resolved": "docs/requirements/evidence/f06-erd-schema-check.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/requirements/F06_VERIFICATION.md",
+    "line": 80,
+    "target": "evidence/f06-core-review.md",
+    "kind": "internal",
+    "resolved": "docs/requirements/evidence/f06-core-review.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "line": 51,
+    "target": "evidence/retail-catalog-automated.json",
+    "kind": "internal",
+    "resolved": "docs/requirements/evidence/retail-catalog-automated.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "line": 75,
+    "target": "evidence/retail-catalog-http.json",
+    "kind": "internal",
+    "resolved": "docs/requirements/evidence/retail-catalog-http.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "line": 93,
+    "target": "evidence/retail-catalog-swagger-ui.json",
+    "kind": "internal",
+    "resolved": "docs/requirements/evidence/retail-catalog-swagger-ui.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "line": 93,
+    "target": "evidence/retail-catalog-swagger-scores.png",
+    "kind": "internal",
+    "resolved": "docs/requirements/evidence/retail-catalog-swagger-scores.png",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "line": 95,
+    "target": "../api/openapi.json",
+    "kind": "internal",
+    "resolved": "docs/api/openapi.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "line": 116,
+    "target": "../api/F03_UTILITY_API.md",
+    "kind": "internal",
+    "resolved": "docs/api/F03_UTILITY_API.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "line": 116,
+    "target": "../api/F02_PRODUCT_INVENTORY_API.md",
+    "kind": "internal",
+    "resolved": "docs/api/F02_PRODUCT_INVENTORY_API.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "line": 116,
+    "target": "../api/F01_F02_RBAC_MATRIX.md",
+    "kind": "internal",
+    "resolved": "docs/api/F01_F02_RBAC_MATRIX.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "line": 116,
+    "target": "../frontend_handoff/F03_HANDOFF.md",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F03_HANDOFF.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "line": 116,
+    "target": "../frontend_handoff/F02_HANDOFF.md",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F02_HANDOFF.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "line": 116,
+    "target": "../api/API_CHANGELOG.md",
+    "kind": "internal",
+    "resolved": "docs/api/API_CHANGELOG.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/setup/BACKEND_CI.md",
+    "line": 1,
+    "target": "../testing/SPMF_CI_READINESS.md",
+    "kind": "internal",
+    "resolved": "docs/testing/SPMF_CI_READINESS.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/setup/BACKEND_CI.md",
+    "line": 1,
+    "target": "SPMF_ARTIFACT_HOSTING.md",
+    "kind": "internal",
+    "resolved": "docs/setup/SPMF_ARTIFACT_HOSTING.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/setup/BACKEND_CI.md",
+    "line": 5,
+    "target": "../testing/BACKEND_CI_REMOTE_VERIFICATION.md",
+    "kind": "internal",
+    "resolved": "docs/testing/BACKEND_CI_REMOTE_VERIFICATION.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/setup/BACKEND_CI.md",
+    "line": 24,
+    "target": "https://github.com/actions/setup-java",
+    "kind": "external"
+  },
+  {
+    "file": "docs/setup/BACKEND_CI.md",
+    "line": 37,
+    "target": "F05_SPMF_RUNTIME_SETUP.md",
+    "kind": "internal",
+    "resolved": "docs/setup/F05_SPMF_RUNTIME_SETUP.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/setup/BACKEND_CI.md",
+    "line": 49,
+    "target": "../testing/PR1_REVIEW_GATE_REPORT.md",
+    "kind": "internal",
+    "resolved": "docs/testing/PR1_REVIEW_GATE_REPORT.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/setup/F05_SPMF_RUNTIME_SETUP.md",
+    "line": 9,
+    "target": "https://www.philippe-fournier-viger.com/spmf/download.php",
+    "kind": "external"
+  },
+  {
+    "file": "docs/setup/F05_SPMF_RUNTIME_SETUP.md",
+    "line": 13,
+    "target": "https://www.philippe-fournier-viger.com/spmf/developers.php",
+    "kind": "external"
+  },
+  {
+    "file": "docs/setup/F05_SPMF_RUNTIME_SETUP.md",
+    "line": 76,
+    "target": "FLYWAY_MYSQL_V7_RECOVERY.md",
+    "kind": "internal",
+    "resolved": "docs/setup/FLYWAY_MYSQL_V7_RECOVERY.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/setup/F05_SPMF_RUNTIME_SETUP.md",
+    "line": 97,
+    "target": "../api/F05_MINING_API.md",
+    "kind": "internal",
+    "resolved": "docs/api/F05_MINING_API.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/setup/F05_SPMF_RUNTIME_SETUP.md",
+    "line": 97,
+    "target": "../frontend_handoff/F05_HANDOFF.md",
+    "kind": "internal",
+    "resolved": "docs/frontend_handoff/F05_HANDOFF.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/setup/F05_SPMF_RUNTIME_SETUP.md",
+    "line": 151,
+    "target": "../audits/F05_P0_DEPLOYMENT_FIX_REPORT.md",
+    "kind": "internal",
+    "resolved": "docs/audits/F05_P0_DEPLOYMENT_FIX_REPORT.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/setup/FLYWAY_MYSQL_V7_RECOVERY.md",
+    "line": 18,
+    "target": "https://documentation.red-gate.com/flyway/reference/commands/repair",
+    "kind": "external"
+  },
+  {
+    "file": "docs/setup/FLYWAY_MYSQL_V7_RECOVERY.md",
+    "line": 18,
+    "target": "https://documentation.red-gate.com/flyway/flyway-concepts/migrations/baseline-migrations",
+    "kind": "external"
+  },
+  {
+    "file": "docs/setup/SPMF_ARTIFACT_HOSTING.md",
+    "line": 11,
+    "target": "https://www.philippe-fournier-viger.com/spmf/download.php",
+    "kind": "external"
+  },
+  {
+    "file": "docs/setup/SPMF_ARTIFACT_HOSTING.md",
+    "line": 13,
+    "target": "https://www.philippe-fournier-viger.com/spmf/developers.php",
+    "kind": "external"
+  },
+  {
+    "file": "docs/setup/SPMF_ARTIFACT_HOSTING.md",
+    "line": 13,
+    "target": "https://www.gnu.org/licenses/gpl-3.0-standalone.html",
+    "kind": "external"
+  },
+  {
+    "file": "docs/setup/SPMF_ARTIFACT_HOSTING.md",
+    "line": 13,
+    "target": "https://www.gnu.org/licenses/gpl-faq.en.html#AnonFTPAndSendSources",
+    "kind": "external"
+  },
+  {
+    "file": "docs/setup/SPMF_ARTIFACT_HOSTING.md",
+    "line": 21,
+    "target": "https://docs.github.com/en/code-security/how-tos/secure-your-supply-chain/establish-provenance-and-integrity/prevent-release-changes",
+    "kind": "external"
+  },
+  {
+    "file": "docs/setup/SPMF_ARTIFACT_HOSTING.md",
+    "line": 24,
+    "target": "https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository",
+    "kind": "external"
+  },
+  {
+    "file": "docs/setup/SPMF_ARTIFACT_HOSTING.md",
+    "line": 61,
+    "target": "../testing/BACKEND_CI_REMOTE_FIX_PR_DESCRIPTION.md",
+    "kind": "internal",
+    "resolved": "docs/testing/BACKEND_CI_REMOTE_FIX_PR_DESCRIPTION.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/setup/SPMF_ARTIFACT_HOSTING.md",
+    "line": 61,
+    "target": "https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/pull/3",
+    "kind": "external"
+  },
+  {
+    "file": "docs/superpowers/specs/2026-10-21-retail-catalog-utility-design.md",
+    "line": 64,
+    "target": "../../requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "kind": "internal",
+    "resolved": "docs/requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/BACKEND_CI_REMOTE_VERIFICATION.md",
+    "line": 28,
+    "target": "https://maven.apache.org/surefire/maven-surefire-plugin/test-mojo.html#systemPropertyVariables",
+    "kind": "external"
+  },
+  {
+    "file": "docs/testing/BACKEND_CI_REMOTE_VERIFICATION.md",
+    "line": 36,
+    "target": "evidence/backend_ci_remote/AFTER_MYSQL_RESULTS.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/backend_ci_remote/AFTER_MYSQL_RESULTS.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/BACKEND_CI_REMOTE_VERIFICATION.md",
+    "line": 42,
+    "target": "evidence/backend_ci_remote/FULL_LOCAL_RESULTS.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/backend_ci_remote/FULL_LOCAL_RESULTS.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/BACKEND_CI_REMOTE_VERIFICATION.md",
+    "line": 52,
+    "target": "https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/actions/runs/39879145935",
+    "kind": "external"
+  },
+  {
+    "file": "docs/testing/BACKEND_CI_REMOTE_VERIFICATION.md",
+    "line": 52,
+    "target": "https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/actions/runs/39909707415",
+    "kind": "external"
+  },
+  {
+    "file": "docs/testing/BACKEND_CI_REMOTE_VERIFICATION.md",
+    "line": 52,
+    "target": "evidence/backend_ci_remote/REMOTE_RESULTS.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/backend_ci_remote/REMOTE_RESULTS.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/BACKEND_CI_REMOTE_VERIFICATION.md",
+    "line": 56,
+    "target": "../setup/BACKEND_CI.md#publish-the-approved-spmf-artifact-safely",
+    "kind": "internal",
+    "resolved": "docs/setup/BACKEND_CI.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/BACKEND_CI_REMOTE_VERIFICATION.md",
+    "line": 64,
+    "target": "https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/compare/dev...Khoi%2Ffix%2Fbackend-ci-remote-verification?expand=1",
+    "kind": "external"
+  },
+  {
+    "file": "docs/testing/BACKEND_CI_REMOTE_VERIFICATION.md",
+    "line": 64,
+    "target": "BACKEND_CI_REMOTE_FIX_PR_DESCRIPTION.md",
+    "kind": "internal",
+    "resolved": "docs/testing/BACKEND_CI_REMOTE_FIX_PR_DESCRIPTION.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/BACKEND_CI_REMOTE_VERIFICATION.md",
+    "line": 66,
+    "target": "evidence/backend_ci_remote/SOURCE_PRESERVATION.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/backend_ci_remote/SOURCE_PRESERVATION.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/JPA_PILOT_REAL_DATA_VERIFICATION.md",
+    "line": 1,
+    "target": "JPA_V5_TO_V10_MIGRATION_VERIFICATION.md",
+    "kind": "internal",
+    "resolved": "docs/testing/JPA_V5_TO_V10_MIGRATION_VERIFICATION.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/JPA_PILOT_REAL_DATA_VERIFICATION.md",
+    "line": 1,
+    "target": "../architecture/JPA_PILOT_PR_READINESS.md",
+    "kind": "internal",
+    "resolved": "docs/architecture/JPA_PILOT_PR_READINESS.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/JPA_PILOT_REAL_DATA_VERIFICATION.md",
+    "line": 16,
+    "target": "evidence/jpa_pilot/JPA_PILOT_RESULTS.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/jpa_pilot/JPA_PILOT_RESULTS.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/JPA_PILOT_REAL_DATA_VERIFICATION.md",
+    "line": 52,
+    "target": "../architecture/MIG_JPA_CORE_00_IMPLEMENTATION_REPORT.md",
+    "kind": "internal",
+    "resolved": "docs/architecture/MIG_JPA_CORE_00_IMPLEMENTATION_REPORT.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/JPA_PILOT_REAL_DATA_VERIFICATION.md",
+    "line": 92,
+    "target": "evidence/jpa_pilot_review/source-discovery.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/jpa_pilot_review/source-discovery.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/JPA_PILOT_REAL_DATA_VERIFICATION.md",
+    "line": 92,
+    "target": "evidence/jpa_pilot_review/configured-qa-probes.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/jpa_pilot_review/configured-qa-probes.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/JPA_PILOT_REAL_DATA_VERIFICATION.md",
+    "line": 92,
+    "target": "evidence/jpa_pilot_review/source-before.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/jpa_pilot_review/source-before.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/JPA_PILOT_REAL_DATA_VERIFICATION.md",
+    "line": 92,
+    "target": "evidence/jpa_pilot_review/source-after.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/jpa_pilot_review/source-after.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/JPA_PILOT_REAL_DATA_VERIFICATION.md",
+    "line": 102,
+    "target": "evidence/jpa_pilot_review/ui-database-proof.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/jpa_pilot_review/ui-database-proof.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/JPA_PILOT_REAL_DATA_VERIFICATION.md",
+    "line": 128,
+    "target": "evidence/jpa_pilot_review/fresh-test-results.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/jpa_pilot_review/fresh-test-results.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/JPA_PILOT_REAL_DATA_VERIFICATION.md",
+    "line": 130,
+    "target": "JPA_PILOT_SWAGGER_VERIFICATION.md",
+    "kind": "internal",
+    "resolved": "docs/testing/JPA_PILOT_SWAGGER_VERIFICATION.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/JPA_PILOT_REAL_DATA_VERIFICATION.md",
+    "line": 130,
+    "target": "evidence/jpa_pilot_review/SWAGGER_RESULTS.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/jpa_pilot_review/SWAGGER_RESULTS.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/JPA_PILOT_REAL_DATA_VERIFICATION.md",
+    "line": 130,
+    "target": "evidence/jpa_pilot_review/OPENAPI_RUNTIME_RESULT.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/jpa_pilot_review/OPENAPI_RUNTIME_RESULT.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/JPA_PILOT_REAL_DATA_VERIFICATION.md",
+    "line": 136,
+    "target": "../architecture/JPA_PILOT_PR_READINESS.md",
+    "kind": "internal",
+    "resolved": "docs/architecture/JPA_PILOT_PR_READINESS.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/JPA_PILOT_REAL_DATA_VERIFICATION.md",
+    "line": 136,
+    "target": "../architecture/JPA_PILOT_CODE_REVIEW.md",
+    "kind": "internal",
+    "resolved": "docs/architecture/JPA_PILOT_CODE_REVIEW.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/JPA_PILOT_SWAGGER_VERIFICATION.md",
+    "line": 36,
+    "target": "evidence/jpa_pilot_review/SWAGGER_RESULTS.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/jpa_pilot_review/SWAGGER_RESULTS.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/JPA_PILOT_SWAGGER_VERIFICATION.md",
+    "line": 42,
+    "target": "evidence/jpa_pilot_review/ui-database-proof.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/jpa_pilot_review/ui-database-proof.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/JPA_PILOT_SWAGGER_VERIFICATION.md",
+    "line": 44,
+    "target": "evidence/jpa_pilot_review/swagger-no-token-401.png",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/jpa_pilot_review/swagger-no-token-401.png",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/JPA_V5_TO_V10_MIGRATION_VERIFICATION.md",
+    "line": 13,
+    "target": "https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/tree/12d348e",
+    "kind": "external"
+  },
+  {
+    "file": "docs/testing/JPA_V5_TO_V10_MIGRATION_VERIFICATION.md",
+    "line": 13,
+    "target": "V5_V10_POPULATED_MATRIX_RECOVERY_TEST_PLAN.md",
+    "kind": "internal",
+    "resolved": "docs/testing/V5_V10_POPULATED_MATRIX_RECOVERY_TEST_PLAN.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/JPA_V5_TO_V10_MIGRATION_VERIFICATION.md",
+    "line": 19,
+    "target": "evidence/historical_matrix_recovery/implementation/TEST_RESULTS.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/historical_matrix_recovery/implementation/TEST_RESULTS.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/JPA_V5_TO_V10_MIGRATION_VERIFICATION.md",
+    "line": 19,
+    "target": "evidence/historical_matrix_recovery/implementation/PRODUCT_PILOT_COMPATIBILITY.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/historical_matrix_recovery/implementation/PRODUCT_PILOT_COMPATIBILITY.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/JPA_V5_TO_V10_MIGRATION_VERIFICATION.md",
+    "line": 19,
+    "target": "evidence/historical_matrix_recovery/implementation/SOURCE_PRESERVATION.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/historical_matrix_recovery/implementation/SOURCE_PRESERVATION.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/JPA_V5_TO_V10_MIGRATION_VERIFICATION.md",
+    "line": 19,
+    "target": "evidence/historical_matrix_recovery/implementation/REPLAY_RESULTS.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/historical_matrix_recovery/implementation/REPLAY_RESULTS.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/JPA_V5_TO_V10_MIGRATION_VERIFICATION.md",
+    "line": 26,
+    "target": "PR1_REVIEW_GATE_REPORT.md",
+    "kind": "internal",
+    "resolved": "docs/testing/PR1_REVIEW_GATE_REPORT.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/JPA_V5_TO_V10_MIGRATION_VERIFICATION.md",
+    "line": 30,
+    "target": "../architecture/PRODUCT_JPA_INTEGRATION_REPORT.md",
+    "kind": "internal",
+    "resolved": "docs/architecture/PRODUCT_JPA_INTEGRATION_REPORT.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/PR1_REVIEW_GATE_REPORT.md",
+    "line": 7,
+    "target": "https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/pull/1",
+    "kind": "external"
+  },
+  {
+    "file": "docs/testing/PR1_REVIEW_GATE_REPORT.md",
+    "line": 28,
+    "target": "evidence/pr1_review_gates/RECOVERY_TEST_RESULTS.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/pr1_review_gates/RECOVERY_TEST_RESULTS.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/PR1_REVIEW_GATE_REPORT.md",
+    "line": 29,
+    "target": "evidence/pr1_review_gates/CI_LOCAL_GROUP_RESULTS.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/pr1_review_gates/CI_LOCAL_GROUP_RESULTS.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/PR1_REVIEW_GATE_REPORT.md",
+    "line": 31,
+    "target": "evidence/pr1_review_gates/CI_HELPER_RESULTS.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/pr1_review_gates/CI_HELPER_RESULTS.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/PR1_REVIEW_GATE_REPORT.md",
+    "line": 38,
+    "target": "evidence/pr1_review_gates/HISTORICAL_REPLAY.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/pr1_review_gates/HISTORICAL_REPLAY.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/PR1_REVIEW_GATE_REPORT.md",
+    "line": 43,
+    "target": "evidence/pr1_review_gates/RECOVERY_SOURCE_REVIEW.md",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/pr1_review_gates/RECOVERY_SOURCE_REVIEW.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/PR1_REVIEW_GATE_REPORT.md",
+    "line": 49,
+    "target": "evidence/pr1_review_gates/CI_VALIDATION.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/pr1_review_gates/CI_VALIDATION.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/PR1_REVIEW_GATE_REPORT.md",
+    "line": 49,
+    "target": "evidence/pr1_review_gates/RUNTIME_VERIFICATION.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/pr1_review_gates/RUNTIME_VERIFICATION.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/PR1_REVIEW_GATE_REPORT.md",
+    "line": 49,
+    "target": "evidence/pr1_review_gates/CI_HELPER_MYSQL.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/pr1_review_gates/CI_HELPER_MYSQL.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/PR1_REVIEW_GATE_REPORT.md",
+    "line": 49,
+    "target": "evidence/pr1_review_gates/ARTIFACT_PREREQUISITE.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/pr1_review_gates/ARTIFACT_PREREQUISITE.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/PR1_REVIEW_GATE_REPORT.md",
+    "line": 51,
+    "target": "../setup/BACKEND_CI.md",
+    "kind": "internal",
+    "resolved": "docs/setup/BACKEND_CI.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/PR1_REVIEW_GATE_REPORT.md",
+    "line": 55,
+    "target": "evidence/pr1_review_gates/SOURCE_PRESERVATION.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/pr1_review_gates/SOURCE_PRESERVATION.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/PR1_REVIEW_GATE_REPORT.md",
+    "line": 59,
+    "target": "evidence/pr1_review_gates/DELIVERY.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/pr1_review_gates/DELIVERY.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/PR1_REVIEW_GATE_REPORT.md",
+    "line": 59,
+    "target": "evidence/pr1_review_gates/CLEANUP.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/pr1_review_gates/CLEANUP.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/PR1_REVIEW_GATE_REPORT.md",
+    "line": 63,
+    "target": "https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/compare/dev...Khoi%2Fchore%2Frecovery-review-ci-gates?expand=1",
+    "kind": "external"
+  },
+  {
+    "file": "docs/testing/PR1_REVIEW_GATE_REPORT.md",
+    "line": 63,
+    "target": "../architecture/BACKEND_CI_PR_DESCRIPTION.md",
+    "kind": "internal",
+    "resolved": "docs/architecture/BACKEND_CI_PR_DESCRIPTION.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/PR1_REVIEW_GATE_REPORT.md",
+    "line": 67,
+    "target": "https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/actions/runs/39878437809",
+    "kind": "external"
+  },
+  {
+    "file": "docs/testing/PR1_REVIEW_GATE_REPORT.md",
+    "line": 67,
+    "target": "https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#context-availability",
+    "kind": "external"
+  },
+  {
+    "file": "docs/testing/SPMF_CI_READINESS.md",
+    "line": 29,
+    "target": "evidence/spmf_ci_readiness/ARTIFACT.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/spmf_ci_readiness/ARTIFACT.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/SPMF_CI_READINESS.md",
+    "line": 29,
+    "target": "evidence/spmf_ci_readiness/REDIRECT_PROBE.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/spmf_ci_readiness/REDIRECT_PROBE.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/SPMF_CI_READINESS.md",
+    "line": 29,
+    "target": "evidence/spmf_ci_readiness/REDIRECT_AFTER.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/spmf_ci_readiness/REDIRECT_AFTER.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/SPMF_CI_READINESS.md",
+    "line": 29,
+    "target": "evidence/spmf_ci_readiness/DOWNLOADER_RESULTS.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/spmf_ci_readiness/DOWNLOADER_RESULTS.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/SPMF_CI_READINESS.md",
+    "line": 29,
+    "target": "evidence/spmf_ci_readiness/MINING_RUNTIME_RESULTS.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/spmf_ci_readiness/MINING_RUNTIME_RESULTS.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/SPMF_CI_READINESS.md",
+    "line": 29,
+    "target": "evidence/spmf_ci_readiness/AGENT_REVIEW.md",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/spmf_ci_readiness/AGENT_REVIEW.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/SPMF_CI_READINESS.md",
+    "line": 33,
+    "target": "../setup/SPMF_ARTIFACT_HOSTING.md",
+    "kind": "internal",
+    "resolved": "docs/setup/SPMF_ARTIFACT_HOSTING.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/SPMF_CI_READINESS.md",
+    "line": 39,
+    "target": "evidence/spmf_ci_readiness/SCOPE_PRESERVATION.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/spmf_ci_readiness/SCOPE_PRESERVATION.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/SPMF_CI_READINESS.md",
+    "line": 49,
+    "target": "BACKEND_CI_REMOTE_FIX_PR_DESCRIPTION.md",
+    "kind": "internal",
+    "resolved": "docs/testing/BACKEND_CI_REMOTE_FIX_PR_DESCRIPTION.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/SPMF_CI_READINESS.md",
+    "line": 53,
+    "target": "https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/actions/runs/40167457094",
+    "kind": "external"
+  },
+  {
+    "file": "docs/testing/SPMF_CI_READINESS.md",
+    "line": 63,
+    "target": "evidence/spmf_ci_readiness/GITHUB_RESULTS.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/spmf_ci_readiness/GITHUB_RESULTS.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/V5_V10_POPULATED_MATRIX_RECOVERY_TEST_PLAN.md",
+    "line": 72,
+    "target": "evidence/historical_matrix_recovery/implementation/TEST_RESULTS.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/historical_matrix_recovery/implementation/TEST_RESULTS.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/V5_V10_POPULATED_MATRIX_RECOVERY_TEST_PLAN.md",
+    "line": 73,
+    "target": "evidence/historical_matrix_recovery/implementation/PRODUCT_PILOT_COMPATIBILITY.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/historical_matrix_recovery/implementation/PRODUCT_PILOT_COMPATIBILITY.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/V5_V10_POPULATED_MATRIX_RECOVERY_TEST_PLAN.md",
+    "line": 74,
+    "target": "evidence/historical_matrix_recovery/implementation/REPLAY_RESULTS.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/historical_matrix_recovery/implementation/REPLAY_RESULTS.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/V5_V10_POPULATED_MATRIX_RECOVERY_TEST_PLAN.md",
+    "line": 75,
+    "target": "evidence/historical_matrix_recovery/implementation/SOURCE_PRESERVATION.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/historical_matrix_recovery/implementation/SOURCE_PRESERVATION.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/V5_V10_POPULATED_MATRIX_RECOVERY_TEST_PLAN.md",
+    "line": 76,
+    "target": "evidence/historical_matrix_recovery/implementation/MIGRATION_MANIFEST.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/historical_matrix_recovery/implementation/MIGRATION_MANIFEST.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/V5_V10_POPULATED_MATRIX_RECOVERY_TEST_PLAN.md",
+    "line": 77,
+    "target": "evidence/historical_matrix_recovery/implementation/REVIEW_SUMMARY.md",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/historical_matrix_recovery/implementation/REVIEW_SUMMARY.md",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/V5_V10_POPULATED_MATRIX_RECOVERY_TEST_PLAN.md",
+    "line": 79,
+    "target": "evidence/historical_matrix_recovery/POC_RESULTS.json",
+    "kind": "internal",
+    "resolved": "docs/testing/evidence/historical_matrix_recovery/POC_RESULTS.json",
+    "valid": true,
+    "reason": "OK"
+  },
+  {
+    "file": "docs/testing/evidence/pr1_review_gates/CI_SOURCE_REVIEW.md",
+    "line": 18,
+    "target": "https://raw.githubusercontent.com/actions/checkout/11d5960a326750d5838078e36cf38b85af677262/action.yml",
+    "kind": "external"
+  },
+  {
+    "file": "docs/testing/evidence/pr1_review_gates/CI_SOURCE_REVIEW.md",
+    "line": 18,
+    "target": "https://raw.githubusercontent.com/actions/setup-java/cf277c60eb25467037889841efdb72551f06f6c3/action.yml",
+    "kind": "external"
+  },
+  {
+    "file": "docs/testing/evidence/pr1_review_gates/CI_SOURCE_REVIEW.md",
+    "line": 21,
+    "target": "https://raw.githubusercontent.com/docker-library/mysql/master/8.4/Dockerfile.oracle",
+    "kind": "external"
+  }
+]

@@ -1,0 +1,119 @@
+{
+  "create": {
+    "status": 201,
+    "body": {
+      "id": 0,
+      "sku": "CONTRACT-SKU",
+      "name": "Contract product",
+      "unit": "each",
+      "requiresExpiry": false,
+      "category": null,
+      "sellingPrice": 50.0,
+      "costPrice": 20.0,
+      "status": "ACTIVE",
+      "stockQuantity": 0,
+      "expiryPushDays": 0
+    }
+  },
+  "get": {
+    "status": 200,
+    "body": {
+      "id": 0,
+      "sku": "CONTRACT-SKU",
+      "name": "Contract product",
+      "unit": "each",
+      "requiresExpiry": false,
+      "category": null,
+      "sellingPrice": 50.0,
+      "costPrice": 20.0,
+      "status": "ACTIVE",
+      "stockQuantity": 0,
+      "expiryPushDays": 0
+    }
+  },
+  "duplicate": {
+    "status": 409,
+    "body": {
+      "error": "Resource already exists or violates a data constraint"
+    }
+  },
+  "foreign": {
+    "status": 404,
+    "body": {
+      "error": "Product not found"
+    }
+  },
+  "missingAuth": {
+    "status": 401,
+    "body": null
+  },
+  "update": {
+    "status": 200,
+    "body": {
+      "id": 0,
+      "sku": "CONTRACT-SKU",
+      "name": "Updated contract",
+      "unit": "each",
+      "requiresExpiry": false,
+      "category": null,
+      "sellingPrice": 75.0,
+      "costPrice": 20.0,
+      "status": "ACTIVE",
+      "stockQuantity": 0,
+      "expiryPushDays": 0
+    }
+  },
+  "status": {
+    "status": 200,
+    "body": {
+      "id": 0,
+      "sku": "CONTRACT-SKU",
+      "name": "Updated contract",
+      "unit": "each",
+      "requiresExpiry": false,
+      "category": null,
+      "sellingPrice": 75.0,
+      "costPrice": 20.0,
+      "status": "INACTIVE",
+      "stockQuantity": 0,
+      "expiryPushDays": 0
+    }
+  },
+  "negativePrice": {
+    "status": 400,
+    "body": {
+      "error": "Invalid request fields"
+    }
+  },
+  "search": {
+    "status": 200,
+    "body": {
+      "content": [
+        {
+          "id": 0,
+          "sku": "CONTRACT-SKU",
+          "name": "Updated contract",
+          "unit": "each",
+          "requiresExpiry": false,
+          "category": null,
+          "sellingPrice": 75.0,
+          "costPrice": 20.0,
+          "status": "INACTIVE",
+          "stockQuantity": 0,
+          "expiryPushDays": 0
+        }
+      ],
+      "page": 0,
+      "pageSize": 20,
+      "totalElements": 1,
+      "totalPages": 1
+    }
+  },
+  "measurement": {
+    "warmup": 5,
+    "notes": "Local MockMvc + real MySQL + JWT lookup, synthetic fixture; no performance guarantee",
+    "p95Millis": 14.696333,
+    "getRequestsMeasured": 25,
+    "medianMillis": 5.093875
+  }
+}

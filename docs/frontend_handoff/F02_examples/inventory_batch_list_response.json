@@ -1,0 +1,14 @@
+[
+  {
+    "id": 31,
+    "productId": 21,
+    "batchCode": "B-001",
+    "receivedAt": "2026-10-17T02:00:00Z",
+    "expiryDate": "2026-10-24",
+    "initialQuantity": 12,
+    "remainingQuantity": 12,
+    "status": "ACTIVE",
+    "createdAt": "2026-10-17T02:00:00Z",
+    "updatedAt": "2026-10-17T02:00:00Z"
+  }
+]

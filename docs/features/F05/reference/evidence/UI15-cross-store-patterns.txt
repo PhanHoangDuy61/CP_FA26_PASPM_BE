@@ -1,0 +1,122 @@
+GET
+/api/mining/runs/{id}/patterns
+Page raw high-utility patterns by utility descending, canonical Product IDs ascending
+
+Empty while pending/failed; check run status. Utility is frozen weighted utility, not revenue. pageSize controls display only and never changes minUtil. Support is not measured.
+
+Parameters
+Cancel
+Name	Description
+
+id *
+integer($int64)
+(path)
+
+
+page
+integer($int32)
+(query)
+
+
+pageSize
+integer($int32)
+(query)
+
+Execute
+Clear
+Responses
+Curl
+curl -X 'GET' \
+  'http://127.0.0.1:18085/api/mining/runs/1/patterns?page=0&pageSize=20' \
+  -H 'accept: */*' \
+  -H 'Authorization: Bearer [REDACTED]'
+Request URL
+http://127.0.0.1:18085/api/mining/runs/1/patterns?page=0&pageSize=20
+Server response
+Code	Details
+404
+
+Error: response status is 404
+
+Response body
+Download
+{
+  "error": "Mining run not found"
+}
+Response headers
+ cache-control: no-cache,no-store,max-age=0,must-revalidate
+ connection: keep-alive
+ content-type: application/json
+ date: Mon,19 Oct 2026 16:08:41 GMT
+ expires: 0
+ keep-alive: timeout=60
+ pragma: no-cache
+ transfer-encoding: chunked
+ x-content-type-options: nosniff
+ x-frame-options: DENY
+ x-xss-protection: 0
+Responses
+Code	Description	Links
+200
+
+OK
+
+Media type
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "items": [
+    {
+      "patternId": 0,
+      "runId": 0,
+      "productIds": [
+        0
+      ],
+      "utility": 0,
+      "utilitySpmf": 0,
+      "patternSize": 0,
+      "supportCount": 0
+    }
+  ],
+  "page": 0,
+  "pageSize": 0,
+  "totalElements": 0
+}
+	No links
+400
+
+Invalid request / verification
+
+	No links
+401
+
+Authentication required / invalid
+
+	No links
+403
+
+Permission denied
+
+	No links
+404
+
+Resource not found or outside the authenticated Store
+
+	No links
+409
+
+Conflict
+
+	No links
+429
+
+Rate limit exceeded
+
+	No links
+503
+
+Service configuration or required dependency unavailable
+
+	No links

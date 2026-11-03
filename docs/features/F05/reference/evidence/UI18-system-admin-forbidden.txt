@@ -1,0 +1,176 @@
+GET
+/api/mining/requests
+List this Store's mining requests, newest first
+Parameters
+Cancel
+Name	Description
+
+page
+integer($int32)
+(query)
+
+
+pageSize
+integer($int32)
+(query)
+
+Execute
+Clear
+Responses
+Curl
+curl -X 'GET' \
+  'http://127.0.0.1:18085/api/mining/requests?page=0&pageSize=20' \
+  -H 'accept: */*' \
+  -H 'Authorization: Bearer [REDACTED]'
+Request URL
+http://127.0.0.1:18085/api/mining/requests?page=0&pageSize=20
+Server response
+Code	Details
+403
+
+Error: response status is 403
+
+Response body
+Download
+{
+  "error": "Forbidden"
+}
+Response headers
+ cache-control: no-cache,no-store,max-age=0,must-revalidate
+ connection: keep-alive
+ content-type: application/json
+ date: Mon,19 Oct 2026 16:08:57 GMT
+ expires: 0
+ keep-alive: timeout=60
+ pragma: no-cache
+ transfer-encoding: chunked
+ x-content-type-options: nosniff
+ x-frame-options: DENY
+ x-xss-protection: 0
+Responses
+Code	Description	Links
+200
+
+OK
+
+Media type
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "items": [
+    {
+      "requestId": 0,
+      "storeId": 0,
+      "requestedBy": 0,
+      "requestKey": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "snapshotId": 0,
+      "algorithms": [
+        "HUI_MINER"
+      ],
+      "minUtilMode": "PERCENTAGE",
+      "minUtilValue": 0,
+      "minUtilSpmf": 0,
+      "effectiveMinUtility": 0,
+      "status": "string",
+      "comparisonStatus": "string",
+      "snapshotHash": "string",
+      "inputHash": "string",
+      "conversionVersion": "string",
+      "utilityScale": 0,
+      "roundingMode": "string",
+      "divisor": 0,
+      "totalScaledUtility": 0,
+      "transactionCount": 0,
+      "distinctItems": 0,
+      "inputBytes": 0,
+      "snapshot": {
+        "snapshotId": 0,
+        "storeId": 0,
+        "createdBy": 0,
+        "rangeStart": "2026-10-19",
+        "rangeEnd": "2026-10-19",
+        "asOfDate": "2026-10-19",
+        "configuration": {
+          "config": {
+            "enableStock": true,
+            "enableExpiry": true,
+            "enableSeason": true,
+            "alpha": 0,
+            "beta": 0,
+            "gamma": 0,
+            "lambda": 0,
+            "version": 0,
+            "scoringVersion": "string"
+          },
+          "lambdaPolicy": {
+            "lambdaMin": 0,
+            "lambdaMax": 0,
+            "version": 0
+          },
+          "effectiveCoefficients": {
+            "alpha": 0,
+            "beta": 0,
+            "gamma": 0
+          },
+          "analysisDate": "2026-10-19",
+          "source": "string",
+          "utilityScale": 0,
+          "roundingMode": "string",
+          "itemMapping": "string",
+          "timeZone": "string"
+        },
+        "sourceHash": "string",
+        "matrixHash": "string",
+        "totalWeightedUtility": 0,
+        "roundingScale": 0,
+        "status": "string",
+        "createdAt": "2026-10-19T16:08:57.490Z",
+        "warnings": [
+          "string"
+        ]
+      },
+      "createdAt": "2026-10-19T16:08:57.490Z"
+    }
+  ],
+  "page": 0,
+  "pageSize": 0,
+  "totalElements": 0
+}
+	No links
+400
+
+Invalid request / verification
+
+	No links
+401
+
+Authentication required / invalid
+
+	No links
+403
+
+Permission denied
+
+	No links
+404
+
+Resource not found or outside the authenticated Store
+
+	No links
+409
+
+Conflict
+
+	No links
+429
+
+Rate limit exceeded
+
+	No links
+503
+
+Service configuration or required dependency unavailable
+
+	No links

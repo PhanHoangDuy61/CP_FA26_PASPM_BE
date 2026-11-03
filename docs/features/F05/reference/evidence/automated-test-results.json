@@ -1,0 +1,684 @@
+{
+  "total": 113,
+  "pass": 113,
+  "cases": [
+    {
+      "suite": "vn.edu.fpt.paspm.AuthIntegrationTest",
+      "test": "passwordChangeRejectsWrongCurrentPasswordAndSamePassword",
+      "status": "PASS",
+      "seconds": 1.177
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.AuthIntegrationTest",
+      "test": "passwordResetIsGenericSingleUseAndRevokesExistingTokens",
+      "status": "PASS",
+      "seconds": 0.941
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.AuthIntegrationTest",
+      "test": "adminInviteActivatesWithInitialPassword",
+      "status": "PASS",
+      "seconds": 0.699
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.AuthIntegrationTest",
+      "test": "invalidOtpAttemptsPersistAndLockChallenge",
+      "status": "PASS",
+      "seconds": 0.005
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.AuthIntegrationTest",
+      "test": "passwordResetCooldownIsGenericAndAllowsRequestAfterExpiry",
+      "status": "PASS",
+      "seconds": 0.235
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.AuthIntegrationTest",
+      "test": "registrationCannotChooseRoleAndOtpIsSingleUse",
+      "status": "PASS",
+      "seconds": 0.701
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.AuthIntegrationTest",
+      "test": "disablingUserRevokesToken",
+      "status": "PASS",
+      "seconds": 0.466
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.AuthIntegrationTest",
+      "test": "swaggerContractAvailableAndPasswordsHashed",
+      "status": "PASS",
+      "seconds": 0.33
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.AuthIntegrationTest",
+      "test": "loginRejectsUnavailableAccountsAndInvalidFields",
+      "status": "PASS",
+      "seconds": 1.629
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.AuthIntegrationTest",
+      "test": "loginMeAndAnonymousAccess",
+      "status": "PASS",
+      "seconds": 0.694
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.AuthIntegrationTest",
+      "test": "googleFailsClosedWithoutClientConfiguration",
+      "status": "PASS",
+      "seconds": 0.003
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.AuthIntegrationTest",
+      "test": "passwordChangeRejectsInactiveAndPasswordlessAccounts",
+      "status": "PASS",
+      "seconds": 0.233
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.AuthIntegrationTest",
+      "test": "passwordResetOtpExpiryAttemptsAndSendLimitsApply",
+      "status": "PASS",
+      "seconds": 0.7
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.AuthIntegrationTest",
+      "test": "roleChangeRevokesExistingToken",
+      "status": "PASS",
+      "seconds": 0.466
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.AuthIntegrationTest",
+      "test": "passwordChangeRequiresAuthenticationAndRevokesCurrentToken",
+      "status": "PASS",
+      "seconds": 1.383
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.AuthIntegrationTest",
+      "test": "smtpFailureRollsBackRegistration",
+      "status": "PASS",
+      "seconds": 0.003
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.AuthIntegrationTest",
+      "test": "currentUserUsesTokenIdentityAndRejectsMissingOrExpiredToken",
+      "status": "PASS",
+      "seconds": 0.233
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.AuthIntegrationTest",
+      "test": "resendRevokesOldChallengeAndCooldownApplies",
+      "status": "PASS",
+      "seconds": 0.003
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.AuthIntegrationTest",
+      "test": "expiredOtpAndManualActivationAreDenied",
+      "status": "PASS",
+      "seconds": 0.234
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.AuthIntegrationTest",
+      "test": "profileAvatarIsSelfScopedAndValidatesImageContents",
+      "status": "PASS",
+      "seconds": 0.494
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.AuthIntegrationTest",
+      "test": "storeBoundaryIsEnforced",
+      "status": "PASS",
+      "seconds": 0.241
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.AuthIntegrationTest",
+      "test": "passwordResetMailFailureDoesNotDiscloseAccountAndRollsBackChallenge",
+      "status": "PASS",
+      "seconds": 0.232
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.auth.GoogleRegistrationTest",
+      "test": "rejectsGoogleIdentityWithoutVerifiedEmail",
+      "status": "PASS",
+      "seconds": 0.007
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.auth.GoogleRegistrationTest",
+      "test": "registersGoogleIdentityAsPendingCustomerAndSendsOtp",
+      "status": "PASS",
+      "seconds": 0.002
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.auth.GoogleRegistrationTest",
+      "test": "doesNotAutomaticallyLinkGoogleIdentityToExistingEmail",
+      "status": "PASS",
+      "seconds": 0.0
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.catalog.CatalogDevSeederTest",
+      "test": "developmentSeedCreatesTwoStoresAndIsIdempotent",
+      "status": "PASS",
+      "seconds": 0.002
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.catalog.CatalogIntegrationTest",
+      "test": "catalogRequiresAuthenticationAndStoreAdminRole",
+      "status": "PASS",
+      "seconds": 0.702
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.catalog.CatalogIntegrationTest",
+      "test": "openApiListsF02Endpoints",
+      "status": "PASS",
+      "seconds": 0.596
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.catalog.CatalogIntegrationTest",
+      "test": "categoryAndProductAreScopedToAuthenticatedStore",
+      "status": "PASS",
+      "seconds": 0.527
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.catalog.CatalogIntegrationTest",
+      "test": "rejectsDuplicateSkuNegativePriceAndInvalidBatchQuantities",
+      "status": "PASS",
+      "seconds": 0.48
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.catalog.CatalogIntegrationTest",
+      "test": "databaseConstraintsRejectCrossStoreCategoriesAndInvalidInventory",
+      "status": "PASS",
+      "seconds": 0.466
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.catalog.CatalogIntegrationTest",
+      "test": "inventorySummarySeparatesExpiredBlockedAndSellableBatches",
+      "status": "PASS",
+      "seconds": 0.483
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.catalog.CatalogIntegrationTest",
+      "test": "productWriteHidesCategoryOwnedByAnotherStore",
+      "status": "PASS",
+      "seconds": 0.461
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.MiningInputTest",
+      "test": "rejectsEmptyNegativeDuplicatePrecisionOverflowAndBadTotals",
+      "status": "PASS",
+      "seconds": 0.001
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.MiningInputTest",
+      "test": "validatesThresholdsAndZeroPolicy",
+      "status": "PASS",
+      "seconds": 0.001
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.MiningInputTest",
+      "test": "convertsExactlyAndMapsSortedProductsDeterministically",
+      "status": "PASS",
+      "seconds": 0.0
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.MiningIntegrationTest",
+      "test": "enforcesRolesOwnershipPaginationAndStrictInput",
+      "status": "PASS",
+      "seconds": 0.268
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.MiningIntegrationTest",
+      "test": "concurrentDuplicateSubmissionsCreateOnlyOneRequestAndOneRunPerAlgorithm",
+      "status": "PASS",
+      "seconds": 0.219
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.MiningIntegrationTest",
+      "test": "databasePreventsCrossStorePatternItems",
+      "status": "PASS",
+      "seconds": 0.01
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.MiningIntegrationTest",
+      "test": "openApiIncludesEveryMiningRoute",
+      "status": "PASS",
+      "seconds": 0.111
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.MiningIntegrationTest",
+      "test": "invalidSnapshotsFailBeforeDurableRequestIsCreated",
+      "status": "PASS",
+      "seconds": 0.028
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.MiningIntegrationTest",
+      "test": "partialPatternWriteRollsBackWithRunStillRunning",
+      "status": "PASS",
+      "seconds": 0.009
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.MiningIntegrationTest",
+      "test": "durableFailureAndTimeoutStatusesContainNoPartialPatterns",
+      "status": "PASS",
+      "seconds": 0.082
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.MiningIntegrationTest",
+      "test": "exactResultMismatchIsNotReportedAsSuccessfulBenchmark",
+      "status": "PASS",
+      "seconds": 0.133
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.MiningIntegrationTest",
+      "test": "boundedQueueRejectsExcessWorkDurably",
+      "status": "PASS",
+      "seconds": 0.129
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.MiningIntegrationTest",
+      "test": "realSnapshotToBothAlgorithmsPersistsEightPatternsAndBenchmark",
+      "status": "PASS",
+      "seconds": 0.472
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.MiningIntegrationTest",
+      "test": "restartRecoveryAndCompareAndSetPreventDuplicateExecution",
+      "status": "PASS",
+      "seconds": 0.006
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.MiningIntegrationTest",
+      "test": "workerReadsFrozenRequestCopyInsteadOfReloadingMutableSource",
+      "status": "PASS",
+      "seconds": 0.2
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.MiningIntegrationTest",
+      "test": "oldScoringMetadataCanBeMinedWithoutRecalculation",
+      "status": "PASS",
+      "seconds": 0.215
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.MiningIntegrationTest",
+      "test": "validEmptyResultIsCompletedWithZeroPatterns",
+      "status": "PASS",
+      "seconds": 0.209
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.MiningIntegrationTest",
+      "test": "historicalProvenanceUsesPersistedVersionsAndMeasurementMethods",
+      "status": "PASS",
+      "seconds": 0.01
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.SpmfMiningEngineTest",
+      "test": "parserRejectsDuplicatesUnknownIdsAndWrongUtility",
+      "status": "PASS",
+      "seconds": 0.0
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.SpmfMiningEngineTest",
+      "test": "actualZeroUtilityAndEmptyResultsAreValid",
+      "status": "PASS",
+      "seconds": 0.605
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.SpmfMiningEngineTest",
+      "test": "actualAlgorithmsProduceKnownEightPatternsAndEqualUtilities",
+      "status": "PASS",
+      "seconds": 0.192
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.SpmfMiningEngineTest",
+      "test": "interruptionCleansTemporaryFilesAndPreservesInterruptFlag",
+      "status": "PASS",
+      "seconds": 0.02
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.SpmfMiningEngineTest",
+      "test": "missingDependencyAndTimeoutAreDistinguished",
+      "status": "PASS",
+      "seconds": 0.022
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.DatabaseTransactionSourceTest",
+      "test": "dateRangeIsInclusiveInAsiaHoChiMinhAndEmptyWhenNoEligibleRowsExist",
+      "status": "PASS",
+      "seconds": 0.005
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.DatabaseTransactionSourceTest",
+      "test": "loadsOnlyEligibleCompletedTransactionsWithinStoreLocalDateBoundaries",
+      "status": "PASS",
+      "seconds": 0.001
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.TransactionImportIntegrationTest",
+      "test": "stagesRawRowsPersistsCompleteOrdersAndNeverMutatesInventory",
+      "status": "PASS",
+      "seconds": 0.114
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.TransactionImportIntegrationTest",
+      "test": "importAndTransactionReadsAreRoleCheckedAndStoreScoped",
+      "status": "PASS",
+      "seconds": 0.025
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.TransactionImportIntegrationTest",
+      "test": "rejectsEntireOrderWhenAnyLineFailsButPersistsOtherOrdersInTheBatch",
+      "status": "PASS",
+      "seconds": 0.007
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.TransactionImportIntegrationTest",
+      "test": "duplicateFileIsIdempotentAndConflictingOrderDoesNotOverwriteHistory",
+      "status": "PASS",
+      "seconds": 0.012
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.TransactionImportIntegrationTest",
+      "test": "openApiAdvertisesCsvUploadAsMultipartBinary",
+      "status": "PASS",
+      "seconds": 0.243
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.TransactionImportIntegrationTest",
+      "test": "acceptsCsvContentTypeWithCharsetParameter",
+      "status": "PASS",
+      "seconds": 0.007
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.TransactionImportSchemaTest",
+      "test": "flywayCreatesStoreScopedImportAndTransactionTables",
+      "status": "PASS",
+      "seconds": 10.687
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.importing.TransactionCsvParserTest",
+      "test": "skipsBlankLinesWithoutCountingThemAgainstDataRowLimit",
+      "status": "PASS",
+      "seconds": 0.001
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.importing.TransactionCsvParserTest",
+      "test": "rejectsMalformedQuotedCsv",
+      "status": "PASS",
+      "seconds": 0.001
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.importing.TransactionCsvParserTest",
+      "test": "rejectsFilesBeyondConfiguredDataRowLimit",
+      "status": "PASS",
+      "seconds": 0.0
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.importing.TransactionCsvParserTest",
+      "test": "parsesBomQuotedCommasEscapedQuotesAndEmbeddedNewline",
+      "status": "PASS",
+      "seconds": 0.001
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.importing.TransactionCsvParserTest",
+      "test": "rejectsHeaderThatDoesNotMatchTheContract",
+      "status": "PASS",
+      "seconds": 0.0
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.importing.TransactionOrderValidatorTest",
+      "test": "invalidQuantityRejectsTheCompleteOrderAndIdentifiesTheRow",
+      "status": "PASS",
+      "seconds": 0.001
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.importing.TransactionOrderValidatorTest",
+      "test": "storeScopedSkuLookupRejectsUnknownAndForeignStoreProducts",
+      "status": "PASS",
+      "seconds": 0.002
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.importing.TransactionOrderValidatorTest",
+      "test": "aggregatesMatchingRepeatedProductLinesAndKeepsSourceRows",
+      "status": "PASS",
+      "seconds": 0.001
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.importing.TransactionOrderValidatorTest",
+      "test": "nonCompletedAndBelowCostOrdersRemainValidButAreNotF03Eligible",
+      "status": "PASS",
+      "seconds": 0.002
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.importing.TransactionOrderValidatorTest",
+      "test": "rejectsWholeOrderWhenRepeatedSkuHasDifferentPrice",
+      "status": "PASS",
+      "seconds": 0.001
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.ExpiryBinaryRulesTest",
+      "test": "officialSevenDayThresholdProduces17220ForTheWholeProduct",
+      "status": "PASS",
+      "seconds": 0.001
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.ExpiryBinaryRulesTest",
+      "test": "threeDayAndDisabledThresholdProduce16020",
+      "status": "PASS",
+      "seconds": 0.0
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.ExpiryBinaryRulesTest",
+      "test": "nullThresholdIsDisabledWithoutInventingADefault",
+      "status": "PASS",
+      "seconds": 0.001
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.ExpiryBinaryRulesTest",
+      "test": "fefoEvidenceIncludesEveryPushBatchAndIgnoresQuantityRatios",
+      "status": "PASS",
+      "seconds": 0.0
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.ExpiryBinaryRulesTest",
+      "test": "negativeThresholdIsInvalid",
+      "status": "PASS",
+      "seconds": 0.0
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.ExpiryBinaryRulesTest",
+      "test": "noSellableMissingAndNonExpiringStatesRemainExplicitEvenWithZeroThreshold",
+      "status": "PASS",
+      "seconds": 0.001
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.ExpiryBinaryRulesTest",
+      "test": "thresholdBoundaryIsInclusiveAndOneDayAfterIsOutside",
+      "status": "PASS",
+      "seconds": 0.0
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.UtilityCalculationTest",
+      "test": "expiryUsesEarliestEligibleBatchAndBinaryProductThreshold",
+      "status": "PASS",
+      "seconds": 0.0
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.UtilityCalculationTest",
+      "test": "excludesBlockedExpiredTodayAndEmptyBatches",
+      "status": "PASS",
+      "seconds": 0.0
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.UtilityCalculationTest",
+      "test": "disabledAndSingleCriteriaHaveCorrectContributions",
+      "status": "PASS",
+      "seconds": 0.001
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.UtilityCalculationTest",
+      "test": "supportsFrozenHistoricalDecimalScoresWithoutChangingMath",
+      "status": "PASS",
+      "seconds": 0.0
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.UtilityCalculationTest",
+      "test": "reportsMissingExpiryAndNonExpiringProductsWithoutInventingDates",
+      "status": "PASS",
+      "seconds": 0.0
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.UtilityCalculationTest",
+      "test": "rejectsUnsafeNegativeOrMissingBusinessValues",
+      "status": "PASS",
+      "seconds": 0.0
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.UtilityFixtureTest",
+      "test": "explicitFixtureProfilesProvideStoreIsolatedIdempotentData",
+      "status": "PASS",
+      "seconds": 0.002
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.UtilityFixtureTest",
+      "test": "diagnosticDateRangesProvideMissingExpiryNegativeUtilityAndDuplicateItems",
+      "status": "PASS",
+      "seconds": 0.0
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.UtilityIntegrationTest",
+      "test": "matrixHashIgnoresPreparedSourceOrdering",
+      "status": "PASS",
+      "seconds": 0.015
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.UtilityIntegrationTest",
+      "test": "separatesPolicyWindowAndWeightPermissionsAndPreservesOwnedSettings",
+      "status": "PASS",
+      "seconds": 0.012
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.UtilityIntegrationTest",
+      "test": "previewRejectsMissingEnabledScoresAndSkipsIneligibleSourceRows",
+      "status": "PASS",
+      "seconds": 0.009
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.UtilityIntegrationTest",
+      "test": "weightReportExamplesFlowThroughPreviewForProductSevenAndThreeDayThresholds",
+      "status": "PASS",
+      "seconds": 0.007
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.UtilityIntegrationTest",
+      "test": "missingExpiryIsPreviewWarningAndPreventsReadySnapshotOnlyWhenEnabled",
+      "status": "PASS",
+      "seconds": 0.007
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.UtilityIntegrationTest",
+      "test": "expirySnapshotsKeepOriginalDateProductThresholdAndBatchScore",
+      "status": "PASS",
+      "seconds": 0.008
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.UtilityIntegrationTest",
+      "test": "persistenceFailureRollsBackSnapshotHeader",
+      "status": "PASS",
+      "seconds": 0.004
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.UtilityIntegrationTest",
+      "test": "scorePatchIsPartialValidatedAndStoreScoped",
+      "status": "PASS",
+      "seconds": 0.006
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.UtilityIntegrationTest",
+      "test": "rejectsDuplicateNegativeAndForeignSourceRowsAndInvalidRanges",
+      "status": "PASS",
+      "seconds": 0.004
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.UtilityIntegrationTest",
+      "test": "snapshotFreezesPolicyWindowScoresAndHistoricalUtilityAndRejectsStaleLambda",
+      "status": "PASS",
+      "seconds": 0.015
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.UtilityIntegrationTest",
+      "test": "rejectsInvalidBoundsWindowsAndCoefficientsWithoutChangingValues",
+      "status": "PASS",
+      "seconds": 0.007
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.UtilityIntegrationTest",
+      "test": "openApiAndDatabaseConstraintsCoverF03",
+      "status": "PASS",
+      "seconds": 0.086
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.WeightRulesV12IntegrationTest",
+      "test": "independentPushQueryUsesFefoAndIgnoresMiningOrHistoricalTransactions",
+      "status": "PASS",
+      "seconds": 0.016
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.WeightRulesV12IntegrationTest",
+      "test": "officialExamplesUseProductThresholdAndHistoricalF04ValuesWithoutStoreFallback",
+      "status": "PASS",
+      "seconds": 0.017
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.WeightRulesV12IntegrationTest",
+      "test": "missingMetadataIsReportedAndCannotBecomeAnEnabledReadySnapshot",
+      "status": "PASS",
+      "seconds": 0.005
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.WeightRulesV12IntegrationTest",
+      "test": "snapshotFreezesEvidenceAndWarningsAfterProductAndInventoryChanges",
+      "status": "PASS",
+      "seconds": 0.016
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.WeightRulesV12IntegrationTest",
+      "test": "storeAdminCanConfigureThresholdAndInventoryIsUnchanged",
+      "status": "PASS",
+      "seconds": 0.006
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.WeightRulesV12IntegrationTest",
+      "test": "oldLinearSnapshotsStayReadableAndTheirStoredValuesNeverChange",
+      "status": "PASS",
+      "seconds": 0.006
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.WeightRulesV12IntegrationTest",
+      "test": "productThresholdEnforcesRolesAndStoreScope",
+      "status": "PASS",
+      "seconds": 0.005
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.WeightRulesV12IntegrationTest",
+      "test": "nullAndOmittedThresholdHaveEffectiveZero",
+      "status": "PASS",
+      "seconds": 0.003
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.WeightRulesV12IntegrationTest",
+      "test": "inactiveHistoricalProductWarningIsFrozenEvenWhenExpiryIsNotApplicable",
+      "status": "PASS",
+      "seconds": 0.006
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.WeightRulesV12IntegrationTest",
+      "test": "actualOpenApiShowsThresholdAndIndependentPushContract",
+      "status": "PASS",
+      "seconds": 0.086
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.WeightRulesV12MigrationTest",
+      "test": "upgradesPopulatedV7WithoutRewritingHistoricalSnapshotsOrBackfillingStoreThreshold",
+      "status": "PASS",
+      "seconds": 0.023
+    }
+  ]
+}

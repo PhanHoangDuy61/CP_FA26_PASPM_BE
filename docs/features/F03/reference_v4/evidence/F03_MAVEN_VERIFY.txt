@@ -1,0 +1,14 @@
+F03 Maven verification evidence
+Command: mvn -q verify
+Observed process exit code: 0
+Execution date: 2026-10-17 Asia/Ho_Chi_Minh
+
+vn.edu.fpt.paspm.AuthIntegrationTest: tests=14 failures=0 errors=0 skipped=0
+vn.edu.fpt.paspm.auth.GoogleRegistrationTest: tests=3 failures=0 errors=0 skipped=0
+vn.edu.fpt.paspm.catalog.CatalogDevSeederTest: tests=1 failures=0 errors=0 skipped=0
+vn.edu.fpt.paspm.catalog.CatalogIntegrationTest: tests=7 failures=0 errors=0 skipped=0
+vn.edu.fpt.paspm.utility.UtilityCalculationTest: tests=6 failures=0 errors=0 skipped=0
+vn.edu.fpt.paspm.utility.UtilityFixtureTest: tests=2 failures=0 errors=0 skipped=0
+vn.edu.fpt.paspm.utility.UtilityIntegrationTest: tests=11 failures=0 errors=0 skipped=0
+TOTAL tests=44 failures=0 errors=0 skipped=0
+Artifact paspm-backend-0.1.0.jar SHA256 122f1ef2e2e7d11d6a66dc067e190ff5b53e860a26ee608d6110ef0645a343eb

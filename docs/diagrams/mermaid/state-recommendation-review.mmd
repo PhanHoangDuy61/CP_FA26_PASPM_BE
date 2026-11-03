@@ -1,0 +1,6 @@
+stateDiagram-v2
+  [*] --> PENDING_REVIEW : evidence-backed candidate generated
+  PENDING_REVIEW --> APPROVED : approve [expectedVersion matches, valid reason, currently ELIGIBLE]
+  PENDING_REVIEW --> REJECTED : reject [expectedVersion matches, valid reason]
+  APPROVED --> [*]
+  REJECTED --> [*]

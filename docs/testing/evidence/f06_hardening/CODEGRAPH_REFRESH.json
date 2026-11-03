@@ -1,0 +1,58 @@
+{
+  "executionDate": "2026-10-26",
+  "scope": "Fresh local CodeGraph index of supported Backend source/config/scripts in the independent F06 worktree; Frontend is not present in this checkout. Index/database ignored byGit. No global agent integration modified.",
+  "commands": [
+    "codegraph init .",
+    "codegraph status -j .",
+    "codegraph query relations -p . -j -l 5",
+    "codegraph callers vn.edu.fpt.paspm.recommendation::RecommendationRepository::relations -p . -j -l 5",
+    "codegraph files -p . --format flat -j"
+  ],
+  "status": {
+    "initialized": true,
+    "fileCount": 167,
+    "nodeCount": 3888,
+    "edgeCount": 9907,
+    "backend": "node-sqlite",
+    "journalMode": "wal",
+    "pendingChanges": {
+      "added": 0,
+      "modified": 0,
+      "removed": 0
+    },
+    "worktreeMismatch": null
+  },
+  "symbol": {
+    "name": "relations",
+    "qualifiedName": "vn.edu.fpt.paspm.recommendation::RecommendationRepository::relations",
+    "filePath": "src/main/java/vn/edu/fpt/paspm/recommendation/RecommendationRepository.java",
+    "startLine": 70,
+    "signature": "Relations (int store,List<Long> ids)"
+  },
+  "callers": [
+    {
+      "name": "list",
+      "kind": "method",
+      "filePath": "src/main/java/vn/edu/fpt/paspm/recommendation/RecommendationService.java",
+      "startLine": 52
+    },
+    {
+      "name": "boundedRelationChunksPreserveSourceHistoryAndStoreIsolation",
+      "kind": "method",
+      "filePath": "src/test/java/vn/edu/fpt/paspm/recommendation/RecommendationHardeningIntegrationTest.java",
+      "startLine": 104
+    }
+  ],
+  "modulesDiscovered": {
+    "auth": true,
+    "user": true,
+    "security": true,
+    "common": true,
+    "mining": true,
+    "catalog": true,
+    "transaction": true,
+    "recommendation": true,
+    "utility": true
+  },
+  "sensitiveGeneratedPathExclusionVerified": true
+}

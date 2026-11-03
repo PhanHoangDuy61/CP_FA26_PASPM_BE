@@ -1,0 +1,11 @@
+{
+  "checkedAt": "2026-10-23T07:59:17.153160+07:00",
+  "sha256": "4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a",
+  "versionBanner": "-- SPMF version 2.67a --",
+  "childJava": "25.0.1",
+  "backendJava": "17",
+  "artifactUpload": "NOT_PERFORMED",
+  "approvedHost": "NOT_PROVIDED",
+  "approvedUrl": "NOT_PROVIDED",
+  "status": "SPMF_INTEGRATION_CI_BLOCKED"
+}

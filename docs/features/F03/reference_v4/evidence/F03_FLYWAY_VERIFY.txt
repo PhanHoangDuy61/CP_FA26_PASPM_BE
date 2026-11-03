@@ -1,0 +1,29 @@
+Actual Flyway output from mvn -q verify, isolated H2 tests, 2026-10-17 Asia/Ho_Chi_Minh
+2026-10-17T15:21:29.414+07:00  INFO 41755 --- [           main] o.f.core.internal.command.DbValidate     : Successfully validated 5 migrations (execution time 00:00.005s)
+2026-10-17T15:21:29.428+07:00  INFO 41755 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "1 - shared store and f01"
+2026-10-17T15:21:29.438+07:00  INFO 41755 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "2 - allow name after email verification"
+2026-10-17T15:21:29.440+07:00  INFO 41755 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "3 - f02 catalog inventory batch"
+2026-10-17T15:21:29.448+07:00  INFO 41755 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "4 - f03 configuration and scores"
+2026-10-17T15:21:29.459+07:00  INFO 41755 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "5 - f03 immutable utility snapshots"
+2026-10-17T15:21:29.466+07:00  INFO 41755 --- [           main] o.f.core.internal.command.DbMigrate      : Successfully applied 5 migrations to schema "public", now at version v5 (execution time 00:00.025s)
+2026-10-17T15:21:34.673+07:00  INFO 41755 --- [           main] o.f.core.internal.command.DbValidate     : Successfully validated 5 migrations (execution time 00:00.001s)
+2026-10-17T15:21:34.677+07:00  INFO 41755 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "1 - shared store and f01"
+2026-10-17T15:21:34.681+07:00  INFO 41755 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "2 - allow name after email verification"
+2026-10-17T15:21:34.684+07:00  INFO 41755 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "3 - f02 catalog inventory batch"
+2026-10-17T15:21:34.690+07:00  INFO 41755 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "4 - f03 configuration and scores"
+2026-10-17T15:21:34.696+07:00  INFO 41755 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "5 - f03 immutable utility snapshots"
+2026-10-17T15:21:34.699+07:00  INFO 41755 --- [           main] o.f.core.internal.command.DbMigrate      : Successfully applied 5 migrations to schema "public", now at version v5 (execution time 00:00.013s)
+2026-10-17T15:21:42.099+07:00  INFO 41755 --- [           main] o.f.core.internal.command.DbValidate     : Successfully validated 5 migrations (execution time 00:00.001s)
+2026-10-17T15:21:42.102+07:00  INFO 41755 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "1 - shared store and f01"
+2026-10-17T15:21:42.104+07:00  INFO 41755 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "2 - allow name after email verification"
+2026-10-17T15:21:42.105+07:00  INFO 41755 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "3 - f02 catalog inventory batch"
+2026-10-17T15:21:42.107+07:00  INFO 41755 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "4 - f03 configuration and scores"
+2026-10-17T15:21:42.111+07:00  INFO 41755 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "5 - f03 immutable utility snapshots"
+2026-10-17T15:21:42.112+07:00  INFO 41755 --- [           main] o.f.core.internal.command.DbMigrate      : Successfully applied 5 migrations to schema "public", now at version v5 (execution time 00:00.005s)
+2026-10-17T15:21:44.347+07:00  INFO 41755 --- [           main] o.f.core.internal.command.DbValidate     : Successfully validated 5 migrations (execution time 00:00.000s)
+2026-10-17T15:21:44.349+07:00  INFO 41755 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "1 - shared store and f01"
+2026-10-17T15:21:44.351+07:00  INFO 41755 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "2 - allow name after email verification"
+2026-10-17T15:21:44.352+07:00  INFO 41755 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "3 - f02 catalog inventory batch"
+2026-10-17T15:21:44.354+07:00  INFO 41755 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "4 - f03 configuration and scores"
+2026-10-17T15:21:44.357+07:00  INFO 41755 --- [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "5 - f03 immutable utility snapshots"
+2026-10-17T15:21:44.358+07:00  INFO 41755 --- [           main] o.f.core.internal.command.DbMigrate      : Successfully applied 5 migrations to schema "public", now at version v5 (execution time 00:00.004s)

@@ -1,0 +1,6 @@
+Fresh isolated MySQL8.4.11 startup: FAILED before F05
+Preexisting V7__f04_transaction_import_pipeline.sql
+SQLState42000 / MySQL1064
+Syntax rejected near: row_number INT NOT NULL, raw_data TEXT ...
+This is an existing unquoted reserved identifier in F04. No applied migration was changed.
+Do not interpret baseline8 -> V9 QA PASS as a clean V1..V9 MySQL PASS.

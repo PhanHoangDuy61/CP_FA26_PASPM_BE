@@ -1,0 +1,24 @@
+{
+  "yamlParse": "PASS",
+  "embeddedBashSyntax": "PASS",
+  "jobs": [
+    "backend",
+    "mysql",
+    "integration",
+    "required-verification"
+  ],
+  "pullRequestTarget": "dev",
+  "tokenPermissions": "contents:read",
+  "remoteExecution": "NOT_RUN",
+  "linuxDockerWrapperExecution": "NOT_RUN",
+  "SPMF_INTEGRATION_CI_BLOCKED": true,
+  "reason": "No team-approved immutable artifact URL available. Local SPMF binary not uploaded.",
+  "initialRemoteWorkflow": "FAIL_BEFORE_JOBS",
+  "initialRemoteHead": "fde0322f626e7cda6ff76880f20741215c448b24",
+  "remoteJobsExecuted": 0,
+  "verifiedConfigurationDefect": "runner context is not supported in jobs.<job_id>.env",
+  "fix": "Runtime shell step exports SPMF_JAR_PATH using RUNNER_TEMP to GITHUB_ENV",
+  "officialReference": "https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#context-availability",
+  "postFixLocalValidation": "YAML/Bash pass; no runner context in job env",
+  "remoteRetest": "PENDING"
+}

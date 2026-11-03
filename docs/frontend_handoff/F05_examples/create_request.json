@@ -1,0 +1,10 @@
+{
+  "requestKey": "009f3ef1-d4ba-4291-9854-b74c6878d26b",
+  "snapshotId": 2,
+  "algorithms": [
+    "HUI_MINER",
+    "EFIM"
+  ],
+  "minUtilMode": "ABSOLUTE",
+  "minUtilValue": 30
+}

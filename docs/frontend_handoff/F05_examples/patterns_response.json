@@ -1,0 +1,113 @@
+{
+  "items": [
+    {
+      "patternId": 4,
+      "runId": 1,
+      "productIds": [
+        9,
+        10,
+        11,
+        12
+      ],
+      "utility": 40,
+      "utilitySpmf": 40,
+      "patternSize": 4,
+      "supportCount": null
+    },
+    {
+      "patternId": 5,
+      "runId": 1,
+      "productIds": [
+        9,
+        10,
+        12
+      ],
+      "utility": 37,
+      "utilitySpmf": 37,
+      "patternSize": 3,
+      "supportCount": null
+    },
+    {
+      "patternId": 7,
+      "runId": 1,
+      "productIds": [
+        9,
+        11,
+        12
+      ],
+      "utility": 36,
+      "utilitySpmf": 36,
+      "patternSize": 3,
+      "supportCount": null
+    },
+    {
+      "patternId": 3,
+      "runId": 1,
+      "productIds": [
+        9,
+        10,
+        11
+      ],
+      "utility": 34,
+      "utilitySpmf": 34,
+      "patternSize": 3,
+      "supportCount": null
+    },
+    {
+      "patternId": 1,
+      "runId": 1,
+      "productIds": [
+        8,
+        10,
+        12
+      ],
+      "utility": 31,
+      "utilitySpmf": 31,
+      "patternSize": 3,
+      "supportCount": null
+    },
+    {
+      "patternId": 8,
+      "runId": 1,
+      "productIds": [
+        9,
+        12
+      ],
+      "utility": 31,
+      "utilitySpmf": 31,
+      "patternSize": 2,
+      "supportCount": null
+    },
+    {
+      "patternId": 2,
+      "runId": 1,
+      "productIds": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "utility": 30,
+      "utilitySpmf": 30,
+      "patternSize": 6,
+      "supportCount": null
+    },
+    {
+      "patternId": 6,
+      "runId": 1,
+      "productIds": [
+        9,
+        11
+      ],
+      "utility": 30,
+      "utilitySpmf": 30,
+      "patternSize": 2,
+      "supportCount": null
+    }
+  ],
+  "page": 0,
+  "pageSize": 20,
+  "totalElements": 8
+}

@@ -1,0 +1,12 @@
+[
+  {
+    "id": 4,
+    "name": "Dairy",
+    "status": "ACTIVE"
+  },
+  {
+    "id": 5,
+    "name": "Pantry",
+    "status": "ACTIVE"
+  }
+]

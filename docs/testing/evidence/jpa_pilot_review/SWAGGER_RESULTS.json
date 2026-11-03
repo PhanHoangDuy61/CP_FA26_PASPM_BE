@@ -1,0 +1,563 @@
+{
+  "ui_method": "Swagger UI Authorize / Try it out / Execute via CUA, no browser-fetch substitute",
+  "cases": [
+    {
+      "id": "SW-00",
+      "method": "POST",
+      "path": "/api/auth/login",
+      "role": "STORE_ADMIN_A",
+      "request_redacted": "Authenticate simulated Store Admin; credentials redacted",
+      "expectedStatus": 200,
+      "actualStatus": 200,
+      "expectedBehavior": "Authenticate simulated Store Admin; credentials redacted",
+      "actualResponse": {
+        "accessToken": "[REDACTED]",
+        "expiresIn": 3600,
+        "tokenType": "Bearer"
+      },
+      "result": "PASS",
+      "data": "SIMULATED",
+      "executedAt": "2026-10-22T05:05:47.049243+07:00",
+      "evidence": "SW-00.txt",
+      "requestBody": {
+        "email": "[REDACTED]",
+        "password": "[REDACTED]"
+      }
+    },
+    {
+      "id": "SW-01",
+      "method": "GET",
+      "path": "/api/products",
+      "role": "STORE_ADMIN_A",
+      "request_redacted": "categoryId=37,status=ACTIVE,pageSize=5; one owned milk product",
+      "expectedStatus": 200,
+      "actualStatus": 200,
+      "expectedBehavior": "categoryId=37,status=ACTIVE,pageSize=5; one owned milk product",
+      "actualResponse": {
+        "content": [
+          {
+            "id": 31,
+            "sku": "SWAGGER-MILK-4e1ed437-b0d7-405f-b4d2-f92416170345",
+            "name": "SIMULATED fresh milk",
+            "unit": "bottle",
+            "requiresExpiry": true,
+            "category": {
+              "id": 37,
+              "name": "SIMULATED dairy",
+              "status": "ACTIVE"
+            },
+            "sellingPrice": 30000,
+            "costPrice": 18000,
+            "status": "ACTIVE",
+            "stockQuantity": 8,
+            "expiryPushDays": 7
+          }
+        ],
+        "page": 0,
+        "pageSize": 5,
+        "totalElements": 1,
+        "totalPages": 1
+      },
+      "result": "PASS",
+      "data": "SIMULATED",
+      "executedAt": "2026-10-22T05:06:11.833098+07:00",
+      "evidence": "SW-01.txt"
+    },
+    {
+      "id": "SW-02",
+      "method": "GET",
+      "path": "/api/products/{id}",
+      "role": "STORE_ADMIN_A",
+      "request_redacted": "id31; existing SIMULATED milk, stock8",
+      "expectedStatus": 200,
+      "actualStatus": 200,
+      "expectedBehavior": "id31; existing SIMULATED milk, stock8",
+      "actualResponse": {
+        "id": 31,
+        "sku": "SWAGGER-MILK-4e1ed437-b0d7-405f-b4d2-f92416170345",
+        "name": "SIMULATED fresh milk",
+        "unit": "bottle",
+        "requiresExpiry": true,
+        "category": {
+          "id": 37,
+          "name": "SIMULATED dairy",
+          "status": "ACTIVE"
+        },
+        "sellingPrice": 30000,
+        "costPrice": 18000,
+        "status": "ACTIVE",
+        "stockQuantity": 8,
+        "expiryPushDays": 7
+      },
+      "result": "PASS",
+      "data": "SIMULATED",
+      "executedAt": "2026-10-22T05:06:36.597477+07:00",
+      "evidence": "SW-02.txt"
+    },
+    {
+      "id": "SW-03",
+      "method": "POST",
+      "path": "/api/products",
+      "role": "STORE_ADMIN_A",
+      "request_redacted": "SIMULATED coffee; valid StoreA category, bag, prices90000/50000, ACTIVE",
+      "expectedStatus": 201,
+      "actualStatus": 201,
+      "expectedBehavior": "SIMULATED coffee; valid StoreA category, bag, prices90000/50000, ACTIVE",
+      "actualResponse": {
+        "id": 32,
+        "sku": "SWAGGER-COFFEE-1792620405561",
+        "name": "SIMULATED coffee via Swagger",
+        "unit": "bag",
+        "requiresExpiry": false,
+        "category": {
+          "id": 37,
+          "name": "SIMULATED dairy",
+          "status": "ACTIVE"
+        },
+        "sellingPrice": 90000,
+        "costPrice": 50000,
+        "status": "ACTIVE",
+        "stockQuantity": 0,
+        "expiryPushDays": 0
+      },
+      "result": "PASS",
+      "data": "SIMULATED",
+      "executedAt": "2026-10-22T05:07:30.365743+07:00",
+      "evidence": "SW-03.txt",
+      "requestBody": {
+        "sku": "SWAGGER-COFFEE-1792620405561",
+        "name": "SIMULATED coffee via Swagger",
+        "unit": "bag",
+        "requiresExpiry": false,
+        "sellingPrice": 90000,
+        "costPrice": 50000,
+        "status": "ACTIVE",
+        "expiryPushDays": 0,
+        "categoryId": 37
+      }
+    },
+    {
+      "id": "SW-04",
+      "method": "PUT",
+      "path": "/api/products/{id}",
+      "role": "STORE_ADMIN_A",
+      "request_redacted": "id31; name edited, price32000, original SKU/category; stock must stay8",
+      "expectedStatus": 200,
+      "actualStatus": 200,
+      "expectedBehavior": "id31; name edited, price32000, original SKU/category; stock must stay8",
+      "actualResponse": {
+        "id": 31,
+        "sku": "SWAGGER-MILK-4e1ed437-b0d7-405f-b4d2-f92416170345",
+        "name": "SIMULATED fresh milk - Swagger edited",
+        "unit": "bottle",
+        "requiresExpiry": true,
+        "category": {
+          "id": 37,
+          "name": "SIMULATED dairy",
+          "status": "ACTIVE"
+        },
+        "sellingPrice": 32000,
+        "costPrice": 18000,
+        "status": "ACTIVE",
+        "stockQuantity": 8,
+        "expiryPushDays": 7
+      },
+      "result": "PASS",
+      "data": "SIMULATED",
+      "executedAt": "2026-10-22T05:07:44.023900+07:00",
+      "evidence": "SW-04.txt",
+      "requestBody": {
+        "sku": "SWAGGER-MILK-4e1ed437-b0d7-405f-b4d2-f92416170345",
+        "name": "SIMULATED fresh milk - Swagger edited",
+        "unit": "bottle",
+        "requiresExpiry": true,
+        "sellingPrice": 32000,
+        "costPrice": 18000,
+        "status": "ACTIVE",
+        "expiryPushDays": 7,
+        "categoryId": 37
+      }
+    },
+    {
+      "id": "SW-05",
+      "method": "PATCH",
+      "path": "/api/products/{id}/status",
+      "role": "STORE_ADMIN_A",
+      "request_redacted": "id31,status=INACTIVE; stock8",
+      "expectedStatus": 200,
+      "actualStatus": 200,
+      "expectedBehavior": "id31,status=INACTIVE; stock8",
+      "actualResponse": {
+        "id": 31,
+        "sku": "SWAGGER-MILK-4e1ed437-b0d7-405f-b4d2-f92416170345",
+        "name": "SIMULATED fresh milk - Swagger edited",
+        "unit": "bottle",
+        "requiresExpiry": true,
+        "category": {
+          "id": 37,
+          "name": "SIMULATED dairy",
+          "status": "ACTIVE"
+        },
+        "sellingPrice": 32000,
+        "costPrice": 18000,
+        "status": "INACTIVE",
+        "stockQuantity": 8,
+        "expiryPushDays": 7
+      },
+      "result": "PASS",
+      "data": "SIMULATED",
+      "executedAt": "2026-10-22T05:07:52.635652+07:00",
+      "evidence": "SW-05.txt",
+      "requestBody": {
+        "status": "INACTIVE"
+      }
+    },
+    {
+      "id": "SW-06",
+      "method": "PATCH",
+      "path": "/api/products/{id}/status",
+      "role": "STORE_ADMIN_A",
+      "request_redacted": "id31,status=ACTIVE; stock8",
+      "expectedStatus": 200,
+      "actualStatus": 200,
+      "expectedBehavior": "id31,status=ACTIVE; stock8",
+      "actualResponse": {
+        "id": 31,
+        "sku": "SWAGGER-MILK-4e1ed437-b0d7-405f-b4d2-f92416170345",
+        "name": "SIMULATED fresh milk - Swagger edited",
+        "unit": "bottle",
+        "requiresExpiry": true,
+        "category": {
+          "id": 37,
+          "name": "SIMULATED dairy",
+          "status": "ACTIVE"
+        },
+        "sellingPrice": 32000,
+        "costPrice": 18000,
+        "status": "ACTIVE",
+        "stockQuantity": 8,
+        "expiryPushDays": 7
+      },
+      "result": "PASS",
+      "data": "SIMULATED",
+      "executedAt": "2026-10-22T05:08:13.997834+07:00",
+      "evidence": "SW-06.txt",
+      "requestBody": {
+        "status": "ACTIVE"
+      }
+    },
+    {
+      "id": "SW-07",
+      "method": "GET",
+      "path": "/api/products/{id}",
+      "role": "STORE_ADMIN_A",
+      "request_redacted": "id31; verify PUT/PATCH persisted",
+      "expectedStatus": 200,
+      "actualStatus": 200,
+      "expectedBehavior": "id31; verify PUT/PATCH persisted",
+      "actualResponse": {
+        "id": 31,
+        "sku": "SWAGGER-MILK-4e1ed437-b0d7-405f-b4d2-f92416170345",
+        "name": "SIMULATED fresh milk - Swagger edited",
+        "unit": "bottle",
+        "requiresExpiry": true,
+        "category": {
+          "id": 37,
+          "name": "SIMULATED dairy",
+          "status": "ACTIVE"
+        },
+        "sellingPrice": 32000,
+        "costPrice": 18000,
+        "status": "ACTIVE",
+        "stockQuantity": 8,
+        "expiryPushDays": 7
+      },
+      "result": "PASS",
+      "data": "SIMULATED",
+      "executedAt": "2026-10-22T05:08:21.419795+07:00",
+      "evidence": "SW-07.txt"
+    },
+    {
+      "id": "SW-08",
+      "method": "POST",
+      "path": "/api/products",
+      "role": "STORE_ADMIN_A",
+      "request_redacted": "synthetic SKU, sellingPrice=-1",
+      "expectedStatus": 400,
+      "actualStatus": 400,
+      "expectedBehavior": "synthetic SKU, sellingPrice=-1",
+      "actualResponse": {
+        "error": "Invalid request fields"
+      },
+      "result": "PASS",
+      "data": "SIMULATED",
+      "executedAt": "2026-10-22T05:08:28.374428+07:00",
+      "evidence": "SW-08.txt",
+      "requestBody": {
+        "sku": "[redacted generated invalid-case SKU]",
+        "name": "SIMULATED coffee via Swagger",
+        "unit": "bag",
+        "requiresExpiry": false,
+        "sellingPrice": -1,
+        "costPrice": 50000,
+        "status": "ACTIVE",
+        "expiryPushDays": 0,
+        "categoryId": 37
+      }
+    },
+    {
+      "id": "SW-09",
+      "method": "POST",
+      "path": "/api/products",
+      "role": "STORE_ADMIN_A",
+      "request_redacted": "repeat created coffee SKU in same Store",
+      "expectedStatus": 409,
+      "actualStatus": 409,
+      "expectedBehavior": "repeat created coffee SKU in same Store",
+      "actualResponse": {
+        "error": "Resource already exists or violates a data constraint"
+      },
+      "result": "PASS",
+      "data": "SIMULATED",
+      "executedAt": "2026-10-22T05:08:33.875770+07:00",
+      "evidence": "SW-09.txt",
+      "requestBody": {
+        "sku": "SWAGGER-COFFEE-1792620405561",
+        "name": "SIMULATED coffee via Swagger",
+        "unit": "bag",
+        "requiresExpiry": false,
+        "sellingPrice": 90000,
+        "costPrice": 50000,
+        "status": "ACTIVE",
+        "expiryPushDays": 0,
+        "categoryId": 37
+      }
+    },
+    {
+      "id": "SW-10",
+      "method": "GET",
+      "path": "/api/products/{id}",
+      "role": "UNAUTHENTICATED",
+      "request_redacted": "id31,no token",
+      "expectedStatus": 401,
+      "actualStatus": 401,
+      "expectedBehavior": "id31,no token",
+      "actualResponse": null,
+      "result": "PASS",
+      "data": "SIMULATED",
+      "executedAt": "2026-10-22T05:08:55.233237+07:00",
+      "evidence": "SW-10.txt"
+    },
+    {
+      "id": "SW-11",
+      "method": "GET",
+      "path": "/api/products/{id}",
+      "role": "STORE_ADMIN_B",
+      "request_redacted": "id31 owned by StoreA",
+      "expectedStatus": 404,
+      "actualStatus": 404,
+      "expectedBehavior": "id31 owned by StoreA",
+      "actualResponse": {
+        "error": "Product not found"
+      },
+      "result": "PASS",
+      "data": "SIMULATED",
+      "executedAt": "2026-10-22T05:09:56.301453+07:00",
+      "evidence": "SW-11.txt"
+    },
+    {
+      "id": "SW-12",
+      "method": "PUT",
+      "path": "/api/products/{id}",
+      "role": "STORE_ADMIN_B",
+      "request_redacted": "valid StoreA metadata for id31; modification forbidden",
+      "expectedStatus": 404,
+      "actualStatus": 404,
+      "expectedBehavior": "valid StoreA metadata for id31; modification forbidden",
+      "actualResponse": {
+        "error": "Product not found"
+      },
+      "result": "PASS",
+      "data": "SIMULATED",
+      "executedAt": "2026-10-22T05:10:03.580425+07:00",
+      "evidence": "SW-12.txt",
+      "requestBody": {
+        "sku": "SWAGGER-MILK-4e1ed437-b0d7-405f-b4d2-f92416170345",
+        "name": "SIMULATED fresh milk - Swagger edited",
+        "unit": "bottle",
+        "requiresExpiry": true,
+        "sellingPrice": 32000,
+        "costPrice": 18000,
+        "status": "ACTIVE",
+        "expiryPushDays": 7,
+        "categoryId": 37
+      }
+    },
+    {
+      "id": "SW-13",
+      "method": "GET",
+      "path": "/api/products",
+      "role": "STORE_ADMIN_B",
+      "request_redacted": "own StoreB list; expected totalElements0",
+      "expectedStatus": 200,
+      "actualStatus": 200,
+      "expectedBehavior": "own StoreB list; expected totalElements0",
+      "actualResponse": {
+        "content": [],
+        "page": 0,
+        "pageSize": 5,
+        "totalElements": 0,
+        "totalPages": 0
+      },
+      "result": "PASS",
+      "data": "SIMULATED",
+      "executedAt": "2026-10-22T05:10:14.805373+07:00",
+      "evidence": "SW-13.txt"
+    },
+    {
+      "id": "SW-14",
+      "method": "POST",
+      "path": "/api/products",
+      "role": "MERCHANDISER",
+      "request_redacted": "valid synthetic Product metadata; role cannot write",
+      "expectedStatus": 403,
+      "actualStatus": 403,
+      "expectedBehavior": "valid synthetic Product metadata; role cannot write",
+      "actualResponse": {
+        "error": "Forbidden"
+      },
+      "result": "PASS",
+      "data": "SIMULATED",
+      "executedAt": "2026-10-22T05:10:47.859292+07:00",
+      "evidence": "SW-14.txt",
+      "requestBody": {
+        "sku": "[redacted generated forbidden-case SKU]",
+        "name": "SIMULATED coffee via Swagger",
+        "unit": "bag",
+        "requiresExpiry": false,
+        "sellingPrice": 90000,
+        "costPrice": 50000,
+        "status": "ACTIVE",
+        "expiryPushDays": 0,
+        "categoryId": 37
+      }
+    },
+    {
+      "id": "SW-15",
+      "method": "GET",
+      "path": "/api/products/{id}",
+      "role": "MERCHANDISER",
+      "request_redacted": "id31; same-Store read allowed",
+      "expectedStatus": 200,
+      "actualStatus": 200,
+      "expectedBehavior": "id31; same-Store read allowed",
+      "actualResponse": {
+        "id": 31,
+        "sku": "SWAGGER-MILK-4e1ed437-b0d7-405f-b4d2-f92416170345",
+        "name": "SIMULATED fresh milk - Swagger edited",
+        "unit": "bottle",
+        "requiresExpiry": true,
+        "category": {
+          "id": 37,
+          "name": "SIMULATED dairy",
+          "status": "ACTIVE"
+        },
+        "sellingPrice": 32000,
+        "costPrice": 18000,
+        "status": "ACTIVE",
+        "stockQuantity": 8,
+        "expiryPushDays": 7
+      },
+      "result": "PASS",
+      "data": "SIMULATED",
+      "executedAt": "2026-10-22T05:10:55.791559+07:00",
+      "evidence": "SW-15.txt"
+    },
+    {
+      "id": "SW-16",
+      "method": "GET",
+      "path": "/api/utility/products/{productId}/scores",
+      "role": "MERCHANDISER",
+      "request_redacted": "id31; S0.8 M0.9 unchanged, E1, W1",
+      "expectedStatus": 200,
+      "actualStatus": 200,
+      "expectedBehavior": "id31; S0.8 M0.9 unchanged, E1, W1",
+      "actualResponse": {
+        "productId": 31,
+        "stockPriorityScore": 0.8,
+        "seasonalPriorityScore": 0.9,
+        "expiryScore": 1,
+        "weightValue": 1,
+        "expiryStatus": "AVAILABLE",
+        "expiryEvidence": {
+          "expiryPushDays": 7,
+          "earliestEligibleExpiryDate": "2026-10-27",
+          "daysRemaining": 5,
+          "asOfDate": "2026-10-22",
+          "reason": "WITHIN_THRESHOLD",
+          "batches": [
+            {
+              "productId": 31,
+              "batchId": 15,
+              "expiryDate": "2026-10-27",
+              "remainingQuantity": 8,
+              "expiryPushDays": 7,
+              "daysRemaining": 5,
+              "pushRequired": true,
+              "pushRequiredQuantity": 8,
+              "asOfDate": "2026-10-22"
+            }
+          ]
+        },
+        "expiryPushDays": 7,
+        "asOfDate": "2026-10-22",
+        "timeZone": "Asia/Ho_Chi_Minh",
+        "configVersion": 1,
+        "lambdaValid": true,
+        "ready": true,
+        "warnings": []
+      },
+      "result": "PASS",
+      "data": "SIMULATED",
+      "executedAt": "2026-10-22T05:11:07.378187+07:00",
+      "evidence": "SW-16.txt"
+    },
+    {
+      "id": "SW-17",
+      "method": "GET",
+      "path": "/api/products/{id}",
+      "role": "MERCHANDISER",
+      "request_redacted": "new id32; POST persistence same SKU and metadata",
+      "expectedStatus": 200,
+      "actualStatus": 200,
+      "expectedBehavior": "new id32; POST persistence same SKU and metadata",
+      "actualResponse": {
+        "id": 32,
+        "sku": "SWAGGER-COFFEE-1792620405561",
+        "name": "SIMULATED coffee via Swagger",
+        "unit": "bag",
+        "requiresExpiry": false,
+        "category": {
+          "id": 37,
+          "name": "SIMULATED dairy",
+          "status": "ACTIVE"
+        },
+        "sellingPrice": 90000,
+        "costPrice": 50000,
+        "status": "ACTIVE",
+        "stockQuantity": 0,
+        "expiryPushDays": 0
+      },
+      "result": "PASS",
+      "data": "SIMULATED",
+      "executedAt": "2026-10-22T05:11:32.677213+07:00",
+      "evidence": "SW-17.txt"
+    }
+  ],
+  "totals": {
+    "PASS": 18,
+    "FAIL": 0,
+    "BLOCKED": 0,
+    "NOT_RUN": 0
+  }
+}

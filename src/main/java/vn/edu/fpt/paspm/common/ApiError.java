@@ -6,6 +6,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.mail.MailException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -35,6 +36,12 @@ public class ApiError {
     public ResponseEntity<Map<String, String>> mail(Exception exception) {
         return ResponseEntity.status(503)
                 .body(Map.of("error", "Email delivery unavailable; retry later"));
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<Map<String, String>> uploadTooLarge(MaxUploadSizeExceededException exception) {
+        return ResponseEntity.status(413)
+                .body(Map.of("error", "Uploaded file exceeds the 5 MiB limit"));
     }
 
     @ExceptionHandler(AccessDeniedException.class)

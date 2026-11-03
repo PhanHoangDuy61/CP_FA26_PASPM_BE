@@ -1,0 +1,19 @@
+{
+  "before": {
+    "tests": 1,
+    "failures": 1,
+    "exit": 1,
+    "hostFileReadable": true,
+    "withinSharedTemp": false,
+    "defaultsFileError": true
+  },
+  "after": {
+    "tests": 1,
+    "failures": 0,
+    "exit": 0,
+    "hostFileReadable": true,
+    "withinSharedTemp": true,
+    "defaultsFileError": false
+  },
+  "sensitiveOutputPublished": false
+}

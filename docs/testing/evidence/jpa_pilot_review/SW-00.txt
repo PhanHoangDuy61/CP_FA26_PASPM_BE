@@ -1,0 +1,27 @@
+SW-00 | POST /api/auth/login | role=STORE_ADMIN_A | data=SIMULATED | 2026-10-22T05:05:47.049243+07:00
+Actual Swagger UI accessibility observation (credential-free response excerpt):
+heading Server response, Value: 4
+					976 text Server response
+				977 table
+					978 row
+						979 cell
+							980 text Code
+						981 cell
+							982 text Details
+					983 row
+						984 cell
+							985 text 200
+						986 cell
+							987 heading Response body, Value: 5
+								988 text Response body
+							989 container
+								990 button
+								991 button Download
+								992 container
+									993 text {
+ "accessToken" :  "[REDACTED_TOKEN]" ,
+ "expiresIn" :  3600 ,
+ "tokenType" :  "Bearer" }
+							994 heading Response headers, Value: 5
+								995 text Response headers
+							996 text cache-control :  no-cache,no-store,max-age=0,must-revalidate connection :  keep-alive content-type :  application/json date :  Wed,21 Oct 2026 22:05:10 GMT expires :  0 keep-alive :  timeout=60 pragma :  no-cache transfer-encoding :  chunked x-content-type-options :  nosniff x-frame-options :  DENY x-xss-protection :  0

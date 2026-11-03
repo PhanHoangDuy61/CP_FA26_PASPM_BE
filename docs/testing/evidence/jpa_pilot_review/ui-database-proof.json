@@ -1,0 +1,27 @@
+{
+  "existingSimulatedProduct" : {
+    "stock" : 8,
+    "M" : 0.900000,
+    "sellingPrice" : 32000.00,
+    "storeOwnershipCorrect" : true,
+    "id" : 31,
+    "status" : "ACTIVE",
+    "sku" : "SWAGGER-MILK-4e1ed437-b0d7-405f-b4d2-f92416170345",
+    "name" : "SIMULATED fresh milk - Swagger edited",
+    "S" : 0.800000,
+    "categoryCorrect" : true
+  },
+  "simulatedTargetCounts" : {
+    "category" : 37,
+    "inventory_batch" : 15,
+    "mining_request" : 0,
+    "mining_run" : 0,
+    "product" : 26,
+    "recommendation" : 0,
+    "sales_transaction" : 0,
+    "store" : 42,
+    "utility_matrix_item" : 0,
+    "utility_snapshot" : 0
+  },
+  "targetVersion" : 10
+}

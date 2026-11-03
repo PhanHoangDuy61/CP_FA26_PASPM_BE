@@ -1,0 +1,5 @@
+healthy A_pid=54021 B_pid=54028 A_port=65105 B_port=65333 request=1 owner=034d6c6a-1613-473f-88a2-0d6e8b3a4c00 fence=1 expiry_before=2026-11-01 01:02:47.0 expiry_after=2026-11-01 01:02:57.0 patterns=8 PASS
+stale A_pid=54021 B_pid=54028 request=2 owner=034d6c6a-1613-473f-88a2-0d6e8b3a4c00 old_fence=1 new_fence=2 actual_repository_rejection=Mining_lease_is_no_longer_active patterns=8 PASS
+crash killed_A_pid=54021 B_pid=54028 request=3 old_owner=034d6c6a-1613-473f-88a2-0d6e8b3a4c00 old_fence=1 old_expiry=2026-11-01 01:03:31.0 new_fence=2 patterns=8 PASS (barrier after real SPMF exited; orphan-child test NOT RUN)
+post_commit_pre_enqueue killed_C_pid=54117 B_pid=54028 request=4 initial_status=PENDING final_status=COMPLETED patterns=8 PASS
+queue_saturation killed_D_pid=54125 B_pid=54028 request_ids=[5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] pending_before_kill=10 completed=11 patterns_per_request=8 PASS

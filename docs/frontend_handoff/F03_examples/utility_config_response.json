@@ -1,0 +1,20 @@
+{
+  "config": {
+    "enableStock": true,
+    "enableExpiry": true,
+    "enableSeason": true,
+    "alpha": 0.5,
+    "beta": 0.2,
+    "gamma": 0.3,
+    "lambda": 0.5,
+    "expiryWindowDays": null,
+    "version": 2,
+    "scoringVersion": "EXPIRY_PRODUCT_EARLIEST_BATCH_BINARY_V1"
+  },
+  "lambdaPolicy": {
+    "lambdaMin": 0,
+    "lambdaMax": 0.5,
+    "version": 1
+  },
+  "lambdaValid": true
+}

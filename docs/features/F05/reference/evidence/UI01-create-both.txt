@@ -1,0 +1,247 @@
+POST
+/api/mining/requests
+Submit durable asynchronous mining; UUID requestKey is idempotent per Store
+
+Same key and payload returns existing request. Different payload returns 409. Missing/unverified SPMF returns 503. Input is a READY F03 snapshot; no uploads or current Weight recalculation.
+
+Parameters
+Cancel
+Reset
+
+No parameters
+
+Request body
+application/json
+Edit Value
+Schema
+Execute
+Clear
+Responses
+Curl
+curl -X 'POST' \
+  'http://127.0.0.1:18085/api/mining/requests' \
+  -H 'accept: */*' \
+  -H 'Authorization: Bearer [REDACTED]' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "requestKey": "009f3ef1-d4ba-4291-9854-b74c6878d26b",
+  "snapshotId": 2,
+  "algorithms": [
+    "HUI_MINER",
+    "EFIM"
+  ],
+  "minUtilMode": "ABSOLUTE",
+  "minUtilValue": 30
+}'
+Request URL
+http://127.0.0.1:18085/api/mining/requests
+Server response
+Code	Details
+202
+Response body
+Download
+{
+  "requestId": 1,
+  "storeId": 5,
+  "requestedBy": 8,
+  "requestKey": "009f3ef1-d4ba-4291-9854-b74c6878d26b",
+  "snapshotId": 2,
+  "algorithms": [
+    "HUI_MINER",
+    "EFIM"
+  ],
+  "minUtilMode": "ABSOLUTE",
+  "minUtilValue": 30,
+  "minUtilSpmf": 30,
+  "effectiveMinUtility": 30,
+  "status": "PENDING",
+  "comparisonStatus": "PENDING",
+  "snapshotHash": "2aa21b391283e3b6ff5a46f4565d277d421d1c23643756cc7b3449270b0dcae3",
+  "inputHash": "8ce22f131d59e8486c6974733fcc81de0c3caadaf13765399311cdfe3dc32626",
+  "conversionVersion": "F03_SCALE6_GCD_INT32_DENSE_V1",
+  "utilityScale": 6,
+  "roundingMode": "HALF_UP",
+  "divisor": 1000000,
+  "totalScaledUtility": 96,
+  "transactionCount": 5,
+  "distinctItems": 7,
+  "inputBytes": 100,
+  "snapshot": {
+    "snapshotId": 2,
+    "storeId": 5,
+    "createdBy": 8,
+    "rangeStart": "2026-10-19",
+    "rangeEnd": "2026-10-19",
+    "asOfDate": "2026-10-19",
+    "configuration": {
+      "config": {
+        "enableStock": false,
+        "enableExpiry": false,
+        "enableSeason": false,
+        "alpha": 0,
+        "beta": 0,
+        "gamma": 0,
+        "lambda": 0,
+        "expiryWindowDays": null,
+        "version": 1,
+        "scoringVersion": "EXPIRY_PRODUCT_EARLIEST_BATCH_BINARY_V1"
+      },
+      "lambdaPolicy": {
+        "lambdaMin": 0,
+        "lambdaMax": 0.5,
+        "version": 1
+      },
+      "effectiveCoefficients": {
+        "alpha": 0,
+        "beta": 0,
+        "gamma": 0
+      },
+      "analysisDate": "2026-10-19",
+      "source": "F04_DATABASE_V1",
+      "utilityScale": 6,
+      "roundingMode": "HALF_UP",
+      "itemMapping": "PRODUCT_ID_V1",
+      "timeZone": "Asia/Ho_Chi_Minh"
+    },
+    "sourceHash": "98684bb2c94988d70246c05fbb7451cfc5aff494faf736f4c51db8b5a8b8ded4",
+    "matrixHash": "2aa21b391283e3b6ff5a46f4565d277d421d1c23643756cc7b3449270b0dcae3",
+    "totalWeightedUtility": 96,
+    "roundingScale": 6,
+    "status": "READY",
+    "createdAt": "2026-10-19T16:04:32Z",
+    "warnings": []
+  },
+  "createdAt": "2026-10-19T16:06:05Z"
+}
+Response headers
+ cache-control: no-cache,no-store,max-age=0,must-revalidate
+ connection: keep-alive
+ content-type: application/json
+ date: Mon,19 Oct 2026 16:06:05 GMT
+ expires: 0
+ keep-alive: timeout=60
+ pragma: no-cache
+ transfer-encoding: chunked
+ x-content-type-options: nosniff
+ x-frame-options: DENY
+ x-xss-protection: 0
+Responses
+Code	Description	Links
+202
+
+Accepted
+
+Media type
+*/*
+Controls Accept header.
+Example Value
+Schema
+{
+  "requestId": 0,
+  "storeId": 0,
+  "requestedBy": 0,
+  "requestKey": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "snapshotId": 0,
+  "algorithms": [
+    "HUI_MINER"
+  ],
+  "minUtilMode": "PERCENTAGE",
+  "minUtilValue": 0,
+  "minUtilSpmf": 0,
+  "effectiveMinUtility": 0,
+  "status": "string",
+  "comparisonStatus": "string",
+  "snapshotHash": "string",
+  "inputHash": "string",
+  "conversionVersion": "string",
+  "utilityScale": 0,
+  "roundingMode": "string",
+  "divisor": 0,
+  "totalScaledUtility": 0,
+  "transactionCount": 0,
+  "distinctItems": 0,
+  "inputBytes": 0,
+  "snapshot": {
+    "snapshotId": 0,
+    "storeId": 0,
+    "createdBy": 0,
+    "rangeStart": "2026-10-19",
+    "rangeEnd": "2026-10-19",
+    "asOfDate": "2026-10-19",
+    "configuration": {
+      "config": {
+        "enableStock": true,
+        "enableExpiry": true,
+        "enableSeason": true,
+        "alpha": 0,
+        "beta": 0,
+        "gamma": 0,
+        "lambda": 0,
+        "version": 0,
+        "scoringVersion": "string"
+      },
+      "lambdaPolicy": {
+        "lambdaMin": 0,
+        "lambdaMax": 0,
+        "version": 0
+      },
+      "effectiveCoefficients": {
+        "alpha": 0,
+        "beta": 0,
+        "gamma": 0
+      },
+      "analysisDate": "2026-10-19",
+      "source": "string",
+      "utilityScale": 0,
+      "roundingMode": "string",
+      "itemMapping": "string",
+      "timeZone": "string"
+    },
+    "sourceHash": "string",
+    "matrixHash": "string",
+    "totalWeightedUtility": 0,
+    "roundingScale": 0,
+    "status": "string",
+    "createdAt": "2026-10-19T16:06:05.066Z",
+    "warnings": [
+      "string"
+    ]
+  },
+  "createdAt": "2026-10-19T16:06:05.066Z"
+}
+	No links
+400
+
+Invalid request / verification
+
+	No links
+401
+
+Authentication required / invalid
+
+	No links
+403
+
+Permission denied
+
+	No links
+404
+
+Resource not found or outside the authenticated Store
+
+	No links
+409
+
+Conflict
+
+	No links
+429
+
+Rate limit exceeded
+
+	No links
+503
+
+Service configuration or required dependency unavailable
+
+	No links

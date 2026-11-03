@@ -1,0 +1,47 @@
+flowchart TB
+  subgraph lane0["MERCHANDISER / RETAIL PLANNER"]
+    direction TB
+    n01(( ))
+    n02("Select baseline A / candidate B<br/>and simulation settings")
+    n03("Review reported simulation issue<br/>Retry separately or return to draft")
+    n04((( )))
+    n05("Review metrics and trade-offs")
+    n06{"Merchandiser<br/>decision?"}
+    n07("Keep baseline A")
+    n08("Choose layout B")
+    n09{" "}
+  end
+  subgraph lane1["PASPM / SYSTEM"]
+    direction TB
+    n10("Load synthetic / historical inputs<br/>Declare CTR/conversion assumptions")
+    n11("Validate comparable A/B inputs<br/>Run simulation; record any error")
+    n12{"Simulation<br/>successful?"}
+    n13("Compare simulated utility, CTR,<br/>conversion and estimated revenue")
+    n14("Save simulated report including<br/>assumptions, time window and source")
+    n15("Record revision-needed outcome<br/>Return to draft in AD06")
+    n16((( )))
+    n17("Save the selected layout A / B<br/>Return to AD06 for publication")
+    n18((( )))
+  end
+  n01 --> n02
+  n02 --> n10
+  n10 --> n11
+  n11 --> n12
+  n12 -->|"[no]"| n03
+  n03 --> n04
+  n12 -->|"[yes]"| n13
+  n13 --> n14
+  n14 --> n05
+  n05 --> n06
+  n06 -->|"[revise]"| n15
+  n15 --> n16
+  n06 -->|"[keep A]"| n07
+  n06 -->|"[select B]"| n08
+  n07 --> n09
+  n08 --> n09
+  n09 --> n17
+  n17 --> n18
+  classDef startNode fill:#000,stroke:#000;
+  classDef endNode fill:#fff,stroke:#000,stroke-width:3px;
+  class n01 startNode;
+  class n04,n16,n18 endNode;

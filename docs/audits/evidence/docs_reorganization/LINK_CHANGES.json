@@ -1,0 +1,562 @@
+[
+  {
+    "originalFile": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_F05_HANDOFF.md",
+    "file": "docs/features/F03/reference_v4/F03_F05_HANDOFF.md",
+    "line": 3,
+    "oldTarget": "../api/F03_V12_F05_F06_INTEGRATION.md",
+    "newTarget": "../../../api/F03_V12_F05_F06_INTEGRATION.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_F05_HANDOFF.md",
+    "file": "docs/features/F03/reference_v4/F03_F05_HANDOFF.md",
+    "line": 3,
+    "oldTarget": "../api/F03_UTILITY_API.md",
+    "newTarget": "../../../api/F03_UTILITY_API.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_F05_HANDOFF.md",
+    "file": "docs/features/F03/reference_v4/F03_F05_HANDOFF.md",
+    "line": 3,
+    "oldTarget": "../requirements/F03_WEIGHT_RULES_v1_2.md",
+    "newTarget": "../../../requirements/README.md#f03-v12-source-gap",
+    "kind": "MISSING_SOURCE_GAP_NOTICE"
+  },
+  {
+    "originalFile": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_F05_HANDOFF.md",
+    "file": "docs/features/F03/reference_v4/F03_F05_HANDOFF.md",
+    "line": 9,
+    "oldTarget": "../api/F05_MINING_API.md",
+    "newTarget": "../../../api/F05_MINING_API.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_F05_HANDOFF.md",
+    "file": "docs/features/F03/reference_v4/F03_F05_HANDOFF.md",
+    "line": 9,
+    "oldTarget": "../PASPM_F05_High_Utility_Mining/F05_VERIFICATION.md",
+    "newTarget": "../../F05/reference/F05_VERIFICATION.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_IMPLEMENTATION_SUMMARY.md",
+    "file": "docs/features/F03/reference_v4/F03_IMPLEMENTATION_SUMMARY.md",
+    "line": 3,
+    "oldTarget": "../requirements/F03_WEIGHT_RULES_v1_2.md",
+    "newTarget": "../../../requirements/README.md#f03-v12-source-gap",
+    "kind": "MISSING_SOURCE_GAP_NOTICE"
+  },
+  {
+    "originalFile": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_IMPLEMENTATION_SUMMARY.md",
+    "file": "docs/features/F03/reference_v4/F03_IMPLEMENTATION_SUMMARY.md",
+    "line": 3,
+    "oldTarget": "../api/F03_UTILITY_API.md",
+    "newTarget": "../../../api/F03_UTILITY_API.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_SWAGGER_TEST_REPORT.md",
+    "file": "docs/features/F03/reference_v4/F03_SWAGGER_TEST_REPORT.md",
+    "line": 3,
+    "oldTarget": "../requirements/F03_WEIGHT_RULES_v1_2.md",
+    "newTarget": "../../../requirements/README.md#f03-v12-source-gap",
+    "kind": "MISSING_SOURCE_GAP_NOTICE"
+  },
+  {
+    "originalFile": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_SWAGGER_TEST_REPORT.md",
+    "file": "docs/features/F03/reference_v4/F03_SWAGGER_TEST_REPORT.md",
+    "line": 3,
+    "oldTarget": "../api/F03_UTILITY_API.md",
+    "newTarget": "../../../api/F03_UTILITY_API.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_TECHNICAL_DECISIONS.md",
+    "file": "docs/features/F03/reference_v4/F03_TECHNICAL_DECISIONS.md",
+    "line": 3,
+    "oldTarget": "../requirements/F03_WEIGHT_RULES_v1_2.md",
+    "newTarget": "../../../requirements/README.md#f03-v12-source-gap",
+    "kind": "MISSING_SOURCE_GAP_NOTICE"
+  },
+  {
+    "originalFile": "docs/PASPM_F03_ERD_and_Tasks_v4/F03_TECHNICAL_DECISIONS.md",
+    "file": "docs/features/F03/reference_v4/F03_TECHNICAL_DECISIONS.md",
+    "line": 3,
+    "oldTarget": "../api/F03_UTILITY_API.md",
+    "newTarget": "../../../api/F03_UTILITY_API.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/PASPM_F04_Transaction_Data_Pipeline/F04_SWAGGER_TEST_REPORT.md",
+    "file": "docs/features/F04/reference/F04_SWAGGER_TEST_REPORT.md",
+    "line": 13,
+    "oldTarget": "../api/openapi.json",
+    "newTarget": "../../../api/openapi.json",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/api/API_CHANGELOG.md",
+    "file": "docs/api/API_CHANGELOG.md",
+    "line": 9,
+    "oldTarget": "../requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "newTarget": "../testing/reports/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/api/API_CHANGELOG.md",
+    "file": "docs/api/API_CHANGELOG.md",
+    "line": 16,
+    "oldTarget": "../requirements/F06_VERIFICATION.md",
+    "newTarget": "../testing/reports/F06_VERIFICATION.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/api/F01_AUTH_USER_API.md",
+    "file": "docs/api/F01_AUTH_USER_API.md",
+    "line": 74,
+    "oldTarget": "../frontend_handoff/F01_examples/",
+    "newTarget": "../frontend_handoff/F01_examples",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/api/F02_PRODUCT_INVENTORY_API.md",
+    "file": "docs/api/F02_PRODUCT_INVENTORY_API.md",
+    "line": 68,
+    "oldTarget": "../frontend_handoff/F02_examples/",
+    "newTarget": "../frontend_handoff/F02_examples",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/api/F03_UTILITY_API.md",
+    "file": "docs/api/F03_UTILITY_API.md",
+    "line": 3,
+    "oldTarget": "../requirements/F03_WEIGHT_RULES_v1_2.md",
+    "newTarget": "../requirements/README.md#f03-v12-source-gap",
+    "kind": "MISSING_SOURCE_GAP_NOTICE"
+  },
+  {
+    "originalFile": "docs/api/F03_UTILITY_API.md",
+    "file": "docs/api/F03_UTILITY_API.md",
+    "line": 140,
+    "oldTarget": "../PASPM_F03_ERD_and_Tasks_v4/F03_F05_HANDOFF.md",
+    "newTarget": "../features/F03/reference_v4/F03_F05_HANDOFF.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/api/F03_V12_F05_F06_INTEGRATION.md",
+    "file": "docs/api/F03_V12_F05_F06_INTEGRATION.md",
+    "line": 7,
+    "oldTarget": "../PASPM_F05_High_Utility_Mining/F05_F06_HANDOFF.md",
+    "newTarget": "../features/F05/reference/F05_F06_HANDOFF.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/api/F05_MINING_API.md",
+    "file": "docs/api/F05_MINING_API.md",
+    "line": 3,
+    "oldTarget": "../PASPM_F05_High_Utility_Mining/F05_VERIFICATION.md",
+    "newTarget": "../features/F05/reference/F05_VERIFICATION.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/api/F05_MINING_API.md",
+    "file": "docs/api/F05_MINING_API.md",
+    "line": 399,
+    "oldTarget": "../PASPM_F05_High_Utility_Mining/F05_F06_HANDOFF.md",
+    "newTarget": "../features/F05/reference/F05_F06_HANDOFF.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/api/F06_RECOMMENDATION_API.md",
+    "file": "docs/api/F06_RECOMMENDATION_API.md",
+    "line": 3,
+    "oldTarget": "../requirements/F06_VERIFICATION.md",
+    "newTarget": "../testing/reports/F06_VERIFICATION.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/architecture/CATEGORY_JPA_IMPLEMENTATION_REPORT.md",
+    "file": "docs/architecture/CATEGORY_JPA_IMPLEMENTATION_REPORT.md",
+    "line": 37,
+    "oldTarget": "HYBRID_JPA_DELIVERY_STATUS.md",
+    "newTarget": "../archive/persistence/HYBRID_JPA_DELIVERY_STATUS.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/architecture/HYBRID_JPA_DELIVERY_STATUS.md",
+    "file": "docs/archive/persistence/HYBRID_JPA_DELIVERY_STATUS.md",
+    "line": 8,
+    "oldTarget": "PRODUCT_JPA_INTEGRATION_PR.md",
+    "newTarget": "../review_packages/PRODUCT_JPA_INTEGRATION_PR.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/architecture/HYBRID_JPA_DELIVERY_STATUS.md",
+    "file": "docs/archive/persistence/HYBRID_JPA_DELIVERY_STATUS.md",
+    "line": 10,
+    "oldTarget": "CATEGORY_JPA_PR.md",
+    "newTarget": "../review_packages/CATEGORY_JPA_PR.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/architecture/JPA_PILOT_CODE_REVIEW.md",
+    "file": "docs/archive/persistence/JPA_PILOT_CODE_REVIEW.md",
+    "line": 36,
+    "oldTarget": "../testing/evidence/jpa_pilot_review/fresh-test-results.json",
+    "newTarget": "../../testing/evidence/jpa_pilot_review/fresh-test-results.json",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/architecture/JPA_PILOT_CODE_REVIEW.md",
+    "file": "docs/archive/persistence/JPA_PILOT_CODE_REVIEW.md",
+    "line": 36,
+    "oldTarget": "../testing/JPA_PILOT_SWAGGER_VERIFICATION.md",
+    "newTarget": "../../testing/JPA_PILOT_SWAGGER_VERIFICATION.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/architecture/JPA_PILOT_PR_READINESS.md",
+    "file": "docs/archive/persistence/JPA_PILOT_PR_READINESS.md",
+    "line": 3,
+    "oldTarget": "PRODUCT_JPA_INTEGRATION_REPORT.md",
+    "newTarget": "../../architecture/PRODUCT_JPA_INTEGRATION_REPORT.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/frontend_handoff/F01_HANDOFF.md",
+    "file": "docs/frontend_handoff/F01_HANDOFF.md",
+    "line": 3,
+    "oldTarget": "F01_examples/",
+    "newTarget": "F01_examples",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/frontend_handoff/F02_HANDOFF.md",
+    "file": "docs/frontend_handoff/F02_HANDOFF.md",
+    "line": 10,
+    "oldTarget": "F02_examples/",
+    "newTarget": "F02_examples",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/frontend_handoff/F03_HANDOFF.md",
+    "file": "docs/frontend_handoff/F03_HANDOFF.md",
+    "line": 3,
+    "oldTarget": "../requirements/F03_WEIGHT_RULES_v1_2.md",
+    "newTarget": "../requirements/README.md#f03-v12-source-gap",
+    "kind": "MISSING_SOURCE_GAP_NOTICE"
+  },
+  {
+    "originalFile": "docs/frontend_handoff/F04_HANDOFF.md",
+    "file": "docs/frontend_handoff/F04_HANDOFF.md",
+    "line": 32,
+    "oldTarget": "../PASPM_F04_Transaction_Data_Pipeline/examples/transactions.csv",
+    "newTarget": "../features/F04/reference/examples/transactions.csv",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/frontend_handoff/F05_HANDOFF.md",
+    "file": "docs/frontend_handoff/F05_HANDOFF.md",
+    "line": 5,
+    "oldTarget": "../PASPM_F05_High_Utility_Mining/F05_VERIFICATION.md",
+    "newTarget": "../features/F05/reference/F05_VERIFICATION.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/frontend_handoff/F06_HANDOFF.md",
+    "file": "docs/frontend_handoff/F06_HANDOFF.md",
+    "line": 84,
+    "oldTarget": "../requirements/F06_VERIFICATION.md",
+    "newTarget": "../testing/reports/F06_VERIFICATION.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/frontend_handoff/F06_examples/README.md",
+    "file": "docs/frontend_handoff/F06_examples/README.md",
+    "line": 13,
+    "oldTarget": "../../requirements/F06_VERIFICATION.md",
+    "newTarget": "../../testing/reports/F06_VERIFICATION.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/requirements/F06_IMPLEMENTATION_READINESS.md",
+    "file": "docs/archive/F06/F06_IMPLEMENTATION_READINESS.md",
+    "line": 4,
+    "oldTarget": "F06_IMPLEMENTATION_SUMMARY.md",
+    "newTarget": "../../features/F06/F06_IMPLEMENTATION_SUMMARY.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/requirements/F06_IMPLEMENTATION_READINESS.md",
+    "file": "docs/archive/F06/F06_IMPLEMENTATION_READINESS.md",
+    "line": 4,
+    "oldTarget": "F06_VERIFICATION.md",
+    "newTarget": "../../testing/reports/F06_VERIFICATION.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/requirements/F06_IMPLEMENTATION_READINESS.md",
+    "file": "docs/archive/F06/F06_IMPLEMENTATION_READINESS.md",
+    "line": 106,
+    "oldTarget": "evidence/f06-readiness.json",
+    "newTarget": "../../testing/evidence/feature_verification/f06-readiness.json",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/requirements/F06_IMPLEMENTATION_SUMMARY.md",
+    "file": "docs/features/F06/F06_IMPLEMENTATION_SUMMARY.md",
+    "line": 97,
+    "oldTarget": "../api/F06_RECOMMENDATION_API.md",
+    "newTarget": "../../api/F06_RECOMMENDATION_API.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/requirements/F06_IMPLEMENTATION_SUMMARY.md",
+    "file": "docs/features/F06/F06_IMPLEMENTATION_SUMMARY.md",
+    "line": 97,
+    "oldTarget": "../api/openapi.json",
+    "newTarget": "../../api/openapi.json",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/requirements/F06_IMPLEMENTATION_SUMMARY.md",
+    "file": "docs/features/F06/F06_IMPLEMENTATION_SUMMARY.md",
+    "line": 97,
+    "oldTarget": "../frontend_handoff/F06_HANDOFF.md",
+    "newTarget": "../../frontend_handoff/F06_HANDOFF.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/requirements/F06_IMPLEMENTATION_SUMMARY.md",
+    "file": "docs/features/F06/F06_IMPLEMENTATION_SUMMARY.md",
+    "line": 101,
+    "oldTarget": "F06_VERIFICATION.md",
+    "newTarget": "../../testing/reports/F06_VERIFICATION.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/requirements/F06_IMPLEMENTATION_SUMMARY.md",
+    "file": "docs/features/F06/F06_IMPLEMENTATION_SUMMARY.md",
+    "line": 102,
+    "oldTarget": "evidence/f06-automated-results.json",
+    "newTarget": "../../testing/evidence/feature_verification/f06-automated-results.json",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/requirements/F06_IMPLEMENTATION_SUMMARY.md",
+    "file": "docs/features/F06/F06_IMPLEMENTATION_SUMMARY.md",
+    "line": 102,
+    "oldTarget": "evidence/f06-swagger-ui.json",
+    "newTarget": "../../testing/evidence/feature_verification/f06-swagger-ui.json",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/requirements/F06_IMPLEMENTATION_SUMMARY.md",
+    "file": "docs/features/F06/F06_IMPLEMENTATION_SUMMARY.md",
+    "line": 102,
+    "oldTarget": "evidence/f06-mysql-readback.txt",
+    "newTarget": "../../testing/evidence/feature_verification/f06-mysql-readback.txt",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/requirements/F06_IMPLEMENTATION_SUMMARY.md",
+    "file": "docs/features/F06/F06_IMPLEMENTATION_SUMMARY.md",
+    "line": 102,
+    "oldTarget": "evidence/f06-erd-schema-check.json",
+    "newTarget": "../../testing/evidence/feature_verification/f06-erd-schema-check.json",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/requirements/F06_IMPLEMENTATION_SUMMARY.md",
+    "file": "docs/features/F06/F06_IMPLEMENTATION_SUMMARY.md",
+    "line": 102,
+    "oldTarget": "evidence/f06-codegraph.json",
+    "newTarget": "../../testing/evidence/feature_verification/f06-codegraph.json",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/requirements/F06_RECOMMENDATION_RULES_v1_1.md",
+    "file": "docs/requirements/F06_RECOMMENDATION_RULES_v1_1.md",
+    "line": 4,
+    "oldTarget": "F06_VERIFICATION.md",
+    "newTarget": "../testing/reports/F06_VERIFICATION.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/requirements/F06_VERIFICATION.md",
+    "file": "docs/testing/reports/F06_VERIFICATION.md",
+    "line": 12,
+    "oldTarget": "evidence/f06-automated-results.json",
+    "newTarget": "../evidence/feature_verification/f06-automated-results.json",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/requirements/F06_VERIFICATION.md",
+    "file": "docs/testing/reports/F06_VERIFICATION.md",
+    "line": 50,
+    "oldTarget": "evidence/f06-swagger-ui.json",
+    "newTarget": "../evidence/feature_verification/f06-swagger-ui.json",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/requirements/F06_VERIFICATION.md",
+    "file": "docs/testing/reports/F06_VERIFICATION.md",
+    "line": 50,
+    "oldTarget": "evidence/f06-swagger-approved.png",
+    "newTarget": "../evidence/feature_verification/f06-swagger-approved.png",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/requirements/F06_VERIFICATION.md",
+    "file": "docs/testing/reports/F06_VERIFICATION.md",
+    "line": 52,
+    "oldTarget": "evidence/f06-mysql-readback.txt",
+    "newTarget": "../evidence/feature_verification/f06-mysql-readback.txt",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/requirements/F06_VERIFICATION.md",
+    "file": "docs/testing/reports/F06_VERIFICATION.md",
+    "line": 75,
+    "oldTarget": "evidence/f06-erd-schema-check.json",
+    "newTarget": "../evidence/feature_verification/f06-erd-schema-check.json",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/requirements/F06_VERIFICATION.md",
+    "file": "docs/testing/reports/F06_VERIFICATION.md",
+    "line": 80,
+    "oldTarget": "evidence/f06-core-review.md",
+    "newTarget": "../evidence/feature_verification/f06-core-review.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "file": "docs/testing/reports/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "line": 51,
+    "oldTarget": "evidence/retail-catalog-automated.json",
+    "newTarget": "../evidence/feature_verification/retail-catalog-automated.json",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "file": "docs/testing/reports/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "line": 75,
+    "oldTarget": "evidence/retail-catalog-http.json",
+    "newTarget": "../evidence/feature_verification/retail-catalog-http.json",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "file": "docs/testing/reports/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "line": 93,
+    "oldTarget": "evidence/retail-catalog-swagger-ui.json",
+    "newTarget": "../evidence/feature_verification/retail-catalog-swagger-ui.json",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "file": "docs/testing/reports/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "line": 93,
+    "oldTarget": "evidence/retail-catalog-swagger-scores.png",
+    "newTarget": "../evidence/feature_verification/retail-catalog-swagger-scores.png",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "file": "docs/testing/reports/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "line": 95,
+    "oldTarget": "../api/openapi.json",
+    "newTarget": "../../api/openapi.json",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "file": "docs/testing/reports/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "line": 116,
+    "oldTarget": "../api/F03_UTILITY_API.md",
+    "newTarget": "../../api/F03_UTILITY_API.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "file": "docs/testing/reports/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "line": 116,
+    "oldTarget": "../api/F02_PRODUCT_INVENTORY_API.md",
+    "newTarget": "../../api/F02_PRODUCT_INVENTORY_API.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "file": "docs/testing/reports/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "line": 116,
+    "oldTarget": "../api/F01_F02_RBAC_MATRIX.md",
+    "newTarget": "../../api/F01_F02_RBAC_MATRIX.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "file": "docs/testing/reports/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "line": 116,
+    "oldTarget": "../frontend_handoff/F03_HANDOFF.md",
+    "newTarget": "../../frontend_handoff/F03_HANDOFF.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "file": "docs/testing/reports/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "line": 116,
+    "oldTarget": "../frontend_handoff/F02_HANDOFF.md",
+    "newTarget": "../../frontend_handoff/F02_HANDOFF.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "file": "docs/testing/reports/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "line": 116,
+    "oldTarget": "../api/API_CHANGELOG.md",
+    "newTarget": "../../api/API_CHANGELOG.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/superpowers/specs/2026-10-21-retail-catalog-utility-design.md",
+    "file": "docs/superpowers/specs/2026-10-21-retail-catalog-utility-design.md",
+    "line": 64,
+    "oldTarget": "../../requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "newTarget": "../../testing/reports/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/testing/JPA_PILOT_REAL_DATA_VERIFICATION.md",
+    "file": "docs/testing/JPA_PILOT_REAL_DATA_VERIFICATION.md",
+    "line": 1,
+    "oldTarget": "../architecture/JPA_PILOT_PR_READINESS.md",
+    "newTarget": "../archive/persistence/JPA_PILOT_PR_READINESS.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/testing/JPA_PILOT_REAL_DATA_VERIFICATION.md",
+    "file": "docs/testing/JPA_PILOT_REAL_DATA_VERIFICATION.md",
+    "line": 136,
+    "oldTarget": "../architecture/JPA_PILOT_PR_READINESS.md",
+    "newTarget": "../archive/persistence/JPA_PILOT_PR_READINESS.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/testing/JPA_PILOT_REAL_DATA_VERIFICATION.md",
+    "file": "docs/testing/JPA_PILOT_REAL_DATA_VERIFICATION.md",
+    "line": 136,
+    "oldTarget": "../architecture/JPA_PILOT_CODE_REVIEW.md",
+    "newTarget": "../archive/persistence/JPA_PILOT_CODE_REVIEW.md",
+    "kind": "RELOCATION"
+  },
+  {
+    "originalFile": "docs/testing/PR1_REVIEW_GATE_REPORT.md",
+    "file": "docs/testing/PR1_REVIEW_GATE_REPORT.md",
+    "line": 63,
+    "oldTarget": "../architecture/BACKEND_CI_PR_DESCRIPTION.md",
+    "newTarget": "../archive/review_packages/BACKEND_CI_PR_DESCRIPTION.md",
+    "kind": "RELOCATION"
+  }
+]

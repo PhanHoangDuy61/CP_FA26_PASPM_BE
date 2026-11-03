@@ -1,0 +1,8 @@
+{
+  "before_sha256_excluding_servers": "35f2133936dbfc9228a5c8133795518c6df646993b9e1ab363b13ddd698a861f",
+  "after_sha256_excluding_servers": "35f2133936dbfc9228a5c8133795518c6df646993b9e1ab363b13ddd698a861f",
+  "path_count": 59,
+  "equal": true,
+  "full_specs": "/tmp/paspm-jpa-pilot/before-openapi.json and after-openapi.json",
+  "interactive_swagger_ui": "NOT RUN; runtime OpenAPI and MockMvc API contract checks executed"
+}

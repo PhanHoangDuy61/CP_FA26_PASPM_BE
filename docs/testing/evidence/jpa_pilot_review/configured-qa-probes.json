@@ -1,0 +1,17 @@
+[ {
+  "configuration" : "paspm-f06-swagger.properties",
+  "classification" : "previously provisioned local QA / SIMULATED, not genuine retail source",
+  "status" : "unavailable; SQL state=42000"
+}, {
+  "configuration" : "paspm-retail-api.properties",
+  "classification" : "previously provisioned local QA / SIMULATED, not genuine retail source",
+  "status" : "unavailable; SQL state=42000"
+}, {
+  "configuration" : "clone.properties",
+  "classification" : "previously provisioned local QA / SIMULATED, not genuine retail source",
+  "flywayVersion" : 10,
+  "category" : 37,
+  "product" : 26,
+  "inventory_batch" : 15,
+  "status" : "READ_ONLY inspection PASS"
+} ]

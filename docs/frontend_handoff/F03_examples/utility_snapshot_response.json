@@ -1,0 +1,45 @@
+{
+  "snapshotId" : 1,
+  "storeId" : 7,
+  "createdBy" : 14,
+  "rangeStart" : "2026-10-01",
+  "rangeEnd" : "2026-10-31",
+  "asOfDate" : "2026-10-19",
+  "configuration" : {
+    "config" : {
+      "enableStock" : true,
+      "enableExpiry" : true,
+      "enableSeason" : true,
+      "alpha" : 0.5,
+      "beta" : 0.2,
+      "gamma" : 0.3,
+      "lambda" : 0.5,
+      "expiryWindowDays" : null,
+      "version" : 2,
+      "scoringVersion" : "EXPIRY_PRODUCT_EARLIEST_BATCH_BINARY_V1"
+    },
+    "lambdaPolicy" : {
+      "lambdaMin" : 0,
+      "lambdaMax" : 0.5,
+      "version" : 1
+    },
+    "effectiveCoefficients" : {
+      "alpha" : 0.5,
+      "beta" : 0.2,
+      "gamma" : 0.3
+    },
+    "analysisDate" : "2026-10-19",
+    "source" : "F04_DATABASE_V1",
+    "utilityScale" : 6,
+    "roundingMode" : "HALF_UP",
+    "itemMapping" : "PRODUCT_ID_V1",
+    "timeZone" : "Asia/Ho_Chi_Minh"
+  },
+  "sourceHash" : "f6c5d455d79fbfba1dd915e9db60ffb5103143d1d0e7f0c059f5511e99d6f43b",
+  "matrixHash" : "0deacd0468b7b525e7cc697ed4822076df8c7b8b60f4c19326d3eeb9732f6af3",
+  "totalWeightedUtility" : 17220.0,
+  "roundingScale" : 6,
+  "status" : "READY",
+  "createdAt" : "2026-10-19T15:34:17.553013Z",
+  "warnings" : [ ]
+}

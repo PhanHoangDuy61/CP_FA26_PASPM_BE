@@ -1,0 +1,1872 @@
+[
+  {
+    "id": "UI01",
+    "method": "GET",
+    "path": "/api/recommendations/expiry-push",
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "input": null,
+    "response": {
+      "items": [
+        {
+          "productId": 1,
+          "batchId": 1,
+          "expiryDate": "2026-10-25",
+          "daysRemaining": 5,
+          "remainingQuantity": 10,
+          "expiryPushDays": 7,
+          "pushRequired": true,
+          "checkedAt": "2026-10-20T07:49:58.518932Z",
+          "status": "AVAILABLE",
+          "warnings": []
+        }
+      ],
+      "page": 0,
+      "pageSize": 20,
+      "totalElements": 1,
+      "asOfDate": "2026-10-20",
+      "timeZone": "Asia/Ho_Chi_Minh",
+      "checkedAt": "2026-10-20T07:49:58.518932Z",
+      "warnings": []
+    },
+    "status": "PASS",
+    "executedAt": "2026-10-20T07:50:56.401Z",
+    "timeZone": "Asia/Ho_Chi_Minh",
+    "channel": "Swagger UI Try it out / Execute"
+  },
+  {
+    "id": "UI02",
+    "method": "POST",
+    "path": "/api/utility/snapshots",
+    "expectedStatus": 201,
+    "actualStatus": 201,
+    "input": {
+      "rangeStart": "2026-10-20",
+      "rangeEnd": "2026-10-20",
+      "asOfDate": "2026-10-20"
+    },
+    "response": {
+      "snapshotId": 1,
+      "storeId": 1,
+      "createdBy": 1,
+      "rangeStart": "2026-10-20",
+      "rangeEnd": "2026-10-20",
+      "asOfDate": "2026-10-20",
+      "configuration": {
+        "config": {
+          "enableStock": false,
+          "enableExpiry": false,
+          "enableSeason": false,
+          "alpha": 0,
+          "beta": 0,
+          "gamma": 0,
+          "lambda": 0,
+          "expiryWindowDays": null,
+          "version": 1,
+          "scoringVersion": "EXPIRY_PRODUCT_EARLIEST_BATCH_BINARY_V1"
+        },
+        "lambdaPolicy": {
+          "lambdaMin": 0,
+          "lambdaMax": 0.5,
+          "version": 1
+        },
+        "effectiveCoefficients": {
+          "alpha": 0,
+          "beta": 0,
+          "gamma": 0
+        },
+        "analysisDate": "2026-10-20",
+        "source": "F04_DATABASE_V1",
+        "utilityScale": 6,
+        "roundingMode": "HALF_UP",
+        "itemMapping": "PRODUCT_ID_V1",
+        "timeZone": "Asia/Ho_Chi_Minh"
+      },
+      "sourceHash": "25758e2c628540a3f39df75f5bdbf9657517f753f7bb503d0a8ac61c1e4b49b9",
+      "matrixHash": "d771e5e8217dd2b5d79cca3986cf0af369583837faaf13ce3056cef3c3e8edee",
+      "totalWeightedUtility": 80,
+      "roundingScale": 6,
+      "status": "READY",
+      "createdAt": "2026-10-20T07:52:08Z",
+      "warnings": []
+    },
+    "status": "PASS",
+    "executedAt": "2026-10-20T07:52:08.730Z",
+    "timeZone": "Asia/Ho_Chi_Minh",
+    "channel": "Swagger UI Try it out / Execute"
+  },
+  {
+    "id": "UI03",
+    "method": "POST",
+    "path": "/api/mining/requests",
+    "expectedStatus": 202,
+    "actualStatus": 202,
+    "input": {
+      "requestKey": "c032ed14-e927-4e50-9165-f86bc97998c4",
+      "snapshotId": 1,
+      "algorithms": [
+        "HUI_MINER",
+        "EFIM"
+      ],
+      "minUtilMode": "ABSOLUTE",
+      "minUtilValue": 1
+    },
+    "response": {
+      "requestId": 1,
+      "storeId": 1,
+      "requestedBy": 1,
+      "requestKey": "c032ed14-e927-4e50-9165-f86bc97998c4",
+      "snapshotId": 1,
+      "algorithms": [
+        "HUI_MINER",
+        "EFIM"
+      ],
+      "minUtilMode": "ABSOLUTE",
+      "minUtilValue": 1,
+      "minUtilSpmf": 1,
+      "effectiveMinUtility": 10,
+      "status": "PENDING",
+      "comparisonStatus": "PENDING",
+      "snapshotHash": "d771e5e8217dd2b5d79cca3986cf0af369583837faaf13ce3056cef3c3e8edee",
+      "inputHash": "757c370552348bd72bdf70e0d154e342cb60fb1ea701b6d644de29691dbc9788",
+      "conversionVersion": "F03_SCALE6_GCD_INT32_DENSE_V1",
+      "utilityScale": 6,
+      "roundingMode": "HALF_UP",
+      "divisor": 10000000,
+      "totalScaledUtility": 8,
+      "transactionCount": 6,
+      "distinctItems": 3,
+      "inputBytes": 44,
+      "snapshot": {
+        "snapshotId": 1,
+        "storeId": 1,
+        "createdBy": 1,
+        "rangeStart": "2026-10-20",
+        "rangeEnd": "2026-10-20",
+        "asOfDate": "2026-10-20",
+        "configuration": {
+          "config": {
+            "enableStock": false,
+            "enableExpiry": false,
+            "enableSeason": false,
+            "alpha": 0,
+            "beta": 0,
+            "gamma": 0,
+            "lambda": 0,
+            "expiryWindowDays": null,
+            "version": 1,
+            "scoringVersion": "EXPIRY_PRODUCT_EARLIEST_BATCH_BINARY_V1"
+          },
+          "lambdaPolicy": {
+            "lambdaMin": 0,
+            "lambdaMax": 0.5,
+            "version": 1
+          },
+          "effectiveCoefficients": {
+            "alpha": 0,
+            "beta": 0,
+            "gamma": 0
+          },
+          "analysisDate": "2026-10-20",
+          "source": "F04_DATABASE_V1",
+          "utilityScale": 6,
+          "roundingMode": "HALF_UP",
+          "itemMapping": "PRODUCT_ID_V1",
+          "timeZone": "Asia/Ho_Chi_Minh"
+        },
+        "sourceHash": "25758e2c628540a3f39df75f5bdbf9657517f753f7bb503d0a8ac61c1e4b49b9",
+        "matrixHash": "d771e5e8217dd2b5d79cca3986cf0af369583837faaf13ce3056cef3c3e8edee",
+        "totalWeightedUtility": 80,
+        "roundingScale": 6,
+        "status": "READY",
+        "createdAt": "2026-10-20T07:52:08Z",
+        "warnings": []
+      },
+      "createdAt": "2026-10-20T07:52:33Z"
+    },
+    "status": "PASS",
+    "executedAt": "2026-10-20T07:53:22.730Z",
+    "timeZone": "Asia/Ho_Chi_Minh",
+    "channel": "Swagger UI Try it out / Execute"
+  },
+  {
+    "id": "UI04",
+    "method": "GET",
+    "path": "/api/mining/requests/1/runs",
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "input": null,
+    "response": [
+      {
+        "runId": 1,
+        "requestId": 1,
+        "storeId": 1,
+        "snapshotId": 1,
+        "algorithm": "HUI_MINER",
+        "attemptNo": 1,
+        "libraryVersion": "SPMF_2.67a",
+        "status": "COMPLETED",
+        "minUtilSpmf": 1,
+        "inputHash": "757c370552348bd72bdf70e0d154e342cb60fb1ea701b6d644de29691dbc9788",
+        "conversionVersion": "F03_SCALE6_GCD_INT32_DENSE_V1",
+        "startedAt": "2026-10-20T07:52:33Z",
+        "completedAt": "2026-10-20T07:52:33Z",
+        "runtimeMillis": 124,
+        "memoryMiB": 10.622848510742188,
+        "memoryMethod": "SPMF_SAMPLED_JAVA_HEAP_MIB_NOT_RSS",
+        "runtimeMethod": "CHILD_JVM_WALL_TIME_INCLUDING_STARTUP_AND_IO_EXCLUDING_INPUT_PREPARATION",
+        "environment": "SPMF=SPMF_2.67a;jarSha256=4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a;heapMiB=256;os=Mac OS X;arch=aarch64;javaExecutableSha256=707698c4c6f29cd001e270afed04aed51a201f5e0adba0023ac3f6c35f11a978",
+        "patternCount": 4,
+        "failureCode": null,
+        "failureMessage": null
+      },
+      {
+        "runId": 2,
+        "requestId": 1,
+        "storeId": 1,
+        "snapshotId": 1,
+        "algorithm": "EFIM",
+        "attemptNo": 1,
+        "libraryVersion": "SPMF_2.67a",
+        "status": "COMPLETED",
+        "minUtilSpmf": 1,
+        "inputHash": "757c370552348bd72bdf70e0d154e342cb60fb1ea701b6d644de29691dbc9788",
+        "conversionVersion": "F03_SCALE6_GCD_INT32_DENSE_V1",
+        "startedAt": "2026-10-20T07:52:33Z",
+        "completedAt": "2026-10-20T07:52:33Z",
+        "runtimeMillis": 106,
+        "memoryMiB": 11.122848510742188,
+        "memoryMethod": "SPMF_SAMPLED_JAVA_HEAP_MIB_NOT_RSS",
+        "runtimeMethod": "CHILD_JVM_WALL_TIME_INCLUDING_STARTUP_AND_IO_EXCLUDING_INPUT_PREPARATION",
+        "environment": "SPMF=SPMF_2.67a;jarSha256=4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a;heapMiB=256;os=Mac OS X;arch=aarch64;javaExecutableSha256=707698c4c6f29cd001e270afed04aed51a201f5e0adba0023ac3f6c35f11a978",
+        "patternCount": 4,
+        "failureCode": null,
+        "failureMessage": null
+      }
+    ],
+    "status": "PASS",
+    "executedAt": "2026-10-20T07:53:49.391Z",
+    "timeZone": "Asia/Ho_Chi_Minh",
+    "channel": "Swagger UI Try it out / Execute"
+  },
+  {
+    "id": "UI05",
+    "method": "POST",
+    "path": "/api/recommendations/generate",
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "input": {
+      "miningRunId": 1,
+      "types": [
+        "BUNDLE",
+        "CROSS_SELL",
+        "FBT",
+        "BANNER"
+      ]
+    },
+    "response": {
+      "miningRunId": 1,
+      "snapshotId": 1,
+      "policyVersion": 1,
+      "ruleVersion": "F06_RULES_V1_1",
+      "createdCount": 8,
+      "reusedCount": 0,
+      "recommendationIds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "skipped": [
+        {
+          "patternId": 3,
+          "type": "BUNDLE",
+          "anchorProductId": null,
+          "reason": "PATTERN_REQUIRES_AT_LEAST_TWO_PRODUCTS"
+        },
+        {
+          "patternId": 3,
+          "type": "CROSS_SELL",
+          "anchorProductId": null,
+          "reason": "PATTERN_REQUIRES_AT_LEAST_TWO_PRODUCTS"
+        },
+        {
+          "patternId": 3,
+          "type": "FBT",
+          "anchorProductId": null,
+          "reason": "PATTERN_REQUIRES_AT_LEAST_TWO_PRODUCTS"
+        },
+        {
+          "patternId": 1,
+          "type": "BUNDLE",
+          "anchorProductId": null,
+          "reason": "PATTERN_REQUIRES_AT_LEAST_TWO_PRODUCTS"
+        },
+        {
+          "patternId": 1,
+          "type": "CROSS_SELL",
+          "anchorProductId": null,
+          "reason": "PATTERN_REQUIRES_AT_LEAST_TWO_PRODUCTS"
+        },
+        {
+          "patternId": 1,
+          "type": "FBT",
+          "anchorProductId": null,
+          "reason": "PATTERN_REQUIRES_AT_LEAST_TWO_PRODUCTS"
+        },
+        {
+          "patternId": 4,
+          "type": "BUNDLE",
+          "anchorProductId": null,
+          "reason": "PATTERN_REQUIRES_AT_LEAST_TWO_PRODUCTS"
+        },
+        {
+          "patternId": 4,
+          "type": "CROSS_SELL",
+          "anchorProductId": null,
+          "reason": "PATTERN_REQUIRES_AT_LEAST_TWO_PRODUCTS"
+        },
+        {
+          "patternId": 4,
+          "type": "FBT",
+          "anchorProductId": null,
+          "reason": "PATTERN_REQUIRES_AT_LEAST_TWO_PRODUCTS"
+        }
+      ]
+    },
+    "status": "PASS",
+    "executedAt": "2026-10-20T07:54:07.193Z",
+    "timeZone": "Asia/Ho_Chi_Minh",
+    "channel": "Swagger UI Try it out / Execute"
+  },
+  {
+    "id": "UI06",
+    "method": "POST",
+    "path": "/api/recommendations/generate",
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "input": {
+      "miningRunId": 1,
+      "types": [
+        "BUNDLE",
+        "CROSS_SELL",
+        "FBT",
+        "BANNER"
+      ]
+    },
+    "response": {
+      "miningRunId": 1,
+      "snapshotId": 1,
+      "policyVersion": 1,
+      "ruleVersion": "F06_RULES_V1_1",
+      "createdCount": 0,
+      "reusedCount": 8,
+      "recommendationIds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "skipped": [
+        {
+          "patternId": 3,
+          "type": "BUNDLE",
+          "anchorProductId": null,
+          "reason": "PATTERN_REQUIRES_AT_LEAST_TWO_PRODUCTS"
+        },
+        {
+          "patternId": 3,
+          "type": "CROSS_SELL",
+          "anchorProductId": null,
+          "reason": "PATTERN_REQUIRES_AT_LEAST_TWO_PRODUCTS"
+        },
+        {
+          "patternId": 3,
+          "type": "FBT",
+          "anchorProductId": null,
+          "reason": "PATTERN_REQUIRES_AT_LEAST_TWO_PRODUCTS"
+        },
+        {
+          "patternId": 1,
+          "type": "BUNDLE",
+          "anchorProductId": null,
+          "reason": "PATTERN_REQUIRES_AT_LEAST_TWO_PRODUCTS"
+        },
+        {
+          "patternId": 1,
+          "type": "CROSS_SELL",
+          "anchorProductId": null,
+          "reason": "PATTERN_REQUIRES_AT_LEAST_TWO_PRODUCTS"
+        },
+        {
+          "patternId": 1,
+          "type": "FBT",
+          "anchorProductId": null,
+          "reason": "PATTERN_REQUIRES_AT_LEAST_TWO_PRODUCTS"
+        },
+        {
+          "patternId": 4,
+          "type": "BUNDLE",
+          "anchorProductId": null,
+          "reason": "PATTERN_REQUIRES_AT_LEAST_TWO_PRODUCTS"
+        },
+        {
+          "patternId": 4,
+          "type": "CROSS_SELL",
+          "anchorProductId": null,
+          "reason": "PATTERN_REQUIRES_AT_LEAST_TWO_PRODUCTS"
+        },
+        {
+          "patternId": 4,
+          "type": "FBT",
+          "anchorProductId": null,
+          "reason": "PATTERN_REQUIRES_AT_LEAST_TWO_PRODUCTS"
+        }
+      ]
+    },
+    "status": "PASS",
+    "executedAt": "2026-10-20T07:54:07.894Z",
+    "timeZone": "Asia/Ho_Chi_Minh",
+    "channel": "Swagger UI Try it out / Execute"
+  },
+  {
+    "id": "UI07",
+    "method": "GET",
+    "path": "/api/recommendations?miningRunId=1&page=0&pageSize=1",
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "input": null,
+    "response": {
+      "items": [
+        {
+          "recommendationId": 6,
+          "storeId": 1,
+          "snapshotId": 1,
+          "type": "BANNER",
+          "productIds": [
+            2
+          ],
+          "anchorProductId": null,
+          "utility": 40,
+          "reviewStatus": "PENDING_REVIEW",
+          "version": 1,
+          "ruleVersion": "F06_RULES_V1_1",
+          "policy": {
+            "version": 1,
+            "maxBundleSize": 4,
+            "minSupportCount": 2,
+            "minSupportRatio": 0.05,
+            "minConfidence": 0.5,
+            "minimumSellableQuantity": 1,
+            "ruleVersion": "F06_RULES_V1_1"
+          },
+          "evidence": {
+            "totalTransactions": 6,
+            "supportCount": 4,
+            "supportRatio": 0.666667,
+            "anchorSupportCount": null,
+            "confidence": null,
+            "status": "AVAILABLE"
+          },
+          "generationEligibility": {
+            "status": "ELIGIBLE",
+            "products": [
+              {
+                "productId": 2,
+                "productStatus": "ACTIVE",
+                "sellableQuantity": 10,
+                "status": "ELIGIBLE",
+                "expiryPriorityScore": 0,
+                "expiryStatus": "NOT_APPLICABLE",
+                "expiryPushDays": 0,
+                "warnings": []
+              }
+            ],
+            "checkedAt": "2026-10-20T07:54:06.468337Z",
+            "asOfDate": "2026-10-20",
+            "timeZone": "Asia/Ho_Chi_Minh",
+            "warnings": [],
+            "fingerprint": "808fb37d21a6c83ab3c5d2475f7aca55e7bd3c53c1606639cabb9fdbd00b1f07"
+          },
+          "currentEligibility": {
+            "status": "ELIGIBLE",
+            "products": [
+              {
+                "productId": 2,
+                "productStatus": "ACTIVE",
+                "sellableQuantity": 10,
+                "status": "ELIGIBLE",
+                "expiryPriorityScore": 0,
+                "expiryStatus": "NOT_APPLICABLE",
+                "expiryPushDays": 0,
+                "warnings": []
+              }
+            ],
+            "checkedAt": "2026-10-20T07:54:55.943454Z",
+            "asOfDate": "2026-10-20",
+            "timeZone": "Asia/Ho_Chi_Minh",
+            "warnings": [],
+            "fingerprint": "808fb37d21a6c83ab3c5d2475f7aca55e7bd3c53c1606639cabb9fdbd00b1f07"
+          },
+          "inventoryChanged": false,
+          "readyForConsumption": false,
+          "sources": [
+            {
+              "runId": 1,
+              "patternId": 3,
+              "requestId": 1,
+              "snapshotId": 1,
+              "algorithm": "HUI_MINER",
+              "libraryVersion": "SPMF_2.67a",
+              "conversionVersion": "F03_SCALE6_GCD_INT32_DENSE_V1",
+              "inputHash": "757c370552348bd72bdf70e0d154e342cb60fb1ea701b6d644de29691dbc9788",
+              "sourceHash": "25758e2c628540a3f39df75f5bdbf9657517f753f7bb503d0a8ac61c1e4b49b9",
+              "matrixHash": "d771e5e8217dd2b5d79cca3986cf0af369583837faaf13ce3056cef3c3e8edee",
+              "minUtilMode": "ABSOLUTE",
+              "minUtilValue": 1,
+              "minUtilSpmf": 1,
+              "effectiveMinUtility": 10,
+              "patternUtility": 40,
+              "analysisDate": "2026-10-20"
+            }
+          ],
+          "explanation": [
+            "Rule F06_RULES_V1_1 / policy 1: BANNER",
+            "Completed mining run 1, pattern 3, immutable snapshot 1",
+            "Utility 40.000000 uses frozen weighted utility units; it is not purchase probability",
+            "Historical support=4/6; confidence=null; anchor=null",
+            "Live eligibility is checked separately; expiry priority is shown per Product and does not alter ranking utility",
+            "Rank policy: eligibility, frozen utility descending within source run, support descending, canonical Product key, type and anchor",
+            "Historical co-occurrence does not establish causality"
+          ],
+          "reviewHistory": [],
+          "reviewedBy": null,
+          "reviewedAt": null,
+          "reviewReason": null,
+          "createdAt": "2026-10-20T07:54:06Z",
+          "rank": 1
+        }
+      ],
+      "page": 0,
+      "pageSize": 1,
+      "totalElements": 8,
+      "ordering": "RANKED_WITHIN_SOURCE_RUN"
+    },
+    "status": "PASS",
+    "executedAt": "2026-10-20T07:55:37.783Z",
+    "timeZone": "Asia/Ho_Chi_Minh",
+    "channel": "Swagger UI Authorize / Try it out / Execute"
+  },
+  {
+    "id": "UI08",
+    "method": "GET",
+    "path": "/api/recommendations/1",
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "input": null,
+    "response": {
+      "recommendationId": 1,
+      "storeId": 1,
+      "snapshotId": 1,
+      "type": "BUNDLE",
+      "productIds": [
+        1,
+        2
+      ],
+      "anchorProductId": null,
+      "utility": 40,
+      "reviewStatus": "PENDING_REVIEW",
+      "version": 1,
+      "ruleVersion": "F06_RULES_V1_1",
+      "policy": {
+        "version": 1,
+        "maxBundleSize": 4,
+        "minSupportCount": 2,
+        "minSupportRatio": 0.05,
+        "minConfidence": 0.5,
+        "minimumSellableQuantity": 1,
+        "ruleVersion": "F06_RULES_V1_1"
+      },
+      "evidence": {
+        "totalTransactions": 6,
+        "supportCount": 2,
+        "supportRatio": 0.333333,
+        "anchorSupportCount": null,
+        "confidence": null,
+        "status": "AVAILABLE"
+      },
+      "generationEligibility": {
+        "status": "ELIGIBLE",
+        "products": [
+          {
+            "productId": 1,
+            "productStatus": "ACTIVE",
+            "sellableQuantity": 10,
+            "status": "ELIGIBLE",
+            "expiryPriorityScore": 1,
+            "expiryStatus": "AVAILABLE",
+            "expiryPushDays": 7,
+            "warnings": []
+          },
+          {
+            "productId": 2,
+            "productStatus": "ACTIVE",
+            "sellableQuantity": 10,
+            "status": "ELIGIBLE",
+            "expiryPriorityScore": 0,
+            "expiryStatus": "NOT_APPLICABLE",
+            "expiryPushDays": 0,
+            "warnings": []
+          }
+        ],
+        "checkedAt": "2026-10-20T07:54:06.440199Z",
+        "asOfDate": "2026-10-20",
+        "timeZone": "Asia/Ho_Chi_Minh",
+        "warnings": [],
+        "fingerprint": "76c5ba9abd844f7d921e2c4ef1ac51dfc507bb61bf291689012fcc72db7a89b5"
+      },
+      "currentEligibility": {
+        "status": "ELIGIBLE",
+        "products": [
+          {
+            "productId": 1,
+            "productStatus": "ACTIVE",
+            "sellableQuantity": 10,
+            "status": "ELIGIBLE",
+            "expiryPriorityScore": 1,
+            "expiryStatus": "AVAILABLE",
+            "expiryPushDays": 7,
+            "warnings": []
+          },
+          {
+            "productId": 2,
+            "productStatus": "ACTIVE",
+            "sellableQuantity": 10,
+            "status": "ELIGIBLE",
+            "expiryPriorityScore": 0,
+            "expiryStatus": "NOT_APPLICABLE",
+            "expiryPushDays": 0,
+            "warnings": []
+          }
+        ],
+        "checkedAt": "2026-10-20T07:55:39.307118Z",
+        "asOfDate": "2026-10-20",
+        "timeZone": "Asia/Ho_Chi_Minh",
+        "warnings": [],
+        "fingerprint": "76c5ba9abd844f7d921e2c4ef1ac51dfc507bb61bf291689012fcc72db7a89b5"
+      },
+      "inventoryChanged": false,
+      "readyForConsumption": false,
+      "sources": [
+        {
+          "runId": 1,
+          "patternId": 2,
+          "requestId": 1,
+          "snapshotId": 1,
+          "algorithm": "HUI_MINER",
+          "libraryVersion": "SPMF_2.67a",
+          "conversionVersion": "F03_SCALE6_GCD_INT32_DENSE_V1",
+          "inputHash": "757c370552348bd72bdf70e0d154e342cb60fb1ea701b6d644de29691dbc9788",
+          "sourceHash": "25758e2c628540a3f39df75f5bdbf9657517f753f7bb503d0a8ac61c1e4b49b9",
+          "matrixHash": "d771e5e8217dd2b5d79cca3986cf0af369583837faaf13ce3056cef3c3e8edee",
+          "minUtilMode": "ABSOLUTE",
+          "minUtilValue": 1,
+          "minUtilSpmf": 1,
+          "effectiveMinUtility": 10,
+          "patternUtility": 40,
+          "analysisDate": "2026-10-20"
+        }
+      ],
+      "explanation": [
+        "Rule F06_RULES_V1_1 / policy 1: BUNDLE",
+        "Completed mining run 1, pattern 2, immutable snapshot 1",
+        "Utility 40.000000 uses frozen weighted utility units; it is not purchase probability",
+        "Historical support=2/6; confidence=null; anchor=null",
+        "Live eligibility is checked separately; expiry priority is shown per Product and does not alter ranking utility",
+        "Rank policy: eligibility, frozen utility descending within source run, support descending, canonical Product key, type and anchor",
+        "Historical co-occurrence does not establish causality"
+      ],
+      "reviewHistory": [],
+      "reviewedBy": null,
+      "reviewedAt": null,
+      "reviewReason": null,
+      "createdAt": "2026-10-20T07:54:06Z",
+      "rank": null
+    },
+    "status": "PASS",
+    "executedAt": "2026-10-20T07:55:40.230Z",
+    "timeZone": "Asia/Ho_Chi_Minh",
+    "channel": "Swagger UI Authorize / Try it out / Execute"
+  },
+  {
+    "id": "UI09",
+    "method": "POST",
+    "path": "/api/recommendations/1/approve",
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "input": {
+      "expectedVersion": 1,
+      "reason": "Swagger QA checked current stock"
+    },
+    "response": {
+      "recommendationId": 1,
+      "storeId": 1,
+      "snapshotId": 1,
+      "type": "BUNDLE",
+      "productIds": [
+        1,
+        2
+      ],
+      "anchorProductId": null,
+      "utility": 40,
+      "reviewStatus": "APPROVED",
+      "version": 2,
+      "ruleVersion": "F06_RULES_V1_1",
+      "policy": {
+        "version": 1,
+        "maxBundleSize": 4,
+        "minSupportCount": 2,
+        "minSupportRatio": 0.05,
+        "minConfidence": 0.5,
+        "minimumSellableQuantity": 1,
+        "ruleVersion": "F06_RULES_V1_1"
+      },
+      "evidence": {
+        "totalTransactions": 6,
+        "supportCount": 2,
+        "supportRatio": 0.333333,
+        "anchorSupportCount": null,
+        "confidence": null,
+        "status": "AVAILABLE"
+      },
+      "generationEligibility": {
+        "status": "ELIGIBLE",
+        "products": [
+          {
+            "productId": 1,
+            "productStatus": "ACTIVE",
+            "sellableQuantity": 10,
+            "status": "ELIGIBLE",
+            "expiryPriorityScore": 1,
+            "expiryStatus": "AVAILABLE",
+            "expiryPushDays": 7,
+            "warnings": []
+          },
+          {
+            "productId": 2,
+            "productStatus": "ACTIVE",
+            "sellableQuantity": 10,
+            "status": "ELIGIBLE",
+            "expiryPriorityScore": 0,
+            "expiryStatus": "NOT_APPLICABLE",
+            "expiryPushDays": 0,
+            "warnings": []
+          }
+        ],
+        "checkedAt": "2026-10-20T07:54:06.440199Z",
+        "asOfDate": "2026-10-20",
+        "timeZone": "Asia/Ho_Chi_Minh",
+        "warnings": [],
+        "fingerprint": "76c5ba9abd844f7d921e2c4ef1ac51dfc507bb61bf291689012fcc72db7a89b5"
+      },
+      "currentEligibility": {
+        "status": "ELIGIBLE",
+        "products": [
+          {
+            "productId": 1,
+            "productStatus": "ACTIVE",
+            "sellableQuantity": 10,
+            "status": "ELIGIBLE",
+            "expiryPriorityScore": 1,
+            "expiryStatus": "AVAILABLE",
+            "expiryPushDays": 7,
+            "warnings": []
+          },
+          {
+            "productId": 2,
+            "productStatus": "ACTIVE",
+            "sellableQuantity": 10,
+            "status": "ELIGIBLE",
+            "expiryPriorityScore": 0,
+            "expiryStatus": "NOT_APPLICABLE",
+            "expiryPushDays": 0,
+            "warnings": []
+          }
+        ],
+        "checkedAt": "2026-10-20T07:56:36.770636Z",
+        "asOfDate": "2026-10-20",
+        "timeZone": "Asia/Ho_Chi_Minh",
+        "warnings": [],
+        "fingerprint": "76c5ba9abd844f7d921e2c4ef1ac51dfc507bb61bf291689012fcc72db7a89b5"
+      },
+      "inventoryChanged": false,
+      "readyForConsumption": true,
+      "sources": [
+        {
+          "runId": 1,
+          "patternId": 2,
+          "requestId": 1,
+          "snapshotId": 1,
+          "algorithm": "HUI_MINER",
+          "libraryVersion": "SPMF_2.67a",
+          "conversionVersion": "F03_SCALE6_GCD_INT32_DENSE_V1",
+          "inputHash": "757c370552348bd72bdf70e0d154e342cb60fb1ea701b6d644de29691dbc9788",
+          "sourceHash": "25758e2c628540a3f39df75f5bdbf9657517f753f7bb503d0a8ac61c1e4b49b9",
+          "matrixHash": "d771e5e8217dd2b5d79cca3986cf0af369583837faaf13ce3056cef3c3e8edee",
+          "minUtilMode": "ABSOLUTE",
+          "minUtilValue": 1,
+          "minUtilSpmf": 1,
+          "effectiveMinUtility": 10,
+          "patternUtility": 40,
+          "analysisDate": "2026-10-20"
+        }
+      ],
+      "explanation": [
+        "Rule F06_RULES_V1_1 / policy 1: BUNDLE",
+        "Completed mining run 1, pattern 2, immutable snapshot 1",
+        "Utility 40.000000 uses frozen weighted utility units; it is not purchase probability",
+        "Historical support=2/6; confidence=null; anchor=null",
+        "Live eligibility is checked separately; expiry priority is shown per Product and does not alter ranking utility",
+        "Rank policy: eligibility, frozen utility descending within source run, support descending, canonical Product key, type and anchor",
+        "Historical co-occurrence does not establish causality"
+      ],
+      "reviewHistory": [
+        {
+          "oldStatus": "PENDING_REVIEW",
+          "newStatus": "APPROVED",
+          "reviewedBy": 1,
+          "reviewedAt": "2026-10-20T07:56:36Z",
+          "reason": "Swagger QA checked current stock",
+          "resultingVersion": 2,
+          "eligibilityCheck": {
+            "status": "ELIGIBLE",
+            "products": [
+              {
+                "productId": 1,
+                "productStatus": "ACTIVE",
+                "sellableQuantity": 10,
+                "status": "ELIGIBLE",
+                "expiryPriorityScore": 1,
+                "expiryStatus": "AVAILABLE",
+                "expiryPushDays": 7,
+                "warnings": []
+              },
+              {
+                "productId": 2,
+                "productStatus": "ACTIVE",
+                "sellableQuantity": 10,
+                "status": "ELIGIBLE",
+                "expiryPriorityScore": 0,
+                "expiryStatus": "NOT_APPLICABLE",
+                "expiryPushDays": 0,
+                "warnings": []
+              }
+            ],
+            "checkedAt": "2026-10-20T07:56:36.763540Z",
+            "asOfDate": "2026-10-20",
+            "timeZone": "Asia/Ho_Chi_Minh",
+            "warnings": [],
+            "fingerprint": "76c5ba9abd844f7d921e2c4ef1ac51dfc507bb61bf291689012fcc72db7a89b5"
+          }
+        }
+      ],
+      "reviewedBy": 1,
+      "reviewedAt": "2026-10-20T07:56:36Z",
+      "reviewReason": "Swagger QA checked current stock",
+      "createdAt": "2026-10-20T07:54:06Z",
+      "rank": null
+    },
+    "status": "PASS",
+    "executedAt": "2026-10-20T07:58:19.131Z",
+    "timeZone": "Asia/Ho_Chi_Minh",
+    "channel": "Swagger UI Authorize / Try it out / Execute"
+  },
+  {
+    "id": "UI10",
+    "method": "GET",
+    "path": "/api/recommendations/1",
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "input": null,
+    "response": {
+      "recommendationId": 1,
+      "storeId": 1,
+      "snapshotId": 1,
+      "type": "BUNDLE",
+      "productIds": [
+        1,
+        2
+      ],
+      "anchorProductId": null,
+      "utility": 40,
+      "reviewStatus": "APPROVED",
+      "version": 2,
+      "ruleVersion": "F06_RULES_V1_1",
+      "policy": {
+        "version": 1,
+        "maxBundleSize": 4,
+        "minSupportCount": 2,
+        "minSupportRatio": 0.05,
+        "minConfidence": 0.5,
+        "minimumSellableQuantity": 1,
+        "ruleVersion": "F06_RULES_V1_1"
+      },
+      "evidence": {
+        "totalTransactions": 6,
+        "supportCount": 2,
+        "supportRatio": 0.333333,
+        "anchorSupportCount": null,
+        "confidence": null,
+        "status": "AVAILABLE"
+      },
+      "generationEligibility": {
+        "status": "ELIGIBLE",
+        "products": [
+          {
+            "productId": 1,
+            "productStatus": "ACTIVE",
+            "sellableQuantity": 10,
+            "status": "ELIGIBLE",
+            "expiryPriorityScore": 1,
+            "expiryStatus": "AVAILABLE",
+            "expiryPushDays": 7,
+            "warnings": []
+          },
+          {
+            "productId": 2,
+            "productStatus": "ACTIVE",
+            "sellableQuantity": 10,
+            "status": "ELIGIBLE",
+            "expiryPriorityScore": 0,
+            "expiryStatus": "NOT_APPLICABLE",
+            "expiryPushDays": 0,
+            "warnings": []
+          }
+        ],
+        "checkedAt": "2026-10-20T07:54:06.440199Z",
+        "asOfDate": "2026-10-20",
+        "timeZone": "Asia/Ho_Chi_Minh",
+        "warnings": [],
+        "fingerprint": "76c5ba9abd844f7d921e2c4ef1ac51dfc507bb61bf291689012fcc72db7a89b5"
+      },
+      "currentEligibility": {
+        "status": "ELIGIBLE",
+        "products": [
+          {
+            "productId": 1,
+            "productStatus": "ACTIVE",
+            "sellableQuantity": 10,
+            "status": "ELIGIBLE",
+            "expiryPriorityScore": 1,
+            "expiryStatus": "AVAILABLE",
+            "expiryPushDays": 7,
+            "warnings": []
+          },
+          {
+            "productId": 2,
+            "productStatus": "ACTIVE",
+            "sellableQuantity": 10,
+            "status": "ELIGIBLE",
+            "expiryPriorityScore": 0,
+            "expiryStatus": "NOT_APPLICABLE",
+            "expiryPushDays": 0,
+            "warnings": []
+          }
+        ],
+        "checkedAt": "2026-10-20T07:58:47.951768Z",
+        "asOfDate": "2026-10-20",
+        "timeZone": "Asia/Ho_Chi_Minh",
+        "warnings": [],
+        "fingerprint": "76c5ba9abd844f7d921e2c4ef1ac51dfc507bb61bf291689012fcc72db7a89b5"
+      },
+      "inventoryChanged": false,
+      "readyForConsumption": true,
+      "sources": [
+        {
+          "runId": 1,
+          "patternId": 2,
+          "requestId": 1,
+          "snapshotId": 1,
+          "algorithm": "HUI_MINER",
+          "libraryVersion": "SPMF_2.67a",
+          "conversionVersion": "F03_SCALE6_GCD_INT32_DENSE_V1",
+          "inputHash": "757c370552348bd72bdf70e0d154e342cb60fb1ea701b6d644de29691dbc9788",
+          "sourceHash": "25758e2c628540a3f39df75f5bdbf9657517f753f7bb503d0a8ac61c1e4b49b9",
+          "matrixHash": "d771e5e8217dd2b5d79cca3986cf0af369583837faaf13ce3056cef3c3e8edee",
+          "minUtilMode": "ABSOLUTE",
+          "minUtilValue": 1,
+          "minUtilSpmf": 1,
+          "effectiveMinUtility": 10,
+          "patternUtility": 40,
+          "analysisDate": "2026-10-20"
+        }
+      ],
+      "explanation": [
+        "Rule F06_RULES_V1_1 / policy 1: BUNDLE",
+        "Completed mining run 1, pattern 2, immutable snapshot 1",
+        "Utility 40.000000 uses frozen weighted utility units; it is not purchase probability",
+        "Historical support=2/6; confidence=null; anchor=null",
+        "Live eligibility is checked separately; expiry priority is shown per Product and does not alter ranking utility",
+        "Rank policy: eligibility, frozen utility descending within source run, support descending, canonical Product key, type and anchor",
+        "Historical co-occurrence does not establish causality"
+      ],
+      "reviewHistory": [
+        {
+          "oldStatus": "PENDING_REVIEW",
+          "newStatus": "APPROVED",
+          "reviewedBy": 1,
+          "reviewedAt": "2026-10-20T07:56:36Z",
+          "reason": "Swagger QA checked current stock",
+          "resultingVersion": 2,
+          "eligibilityCheck": {
+            "status": "ELIGIBLE",
+            "products": [
+              {
+                "productId": 1,
+                "productStatus": "ACTIVE",
+                "sellableQuantity": 10,
+                "status": "ELIGIBLE",
+                "expiryPriorityScore": 1,
+                "expiryStatus": "AVAILABLE",
+                "expiryPushDays": 7,
+                "warnings": []
+              },
+              {
+                "productId": 2,
+                "productStatus": "ACTIVE",
+                "sellableQuantity": 10,
+                "status": "ELIGIBLE",
+                "expiryPriorityScore": 0,
+                "expiryStatus": "NOT_APPLICABLE",
+                "expiryPushDays": 0,
+                "warnings": []
+              }
+            ],
+            "checkedAt": "2026-10-20T07:56:36.763540Z",
+            "asOfDate": "2026-10-20",
+            "timeZone": "Asia/Ho_Chi_Minh",
+            "warnings": [],
+            "fingerprint": "76c5ba9abd844f7d921e2c4ef1ac51dfc507bb61bf291689012fcc72db7a89b5"
+          }
+        }
+      ],
+      "reviewedBy": 1,
+      "reviewedAt": "2026-10-20T07:56:36Z",
+      "reviewReason": "Swagger QA checked current stock",
+      "createdAt": "2026-10-20T07:54:06Z",
+      "rank": null
+    },
+    "status": "PASS",
+    "executedAt": "2026-10-20T07:58:48.444Z",
+    "timeZone": "Asia/Ho_Chi_Minh",
+    "channel": "Swagger UI Authorize / Try it out / Execute"
+  },
+  {
+    "id": "UI11",
+    "method": "POST",
+    "path": "/api/recommendations/2/reject",
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "input": {
+      "expectedVersion": 1,
+      "reason": "Swagger QA reject alternative placement"
+    },
+    "response": {
+      "recommendationId": 2,
+      "storeId": 1,
+      "snapshotId": 1,
+      "type": "CROSS_SELL",
+      "productIds": [
+        1,
+        2
+      ],
+      "anchorProductId": 1,
+      "utility": 40,
+      "reviewStatus": "REJECTED",
+      "version": 2,
+      "ruleVersion": "F06_RULES_V1_1",
+      "policy": {
+        "version": 1,
+        "maxBundleSize": 4,
+        "minSupportCount": 2,
+        "minSupportRatio": 0.05,
+        "minConfidence": 0.5,
+        "minimumSellableQuantity": 1,
+        "ruleVersion": "F06_RULES_V1_1"
+      },
+      "evidence": {
+        "totalTransactions": 6,
+        "supportCount": 2,
+        "supportRatio": 0.333333,
+        "anchorSupportCount": 3,
+        "confidence": 0.666667,
+        "status": "AVAILABLE"
+      },
+      "generationEligibility": {
+        "status": "ELIGIBLE",
+        "products": [
+          {
+            "productId": 1,
+            "productStatus": "ACTIVE",
+            "sellableQuantity": 10,
+            "status": "ELIGIBLE",
+            "expiryPriorityScore": 1,
+            "expiryStatus": "AVAILABLE",
+            "expiryPushDays": 7,
+            "warnings": []
+          },
+          {
+            "productId": 2,
+            "productStatus": "ACTIVE",
+            "sellableQuantity": 10,
+            "status": "ELIGIBLE",
+            "expiryPriorityScore": 0,
+            "expiryStatus": "NOT_APPLICABLE",
+            "expiryPushDays": 0,
+            "warnings": []
+          }
+        ],
+        "checkedAt": "2026-10-20T07:54:06.440199Z",
+        "asOfDate": "2026-10-20",
+        "timeZone": "Asia/Ho_Chi_Minh",
+        "warnings": [],
+        "fingerprint": "76c5ba9abd844f7d921e2c4ef1ac51dfc507bb61bf291689012fcc72db7a89b5"
+      },
+      "currentEligibility": {
+        "status": "ELIGIBLE",
+        "products": [
+          {
+            "productId": 1,
+            "productStatus": "ACTIVE",
+            "sellableQuantity": 10,
+            "status": "ELIGIBLE",
+            "expiryPriorityScore": 1,
+            "expiryStatus": "AVAILABLE",
+            "expiryPushDays": 7,
+            "warnings": []
+          },
+          {
+            "productId": 2,
+            "productStatus": "ACTIVE",
+            "sellableQuantity": 10,
+            "status": "ELIGIBLE",
+            "expiryPriorityScore": 0,
+            "expiryStatus": "NOT_APPLICABLE",
+            "expiryPushDays": 0,
+            "warnings": []
+          }
+        ],
+        "checkedAt": "2026-10-20T07:58:50.215811Z",
+        "asOfDate": "2026-10-20",
+        "timeZone": "Asia/Ho_Chi_Minh",
+        "warnings": [],
+        "fingerprint": "76c5ba9abd844f7d921e2c4ef1ac51dfc507bb61bf291689012fcc72db7a89b5"
+      },
+      "inventoryChanged": false,
+      "readyForConsumption": false,
+      "sources": [
+        {
+          "runId": 1,
+          "patternId": 2,
+          "requestId": 1,
+          "snapshotId": 1,
+          "algorithm": "HUI_MINER",
+          "libraryVersion": "SPMF_2.67a",
+          "conversionVersion": "F03_SCALE6_GCD_INT32_DENSE_V1",
+          "inputHash": "757c370552348bd72bdf70e0d154e342cb60fb1ea701b6d644de29691dbc9788",
+          "sourceHash": "25758e2c628540a3f39df75f5bdbf9657517f753f7bb503d0a8ac61c1e4b49b9",
+          "matrixHash": "d771e5e8217dd2b5d79cca3986cf0af369583837faaf13ce3056cef3c3e8edee",
+          "minUtilMode": "ABSOLUTE",
+          "minUtilValue": 1,
+          "minUtilSpmf": 1,
+          "effectiveMinUtility": 10,
+          "patternUtility": 40,
+          "analysisDate": "2026-10-20"
+        }
+      ],
+      "explanation": [
+        "Rule F06_RULES_V1_1 / policy 1: CROSS_SELL",
+        "Completed mining run 1, pattern 2, immutable snapshot 1",
+        "Utility 40.000000 uses frozen weighted utility units; it is not purchase probability",
+        "Historical support=2/6; confidence=0.666667; anchor=1",
+        "Live eligibility is checked separately; expiry priority is shown per Product and does not alter ranking utility",
+        "Rank policy: eligibility, frozen utility descending within source run, support descending, canonical Product key, type and anchor",
+        "Historical co-occurrence does not establish causality"
+      ],
+      "reviewHistory": [
+        {
+          "oldStatus": "PENDING_REVIEW",
+          "newStatus": "REJECTED",
+          "reviewedBy": 1,
+          "reviewedAt": "2026-10-20T07:58:50Z",
+          "reason": "Swagger QA reject alternative placement",
+          "resultingVersion": 2,
+          "eligibilityCheck": {
+            "status": "ELIGIBLE",
+            "products": [
+              {
+                "productId": 1,
+                "productStatus": "ACTIVE",
+                "sellableQuantity": 10,
+                "status": "ELIGIBLE",
+                "expiryPriorityScore": 1,
+                "expiryStatus": "AVAILABLE",
+                "expiryPushDays": 7,
+                "warnings": []
+              },
+              {
+                "productId": 2,
+                "productStatus": "ACTIVE",
+                "sellableQuantity": 10,
+                "status": "ELIGIBLE",
+                "expiryPriorityScore": 0,
+                "expiryStatus": "NOT_APPLICABLE",
+                "expiryPushDays": 0,
+                "warnings": []
+              }
+            ],
+            "checkedAt": "2026-10-20T07:58:50.208166Z",
+            "asOfDate": "2026-10-20",
+            "timeZone": "Asia/Ho_Chi_Minh",
+            "warnings": [],
+            "fingerprint": "76c5ba9abd844f7d921e2c4ef1ac51dfc507bb61bf291689012fcc72db7a89b5"
+          }
+        }
+      ],
+      "reviewedBy": 1,
+      "reviewedAt": "2026-10-20T07:58:50Z",
+      "reviewReason": "Swagger QA reject alternative placement",
+      "createdAt": "2026-10-20T07:54:06Z",
+      "rank": null
+    },
+    "status": "PASS",
+    "executedAt": "2026-10-20T07:58:50.901Z",
+    "timeZone": "Asia/Ho_Chi_Minh",
+    "channel": "Swagger UI Authorize / Try it out / Execute"
+  },
+  {
+    "id": "UI12",
+    "method": "GET",
+    "path": "/api/recommendations/2",
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "input": null,
+    "response": {
+      "recommendationId": 2,
+      "storeId": 1,
+      "snapshotId": 1,
+      "type": "CROSS_SELL",
+      "productIds": [
+        1,
+        2
+      ],
+      "anchorProductId": 1,
+      "utility": 40,
+      "reviewStatus": "REJECTED",
+      "version": 2,
+      "ruleVersion": "F06_RULES_V1_1",
+      "policy": {
+        "version": 1,
+        "maxBundleSize": 4,
+        "minSupportCount": 2,
+        "minSupportRatio": 0.05,
+        "minConfidence": 0.5,
+        "minimumSellableQuantity": 1,
+        "ruleVersion": "F06_RULES_V1_1"
+      },
+      "evidence": {
+        "totalTransactions": 6,
+        "supportCount": 2,
+        "supportRatio": 0.333333,
+        "anchorSupportCount": 3,
+        "confidence": 0.666667,
+        "status": "AVAILABLE"
+      },
+      "generationEligibility": {
+        "status": "ELIGIBLE",
+        "products": [
+          {
+            "productId": 1,
+            "productStatus": "ACTIVE",
+            "sellableQuantity": 10,
+            "status": "ELIGIBLE",
+            "expiryPriorityScore": 1,
+            "expiryStatus": "AVAILABLE",
+            "expiryPushDays": 7,
+            "warnings": []
+          },
+          {
+            "productId": 2,
+            "productStatus": "ACTIVE",
+            "sellableQuantity": 10,
+            "status": "ELIGIBLE",
+            "expiryPriorityScore": 0,
+            "expiryStatus": "NOT_APPLICABLE",
+            "expiryPushDays": 0,
+            "warnings": []
+          }
+        ],
+        "checkedAt": "2026-10-20T07:54:06.440199Z",
+        "asOfDate": "2026-10-20",
+        "timeZone": "Asia/Ho_Chi_Minh",
+        "warnings": [],
+        "fingerprint": "76c5ba9abd844f7d921e2c4ef1ac51dfc507bb61bf291689012fcc72db7a89b5"
+      },
+      "currentEligibility": {
+        "status": "ELIGIBLE",
+        "products": [
+          {
+            "productId": 1,
+            "productStatus": "ACTIVE",
+            "sellableQuantity": 10,
+            "status": "ELIGIBLE",
+            "expiryPriorityScore": 1,
+            "expiryStatus": "AVAILABLE",
+            "expiryPushDays": 7,
+            "warnings": []
+          },
+          {
+            "productId": 2,
+            "productStatus": "ACTIVE",
+            "sellableQuantity": 10,
+            "status": "ELIGIBLE",
+            "expiryPriorityScore": 0,
+            "expiryStatus": "NOT_APPLICABLE",
+            "expiryPushDays": 0,
+            "warnings": []
+          }
+        ],
+        "checkedAt": "2026-10-20T07:59:06.000041Z",
+        "asOfDate": "2026-10-20",
+        "timeZone": "Asia/Ho_Chi_Minh",
+        "warnings": [],
+        "fingerprint": "76c5ba9abd844f7d921e2c4ef1ac51dfc507bb61bf291689012fcc72db7a89b5"
+      },
+      "inventoryChanged": false,
+      "readyForConsumption": false,
+      "sources": [
+        {
+          "runId": 1,
+          "patternId": 2,
+          "requestId": 1,
+          "snapshotId": 1,
+          "algorithm": "HUI_MINER",
+          "libraryVersion": "SPMF_2.67a",
+          "conversionVersion": "F03_SCALE6_GCD_INT32_DENSE_V1",
+          "inputHash": "757c370552348bd72bdf70e0d154e342cb60fb1ea701b6d644de29691dbc9788",
+          "sourceHash": "25758e2c628540a3f39df75f5bdbf9657517f753f7bb503d0a8ac61c1e4b49b9",
+          "matrixHash": "d771e5e8217dd2b5d79cca3986cf0af369583837faaf13ce3056cef3c3e8edee",
+          "minUtilMode": "ABSOLUTE",
+          "minUtilValue": 1,
+          "minUtilSpmf": 1,
+          "effectiveMinUtility": 10,
+          "patternUtility": 40,
+          "analysisDate": "2026-10-20"
+        }
+      ],
+      "explanation": [
+        "Rule F06_RULES_V1_1 / policy 1: CROSS_SELL",
+        "Completed mining run 1, pattern 2, immutable snapshot 1",
+        "Utility 40.000000 uses frozen weighted utility units; it is not purchase probability",
+        "Historical support=2/6; confidence=0.666667; anchor=1",
+        "Live eligibility is checked separately; expiry priority is shown per Product and does not alter ranking utility",
+        "Rank policy: eligibility, frozen utility descending within source run, support descending, canonical Product key, type and anchor",
+        "Historical co-occurrence does not establish causality"
+      ],
+      "reviewHistory": [
+        {
+          "oldStatus": "PENDING_REVIEW",
+          "newStatus": "REJECTED",
+          "reviewedBy": 1,
+          "reviewedAt": "2026-10-20T07:58:50Z",
+          "reason": "Swagger QA reject alternative placement",
+          "resultingVersion": 2,
+          "eligibilityCheck": {
+            "status": "ELIGIBLE",
+            "products": [
+              {
+                "productId": 1,
+                "productStatus": "ACTIVE",
+                "sellableQuantity": 10,
+                "status": "ELIGIBLE",
+                "expiryPriorityScore": 1,
+                "expiryStatus": "AVAILABLE",
+                "expiryPushDays": 7,
+                "warnings": []
+              },
+              {
+                "productId": 2,
+                "productStatus": "ACTIVE",
+                "sellableQuantity": 10,
+                "status": "ELIGIBLE",
+                "expiryPriorityScore": 0,
+                "expiryStatus": "NOT_APPLICABLE",
+                "expiryPushDays": 0,
+                "warnings": []
+              }
+            ],
+            "checkedAt": "2026-10-20T07:58:50.208166Z",
+            "asOfDate": "2026-10-20",
+            "timeZone": "Asia/Ho_Chi_Minh",
+            "warnings": [],
+            "fingerprint": "76c5ba9abd844f7d921e2c4ef1ac51dfc507bb61bf291689012fcc72db7a89b5"
+          }
+        }
+      ],
+      "reviewedBy": 1,
+      "reviewedAt": "2026-10-20T07:58:50Z",
+      "reviewReason": "Swagger QA reject alternative placement",
+      "createdAt": "2026-10-20T07:54:06Z",
+      "rank": null
+    },
+    "status": "PASS",
+    "executedAt": "2026-10-20T07:59:06.541Z",
+    "timeZone": "Asia/Ho_Chi_Minh",
+    "channel": "Swagger UI Authorize / Try it out / Execute"
+  },
+  {
+    "id": "UI13",
+    "method": "POST",
+    "path": "/api/recommendations/2/approve",
+    "expectedStatus": 409,
+    "actualStatus": 409,
+    "input": {
+      "expectedVersion": 2,
+      "reason": "QA forbidden reopen"
+    },
+    "response": {
+      "error": "Recommendation review version or state changed"
+    },
+    "status": "PASS",
+    "executedAt": "2026-10-20T07:59:08.756Z",
+    "timeZone": "Asia/Ho_Chi_Minh",
+    "channel": "Swagger UI Authorize / Try it out / Execute"
+  },
+  {
+    "id": "UI14",
+    "method": "GET",
+    "path": "/api/recommendations/config",
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "input": null,
+    "response": {
+      "version": 1,
+      "maxBundleSize": 4,
+      "minSupportCount": 2,
+      "minSupportRatio": 0.05,
+      "minConfidence": 0.5,
+      "minimumSellableQuantity": 1,
+      "ruleVersion": "F06_RULES_V1_1"
+    },
+    "status": "PASS",
+    "executedAt": "2026-10-20T07:59:10.810Z",
+    "timeZone": "Asia/Ho_Chi_Minh",
+    "channel": "Swagger UI Authorize / Try it out / Execute"
+  },
+  {
+    "id": "UI15",
+    "method": "PUT",
+    "path": "/api/recommendations/config",
+    "expectedStatus": 403,
+    "actualStatus": 403,
+    "input": {
+      "expectedVersion": 1,
+      "maxBundleSize": 4,
+      "minSupportCount": 2,
+      "minSupportRatio": 0.05,
+      "minConfidence": 0.5,
+      "minimumSellableQuantity": 1
+    },
+    "response": {
+      "error": "Forbidden"
+    },
+    "status": "PASS",
+    "executedAt": "2026-10-20T07:59:12.819Z",
+    "timeZone": "Asia/Ho_Chi_Minh",
+    "channel": "Swagger UI Authorize / Try it out / Execute"
+  },
+  {
+    "id": "UI16",
+    "method": "PUT",
+    "path": "/api/recommendations/config",
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "input": {
+      "expectedVersion": 1,
+      "maxBundleSize": 4,
+      "minSupportCount": 2,
+      "minSupportRatio": 0.05,
+      "minConfidence": 0.5,
+      "minimumSellableQuantity": 1
+    },
+    "response": {
+      "version": 2,
+      "maxBundleSize": 4,
+      "minSupportCount": 2,
+      "minSupportRatio": 0.05,
+      "minConfidence": 0.5,
+      "minimumSellableQuantity": 1,
+      "ruleVersion": "F06_RULES_V1_1"
+    },
+    "status": "PASS",
+    "executedAt": "2026-10-20T08:00:50.059Z",
+    "timeZone": "Asia/Ho_Chi_Minh",
+    "channel": "Swagger UI Authorize / Try it out / Execute"
+  },
+  {
+    "id": "UI17",
+    "method": "GET",
+    "path": "/api/recommendations/config",
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "input": null,
+    "response": {
+      "version": 2,
+      "maxBundleSize": 4,
+      "minSupportCount": 2,
+      "minSupportRatio": 0.05,
+      "minConfidence": 0.5,
+      "minimumSellableQuantity": 1,
+      "ruleVersion": "F06_RULES_V1_1"
+    },
+    "status": "PASS",
+    "executedAt": "2026-10-20T08:00:51.732Z",
+    "timeZone": "Asia/Ho_Chi_Minh",
+    "channel": "Swagger UI Authorize / Try it out / Execute"
+  },
+  {
+    "id": "UI18",
+    "method": "POST",
+    "path": "/api/recommendations/3/approve",
+    "expectedStatus": 403,
+    "actualStatus": 403,
+    "input": {
+      "expectedVersion": 1,
+      "reason": "StoreAdmin cannot approve"
+    },
+    "response": {
+      "error": "Forbidden"
+    },
+    "status": "PASS",
+    "executedAt": "2026-10-20T08:00:53.628Z",
+    "timeZone": "Asia/Ho_Chi_Minh",
+    "channel": "Swagger UI Authorize / Try it out / Execute"
+  },
+  {
+    "id": "UI19",
+    "method": "GET",
+    "path": "/api/recommendations/1",
+    "expectedStatus": 404,
+    "actualStatus": 404,
+    "input": null,
+    "response": {
+      "error": "Recommendation not found"
+    },
+    "status": "PASS",
+    "executedAt": "2026-10-20T08:02:06.533Z",
+    "timeZone": "Asia/Ho_Chi_Minh",
+    "channel": "Swagger UI Authorize / Try it out / Execute"
+  },
+  {
+    "id": "UI20",
+    "method": "POST",
+    "path": "/api/recommendations/3/approve",
+    "expectedStatus": 404,
+    "actualStatus": 404,
+    "input": {
+      "expectedVersion": 1,
+      "reason": "Cross store attempt"
+    },
+    "response": {
+      "error": "Recommendation not found"
+    },
+    "status": "PASS",
+    "executedAt": "2026-10-20T08:02:08.488Z",
+    "timeZone": "Asia/Ho_Chi_Minh",
+    "channel": "Swagger UI Authorize / Try it out / Execute"
+  },
+  {
+    "id": "UI21",
+    "method": "GET",
+    "path": "/api/recommendations",
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "input": null,
+    "response": {
+      "items": [],
+      "page": 0,
+      "pageSize": 1,
+      "totalElements": 0,
+      "ordering": "CREATED_DESC"
+    },
+    "status": "PASS",
+    "executedAt": "2026-10-20T08:02:10.689Z",
+    "timeZone": "Asia/Ho_Chi_Minh",
+    "channel": "Swagger UI Authorize / Try it out / Execute"
+  },
+  {
+    "id": "UI22",
+    "method": "GET",
+    "path": "/api/recommendations",
+    "expectedStatus": 403,
+    "actualStatus": 403,
+    "input": null,
+    "response": {
+      "error": "Forbidden"
+    },
+    "status": "PASS",
+    "executedAt": "2026-10-20T08:02:25.137Z",
+    "timeZone": "Asia/Ho_Chi_Minh",
+    "channel": "Swagger UI Authorize / Try it out / Execute"
+  },
+  {
+    "id": "UI23",
+    "method": "GET",
+    "path": "/api/recommendations",
+    "expectedStatus": 403,
+    "actualStatus": 403,
+    "input": null,
+    "response": {
+      "error": "Forbidden"
+    },
+    "status": "PASS",
+    "executedAt": "2026-10-20T08:02:30.743Z",
+    "timeZone": "Asia/Ho_Chi_Minh",
+    "channel": "Swagger UI Authorize / Try it out / Execute"
+  },
+  {
+    "id": "UI24",
+    "method": "POST",
+    "path": "/api/recommendations/generate",
+    "expectedStatus": 400,
+    "actualStatus": 400,
+    "input": {
+      "miningRunId": 1,
+      "types": [
+        "BUNDLE"
+      ],
+      "storeId": 2
+    },
+    "response": {
+      "error": "Invalid request fields"
+    },
+    "status": "PASS",
+    "executedAt": "2026-10-20T08:02:36.362Z",
+    "timeZone": "Asia/Ho_Chi_Minh",
+    "channel": "Swagger UI Authorize / Try it out / Execute"
+  },
+  {
+    "id": "UI25",
+    "method": "GET",
+    "path": "/api/recommendations",
+    "expectedStatus": 401,
+    "actualStatus": 401,
+    "input": null,
+    "response": null,
+    "status": "PASS",
+    "executedAt": "2026-10-20T08:02:57.162Z",
+    "timeZone": "Asia/Ho_Chi_Minh",
+    "channel": "Swagger UI Authorize / Try it out / Execute"
+  },
+  {
+    "id": "UI26",
+    "method": "GET",
+    "path": "/api/recommendations",
+    "expectedStatus": 401,
+    "actualStatus": 401,
+    "input": null,
+    "response": null,
+    "status": "PASS",
+    "executedAt": "2026-10-20T08:03:00.055Z",
+    "timeZone": "Asia/Ho_Chi_Minh",
+    "channel": "Swagger UI Authorize / Try it out / Execute"
+  },
+  {
+    "id": "UI27",
+    "method": "GET",
+    "path": "/api/recommendations/1",
+    "expectedStatus": 200,
+    "actualStatus": 200,
+    "input": null,
+    "response": {
+      "recommendationId": 1,
+      "storeId": 1,
+      "snapshotId": 1,
+      "type": "BUNDLE",
+      "productIds": [
+        1,
+        2
+      ],
+      "anchorProductId": null,
+      "utility": 40,
+      "reviewStatus": "APPROVED",
+      "version": 2,
+      "ruleVersion": "F06_RULES_V1_1",
+      "policy": {
+        "version": 1,
+        "maxBundleSize": 4,
+        "minSupportCount": 2,
+        "minSupportRatio": 0.05,
+        "minConfidence": 0.5,
+        "minimumSellableQuantity": 1,
+        "ruleVersion": "F06_RULES_V1_1"
+      },
+      "evidence": {
+        "totalTransactions": 6,
+        "supportCount": 2,
+        "supportRatio": 0.333333,
+        "anchorSupportCount": null,
+        "confidence": null,
+        "status": "AVAILABLE"
+      },
+      "generationEligibility": {
+        "status": "ELIGIBLE",
+        "products": [
+          {
+            "productId": 1,
+            "productStatus": "ACTIVE",
+            "sellableQuantity": 10,
+            "status": "ELIGIBLE",
+            "expiryPriorityScore": 1,
+            "expiryStatus": "AVAILABLE",
+            "expiryPushDays": 7,
+            "warnings": []
+          },
+          {
+            "productId": 2,
+            "productStatus": "ACTIVE",
+            "sellableQuantity": 10,
+            "status": "ELIGIBLE",
+            "expiryPriorityScore": 0,
+            "expiryStatus": "NOT_APPLICABLE",
+            "expiryPushDays": 0,
+            "warnings": []
+          }
+        ],
+        "checkedAt": "2026-10-20T07:54:06.440199Z",
+        "asOfDate": "2026-10-20",
+        "timeZone": "Asia/Ho_Chi_Minh",
+        "warnings": [],
+        "fingerprint": "76c5ba9abd844f7d921e2c4ef1ac51dfc507bb61bf291689012fcc72db7a89b5"
+      },
+      "currentEligibility": {
+        "status": "ELIGIBLE",
+        "products": [
+          {
+            "productId": 1,
+            "productStatus": "ACTIVE",
+            "sellableQuantity": 10,
+            "status": "ELIGIBLE",
+            "expiryPriorityScore": 1,
+            "expiryStatus": "AVAILABLE",
+            "expiryPushDays": 7,
+            "warnings": []
+          },
+          {
+            "productId": 2,
+            "productStatus": "ACTIVE",
+            "sellableQuantity": 10,
+            "status": "ELIGIBLE",
+            "expiryPriorityScore": 0,
+            "expiryStatus": "NOT_APPLICABLE",
+            "expiryPushDays": 0,
+            "warnings": []
+          }
+        ],
+        "checkedAt": "2026-10-20T14:21:53.099490Z",
+        "asOfDate": "2026-10-20",
+        "timeZone": "Asia/Ho_Chi_Minh",
+        "warnings": [],
+        "fingerprint": "76c5ba9abd844f7d921e2c4ef1ac51dfc507bb61bf291689012fcc72db7a89b5"
+      },
+      "inventoryChanged": false,
+      "readyForConsumption": true,
+      "sources": [
+        {
+          "runId": 1,
+          "patternId": 2,
+          "requestId": 1,
+          "snapshotId": 1,
+          "algorithm": "HUI_MINER",
+          "libraryVersion": "SPMF_2.67a",
+          "conversionVersion": "F03_SCALE6_GCD_INT32_DENSE_V1",
+          "inputHash": "757c370552348bd72bdf70e0d154e342cb60fb1ea701b6d644de29691dbc9788",
+          "sourceHash": "25758e2c628540a3f39df75f5bdbf9657517f753f7bb503d0a8ac61c1e4b49b9",
+          "matrixHash": "d771e5e8217dd2b5d79cca3986cf0af369583837faaf13ce3056cef3c3e8edee",
+          "minUtilMode": "ABSOLUTE",
+          "minUtilValue": 1,
+          "minUtilSpmf": 1,
+          "effectiveMinUtility": 10,
+          "patternUtility": 40,
+          "analysisDate": "2026-10-20"
+        }
+      ],
+      "explanation": [
+        "Rule F06_RULES_V1_1 / policy 1: BUNDLE",
+        "Completed mining run 1, pattern 2, immutable snapshot 1",
+        "Utility 40.000000 uses frozen weighted utility units; it is not purchase probability",
+        "Historical support=2/6; confidence=null; anchor=null",
+        "Live eligibility is checked separately; expiry priority is shown per Product and does not alter ranking utility",
+        "Rank policy: eligibility, frozen utility descending within source run, support descending, canonical Product key, type and anchor",
+        "Historical co-occurrence does not establish causality"
+      ],
+      "reviewHistory": [
+        {
+          "oldStatus": "PENDING_REVIEW",
+          "newStatus": "APPROVED",
+          "reviewedBy": 1,
+          "reviewedAt": "2026-10-20T07:56:36Z",
+          "reason": "Swagger QA checked current stock",
+          "resultingVersion": 2,
+          "eligibilityCheck": {
+            "status": "ELIGIBLE",
+            "products": [
+              {
+                "productId": 1,
+                "productStatus": "ACTIVE",
+                "sellableQuantity": 10,
+                "status": "ELIGIBLE",
+                "expiryPriorityScore": 1,
+                "expiryStatus": "AVAILABLE",
+                "expiryPushDays": 7,
+                "warnings": []
+              },
+              {
+                "productId": 2,
+                "productStatus": "ACTIVE",
+                "sellableQuantity": 10,
+                "status": "ELIGIBLE",
+                "expiryPriorityScore": 0,
+                "expiryStatus": "NOT_APPLICABLE",
+                "expiryPushDays": 0,
+                "warnings": []
+              }
+            ],
+            "checkedAt": "2026-10-20T07:56:36.763540Z",
+            "asOfDate": "2026-10-20",
+            "timeZone": "Asia/Ho_Chi_Minh",
+            "warnings": [],
+            "fingerprint": "76c5ba9abd844f7d921e2c4ef1ac51dfc507bb61bf291689012fcc72db7a89b5"
+          }
+        }
+      ],
+      "reviewedBy": 1,
+      "reviewedAt": "2026-10-20T07:56:36Z",
+      "reviewReason": "Swagger QA checked current stock",
+      "createdAt": "2026-10-20T07:54:06Z",
+      "rank": null
+    },
+    "status": "PASS",
+    "executedAt": "2026-10-20T14:21:53.722Z",
+    "timeZone": "Asia/Ho_Chi_Minh",
+    "channel": "Swagger UI Authorize / Try it out / Execute"
+  }
+]

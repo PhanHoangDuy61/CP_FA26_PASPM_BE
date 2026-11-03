@@ -1,0 +1,35 @@
+Isolated Swagger database readback, 2026-10-20, Asia/Ho_Chi_Minh. No credentials or connection strings.
+version	success
+1	1
+2	1
+3	1
+4	1
+5	1
+6	1
+7	1
+8	1
+9	1
+10	1
+recommendation_id	type	review_status	version	policy_version	reviewed_by
+1	BUNDLE	APPROVED	2	1	1
+2	CROSS_SELL	REJECTED	2	1	1
+3	CROSS_SELL	PENDING_REVIEW	1	1	NULL
+4	FBT	PENDING_REVIEW	1	1	NULL
+5	BANNER	PENDING_REVIEW	1	1	NULL
+6	BANNER	PENDING_REVIEW	1	1	NULL
+7	BANNER	PENDING_REVIEW	1	1	NULL
+8	BANNER	PENDING_REVIEW	1	1	NULL
+recommendation_count
+8
+source_count
+8
+history_count
+2
+store_id	config_version
+1	2
+unchanged_inventory_quantity
+30
+unchanged_pattern_count	measured_support_count
+8	0
+snapshot_id	status	total_weighted_utility	matrix_hash
+1	READY	80.000000	d771e5e8217dd2b5d79cca3986cf0af369583837faaf13ce3056cef3c3e8edee

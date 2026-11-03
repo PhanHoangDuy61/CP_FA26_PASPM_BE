@@ -1,0 +1,9 @@
+{
+  "userId": 42,
+  "email": "customer@example.test",
+  "name": "Example Customer",
+  "roleCode": "END_CUSTOMER",
+  "storeId": null,
+  "status": "ACTIVE",
+  "emailVerified": true
+}

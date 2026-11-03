@@ -1,0 +1,10 @@
+{
+  "requestKey": "0607a0ce-61c5-4021-b62c-70b5b179f3a9",
+  "snapshotId": 2,
+  "algorithms": [
+    "HUI_MINER",
+    "EFIM"
+  ],
+  "minUtilMode": "PERCENTAGE",
+  "minUtilValue": 31.25
+}

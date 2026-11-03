@@ -1,0 +1,551 @@
+{
+  "executedAt": "2026-10-20T21:20:40+07:00",
+  "timeZone": "Asia/Ho_Chi_Minh",
+  "branch": "Khoi/Fear/F06-recommendation-engine",
+  "baselineCommit": "3f6faaa",
+  "command": "Java17 + configured Java25/SPMF: mvn -o -Dpaspm.test.mysql=true -Dpaspm.test.java17-backend=true -Dpaspm.test.java17=<temporary JDK17> -Dpaspm.test.spmf-jar=<approved local JAR> -Dpaspm.test.spmf-java=<Java25> -Dpaspm.f06.export-dir=<temporary examples> clean verify",
+  "result": "BUILD SUCCESS",
+  "totals": {
+    "tests": 210,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "f06Tests": 63,
+  "existingRegressionTests": 147,
+  "isolatedMySqlSchemas": [
+    {
+      "schema": "paspm_p0_test_f99b61f6e10749fcbb97ef7151290b70",
+      "serverVersion": "8.4.11"
+    },
+    {
+      "schema": "paspm_p0_test_9ea8f0ef7dfc4b57984f5287924bd0e8",
+      "serverVersion": "8.4.11"
+    },
+    {
+      "schema": "paspm_p0_test_4474eea53b7a48848f89d22159cb49c1",
+      "serverVersion": "8.4.11"
+    },
+    {
+      "schema": "paspm_p0_test_624aebee479f4d968b8f0612d65066ec",
+      "serverVersion": "8.4.11"
+    },
+    {
+      "schema": "paspm_p0_test_e7584b53d36843be95c9157c29f19b61",
+      "serverVersion": "8.4.11"
+    },
+    {
+      "schema": "paspm_p0_test_15855dd09f25435498e22b05b0446209",
+      "serverVersion": "8.4.11"
+    },
+    {
+      "schema": "paspm_p0_test_34a620cacddd4629a8e0bb9c304998d1",
+      "serverVersion": "8.4.11"
+    },
+    {
+      "schema": "paspm_p0_test_6c69556aa0894ad88a70c7c4884bdbd5",
+      "serverVersion": "8.4.11"
+    }
+  ],
+  "openApi": {
+    "source": "actual standalone Java17/MySQL runtime GET /v3/api-docs",
+    "paths": 59,
+    "operations": 73,
+    "f06Operations": 8,
+    "evidenceSchemaCollisionRegression": "PASS",
+    "export": "docs/api/openapi.json",
+    "strictUnknownProperties": "PASS: all three request schemas additionalProperties=false"
+  },
+  "suites": [
+    {
+      "suite": "vn.edu.fpt.paspm.AuthIntegrationTest",
+      "tests": 22,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "passwordChangeRejectsWrongCurrentPasswordAndSamePassword",
+        "passwordResetIsGenericSingleUseAndRevokesExistingTokens",
+        "adminInviteActivatesWithInitialPassword",
+        "invalidOtpAttemptsPersistAndLockChallenge",
+        "passwordResetCooldownIsGenericAndAllowsRequestAfterExpiry",
+        "registrationCannotChooseRoleAndOtpIsSingleUse",
+        "disablingUserRevokesToken",
+        "swaggerContractAvailableAndPasswordsHashed",
+        "loginRejectsUnavailableAccountsAndInvalidFields",
+        "loginMeAndAnonymousAccess",
+        "googleFailsClosedWithoutClientConfiguration",
+        "passwordChangeRejectsInactiveAndPasswordlessAccounts",
+        "passwordResetOtpExpiryAttemptsAndSendLimitsApply",
+        "roleChangeRevokesExistingToken",
+        "passwordChangeRequiresAuthenticationAndRevokesCurrentToken",
+        "smtpFailureRollsBackRegistration",
+        "currentUserUsesTokenIdentityAndRejectsMissingOrExpiredToken",
+        "resendRevokesOldChallengeAndCooldownApplies",
+        "expiredOtpAndManualActivationAreDenied",
+        "profileAvatarIsSelfScopedAndValidatesImageContents",
+        "storeBoundaryIsEnforced",
+        "passwordResetMailFailureDoesNotDiscloseAccountAndRollsBackChallenge"
+      ]
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.auth.GoogleRegistrationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "rejectsGoogleIdentityWithoutVerifiedEmail",
+        "registersGoogleIdentityAsPendingCustomerAndSendsOtp",
+        "doesNotAutomaticallyLinkGoogleIdentityToExistingEmail"
+      ]
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.catalog.CatalogDevSeederTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "developmentSeedCreatesTwoStoresAndIsIdempotent"
+      ]
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.catalog.CatalogIntegrationTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "catalogRequiresAuthenticationAndStoreAdminRole",
+        "openApiListsF02Endpoints",
+        "categoryAndProductAreScopedToAuthenticatedStore",
+        "rejectsDuplicateSkuNegativePriceAndInvalidBatchQuantities",
+        "databaseConstraintsRejectCrossStoreCategoriesAndInvalidInventory",
+        "inventorySummarySeparatesExpiredBlockedAndSellableBatches",
+        "productWriteHidesCategoryOwnedByAnotherStore"
+      ]
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.deployment.FlywayRecoveryTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "existingMySqlV7UpgradesWithoutReplayingOrDeletingData",
+        "oldAppliedChecksumRequiresExplicitRepairAndPreservesData"
+      ]
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.MiningHttpMySqlTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "java17BackendMinesRealSnapshotOverHttpWithJava25Child"
+      ]
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.MiningInputTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "rejectsEmptyNegativeDuplicatePrecisionOverflowAndBadTotals",
+        "validatesThresholdsAndZeroPolicy",
+        "convertsExactlyAndMapsSortedProductsDeterministically"
+      ]
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.MiningIntegrationTest",
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "unavailableRuntimeRejectsNewWorkAndPreservesReadableHistory",
+        "enforcesRolesOwnershipPaginationAndStrictInput",
+        "concurrentDuplicateSubmissionsCreateOnlyOneRequestAndOneRunPerAlgorithm",
+        "databasePreventsCrossStorePatternItems",
+        "openApiIncludesEveryMiningRoute",
+        "invalidSnapshotsFailBeforeDurableRequestIsCreated",
+        "partialPatternWriteRollsBackWithRunStillRunning",
+        "durableFailureAndTimeoutStatusesContainNoPartialPatterns",
+        "exactResultMismatchIsNotReportedAsSuccessfulBenchmark",
+        "boundedQueueRejectsExcessWorkDurably",
+        "realSnapshotToBothAlgorithmsPersistsEightPatternsAndBenchmark",
+        "restartRecoveryAndCompareAndSetPreventDuplicateExecution",
+        "workerReadsFrozenRequestCopyInsteadOfReloadingMutableSource",
+        "oldScoringMetadataCanBeMinedWithoutRecalculation",
+        "validEmptyResultIsCompletedWithZeroPatterns",
+        "historicalProvenanceUsesPersistedVersionsAndMeasurementMethods"
+      ]
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.MiningMySqlIntegrationTest",
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "unavailableRuntimeRejectsNewWorkAndPreservesReadableHistory",
+        "enforcesRolesOwnershipPaginationAndStrictInput",
+        "concurrentDuplicateSubmissionsCreateOnlyOneRequestAndOneRunPerAlgorithm",
+        "databasePreventsCrossStorePatternItems",
+        "openApiIncludesEveryMiningRoute",
+        "invalidSnapshotsFailBeforeDurableRequestIsCreated",
+        "partialPatternWriteRollsBackWithRunStillRunning",
+        "durableFailureAndTimeoutStatusesContainNoPartialPatterns",
+        "exactResultMismatchIsNotReportedAsSuccessfulBenchmark",
+        "boundedQueueRejectsExcessWorkDurably",
+        "realSnapshotToBothAlgorithmsPersistsEightPatternsAndBenchmark",
+        "restartRecoveryAndCompareAndSetPreventDuplicateExecution",
+        "workerReadsFrozenRequestCopyInsteadOfReloadingMutableSource",
+        "oldScoringMetadataCanBeMinedWithoutRecalculation",
+        "validEmptyResultIsCompletedWithZeroPatterns",
+        "historicalProvenanceUsesPersistedVersionsAndMeasurementMethods"
+      ]
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.SpmfMiningEngineTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "parserRejectsDuplicatesUnknownIdsAndWrongUtility",
+        "actualZeroUtilityAndEmptyResultsAreValid",
+        "actualAlgorithmsProduceKnownEightPatternsAndEqualUtilities",
+        "interruptionCleansTemporaryFilesAndPreservesInterruptFlag",
+        "missingDependencyAndTimeoutAreDistinguished"
+      ]
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.mining.SpmfRuntimeTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "childExitAfterSuccessfulPreflightStillFailsWithoutSuccess",
+        "sameSizeSameTimestampJarChangeCannotBypassCachedPreflight",
+        "missingJarAndJavaHaveActionableDistinctCodes",
+        "actualJava17IsRejectedBeforeMiningAdmission",
+        "boundedPreflightTerminatesHungExecutableAndRemovesFiles",
+        "entrypointFailureAndChangedJavaAreDetectedWithCleanup",
+        "verifiedJava25AndJarPassAndPreflightFilesAreRemoved",
+        "unreadableJarAndUnrunnableExecutableAreRejected"
+      ]
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.recommendation.FrozenEvidenceReaderTest",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "readsFrozenMembershipIncludingZeroUtilityAndIgnoresNullableSpmfSupportAndLiveEdits",
+        "rejectsNonCompletedRun",
+        "rejectsCompletedRunWithPartiallyMissingPatterns",
+        "missingOrForeignRunRemains404",
+        "rejectsCompletedRunWithNegativeRecordedPatternCount",
+        "rejectsPatternWithNoActualCooccurrence",
+        "rejectsForeignPatternItems",
+        "rejectsSnapshotMismatch",
+        "rejectsHashMismatch",
+        "completedZeroPatternsIsValid",
+        "rejectsFrozenMatrixMembershipMismatch",
+        "rejectsCompletedRunWithAllRecordedPatternsMissing",
+        "rejectsCompletedRunWithNullRecordedPatternCount",
+        "rejectsMissingOrWrongDenseMapping",
+        "malformedPersistedJsonIsSanitizedConflict"
+      ]
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.recommendation.RecommendationExpiryIntegrationTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "missingMetadataWarningsSurviveWithKnownPushBatches",
+        "accessAndCurrentOnlyValidation",
+        "fefoAcrossProductsAndPaginationIgnoreReceiptOrder",
+        "thresholdsAndCalendarBoundariesFilterCurrentSellableBatches",
+        "noMiningNeededAndReadDoesNotMutateData"
+      ]
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.recommendation.RecommendationExpiryMySqlIntegrationTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "missingMetadataWarningsSurviveWithKnownPushBatches",
+        "accessAndCurrentOnlyValidation",
+        "fefoAcrossProductsAndPaginationIgnoreReceiptOrder",
+        "thresholdsAndCalendarBoundariesFilterCurrentSellableBatches",
+        "noMiningNeededAndReadDoesNotMutateData"
+      ]
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.recommendation.RecommendationIntegrationTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "rolesStoreIsolationAndStrictRequestsAreEnforced",
+        "expiryPushWorksWithCompletedZeroPatternRun",
+        "frozenEvidenceAndHistoricalUtilityStayUnchangedAfterLiveEdits",
+        "currentEligibilityExcludesInactiveExpiredBlockedAndMissingExpiry",
+        "configIsStoreAdminOwnedVersionedAndFrozenOnExistingCandidates",
+        "nonCompletedEmptyAndMalformedSourceRunsNeverProduceUnsupportedCandidates",
+        "openApiExposesActualRecommendationOperations",
+        "concurrentGenerationRemainsIdempotentAndConfigHasSingleVersionWinner",
+        "rankingIsDeterministicAndCrossSnapshotHistoryIsChronological",
+        "completedRealMiningGeneratesFourTypesAndDirectionalFrozenEvidence",
+        "exportsExecutedApiExamplesForHandoff",
+        "reviewPreservesHistoryAndRejectsStaleInventoryAndResolvedTransitions",
+        "concurrentReviewHasSingleWinnerAndRejectedCannotBeApproved",
+        "generationIsIdempotentAcrossEquivalentAlgorithmsButNotDifferentSnapshots"
+      ]
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.recommendation.RecommendationMigrationTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "freshMySqlMigratesAllTenVersions",
+        "mysqlV9UpgradePreservesHistoricalSnapshotAndStoreConfiguration"
+      ]
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.recommendation.RecommendationMySqlIntegrationTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "rolesStoreIsolationAndStrictRequestsAreEnforced",
+        "expiryPushWorksWithCompletedZeroPatternRun",
+        "frozenEvidenceAndHistoricalUtilityStayUnchangedAfterLiveEdits",
+        "currentEligibilityExcludesInactiveExpiredBlockedAndMissingExpiry",
+        "configIsStoreAdminOwnedVersionedAndFrozenOnExistingCandidates",
+        "nonCompletedEmptyAndMalformedSourceRunsNeverProduceUnsupportedCandidates",
+        "openApiExposesActualRecommendationOperations",
+        "concurrentGenerationRemainsIdempotentAndConfigHasSingleVersionWinner",
+        "rankingIsDeterministicAndCrossSnapshotHistoryIsChronological",
+        "completedRealMiningGeneratesFourTypesAndDirectionalFrozenEvidence",
+        "exportsExecutedApiExamplesForHandoff",
+        "reviewPreservesHistoryAndRejectsStaleInventoryAndResolvedTransitions",
+        "concurrentReviewHasSingleWinnerAndRejectedCannotBeApproved",
+        "generationIsIdempotentAcrossEquivalentAlgorithmsButNotDifferentSnapshots"
+      ]
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.recommendation.RecommendationRulesTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "bundleUsesFullPatternAndApprovedMaximumWhileBannerAllowsSingleton",
+        "missingEvidenceNeverClaimsCrossSellOrFrequentlyBoughtTogether",
+        "fbtUsesBothExactCountAndRatioAndInclusiveBoundary",
+        "confidenceQualificationDoesNotRoundTwoThirdsUpToThreshold"
+      ]
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.recommendation.TransactionEvidenceTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "zeroAnchorHasUndefinedConfidence",
+        "copiesInputAndCountsRepeatedPresenceOnce",
+        "emptyEvidenceHasNoFabricatedCountsOrRatios",
+        "countsPresenceAndDirectionalConfidenceFromSixTransactions"
+      ]
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.DatabaseTransactionSourceTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "dateRangeIsInclusiveInAsiaHoChiMinhAndEmptyWhenNoEligibleRowsExist",
+        "loadsOnlyEligibleCompletedTransactionsWithinStoreLocalDateBoundaries"
+      ]
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.TransactionImportIntegrationTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "stagesRawRowsPersistsCompleteOrdersAndNeverMutatesInventory",
+        "importAndTransactionReadsAreRoleCheckedAndStoreScoped",
+        "rejectsEntireOrderWhenAnyLineFailsButPersistsOtherOrdersInTheBatch",
+        "duplicateFileIsIdempotentAndConflictingOrderDoesNotOverwriteHistory",
+        "openApiAdvertisesCsvUploadAsMultipartBinary",
+        "acceptsCsvContentTypeWithCharsetParameter"
+      ]
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.TransactionImportMySqlIntegrationTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "stagesRawRowsPersistsCompleteOrdersAndNeverMutatesInventory",
+        "importAndTransactionReadsAreRoleCheckedAndStoreScoped",
+        "rejectsEntireOrderWhenAnyLineFailsButPersistsOtherOrdersInTheBatch",
+        "duplicateFileIsIdempotentAndConflictingOrderDoesNotOverwriteHistory",
+        "openApiAdvertisesCsvUploadAsMultipartBinary",
+        "acceptsCsvContentTypeWithCharsetParameter"
+      ]
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.TransactionImportSchemaTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "flywayCreatesStoreScopedImportAndTransactionTables"
+      ]
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.importing.TransactionCsvParserTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "skipsBlankLinesWithoutCountingThemAgainstDataRowLimit",
+        "rejectsMalformedQuotedCsv",
+        "rejectsFilesBeyondConfiguredDataRowLimit",
+        "parsesBomQuotedCommasEscapedQuotesAndEmbeddedNewline",
+        "rejectsHeaderThatDoesNotMatchTheContract"
+      ]
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.importing.TransactionOrderValidatorTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "invalidQuantityRejectsTheCompleteOrderAndIdentifiesTheRow",
+        "storeScopedSkuLookupRejectsUnknownAndForeignStoreProducts",
+        "aggregatesMatchingRepeatedProductLinesAndKeepsSourceRows",
+        "nonCompletedAndBelowCostOrdersRemainValidButAreNotF03Eligible",
+        "rejectsWholeOrderWhenRepeatedSkuHasDifferentPrice"
+      ]
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.ExpiryBinaryRulesTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "officialSevenDayThresholdProduces17220ForTheWholeProduct",
+        "threeDayAndDisabledThresholdProduce16020",
+        "nullThresholdIsDisabledWithoutInventingADefault",
+        "fefoEvidenceIncludesEveryPushBatchAndIgnoresQuantityRatios",
+        "negativeThresholdIsInvalid",
+        "noSellableMissingAndNonExpiringStatesRemainExplicitEvenWithZeroThreshold",
+        "thresholdBoundaryIsInclusiveAndOneDayAfterIsOutside"
+      ]
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.UtilityCalculationTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "expiryUsesEarliestEligibleBatchAndBinaryProductThreshold",
+        "excludesBlockedExpiredTodayAndEmptyBatches",
+        "disabledAndSingleCriteriaHaveCorrectContributions",
+        "supportsFrozenHistoricalDecimalScoresWithoutChangingMath",
+        "reportsMissingExpiryAndNonExpiringProductsWithoutInventingDates",
+        "rejectsUnsafeNegativeOrMissingBusinessValues"
+      ]
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.UtilityFixtureTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "explicitFixtureProfilesProvideStoreIsolatedIdempotentData",
+        "diagnosticDateRangesProvideMissingExpiryNegativeUtilityAndDuplicateItems"
+      ]
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.UtilityIntegrationTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "matrixHashIgnoresPreparedSourceOrdering",
+        "separatesPolicyWindowAndWeightPermissionsAndPreservesOwnedSettings",
+        "previewRejectsMissingEnabledScoresAndSkipsIneligibleSourceRows",
+        "weightReportExamplesFlowThroughPreviewForProductSevenAndThreeDayThresholds",
+        "missingExpiryIsPreviewWarningAndPreventsReadySnapshotOnlyWhenEnabled",
+        "expirySnapshotsKeepOriginalDateProductThresholdAndBatchScore",
+        "persistenceFailureRollsBackSnapshotHeader",
+        "scorePatchIsPartialValidatedAndStoreScoped",
+        "rejectsDuplicateNegativeAndForeignSourceRowsAndInvalidRanges",
+        "snapshotFreezesPolicyWindowScoresAndHistoricalUtilityAndRejectsStaleLambda",
+        "rejectsInvalidBoundsWindowsAndCoefficientsWithoutChangingValues",
+        "openApiAndDatabaseConstraintsCoverF03"
+      ]
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.WeightRulesV12IntegrationTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "independentPushQueryUsesFefoAndIgnoresMiningOrHistoricalTransactions",
+        "officialExamplesUseProductThresholdAndHistoricalF04ValuesWithoutStoreFallback",
+        "missingMetadataIsReportedAndCannotBecomeAnEnabledReadySnapshot",
+        "snapshotFreezesEvidenceAndWarningsAfterProductAndInventoryChanges",
+        "storeAdminCanConfigureThresholdAndInventoryIsUnchanged",
+        "oldLinearSnapshotsStayReadableAndTheirStoredValuesNeverChange",
+        "productThresholdEnforcesRolesAndStoreScope",
+        "nullAndOmittedThresholdHaveEffectiveZero",
+        "inactiveHistoricalProductWarningIsFrozenEvenWhenExpiryIsNotApplicable",
+        "actualOpenApiShowsThresholdAndIndependentPushContract"
+      ]
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.utility.WeightRulesV12MigrationTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "upgradesPopulatedV7WithoutRewritingHistoricalSnapshotsOrBackfillingStoreThreshold"
+      ]
+    }
+  ],
+  "previousFullRun": "2026-10-20T14:46:31+07:00,210 PASS before final strict request-schema metadata"
+}

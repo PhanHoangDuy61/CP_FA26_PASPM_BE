@@ -1,0 +1,4 @@
+Actual Hibernate failed-constraint SQL captured during synthetic MySQL/H2 tests (parameters omitted).
+insert into product (category_id,cost_price,expiry_push_days,name,requires_expiry,selling_price,sku,status,store_id,unit,product_id) values (?,?,?,?,?,?,?,?,?,?,default)
+
+S/M and inventory columns are absent. Duplicate/FK errors were intentional negative tests.

@@ -1,0 +1,26 @@
+sequenceDiagram
+  autonumber
+  actor User as Store user
+  participant API as Import API
+  participant Service as Import service
+  participant DB as Database
+  User->>API: Upload CSV
+  API->>Service: importCsv(jwt, file)
+  Service->>Service: Enforce limits, parse, validate order groups
+  Service->>DB: Create PROCESSING batch and staging rows
+  loop each accepted order
+    Service->>DB: Check (store, source system, source order) key
+    alt Existing order, same content
+      DB-->>Service: Existing transaction
+      Service->>Service: Count duplicate, preserve existing order
+    else Existing order, changed content
+      DB-->>Service: Existing transaction differs
+      Service->>Service: Count conflict, reject order
+    else New valid order
+      Service->>DB: Persist sales transaction and items
+      Note over Service,DB: Import does not write inventory batches
+    end
+  end
+  Service->>DB: Finalize counts and terminal batch status
+  Service-->>API: Import summary
+  API-->>User: Import outcomes

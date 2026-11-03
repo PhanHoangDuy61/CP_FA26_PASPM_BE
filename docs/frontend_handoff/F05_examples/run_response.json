@@ -1,0 +1,23 @@
+{
+  "runId": 1,
+  "requestId": 1,
+  "storeId": 5,
+  "snapshotId": 2,
+  "algorithm": "HUI_MINER",
+  "attemptNo": 1,
+  "libraryVersion": "SPMF_2.67a",
+  "status": "COMPLETED",
+  "minUtilSpmf": 30,
+  "inputHash": "8ce22f131d59e8486c6974733fcc81de0c3caadaf13765399311cdfe3dc32626",
+  "conversionVersion": "F03_SCALE6_GCD_INT32_DENSE_V1",
+  "startedAt": "2026-10-19T16:06:05Z",
+  "completedAt": "2026-10-19T16:06:05Z",
+  "runtimeMillis": 98,
+  "memoryMiB": 10.622848510742188,
+  "memoryMethod": "SPMF_SAMPLED_JAVA_HEAP_MIB_NOT_RSS",
+  "runtimeMethod": "CHILD_JVM_WALL_TIME_INCLUDING_STARTUP_AND_IO_EXCLUDING_INPUT_PREPARATION",
+  "environment": "SPMF=SPMF_2.67a;jarSha256=4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a;heapMiB=256;os=Mac OS X;arch=aarch64;javaExecutableSha256=707698c4c6f29cd001e270afed04aed51a201f5e0adba0023ac3f6c35f11a978",
+  "patternCount": 8,
+  "failureCode": null,
+  "failureMessage": null
+}

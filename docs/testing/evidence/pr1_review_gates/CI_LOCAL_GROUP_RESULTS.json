@@ -1,0 +1,20 @@
+{
+  "backend": {
+    "exitCode": 0,
+    "tests": 135,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "spmfJar": "INTENTIONALLY_NONEXISTENT",
+    "sourceDatabaseUsed": false
+  },
+  "mysql": {
+    "exitCode": 0,
+    "tests": 33,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "spmfJar": "INTENTIONALLY_NONEXISTENT",
+    "sourceDatabaseUsed": false
+  }
+}

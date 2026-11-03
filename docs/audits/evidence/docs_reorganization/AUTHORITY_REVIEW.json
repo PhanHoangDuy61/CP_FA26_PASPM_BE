@@ -1,0 +1,1091 @@
+{
+  "statusesOverrides": {
+    "docs/PASPM_F01_AUTH_SERVICE/IMPLEMENTATION_STATUS.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F01_AUTH_SERVICE/IMPLEMENTATION_STATUS.md",
+        "docs/api/F01_AUTH_USER_API.md"
+      ],
+      "authority": "docs/api/F01_AUTH_USER_API.md"
+    },
+    "docs/PASPM_F01_AUTH_SERVICE/SWAGGER_CHECKLIST.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F01_AUTH_SERVICE/SWAGGER_CHECKLIST.md",
+        "docs/api/F01_AUTH_USER_API.md"
+      ],
+      "authority": "docs/api/F01_AUTH_USER_API.md"
+    },
+    "docs/PASPM_F01_AUTH_SERVICE/TEST_RESULTS.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F01_AUTH_SERVICE/TEST_RESULTS.md",
+        "docs/api/F01_AUTH_USER_API.md"
+      ],
+      "authority": "docs/api/F01_AUTH_USER_API.md"
+    },
+    "docs/PASPM_F01_AUTH_SERVICE/DECISIONS.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F01_AUTH_SERVICE/DECISIONS.md",
+        "docs/api/F01_AUTH_USER_API.md"
+      ],
+      "authority": "docs/api/F01_AUTH_USER_API.md"
+    },
+    "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_CODEGRAPH_REPORT.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_CODEGRAPH_REPORT.md",
+        "docs/api/F02_PRODUCT_INVENTORY_API.md"
+      ],
+      "authority": "docs/api/F02_PRODUCT_INVENTORY_API.md"
+    },
+    "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_SWAGGER_TEST_REPORT.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_SWAGGER_TEST_REPORT.md",
+        "docs/api/F02_PRODUCT_INVENTORY_API.md"
+      ],
+      "authority": "docs/api/F02_PRODUCT_INVENTORY_API.md"
+    },
+    "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_CODEX_SWAGGER_TEST_PROMPT.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_CODEX_SWAGGER_TEST_PROMPT.md",
+        "docs/api/F02_PRODUCT_INVENTORY_API.md"
+      ],
+      "authority": "docs/api/F02_PRODUCT_INVENTORY_API.md"
+    },
+    "docs/PASPM_F02_Inventory_Batch_Backlog_v3/PASPM_F02_Inventory_Batch_API_Swagger_Backlog_v3.md": {
+      "status": "SUPERSEDED",
+      "reason": "Current catalog GETs permit Merchandiser; original contract/backlog also uses an inclusive expiry-today sellability boundary replaced by strict future-date behavior. Preserve original requirements provenance.",
+      "evidenceRefs": [
+        "docs/PASPM_F02_Inventory_Batch_Backlog_v3/PASPM_F02_Inventory_Batch_API_Swagger_Backlog_v3.md",
+        "src/main/java/vn/edu/fpt/paspm/catalog/product/ProductController.java",
+        "src/main/java/vn/edu/fpt/paspm/catalog/inventory/InventorySummaryRepository.java"
+      ],
+      "authority": "docs/api/F02_PRODUCT_INVENTORY_API.md"
+    },
+    "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_IMPLEMENTATION_SUMMARY.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_IMPLEMENTATION_SUMMARY.md",
+        "docs/api/F02_PRODUCT_INVENTORY_API.md"
+      ],
+      "authority": "docs/api/F02_PRODUCT_INVENTORY_API.md"
+    },
+    "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_SWAGGER_ISSUES.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_SWAGGER_ISSUES.md",
+        "docs/api/F02_PRODUCT_INVENTORY_API.md"
+      ],
+      "authority": "docs/api/F02_PRODUCT_INVENTORY_API.md"
+    },
+    "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_API_CONTRACT.md": {
+      "status": "SUPERSEDED",
+      "reason": "Current catalog GETs permit Merchandiser; original contract/backlog also uses an inclusive expiry-today sellability boundary replaced by strict future-date behavior. Preserve original requirements provenance.",
+      "evidenceRefs": [
+        "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_API_CONTRACT.md",
+        "src/main/java/vn/edu/fpt/paspm/catalog/product/ProductController.java",
+        "src/main/java/vn/edu/fpt/paspm/catalog/inventory/InventorySummaryRepository.java"
+      ],
+      "authority": "docs/api/F02_PRODUCT_INVENTORY_API.md"
+    },
+    "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_TECHNICAL_DECISIONS.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_TECHNICAL_DECISIONS.md",
+        "docs/api/F02_PRODUCT_INVENTORY_API.md"
+      ],
+      "authority": "docs/api/F02_PRODUCT_INVENTORY_API.md"
+    },
+    "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_IMPLEMENTATION_PLAN.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_IMPLEMENTATION_PLAN.md",
+        "docs/api/F02_PRODUCT_INVENTORY_API.md"
+      ],
+      "authority": "docs/api/F02_PRODUCT_INVENTORY_API.md"
+    },
+    "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_SWAGGER_TEST_CASES.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_SWAGGER_TEST_CASES.md",
+        "docs/api/F02_PRODUCT_INVENTORY_API.md"
+      ],
+      "authority": "docs/api/F02_PRODUCT_INVENTORY_API.md"
+    },
+    "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_GitHub_Issues/F02-07.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_GitHub_Issues/F02-07.md",
+        "docs/api/F02_PRODUCT_INVENTORY_API.md"
+      ],
+      "authority": "docs/api/F02_PRODUCT_INVENTORY_API.md"
+    },
+    "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_GitHub_Issues/F02-03.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_GitHub_Issues/F02-03.md",
+        "docs/api/F02_PRODUCT_INVENTORY_API.md"
+      ],
+      "authority": "docs/api/F02_PRODUCT_INVENTORY_API.md"
+    },
+    "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_GitHub_Issues/F02-02.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_GitHub_Issues/F02-02.md",
+        "docs/api/F02_PRODUCT_INVENTORY_API.md"
+      ],
+      "authority": "docs/api/F02_PRODUCT_INVENTORY_API.md"
+    },
+    "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_GitHub_Issues/F02-06.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_GitHub_Issues/F02-06.md",
+        "docs/api/F02_PRODUCT_INVENTORY_API.md"
+      ],
+      "authority": "docs/api/F02_PRODUCT_INVENTORY_API.md"
+    },
+    "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_GitHub_Issues/F02-08.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_GitHub_Issues/F02-08.md",
+        "docs/api/F02_PRODUCT_INVENTORY_API.md"
+      ],
+      "authority": "docs/api/F02_PRODUCT_INVENTORY_API.md"
+    },
+    "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_GitHub_Issues/README.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_GitHub_Issues/README.md",
+        "docs/api/F02_PRODUCT_INVENTORY_API.md"
+      ],
+      "authority": "docs/api/F02_PRODUCT_INVENTORY_API.md"
+    },
+    "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_GitHub_Issues/F02-01.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_GitHub_Issues/F02-01.md",
+        "docs/api/F02_PRODUCT_INVENTORY_API.md"
+      ],
+      "authority": "docs/api/F02_PRODUCT_INVENTORY_API.md"
+    },
+    "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_GitHub_Issues/F02-05.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_GitHub_Issues/F02-05.md",
+        "docs/api/F02_PRODUCT_INVENTORY_API.md"
+      ],
+      "authority": "docs/api/F02_PRODUCT_INVENTORY_API.md"
+    },
+    "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_GitHub_Issues/F02-04.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_GitHub_Issues/F02-04.md",
+        "docs/api/F02_PRODUCT_INVENTORY_API.md"
+      ],
+      "authority": "docs/api/F02_PRODUCT_INVENTORY_API.md"
+    },
+    "docs/PASPM_F03_ERD_and_Tasks_v4/F03_CODEGRAPH_REPORT.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F03_ERD_and_Tasks_v4/F03_CODEGRAPH_REPORT.md",
+        "docs/api/F03_UTILITY_API.md"
+      ],
+      "authority": "docs/api/F03_UTILITY_API.md"
+    },
+    "docs/PASPM_F03_ERD_and_Tasks_v4/F03_F05_HANDOFF.md": {
+      "status": "NEEDS_REVIEW",
+      "reason": "Useful implemented boundary contract is mixed with statements that F06 is absent/future and/or V7 clean provisioning remains blocked; RecommendationController, corrected V7 and V11 recovery exist now.",
+      "evidenceRefs": [
+        "docs/PASPM_F03_ERD_and_Tasks_v4/F03_F05_HANDOFF.md",
+        "docs/api/F06_RECOMMENDATION_API.md",
+        "src/main/java/vn/edu/fpt/paspm/recommendation/RecommendationController.java",
+        "docs/setup/FLYWAY_MYSQL_V7_RECOVERY.md"
+      ],
+      "authority": "docs/api/F06_RECOMMENDATION_API.md"
+    },
+    "docs/PASPM_F03_ERD_and_Tasks_v4/F03_SWAGGER_TEST_CASES.md": {
+      "status": "NEEDS_REVIEW",
+      "reason": "Contains a current v1.2 acceptance section plus explicitly historical linear-v4 cases; cannot classify entire document as obsolete or execute all cases as current. Linked v1.2 verification file is absent.",
+      "evidenceRefs": [
+        "docs/PASPM_F03_ERD_and_Tasks_v4/F03_SWAGGER_TEST_CASES.md",
+        "src/main/java/vn/edu/fpt/paspm/utility/ExpiryScoreCalculator.java"
+      ],
+      "authority": "docs/api/F03_UTILITY_API.md"
+    },
+    "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_API_Swagger_Backlog.md": {
+      "status": "SUPERSEDED",
+      "reason": "Contains Store-owned T and/or linear quantity-weighted expiry scoring; new calculations use Product threshold and earliest eligible batch binary E. Historical snapshots keep their frozen original values.",
+      "evidenceRefs": [
+        "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_API_Swagger_Backlog.md",
+        "src/main/java/vn/edu/fpt/paspm/utility/ExpiryScoreCalculator.java",
+        "docs/api/F03_UTILITY_API.md"
+      ],
+      "authority": "docs/api/F03_UTILITY_API.md"
+    },
+    "docs/PASPM_F03_ERD_and_Tasks_v4/F03_SWAGGER_TEST_REPORT.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F03_ERD_and_Tasks_v4/F03_SWAGGER_TEST_REPORT.md",
+        "docs/api/F03_UTILITY_API.md"
+      ],
+      "authority": "docs/api/F03_UTILITY_API.md"
+    },
+    "docs/PASPM_F03_ERD_and_Tasks_v4/F03_SWAGGER_ISSUES.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F03_ERD_and_Tasks_v4/F03_SWAGGER_ISSUES.md",
+        "docs/api/F03_UTILITY_API.md"
+      ],
+      "authority": "docs/api/F03_UTILITY_API.md"
+    },
+    "docs/PASPM_F03_ERD_and_Tasks_v4/F03_IMPLEMENTATION_PLAN.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F03_ERD_and_Tasks_v4/F03_IMPLEMENTATION_PLAN.md",
+        "docs/api/F03_UTILITY_API.md"
+      ],
+      "authority": "docs/api/F03_UTILITY_API.md"
+    },
+    "docs/PASPM_F03_ERD_and_Tasks_v4/F03_IMPLEMENTATION_SUMMARY.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F03_ERD_and_Tasks_v4/F03_IMPLEMENTATION_SUMMARY.md",
+        "docs/api/F03_UTILITY_API.md"
+      ],
+      "authority": "docs/api/F03_UTILITY_API.md"
+    },
+    "docs/PASPM_F03_ERD_and_Tasks_v4/F03_TECHNICAL_DECISIONS.md": {
+      "status": "SUPERSEDED",
+      "reason": "Contains Store-owned T and/or linear quantity-weighted expiry scoring; new calculations use Product threshold and earliest eligible batch binary E. Historical snapshots keep their frozen original values.",
+      "evidenceRefs": [
+        "docs/PASPM_F03_ERD_and_Tasks_v4/F03_TECHNICAL_DECISIONS.md",
+        "src/main/java/vn/edu/fpt/paspm/utility/ExpiryScoreCalculator.java",
+        "docs/api/F03_UTILITY_API.md"
+      ],
+      "authority": "docs/api/F03_UTILITY_API.md"
+    },
+    "docs/PASPM_F03_ERD_and_Tasks_v4/F03_API_CONTRACT.md": {
+      "status": "SUPERSEDED",
+      "reason": "Contains Store-owned T and/or linear quantity-weighted expiry scoring; new calculations use Product threshold and earliest eligible batch binary E. Historical snapshots keep their frozen original values.",
+      "evidenceRefs": [
+        "docs/PASPM_F03_ERD_and_Tasks_v4/F03_API_CONTRACT.md",
+        "src/main/java/vn/edu/fpt/paspm/utility/ExpiryScoreCalculator.java",
+        "docs/api/F03_UTILITY_API.md"
+      ],
+      "authority": "docs/api/F03_UTILITY_API.md"
+    },
+    "docs/PASPM_F03_ERD_and_Tasks_v4/F03_TASK_UPDATES.md": {
+      "status": "SUPERSEDED",
+      "reason": "Contains Store-owned T and/or linear quantity-weighted expiry scoring; new calculations use Product threshold and earliest eligible batch binary E. Historical snapshots keep their frozen original values.",
+      "evidenceRefs": [
+        "docs/PASPM_F03_ERD_and_Tasks_v4/F03_TASK_UPDATES.md",
+        "src/main/java/vn/edu/fpt/paspm/utility/ExpiryScoreCalculator.java",
+        "docs/api/F03_UTILITY_API.md"
+      ],
+      "authority": "docs/api/F03_UTILITY_API.md"
+    },
+    "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/F03-09.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/F03-09.md",
+        "docs/api/F03_UTILITY_API.md"
+      ],
+      "authority": "docs/api/F03_UTILITY_API.md"
+    },
+    "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/F03-08.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/F03-08.md",
+        "docs/api/F03_UTILITY_API.md"
+      ],
+      "authority": "docs/api/F03_UTILITY_API.md"
+    },
+    "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/F03-03.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/F03-03.md",
+        "docs/api/F03_UTILITY_API.md"
+      ],
+      "authority": "docs/api/F03_UTILITY_API.md"
+    },
+    "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/F03-07.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/F03-07.md",
+        "docs/api/F03_UTILITY_API.md"
+      ],
+      "authority": "docs/api/F03_UTILITY_API.md"
+    },
+    "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/F03-06.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/F03-06.md",
+        "docs/api/F03_UTILITY_API.md"
+      ],
+      "authority": "docs/api/F03_UTILITY_API.md"
+    },
+    "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/PASPM_F03_Three_Weights_v4_API_Swagger_Backlog.md": {
+      "status": "SUPERSEDED",
+      "reason": "Byte-identical duplicate of original v4 backlog with superseded Store-T and scoring instructions; preserve both provenance locations.",
+      "evidenceRefs": [
+        "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/PASPM_F03_Three_Weights_v4_API_Swagger_Backlog.md",
+        "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_API_Swagger_Backlog.md"
+      ],
+      "authority": "docs/api/F03_UTILITY_API.md"
+    },
+    "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/F03-02.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/F03-02.md",
+        "docs/api/F03_UTILITY_API.md"
+      ],
+      "authority": "docs/api/F03_UTILITY_API.md"
+    },
+    "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/README.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/README.md",
+        "docs/api/F03_UTILITY_API.md"
+      ],
+      "authority": "docs/api/F03_UTILITY_API.md"
+    },
+    "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/F03-05.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/F03-05.md",
+        "docs/api/F03_UTILITY_API.md"
+      ],
+      "authority": "docs/api/F03_UTILITY_API.md"
+    },
+    "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/F03-01.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/F03-01.md",
+        "docs/api/F03_UTILITY_API.md"
+      ],
+      "authority": "docs/api/F03_UTILITY_API.md"
+    },
+    "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/F03-10.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/F03-10.md",
+        "docs/api/F03_UTILITY_API.md"
+      ],
+      "authority": "docs/api/F03_UTILITY_API.md"
+    },
+    "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/F03-04.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/F03-04.md",
+        "docs/api/F03_UTILITY_API.md"
+      ],
+      "authority": "docs/api/F03_UTILITY_API.md"
+    },
+    "docs/PASPM_F04_Transaction_Data_Pipeline/F04_GAP_ANALYSIS.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F04_Transaction_Data_Pipeline/F04_GAP_ANALYSIS.md",
+        "docs/api/F04_TRANSACTION_API.md"
+      ],
+      "authority": "docs/api/F04_TRANSACTION_API.md"
+    },
+    "docs/PASPM_F04_Transaction_Data_Pipeline/F04_CODEGRAPH_REPORT.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F04_Transaction_Data_Pipeline/F04_CODEGRAPH_REPORT.md",
+        "docs/api/F04_TRANSACTION_API.md"
+      ],
+      "authority": "docs/api/F04_TRANSACTION_API.md"
+    },
+    "docs/PASPM_F04_Transaction_Data_Pipeline/F04_SWAGGER_TEST_REPORT.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F04_Transaction_Data_Pipeline/F04_SWAGGER_TEST_REPORT.md",
+        "docs/api/F04_TRANSACTION_API.md"
+      ],
+      "authority": "docs/api/F04_TRANSACTION_API.md"
+    },
+    "docs/PASPM_F04_Transaction_Data_Pipeline/F04_IMPLEMENTATION_PLAN.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F04_Transaction_Data_Pipeline/F04_IMPLEMENTATION_PLAN.md",
+        "docs/api/F04_TRANSACTION_API.md"
+      ],
+      "authority": "docs/api/F04_TRANSACTION_API.md"
+    },
+    "docs/PASPM_F04_Transaction_Data_Pipeline/F04_DESIGN.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F04_Transaction_Data_Pipeline/F04_DESIGN.md",
+        "docs/api/F04_TRANSACTION_API.md"
+      ],
+      "authority": "docs/api/F04_TRANSACTION_API.md"
+    },
+    "docs/PASPM_F05_High_Utility_Mining/F05_CODEGRAPH_REPORT.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F05_High_Utility_Mining/F05_CODEGRAPH_REPORT.md",
+        "docs/api/F05_MINING_API.md"
+      ],
+      "authority": "docs/api/F05_MINING_API.md"
+    },
+    "docs/PASPM_F05_High_Utility_Mining/F05_GAP_ANALYSIS.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F05_High_Utility_Mining/F05_GAP_ANALYSIS.md",
+        "docs/api/F05_MINING_API.md"
+      ],
+      "authority": "docs/api/F05_MINING_API.md"
+    },
+    "docs/PASPM_F05_High_Utility_Mining/F05_VERIFICATION.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated feature planning, implementation or execution record; preserve content and scope without treating its baseline as current.",
+      "evidenceRefs": [
+        "docs/PASPM_F05_High_Utility_Mining/F05_VERIFICATION.md",
+        "docs/api/F05_MINING_API.md"
+      ],
+      "authority": "docs/api/F05_MINING_API.md"
+    },
+    "docs/PASPM_F05_High_Utility_Mining/F05_F06_HANDOFF.md": {
+      "status": "NEEDS_REVIEW",
+      "reason": "Useful implemented boundary contract is mixed with statements that F06 is absent/future and/or V7 clean provisioning remains blocked; RecommendationController, corrected V7 and V11 recovery exist now.",
+      "evidenceRefs": [
+        "docs/PASPM_F05_High_Utility_Mining/F05_F06_HANDOFF.md",
+        "docs/api/F06_RECOMMENDATION_API.md",
+        "src/main/java/vn/edu/fpt/paspm/recommendation/RecommendationController.java",
+        "docs/setup/FLYWAY_MYSQL_V7_RECOVERY.md"
+      ],
+      "authority": "docs/api/F06_RECOMMENDATION_API.md"
+    },
+    "docs/requirements/F06_RECOMMENDATION_RULES_v1_1.md": {
+      "status": "CURRENT",
+      "reason": "Explicit implemented approved rule package agrees with RecommendationRules and current F06 policy contracts.",
+      "evidenceRefs": [
+        "docs/requirements/F06_RECOMMENDATION_RULES_v1_1.md",
+        "src/main/java/vn/edu/fpt/paspm/recommendation/RecommendationRules.java"
+      ],
+      "authority": "docs/requirements/F06_RECOMMENDATION_RULES_v1_1.md"
+    },
+    "docs/requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md": {
+      "status": "HISTORICAL",
+      "reason": "Report captures a dated implementation/readiness or verification event rather than current business authority.",
+      "evidenceRefs": [
+        "docs/requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md",
+        "docs/api/F06_RECOMMENDATION_API.md"
+      ],
+      "authority": "docs/api/F06_RECOMMENDATION_API.md"
+    },
+    "docs/requirements/F06_IMPLEMENTATION_READINESS.md": {
+      "status": "HISTORICAL",
+      "reason": "Report captures a dated implementation/readiness or verification event rather than current business authority.",
+      "evidenceRefs": [
+        "docs/requirements/F06_IMPLEMENTATION_READINESS.md",
+        "docs/api/F06_RECOMMENDATION_API.md"
+      ],
+      "authority": "docs/api/F06_RECOMMENDATION_API.md"
+    },
+    "docs/requirements/F06_VERIFICATION.md": {
+      "status": "HISTORICAL",
+      "reason": "Report captures a dated implementation/readiness or verification event rather than current business authority.",
+      "evidenceRefs": [
+        "docs/requirements/F06_VERIFICATION.md",
+        "docs/api/F06_RECOMMENDATION_API.md"
+      ],
+      "authority": "docs/api/F06_RECOMMENDATION_API.md"
+    },
+    "docs/requirements/F06_IMPLEMENTATION_SUMMARY.md": {
+      "status": "HISTORICAL",
+      "reason": "Report captures a dated implementation/readiness or verification event rather than current business authority.",
+      "evidenceRefs": [
+        "docs/requirements/F06_IMPLEMENTATION_SUMMARY.md",
+        "docs/api/F06_RECOMMENDATION_API.md"
+      ],
+      "authority": "docs/api/F06_RECOMMENDATION_API.md"
+    },
+    "docs/architecture/PRODUCT_JPA_INTEGRATION_PR.md": {
+      "status": "HISTORICAL",
+      "reason": "Retain branch-specific implementation/review/PR record and dated evidence; current code now includes integrated Product/Category JPA and recovery.",
+      "evidenceRefs": [
+        "docs/architecture/PRODUCT_JPA_INTEGRATION_PR.md",
+        "src/main/java/vn/edu/fpt/paspm/common/persistence/PersistenceConfiguration.java"
+      ],
+      "authority": "UNKNOWN"
+    },
+    "docs/architecture/PRODUCT_JPA_INTEGRATION_REPORT.md": {
+      "status": "HISTORICAL",
+      "reason": "Retain branch-specific implementation/review/PR record and dated evidence; current code now includes integrated Product/Category JPA and recovery.",
+      "evidenceRefs": [
+        "docs/architecture/PRODUCT_JPA_INTEGRATION_REPORT.md",
+        "src/main/java/vn/edu/fpt/paspm/common/persistence/PersistenceConfiguration.java"
+      ],
+      "authority": "UNKNOWN"
+    },
+    "docs/architecture/JPA_PILOT_PR_READINESS.md": {
+      "status": "NEEDS_REVIEW",
+      "reason": "Architecture remains useful but development/delivery clauses still describe Product/Category as separate unmerged work or Category not yet started. Current source contains both mapped modules; no up-to-date merged-state architecture authority exists.",
+      "evidenceRefs": [
+        "docs/architecture/JPA_PILOT_PR_READINESS.md",
+        "src/main/java/vn/edu/fpt/paspm/catalog/product/persistence/ProductEntity.java",
+        "src/main/java/vn/edu/fpt/paspm/catalog/category/persistence/CategoryEntity.java",
+        "src/main/resources/persistence.properties"
+      ],
+      "authority": "UNKNOWN"
+    },
+    "docs/architecture/LEGACY_UTILITY_MATRIX_COMPATIBILITY.md": {
+      "status": "CURRENT",
+      "reason": "Operational identity, archive/live routing, verified-backup transition and F03/F05/F06 compatibility boundaries correspond to current callback and V11 implementation. This does not authorize a database operation.",
+      "evidenceRefs": [
+        "docs/architecture/LEGACY_UTILITY_MATRIX_COMPATIBILITY.md",
+        "src/main/java/db/migration/V11__historical_utility_matrix_storage.java",
+        "src/main/java/vn/edu/fpt/paspm/deployment/legacy/LegacyRecoveryCallback.java"
+      ],
+      "authority": "docs/architecture/LEGACY_UTILITY_MATRIX_COMPATIBILITY.md"
+    },
+    "docs/architecture/JPA_PILOT_CODE_REVIEW.md": {
+      "status": "HISTORICAL",
+      "reason": "Retain branch-specific implementation/review/PR record and dated evidence; current code now includes integrated Product/Category JPA and recovery.",
+      "evidenceRefs": [
+        "docs/architecture/JPA_PILOT_CODE_REVIEW.md",
+        "src/main/java/vn/edu/fpt/paspm/common/persistence/PersistenceConfiguration.java"
+      ],
+      "authority": "UNKNOWN"
+    },
+    "docs/architecture/MIG_JPA_F02_01_IMPLEMENTATION_REPORT.md": {
+      "status": "HISTORICAL",
+      "reason": "Retain branch-specific implementation/review/PR record and dated evidence; current code now includes integrated Product/Category JPA and recovery.",
+      "evidenceRefs": [
+        "docs/architecture/MIG_JPA_F02_01_IMPLEMENTATION_REPORT.md",
+        "src/main/java/vn/edu/fpt/paspm/common/persistence/PersistenceConfiguration.java"
+      ],
+      "authority": "UNKNOWN"
+    },
+    "docs/architecture/CATEGORY_JPA_IMPLEMENTATION_REPORT.md": {
+      "status": "HISTORICAL",
+      "reason": "Retain branch-specific implementation/review/PR record and dated evidence; current code now includes integrated Product/Category JPA and recovery.",
+      "evidenceRefs": [
+        "docs/architecture/CATEGORY_JPA_IMPLEMENTATION_REPORT.md",
+        "src/main/java/vn/edu/fpt/paspm/common/persistence/PersistenceConfiguration.java"
+      ],
+      "authority": "UNKNOWN"
+    },
+    "docs/architecture/BACKEND_CI_PR_DESCRIPTION.md": {
+      "status": "HISTORICAL",
+      "reason": "Retain branch-specific implementation/review/PR record and dated evidence; current code now includes integrated Product/Category JPA and recovery.",
+      "evidenceRefs": [
+        "docs/architecture/BACKEND_CI_PR_DESCRIPTION.md",
+        "src/main/java/vn/edu/fpt/paspm/common/persistence/PersistenceConfiguration.java"
+      ],
+      "authority": "UNKNOWN"
+    },
+    "docs/architecture/HYBRID_PERSISTENCE_DECISIONS.md": {
+      "status": "NEEDS_REVIEW",
+      "reason": "Architecture remains useful but development/delivery clauses still describe Product/Category as separate unmerged work or Category not yet started. Current source contains both mapped modules; no up-to-date merged-state architecture authority exists.",
+      "evidenceRefs": [
+        "docs/architecture/HYBRID_PERSISTENCE_DECISIONS.md",
+        "src/main/java/vn/edu/fpt/paspm/catalog/product/persistence/ProductEntity.java",
+        "src/main/java/vn/edu/fpt/paspm/catalog/category/persistence/CategoryEntity.java",
+        "src/main/resources/persistence.properties"
+      ],
+      "authority": "UNKNOWN"
+    },
+    "docs/architecture/CATEGORY_JPA_PR.md": {
+      "status": "HISTORICAL",
+      "reason": "Retain branch-specific implementation/review/PR record and dated evidence; current code now includes integrated Product/Category JPA and recovery.",
+      "evidenceRefs": [
+        "docs/architecture/CATEGORY_JPA_PR.md",
+        "src/main/java/vn/edu/fpt/paspm/common/persistence/PersistenceConfiguration.java"
+      ],
+      "authority": "UNKNOWN"
+    },
+    "docs/architecture/V5_V7_HISTORICAL_MATRIX_RECOVERY_DESIGN.md": {
+      "status": "NEEDS_REVIEW",
+      "reason": "Implemented B+C recovery design remains useful current technical context; READY_FOR_REVIEW/unmerged-development clauses are dated and must not represent current delivery state.",
+      "evidenceRefs": [
+        "docs/architecture/V5_V7_HISTORICAL_MATRIX_RECOVERY_DESIGN.md",
+        "src/main/java/db/migration/V11__historical_utility_matrix_storage.java"
+      ],
+      "authority": "docs/architecture/LEGACY_UTILITY_MATRIX_COMPATIBILITY.md"
+    },
+    "docs/architecture/MIG_JPA_CORE_00_IMPLEMENTATION_REPORT.md": {
+      "status": "HISTORICAL",
+      "reason": "Retain branch-specific implementation/review/PR record and dated evidence; current code now includes integrated Product/Category JPA and recovery.",
+      "evidenceRefs": [
+        "docs/architecture/MIG_JPA_CORE_00_IMPLEMENTATION_REPORT.md",
+        "src/main/java/vn/edu/fpt/paspm/common/persistence/PersistenceConfiguration.java"
+      ],
+      "authority": "UNKNOWN"
+    },
+    "docs/architecture/JDBC_TO_JPA_MIGRATION_PLAN.md": {
+      "status": "NEEDS_REVIEW",
+      "reason": "Architecture remains useful but development/delivery clauses still describe Product/Category as separate unmerged work or Category not yet started. Current source contains both mapped modules; no up-to-date merged-state architecture authority exists.",
+      "evidenceRefs": [
+        "docs/architecture/JDBC_TO_JPA_MIGRATION_PLAN.md",
+        "src/main/java/vn/edu/fpt/paspm/catalog/product/persistence/ProductEntity.java",
+        "src/main/java/vn/edu/fpt/paspm/catalog/category/persistence/CategoryEntity.java",
+        "src/main/resources/persistence.properties"
+      ],
+      "authority": "UNKNOWN"
+    },
+    "docs/architecture/HYBRID_JPA_DELIVERY_STATUS.md": {
+      "status": "NEEDS_REVIEW",
+      "reason": "Architecture remains useful but development/delivery clauses still describe Product/Category as separate unmerged work or Category not yet started. Current source contains both mapped modules; no up-to-date merged-state architecture authority exists.",
+      "evidenceRefs": [
+        "docs/architecture/HYBRID_JPA_DELIVERY_STATUS.md",
+        "src/main/java/vn/edu/fpt/paspm/catalog/product/persistence/ProductEntity.java",
+        "src/main/java/vn/edu/fpt/paspm/catalog/category/persistence/CategoryEntity.java",
+        "src/main/resources/persistence.properties"
+      ],
+      "authority": "UNKNOWN"
+    },
+    "docs/architecture/HISTORICAL_MATRIX_RECOVERY_PR_DESCRIPTION.md": {
+      "status": "HISTORICAL",
+      "reason": "Retain branch-specific implementation/review/PR record and dated evidence; current code now includes integrated Product/Category JPA and recovery.",
+      "evidenceRefs": [
+        "docs/architecture/HISTORICAL_MATRIX_RECOVERY_PR_DESCRIPTION.md",
+        "src/main/java/vn/edu/fpt/paspm/common/persistence/PersistenceConfiguration.java"
+      ],
+      "authority": "UNKNOWN"
+    },
+    "docs/api/F01_AUTH_USER_API.md": {
+      "status": "CURRENT",
+      "reason": "Canonical shared API surface or append-only change history; implementation matches current controller/DTO and role structure. Separate conflicts below qualify unresolved links or dated context.",
+      "evidenceRefs": [
+        "docs/api/F01_AUTH_USER_API.md",
+        "docs/api/openapi.json"
+      ],
+      "authority": "docs/api/F01_AUTH_USER_API.md"
+    },
+    "docs/api/F02_PRODUCT_INVENTORY_API.md": {
+      "status": "CURRENT",
+      "reason": "Canonical shared API surface or append-only change history; implementation matches current controller/DTO and role structure. Separate conflicts below qualify unresolved links or dated context.",
+      "evidenceRefs": [
+        "docs/api/F02_PRODUCT_INVENTORY_API.md",
+        "docs/api/openapi.json"
+      ],
+      "authority": "docs/api/F02_PRODUCT_INVENTORY_API.md"
+    },
+    "docs/api/F03_UTILITY_API.md": {
+      "status": "CURRENT",
+      "reason": "Canonical shared API surface or append-only change history; implementation matches current controller/DTO and role structure. Separate conflicts below qualify unresolved links or dated context.",
+      "evidenceRefs": [
+        "docs/api/F03_UTILITY_API.md",
+        "docs/api/openapi.json"
+      ],
+      "authority": "docs/api/F03_UTILITY_API.md"
+    },
+    "docs/api/F04_TRANSACTION_API.md": {
+      "status": "CURRENT",
+      "reason": "Canonical shared API surface or append-only change history; implementation matches current controller/DTO and role structure. Separate conflicts below qualify unresolved links or dated context.",
+      "evidenceRefs": [
+        "docs/api/F04_TRANSACTION_API.md",
+        "docs/api/openapi.json"
+      ],
+      "authority": "docs/api/F04_TRANSACTION_API.md"
+    },
+    "docs/api/F05_MINING_API.md": {
+      "status": "CURRENT",
+      "reason": "Canonical shared API surface or append-only change history; implementation matches current controller/DTO and role structure. Separate conflicts below qualify unresolved links or dated context.",
+      "evidenceRefs": [
+        "docs/api/F05_MINING_API.md",
+        "docs/api/openapi.json"
+      ],
+      "authority": "docs/api/F05_MINING_API.md"
+    },
+    "docs/api/F06_RECOMMENDATION_API.md": {
+      "status": "CURRENT",
+      "reason": "Canonical shared API surface or append-only change history; implementation matches current controller/DTO and role structure. Separate conflicts below qualify unresolved links or dated context.",
+      "evidenceRefs": [
+        "docs/api/F06_RECOMMENDATION_API.md",
+        "docs/api/openapi.json"
+      ],
+      "authority": "docs/api/F06_RECOMMENDATION_API.md"
+    },
+    "docs/api/F01_F02_RBAC_MATRIX.md": {
+      "status": "CURRENT",
+      "reason": "Canonical shared API surface or append-only change history; implementation matches current controller/DTO and role structure. Separate conflicts below qualify unresolved links or dated context.",
+      "evidenceRefs": [
+        "docs/api/F01_F02_RBAC_MATRIX.md",
+        "docs/api/openapi.json"
+      ],
+      "authority": "docs/api/F01_F02_RBAC_MATRIX.md"
+    },
+    "docs/api/API_CHANGELOG.md": {
+      "status": "CURRENT",
+      "reason": "Canonical shared API surface or append-only change history; implementation matches current controller/DTO and role structure. Separate conflicts below qualify unresolved links or dated context.",
+      "evidenceRefs": [
+        "docs/api/API_CHANGELOG.md",
+        "docs/api/openapi.json"
+      ],
+      "authority": "docs/api/API_CHANGELOG.md"
+    },
+    "docs/api/openapi.json": {
+      "status": "CURRENT",
+      "reason": "Shared checked-in export contains 59 paths and 73 operations; preserves current external schema, distinct from historical evidence exports.",
+      "evidenceRefs": [
+        "docs/api/openapi.json"
+      ],
+      "authority": "docs/api/openapi.json"
+    },
+    "docs/api/F03_V12_F05_F06_INTEGRATION.md": {
+      "status": "NEEDS_REVIEW",
+      "reason": "Useful implemented boundary contract is mixed with statements that F06 is absent/future and/or V7 clean provisioning remains blocked; RecommendationController, corrected V7 and V11 recovery exist now.",
+      "evidenceRefs": [
+        "docs/api/F03_V12_F05_F06_INTEGRATION.md",
+        "docs/api/F06_RECOMMENDATION_API.md",
+        "src/main/java/vn/edu/fpt/paspm/recommendation/RecommendationController.java",
+        "docs/setup/FLYWAY_MYSQL_V7_RECOVERY.md"
+      ],
+      "authority": "docs/api/F06_RECOMMENDATION_API.md"
+    },
+    "docs/frontend_handoff/F05_HANDOFF.md": {
+      "status": "NEEDS_REVIEW",
+      "reason": "Useful implemented boundary contract is mixed with statements that F06 is absent/future and/or V7 clean provisioning remains blocked; RecommendationController, corrected V7 and V11 recovery exist now.",
+      "evidenceRefs": [
+        "docs/frontend_handoff/F05_HANDOFF.md",
+        "docs/api/F06_RECOMMENDATION_API.md",
+        "src/main/java/vn/edu/fpt/paspm/recommendation/RecommendationController.java",
+        "docs/setup/FLYWAY_MYSQL_V7_RECOVERY.md"
+      ],
+      "authority": "docs/api/F06_RECOMMENDATION_API.md"
+    },
+    "docs/setup/BACKEND_CI.md": {
+      "status": "NEEDS_REVIEW",
+      "reason": "Current workflow/setup instructions coexist with obsolete progression policy blocking Product integration and Category work; current source contains both. Keep active setup location, qualify dated governance claims.",
+      "evidenceRefs": [
+        "docs/setup/BACKEND_CI.md",
+        ".github/workflows/backend-verification.yml",
+        "src/main/java/vn/edu/fpt/paspm/catalog/category/persistence/CategoryEntity.java"
+      ],
+      "authority": "UNKNOWN"
+    },
+    "docs/setup/F05_SPMF_RUNTIME_SETUP.md": {
+      "status": "CURRENT",
+      "reason": "Approved hash, Java17 backend/Java25 child separation and explicit runtime configuration match SpmfRuntime. Migration counts V1-V9 describe original F05 rollout, not latest full schema.",
+      "evidenceRefs": [
+        "docs/setup/F05_SPMF_RUNTIME_SETUP.md",
+        "src/main/java/vn/edu/fpt/paspm/mining/SpmfRuntime.java"
+      ],
+      "authority": "docs/setup/F05_SPMF_RUNTIME_SETUP.md"
+    },
+    "docs/setup/FLYWAY_MYSQL_V7_RECOVERY.md": {
+      "status": "CURRENT",
+      "reason": "Specific V7 identifier/checksum reconciliation runbook remains applicable to old histories; it is separate from populated-V5 matrix recovery. Retain explicit approval and failure-state boundaries.",
+      "evidenceRefs": [
+        "docs/setup/FLYWAY_MYSQL_V7_RECOVERY.md",
+        "src/main/resources/db/migration/V7__f04_transaction_import_pipeline.sql"
+      ],
+      "authority": "docs/setup/FLYWAY_MYSQL_V7_RECOVERY.md"
+    },
+    "docs/setup/SPMF_ARTIFACT_HOSTING.md": {
+      "status": "NEEDS_REVIEW",
+      "reason": "Retain owner approval/source-provenance package; claims about current hosted artifact/release availability are dated external observations and cannot be certified from local code.",
+      "evidenceRefs": [
+        "docs/setup/SPMF_ARTIFACT_HOSTING.md",
+        ".github/scripts/provision-spmf.py"
+      ],
+      "authority": "docs/setup/SPMF_ARTIFACT_HOSTING.md"
+    },
+    "docs/testing/JPA_V5_TO_V10_MIGRATION_VERIFICATION.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated execution/acceptance/review report; preserve counts, failed cases and readiness limitations as recorded, without upgrading to current verification.",
+      "evidenceRefs": [
+        "docs/testing/JPA_V5_TO_V10_MIGRATION_VERIFICATION.md"
+      ],
+      "authority": "UNKNOWN"
+    },
+    "docs/testing/PR1_REVIEW_GATE_REPORT.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated execution/acceptance/review report; preserve counts, failed cases and readiness limitations as recorded, without upgrading to current verification.",
+      "evidenceRefs": [
+        "docs/testing/PR1_REVIEW_GATE_REPORT.md"
+      ],
+      "authority": "UNKNOWN"
+    },
+    "docs/testing/V5_V10_POPULATED_MATRIX_RECOVERY_TEST_PLAN.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated execution/acceptance/review report; preserve counts, failed cases and readiness limitations as recorded, without upgrading to current verification.",
+      "evidenceRefs": [
+        "docs/testing/V5_V10_POPULATED_MATRIX_RECOVERY_TEST_PLAN.md"
+      ],
+      "authority": "UNKNOWN"
+    },
+    "docs/testing/JPA_PILOT_SWAGGER_VERIFICATION.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated execution/acceptance/review report; preserve counts, failed cases and readiness limitations as recorded, without upgrading to current verification.",
+      "evidenceRefs": [
+        "docs/testing/JPA_PILOT_SWAGGER_VERIFICATION.md"
+      ],
+      "authority": "UNKNOWN"
+    },
+    "docs/testing/BACKEND_CI_REMOTE_FIX_PR_DESCRIPTION.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated execution/acceptance/review report; preserve counts, failed cases and readiness limitations as recorded, without upgrading to current verification.",
+      "evidenceRefs": [
+        "docs/testing/BACKEND_CI_REMOTE_FIX_PR_DESCRIPTION.md"
+      ],
+      "authority": "UNKNOWN"
+    },
+    "docs/testing/SPMF_CI_READINESS.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated execution/acceptance/review report; preserve counts, failed cases and readiness limitations as recorded, without upgrading to current verification.",
+      "evidenceRefs": [
+        "docs/testing/SPMF_CI_READINESS.md"
+      ],
+      "authority": "UNKNOWN"
+    },
+    "docs/testing/BACKEND_CI_REMOTE_VERIFICATION.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated execution/acceptance/review report; preserve counts, failed cases and readiness limitations as recorded, without upgrading to current verification.",
+      "evidenceRefs": [
+        "docs/testing/BACKEND_CI_REMOTE_VERIFICATION.md"
+      ],
+      "authority": "UNKNOWN"
+    },
+    "docs/testing/JPA_PILOT_REAL_DATA_VERIFICATION.md": {
+      "status": "HISTORICAL",
+      "reason": "Dated execution/acceptance/review report; preserve counts, failed cases and readiness limitations as recorded, without upgrading to current verification.",
+      "evidenceRefs": [
+        "docs/testing/JPA_PILOT_REAL_DATA_VERIFICATION.md"
+      ],
+      "authority": "UNKNOWN"
+    },
+    "docs/ERD_Diagram/PASPM_Complete_ERD_F02_Inventory_Batch_v3.drawio": {
+      "status": "SUPERSEDED",
+      "reason": "Actual conceptual/logical pages omit Product expiry_push_days, F04 staging, later F06 physical details and V11 archive; retain original model provenance.",
+      "evidenceRefs": [
+        "docs/ERD_Diagram/PASPM_Complete_ERD_F02_Inventory_Batch_v3.drawio",
+        "docs/ERD_Diagram/PASPM_Complete_ERD_F03_Three_Weights_v4.drawio"
+      ],
+      "authority": "docs/ERD_Diagram/PASPM_Complete_ERD_F03_Three_Weights_v4.drawio"
+    },
+    "docs/PASPM_F02_Inventory_Batch_Backlog_v3/PASPM_Complete_ERD_F02_Inventory_Batch_v3.drawio": {
+      "status": "SUPERSEDED",
+      "reason": "Byte-identical original F02 model duplicate; preserve independently with relocation map rather than delete.",
+      "evidenceRefs": [
+        "docs/ERD_Diagram/PASPM_Complete_ERD_F02_Inventory_Batch_v3.drawio"
+      ],
+      "authority": "docs/ERD_Diagram/PASPM_Complete_ERD_F03_Three_Weights_v4.drawio"
+    },
+    "docs/ERD_Diagram/PASPM_Complete_ERD_F03_Three_Weights_v4.drawio": {
+      "status": "NEEDS_REVIEW",
+      "reason": "Despite v4 filename, actual page names/content include Final Weights v1.2, F05 P0, F06 V10, expiry_push_days and staging. It omits V11 legacy archive/routing, so latest editable business ERD is not full current physical schema.",
+      "evidenceRefs": [
+        "docs/ERD_Diagram/PASPM_Complete_ERD_F03_Three_Weights_v4.drawio",
+        "src/main/java/db/migration/V11__historical_utility_matrix_storage.java"
+      ],
+      "authority": "UNKNOWN"
+    }
+  },
+  "conflicts": [
+    {
+      "id": "F03_MISSING_AUTHORITY",
+      "paths": [
+        "docs/api/F03_UTILITY_API.md",
+        "docs/frontend_handoff/F03_HANDOFF.md",
+        "docs/PASPM_F03_ERD_and_Tasks_v4/F03_TECHNICAL_DECISIONS.md"
+      ],
+      "claim": "Links designate requirements/F03_WEIGHT_RULES_v1_2.md and F03_WEIGHT_RULES_v1_2_VERIFICATION.md as authority, but neither is tracked on this baseline.",
+      "resolution": "Record missing authority explicitly; retain code-derived API as current implementation reference. Do not import original checkout untracked materials."
+    },
+    {
+      "id": "F02_OLD_BOUNDARY_AND_RBAC",
+      "paths": [
+        "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_API_CONTRACT.md",
+        "docs/PASPM_F02_Inventory_Batch_Backlog_v3/PASPM_F02_Inventory_Batch_API_Swagger_Backlog_v3.md",
+        "docs/api/F02_PRODUCT_INVENTORY_API.md"
+      ],
+      "claim": "Legacy all-STORE_ADMIN route rule and expiryDate>=today sellability conflict with Merchandiser catalog reads and expiryDate>today in current implementation.",
+      "resolution": "Canonical API/controller + inventory summary implementation govern; preserve original backlog as superseded."
+    },
+    {
+      "id": "F03_LINEAR_VS_BINARY",
+      "paths": [
+        "docs/PASPM_F03_ERD_and_Tasks_v4/F03_API_CONTRACT.md",
+        "docs/PASPM_F03_ERD_and_Tasks_v4/F03_TASK_UPDATES.md",
+        "docs/api/F03_UTILITY_API.md"
+      ],
+      "claim": "Store T and quantity-weighted linear E are superseded for new calculations by Product expiryPushDays and binary earliest eligible batch E.",
+      "resolution": "Keep old scoring artifacts for historical frozen snapshots; current calculator/API govern new calculations."
+    },
+    {
+      "id": "CURRENT_FOLDER_STALE_F06",
+      "paths": [
+        "docs/api/F03_V12_F05_F06_INTEGRATION.md",
+        "docs/frontend_handoff/F05_HANDOFF.md",
+        "docs/PASPM_F05_High_Utility_Mining/F05_F06_HANDOFF.md",
+        "docs/PASPM_F03_ERD_and_Tasks_v4/F03_F05_HANDOFF.md"
+      ],
+      "claim": "These mixed documents still say Recommendation Engine absent or future; F06 API, V10 and implementation exist. Several also carry pre-fix V7 deployment blockers.",
+      "resolution": "Keep useful contracts discoverable, label NEEDS_REVIEW and route F06 consumers to current F06 API."
+    },
+    {
+      "id": "HYBRID_MERGE_STATE",
+      "paths": [
+        "docs/architecture/HYBRID_JPA_DELIVERY_STATUS.md",
+        "docs/architecture/JDBC_TO_JPA_MIGRATION_PLAN.md",
+        "docs/architecture/JPA_PILOT_PR_READINESS.md",
+        "docs/setup/BACKEND_CI.md",
+        "docs/testing/SPMF_CI_READINESS.md"
+      ],
+      "claim": "Branch and progression claims describe unmerged Product/Category or Category not started; current source includes both JPA mappings/bridges and current CI tooling.",
+      "resolution": "Keep dated delivery/audit records historical; create an accurate merged-state architecture index without rewriting evidence."
+    },
+    {
+      "id": "ERD_NOT_COMPLETE_PHYSICAL_SCHEMA",
+      "paths": [
+        "docs/ERD_Diagram/PASPM_Complete_ERD_F03_Three_Weights_v4.drawio",
+        "src/main/java/db/migration/V11__historical_utility_matrix_storage.java"
+      ],
+      "claim": "Latest diagram actual content reaches v1.2/F05/F06 V10, but has no V11 legacy matrix archive/routing model.",
+      "resolution": "Treat as latest editable business model requiring review; Flyway/V11 source governs physical schema."
+    },
+    {
+      "id": "README_IMPLEMENTATION_SCOPE",
+      "paths": [
+        "README.md"
+      ],
+      "claim": "README says only F01 exists and F02-F11 unimplemented, while current controllers implement F01-F06.",
+      "resolution": "Update landing/navigation scope using current source; retain original F01 reports as history."
+    }
+  ],
+  "duplicates": [
+    {
+      "paths": [
+        "docs/ERD_Diagram/PASPM_Complete_ERD_F02_Inventory_Batch_v3.drawio",
+        "docs/PASPM_F02_Inventory_Batch_Backlog_v3/PASPM_Complete_ERD_F02_Inventory_Batch_v3.drawio"
+      ],
+      "sha256": "b8cc996bed7fea07d45c228587dec3009ca0a05621a7d351cd15dcb0e6184568",
+      "action": "PRESERVE_ALL",
+      "reason": "Byte-identical content has independent requirement/handoff provenance; relocation must not deduplicate."
+    },
+    {
+      "paths": [
+        "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_API_Swagger_Backlog.md",
+        "docs/PASPM_F03_ERD_and_Tasks_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/PASPM_F03_Three_Weights_v4_API_Swagger_Backlog.md"
+      ],
+      "sha256": "82a7df85e949749b8f1444394f61e46212ab26f17e70bd221479e0da35b86ffc",
+      "action": "PRESERVE_ALL",
+      "reason": "Byte-identical content has independent requirement/handoff provenance; relocation must not deduplicate."
+    },
+    {
+      "paths": [
+        "docs/frontend_handoff/F01_examples/otp_response.json",
+        "docs/frontend_handoff/F01_examples/register_response.json"
+      ],
+      "sha256": "d5384929ae571537e38bf4e4833bee4ef470b1f0c29995514e1c4c7c953cd95c",
+      "action": "PRESERVE_ALL",
+      "reason": "Byte-identical content has independent requirement/handoff provenance; relocation must not deduplicate."
+    },
+    {
+      "paths": [
+        "docs/frontend_handoff/F01_examples/user_status_request.json",
+        "docs/frontend_handoff/F02_examples/product_status_request.json"
+      ],
+      "sha256": "4921d038d1fa1c475dfba65eaa86d7f59caea45ddc08d4185347e5c8fa4fde9a",
+      "action": "PRESERVE_ALL",
+      "reason": "Byte-identical content has independent requirement/handoff provenance; relocation must not deduplicate."
+    }
+  ],
+  "relocationConstraints": [
+    {
+      "paths": [
+        "docs/api",
+        "docs/frontend_handoff"
+      ],
+      "action": "KEEP_STABLE",
+      "reason": "Shared integration entrypoints and example references. No executable doc-path consumer was found in source/scripts; preserving stable contract locations avoids breaking existing integrations."
+    },
+    {
+      "paths": [
+        "docs/superpowers/plans",
+        "docs/superpowers/specs"
+      ],
+      "action": "KEEP_STABLE",
+      "reason": "Agent workflow conventions; retain tool-facing layout and classify dated plans separately."
+    },
+    {
+      "paths": [
+        "docs/PASPM_F05_High_Utility_Mining/F05_FILE_MANIFEST.json",
+        "docs/testing/evidence",
+        "docs/requirements/evidence"
+      ],
+      "action": "PRESERVE_RECORD_SEMANTICS",
+      "reason": "Historical manifests/evidence embed original repo-relative paths and execution context. Use relocation mapping; do not rewrite recorded results or convert old evidence to current verification."
+    },
+    {
+      "paths": [
+        "docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_CODEX_SWAGGER_TEST_PROMPT.md"
+      ],
+      "action": "UPDATE_OPERATIONAL_PATHS_OR_MARK_HISTORICAL",
+      "reason": "Prompt explicitly instructs recursively reading old F02 folder; a move without mapping leaves an obsolete execution instruction."
+    },
+    {
+      "paths": [
+        "docs/ERD_Diagram",
+        "docs/PASPM_F01_AUTH_SERVICE",
+        "docs/PASPM_F02_Inventory_Batch_Backlog_v3",
+        "docs/PASPM_F03_ERD_and_Tasks_v4",
+        "docs/PASPM_F04_Transaction_Data_Pipeline",
+        "docs/PASPM_F05_High_Utility_Mining"
+      ],
+      "action": "MOVE_WITH_LINK_MAP",
+      "reason": "README and many Markdown links refer to these original locations. Relocation is feasible after updating navigational links and providing old-to-new map; preserve diagram/document/archive bytes."
+    },
+    {
+      "paths": [
+        "docs/requirements/F03_WEIGHT_RULES_v1_2.md",
+        "docs/requirements/F03_WEIGHT_RULES_v1_2_VERIFICATION.md"
+      ],
+      "action": "DO_NOT_FABRICATE_OR_IMPORT",
+      "reason": "Absent from tracked baseline; missing references are review findings. Original-user untracked versions are outside this branch task."
+    }
+  ]
+}

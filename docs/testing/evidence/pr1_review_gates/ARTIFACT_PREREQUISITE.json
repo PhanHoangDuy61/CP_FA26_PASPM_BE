@@ -1,0 +1,8 @@
+{
+  "case": "Missing approved artifact URL",
+  "exitCode": 1,
+  "result": "EXPECTED_REFUSAL",
+  "integrationStatus": "SPMF_INTEGRATION_CI_BLOCKED",
+  "backendTestsExecutedByThisCheck": false,
+  "artifactFileCreated": false
+}

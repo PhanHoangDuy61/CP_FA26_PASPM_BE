@@ -1,0 +1,203 @@
+// Audit copy: fixed disposable-only JWT/OTP test keys redacted; executed source hash is in manifest.
+import java.nio.file.*;
+import java.nio.charset.StandardCharsets;
+import java.sql.*;
+import java.math.BigDecimal;
+import java.time.*;
+import java.util.*;
+import java.security.MessageDigest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.flywaydb.core.Flyway;
+import org.flywaydb.core.api.FlywayException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import vn.edu.fpt.paspm.PaspmApplication;
+import vn.edu.fpt.paspm.utility.UtilityContracts.*;
+import vn.edu.fpt.paspm.utility.UtilityMatrixContracts.*;
+import vn.edu.fpt.paspm.mining.*;
+import vn.edu.fpt.paspm.user.UserRepository;
+import vn.edu.fpt.paspm.auth.AuthService;
+import vn.edu.fpt.paspm.transaction.importing.TransactionImportService;
+
+/** EXPERIMENTAL: dedicated loopback instance only. Never reads application DB credentials. */
+public class RecoveryProof {
+ static final Path ROOT=Path.of("/tmp/paspm-matrix-recovery-f0y8avdy");
+ static final ObjectMapper JSON=new ObjectMapper().findAndRegisterModules();
+ static final BigDecimal Z=BigDecimal.ZERO,O=BigDecimal.ONE;
+ static final String ARCHIVE="utility_matrix_item_legacy_v5",STAGE="utility_matrix_item_recovery_stage";
+ static final List<Map<String,Object>> RESULTS=new ArrayList<>();
+ static Properties cfg=new Properties(); static Db failed; static Map<String,Object> failedBefore;
+ record Db(String name,String url,DriverManagerDataSource ds,JdbcTemplate j) {}
+ interface Work { Map<String,Object> execute() throws Exception; }
+ static void check(boolean condition,String why) {if(!condition)throw new AssertionError(why);}
+ static String hash(String s)throws Exception{return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(s.getBytes(StandardCharsets.UTF_8)));}
+ static Flyway fly(Db db,String target){return Flyway.configure().dataSource(db.ds()).locations("filesystem:src/main/resources/db/migration").target(target).load();}
+ static Db create()throws Exception{
+  String name="paspm_recovery_test_"+UUID.randomUUID().toString().replace("-","");
+  try(var c=DriverManager.getConnection(cfg.getProperty("url"),cfg.getProperty("username"),cfg.getProperty("password"));var s=c.createStatement()){
+   try(var r=s.executeQuery("SELECT @@port,CURRENT_USER(),VERSION()")){r.next();check(r.getInt(1)==13317&&r.getString(2).startsWith("matrix_recovery@")&&r.getString(3).startsWith("8.4."),"Dedicated server identity required");}
+   s.executeUpdate("CREATE DATABASE "+name);
+  }
+  var ds=new DriverManagerDataSource(cfg.getProperty("url")+name+"?connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true",cfg.getProperty("username"),cfg.getProperty("password"));
+  return new Db(name,ds.getUrl(),ds,new JdbcTemplate(ds));
+ }
+ static FrozenConfiguration frozen(String source){return new FrozenConfiguration(new WeightConfig(false,false,false,Z,Z,Z,Z,30,1,"F03_LINEAR_V1"),new LambdaPolicy(Z,new BigDecimal(".5"),1),new EffectiveCoefficients(Z,Z,Z),LocalDate.of(2026,10,2),source,6,"HALF_UP","PRODUCT_ID_V1","Asia/Ho_Chi_Minh");}
+ static String csv(int store){return "source_order_id,occurred_at,sku,quantity,unit_price,unit_cost,status\n"+(store==1?
+  "SIM-A-1,2026-10-01T09:00:00+07:00,SIM-MILK,2,15,5,COMPLETED\nSIM-A-1,2026-10-01T09:00:00+07:00,SIM-BREAD,1,15,5,COMPLETED\nSIM-A-2,2026-10-02T09:00:00+07:00,SIM-MILK,1,15,5,COMPLETED\n":
+  "SIM-B-1,2026-10-01T10:00:00+07:00,SIM-TEA,1,20,5,COMPLETED\n");}
+ static void seed(Db db,boolean matrix,String source)throws Exception{
+  var j=db.j();j.update("INSERT INTO store(store_id,name) VALUES (1,'SIMULATED source A'),(2,'SIMULATED source B')");
+  for(int store=1;store<=2;store++){
+   j.update("INSERT INTO app_user(user_id,store_id,role_id,email,name,status,email_verified_at) VALUES (?, ?, (SELECT role_id FROM role WHERE code='MERCHANDISER'),?,'Synthetic historical planner','ACTIVE','2026-10-01')",10+store,store,"poc-planner-"+store+"@example.test");
+   j.update("INSERT INTO app_user(user_id,store_id,role_id,email,name,status,email_verified_at) VALUES (?, ?, (SELECT role_id FROM role WHERE code='STORE_ADMIN'),?,'Synthetic source admin','ACTIVE','2026-10-01')",20+store,store,"poc-admin-"+store+"@example.test");
+  }
+  j.update("INSERT INTO category(category_id,store_id,name,status) VALUES (11,1,'Synthetic dairy','ACTIVE'),(12,2,'Synthetic drinks','ACTIVE')");
+  j.update("INSERT INTO product(product_id,store_id,category_id,sku,name,unit,requires_expiry,selling_price,cost_price,status,stock_priority_score,seasonal_priority_score) VALUES (101,1,11,'SIM-MILK','Synthetic milk','unit',FALSE,15,5,'ACTIVE',.8,.9),(102,1,11,'SIM-BREAD','Synthetic bread','unit',FALSE,15,5,'ACTIVE',.2,.4),(201,2,12,'SIM-TEA','Synthetic tea','unit',FALSE,20,5,'ACTIVE',.3,.5)");
+  j.update("INSERT INTO inventory_batch(batch_id,product_id,batch_code,received_at,initial_quantity,remaining_quantity,status,created_at,updated_at) VALUES (1,101,'SIM-A','2026-10-01',10,7,'ACTIVE','2026-10-01','2026-10-01'),(2,201,'SIM-B','2026-10-01',8,5,'BLOCKED','2026-10-01','2026-10-01')");
+  for(int store=1;store<=2;store++)j.update("INSERT INTO utility_snapshot(snapshot_id,store_id,created_by,range_start,range_end,as_of_date,config_snapshot,source_hash,matrix_hash,total_weighted_utility,rounding_scale,status,created_at) VALUES (?, ?, ?, '2026-10-01','2026-10-02','2026-10-02',?,?,?,?,6,'READY','2026-10-02')",10+store,store,10+store,JSON.writeValueAsString(frozen(source)),hash(csv(store)),hash("SIMULATED_FROZEN_MATRIX_"+store),store==1?40:15);
+  if(matrix)rows(db,"utility_matrix_item",false);
+ }
+ static void rows(Db db,String table,boolean modern){
+  db.j().update("INSERT INTO "+table+"(matrix_item_id,snapshot_id,transaction_id,product_id,quantity,base_utility,stock_score,expiry_score,seasonal_score,expiry_status,weight_value,weighted_utility) VALUES (1,11,1,101,2,20,.8,0,.9,'NOT_APPLICABLE',1,20),(2,11,1,102,1,10,.2,0,.4,'NOT_APPLICABLE',1,10),(3,11,2,101,1,10,.8,0,.9,'NOT_APPLICABLE',1,10),(4,12,"+(modern?3:1)+",201,1,15,.3,0,.5,'NOT_APPLICABLE',1,15)");
+ }
+ static Db v5()throws Exception{var db=create();check(fly(db,"5").migrate().migrationsExecuted==5,"V1-V5");seed(db,true,"DEV_FIXTURE");return db;}
+ static Map<String,Object> fingerprint(Db db,String table)throws Exception{
+  var q=new LinkedHashMap<String,String>();
+  q.put("store","SELECT store_id,name,utility_config,mining_schedule FROM store ORDER BY store_id");
+  q.put("category","SELECT category_id,store_id,name,status FROM category ORDER BY category_id");
+  q.put("product","SELECT product_id,store_id,category_id,sku,name,unit,requires_expiry,selling_price,cost_price,status,stock_priority_score,seasonal_priority_score FROM product ORDER BY product_id");
+  q.put("batch","SELECT * FROM inventory_batch ORDER BY batch_id");
+  q.put("snapshot","SELECT snapshot_id,store_id,created_by,range_start,range_end,as_of_date,config_snapshot,source_hash,matrix_hash,total_weighted_utility,rounding_scale,status,created_at FROM utility_snapshot ORDER BY snapshot_id");
+  q.put("matrix","SELECT matrix_item_id,snapshot_id,transaction_id,product_id,quantity,base_utility,stock_score,expiry_score,seasonal_score,expiry_status,weight_value,weighted_utility FROM "+table+" ORDER BY matrix_item_id");
+  var result=new LinkedHashMap<String,Object>();for(var e:q.entrySet()){var data=db.j().queryForList(e.getValue());result.put(e.getKey(),Map.of("count",data.size(),"sha256",hash(data.toString())));}return result;
+ }
+ static SQLException sqlCause(Throwable t){while(t!=null){if(t instanceof SQLException s)return s;t=t.getCause();}throw new AssertionError("SQL error required");}
+ static int expectedSql(Work work,int code)throws Exception {try{work.execute();throw new AssertionError("Expected SQL "+code);}catch(AssertionError e){throw e;}catch(Exception e){var sql=sqlCause(e);check(sql.getErrorCode()==code,"Expected "+code+", got "+sql.getErrorCode());return code;}}
+ static int archiveExists(Db db){return db.j().queryForObject("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name=?",Integer.class,ARCHIVE);}
+ static void scopeCheck(Db db){check(db.j().queryForObject("SELECT COUNT(*) FROM utility_matrix_item m JOIN utility_snapshot s ON s.snapshot_id=m.snapshot_id JOIN product p ON p.product_id=m.product_id WHERE s.store_id<>p.store_id",Integer.class)==0,"Cross-store historical product");}
+ static void transition(Db db,boolean interrupt)throws Exception{
+  if(archiveExists(db)==1){
+   check(db.j().queryForObject("SELECT COUNT(*) FROM recovery_poc_journal WHERE id=1",Integer.class)==1,"Unjournaled archive: refuse");
+   String expected=db.j().queryForObject("SELECT matrix_hash FROM recovery_poc_journal WHERE id=1",String.class);
+   check(expected.equals(hash(JSON.writeValueAsString(fingerprint(db,ARCHIVE)))),"Archive journal mismatch");
+   db.j().update("UPDATE recovery_poc_journal SET phase='SWAPPED' WHERE id=1");return;
+  }
+  check("5".equals(fly(db,"latest").info().current().getVersion().toString())||"6".equals(fly(db,"latest").info().current().getVersion().toString()),"Only clean V5/V6 may stage");
+  check(db.j().queryForObject("SELECT COUNT(*) FROM flyway_schema_history WHERE success=FALSE",Integer.class)==0,"Partial migration: refuse");scopeCheck(db);
+  var before=fingerprint(db,"utility_matrix_item");
+  db.j().execute("CREATE TABLE recovery_poc_journal(id INT PRIMARY KEY,phase VARCHAR(20) NOT NULL,matrix_hash CHAR(64) NOT NULL)");
+  db.j().update("INSERT INTO recovery_poc_journal VALUES (1,'PREPARED',?)",hash(JSON.writeValueAsString(before)));
+  db.j().execute("CREATE TABLE recovery_poc_snapshot_storage(snapshot_id INT PRIMARY KEY,store_id INT NOT NULL,storage_kind VARCHAR(30) NOT NULL,source_namespace VARCHAR(100) NOT NULL,FOREIGN KEY(snapshot_id) REFERENCES utility_snapshot(snapshot_id))");
+  db.j().execute("INSERT INTO recovery_poc_snapshot_storage SELECT snapshot_id,store_id,'LEGACY_V5_ARCHIVE',CONCAT('LEGACY_SNAPSHOT_',snapshot_id) FROM utility_snapshot");
+  db.j().execute("CREATE TABLE "+STAGE+" LIKE utility_matrix_item");
+  check(db.j().queryForObject("SELECT COUNT(*) FROM information_schema.referential_constraints WHERE constraint_schema=DATABASE() AND table_name=?",Integer.class,STAGE)==0,"LIKE does not preserve foreign keys");
+  db.j().execute("ALTER TABLE "+STAGE+" ADD CONSTRAINT fk_recovery_live_snapshot FOREIGN KEY(snapshot_id) REFERENCES utility_snapshot(snapshot_id), ADD CONSTRAINT fk_recovery_live_product FOREIGN KEY(product_id) REFERENCES product(product_id)");
+  db.j().execute("ALTER TABLE "+STAGE+" AUTO_INCREMENT=5");
+  db.j().execute("RENAME TABLE utility_matrix_item TO "+ARCHIVE+", "+STAGE+" TO utility_matrix_item");
+  if(interrupt)throw new IllegalStateException("SIMULATED_STOP_AFTER_ATOMIC_RENAME");
+  db.j().update("UPDATE recovery_poc_journal SET phase='SWAPPED' WHERE id=1");
+  check(before.equals(fingerprint(db,ARCHIVE)),"Archive preservation");
+ }
+ static void immutable(Db db){
+  check(db.name().startsWith("paspm_recovery_test_"),"Only PoC schema may receive DBA triggers");
+  for(String action:List.of("INSERT","UPDATE","DELETE")) {
+   String sql="CREATE TRIGGER recovery_archive_"+action.toLowerCase()+" BEFORE "+action+" ON "+ARCHIVE+" FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Immutable legacy matrix'";
+   try {var process=new ProcessBuilder("/opt/homebrew/opt/mysql@8.4/bin/mysql","--defaults-file="+ROOT.resolve("admin.cnf"),"--database="+db.name(),"--execute="+sql).redirectOutput(ROOT.resolve("trigger-install.log").toFile()).redirectErrorStream(true).start();check(process.waitFor()==0,"DBA trigger installation");}
+   catch(Exception e){throw new IllegalStateException("Dedicated test DBA trigger install failed",e);}
+  }
+ }
+ static SnapshotView snapshot(Db db,int id)throws Exception{
+  var row=db.j().queryForMap("SELECT * FROM utility_snapshot WHERE snapshot_id=?",id);
+  return new SnapshotView(id,((Number)row.get("store_id")).intValue(),((Number)row.get("created_by")).intValue(),LocalDate.of(2026,10,1),LocalDate.of(2026,10,2),LocalDate.of(2026,10,2),JSON.readValue(row.get("config_snapshot").toString(),FrozenConfiguration.class),row.get("source_hash").toString(),row.get("matrix_hash").toString(),(BigDecimal)row.get("total_weighted_utility"),6,"READY",Instant.parse("2026-10-02T00:00:00Z"),List.of());
+ }
+ static List<MatrixItem> matrix(Db db,String table,int id,int store){return db.j().query("SELECT m.*,SUM(m.weighted_utility) OVER(PARTITION BY m.snapshot_id,m.transaction_id) transaction_total FROM "+table+" m JOIN utility_snapshot s ON s.snapshot_id=m.snapshot_id WHERE m.snapshot_id=? AND s.store_id=? ORDER BY transaction_id,product_id",(r,n)->new MatrixItem(r.getInt("transaction_id"),r.getInt("product_id"),r.getInt("product_id"),r.getInt("quantity"),r.getBigDecimal("base_utility"),r.getBigDecimal("stock_score"),r.getBigDecimal("expiry_score"),r.getBigDecimal("seasonal_score"),r.getString("expiry_status"),r.getBigDecimal("weight_value"),r.getBigDecimal("weighted_utility"),r.getBigDecimal("transaction_total"),null),id,store);}
+ static ConfigurableApplicationContext app(Db db){return new SpringApplicationBuilder(PaspmApplication.class).run("--server.port=0","--server.address=127.0.0.1","--spring.profiles.active=recovery-poc","--spring.datasource.url="+db.url(),"--spring.datasource.username="+cfg.getProperty("username"),"--spring.datasource.password="REDACTED_TEST_CREDENTIAL"password"),"--paspm.bootstrap-email=","--paspm.bootstrap-password=","--paspm.jwt-secret=REDACTED_SYNTHETIC_JWT_KEY","--paspm.otp-secret=REDACTED_SYNTHETIC_OTP_KEY","--paspm.avatar.directory="+ROOT.resolve("avatars"),"--logging.level.root=ERROR");}
+ static Map<Integer,List<Integer>> importSources(Db db)throws Exception{
+  var result=new LinkedHashMap<Integer,List<Integer>>();
+  try(var ctx=app(db)){
+   for(int store=1;store<=2;store++){
+    var u=ctx.getBean(UserRepository.class).findById(20+store);var token=ctx.getBean(AuthService.class).token(u).accessToken();var jwt=ctx.getBean(JwtDecoder.class).decode(token);
+    var importer=ctx.getBean(TransactionImportService.class);byte[] source=csv(store).getBytes(StandardCharsets.UTF_8);
+    var imported=importer.importCsv(jwt,new MockMultipartFile("file","simulated-source.csv","text/csv",source));check(imported.acceptedOrderCount()==(store==1?2:1),"Import accepted only source-backed orders");
+    var repeated=importer.importCsv(jwt,new MockMultipartFile("file","simulated-source.csv","text/csv",source));check(repeated.acceptedOrderCount()==0&&repeated.duplicateOrderCount()==(store==1?2:1),"F04 idempotency");
+    result.put(store,db.j().queryForList("SELECT transaction_id FROM sales_transaction WHERE store_id=? ORDER BY source_order_id",Integer.class,store));
+   }
+  }return result;
+ }
+ static void run(String id,String name,Work work){var result=new LinkedHashMap<String,Object>();result.put("id",id);result.put("name",name);try{result.putAll(work.execute());result.put("proofAssertion","PASS");}catch(Throwable e){result.put("proofAssertion","FAIL");result.put("unexpectedType",e.getClass().getName());result.put("diagnostic",String.valueOf(e.getMessage()).substring(0,Math.min(220,String.valueOf(e.getMessage()).length())));e.printStackTrace();}RESULTS.add(result);System.out.println("POC "+id+" "+result.get("proofAssertion"));}
+ public static void main(String[] args)throws Exception{
+  try(var input=Files.newInputStream(ROOT.resolve("test.properties"))){cfg.load(input);}check("true".equals(cfg.getProperty("disposable"))&&"jdbc:mysql://127.0.0.1:13317/".equals(cfg.getProperty("url")),"Disposable target only");
+  run("R01","Original V5 matrix migration failure and backup",()->{
+   var db=v5();failed=db;failedBefore=fingerprint(db,"utility_matrix_item");
+   var p=new ProcessBuilder("/opt/homebrew/opt/mysql@8.4/bin/mysqldump","--defaults-file="+ROOT.resolve("test.cnf"),"--single-transaction","--skip-lock-tables","--no-tablespaces","--set-gtid-purged=OFF",db.name()).redirectOutput(ROOT.resolve("v5-before.sql").toFile()).redirectError(ROOT.resolve("dump.log").toFile()).start();check(p.waitFor()==0,"V5 backup");
+   int error=expectedSql(()->{fly(db,"latest").migrate();return Map.of();},1452);var after=fingerprint(db,"utility_matrix_item");check(failedBefore.equals(after),"Failure preserved original rows");
+   check(db.j().queryForObject("SELECT COUNT(*) FROM flyway_schema_history WHERE version='7' AND success=FALSE",Integer.class)==1,"Failed V7 recorded");
+   check(db.j().queryForObject("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name='sales_transaction'",Integer.class)==1,"Partial DDL persists");
+   return Map.of("migrationOutcome","FAIL","mysqlError",error,"sqlState","23000","constraint","fk_utility_matrix_transaction","before",failedBefore,"after",after,"partialDDL",true,"backupCreated",true);
+  });
+  run("R02","Version-aware missing-evidence refusal before upgrade",()->{
+   var db=v5();var before=fingerprint(db,"utility_matrix_item");int shared=db.j().queryForObject("SELECT COUNT(*) FROM (SELECT m.transaction_id FROM utility_matrix_item m JOIN utility_snapshot s ON s.snapshot_id=m.snapshot_id GROUP BY m.transaction_id HAVING COUNT(DISTINCT s.store_id)>1) collision",Integer.class);check(shared==1,"Provider IDs reused across Stores");
+   boolean authenticatedMappingAvailable=false;check(!authenticatedMappingAvailable,"No authentic source evidence provided");check("5".equals(fly(db,"latest").info().current().getVersion().toString()),"Refuse before V6/V7");check(before.equals(fingerprint(db,"utility_matrix_item")),"No changes on refusal");return Map.of("migrationOutcome","REFUSED_AT_V5","reason","MISSING_AUTHENTIC_MAPPING_FOR_OPTION_A","crossStoreNumericIdCollisions",shared,"unchanged",true);
+  });
+  run("R03","Precreating F04 schema cannot make unchanged V7 replay",()->{
+   var db=v5();fly(db,"6").migrate();String sql=Files.readString(Path.of("src/main/resources/db/migration/V7__f04_transaction_import_pipeline.sql"));sql=sql.substring(0,sql.lastIndexOf("ALTER TABLE utility_matrix_item"));new ResourceDatabasePopulator(new ByteArrayResource(sql.getBytes(StandardCharsets.UTF_8))).execute(db.ds());
+   int error=expectedSql(()->{fly(db,"latest").migrate();return Map.of();},1050);check(db.j().queryForObject("SELECT COUNT(*) FROM sales_transaction",Integer.class)==0,"No placeholder transactions");return Map.of("migrationOutcome","FAIL","mysqlError",error,"reason","F04 tables already exist; pure pre-backfill conflicts with unchanged V7 CREATE TABLE","inventedSalesRows",0);
+  });
+  run("R04","Archive/live transition, unchanged migrations and real mining replay",()->{
+   var db=v5();var before=fingerprint(db,"utility_matrix_item");var builder=new MiningInputBuilder();var inputs=new LinkedHashMap<Integer,MiningInputBuilder.Dataset>();
+   var engine=new SpmfMiningEngine(System.getProperty("poc.spmf.jar"),System.getProperty("poc.spmf.java"),20000,128,2000);var patterns=new LinkedHashMap<String,Map<String,Integer>>();
+   for(int store=1;store<=2;store++) {var data=builder.build(snapshot(db,10+store),matrix(db,"utility_matrix_item",10+store,store));inputs.put(store,data);for(var algorithm:MiningEngine.Algorithm.values())patterns.put(store+"/"+algorithm,engine.execute(algorithm,data,1).patterns());}
+   transition(db,false);immutable(db);var migration=fly(db,"latest");check(migration.migrate().migrationsExecuted==5,"V6-V10");migration.validate();check(before.equals(fingerprint(db,ARCHIVE)),"All original rows unchanged");
+   var mining=new ArrayList<Map<String,Object>>();for(int store=1;store<=2;store++){
+    check(db.j().queryForObject("SELECT COUNT(*) FROM utility_matrix_item WHERE snapshot_id=?",Integer.class,10+store)==0,"Unmodified application reader cannot see archive");
+    var data=builder.build(snapshot(db,10+store),matrix(db,ARCHIVE,10+store,store));check(inputs.get(store).equals(data),"Frozen input byte/hash/mapping equality");check(matrix(db,ARCHIVE,10+store,3-store).isEmpty(),"Store isolation");
+    for(var algorithm:MiningEngine.Algorithm.values()){var output=engine.execute(algorithm,data,1);check(patterns.get(store+"/"+algorithm).equals(output.patterns()),"Exact algorithm outputs preserved");mining.add(Map.of("store",store,"algorithm",algorithm.toString(),"inputSha256",data.hash(),"patternCount",output.patterns().size(),"patternsSha256",hash(output.patterns().toString())));}
+   }
+   check(db.j().queryForObject("SELECT COUNT(*) FROM sales_transaction",Integer.class)==0,"Archive recovery invents no sales rows");
+   return Map.of("migrationOutcome","PASS_POC","versionsApplied",List.of(6,7,8,9,10),"before",before,"after",fingerprint(db,ARCHIVE),"salesRowsCreated",0,"miningReplay",mining,"productionReaderAdaptationRequired",true);
+  });
+  run("R05","Archive mutation denied and new live FK remains enforced",()->{
+   var db=v5();transition(db,false);immutable(db);fly(db,"latest").migrate();var before=fingerprint(db,ARCHIVE);
+   for(String action:List.of("UPDATE "+ARCHIVE+" SET quantity=99 WHERE matrix_item_id=1","DELETE FROM "+ARCHIVE+" WHERE matrix_item_id=1","INSERT INTO "+ARCHIVE+" SELECT * FROM "+ARCHIVE+" WHERE matrix_item_id=1"))expectedSql(()->{db.j().update(action);return Map.of();},1644);
+   expectedSql(()->{db.j().update("INSERT INTO utility_matrix_item(snapshot_id,transaction_id,product_id,quantity,base_utility,expiry_status,weight_value,weighted_utility) VALUES (11,999,101,1,10,'NOT_APPLICABLE',1,10)");return Map.of();},1452);
+   check(before.equals(fingerprint(db,ARCHIVE)),"Forbidden operations changed no archive data");return Map.of("migrationOutcome","PASS_POC","archiveInsertUpdateDeleteError",1644,"invalidLiveReferenceError",1452,"unchanged",true);
+  });
+  run("R06","Optional evidenced mapping through real F04 importer, synthetic source only",()->{
+   var db=v5();transition(db,false);immutable(db);fly(db,"latest").migrate();var before=fingerprint(db,ARCHIVE);var ids=importSources(db);
+   db.j().execute("CREATE TABLE recovery_poc_verified_mapping(snapshot_id INT NOT NULL,legacy_transaction_id INT NOT NULL,store_id INT NOT NULL,sales_transaction_id INT NOT NULL,evidence_kind VARCHAR(40) NOT NULL,evidence_sha256 CHAR(64) NOT NULL,PRIMARY KEY(snapshot_id,legacy_transaction_id),FOREIGN KEY(store_id,snapshot_id) REFERENCES utility_snapshot(store_id,snapshot_id),FOREIGN KEY(store_id,sales_transaction_id) REFERENCES sales_transaction(store_id,transaction_id))");
+   for(int store=1;store<=2;store++)for(int index=0;index<ids.get(store).size();index++)db.j().update("INSERT INTO recovery_poc_verified_mapping VALUES (?,?,?,?,?,?)",10+store,index+1,store,ids.get(store).get(index),"SIMULATED_POC_SOURCE",hash(csv(store)));
+   expectedSql(()->{db.j().update("INSERT INTO recovery_poc_verified_mapping VALUES (12,99,2,?, 'SIMULATED_POC_SOURCE',?)",ids.get(1).get(0),hash(csv(2)));return Map.of();},1452);
+   check(db.j().queryForObject("SELECT COUNT(*) FROM sales_transaction",Integer.class)==3,"Exactly three source orders");check(before.equals(fingerprint(db,ARCHIVE)),"Mapping never rewrites legacy IDs or amounts");
+   return Map.of("migrationOutcome","PASS_POC_CONDITIONAL","authenticRetailEvidenceAvailable",false,"sourceKind","SYNTHETIC_PROOF_ONLY","F04OrderCount",3,"F04Idempotency",true,"actualTransactionIds",ids,"legacyTransactionIdForStoreB",1,"mappedTransactionIdForStoreB",ids.get(2).get(0),"wrongStoreMappingError",1452,"archivePreserved",true);
+  });
+  run("R07","Recover partial MySQL DDL by restoring clean backup to separate schema",()->{
+   check(failed!=null&&Files.exists(ROOT.resolve("v5-before.sql")),"Baseline backup required");var db=create();var process=new ProcessBuilder("/opt/homebrew/opt/mysql@8.4/bin/mysql","--defaults-file="+ROOT.resolve("test.cnf"),db.name()).redirectInput(ROOT.resolve("v5-before.sql").toFile()).redirectOutput(ROOT.resolve("restore.log").toFile()).redirectErrorStream(true).start();check(process.waitFor()==0,"Restore synthetic backup");check(failedBefore.equals(fingerprint(db,"utility_matrix_item")),"Restored V5 fingerprints");check("5".equals(fly(db,"latest").info().current().getVersion().toString()),"Restored clean V5");transition(db,false);fly(db,"latest").migrate();fly(db,"latest").validate();check(failedBefore.equals(fingerprint(db,ARCHIVE)),"Recovered archive");check(failed.j().queryForObject("SELECT COUNT(*) FROM flyway_schema_history WHERE version='7' AND success=FALSE",Integer.class)==1,"Failed copy remains untouched for forensics");return Map.of("migrationOutcome","PASS_POC","cleanBackupRestore",true,"restoredToSeparateCopy",true,"fingerprintsEqual",true,"failedCopyPreserved",true,"sourceRepairExecuted",false);
+  });
+  run("R08","Interrupted atomic-swap checkpoint resumes without repeat rename",()->{
+   var db=v5();var before=fingerprint(db,"utility_matrix_item");try{transition(db,true);throw new AssertionError("Expected stop");}catch(IllegalStateException e){check(e.getMessage().equals("SIMULATED_STOP_AFTER_ATOMIC_RENAME"),"Expected injection");}
+   transition(db,false);transition(db,false);check(before.equals(fingerprint(db,ARCHIVE)),"Resume preserves rows");fly(db,"latest").migrate();fly(db,"latest").validate();return Map.of("migrationOutcome","PASS_POC","interruption","after atomic rename before journal completion","resumeAttempts",2,"duplicateHistoricalRows",0,"preserved",true);
+  });
+  run("R09","Already-upgraded V10 remains unchanged and no out-of-order migration injected",()->{
+   var db=create();fly(db,"latest").migrate();seed(db,false,"F04_DATABASE_V1");importSources(db);rows(db,"utility_matrix_item",true);var before=fingerprint(db,"utility_matrix_item");check("10".equals(fly(db,"latest").info().current().getVersion().toString()),"Modern V10");check(archiveExists(db)==0,"No automatic modern table rename");fly(db,"latest").validate();check(before.equals(fingerprint(db,"utility_matrix_item")),"No-op modern preflight");return Map.of("migrationOutcome","PASS_NOOP_COMPATIBILITY","preserved",true,"newProductionAdditiveMigrationTested",false);
+  });
+  run("R10","Global numeric FK alone cannot prove Store/source identity",()->{
+   var db=create();fly(db,"latest").migrate();seed(db,false,"F04_DATABASE_V1");importSources(db);var before=fingerprint(db,"utility_matrix_item");
+   try(var c=db.ds().getConnection()){c.setAutoCommit(false);try(var s=c.createStatement()){s.executeUpdate("INSERT INTO utility_matrix_item(snapshot_id,transaction_id,product_id,quantity,base_utility,expiry_status,weight_value,weighted_utility) VALUES (12,1,201,1,15,'NOT_APPLICABLE',1,15)");try(var r=s.executeQuery("SELECT COUNT(*) FROM utility_matrix_item m JOIN utility_snapshot s ON s.snapshot_id=m.snapshot_id JOIN sales_transaction t ON t.transaction_id=m.transaction_id WHERE s.store_id<>t.store_id")){r.next();check(r.getInt(1)==1,"Numeric FK accepts cross-store alias");}}finally{c.rollback();}}
+   check(before.equals(fingerprint(db,"utility_matrix_item")),"Negative test rolled back");return Map.of("migrationOutcome","SEMANTIC_RISK_REPRODUCED","globalFKAcceptedDifferentStore",true,"negativeFixtureRolledBack",true,"numericIdIsNotAuthenticityEvidence",true);
+  });
+  run("R11","Pre-upgrade staging refuses a partially failed V7 schema",()->{
+   var before=fingerprint(failed,"utility_matrix_item");var history=failed.j().queryForList("SELECT * FROM flyway_schema_history ORDER BY installed_rank").toString();
+   boolean refused=false;try{transition(failed,false);}catch(AssertionError e){refused=e.getMessage().contains("Only clean")||e.getMessage().contains("Partial migration");}
+   check(refused,"Partial V7 must be refused");check(before.equals(fingerprint(failed,"utility_matrix_item")),"Partial-copy original rows unchanged");check(history.equals(failed.j().queryForList("SELECT * FROM flyway_schema_history ORDER BY installed_rank").toString()),"No repair/history edits");
+   return Map.of("migrationOutcome","REFUSED_PARTIAL_V7","dataAndHistoryUnchanged",true,"repairExecuted",false);
+  });
+  var report=new LinkedHashMap<String,Object>();report.put("date","2026-10-22");report.put("timezone","Asia/Ho_Chi_Minh");report.put("mysqlVersion","8.4.11");report.put("port",13317);report.put("provenance","ALL_POPULATED_DATA_SYNTHETIC");report.put("originalDatabaseWriteAccessUsed",false);report.put("productionMigrationFilesChanged",false);report.put("productionReaderImplemented",false);report.put("mergeBlockerResolved",false);report.put("cases",RESULTS);JSON.writerWithDefaultPrettyPrinter().writeValue(ROOT.resolve("results.json").toFile(),report);
+  check(RESULTS.stream().allMatch(r->"PASS".equals(r.get("proofAssertion"))),"Unexpected proof failure; inspect private logs");
+ }
+}

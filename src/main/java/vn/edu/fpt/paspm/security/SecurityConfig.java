@@ -85,12 +85,16 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/api/system/mining/**").hasRole("SYSTEM_ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/mining/requests").denyAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/mining/runs/*/benchmark").denyAll()
                         .requestMatchers(
                                 "/api/auth/login",
                                 "/api/auth/register",
                                 "/api/auth/register/complete",
                                 "/api/auth/otp/**",
                                 "/api/auth/activate",
+                                "/api/auth/password-reset/**",
                                 "/api/auth/google/register",
                                 "/api/auth/google"
                         ).permitAll()
@@ -102,7 +106,7 @@ public class SecurityConfig {
     @Bean
     public OpenAPI openapi() {
         return new OpenAPI()
-                .info(new io.swagger.v3.oas.models.info.Info().title("PASPM F01 API").version("0.1.0"))
+                .info(new io.swagger.v3.oas.models.info.Info().title("PASPM Backend API").version("0.1.0"))
                 .components(new Components()
                         .addSecuritySchemes("bearerAuth",
                                 new SecurityScheme()
@@ -120,9 +124,10 @@ public class SecurityConfig {
                             "400", "Invalid request / verification",
                             "401", "Authentication required / invalid",
                             "403", "Permission denied",
+                            "404", "Resource not found or outside the authenticated Store",
                             "409", "Conflict",
                             "429", "Rate limit exceeded",
-                            "503", "Email / Google configuration unavailable"
+                            "503", "Service configuration or required dependency unavailable"
                     ).entrySet()) {
                         operation.getResponses().addApiResponse(
                                 entry.getKey(),

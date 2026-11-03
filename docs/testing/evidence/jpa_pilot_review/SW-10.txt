@@ -1,0 +1,18 @@
+SW-10 | GET /api/products/{id} | role=UNAUTHENTICATED | data=SIMULATED | 2026-10-22T05:08:55.233237+07:00
+Actual Swagger UI accessibility observation (credential-free response excerpt):
+heading Server response, Value: 4
+					979 text Server response
+				980 table
+					981 row
+						982 cell
+							983 text Code
+						984 cell
+							985 text Details
+					986 row
+						987 cell
+							988 text 401
+						989 cell
+							1078 text Error: response status is 401
+							997 heading Response headers, Value: 5
+								998 text Response headers
+							999 text cache-control :  no-cache,no-store,max-age=0,must-revalidate connection :  keep-alive content-length :  0 date :  Wed,21 Oct 2026 22:08:54 GMT expires :  0 keep-alive :  timeout=60 pragma :  no-cache www-authenticate :  Bearer x-content-type-options :  nosniff x-frame-options :  DENY x-xss-protection :  0

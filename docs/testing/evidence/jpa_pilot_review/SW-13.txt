@@ -1,0 +1,29 @@
+SW-13 | GET /api/products | role=STORE_ADMIN_B | data=SIMULATED | 2026-10-22T05:10:14.805373+07:00
+Actual Swagger UI accessibility observation (credential-free response excerpt):
+heading Server response, Value: 4
+					1028 text Server response
+				1029 table
+					1030 row
+						1031 cell
+							1032 text Code
+						1033 cell
+							1034 text Details
+					1035 row
+						1036 cell
+							1037 text 200
+						1038 cell
+							1039 heading Response body, Value: 5
+								1040 text Response body
+							1041 container
+								1042 button
+								1043 button Download
+								1044 container
+									1045 text {
+ "content" : [],
+ "page" :  0 ,
+ "pageSize" :  5 ,
+ "totalElements" :  0 ,
+ "totalPages" :  0 }
+							1046 heading Response headers, Value: 5
+								1047 text Response headers
+							1048 text cache-control :  no-cache,no-store,max-age=0,must-revalidate connection :  keep-alive content-type :  application/json date :  Wed,21 Oct 2026 22:10:14 GMT expires :  0 keep-alive :  timeout=60 pragma :  no-cache transfer-encoding :  chunked x-content-type-options :  nosniff x-frame-options :  DENY x-xss-protection :  0

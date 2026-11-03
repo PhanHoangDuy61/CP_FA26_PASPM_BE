@@ -1,0 +1,13 @@
+WARNING: The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested
+PARENT_IDENTITY_MISMATCH_REFUSED
+MISSING_PYTHON_FAILS_CLOSED
+CHILD_REAPED_BY_INIT
+LINUX_PDEATH_PROBE parent=76 child=101 unrelated=105 child_terminated=true unrelated_survived=true
+PARENT_IDENTITY_MISMATCH_REFUSED
+MISSING_PYTHON_FAILS_CLOSED
+CHILD_REAPED_BY_INIT
+LINUX_PDEATH_PROBE parent=175 child=199 unrelated=202 child_terminated=true unrelated_survived=true
+PARENT_IDENTITY_MISMATCH_REFUSED
+MISSING_PYTHON_FAILS_CLOSED
+CHILD_REAPED_BY_INIT
+LINUX_PDEATH_PROBE parent=273 child=297 unrelated=300 child_terminated=true unrelated_survived=true

@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-22",
+  "timezone": "Asia/Ho_Chi_Minh",
+  "testCases": [
+    {
+      "name": "v5CatalogAndEmptySnapshotUpgradePreservesRowsAndJpaJdbcTransactions",
+      "status": "PASS"
+    },
+    {
+      "name": "v5HistoricalMatrixRequiresReconciliationBeforeV7AndOriginalRowsStayIntact",
+      "status": "PASS"
+    },
+    {
+      "name": "freshV1ToV10ValidatesJpaConstraintsAndActualCategoryProductHttpApis",
+      "status": "PASS"
+    }
+  ],
+  "businessScenarios": [
+    {
+      "scenario": "Fresh V1 to V10",
+      "result": "PASS"
+    },
+    {
+      "scenario": "V5 catalog and empty snapshot matrix to V10",
+      "result": "PASS"
+    },
+    {
+      "scenario": "V5 populated historical snapshot matrix to V10",
+      "result": "FAIL",
+      "sqlState": "23000",
+      "mysqlError": 1452,
+      "migration": "V7",
+      "constraint": "fk_utility_matrix_transaction",
+      "originalRowsPreserved": true,
+      "recoveryApproved": false
+    }
+  ],
+  "markers": [
+    "JPA_MIGRATION_V5_CATALOG before={store=1afee5630e1c9b65e316d298becb82a48c05ee393fff57d17a1a2616a8a16888, category=ef17d372bbbf383018e74ada2213bd85088f9add2dc7a15ab9dc56bf67f37731, product=34869552334b9beeaeda0c85eab1f1a9a7905e2a1f8758b79de3048abe5c30f5, inventory_batch=12d59f5ae98eb925690362b6d787cd794cfc626666cf7bc21d09a95e56a7a133, utility_snapshot=c797ec5b2bfc0339797fda2e8f1f319efcb1d0fc4c69f2e0718b33a7f0c91138, utility_matrix_item=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945} after={store=1afee5630e1c9b65e316d298becb82a48c05ee393fff57d17a1a2616a8a16888, category=ef17d372bbbf383018e74ada2213bd85088f9add2dc7a15ab9dc56bf67f37731, product=34869552334b9beeaeda0c85eab1f1a9a7905e2a1f8758b79de3048abe5c30f5, inventory_batch=12d59f5ae98eb925690362b6d787cd794cfc626666cf7bc21d09a95e56a7a133, utility_snapshot=c797ec5b2bfc0339797fda2e8f1f319efcb1d0fc4c69f2e0718b33a7f0c91138, utility_matrix_item=4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945} preserved=PASS migrations=6,7,8,9,10 mixedRollback=PASS",
+    "JPA_MIGRATION_V5_MATRIX before={store=1afee5630e1c9b65e316d298becb82a48c05ee393fff57d17a1a2616a8a16888, category=ef17d372bbbf383018e74ada2213bd85088f9add2dc7a15ab9dc56bf67f37731, product=34869552334b9beeaeda0c85eab1f1a9a7905e2a1f8758b79de3048abe5c30f5, inventory_batch=12d59f5ae98eb925690362b6d787cd794cfc626666cf7bc21d09a95e56a7a133, utility_snapshot=50f65694ede0b40fdc0685b806c68cacd68d220005916de1a0ae720ad711cd61, utility_matrix_item=972ff9441e55eb85201ec50c963a44d625246f18870b0a053e81aed0c1676db3} fixture=VALID_V5_SYNTHETIC transactionTableAbsent=true",
+    "JPA_MIGRATION_V5_MATRIX compatibility=FAIL sqlState=23000 errorCode=1452 originalRowsPreserved=true after={store=1afee5630e1c9b65e316d298becb82a48c05ee393fff57d17a1a2616a8a16888, category=ef17d372bbbf383018e74ada2213bd85088f9add2dc7a15ab9dc56bf67f37731, product=34869552334b9beeaeda0c85eab1f1a9a7905e2a1f8758b79de3048abe5c30f5, inventory_batch=12d59f5ae98eb925690362b6d787cd794cfc626666cf7bc21d09a95e56a7a133, utility_snapshot=50f65694ede0b40fdc0685b806c68cacd68d220005916de1a0ae720ad711cd61, utility_matrix_item=972ff9441e55eb85201ec50c963a44d625246f18870b0a053e81aed0c1676db3}",
+    "JPA_MIGRATION_FRESH migrations=1,2,3,4,5,6,7,8,9,10 schemaValidation=PASS HTTP=PASS constraints=PASS"
+  ]
+}

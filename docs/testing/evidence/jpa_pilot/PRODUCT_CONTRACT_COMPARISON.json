@@ -1,0 +1,31 @@
+{
+  "openapi_equal_excluding_runtime_servers": true,
+  "path_count": 59,
+  "behavior_cases_equal": {
+    "create": true,
+    "get": true,
+    "duplicate": true,
+    "foreign": true,
+    "missingAuth": true,
+    "update": true,
+    "status": true,
+    "negativePrice": true,
+    "search": true
+  },
+  "baseline_measurement": {
+    "warmup": 5,
+    "notes": "Local MockMvc + real MySQL + JWT lookup, synthetic fixture; no performance guarantee",
+    "p95Millis": 14.696333,
+    "getRequestsMeasured": 25,
+    "medianMillis": 5.093875
+  },
+  "jpa_measurement": {
+    "notes": "Local MockMvc + real MySQL + JWT lookup, synthetic fixture; no performance guarantee",
+    "p95Millis": 3.905333,
+    "getRequestsMeasured": 25,
+    "medianMillis": 2.216042,
+    "warmup": 5
+  },
+  "jpa_update_prepared_statements": 3,
+  "query_note": "Hibernate statistics count JPA statements only; JDBC/auth/projection statements excluded. Product metadata write now has scoped lookup + refresh + UPDATE versus one metadata UPDATE in original JDBC path."
+}

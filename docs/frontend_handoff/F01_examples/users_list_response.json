@@ -1,0 +1,20 @@
+[
+  {
+    "userId": 43,
+    "email": "admin@example.test",
+    "name": "Store Admin",
+    "roleCode": "STORE_ADMIN",
+    "storeId": 7,
+    "status": "ACTIVE",
+    "emailVerified": true
+  },
+  {
+    "userId": 44,
+    "email": "merch@example.test",
+    "name": "Merchandiser",
+    "roleCode": "MERCHANDISER",
+    "storeId": 7,
+    "status": "ACTIVE",
+    "emailVerified": true
+  }
+]

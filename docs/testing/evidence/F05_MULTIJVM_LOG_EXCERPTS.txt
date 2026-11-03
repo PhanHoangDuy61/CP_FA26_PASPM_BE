@@ -1,0 +1,11 @@
+A 2026-11-01T01:02:17.184+07:00  INFO 54021 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 65105 (http) with context path '/'
+A 2026-11-01T01:02:17.188+07:00  INFO 54021 --- [           main] v.e.f.p.mining.MiningMultiJvmBackend     : Started MiningMultiJvmBackend in 2.506 seconds (process running for 2.619)
+A 2026-11-01T01:03:01.404+07:00  WARN 54021 --- [   paspm-mining] vn.edu.fpt.paspm.mining.MiningWorker     : Mining request could not finish under its lease; it remains recoverable
+A org.springframework.dao.InvalidDataAccessApiUsageException: Mining lease is no longer active
+A Caused by: java.lang.IllegalStateException: Mining lease is no longer active
+B 2026-11-01T01:02:31.819+07:00  INFO 54028 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 65333 (http) with context path '/'
+B 2026-11-01T01:02:31.824+07:00  INFO 54028 --- [           main] v.e.f.p.mining.MiningMultiJvmBackend     : Started MiningMultiJvmBackend in 2.497 seconds (process running for 2.625)
+C 2026-11-01T01:03:34.150+07:00  INFO 54117 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 49187 (http) with context path '/'
+C 2026-11-01T01:03:34.155+07:00  INFO 54117 --- [           main] v.e.f.p.mining.MiningMultiJvmBackend     : Started MiningMultiJvmBackend in 2.53 seconds (process running for 2.643)
+D 2026-11-01T01:03:37.158+07:00  INFO 54125 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 49413 (http) with context path '/'
+D 2026-11-01T01:03:37.164+07:00  INFO 54125 --- [           main] v.e.f.p.mining.MiningMultiJvmBackend     : Started MiningMultiJvmBackend in 2.475 seconds (process running for 2.579)

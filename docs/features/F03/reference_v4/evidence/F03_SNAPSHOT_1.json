@@ -1,0 +1,43 @@
+{
+  "snapshotId": 1,
+  "storeId": 1,
+  "createdBy": 4,
+  "rangeStart": "2026-10-01",
+  "rangeEnd": "2026-10-31",
+  "asOfDate": "2026-10-17",
+  "configuration": {
+    "config": {
+      "enableStock": true,
+      "enableExpiry": true,
+      "enableSeason": true,
+      "alpha": 0.5,
+      "beta": 0.2,
+      "gamma": 0.3,
+      "lambda": 0.5,
+      "expiryWindowDays": 30,
+      "version": 9,
+      "scoringVersion": "F03_LINEAR_V1"
+    },
+    "lambdaPolicy": {
+      "lambdaMin": 0,
+      "lambdaMax": 0.5,
+      "version": 4
+    },
+    "effectiveCoefficients": {
+      "alpha": 0.5,
+      "beta": 0.2,
+      "gamma": 0.3
+    },
+    "analysisDate": "2026-10-17",
+    "source": "DEV_FIXTURE",
+    "utilityScale": 6,
+    "roundingMode": "HALF_UP",
+    "itemMapping": "PRODUCT_ID_V1"
+  },
+  "sourceHash": "d43e282cd16c316364c94793a6c01131ea6b29c986cd90f098d2c247d7eca83e",
+  "matrixHash": "d1fd432876a91fa898eea1a8ae2ed8dc7510a6f4387ea02ee3c8e42628d0b055",
+  "totalWeightedUtility": 73675,
+  "roundingScale": 6,
+  "status": "READY",
+  "createdAt": "2026-10-17T08:05:14.681290Z"
+}

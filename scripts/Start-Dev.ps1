@@ -4,6 +4,12 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
+if (!$EnvFile) {
+    $defaultEnvFile = Join-Path $projectRoot '.env'
+    if (Test-Path -LiteralPath $defaultEnvFile -PathType Leaf) {
+        $EnvFile = $defaultEnvFile
+    }
+}
 if ($EnvFile) {
     if (!(Test-Path -LiteralPath $EnvFile -PathType Leaf)) { throw 'Environment file does not exist.' }
     foreach ($line in [IO.File]::ReadAllLines((Resolve-Path -LiteralPath $EnvFile).Path)) {
@@ -11,7 +17,7 @@ if ($EnvFile) {
         if ($line -notmatch '^\s*([A-Za-z_][A-Za-z0-9_]*)=(.*)$') { throw 'Invalid environment file line; use NAME=value.' }
         $name = $Matches[1]
         $value = $Matches[2].Trim()
-        if ($name -notmatch '^(DB_URL|DB_USER|DB_PASSWORD|MYSQL_ROOT_PASSWORD|JWT_SECRET|OTP_SECRET|BOOTSTRAP_EMAIL|BOOTSTRAP_PASSWORD|GOOGLE_CLIENT_ID|PORT|SMTP_HOST|SMTP_PORT|SMTP_USERNAME|SMTP_PASSWORD|SMTP_AUTH|SMTP_TLS|MAIL_FROM|TOKEN_TTL_SECONDS|OTP_TTL_SECONDS|OTP_COOLDOWN_SECONDS)$') {
+        if ($name -notmatch '^(DB_URL|DB_USER|DB_PASSWORD|MYSQL_ROOT_PASSWORD|JWT_SECRET|OTP_SECRET|BOOTSTRAP_EMAIL|BOOTSTRAP_PASSWORD|GOOGLE_CLIENT_ID|PORT|SMTP_HOST|SMTP_PORT|SMTP_USERNAME|SMTP_PASSWORD|SMTP_AUTH|SMTP_TLS|MAIL_FROM|TOKEN_TTL_SECONDS|OTP_TTL_SECONDS|OTP_COOLDOWN_SECONDS|PROFILE_IMAGE_DIRECTORY)$') {
             throw "Unsupported environment variable: $name"
         }
         if ($value.Length -ge 2 -and (($value.StartsWith('"') -and $value.EndsWith('"')) -or ($value.StartsWith("'") -and $value.EndsWith("'")))) {

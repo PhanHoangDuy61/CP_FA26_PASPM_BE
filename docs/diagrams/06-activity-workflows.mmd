@@ -1,0 +1,58 @@
+flowchart TB
+  subgraph AD01["AD01 · Authentication and store-scoped authorization (F01)"]
+    a1([Start]) --> a2["Submit credentials / verification / federated identity"] --> a3{"Valid and active?"}
+    a3 -->|No| a4["Return authentication error"] --> a5([End])
+    a3 -->|Yes| a6["Issue identity token"] --> a7["Authorize role and derive store scope"] --> a5
+  end
+  subgraph AD02["AD02 · Product and inventory management (F02)"]
+    b1([Start]) --> b2["Authorized store user creates/updates product"] --> b3{"Valid SKU, category and prices?"}
+    b3 -->|No| b4["Return validation error"] --> b6([End])
+    b3 -->|Yes| b5["Persist product and optional inventory batches"] --> b6
+  end
+  subgraph AD03["AD03 · CSV transaction import and validation (F04)"]
+    c1([Upload CSV]) --> c2["Check file limits and parse rows"] --> c3["Create PROCESSING batch and staging rows"] --> c4["Validate order groups, products and transaction status"]
+    c4 --> c5{"Duplicate idempotency key?"}
+    c5 -->|Same content| c6["Count as duplicate; do not recreate order"]
+    c5 -->|Different content| c7["Count as conflict; reject order"]
+    c5 -->|New order| c8{"Order valid?"}
+    c8 -->|No| c9["Mark rows REJECTED"]
+    c8 -->|Yes| c10["Persist sales transaction and items; mark rows PROCESSED"]
+    c6 --> c11["Finalize counts and batch status"]
+    c7 --> c11
+    c9 --> c11
+    c10 --> c11
+    c11 --> c12["COMPLETED / COMPLETED_WITH_ERRORS / FAILED"] --> c13([End])
+    c10 -. "No InventoryBatch writes" .-> c13
+  end
+  subgraph AD04["AD04 · Utility preview and snapshot (F03)"]
+    d1([Start]) --> d2["Lock and capture utility policy/config"] --> d3["Load eligible completed transaction items in date range"] --> d4["Compute base utility; apply configured S, E, M weights"]
+    d4 --> d5["E uses sellable inventory expiry metadata; missing required data blocks readiness"] --> d6{"Ready and non-empty?"}
+    d6 -->|No| d7["Return validation error; do not create READY snapshot"] --> d9([End])
+    d6 -->|Yes| d8["Persist READY snapshot, hashes, frozen config and matrix rows"] --> d9
+  end
+  subgraph AD05["AD05 · HUI-Miner / EFIM execution (F05)"]
+    e1([Create request]) --> e2["Validate snapshot, threshold, algorithms and idempotency key"] --> e3["Capture immutable normalized input"] --> e4["Persist PENDING request and algorithm runs"]
+    e4 --> e5["Worker claims request/run: RUNNING"] --> e6["Execute each selected algorithm in isolated runtime"] --> e7{"Execution outcome?"}
+    e7 -->|Success| e8["Persist patterns and metrics; run COMPLETED"]
+    e7 -->|Failure / deadline| e9["Persist sanitized failure; run FAILED / TIMED_OUT"]
+    e8 --> e10["Finalize request status"]
+    e9 --> e10
+    e10 --> e11([End])
+  end
+  subgraph AD06["AD06 · Recommendation generation and evidence checks (F06)"]
+    f1([Generate request]) --> f2["Read completed run and frozen patterns"] --> f3["Validate each candidate against generation rules and current product eligibility"] --> f4{"Eligible evidence-backed candidate?"}
+    f4 -->|No| f5["Skip candidate or attach eligibility explanation"] --> f7([End])
+    f4 -->|Yes| f6["Persist deduplicated PENDING_REVIEW recommendation, items and source provenance"] --> f7
+  end
+  subgraph AD07["AD07 · Recommendation approval or rejection (F06)"]
+    g1([Review candidate]) --> g2["Load current version and recheck live eligibility"] --> g3{"Expected version matches and candidate pending?"}
+    g3 -->|No| g4["Return conflict / validation response"] --> g7([End])
+    g3 -->|Yes| g5{"Merchandiser decision"}
+    g5 -->|Approve| g6["Persist APPROVED, reviewer, reason, version and history"] --> g7
+    g5 -->|Reject| g8["Persist REJECTED, reviewer, reason, version and history"] --> g7
+  end
+  subgraph AD08["AD08 · Expiry Push candidate generation (F06)"]
+    h1([Request expiry push]) --> h2["Read live sellable stock and expiry conditions"] --> h3{"Products satisfy configured expiry policy?"}
+    h3 -->|No| h4["Return no eligible candidate"] --> h6([End])
+    h3 -->|Yes| h5["Create reviewable candidate with eligibility explanation"] --> h6
+  end

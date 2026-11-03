@@ -1,0 +1,10 @@
+{
+  "artifactVersionCheck": "/ ___||  _ \\|  \\/  |  ___|\n \\___ \\| |_) | |\\/| | |_   \n  ___) |  __/| |  | |  _|  \n |____/|_|   |_|  |_|_|   \n \n-- SPMF version 2.67a --",
+  "artifactSha256": "4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a",
+  "backendJavaVersion": "openjdk version \"17.0.20.1\" 2026-08-18 LTS\nOpenJDK Runtime Environment Corretto-17.0.20.12.1 (build 17.0.20.1+12-LTS)\nOpenJDK 64-Bit Server VM Corretto-17.0.20.12.1 (build 17.0.20.1+12-LTS, mixed mode, sharing)",
+  "childJavaVersion": "openjdk version \"25.0.1\" 2025-10-21\nOpenJDK Runtime Environment Homebrew (build 25.0.1)\nOpenJDK 64-Bit Server VM Homebrew (build 25.0.1, mixed mode, sharing)",
+  "mysql": "8.4.11",
+  "newIsolatedInstance": true,
+  "artifactUrl": "NOT_APPROVED_NOT_CONFIGURED",
+  "artifactUpload": "NOT_PERFORMED"
+}

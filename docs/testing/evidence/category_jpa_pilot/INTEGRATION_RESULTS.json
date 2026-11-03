@@ -1,0 +1,350 @@
+{
+  "executedAt": "2026-10-25 Asia/Ho_Chi_Minh",
+  "initialCategoryBaseline": {
+    "tests": 28,
+    "pass": 12,
+    "failures": 8,
+    "errors": 8,
+    "skipped": 0,
+    "note": "Includes incorrect new test assumptions; not product defects"
+  },
+  "correctedCategoryRed": {
+    "tests": 28,
+    "pass": 16,
+    "failures": 4,
+    "errors": 8,
+    "skipped": 0,
+    "note": "Missing JPA mapping/persistence expected before implementation"
+  },
+  "focusedRetest": {
+    "tests": 63,
+    "pass": 63,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "finalFull": {
+    "tests": 330,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "focusedCaseNamesAlsoExecutedInFull": [
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceMySqlIntegrationTest",
+      "name": "repeatedConcurrentNativeScoresAndPriceSurviveStatusWritesFromStaleJpaState",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceMySqlIntegrationTest",
+      "name": "jdbcAndJpaShareTheActualTransactionalConnectionAndIsolation",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceMySqlIntegrationTest",
+      "name": "repeatedConcurrentF03ScoreWritesSurviveJpaMetadataUpdates",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceMySqlIntegrationTest",
+      "name": "forcedFailureRollsBackProductJpaAndInventoryJdbcFromIndependentConnection",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceMySqlIntegrationTest",
+      "name": "controlledFailureRollsBackExistingManagedProductAndExistingJdbcBatchUpdates",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceMySqlIntegrationTest",
+      "name": "f04RequiresNewTemplateKeepsInnerJdbcCommitAfterOuterJpaRollback",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceMySqlIntegrationTest",
+      "name": "dirtyManagedStoreIdCannotTransferProductOwnership",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceMySqlIntegrationTest",
+      "name": "directForeignStoreCategoryViolatesCompositeForeignKeyAndRemainsTranslated",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceMySqlIntegrationTest",
+      "name": "productJpaAndInventoryJdbcCommitTogetherWithReadYourWrites",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceMySqlIntegrationTest",
+      "name": "statusOnlyWriteDoesNotOverwriteNativePriceOnPreviouslyManagedProduct",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceMySqlIntegrationTest",
+      "name": "writesAreStoreScopedAndDuplicateConstraintsRemainTranslated",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceMySqlIntegrationTest",
+      "name": "productMappingContainsOnlyOwnedMetadata",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceMySqlIntegrationTest",
+      "name": "nativeUpdateIsStaleUntilExplicitRefreshAndMetadataAdapterRefreshesItsBoundary",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceMySqlIntegrationTest",
+      "name": "existingManagedProductAndExistingJdbcBatchUpdatesCommitTogether",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceMySqlIntegrationTest",
+      "name": "sharedPersistenceUsesOneJpaTransactionManager",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceMySqlIntegrationTest",
+      "name": "metadataUpdatesFlushBeforeJdbcReadbackAndPreserveNativeScoresAndInventory",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceMySqlIntegrationTest",
+      "name": "productFacadeActuallyUsesJpaForCreateAndMetadataUpdate",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceMySqlIntegrationTest",
+      "name": "repeatableReadJdbcSnapshotSurvivesIndependentNativeCommit",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.category.persistence.CategoryPersistenceIntegrationTest",
+      "name": "referencedCategoryStatusAndNamePreserveProductAndInventory",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.category.persistence.CategoryPersistenceIntegrationTest",
+      "name": "invalidPersistenceValuesStillFailConstraints",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.category.persistence.CategoryPersistenceIntegrationTest",
+      "name": "categoryJpaProductJpaAndInventoryJdbcCommitTogether",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.category.persistence.CategoryPersistenceIntegrationTest",
+      "name": "categoryFacadeUsesJpaWritesAndDtoQueries",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.category.persistence.CategoryPersistenceIntegrationTest",
+      "name": "statusWritePreservesNativeNameAndClearsStaleManagedState",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.category.persistence.CategoryPersistenceIntegrationTest",
+      "name": "categoryMappingOwnsOnlyScalarMetadataWithoutCascade",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.category.persistence.CategoryPersistenceIntegrationTest",
+      "name": "rollbackRemovesNewCategoryProductAndJdbcBatch",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.category.persistence.CategoryPersistenceIntegrationTest",
+      "name": "scopedListsAndMissingWritesPreserveOrderAndIsolation",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.category.persistence.CategoryPersistenceIntegrationTest",
+      "name": "rollbackRestoresExistingCategoryProductInventoryAndScores",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.category.persistence.CategoryPersistenceIntegrationTest",
+      "name": "duplicateNamesRemainAllowedByExistingSchema",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.category.persistence.CategoryPersistenceIntegrationTest",
+      "name": "dirtyManagedCategoryStoreCannotTransferOwnership",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.category.persistence.CategoryPersistenceIntegrationTest",
+      "name": "productStatusContextClearDoesNotLoseCategoryEdits",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.category.persistence.CategoryPersistenceIntegrationTest",
+      "name": "existingCategoryApiContractValidationAndRolesRemain",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.category.persistence.CategoryPersistenceIntegrationTest",
+      "name": "dtoReadsObserveNativeCategoryEditsEvenWithStaleManagedEntity",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.category.persistence.CategoryPersistenceMySqlIntegrationTest",
+      "name": "referencedCategoryStatusAndNamePreserveProductAndInventory",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.category.persistence.CategoryPersistenceMySqlIntegrationTest",
+      "name": "invalidPersistenceValuesStillFailConstraints",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.category.persistence.CategoryPersistenceMySqlIntegrationTest",
+      "name": "categoryJpaProductJpaAndInventoryJdbcCommitTogether",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.category.persistence.CategoryPersistenceMySqlIntegrationTest",
+      "name": "categoryFacadeUsesJpaWritesAndDtoQueries",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.category.persistence.CategoryPersistenceMySqlIntegrationTest",
+      "name": "statusWritePreservesNativeNameAndClearsStaleManagedState",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.category.persistence.CategoryPersistenceMySqlIntegrationTest",
+      "name": "categoryMappingOwnsOnlyScalarMetadataWithoutCascade",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.category.persistence.CategoryPersistenceMySqlIntegrationTest",
+      "name": "rollbackRemovesNewCategoryProductAndJdbcBatch",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.category.persistence.CategoryPersistenceMySqlIntegrationTest",
+      "name": "scopedListsAndMissingWritesPreserveOrderAndIsolation",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.category.persistence.CategoryPersistenceMySqlIntegrationTest",
+      "name": "rollbackRestoresExistingCategoryProductInventoryAndScores",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.category.persistence.CategoryPersistenceMySqlIntegrationTest",
+      "name": "duplicateNamesRemainAllowedByExistingSchema",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.category.persistence.CategoryPersistenceMySqlIntegrationTest",
+      "name": "dirtyManagedCategoryStoreCannotTransferOwnership",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.category.persistence.CategoryPersistenceMySqlIntegrationTest",
+      "name": "productStatusContextClearDoesNotLoseCategoryEdits",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.category.persistence.CategoryPersistenceMySqlIntegrationTest",
+      "name": "existingCategoryApiContractValidationAndRolesRemain",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.category.persistence.CategoryPersistenceMySqlIntegrationTest",
+      "name": "dtoReadsObserveNativeCategoryEditsEvenWithStaleManagedEntity",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceIntegrationTest",
+      "name": "repeatedConcurrentNativeScoresAndPriceSurviveStatusWritesFromStaleJpaState",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceIntegrationTest",
+      "name": "jdbcAndJpaShareTheActualTransactionalConnectionAndIsolation",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceIntegrationTest",
+      "name": "repeatedConcurrentF03ScoreWritesSurviveJpaMetadataUpdates",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceIntegrationTest",
+      "name": "forcedFailureRollsBackProductJpaAndInventoryJdbcFromIndependentConnection",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceIntegrationTest",
+      "name": "controlledFailureRollsBackExistingManagedProductAndExistingJdbcBatchUpdates",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceIntegrationTest",
+      "name": "f04RequiresNewTemplateKeepsInnerJdbcCommitAfterOuterJpaRollback",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceIntegrationTest",
+      "name": "dirtyManagedStoreIdCannotTransferProductOwnership",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceIntegrationTest",
+      "name": "directForeignStoreCategoryViolatesCompositeForeignKeyAndRemainsTranslated",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceIntegrationTest",
+      "name": "productJpaAndInventoryJdbcCommitTogetherWithReadYourWrites",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceIntegrationTest",
+      "name": "statusOnlyWriteDoesNotOverwriteNativePriceOnPreviouslyManagedProduct",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceIntegrationTest",
+      "name": "writesAreStoreScopedAndDuplicateConstraintsRemainTranslated",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceIntegrationTest",
+      "name": "productMappingContainsOnlyOwnedMetadata",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceIntegrationTest",
+      "name": "nativeUpdateIsStaleUntilExplicitRefreshAndMetadataAdapterRefreshesItsBoundary",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceIntegrationTest",
+      "name": "existingManagedProductAndExistingJdbcBatchUpdatesCommitTogether",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceIntegrationTest",
+      "name": "sharedPersistenceUsesOneJpaTransactionManager",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceIntegrationTest",
+      "name": "metadataUpdatesFlushBeforeJdbcReadbackAndPreserveNativeScoresAndInventory",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.product.persistence.ProductPersistenceIntegrationTest",
+      "name": "productFacadeActuallyUsesJpaForCreateAndMetadataUpdate",
+      "result": "PASS"
+    }
+  ],
+  "warning": "Focused/full executions overlap; do not sum as unique tests. Raw Surefire properties/dumps/private configs excluded."
+}

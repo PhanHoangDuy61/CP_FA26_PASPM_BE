@@ -1,0 +1,41 @@
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.184 s -- in vn.edu.fpt.paspm.transaction.TransactionImportSchemaTest
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.030 s -- in vn.edu.fpt.paspm.transaction.TransactionImportIntegrationTest
+P0_MYSQL_TEST schema=paspm_p0_test_cd83cc5458464a869f36dccb8106d3bd serverVersion=8.4.11
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.357 s -- in vn.edu.fpt.paspm.transaction.TransactionImportMySqlIntegrationTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.006 s -- in vn.edu.fpt.paspm.transaction.DatabaseTransactionSourceTest
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.002 s -- in vn.edu.fpt.paspm.transaction.importing.TransactionCsvParserTest
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.007 s -- in vn.edu.fpt.paspm.transaction.importing.TransactionOrderValidatorTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.076 s -- in vn.edu.fpt.paspm.auth.GoogleRegistrationTest
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.179 s -- in vn.edu.fpt.paspm.catalog.CatalogIntegrationTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.183 s -- in vn.edu.fpt.paspm.catalog.CatalogDevSeederTest
+F05_REAL_SPMF HUI=Output[patterns={1,2,3,4,5,6=30, 1,3,5=31, 2,3,4=34, 2,3,4,5=40, 2,3,5=37, 2,4=30, 2,4,5=36, 2,5=31}, runtimeMillis=87, memoryMiB=10.622848510742188, environment=SPMF=SPMF_2.67a;jarSha256=4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a;heapMiB=128;os=Mac OS X;arch=aarch64;javaExecutableSha256=707698c4c6f29cd001e270afed04aed51a201f5e0adba0023ac3f6c35f11a978] EFIM=Output[patterns={1,2,3,4,5,6=30, 1,3,5=31, 2,3,4=34, 2,3,4,5=40, 2,3,5=37, 2,4=30, 2,4,5=36, 2,5=31}, runtimeMillis=89, memoryMiB=11.122848510742188, environment=SPMF=SPMF_2.67a;jarSha256=4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a;heapMiB=128;os=Mac OS X;arch=aarch64;javaExecutableSha256=707698c4c6f29cd001e270afed04aed51a201f5e0adba0023ac3f6c35f11a978]
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.453 s -- in vn.edu.fpt.paspm.mining.SpmfMiningEngineTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.002 s -- in vn.edu.fpt.paspm.mining.MiningInputTest
+P0_MYSQL_TEST schema=paspm_p0_test_39b16fdfd5e0462a9b8a0d44039aa874 serverVersion=8.4.11
+P0_HTTP backendJava=17.0.20.1 port=60881 realAlgorithms=HUI_MINER,EFIM patternsPerRun=8 comparison=MATCH MySQLPersistence=16 OpenAPI=PASS
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.502 s -- in vn.edu.fpt.paspm.mining.MiningHttpMySqlTest
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 7.013 s -- in vn.edu.fpt.paspm.mining.SpmfRuntimeTest
+P0_MYSQL_TEST schema=paspm_p0_test_0853bb64da0b46fe8bba8303fb4f3554 serverVersion=8.4.11
+[INFO] Tests run: 16, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.723 s -- in vn.edu.fpt.paspm.mining.MiningMySqlIntegrationTest
+[INFO] Tests run: 16, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.070 s -- in vn.edu.fpt.paspm.mining.MiningIntegrationTest
+P0_MYSQL_TEST schema=paspm_p0_test_b8c965a9faf94610a29addb125b58d11 serverVersion=8.4.11
+P0_MYSQL_UPGRADE preservedBatch=1 migrationsExecuted=2 validation=PASS
+P0_CHECKSUM original=-1762009830 corrected=-1490036030 dataPreserved=true
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.432 s -- in vn.edu.fpt.paspm.deployment.FlywayRecoveryTest
+[INFO] Tests run: 22, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 12.26 s -- in vn.edu.fpt.paspm.AuthIntegrationTest
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.002 s -- in vn.edu.fpt.paspm.utility.UtilityCalculationTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.453 s -- in vn.edu.fpt.paspm.utility.UtilityFixtureTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.031 s -- in vn.edu.fpt.paspm.utility.WeightRulesV12MigrationTest
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.004 s -- in vn.edu.fpt.paspm.utility.ExpiryBinaryRulesTest
+[INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.552 s -- in vn.edu.fpt.paspm.utility.WeightRulesV12IntegrationTest
+[INFO] Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.769 s -- in vn.edu.fpt.paspm.utility.UtilityIntegrationTest
+[INFO] Tests run: 147, Failures: 0, Errors: 0, Skipped: 0
+[INFO] BUILD SUCCESS
+[INFO] Total time:  49.453 s
+[INFO] Finished at: 2026-10-20T13:37:58+07:00
+
+Original failing MySQL reproduction (first error):
+SQL State  : 42000
+Error Code : 1064
+Message    : You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'row_number INT NOT NULL,
+History: V1..V6 successful; V7 failed. Partial DDL retained; no repair on this failed schema.

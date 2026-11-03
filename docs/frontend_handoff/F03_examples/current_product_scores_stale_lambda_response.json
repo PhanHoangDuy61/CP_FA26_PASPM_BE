@@ -1,0 +1,37 @@
+{
+  "productId": 1,
+  "stockPriorityScore": 0.8,
+  "seasonalPriorityScore": 0.9,
+  "expiryScore": 0,
+  "weightValue": null,
+  "expiryStatus": "AVAILABLE",
+  "expiryEvidence": {
+    "expiryPushDays": 3,
+    "earliestEligibleExpiryDate": "2026-10-26",
+    "daysRemaining": 5,
+    "asOfDate": "2026-10-21",
+    "reason": "OUTSIDE_THRESHOLD",
+    "batches": [
+      {
+        "productId": 1,
+        "batchId": 1,
+        "expiryDate": "2026-10-26",
+        "remainingQuantity": 10,
+        "expiryPushDays": 3,
+        "daysRemaining": 5,
+        "pushRequired": false,
+        "pushRequiredQuantity": 0,
+        "asOfDate": "2026-10-21"
+      }
+    ]
+  },
+  "expiryPushDays": 3,
+  "asOfDate": "2026-10-21",
+  "timeZone": "Asia/Ho_Chi_Minh",
+  "configVersion": 2,
+  "lambdaValid": false,
+  "ready": false,
+  "warnings": [
+    "Selected lambda is outside the current system policy; update the Store weight configuration"
+  ]
+}

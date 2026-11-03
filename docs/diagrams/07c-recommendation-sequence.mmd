@@ -1,0 +1,24 @@
+sequenceDiagram
+  autonumber
+  actor Merch as Merchandiser
+  participant API as Recommendation API
+  participant Service as Recommendation service
+  participant Evidence as Frozen evidence reader
+  participant Eligibility as Live eligibility service
+  participant DB as Database
+  Merch->>API: Generate from completed run / request expiry push
+  API->>Service: Validate role, store and request
+  Service->>Evidence: Load frozen patterns/provenance (mining path)
+  Evidence-->>Service: Immutable source evidence
+  Service->>Eligibility: Check current product and inventory eligibility
+  Eligibility-->>Service: Current status and warnings
+  Service->>DB: Insert deduplicated PENDING_REVIEW candidate and source links
+  DB-->>Service: Candidate ID
+  Service-->>API: Generation result
+  API-->>Merch: Candidate and eligibility details
+  Merch->>API: Approve/reject with expected version and reason
+  API->>Service: Review decision
+  Service->>Eligibility: Recheck live eligibility
+  Service->>DB: Compare version/state, persist review and history
+  DB-->>Service: Updated candidate
+  Service-->>Merch: Review result

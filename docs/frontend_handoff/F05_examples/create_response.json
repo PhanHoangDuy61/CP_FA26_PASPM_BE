@@ -1,0 +1,73 @@
+{
+  "requestId": 1,
+  "storeId": 5,
+  "requestedBy": 8,
+  "requestKey": "009f3ef1-d4ba-4291-9854-b74c6878d26b",
+  "snapshotId": 2,
+  "algorithms": [
+    "HUI_MINER",
+    "EFIM"
+  ],
+  "minUtilMode": "ABSOLUTE",
+  "minUtilValue": 30,
+  "minUtilSpmf": 30,
+  "effectiveMinUtility": 30,
+  "status": "PENDING",
+  "comparisonStatus": "PENDING",
+  "snapshotHash": "2aa21b391283e3b6ff5a46f4565d277d421d1c23643756cc7b3449270b0dcae3",
+  "inputHash": "8ce22f131d59e8486c6974733fcc81de0c3caadaf13765399311cdfe3dc32626",
+  "conversionVersion": "F03_SCALE6_GCD_INT32_DENSE_V1",
+  "utilityScale": 6,
+  "roundingMode": "HALF_UP",
+  "divisor": 1000000,
+  "totalScaledUtility": 96,
+  "transactionCount": 5,
+  "distinctItems": 7,
+  "inputBytes": 100,
+  "snapshot": {
+    "snapshotId": 2,
+    "storeId": 5,
+    "createdBy": 8,
+    "rangeStart": "2026-10-19",
+    "rangeEnd": "2026-10-19",
+    "asOfDate": "2026-10-19",
+    "configuration": {
+      "config": {
+        "enableStock": false,
+        "enableExpiry": false,
+        "enableSeason": false,
+        "alpha": 0,
+        "beta": 0,
+        "gamma": 0,
+        "lambda": 0,
+        "expiryWindowDays": null,
+        "version": 1,
+        "scoringVersion": "EXPIRY_PRODUCT_EARLIEST_BATCH_BINARY_V1"
+      },
+      "lambdaPolicy": {
+        "lambdaMin": 0,
+        "lambdaMax": 0.5,
+        "version": 1
+      },
+      "effectiveCoefficients": {
+        "alpha": 0,
+        "beta": 0,
+        "gamma": 0
+      },
+      "analysisDate": "2026-10-19",
+      "source": "F04_DATABASE_V1",
+      "utilityScale": 6,
+      "roundingMode": "HALF_UP",
+      "itemMapping": "PRODUCT_ID_V1",
+      "timeZone": "Asia/Ho_Chi_Minh"
+    },
+    "sourceHash": "98684bb2c94988d70246c05fbb7451cfc5aff494faf736f4c51db8b5a8b8ded4",
+    "matrixHash": "2aa21b391283e3b6ff5a46f4565d277d421d1c23643756cc7b3449270b0dcae3",
+    "totalWeightedUtility": 96,
+    "roundingScale": 6,
+    "status": "READY",
+    "createdAt": "2026-10-19T16:04:32Z",
+    "warnings": []
+  },
+  "createdAt": "2026-10-19T16:06:05Z"
+}

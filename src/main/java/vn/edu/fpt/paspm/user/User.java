@@ -14,10 +14,20 @@ public record User(
         String passwordHash,
         Instant verifiedAt,
         int version,
-        String purpose) {
+        String purpose,
+        String avatarKey) {
 
     public UserView view() {
-        return new UserView(id, email, name, role, storeId, status, verifiedAt != null);
+        return new UserView(
+                id,
+                email,
+                name,
+                role,
+                storeId,
+                status,
+                verifiedAt != null,
+                avatarKey == null ? null : "/api/users/" + id + "/avatar"
+        );
     }
 
     public boolean active() {

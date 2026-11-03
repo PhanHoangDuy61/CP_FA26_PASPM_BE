@@ -1,0 +1,324 @@
+{
+  "date": "2026-10-22",
+  "timezone": "Asia/Ho_Chi_Minh",
+  "mysqlVersion": "8.4.11",
+  "port": 13317,
+  "provenance": "ALL_POPULATED_DATA_SYNTHETIC",
+  "originalDatabaseWriteAccessUsed": false,
+  "productionMigrationFilesChanged": false,
+  "productionReaderImplemented": false,
+  "mergeBlockerResolved": false,
+  "cases": [
+    {
+      "id": "R01",
+      "name": "Original V5 matrix migration failure and backup",
+      "sqlState": "23000",
+      "before": {
+        "store": {
+          "sha256": "0ce427c93468f76f88cdec6615c5b18076897b1bd5566bd2a56de6f37f0b8b22",
+          "count": 2
+        },
+        "category": {
+          "sha256": "12b8edf8390dd4c0ef2b18e99d2ccba3c989c95d8fcc737b8c5948d7025dc1d1",
+          "count": 2
+        },
+        "product": {
+          "sha256": "5c062a9869f5e701ccc67b1f071b546b641d23f296c1ef451fd312a93f081c55",
+          "count": 3
+        },
+        "batch": {
+          "sha256": "85285c1984e01012f05e88d9ae2456d5ea93f78d33cf48b3a4e00f1b049b6294",
+          "count": 2
+        },
+        "snapshot": {
+          "sha256": "86be824fdf55b3faa475ffee28f6adc5c3061693b7f328c57d64488909cc850c",
+          "count": 2
+        },
+        "matrix": {
+          "sha256": "1cf2879af59bddfe804f9e6635eae050c2cf8af55a263222c53994402e3546e2",
+          "count": 4
+        }
+      },
+      "constraint": "fk_utility_matrix_transaction",
+      "after": {
+        "store": {
+          "sha256": "0ce427c93468f76f88cdec6615c5b18076897b1bd5566bd2a56de6f37f0b8b22",
+          "count": 2
+        },
+        "category": {
+          "sha256": "12b8edf8390dd4c0ef2b18e99d2ccba3c989c95d8fcc737b8c5948d7025dc1d1",
+          "count": 2
+        },
+        "product": {
+          "sha256": "5c062a9869f5e701ccc67b1f071b546b641d23f296c1ef451fd312a93f081c55",
+          "count": 3
+        },
+        "batch": {
+          "sha256": "85285c1984e01012f05e88d9ae2456d5ea93f78d33cf48b3a4e00f1b049b6294",
+          "count": 2
+        },
+        "snapshot": {
+          "sha256": "86be824fdf55b3faa475ffee28f6adc5c3061693b7f328c57d64488909cc850c",
+          "count": 2
+        },
+        "matrix": {
+          "sha256": "1cf2879af59bddfe804f9e6635eae050c2cf8af55a263222c53994402e3546e2",
+          "count": 4
+        }
+      },
+      "partialDDL": true,
+      "backupCreated": true,
+      "mysqlError": 1452,
+      "migrationOutcome": "FAIL",
+      "proofAssertion": "PASS"
+    },
+    {
+      "id": "R02",
+      "name": "Version-aware missing-evidence refusal before upgrade",
+      "crossStoreNumericIdCollisions": 1,
+      "reason": "MISSING_AUTHENTIC_MAPPING_FOR_OPTION_A",
+      "migrationOutcome": "REFUSED_AT_V5",
+      "unchanged": true,
+      "proofAssertion": "PASS"
+    },
+    {
+      "id": "R03",
+      "name": "Precreating F04 schema cannot make unchanged V7 replay",
+      "inventedSalesRows": 0,
+      "mysqlError": 1050,
+      "reason": "F04 tables already exist; pure pre-backfill conflicts with unchanged V7 CREATE TABLE",
+      "migrationOutcome": "FAIL",
+      "proofAssertion": "PASS",
+      "historicalFingerprintsEqual": true,
+      "preservationComparison": "Same fully deterministic V5 fixture as R01; post-failure six-table fingerprints equal its baseline",
+      "after": {
+        "store": {
+          "sha256": "0ce427c93468f76f88cdec6615c5b18076897b1bd5566bd2a56de6f37f0b8b22",
+          "count": 2
+        },
+        "category": {
+          "sha256": "12b8edf8390dd4c0ef2b18e99d2ccba3c989c95d8fcc737b8c5948d7025dc1d1",
+          "count": 2
+        },
+        "product": {
+          "sha256": "5c062a9869f5e701ccc67b1f071b546b641d23f296c1ef451fd312a93f081c55",
+          "count": 3
+        },
+        "batch": {
+          "sha256": "85285c1984e01012f05e88d9ae2456d5ea93f78d33cf48b3a4e00f1b049b6294",
+          "count": 2
+        },
+        "snapshot": {
+          "sha256": "86be824fdf55b3faa475ffee28f6adc5c3061693b7f328c57d64488909cc850c",
+          "count": 2
+        },
+        "matrix": {
+          "sha256": "1cf2879af59bddfe804f9e6635eae050c2cf8af55a263222c53994402e3546e2",
+          "count": 4
+        }
+      }
+    },
+    {
+      "id": "R04",
+      "name": "Archive/live transition, unchanged migrations and real mining replay",
+      "productionReaderAdaptationRequired": true,
+      "migrationOutcome": "PASS_POC",
+      "versionsApplied": [
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "before": {
+        "store": {
+          "sha256": "0ce427c93468f76f88cdec6615c5b18076897b1bd5566bd2a56de6f37f0b8b22",
+          "count": 2
+        },
+        "category": {
+          "sha256": "12b8edf8390dd4c0ef2b18e99d2ccba3c989c95d8fcc737b8c5948d7025dc1d1",
+          "count": 2
+        },
+        "product": {
+          "sha256": "5c062a9869f5e701ccc67b1f071b546b641d23f296c1ef451fd312a93f081c55",
+          "count": 3
+        },
+        "batch": {
+          "sha256": "85285c1984e01012f05e88d9ae2456d5ea93f78d33cf48b3a4e00f1b049b6294",
+          "count": 2
+        },
+        "snapshot": {
+          "sha256": "86be824fdf55b3faa475ffee28f6adc5c3061693b7f328c57d64488909cc850c",
+          "count": 2
+        },
+        "matrix": {
+          "sha256": "1cf2879af59bddfe804f9e6635eae050c2cf8af55a263222c53994402e3546e2",
+          "count": 4
+        }
+      },
+      "miningReplay": [
+        {
+          "algorithm": "HUI_MINER",
+          "patternsSha256": "101d8e01a448881443d4984371d64d347be648d103c422b332d50e7739db9050",
+          "store": 1,
+          "inputSha256": "c61faef87fd04064bdbd51ef1a9c579f19f72318115b6e957b9bff3cb6c2f5e8",
+          "patternCount": 3
+        },
+        {
+          "algorithm": "EFIM",
+          "patternsSha256": "101d8e01a448881443d4984371d64d347be648d103c422b332d50e7739db9050",
+          "store": 1,
+          "inputSha256": "c61faef87fd04064bdbd51ef1a9c579f19f72318115b6e957b9bff3cb6c2f5e8",
+          "patternCount": 3
+        },
+        {
+          "algorithm": "HUI_MINER",
+          "patternsSha256": "2eedb3e0a521d19c5463a63ab8593d19bddd0813ca968208d68c2aca80037e27",
+          "store": 2,
+          "inputSha256": "526a725dfc315cf5e950683bb0d8e6b542130234977cfd247e5f6f50e4ae9401",
+          "patternCount": 1
+        },
+        {
+          "algorithm": "EFIM",
+          "patternsSha256": "2eedb3e0a521d19c5463a63ab8593d19bddd0813ca968208d68c2aca80037e27",
+          "store": 2,
+          "inputSha256": "526a725dfc315cf5e950683bb0d8e6b542130234977cfd247e5f6f50e4ae9401",
+          "patternCount": 1
+        }
+      ],
+      "salesRowsCreated": 0,
+      "after": {
+        "store": {
+          "sha256": "0ce427c93468f76f88cdec6615c5b18076897b1bd5566bd2a56de6f37f0b8b22",
+          "count": 2
+        },
+        "category": {
+          "sha256": "12b8edf8390dd4c0ef2b18e99d2ccba3c989c95d8fcc737b8c5948d7025dc1d1",
+          "count": 2
+        },
+        "product": {
+          "sha256": "5c062a9869f5e701ccc67b1f071b546b641d23f296c1ef451fd312a93f081c55",
+          "count": 3
+        },
+        "batch": {
+          "sha256": "85285c1984e01012f05e88d9ae2456d5ea93f78d33cf48b3a4e00f1b049b6294",
+          "count": 2
+        },
+        "snapshot": {
+          "sha256": "86be824fdf55b3faa475ffee28f6adc5c3061693b7f328c57d64488909cc850c",
+          "count": 2
+        },
+        "matrix": {
+          "sha256": "1cf2879af59bddfe804f9e6635eae050c2cf8af55a263222c53994402e3546e2",
+          "count": 4
+        }
+      },
+      "proofAssertion": "PASS"
+    },
+    {
+      "id": "R05",
+      "name": "Archive mutation denied and new live FK remains enforced",
+      "archiveInsertUpdateDeleteError": 1644,
+      "invalidLiveReferenceError": 1452,
+      "migrationOutcome": "PASS_POC",
+      "unchanged": true,
+      "proofAssertion": "PASS"
+    },
+    {
+      "id": "R06",
+      "name": "Optional evidenced mapping through real F04 importer, synthetic source only",
+      "wrongStoreMappingError": 1452,
+      "authenticRetailEvidenceAvailable": false,
+      "mappedTransactionIdForStoreB": 3,
+      "archivePreserved": true,
+      "legacyTransactionIdForStoreB": 1,
+      "F04Idempotency": true,
+      "sourceKind": "SYNTHETIC_PROOF_ONLY",
+      "actualTransactionIds": {
+        "1": [
+          1,
+          2
+        ],
+        "2": [
+          3
+        ]
+      },
+      "migrationOutcome": "PASS_POC_CONDITIONAL",
+      "F04OrderCount": 3,
+      "proofAssertion": "PASS"
+    },
+    {
+      "id": "R07",
+      "name": "Recover partial MySQL DDL by restoring clean backup to separate schema",
+      "restoredToSeparateCopy": true,
+      "cleanBackupRestore": true,
+      "failedCopyPreserved": true,
+      "fingerprintsEqual": true,
+      "migrationOutcome": "PASS_POC",
+      "sourceRepairExecuted": false,
+      "proofAssertion": "PASS"
+    },
+    {
+      "id": "R08",
+      "name": "Interrupted atomic-swap checkpoint resumes without repeat rename",
+      "preserved": true,
+      "duplicateHistoricalRows": 0,
+      "resumeAttempts": 2,
+      "migrationOutcome": "PASS_POC",
+      "interruption": "after atomic rename before journal completion",
+      "proofAssertion": "PASS"
+    },
+    {
+      "id": "R09",
+      "name": "Already-upgraded V10 remains unchanged and no out-of-order migration injected",
+      "preserved": true,
+      "newProductionAdditiveMigrationTested": false,
+      "migrationOutcome": "PASS_NOOP_COMPATIBILITY",
+      "proofAssertion": "PASS"
+    },
+    {
+      "id": "R10",
+      "name": "Global numeric FK alone cannot prove Store/source identity",
+      "numericIdIsNotAuthenticityEvidence": true,
+      "negativeFixtureRolledBack": true,
+      "globalFKAcceptedDifferentStore": true,
+      "migrationOutcome": "SEMANTIC_RISK_REPRODUCED",
+      "proofAssertion": "PASS"
+    },
+    {
+      "id": "R11",
+      "name": "Pre-upgrade staging refuses a partially failed V7 schema",
+      "repairExecuted": false,
+      "dataAndHistoryUnchanged": true,
+      "migrationOutcome": "REFUSED_PARTIAL_V7",
+      "proofAssertion": "PASS"
+    },
+    {
+      "id": "R12",
+      "name": "Actual beforeEachMigrate callback stages archive before unchanged V7",
+      "callbackEvent": "beforeEachMigrate",
+      "transitions": 1,
+      "salesRowsCreated": 0,
+      "fingerprintsEqual": true,
+      "triggerMigration": "7",
+      "productionMigrationFilesEdited": false,
+      "finalVersion": "10",
+      "migrationOutcome": "PASS_POC_CALLBACK",
+      "callbackInspections": 1,
+      "proofAssertion": "PASS"
+    },
+    {
+      "id": "R13",
+      "name": "Same callback skips fresh empty data and does not replay applied V7",
+      "freshArchiveTransitions": 0,
+      "noOutOfOrderMigration": true,
+      "freshVersionsApplied": 10,
+      "migrationOutcome": "PASS_POC_NOOP",
+      "alreadyV10VersionsApplied": 0,
+      "proofAssertion": "PASS"
+    }
+  ],
+  "callbackWiringTested": true,
+  "formalAdditiveNormalizationMigrationImplemented": false,
+  "verifiedAt": "2026-10-22T16:19:31.803110+07:00"
+}

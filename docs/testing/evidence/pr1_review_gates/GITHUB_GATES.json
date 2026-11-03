@@ -1,0 +1,58 @@
+{
+  "checkedAt": "2026-10-23T02:44:03.103741+07:00",
+  "recoveryPr": {
+    "url": "https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/pull/1",
+    "state": "closed",
+    "merged": true,
+    "mergedAt": "2026-10-22T19:10:21Z",
+    "mergedBy": "khoinm04",
+    "draft": false,
+    "base": "dev",
+    "baseSha": "3d58a73543db3b5923289f901f9ffecba6228d23",
+    "head": "Khoi/Fear/fix-legacy-utility-matrix-migration",
+    "headSha": "3a9c66632cd52f2a0a6720977aff10828d5176e6",
+    "mergeSha": "691371b9a283208f41269f0956b1386a045fe27a",
+    "descriptionPresent": false,
+    "discussionHasPreparedDescription": true,
+    "changedFiles": 39,
+    "requestedReviewers": []
+  },
+  "reviews": {
+    "submitted": 0,
+    "inlineThreads": 0,
+    "status": "REVIEWER_PENDING",
+    "candidate": "PhanHoangDuy61",
+    "implementationAuthor": "khoinm04",
+    "differentGitHubAccounts": true,
+    "differentPeopleVerified": false,
+    "collaboratorPermissionProbe": "403 Resource not accessible by integration",
+    "reviewRequestSent": false,
+    "reason": "Merged PR cannot receive a new pending review request; eligibility and distinct human identities are not verified."
+  },
+  "ciAtRecoveryHead": {
+    "checkRuns": 0,
+    "commitStatuses": 0,
+    "workflowRuns": 0,
+    "repositoryWorkflows": 0,
+    "status": "NOT_RUN"
+  },
+  "policy": {
+    "publicDevProtected": false,
+    "publicActiveRules": [],
+    "publicRulesets": [],
+    "authenticatedProtectionEndpoint": "401 Requires authentication",
+    "authenticatedCollaboratorsEndpoint": "401 Requires authentication",
+    "policyConclusion": "No required-check names or independent-approval equivalent verified. Team Lead task gates still apply; no bypass."
+  },
+  "progression": {
+    "recoveryMergedBeforeThisTask": true,
+    "mergedByThisTask": false,
+    "productIntegration": "BLOCKED_REVIEW_AND_CI",
+    "productPr": "NOT_CREATED_EXISTING_SEARCH_FOUND_NONE",
+    "productMerge": "NOT_PERFORMED",
+    "category": "NOT_STARTED_ENTRY_GATE_BLOCKED",
+    "deployment": "NOT_PERFORMED"
+  },
+  "data": "REAL_DATA_BLOCKED; populated fixtures synthetic",
+  "latestObservedDev": "691371b9a283208f41269f0956b1386a045fe27a"
+}

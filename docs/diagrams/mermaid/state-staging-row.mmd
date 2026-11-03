@@ -1,0 +1,8 @@
+stateDiagram-v2
+  [*] --> PENDING : CSV row staged
+  PENDING --> VALID : row and whole-order validation succeed
+  PENDING --> REJECTED : row or whole-order validation fails
+  VALID --> PROCESSED : new order committed or identical duplicate linked
+  VALID --> REJECTED : same order identity has conflicting content
+  REJECTED --> [*]
+  PROCESSED --> [*]

@@ -1,0 +1,1 @@
+graceful_shutdown A_pid=162 B_pid=276 spmf_pid=268 request=1 owner=88cadf9f-4547-4832-87c7-bce7a8316a68 fence=1 active_spmf_terminated=true recovered_patterns=8 PASS

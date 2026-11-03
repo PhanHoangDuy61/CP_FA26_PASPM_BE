@@ -1,0 +1,100 @@
+{
+  "result": "PASS",
+  "logicalTables": [
+    {
+      "page": "Complete Logical ERD \u2014 Final Weights v1.2 + F05 P0",
+      "table": "MINING_REQUEST",
+      "columns": [
+        "request_id",
+        "store_id",
+        "requested_by",
+        "utility_snapshot_id",
+        "request_key",
+        "payload_hash",
+        "algorithms",
+        "min_util_mode",
+        "min_util_value",
+        "min_util_spmf",
+        "input_snapshot_hash",
+        "frozen_input",
+        "utility_config_snapshot",
+        "status",
+        "comparison_status",
+        "created_at"
+      ]
+    },
+    {
+      "page": "Complete Logical ERD \u2014 Final Weights v1.2 + F05 P0",
+      "table": "MINING_RUN",
+      "columns": [
+        "run_id",
+        "store_id",
+        "request_id",
+        "algorithm",
+        "attempt_no",
+        "library_version",
+        "conversion_version",
+        "memory_method",
+        "runtime_method",
+        "status",
+        "started_at",
+        "completed_at",
+        "runtime_ms",
+        "memory_mib",
+        "environment",
+        "itemset_count",
+        "failure_code",
+        "failure_message"
+      ]
+    },
+    {
+      "page": "Complete Logical ERD \u2014 Final Weights v1.2 + F05 P0",
+      "table": "HIGH_UTILITY_PATTERN",
+      "columns": [
+        "pattern_id",
+        "store_id",
+        "run_id",
+        "canonical_key",
+        "canonical_hash",
+        "utility",
+        "utility_spmf",
+        "pattern_size",
+        "support_count"
+      ]
+    },
+    {
+      "page": "Complete Logical ERD \u2014 Final Weights v1.2 + F05 P0",
+      "table": "PATTERN_ITEM",
+      "columns": [
+        "pattern_id",
+        "store_id",
+        "product_id",
+        "algorithm_item_id"
+      ]
+    },
+    {
+      "page": "F03 \u2014 Utility Profiling (Logical Zoom)",
+      "table": "MINING_REQUEST",
+      "columns": [
+        "request_id",
+        "store_id",
+        "requested_by",
+        "utility_snapshot_id",
+        "request_key",
+        "payload_hash",
+        "algorithms",
+        "min_util_mode",
+        "min_util_value",
+        "min_util_spmf",
+        "input_snapshot_hash",
+        "frozen_input",
+        "utility_config_snapshot",
+        "status",
+        "comparison_status",
+        "created_at"
+      ]
+    }
+  ],
+  "relationshipsPreserved": true,
+  "manualRequestedByCardinality": "USER1:NREQUEST"
+}

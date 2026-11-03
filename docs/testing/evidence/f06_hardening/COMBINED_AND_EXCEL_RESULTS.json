@@ -1,0 +1,77 @@
+{
+  "date": "2026-10-26",
+  "composition": {
+    "baseExcel": "0f471aa",
+    "f06Base": "c06d43ec59269b8190f5920b5db526ee4e7f19d7",
+    "f06Head": "29560faf17f99a210ed1d29e04fa4dcdc98f1dca",
+    "patchSha256": "82b9e07d6440b44239e1c24bd3b4fc73556465bfb1186ee25aaed6f26e343e3a",
+    "gitBranchMergePerformed": false,
+    "summary": {
+      "tests": 510,
+      "passed": 505,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 5
+    }
+  },
+  "excelPerformance": {
+    "samples": [
+      {
+        "format": "xlsx",
+        "rows": 100,
+        "uploadBytes": 6239,
+        "elapsedMs": 8.020083,
+        "threadCpuMs": 8.055,
+        "sampledHeapGrowthBytes": 1471608
+      },
+      {
+        "format": "xlsx",
+        "rows": 1000,
+        "uploadBytes": 30962,
+        "elapsedMs": 19.251292,
+        "threadCpuMs": 19.105,
+        "sampledHeapGrowthBytes": 5554864
+      },
+      {
+        "format": "xlsx",
+        "rows": 10000,
+        "uploadBytes": 278105,
+        "elapsedMs": 114.206792,
+        "threadCpuMs": 113.196,
+        "sampledHeapGrowthBytes": 27849088
+      },
+      {
+        "format": "xls",
+        "rows": 100,
+        "uploadBytes": 16896,
+        "elapsedMs": 1.706125,
+        "threadCpuMs": 1.716,
+        "sampledHeapGrowthBytes": 585008
+      },
+      {
+        "format": "xls",
+        "rows": 1000,
+        "uploadBytes": 137216,
+        "elapsedMs": 7.402125,
+        "threadCpuMs": 7.44,
+        "sampledHeapGrowthBytes": 3841416
+      },
+      {
+        "format": "xls",
+        "rows": 10000,
+        "uploadBytes": 1337856,
+        "elapsedMs": 50.788667,
+        "threadCpuMs": 50.476,
+        "sampledHeapGrowthBytes": 30949056
+      }
+    ],
+    "java": "17.0.20.1",
+    "scope": "Synthetic parser-only, warmup100 per format, one caller; fixture generation outside timing; explicitGC requested before measurement, heap sampled5ms; no DB, HTTP/RBAC or productionSLA measurement"
+  },
+  "artifacts": {
+    "combined": "https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/blob/332a39b/docs/testing/evidence/f04_excel_import/COMBINED_VERIFICATION.json",
+    "excelPerformance": "https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/blob/332a39b/docs/testing/evidence/f04_excel_import/PARSER_PERFORMANCE.json"
+  },
+  "hostedVerification": "NOT_RUN",
+  "productionAcceptance": "NOT_CLAIMED"
+}

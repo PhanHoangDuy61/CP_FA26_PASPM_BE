@@ -1,0 +1,8 @@
+Final-source Maven verification, 2026-11-01 Asia/Ho_Chi_Minh
+Environment: macOS ARM, non-root user, Corretto Java 17.0.21; MySQL 8.4.13 in disposable Docker schema reached via temporary loopback-only proxy; actual MySQL client and disposable restore provisioner; separately configured Java 25 and approved hash-verified SPMF 2.67a.
+Command: mvn -q -Dpaspm.test.mysql=true -Dpaspm.test.spmf-jar=<approved-local-jar> -Dpaspm.test.spmf-java=<java25-executable> verify
+Exit code: 0. Surefire aggregate: 370 tests, 0 failures, 0 errors, 12 skipped, across 59 report files.
+Skipped in this full invocation: MiningMultiJvmMySqlTest 5, PilotCloneApiIntegrationTest 5, SpmfRuntimeTest 1, MiningHttpMySqlTest 1. They are opt-in, and must be reported separately from this full run.
+The migration/recovery tests used test-only MySQL schemas and a disposable-account provisioner. The original source database was not accessed. A direct V5 populated-matrix migration failure is intentionally characterized by tests and is not a claim that the unsupported direct upgrade succeeds.
+
+Final-source opt-in rerun on disposable MySQL / macOS Java 17: PilotCloneApiIntegrationTest 5/5; MiningHttpMySqlTest 1/1; actualJava17IsRejectedBeforeMiningAdmission 1/1; 0 failures/errors/skips. The restricted synthetic clone had no production data; trust_function_creators was enabled only on the disposable MySQL instance for fresh migration. The Linux multi-JVM group is recorded separately after it finishes.

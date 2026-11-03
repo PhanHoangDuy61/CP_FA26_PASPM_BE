@@ -1,0 +1,94 @@
+{
+  "date": "2026-10-25",
+  "backendJava": "17",
+  "childJava": "25.0.1",
+  "tests": 13,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "cases": [
+    {
+      "class": "vn.edu.fpt.paspm.mining.SpmfMiningEngineTest",
+      "name": "parserRejectsDuplicatesUnknownIdsAndWrongUtility",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.mining.SpmfMiningEngineTest",
+      "name": "actualZeroUtilityAndEmptyResultsAreValid",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.mining.SpmfMiningEngineTest",
+      "name": "actualAlgorithmsProduceKnownEightPatternsAndEqualUtilities",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.mining.SpmfMiningEngineTest",
+      "name": "interruptionCleansTemporaryFilesAndPreservesInterruptFlag",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.mining.SpmfMiningEngineTest",
+      "name": "missingDependencyAndTimeoutAreDistinguished",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.mining.SpmfRuntimeTest",
+      "name": "childExitAfterSuccessfulPreflightStillFailsWithoutSuccess",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.mining.SpmfRuntimeTest",
+      "name": "sameSizeSameTimestampJarChangeCannotBypassCachedPreflight",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.mining.SpmfRuntimeTest",
+      "name": "missingJarAndJavaHaveActionableDistinctCodes",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.mining.SpmfRuntimeTest",
+      "name": "actualJava17IsRejectedBeforeMiningAdmission",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.mining.SpmfRuntimeTest",
+      "name": "boundedPreflightTerminatesHungExecutableAndRemovesFiles",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.mining.SpmfRuntimeTest",
+      "name": "entrypointFailureAndChangedJavaAreDetectedWithCleanup",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.mining.SpmfRuntimeTest",
+      "name": "verifiedJava25AndJarPassAndPreflightFilesAreRemoved",
+      "result": "PASS"
+    },
+    {
+      "class": "vn.edu.fpt.paspm.mining.SpmfRuntimeTest",
+      "name": "unreadableJarAndUnrunnableExecutableAreRejected",
+      "result": "PASS"
+    }
+  ],
+  "mavenCleanVerify": "PASS",
+  "initialAttempt": {
+    "tests": 13,
+    "skipped": 1,
+    "reason": "Missing paspm.test.java17 opt-in; corrected final command reran both suites with all cases enabled"
+  },
+  "algorithms": {
+    "HUI-Miner": {
+      "patterns": 8
+    },
+    "EFIM": {
+      "patterns": 8
+    },
+    "sameExpectedUtilities": true,
+    "fixtureTransactions": 5,
+    "fixtureTotalUtility": 96,
+    "minimumUtility": 30
+  }
+}

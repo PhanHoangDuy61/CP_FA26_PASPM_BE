@@ -42,11 +42,11 @@ public class AccountService {
     }
 
     @Transactional
-    public void requestRegistration(String email, String ip) {
+    public boolean requestRegistration(String email, String ip) {
         limits.hit("register:" + ip, 10, 3600);
         var existing = userRepository.findByEmail(email);
         if (existing.isPresent()) {
-            return;
+            return false;
         }
 
         User user = userRepository.createPendingUser(
@@ -58,6 +58,7 @@ public class AccountService {
                 "SELF_REGISTER"
         );
         otp.issue(user);
+        return true;
     }
 
     @Transactional

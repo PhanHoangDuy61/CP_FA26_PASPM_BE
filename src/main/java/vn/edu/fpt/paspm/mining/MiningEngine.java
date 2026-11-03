@@ -1,28 +1,15 @@
 package vn.edu.fpt.paspm.mining;
 
-import java.math.BigDecimal;
-import java.nio.file.Path;
-import java.util.List;
+import java.util.Map;
 
-/**
- * Future F05 adapter boundary; no mining implementation is claimed in F01.
- */
+/** Isolated algorithm execution over one immutable, normalized dataset. */
 public interface MiningEngine {
-    enum Algorithm {
-        HUI_MINER,
-        EFIM
+    enum Algorithm { HUI_MINER, EFIM }
+    record Output(Map<String,Integer> patterns,long runtimeMillis,double memoryMiB,String environment) {}
+    record ExecutionIdentity(int storeId,long requestId,long runId,String owner,long fence) {}
+    Output execute(Algorithm algorithm,MiningInputBuilder.Dataset input,int minUtility) throws Exception;
+    default Output execute(Algorithm algorithm,MiningInputBuilder.Dataset input,int minUtility,ExecutionIdentity identity) throws Exception {
+        return execute(algorithm,input,minUtility);
     }
-
-    record Input(Path immutableSnapshot, String sha256, BigDecimal minUtility, String implementationVersion) {
-    }
-
-    record Pattern(List<Integer> productIds, BigDecimal utility) {
-    }
-
-    record Output(List<Pattern> patterns, Path rawOutput, long runtimeMillis, Long peakMemoryBytes) {
-    }
-
-    Algorithm algorithm();
-
-    Output execute(Input input) throws Exception;
+    void requireAvailable();
 }

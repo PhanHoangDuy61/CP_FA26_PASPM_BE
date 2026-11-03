@@ -1,0 +1,61 @@
+{
+  "generatedAt": "2026-10-23T00:34:04.776583+07:00",
+  "testedCommit": "9c19f2ab8e40d21a68378fde72bb2311ef349884",
+  "sourceTreeSha256": "4d326c0b161ff4916e720a83be27fe0f5cd9d40c2ddb5c6afb61ab6d9d63d736",
+  "originalMigrationsUnchanged": true,
+  "V1ToV10Sha256": {
+    "V9__f05_mining_engine.sql": "62d3afe4c48b2c9d96c41d7ff3297985dcbd39d15fbebc18242d837e292edf48",
+    "V4__f03_configuration_and_scores.sql": "ba7dd60ddd4843faf1dd81bba8a2100522fb78dfecc281d28a00567ddb23892e",
+    "V10__f06_recommendations.sql": "eb2220aef4a867d3fce16d267e0ef0403cedb460685c45259d9af71d54215d8d",
+    "V7__f04_transaction_import_pipeline.sql": "817660c8bbe125c5f39f1cf1b9ae14af1b23ae11c8f3709fc16ddc9822f592ef",
+    "V3__f02_catalog_inventory_batch.sql": "c677b1c6949c56895dae773d5d072e505a51b463437617bf374e4cb91a5c0a57",
+    "V5__f03_immutable_utility_snapshots.sql": "974a40a8ca9a881499a3282b346b7e6c6c720ddfc3a426200fd149d63bdcf2b9",
+    "V6__f01_profile_avatar.sql": "a2b35f5f7e7ecabc5d3a0e32bf0032ae1599112ec5dc01396c9f4c873e88826f",
+    "V1__shared_store_and_f01.sql": "b9ed4e36f187e825b716cf91398f9a200d468e4e1ca63c6919eee84b7ef366f5",
+    "V2__allow_name_after_email_verification.sql": "51888be9c77dcdc921cd5a028dc2c034648a241e8fc97d7a6a8b661d0fe06ef7",
+    "V8__product_binary_expiry_priority.sql": "3baf47c4604e77e8c632792fac683227db0b774fe52fd1709ee18d1d466b8b43"
+  },
+  "addedMigration": "db.migration.V11__historical_utility_matrix_storage",
+  "flywayVersion": "11.7.2",
+  "mysqlVersion": "8.4.11",
+  "backendJava": "17.0.20.1",
+  "spmfVersion": "2.67a",
+  "spmfJava": "25.0.1",
+  "dataProvenance": "ALL_POPULATED_FIXTURES_SYNTHETIC",
+  "noSourceWrites": true,
+  "noMySqlRepair": true,
+  "noMergeOrDeployment": true,
+  "testInstanceCleanup": {
+    "status": "COMPLETE",
+    "shutdownExit": 0,
+    "dedicatedPortClosed": true,
+    "temporaryPlaintextCredentialFilesRemoved": [
+      "config.json",
+      "init.sql",
+      "admin.cnf",
+      "test.cnf",
+      "mysql-migrator.properties",
+      "mysql-test.properties",
+      "clone.properties"
+    ],
+    "forensics": "Offline private test datadir retained; no raw dumps or credentials in Git"
+  },
+  "prStatus": {
+    "status": "BLOCKED_API_403_MANUAL_PR_PREPARED",
+    "base": "dev",
+    "head": "Khoi/Fear/fix-legacy-utility-matrix-migration",
+    "githubError": "403 Resource not accessible by integration",
+    "manualCompareUrl": "https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/compare/dev...Khoi%2FFear%2Ffix-legacy-utility-matrix-migration?expand=1",
+    "descriptionFile": "docs/architecture/HISTORICAL_MATRIX_RECOVERY_PR_DESCRIPTION.md",
+    "automaticMerge": false
+  },
+  "independentAgentReview": "APPROVED_FOR_REVIEW_NO_OUTSTANDING_IMPORTANT_FINDINGS",
+  "pomSha256": "8fa15d1e3088a3eef106aeadfc1545a6cfe482059d8b656b29f4c3aa57182977",
+  "builtJarSha256": "dcd7d234909f47c325d580ed361b4a4af57ca2265eb3d56aea80ae3f422e8ebb",
+  "branchPush": {
+    "status": "SUCCESS",
+    "remote": "origin",
+    "branch": "Khoi/Fear/fix-legacy-utility-matrix-migration"
+  },
+  "deliveryUpdatedAt": "2026-10-23T00:59:28.135953+07:00"
+}

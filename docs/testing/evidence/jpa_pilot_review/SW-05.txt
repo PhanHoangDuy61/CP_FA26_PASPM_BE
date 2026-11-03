@@ -1,0 +1,38 @@
+SW-05 | PATCH /api/products/{id}/status | role=STORE_ADMIN_A | data=SIMULATED | 2026-10-22T05:07:52.635652+07:00
+Actual Swagger UI accessibility observation (credential-free response excerpt):
+heading Server response, Value: 4
++					1068 text Server response
++				1069 table
++					1070 row
++						1071 cell
++							1072 text Code
++						1073 cell
++							1074 text Details
++					1075 row
++						1076 cell
++							1077 text 200
++						1078 cell
++							1079 heading Response body, Value: 5
++								1080 text Response body
++							1081 container
++								1082 button
++								1083 button Download
++								1084 container
++									1085 text {
+ "id" :  31 ,
+ "sku" :  "SWAGGER-MILK-4e1ed437-b0d7-405f-b4d2-f92416170345" ,
+ "name" :  "SIMULATED fresh milk - Swagger edited" ,
+ "unit" :  "bottle" ,
+ "requiresExpiry" :  true ,
+ "category" : {
+ "id" :  37 ,
+ "name" :  "SIMULATED dairy" ,
+ "status" :  "ACTIVE"   },
+ "sellingPrice" :  32000 ,
+ "costPrice" :  18000 ,
+ "status" :  "INACTIVE" ,
+ "stockQuantity" :  8 ,
+ "expiryPushDays" :  7 }
++							1086 heading Response headers, Value: 5
++								1087 text Response headers
++							1088 text cache-control :  no-cache,no-store,max-age=0,must-revalidate connection :  keep-alive content-type :  application/json date :  Wed,21 Oct 2026 22:07:52 GMT expires :  0 keep-alive :  timeout=60 pragma :  no-cache transfer-encoding :  chunked x-content-type-options :  nosniff x-frame-options :  DENY x-xss-protection :  0

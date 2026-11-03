@@ -1,0 +1,15 @@
+{
+  "relativeWorkspacePath": "spmf_run/spmf.jar",
+  "bytes": 15907956,
+  "sha256": "4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a",
+  "mainClassMajor": 69,
+  "sourceJavaFilesInJar": 0,
+  "licenseNamedEntries": [
+    "ca/pfv/spmf/LICENSE_AGREEMENT_GPL3.txt",
+    "ca/pfv/spmf/documentation/LICENSE_AGREEMENT_GPL3.txt",
+    "ca/pfv/spmf/test/LICENSE_AGREEMENT_GPL3.txt",
+    "LICENSE_AGREEMENT_GPL3.txt"
+  ],
+  "versionBanner": "-- SPMF version 2.67a --",
+  "versionExit": 0
+}

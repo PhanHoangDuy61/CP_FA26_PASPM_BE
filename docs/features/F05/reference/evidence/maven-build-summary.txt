@@ -1,0 +1,5 @@
+Command: mvn -Dpaspm.avatar.directory=/tmp/paspm-test-avatars -Dpaspm.f05.export-dir=/tmp/paspm-f05-examples verify
+JDK25.0.1, compiler release17; Maven3.9.12
+Tests run113, Failures0, Errors0, Skipped0
+BUILD SUCCESS
+Completed2026-10-19T23:16:48+07:00; total39.091s

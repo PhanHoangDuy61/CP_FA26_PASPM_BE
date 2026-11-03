@@ -1,0 +1,54 @@
+flowchart TB
+  subgraph lane0["SYSTEM ADMIN / MINING OPERATOR"]
+    direction TB
+    n01(( ))
+    n02("Choose Store + READY utility snapshot<br/>Policy supplies algorithm + minUtil; UUID requestKey")
+    n03{"Submission mode?"}
+    n04("Return validation / 503 error<br/>Do not create an invalid request")
+    n05((( )))
+    n06("Inspect FAILED / TIMED_OUT runs<br/>COMPLETED sibling remains accessible")
+    n07((( )))
+    n08("Read run(s), patterns, benchmark<br/>Comparison MATCH / FAILED / BLOCKED")
+    n09((( )))
+  end
+  subgraph lane1["PASPM / ASYNC WORKER"]
+    direction TB
+    n10{" "}
+    n11("Validate Store ownership / minUtil<br/>Preflight pinned SPMF & Java 25+")
+    n12{"Ready for<br/>request?"}
+    n13("202 (manual): persist request + run(s)<br/>Worker claims queued job asynchronously")
+    n14("Execute child JVM; validate output<br/>Atomically persist successful patterns")
+    n15{"All selected runs<br/>COMPLETED?"}
+  end
+  subgraph lane2["PASPM SCHEDULER (DISPATCHER)"]
+    direction TB
+    n16("Reserve the latest due fire time<br/>older missed fires recorded SKIPPED")
+    n17("Claim lease; create fresh utility snapshot<br/>and Mining Request (one transaction)")
+    n18{"Prepared?"}
+    n19("FAILED + failureMessage<br/>(retryable: 3 attempts, 15 s / 30 s)")
+    n20((( )))
+  end
+  n01 --> n02
+  n02 --> n03
+  n03 -->|"[submit now]"| n10
+  n10 --> n11
+  n11 --> n12
+  n12 -->|"[invalid]"| n04
+  n04 --> n05
+  n12 -->|"[valid]"| n13
+  n13 --> n14
+  n15 -->|"[any failed]"| n06
+  n06 --> n07
+  n14 --> n15
+  n15 -->|"[all complete]"| n08
+  n08 --> n09
+  n03 -->|"[schedule]"| n16
+  n16 --> n17
+  n17 --> n18
+  n18 -->|"[failed]"| n19
+  n19 --> n20
+  n18 -->|"[prepared]"| n13
+  classDef startNode fill:#000,stroke:#000;
+  classDef endNode fill:#fff,stroke:#000,stroke-width:3px;
+  class n01 startNode;
+  class n05,n07,n09,n20 endNode;

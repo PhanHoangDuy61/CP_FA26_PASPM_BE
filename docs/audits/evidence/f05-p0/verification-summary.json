@@ -1,0 +1,825 @@
+{
+  "executionDate": "2026-10-20",
+  "timezone": "Asia/Ho_Chi_Minh",
+  "backendJava": "Corretto 17.0.20.1",
+  "spmfJava": "Homebrew 25.0.1",
+  "spmfVersion": "2.67a",
+  "spmfJarSha256": "4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a",
+  "mysql": "8.4.11",
+  "flyway": "11.7.2",
+  "totals": {
+    "tests": 147,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "v7Checksum": {
+    "old": -1762009830,
+    "corrected": -1490036030
+  },
+  "build": "SUCCESS",
+  "durationSeconds": 49.453,
+  "classes": [
+    {
+      "class": "vn.edu.fpt.paspm.AuthIntegrationTest",
+      "tests": 22,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "passwordChangeRejectsWrongCurrentPasswordAndSamePassword",
+          "status": "PASS"
+        },
+        {
+          "name": "passwordResetIsGenericSingleUseAndRevokesExistingTokens",
+          "status": "PASS"
+        },
+        {
+          "name": "adminInviteActivatesWithInitialPassword",
+          "status": "PASS"
+        },
+        {
+          "name": "invalidOtpAttemptsPersistAndLockChallenge",
+          "status": "PASS"
+        },
+        {
+          "name": "passwordResetCooldownIsGenericAndAllowsRequestAfterExpiry",
+          "status": "PASS"
+        },
+        {
+          "name": "registrationCannotChooseRoleAndOtpIsSingleUse",
+          "status": "PASS"
+        },
+        {
+          "name": "disablingUserRevokesToken",
+          "status": "PASS"
+        },
+        {
+          "name": "swaggerContractAvailableAndPasswordsHashed",
+          "status": "PASS"
+        },
+        {
+          "name": "loginRejectsUnavailableAccountsAndInvalidFields",
+          "status": "PASS"
+        },
+        {
+          "name": "loginMeAndAnonymousAccess",
+          "status": "PASS"
+        },
+        {
+          "name": "googleFailsClosedWithoutClientConfiguration",
+          "status": "PASS"
+        },
+        {
+          "name": "passwordChangeRejectsInactiveAndPasswordlessAccounts",
+          "status": "PASS"
+        },
+        {
+          "name": "passwordResetOtpExpiryAttemptsAndSendLimitsApply",
+          "status": "PASS"
+        },
+        {
+          "name": "roleChangeRevokesExistingToken",
+          "status": "PASS"
+        },
+        {
+          "name": "passwordChangeRequiresAuthenticationAndRevokesCurrentToken",
+          "status": "PASS"
+        },
+        {
+          "name": "smtpFailureRollsBackRegistration",
+          "status": "PASS"
+        },
+        {
+          "name": "currentUserUsesTokenIdentityAndRejectsMissingOrExpiredToken",
+          "status": "PASS"
+        },
+        {
+          "name": "resendRevokesOldChallengeAndCooldownApplies",
+          "status": "PASS"
+        },
+        {
+          "name": "expiredOtpAndManualActivationAreDenied",
+          "status": "PASS"
+        },
+        {
+          "name": "profileAvatarIsSelfScopedAndValidatesImageContents",
+          "status": "PASS"
+        },
+        {
+          "name": "storeBoundaryIsEnforced",
+          "status": "PASS"
+        },
+        {
+          "name": "passwordResetMailFailureDoesNotDiscloseAccountAndRollsBackChallenge",
+          "status": "PASS"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.auth.GoogleRegistrationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "rejectsGoogleIdentityWithoutVerifiedEmail",
+          "status": "PASS"
+        },
+        {
+          "name": "registersGoogleIdentityAsPendingCustomerAndSendsOtp",
+          "status": "PASS"
+        },
+        {
+          "name": "doesNotAutomaticallyLinkGoogleIdentityToExistingEmail",
+          "status": "PASS"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.CatalogDevSeederTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "developmentSeedCreatesTwoStoresAndIsIdempotent",
+          "status": "PASS"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.catalog.CatalogIntegrationTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "catalogRequiresAuthenticationAndStoreAdminRole",
+          "status": "PASS"
+        },
+        {
+          "name": "openApiListsF02Endpoints",
+          "status": "PASS"
+        },
+        {
+          "name": "categoryAndProductAreScopedToAuthenticatedStore",
+          "status": "PASS"
+        },
+        {
+          "name": "rejectsDuplicateSkuNegativePriceAndInvalidBatchQuantities",
+          "status": "PASS"
+        },
+        {
+          "name": "databaseConstraintsRejectCrossStoreCategoriesAndInvalidInventory",
+          "status": "PASS"
+        },
+        {
+          "name": "inventorySummarySeparatesExpiredBlockedAndSellableBatches",
+          "status": "PASS"
+        },
+        {
+          "name": "productWriteHidesCategoryOwnedByAnotherStore",
+          "status": "PASS"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.deployment.FlywayRecoveryTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "existingMySqlV7UpgradesWithoutReplayingOrDeletingData",
+          "status": "PASS"
+        },
+        {
+          "name": "oldAppliedChecksumRequiresExplicitRepairAndPreservesData",
+          "status": "PASS"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.mining.MiningHttpMySqlTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "java17BackendMinesRealSnapshotOverHttpWithJava25Child",
+          "status": "PASS"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.mining.MiningInputTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "rejectsEmptyNegativeDuplicatePrecisionOverflowAndBadTotals",
+          "status": "PASS"
+        },
+        {
+          "name": "validatesThresholdsAndZeroPolicy",
+          "status": "PASS"
+        },
+        {
+          "name": "convertsExactlyAndMapsSortedProductsDeterministically",
+          "status": "PASS"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.mining.MiningIntegrationTest",
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "unavailableRuntimeRejectsNewWorkAndPreservesReadableHistory",
+          "status": "PASS"
+        },
+        {
+          "name": "enforcesRolesOwnershipPaginationAndStrictInput",
+          "status": "PASS"
+        },
+        {
+          "name": "concurrentDuplicateSubmissionsCreateOnlyOneRequestAndOneRunPerAlgorithm",
+          "status": "PASS"
+        },
+        {
+          "name": "databasePreventsCrossStorePatternItems",
+          "status": "PASS"
+        },
+        {
+          "name": "openApiIncludesEveryMiningRoute",
+          "status": "PASS"
+        },
+        {
+          "name": "invalidSnapshotsFailBeforeDurableRequestIsCreated",
+          "status": "PASS"
+        },
+        {
+          "name": "partialPatternWriteRollsBackWithRunStillRunning",
+          "status": "PASS"
+        },
+        {
+          "name": "durableFailureAndTimeoutStatusesContainNoPartialPatterns",
+          "status": "PASS"
+        },
+        {
+          "name": "exactResultMismatchIsNotReportedAsSuccessfulBenchmark",
+          "status": "PASS"
+        },
+        {
+          "name": "boundedQueueRejectsExcessWorkDurably",
+          "status": "PASS"
+        },
+        {
+          "name": "realSnapshotToBothAlgorithmsPersistsEightPatternsAndBenchmark",
+          "status": "PASS"
+        },
+        {
+          "name": "restartRecoveryAndCompareAndSetPreventDuplicateExecution",
+          "status": "PASS"
+        },
+        {
+          "name": "workerReadsFrozenRequestCopyInsteadOfReloadingMutableSource",
+          "status": "PASS"
+        },
+        {
+          "name": "oldScoringMetadataCanBeMinedWithoutRecalculation",
+          "status": "PASS"
+        },
+        {
+          "name": "validEmptyResultIsCompletedWithZeroPatterns",
+          "status": "PASS"
+        },
+        {
+          "name": "historicalProvenanceUsesPersistedVersionsAndMeasurementMethods",
+          "status": "PASS"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.mining.MiningMySqlIntegrationTest",
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "unavailableRuntimeRejectsNewWorkAndPreservesReadableHistory",
+          "status": "PASS"
+        },
+        {
+          "name": "enforcesRolesOwnershipPaginationAndStrictInput",
+          "status": "PASS"
+        },
+        {
+          "name": "concurrentDuplicateSubmissionsCreateOnlyOneRequestAndOneRunPerAlgorithm",
+          "status": "PASS"
+        },
+        {
+          "name": "databasePreventsCrossStorePatternItems",
+          "status": "PASS"
+        },
+        {
+          "name": "openApiIncludesEveryMiningRoute",
+          "status": "PASS"
+        },
+        {
+          "name": "invalidSnapshotsFailBeforeDurableRequestIsCreated",
+          "status": "PASS"
+        },
+        {
+          "name": "partialPatternWriteRollsBackWithRunStillRunning",
+          "status": "PASS"
+        },
+        {
+          "name": "durableFailureAndTimeoutStatusesContainNoPartialPatterns",
+          "status": "PASS"
+        },
+        {
+          "name": "exactResultMismatchIsNotReportedAsSuccessfulBenchmark",
+          "status": "PASS"
+        },
+        {
+          "name": "boundedQueueRejectsExcessWorkDurably",
+          "status": "PASS"
+        },
+        {
+          "name": "realSnapshotToBothAlgorithmsPersistsEightPatternsAndBenchmark",
+          "status": "PASS"
+        },
+        {
+          "name": "restartRecoveryAndCompareAndSetPreventDuplicateExecution",
+          "status": "PASS"
+        },
+        {
+          "name": "workerReadsFrozenRequestCopyInsteadOfReloadingMutableSource",
+          "status": "PASS"
+        },
+        {
+          "name": "oldScoringMetadataCanBeMinedWithoutRecalculation",
+          "status": "PASS"
+        },
+        {
+          "name": "validEmptyResultIsCompletedWithZeroPatterns",
+          "status": "PASS"
+        },
+        {
+          "name": "historicalProvenanceUsesPersistedVersionsAndMeasurementMethods",
+          "status": "PASS"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.mining.SpmfMiningEngineTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "parserRejectsDuplicatesUnknownIdsAndWrongUtility",
+          "status": "PASS"
+        },
+        {
+          "name": "actualZeroUtilityAndEmptyResultsAreValid",
+          "status": "PASS"
+        },
+        {
+          "name": "actualAlgorithmsProduceKnownEightPatternsAndEqualUtilities",
+          "status": "PASS"
+        },
+        {
+          "name": "interruptionCleansTemporaryFilesAndPreservesInterruptFlag",
+          "status": "PASS"
+        },
+        {
+          "name": "missingDependencyAndTimeoutAreDistinguished",
+          "status": "PASS"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.mining.SpmfRuntimeTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "childExitAfterSuccessfulPreflightStillFailsWithoutSuccess",
+          "status": "PASS"
+        },
+        {
+          "name": "sameSizeSameTimestampJarChangeCannotBypassCachedPreflight",
+          "status": "PASS"
+        },
+        {
+          "name": "missingJarAndJavaHaveActionableDistinctCodes",
+          "status": "PASS"
+        },
+        {
+          "name": "actualJava17IsRejectedBeforeMiningAdmission",
+          "status": "PASS"
+        },
+        {
+          "name": "boundedPreflightTerminatesHungExecutableAndRemovesFiles",
+          "status": "PASS"
+        },
+        {
+          "name": "entrypointFailureAndChangedJavaAreDetectedWithCleanup",
+          "status": "PASS"
+        },
+        {
+          "name": "verifiedJava25AndJarPassAndPreflightFilesAreRemoved",
+          "status": "PASS"
+        },
+        {
+          "name": "unreadableJarAndUnrunnableExecutableAreRejected",
+          "status": "PASS"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.transaction.DatabaseTransactionSourceTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "dateRangeIsInclusiveInAsiaHoChiMinhAndEmptyWhenNoEligibleRowsExist",
+          "status": "PASS"
+        },
+        {
+          "name": "loadsOnlyEligibleCompletedTransactionsWithinStoreLocalDateBoundaries",
+          "status": "PASS"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.transaction.TransactionImportIntegrationTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "stagesRawRowsPersistsCompleteOrdersAndNeverMutatesInventory",
+          "status": "PASS"
+        },
+        {
+          "name": "importAndTransactionReadsAreRoleCheckedAndStoreScoped",
+          "status": "PASS"
+        },
+        {
+          "name": "rejectsEntireOrderWhenAnyLineFailsButPersistsOtherOrdersInTheBatch",
+          "status": "PASS"
+        },
+        {
+          "name": "duplicateFileIsIdempotentAndConflictingOrderDoesNotOverwriteHistory",
+          "status": "PASS"
+        },
+        {
+          "name": "openApiAdvertisesCsvUploadAsMultipartBinary",
+          "status": "PASS"
+        },
+        {
+          "name": "acceptsCsvContentTypeWithCharsetParameter",
+          "status": "PASS"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.transaction.TransactionImportMySqlIntegrationTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "stagesRawRowsPersistsCompleteOrdersAndNeverMutatesInventory",
+          "status": "PASS"
+        },
+        {
+          "name": "importAndTransactionReadsAreRoleCheckedAndStoreScoped",
+          "status": "PASS"
+        },
+        {
+          "name": "rejectsEntireOrderWhenAnyLineFailsButPersistsOtherOrdersInTheBatch",
+          "status": "PASS"
+        },
+        {
+          "name": "duplicateFileIsIdempotentAndConflictingOrderDoesNotOverwriteHistory",
+          "status": "PASS"
+        },
+        {
+          "name": "openApiAdvertisesCsvUploadAsMultipartBinary",
+          "status": "PASS"
+        },
+        {
+          "name": "acceptsCsvContentTypeWithCharsetParameter",
+          "status": "PASS"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.transaction.TransactionImportSchemaTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "flywayCreatesStoreScopedImportAndTransactionTables",
+          "status": "PASS"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.transaction.importing.TransactionCsvParserTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "skipsBlankLinesWithoutCountingThemAgainstDataRowLimit",
+          "status": "PASS"
+        },
+        {
+          "name": "rejectsMalformedQuotedCsv",
+          "status": "PASS"
+        },
+        {
+          "name": "rejectsFilesBeyondConfiguredDataRowLimit",
+          "status": "PASS"
+        },
+        {
+          "name": "parsesBomQuotedCommasEscapedQuotesAndEmbeddedNewline",
+          "status": "PASS"
+        },
+        {
+          "name": "rejectsHeaderThatDoesNotMatchTheContract",
+          "status": "PASS"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.transaction.importing.TransactionOrderValidatorTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "invalidQuantityRejectsTheCompleteOrderAndIdentifiesTheRow",
+          "status": "PASS"
+        },
+        {
+          "name": "storeScopedSkuLookupRejectsUnknownAndForeignStoreProducts",
+          "status": "PASS"
+        },
+        {
+          "name": "aggregatesMatchingRepeatedProductLinesAndKeepsSourceRows",
+          "status": "PASS"
+        },
+        {
+          "name": "nonCompletedAndBelowCostOrdersRemainValidButAreNotF03Eligible",
+          "status": "PASS"
+        },
+        {
+          "name": "rejectsWholeOrderWhenRepeatedSkuHasDifferentPrice",
+          "status": "PASS"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.utility.ExpiryBinaryRulesTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "officialSevenDayThresholdProduces17220ForTheWholeProduct",
+          "status": "PASS"
+        },
+        {
+          "name": "threeDayAndDisabledThresholdProduce16020",
+          "status": "PASS"
+        },
+        {
+          "name": "nullThresholdIsDisabledWithoutInventingADefault",
+          "status": "PASS"
+        },
+        {
+          "name": "fefoEvidenceIncludesEveryPushBatchAndIgnoresQuantityRatios",
+          "status": "PASS"
+        },
+        {
+          "name": "negativeThresholdIsInvalid",
+          "status": "PASS"
+        },
+        {
+          "name": "noSellableMissingAndNonExpiringStatesRemainExplicitEvenWithZeroThreshold",
+          "status": "PASS"
+        },
+        {
+          "name": "thresholdBoundaryIsInclusiveAndOneDayAfterIsOutside",
+          "status": "PASS"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.utility.UtilityCalculationTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "expiryUsesEarliestEligibleBatchAndBinaryProductThreshold",
+          "status": "PASS"
+        },
+        {
+          "name": "excludesBlockedExpiredTodayAndEmptyBatches",
+          "status": "PASS"
+        },
+        {
+          "name": "disabledAndSingleCriteriaHaveCorrectContributions",
+          "status": "PASS"
+        },
+        {
+          "name": "supportsFrozenHistoricalDecimalScoresWithoutChangingMath",
+          "status": "PASS"
+        },
+        {
+          "name": "reportsMissingExpiryAndNonExpiringProductsWithoutInventingDates",
+          "status": "PASS"
+        },
+        {
+          "name": "rejectsUnsafeNegativeOrMissingBusinessValues",
+          "status": "PASS"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.utility.UtilityFixtureTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "explicitFixtureProfilesProvideStoreIsolatedIdempotentData",
+          "status": "PASS"
+        },
+        {
+          "name": "diagnosticDateRangesProvideMissingExpiryNegativeUtilityAndDuplicateItems",
+          "status": "PASS"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.utility.UtilityIntegrationTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "matrixHashIgnoresPreparedSourceOrdering",
+          "status": "PASS"
+        },
+        {
+          "name": "separatesPolicyWindowAndWeightPermissionsAndPreservesOwnedSettings",
+          "status": "PASS"
+        },
+        {
+          "name": "previewRejectsMissingEnabledScoresAndSkipsIneligibleSourceRows",
+          "status": "PASS"
+        },
+        {
+          "name": "weightReportExamplesFlowThroughPreviewForProductSevenAndThreeDayThresholds",
+          "status": "PASS"
+        },
+        {
+          "name": "missingExpiryIsPreviewWarningAndPreventsReadySnapshotOnlyWhenEnabled",
+          "status": "PASS"
+        },
+        {
+          "name": "expirySnapshotsKeepOriginalDateProductThresholdAndBatchScore",
+          "status": "PASS"
+        },
+        {
+          "name": "persistenceFailureRollsBackSnapshotHeader",
+          "status": "PASS"
+        },
+        {
+          "name": "scorePatchIsPartialValidatedAndStoreScoped",
+          "status": "PASS"
+        },
+        {
+          "name": "rejectsDuplicateNegativeAndForeignSourceRowsAndInvalidRanges",
+          "status": "PASS"
+        },
+        {
+          "name": "snapshotFreezesPolicyWindowScoresAndHistoricalUtilityAndRejectsStaleLambda",
+          "status": "PASS"
+        },
+        {
+          "name": "rejectsInvalidBoundsWindowsAndCoefficientsWithoutChangingValues",
+          "status": "PASS"
+        },
+        {
+          "name": "openApiAndDatabaseConstraintsCoverF03",
+          "status": "PASS"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.utility.WeightRulesV12IntegrationTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "independentPushQueryUsesFefoAndIgnoresMiningOrHistoricalTransactions",
+          "status": "PASS"
+        },
+        {
+          "name": "officialExamplesUseProductThresholdAndHistoricalF04ValuesWithoutStoreFallback",
+          "status": "PASS"
+        },
+        {
+          "name": "missingMetadataIsReportedAndCannotBecomeAnEnabledReadySnapshot",
+          "status": "PASS"
+        },
+        {
+          "name": "snapshotFreezesEvidenceAndWarningsAfterProductAndInventoryChanges",
+          "status": "PASS"
+        },
+        {
+          "name": "storeAdminCanConfigureThresholdAndInventoryIsUnchanged",
+          "status": "PASS"
+        },
+        {
+          "name": "oldLinearSnapshotsStayReadableAndTheirStoredValuesNeverChange",
+          "status": "PASS"
+        },
+        {
+          "name": "productThresholdEnforcesRolesAndStoreScope",
+          "status": "PASS"
+        },
+        {
+          "name": "nullAndOmittedThresholdHaveEffectiveZero",
+          "status": "PASS"
+        },
+        {
+          "name": "inactiveHistoricalProductWarningIsFrozenEvenWhenExpiryIsNotApplicable",
+          "status": "PASS"
+        },
+        {
+          "name": "actualOpenApiShowsThresholdAndIndependentPushContract",
+          "status": "PASS"
+        }
+      ]
+    },
+    {
+      "class": "vn.edu.fpt.paspm.utility.WeightRulesV12MigrationTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        {
+          "name": "upgradesPopulatedV7WithoutRewritingHistoricalSnapshotsOrBackfillingStoreThreshold",
+          "status": "PASS"
+        }
+      ]
+    }
+  ],
+  "scopeNotes": [
+    "Real Java17 HTTP/MySQL/SPMF Java25 test executed",
+    "Historical checksum repair tested on isolated H2 only",
+    "No deployed database repair",
+    "Windows/Linux and pristine clean-machine setup not executed"
+  ]
+}
