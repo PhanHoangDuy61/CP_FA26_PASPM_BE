@@ -1,0 +1,45 @@
+flowchart TB
+  subgraph lane0["STORE ADMIN / FILE IMPORT"]
+    direction TB
+    n01(( ))
+    n02{"File format?"}
+    n03("Upload CSV (UTF-8)<br/>Exact seven ordered columns")
+    n04("Excel .xlsx / .xls<br/>Text ID/SKU; ISO-8601 text time")
+    n05("Reject malformed file (400 / 413)<br/>Correct and re-upload")
+    n06((( )))
+    n07("View accepted / rejected / duplicate<br/>/ conflict counts and row errors")
+    n08((( )))
+  end
+  subgraph lane1["PASPM / IMPORT PIPELINE"]
+    direction TB
+    n09{" "}
+    n10("Check workbook / CSV structure<br/>size, row cap, headers & types")
+    n11{"Valid file<br/>structure?"}
+    n12("Stage original raw evidence<br/>Validate + group by order within Store")
+    n13("Handle each order independently<br/>Accept / reject / duplicate / conflict")
+    n14{"Fatal staging / DB<br/>error?"}
+    n15("Mark batch FAILED; return error<br/>Roll back DB unit; keep prior commits")
+    n16((( )))
+    n17("Commit batch summary + row errors<br/>Keep valid history; never alter inventory")
+  end
+  n01 --> n02
+  n02 -->|"[CSV]"| n03
+  n02 -->|"[Excel]"| n04
+  n03 --> n09
+  n04 --> n09
+  n09 --> n10
+  n10 --> n11
+  n11 -->|"[invalid file]"| n05
+  n05 --> n06
+  n11 -->|"[valid file]"| n12
+  n12 --> n13
+  n13 --> n14
+  n17 --> n07
+  n07 --> n08
+  n14 -->|"[no]"| n17
+  n14 -->|"[fatal]"| n15
+  n15 --> n16
+  classDef startNode fill:#000,stroke:#000;
+  classDef endNode fill:#fff,stroke:#000,stroke-width:3px;
+  class n01 startNode;
+  class n06,n08,n16 endNode;

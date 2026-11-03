@@ -1,0 +1,62 @@
+flowchart TB
+  subgraph lane0["MERCHANDISER / RETAIL PLANNER"]
+    direction TB
+    n01("4xx invalid source / cap exceeded<br/>No partial candidate persistence")
+    n02((( )))
+    n03("Success with 0 candidates<br/>Show skipped / empty reasons")
+    n04((( )))
+    n05("Review candidate<br/>Choose approve / reject / regenerate")
+    n06{"Review action?"}
+    n07("Submit approval with reason<br/>+ expectedVersion")
+    n08("Submit rejection with reason<br/>+ expectedVersion")
+    n09{"Valid reason, version<br/>& PENDING_REVIEW state?"}
+  end
+  subgraph lane1["PASPM / SYSTEM"]
+    direction TB
+    n10(( ))
+    n11("Load COMPLETED run for this Store<br/>Validate frozen evidence / hashes")
+    n12{" "}
+    n13("Generate candidates<br/>Cap 10,000; rollback on overflow")
+    n14{"Generation<br/>succeeded?"}
+    n15{"Valid candidates<br/>returned?"}
+    n16("View candidates, Utility evidence<br/>and current eligibility")
+    n17("Regenerate from same frozen run<br/>with allowed types / filters")
+    n18{"PENDING_REVIEW,<br/>version, reason<br/>& eligibility OK?"}
+    n19{" "}
+    n20("400 invalid / 409 stale review<br/>No state or audit change")
+    n21((( )))
+    n22("Atomic APPROVED + audit history<br/>No campaign / stock mutation")
+    n23((( )))
+    n24("Atomic REJECTED + audit history<br/>No campaign / stock mutation")
+    n25((( )))
+  end
+  n10 --> n11
+  n11 --> n12
+  n12 --> n13
+  n13 --> n14
+  n15 -->|"[no]"| n03
+  n03 --> n04
+  n15 -->|"[yes]"| n16
+  n16 --> n05
+  n05 --> n06
+  n06 -->|"[regenerate]"| n17
+  n17 --> n12
+  n06 -->|"[approve]"| n07
+  n07 --> n18
+  n22 --> n23
+  n06 -->|"[reject]"| n08
+  n08 --> n09
+  n24 --> n25
+  n18 -->|"[yes]"| n22
+  n18 -->|"[no]"| n19
+  n20 --> n21
+  n14 -->|"[yes]"| n15
+  n14 -->|"[409 / error]"| n01
+  n01 --> n02
+  n09 -->|"[yes]"| n24
+  n09 -->|"[no]"| n19
+  n19 --> n20
+  classDef startNode fill:#000,stroke:#000;
+  classDef endNode fill:#fff,stroke:#000,stroke-width:3px;
+  class n10 startNode;
+  class n04,n23,n25,n21,n02 endNode;

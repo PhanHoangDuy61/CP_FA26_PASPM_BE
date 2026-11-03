@@ -1,0 +1,12 @@
+# Staging overrides, used together with compose.yml and compose.backend.yml:
+#   docker compose -f compose.yml -f compose.backend.yml -f compose.staging.yml up -d
+services:
+  mysql:
+    # Migration V11 creates triggers. The non-root application user paspm has no SUPER privilege and MySQL 8.4 enables
+    # binary logging, so without this flag Flyway stops with "You do not have the SUPER privilege and binary logging is enabled".
+    command: ["--log-bin-trust-function-creators=1"]
+  backend:
+    environment:
+      # Set both to false to hide /swagger and /v3/api-docs (they are public in SecurityConfig).
+      SPRINGDOC_API_DOCS_ENABLED: ${SPRINGDOC_API_DOCS_ENABLED:-true}
+      SPRINGDOC_SWAGGER_UI_ENABLED: ${SPRINGDOC_SWAGGER_UI_ENABLED:-true}

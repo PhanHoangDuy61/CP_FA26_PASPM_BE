@@ -1,0 +1,32 @@
+flowchart TB
+  subgraph lane0["SYSTEM ADMIN / BENCHMARK VIEWER"]
+    direction TB
+    n01(( ))
+    n02("Choose Store + frozen utility snapshot<br/>Run HUI-Miner + EFIM with policy minUtil")
+    n03("Show BLOCKED & run evidence<br/>Keep successful sibling run visible")
+    n04((( )))
+    n05("Read both run benchmarks incl. comparisonStatus")
+    n06((( )))
+  end
+  subgraph lane1["PASPM / BENCHMARK"]
+    direction TB
+    n07("Freeze identical mapping / input<br/>and effective minUtil for both runs")
+    n08("Run HUI-Miner; measure wall time,<br/>sampled Java heap MiB & patterns")
+    n09("Run EFIM; measure wall time,<br/>sampled Java heap MiB & patterns")
+    n10{"Both runs<br/>COMPLETED?"}
+    n11("Compare exact pattern sets + utilities<br/>MATCH/FAILED; show metrics separately")
+  end
+  n01 --> n02
+  n02 --> n07
+  n07 --> n08
+  n08 --> n09
+  n09 --> n10
+  n10 -->|"[no]"| n03
+  n03 --> n04
+  n10 -->|"[yes]"| n11
+  n11 --> n05
+  n05 --> n06
+  classDef startNode fill:#000,stroke:#000;
+  classDef endNode fill:#fff,stroke:#000,stroke-width:3px;
+  class n01 startNode;
+  class n04,n06 endNode;

@@ -1,0 +1,53 @@
+flowchart TB
+  subgraph lane0["END-TO-END WORKFLOW"]
+    direction TB
+    n01(( ))
+    n02("AD02 · Import CSV<br/>Keep validated transaction history")
+    n03{"Eligible transactions<br/>available?"}
+    n04("End this attempt<br/>Fix import / source-data issues")
+    n05((( )))
+    n06("Create Utility Snapshot<br/>Freeze range and current policy")
+    n07{"Utility snapshot<br/>READY?"}
+    n08("Stop this attempt<br/>Fix utility inputs / configuration")
+    n09((( )))
+    n10("AD03 · System Admin requests mining<br/>HUI-Miner / EFIM with policy minUtil")
+    n11{"Completed valid mining<br/>run available?"}
+    n12("End this attempt<br/>Review request / run errors")
+    n13((( )))
+    n14("AD05 · Generate and review<br/>recommendation candidates")
+    n15{"Approved and ready<br/>for consumption?"}
+    n16("No new downstream campaign<br/>Retain existing state")
+    n17((( )))
+    n18("AD06 · Layout / campaign<br/>Optional AD07")
+    n19{"Campaign<br/>activated?"}
+    n20("Retain draft / current storefront")
+    n21((( )))
+    n22("AD08 · Show active<br/>storefront and offered bundles")
+    n23((( )))
+  end
+  n01 --> n02
+  n02 --> n03
+  n10 --> n11
+  n14 --> n15
+  n18 --> n19
+  n22 --> n23
+  n03 -->|"[yes]"| n06
+  n03 -->|"[no]"| n04
+  n04 --> n05
+  n11 -->|"[yes]"| n14
+  n11 -->|"[no]"| n12
+  n12 --> n13
+  n15 -->|"[yes]"| n18
+  n15 -->|"[no]"| n16
+  n16 --> n17
+  n19 -->|"[yes]"| n22
+  n19 -->|"[no]"| n20
+  n20 --> n21
+  n06 --> n07
+  n07 -->|"[READY]"| n10
+  n07 -->|"[not READY]"| n08
+  n08 --> n09
+  classDef startNode fill:#000,stroke:#000;
+  classDef endNode fill:#fff,stroke:#000,stroke-width:3px;
+  class n01 startNode;
+  class n05,n13,n17,n21,n23,n09 endNode;
