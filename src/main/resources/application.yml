@@ -30,7 +30,10 @@ springdoc:
 paspm:
   jwt-secret: ${JWT_SECRET}
   otp-secret: ${OTP_SECRET}
-  token-ttl-seconds: ${TOKEN_TTL_SECONDS:900}
+  token-ttl-seconds: ${TOKEN_TTL_SECONDS:3600}
+  refresh-token-absolute-ttl-seconds: ${REFRESH_TOKEN_ABSOLUTE_TTL_SECONDS:2592000}
+  refresh-token-idle-ttl-seconds: ${REFRESH_TOKEN_IDLE_TTL_SECONDS:604800}
+  refresh-cookie-secure: ${REFRESH_COOKIE_SECURE:true}
   otp-ttl-seconds: ${OTP_TTL_SECONDS:600}
   otp-cooldown-seconds: ${OTP_COOLDOWN_SECONDS:60}
   avatar:

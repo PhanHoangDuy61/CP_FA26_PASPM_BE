@@ -11,6 +11,7 @@ Status: **two layers.** (1) **On `dev`** (PR #11, `11973a0`; code verified 2026-
 ## 1. Base URL and authentication
 - Base URL: configure per environment (`VITE_API_BASE_URL` or equivalent); local default `http://localhost:8080`. Swagger UI `/swagger-ui/index.html`, OpenAPI `/v3/api-docs`.
 - Login: `POST /api/auth/login` body `{"email","password"}` → `{"accessToken","expiresIn","tokenType"}`. Send `Authorization: Bearer <accessToken>` on every other call. `GET /api/auth/me` returns the current account. The Store is taken from the token, never from the URL, except the System Admin routes below that take `storeId` explicitly.
+- F01 session refresh: Login and Google login also set an HttpOnly refresh cookie and return `csrfToken`; responses use `Cache-Control: no-store`, and `expiresIn` is the access-token lifetime in seconds. Call `POST /api/auth/refresh` with the CSRF cookie value in `X-CSRF-Token`; `POST /api/auth/logout` revokes only the current session.
 - Pagination: `?page=0&pageSize=20`; response `{items,page,pageSize,totalElements}`.
 
 ## 2. Errors

@@ -2,6 +2,8 @@
 
 Backend cho FA26_SE048 — Product Arrangement Support Platform. Source hiện tại có các module F01–F06, Java 17/Spring Boot, Hybrid JPA + JDBC, MySQL/Flyway và SPMF chạy bằng child JVM riêng.
 
+F01 access JWT mặc định hết hạn sau 3600 giây; refresh session mặc định 30 ngày tuyệt đối/7 ngày không hoạt động, dùng opaque token trong HttpOnly cookie và CSRF double-submit. Cấu hình trong [hướng dẫn setup chung](docs/setup/LOCAL_SETUP_COMMON.md) và contract [F01](docs/api/F01_AUTH_USER_API.md).
+
 ## Getting Started — Local Development (Windows / macOS)
 
 Chọn hướng dẫn [Windows PowerShell](docs/setup/LOCAL_SETUP_WINDOWS.md) hoặc [macOS zsh](docs/setup/LOCAL_SETUP_MACOS.md); xem [cấu hình chung](docs/setup/LOCAL_SETUP_COMMON.md) và [xử lý lỗi](docs/setup/LOCAL_SETUP_TROUBLESHOOTING.md). Backend dùng JDK 17; F05 cần JAR SPMF 2.67a được duyệt và Java 25+ riêng. Scheduler hiện trả 503 khi bật và chưa sẵn sàng. Các bước cài mới Windows/macOS chưa được kiểm chứng đầy đủ trên máy sạch.

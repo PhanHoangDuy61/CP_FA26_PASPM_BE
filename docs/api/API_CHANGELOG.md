@@ -1,5 +1,12 @@
 # API Changelog
 
+## 2026-11-05 — F01 rotating refresh sessions
+
+- **Changed** email/password and Google login to issue one-hour access JWTs plus an opaque refresh token in a `HttpOnly; Secure; SameSite=Strict` cookie. JSON keeps `accessToken`, `expiresIn` (access lifetime in seconds) and `tokenType`, and adds `csrfToken`; responses use `Cache-Control: no-store`.
+- **Added** `POST /api/auth/refresh` (rotates the cookie), `POST /api/auth/logout` (current session) and `POST /api/auth/logout-all` (all sessions and access tokens). Refresh/logout endpoints require matching CSRF cookie/header.
+- Refresh policy defaults to 30 days absolute / 7 days idle; password change/reset and user role/status changes revoke refresh sessions. Flyway V20 stores only SHA-256 hashes and consumed-token history.
+- Runtime/export now contains 91 operations (F01 27); no F02–F06 endpoint or contract was changed.
+
 ## 2026-11-02 — F05 Scheduler branch (`Khoi/feat/f05-scheduled-mining-option-b-completion`, not on `dev`)
 
 - **Added** `GET /api/system/stores` (SYSTEM_ADMIN, `Page<StoreView{storeId,name}>`, decision D2). OpenAPI 88 → 89 operations.

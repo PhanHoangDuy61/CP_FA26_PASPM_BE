@@ -1,16 +1,26 @@
 package vn.edu.fpt.paspm.auth;
 
 import java.util.Map;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
+import java.time.Instant;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Cookie;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.CacheControl;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,18 +45,30 @@ import vn.edu.fpt.paspm.user.AccountService;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+    private static final String COOKIE_REFRESH_SECURE = "__Host-PASPM-REFRESH";
+    private static final String COOKIE_REFRESH_LOCAL = "PASPM-REFRESH";
+    private static final String COOKIE_CSRF_SECURE = "__Host-PASPM-CSRF";
+    private static final String COOKIE_CSRF_LOCAL = "PASPM-CSRF";
+    private static final String CSRF_HEADER = "X-CSRF-Token";
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     private final AuthService auth;
     private final AccountService accounts;
     private final OtpService otp;
     private final GoogleService google;
+    private final boolean refreshCookieSecure;
 
-    public AuthController(AuthService auth, AccountService accounts, OtpService otp, GoogleService google) {
+    public AuthController(
+            AuthService auth,
+            AccountService accounts,
+            OtpService otp,
+            GoogleService google,
+            @Value("${paspm.refresh-cookie-secure}") boolean refreshCookieSecure) {
         this.auth = auth;
         this.accounts = accounts;
         this.otp = otp;
         this.google = google;
+        this.refreshCookieSecure = refreshCookieSecure;
     }
 
     @Operation(
@@ -54,8 +76,45 @@ public class AuthController {
             description = "Chỉ tài khoản đã xác minh email và đang ACTIVE mới nhận PASPM access token.",
             security = {})
     @PostMapping("/login")
-    public Token login(@Valid @RequestBody Login request, HttpServletRequest servletRequest) {
-        return auth.login(request, servletRequest.getRemoteAddr());
+    public ResponseEntity<Token> login(@Valid @RequestBody Login request, HttpServletRequest servletRequest) {
+        return tokenResponse(auth.login(request, servletRequest.getRemoteAddr()));
+    }
+
+    @Operation(
+            summary = "Làm mới credentials",
+            description = "Xoay vòng opaque refresh token một lần; expiresIn là thời hạn access token mới tính bằng giây.",
+            security = {})
+    @PostMapping("/refresh")
+    public ResponseEntity<Token> refresh(
+            HttpServletRequest servletRequest) {
+        requireCsrf(servletRequest);
+        String refreshToken = cookieValue(servletRequest, refreshCookieName());
+        if (refreshToken == null || refreshToken.isBlank()) {
+            throw new vn.edu.fpt.paspm.common.ApiException(401, "Invalid or expired refresh token");
+        }
+        return tokenResponse(auth.refresh(refreshToken, servletRequest.getRemoteAddr()));
+    }
+
+    @Operation(summary = "Đăng xuất thiết bị hiện tại", description = "Thu hồi refresh session gắn với access token hiện tại.")
+    @PostMapping("/logout")
+    public ResponseEntity<Map<String, String>> logout(
+            @AuthenticationPrincipal Jwt jwt,
+            HttpServletRequest servletRequest) {
+        requireCsrf(servletRequest);
+        auth.logout(jwt);
+        return clearSessionCookies(Map.of("message", "Logged out"));
+    }
+
+    @Operation(
+            summary = "Đăng xuất mọi thiết bị",
+            description = "Thu hồi mọi refresh session và tăng token_version để vô hiệu hóa toàn bộ access token.")
+    @PostMapping("/logout-all")
+    public ResponseEntity<Map<String, String>> logoutAll(
+            @AuthenticationPrincipal Jwt jwt,
+            HttpServletRequest servletRequest) {
+        requireCsrf(servletRequest);
+        auth.logoutAll(jwt);
+        return clearSessionCookies(Map.of("message", "Logged out from all sessions"));
     }
 
     @Operation(
@@ -209,8 +268,8 @@ public class AuthController {
             description = "Đổi Google ID token của identity đã liên kết lấy PASPM access token. Tài khoản phải đang ACTIVE.",
             security = {})
     @PostMapping("/google")
-    public Token google(@Valid @RequestBody Google request, HttpServletRequest servletRequest) {
-        return google.login(request.idToken(), servletRequest.getRemoteAddr());
+    public ResponseEntity<Token> google(@Valid @RequestBody Google request, HttpServletRequest servletRequest) {
+        return tokenResponse(google.login(request.idToken(), servletRequest.getRemoteAddr()));
     }
 
     @Operation(
@@ -224,5 +283,80 @@ public class AuthController {
 
     private Map<String, String> accepted() {
         return Map.of("message", "If the account is eligible, a verification email will be sent");
+    }
+
+    private ResponseEntity<Token> tokenResponse(AuthCredentials credentials) {
+        long maxAge = Math.max(0, Duration.between(Instant.now(), credentials.refreshExpiresAt()).getSeconds());
+        ResponseCookie refreshCookie = ResponseCookie.from(refreshCookieName(), credentials.refreshToken())
+                .httpOnly(true)
+                .secure(refreshCookieSecure)
+                .sameSite("Strict")
+                .path("/")
+                .maxAge(maxAge)
+                .build();
+        ResponseCookie csrfCookie = ResponseCookie.from(csrfCookieName(), credentials.token().csrfToken())
+                .httpOnly(false)
+                .secure(refreshCookieSecure)
+                .sameSite("Strict")
+                .path("/")
+                .maxAge(maxAge)
+                .build();
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.noStore())
+                .header(HttpHeaders.SET_COOKIE, refreshCookie.toString(), csrfCookie.toString())
+                .body(credentials.token());
+    }
+
+    private ResponseEntity<Map<String, String>> clearSessionCookies(Map<String, String> body) {
+        ResponseCookie expiredRefresh = ResponseCookie.from(refreshCookieName(), "")
+                .httpOnly(true)
+                .secure(refreshCookieSecure)
+                .sameSite("Strict")
+                .path("/")
+                .maxAge(0)
+                .build();
+        ResponseCookie expiredCsrf = ResponseCookie.from(csrfCookieName(), "")
+                .httpOnly(false)
+                .secure(refreshCookieSecure)
+                .sameSite("Strict")
+                .path("/")
+                .maxAge(0)
+                .build();
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.noStore())
+                .header(HttpHeaders.SET_COOKIE, expiredRefresh.toString(), expiredCsrf.toString())
+                .body(body);
+    }
+
+    private void requireCsrf(HttpServletRequest request) {
+        String cookie = cookieValue(request, csrfCookieName());
+        String header = request.getHeader(CSRF_HEADER);
+        if (cookie == null || header == null
+                || !MessageDigest.isEqual(
+                        cookie.getBytes(StandardCharsets.UTF_8),
+                        header.getBytes(StandardCharsets.UTF_8))) {
+            throw new vn.edu.fpt.paspm.common.ApiException(403, "CSRF validation failed");
+        }
+    }
+
+    private String cookieValue(HttpServletRequest request, String name) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            return null;
+        }
+        for (Cookie cookie : cookies) {
+            if (name.equals(cookie.getName())) {
+                return cookie.getValue();
+            }
+        }
+        return null;
+    }
+
+    private String refreshCookieName() {
+        return refreshCookieSecure ? COOKIE_REFRESH_SECURE : COOKIE_REFRESH_LOCAL;
+    }
+
+    private String csrfCookieName() {
+        return refreshCookieSecure ? COOKIE_CSRF_SECURE : COOKIE_CSRF_LOCAL;
     }
 }

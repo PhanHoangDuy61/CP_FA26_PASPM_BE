@@ -90,6 +90,7 @@ public class SecurityConfig {
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/mining/runs/*/benchmark").denyAll()
                         .requestMatchers(
                                 "/api/auth/login",
+                                "/api/auth/refresh",
                                 "/api/auth/register",
                                 "/api/auth/register/complete",
                                 "/api/auth/otp/**",

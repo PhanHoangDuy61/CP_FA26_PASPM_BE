@@ -212,6 +212,10 @@ public class UserRepository {
         );
     }
 
+    public void incrementTokenVersion(int id) {
+        jdbc.update("UPDATE app_user SET token_version=token_version+1 WHERE user_id=?", id);
+    }
+
     public void updateAvatar(int id, String avatarKey) {
         jdbc.update("UPDATE app_user SET avatar_key=? WHERE user_id=?", avatarKey, id);
     }

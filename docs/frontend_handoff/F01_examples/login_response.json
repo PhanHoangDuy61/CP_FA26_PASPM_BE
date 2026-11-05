@@ -1,5 +1,6 @@
 {
   "accessToken": "<synthetic JWT omitted>",
-  "expiresIn": 900,
-  "tokenType": "Bearer"
+  "expiresIn": 3600,
+  "tokenType": "Bearer",
+  "csrfToken": "<synthetic CSRF token>"
 }

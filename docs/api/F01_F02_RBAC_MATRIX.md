@@ -9,6 +9,9 @@ Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and fea
 | Feature | Endpoint | System Admin | Store Admin | Merchandiser | End Customer |
 |---|---|---|---|---|---|
 | F01 Login | POST `/api/auth/login` | Public | Public | Public | Public |
+| F01 Refresh session | POST `/api/auth/refresh` | Public; refresh cookie + CSRF required | same | same | same |
+| F01 Logout current session | POST `/api/auth/logout` | Authenticated own session + CSRF | same | same | same |
+| F01 Logout all sessions | POST `/api/auth/logout-all` | Authenticated own account + CSRF | same | same | same |
 | F01 Self-registration OTP request | POST `/api/auth/register` | Public | Public | Public | Public |
 | F01 Complete self-registration | POST `/api/auth/register/complete` | Public (eligible pending account only) | same | same | same |
 | F01 OTP request | POST `/api/auth/otp/request` | Public (eligible pending account) | same | same | same |
@@ -110,15 +113,15 @@ The database identity claims one Store and no request accepts a Store selector. 
 
 ## Readiness evidence
 
-The runtime OpenAPI export records 24 F01, 15 F02, 12 F03, 6 F04, 23 F05 and 8 F06 operations (88 total; the earlier 73 predates F05 administration). The original F01/F02 table below was a historical baseline; v1.2 verifies that existing authentication/RBAC stays intact rather than claiming a new browser run of every F01 operation. Existing automated tests exercise F01 login/current-user/self-registration/OTP/invitation/password-change/role and token-revocation behavior, and F02 authentication, category/product, batch, summary and Store isolation behavior; not every individual operation was separately tested in a live browser for this documentation task. F02 browser verification from the prior F02 QA run is summarized in `docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_SWAGGER_TEST_REPORT.md`.
+The runtime OpenAPI export records 27 F01, 15 F02, 12 F03, 6 F04, 23 F05 and 8 F06 operations (91 total). The original F01/F02 table below was a historical baseline; existing tests exercise F01 login/current-user/self-registration/OTP/invitation/password-change/role and token-revocation behavior, and F02 authentication, category/product, batch, summary and Store isolation behavior; not every operation is separately exercised in a live browser. Current F01 refresh tests cover rotation/replay, concurrent use, CSRF, cookie policy and per-device logout. F02 browser verification from the prior F02 QA run is summarized in `docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_SWAGGER_TEST_REPORT.md`.
 
-Integration-ready: F01 password/OTP/user APIs and F02 all 15 operations. Google operations are conditional on the Google client ID, mail delivery and valid Google-issued ID tokens. Browser cross-origin use is blocked until a same-origin proxy or deployment CORS policy is provided; Backend source contains no CORS mapping. Missing F01 operations: logout, refresh and general self-profile editing beyond the documented avatar operations. F02 delete and stock-movement/adjustment history APIs do not exist and are not implied by the implemented contract.
+Integration-ready: F01 access/refresh, password/OTP/user APIs and F02 all 15 operations. Google operations are conditional on the Google client ID, mail delivery and valid Google-issued ID tokens. Browser cross-origin use is blocked until a same-origin proxy or deployment CORS policy is provided; Backend source contains no CORS mapping. General self-profile editing beyond avatar operations is not implemented. F02 delete and stock-movement/adjustment history APIs do not exist and are not implied by the implemented contract.
 
 ## Endpoint readiness counts
 
 | Feature | Implemented | Contract verified (source + runtime OpenAPI) | Ready for Frontend integration | Conditional / blocked at runtime | Not implemented workflows outside these endpoints |
 |---|---:|---:|---:|---|---|
-| F01 | 24 | 24 routes in runtime export | 24 implemented | Google register/login/link require Google client configuration and mail for OTP; in the default unconfigured setup those return 503 | logout, refresh token, general profile editing |
+| F01 | 27 | 27 routes in runtime export | 27 implemented | Google register/login/link require Google client configuration and mail for OTP; in the default unconfigured setup those return 503 | general profile editing beyond avatar |
 | F02 | 15 | 15 | 15 | Browser cross-origin integration needs a same-origin proxy or deployment CORS policy; API endpoints themselves are available | delete endpoints, stock adjustment/movement history |
 | F03 | 12 | 12 | 12 (one deprecated) | Preview/Snapshot need persisted eligible F04 rows and valid config; snapshot reads need a known ID | snapshot history list |
 | F04 | 6 | 6 | 6 | Requires valid Store-scoped transaction data | Excel import, external POS synchronization |

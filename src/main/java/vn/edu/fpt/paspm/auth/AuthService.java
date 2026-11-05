@@ -1,16 +1,10 @@
 package vn.edu.fpt.paspm.auth;
 
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.JwtClaimsSet;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,27 +20,20 @@ import vn.edu.fpt.paspm.user.UserRepository;
 public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwords;
-    private final JwtEncoder encoder;
+    private final AuthSessionService sessions;
     private final RateLimits limits;
-    private final long ttl;
     private final String dummy;
 
     public AuthService(
             UserRepository userRepository,
             PasswordEncoder passwords,
-            JwtEncoder encoder,
-            RateLimits limits,
-            @Value("${paspm.token-ttl-seconds}") long ttl) {
+            AuthSessionService sessions,
+            RateLimits limits) {
         this.userRepository = userRepository;
         this.passwords = passwords;
-        this.encoder = encoder;
+        this.sessions = sessions;
         this.limits = limits;
-        this.ttl = ttl;
         this.dummy = passwords.encode(UUID.randomUUID().toString());
-
-        if (ttl < 60 || ttl > 3600) {
-            throw new IllegalArgumentException("Token TTL must be 60..3600");
-        }
     }
 
     public void validatePasswordLength(String password) {
@@ -60,7 +47,8 @@ public class AuthService {
         return passwords.encode(password);
     }
 
-    public Token login(Login request, String ip) {
+    @Transactional
+    public AuthCredentials login(Login request, String ip) {
         limits.hit("login-ip:" + ip, 30, 900);
         limits.hit("login-user:" + UserRepository.email(request.email()), 10, 900);
         validatePasswordLength(request.password());
@@ -75,7 +63,7 @@ public class AuthService {
             throw new ApiException(401, "Invalid credentials or account unavailable");
         }
 
-        return token(user);
+        return sessions.issue(user);
     }
 
     @Transactional
@@ -99,27 +87,27 @@ public class AuthService {
         }
 
         userRepository.updatePassword(user.id(), encodePassword(request.newPassword()));
+        sessions.revokeUserSessions(user.id());
     }
 
     public Token token(User user) {
-        Instant now = Instant.now();
-        JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("paspm")
-                .subject(String.valueOf(user.id()))
-                .issuedAt(now)
-                .expiresAt(now.plusSeconds(ttl))
-                .id(UUID.randomUUID().toString())
-                .claim("ver", user.version())
-                .build();
+        return sessions.accessToken(user);
+    }
 
-        String tokenValue = encoder.encode(
-                JwtEncoderParameters.from(
-                        org.springframework.security.oauth2.jwt.JwsHeader.with(MacAlgorithm.HS256).build(),
-                        claims
-                )
-        ).getTokenValue();
+    public AuthCredentials issueCredentials(User user) {
+        return sessions.issue(user);
+    }
 
-        return new Token(tokenValue, ttl, "Bearer");
+    public AuthCredentials refresh(String refreshToken, String ip) {
+        return sessions.refresh(refreshToken, ip);
+    }
+
+    public void logout(Jwt jwt) {
+        sessions.logout(jwt);
+    }
+
+    public void logoutAll(Jwt jwt) {
+        sessions.logoutAll(jwt);
     }
 
     public User current(Jwt jwt) {

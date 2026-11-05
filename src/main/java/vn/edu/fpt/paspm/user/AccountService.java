@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import vn.edu.fpt.paspm.auth.AuthService;
+import vn.edu.fpt.paspm.auth.AuthSessionService;
 import vn.edu.fpt.paspm.auth.OtpService;
 import vn.edu.fpt.paspm.common.ApiException;
 import vn.edu.fpt.paspm.common.Contracts.CreateUser;
@@ -17,12 +18,19 @@ import vn.edu.fpt.paspm.security.RateLimits;
 public class AccountService {
     private final UserRepository userRepository;
     private final AuthService auth;
+    private final AuthSessionService sessions;
     private final OtpService otp;
     private final RateLimits limits;
 
-    public AccountService(UserRepository userRepository, AuthService auth, OtpService otp, RateLimits limits) {
+    public AccountService(
+            UserRepository userRepository,
+            AuthService auth,
+            AuthSessionService sessions,
+            OtpService otp,
+            RateLimits limits) {
         this.userRepository = userRepository;
         this.auth = auth;
+        this.sessions = sessions;
         this.otp = otp;
         this.limits = limits;
     }
@@ -97,6 +105,7 @@ public class AccountService {
         }
 
         userRepository.updateStatus(id, status);
+        sessions.revokeUserSessions(id);
         return userRepository.findById(id).view();
     }
 
@@ -114,6 +123,7 @@ public class AccountService {
                 userRepository.findRoleId(request.roleCode()),
                 request.storeId()
         );
+        sessions.revokeUserSessions(id);
         return userRepository.findById(id).view();
     }
 }

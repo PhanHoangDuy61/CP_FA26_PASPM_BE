@@ -25,7 +25,9 @@ Compose reads `.env`; Spring Boot does **not** automatically import it. `.env` i
 | `PASPM_MINING_SPMF_JAR`, `PASPM_MINING_JAVA_EXECUTABLE` | Absolute JAR and **Java 25+** executable paths for mining. Both default empty. `JAVA_HOME` selects the separate Backend JDK 17 and does not configure these. Missing/invalid mining runtime rejects new mining requests with 503 while other APIs remain available. |
 | `PASPM_MINING_HEAP_MIB`, `PASPM_MINING_TIMEOUT_MILLIS`, `PASPM_MINING_MAX_PATTERNS` | Optional: defaults 256 MiB, 60000 ms, 2000; see [SPMF setup](F05_SPMF_RUNTIME_SETUP.md) for bounds. |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_AUTH`, `SMTP_TLS`, `MAIL_FROM` | Optional mail settings. Defaults are localhost:1025, no authentication/TLS, and `no-reply@paspm.local`, matching Compose Mailpit. |
-| `TOKEN_TTL_SECONDS`, `OTP_TTL_SECONDS`, `OTP_COOLDOWN_SECONDS` | Optional authentication timing overrides; defaults are 900, 600 and 60 seconds. |
+| `TOKEN_TTL_SECONDS`, `OTP_TTL_SECONDS`, `OTP_COOLDOWN_SECONDS` | Access JWT defaults to 3600 seconds (valid range 60–3600); OTP defaults are 600 and 60 seconds. |
+| `REFRESH_TOKEN_ABSOLUTE_TTL_SECONDS`, `REFRESH_TOKEN_IDLE_TTL_SECONDS` | Refresh session defaults to 30 days absolute and 7 days idle; absolute range is 1 hour–90 days, idle must be at least 60 seconds and no longer than absolute. |
+| `REFRESH_COOKIE_SECURE` | Defaults to `true`; keep true in HTTPS deployments. For local plain-HTTP browser testing only, set `false` (cookie names lose the `__Host-` prefix and Secure attribute). |
 | `PROFILE_IMAGE_DIRECTORY` | Optional local avatar directory; default is `.paspm/profile-images` under the launching user's home. |
 | `PASPM_STORE_TIME_ZONE` | Optional Store-time-zone override; application code defaults to `Asia/Ho_Chi_Minh`. |
 | `GOOGLE_CLIENT_ID` | Optional; empty by default. |
@@ -34,7 +36,7 @@ Current worker capacity is one active request and eight queued per instance; pol
 
 ## Flyway, accounts and verification
 
-Flyway runs automatically on Backend startup; `dev` includes V1–V17. F05 mining migrations are V13–V17; V12 is F04 `f04_preserve_large_raw_import_rows`. Hibernate validates rather than creates schema. On a **new isolated schema**, inspect startup logs and `flyway_schema_history` for successful migrations. For an existing database check its identity and migration history first; see [V7 recovery](FLYWAY_MYSQL_V7_RECOVERY.md). Do not run `repair`, delete a schema or remove a volume as a routine fix.
+Flyway runs automatically on Backend startup; the current mainline schema includes V1–V20. V20 adds F01 refresh sessions; F05 migrations are V13–V19 and V12 is F04 `f04_preserve_large_raw_import_rows`. Hibernate validates rather than creates schema. On a **new isolated schema**, inspect startup logs and `flyway_schema_history` for successful migrations. For an existing database check its identity and migration history first; see [V7 recovery](FLYWAY_MYSQL_V7_RECOVERY.md). Do not run `repair`, delete a schema or remove a volume as a routine fix.
 
 **Scheduler branch (not yet on `dev`):** adds Flyway V18 (SKIPPED status, `skip_reason`, `failure_message`) and V19 (role `SYSTEM_SCHEDULER` and its credential-free machine user), so the branch is V1–V19. **Scheduled Mining stays off by default.** To exercise it locally set `PASPM_MINING_SCHEDULE_DISPATCH_ENABLED=true` (property `paspm.mining.schedule-dispatch-enabled`), keep `PASPM_STORE_TIME_ZONE` unset or `Asia/Ho_Chi_Minh`, and configure the SPMF jar and Java 25 executable ([F05_SPMF_RUNTIME_SETUP.md](F05_SPMF_RUNTIME_SETUP.md)). Without the flag, enabling a schedule answers 503 and no background thread starts. Never set the flag in a shared or production environment before release sign-off.
 

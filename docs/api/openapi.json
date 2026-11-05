@@ -2655,13 +2655,184 @@
         }
       }
     },
+    "/api/auth/logout": {
+      "post": {
+        "tags": [
+          "auth-controller"
+        ],
+        "summary": "Đăng xuất thiết bị hiện tại",
+        "description": "Thu hồi refresh session gắn với access token hiện tại; access JWT còn hiệu lực đến khi hết hạn. Cần CSRF cookie/header khớp.",
+        "operationId": "logout",
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "__Host-PASPM-CSRF",
+            "in": "cookie",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Logged out; clears refresh and CSRF cookies",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "403": {
+            "description": "Permission denied / CSRF validation failed"
+          }
+        }
+      }
+    },
+    "/api/auth/logout-all": {
+      "post": {
+        "tags": [
+          "auth-controller"
+        ],
+        "summary": "Đăng xuất mọi thiết bị",
+        "description": "Thu hồi mọi refresh session và tăng token_version để vô hiệu hóa access JWT. Cần CSRF cookie/header khớp.",
+        "operationId": "logoutAll",
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "__Host-PASPM-CSRF",
+            "in": "cookie",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Logged out from all sessions; clears refresh and CSRF cookies",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "403": {
+            "description": "Permission denied / CSRF validation failed"
+          }
+        }
+      }
+    },
+    "/api/auth/refresh": {
+      "post": {
+        "tags": [
+          "auth-controller"
+        ],
+        "summary": "Làm mới credentials",
+        "description": "Xoay vòng opaque refresh cookie. expiresIn là thời hạn access token mới tính bằng giây; refresh token không nằm trong JSON. Cần CSRF cookie/header khớp.",
+        "operationId": "refresh",
+        "security": [],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "__Host-PASPM-REFRESH",
+            "in": "cookie",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "__Host-PASPM-CSRF",
+            "in": "cookie",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Rotated session cookies and a new access token",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "example": "no-store"
+                }
+              },
+              "Set-Cookie": {
+                "description": "HttpOnly refresh cookie and readable CSRF cookie",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid, expired, revoked or replayed refresh session"
+          },
+          "403": {
+            "description": "CSRF validation failed"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          }
+        }
+      }
+    },
     "/api/auth/login": {
       "post": {
         "tags": [
           "auth-controller"
         ],
         "summary": "Đăng nhập bằng email",
-        "description": "Chỉ tài khoản đã xác minh email và đang ACTIVE mới nhận PASPM access token.",
+        "description": "Chỉ tài khoản đã xác minh email và đang ACTIVE mới nhận access JWT (3600 giây mặc định), refresh HttpOnly cookie và CSRF token. expiresIn là TTL access token. Response no-store.",
+        "security": [],
         "operationId": "login",
         "requestBody": {
           "content": {
@@ -2676,6 +2847,20 @@
         "responses": {
           "200": {
             "description": "OK",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "example": "no-store"
+                }
+              },
+              "Set-Cookie": {
+                "description": "HttpOnly refresh cookie and readable CSRF cookie",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
             "content": {
               "*/*": {
                 "schema": {
@@ -2714,7 +2899,8 @@
           "auth-controller"
         ],
         "summary": "Đăng nhập bằng Google",
-        "description": "Đổi Google ID token của identity đã liên kết lấy PASPM access token. Tài khoản phải đang ACTIVE.",
+        "description": "Đổi Google ID token của identity đã liên kết lấy access JWT, refresh HttpOnly cookie và CSRF token. Tài khoản phải đang ACTIVE; expiresIn là TTL access token. Response no-store.",
+        "security": [],
         "operationId": "google",
         "requestBody": {
           "content": {
@@ -2729,6 +2915,20 @@
         "responses": {
           "200": {
             "description": "OK",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "example": "no-store"
+                }
+              },
+              "Set-Cookie": {
+                "description": "HttpOnly refresh cookie and readable CSRF cookie",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
             "content": {
               "*/*": {
                 "schema": {
@@ -7188,6 +7388,9 @@
             "format": "int64"
           },
           "tokenType": {
+            "type": "string"
+          },
+          "csrfToken": {
             "type": "string"
           }
         }
