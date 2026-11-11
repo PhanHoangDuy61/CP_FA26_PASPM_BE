@@ -37,6 +37,8 @@ Create category → create product (with `expiryPushDays` when it expires) → r
 ## 8. Dependencies
 Uses F01 (role, Store). Consumed by F03 (threshold and FEFO batches), F04 (SKU resolution), F06 (current sellable quantity).
 
+F01 session reconciliation (2026-11-12, dev V20 retained + additive V21): catalog APIs still require a valid Bearer with their existing role and Store checks. Refresh/logout does not grant END_CUSTOMER catalog access or change stock, expiry or persistence rules. See [shared session impact and evidence](../F01/F01_SESSION_MANAGEMENT.md#5-tác-động-tới-feature-khác).
+
 ## 9. Tests and evidence
 `CatalogIntegrationTest`, `CatalogDevSeederTest`, `CategoryPersistence*Test`, `ProductPersistence*Test` (H2 and MySQL), `JpaPilotMigrationMySqlTest`, `PilotCloneApiIntegrationTest` (opt-in, 5/5 on 2026-11-02), `ExpiryFefoOrderingTest` (FEFO order `expiry_date → received_at → batch_id`). Historical Swagger evidence: [reference_v3](reference_v3/F02_SWAGGER_TEST_REPORT.md).
 

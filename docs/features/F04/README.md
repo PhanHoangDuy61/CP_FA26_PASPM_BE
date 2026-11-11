@@ -37,6 +37,8 @@ Upload CSV → read import summary and rejected rows → browse transactions →
 ## 8. Dependencies
 F01 (role, Store), F02 (SKU resolution). Feeds F03 (and through it F05, F06 evidence).
 
+F01 session reconciliation (2026-11-12, dev V20 retained + additive V21): browser import/query calls continue using Bearer and existing Store authorization. No change to transaction history, file parsing, idempotency or rollback semantics. See [shared session impact and evidence](../F01/F01_SESSION_MANAGEMENT.md#5-tác-động-tới-feature-khác).
+
 ## 9. Tests and evidence
 `TransactionCsvParserTest`, `TransactionOrderValidatorTest`, `TransactionOrderIdentifierTest`, `TransactionImportIntegrationTest`, `TransactionImportCorrectnessIntegrationTest`, MySQL variants, `TransactionRawEvidenceMigrationMySqlTest` (V12 compatibility), `DatabaseTransactionSourceTest`; all inside the 23/23 script run. [Performance report](../../testing/F04_F06_PERFORMANCE_REPORT.md) (dated measurements).
 

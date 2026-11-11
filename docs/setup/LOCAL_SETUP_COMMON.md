@@ -36,7 +36,7 @@ Current worker capacity is one active request and eight queued per instance; pol
 
 ## Flyway, accounts and verification
 
-Flyway runs automatically on Backend startup; the current mainline schema includes V1–V20. V20 adds F01 refresh sessions; F05 migrations are V13–V19 and V12 is F04 `f04_preserve_large_raw_import_rows`. Hibernate validates rather than creates schema. On a **new isolated schema**, inspect startup logs and `flyway_schema_history` for successful migrations. For an existing database check its identity and migration history first; see [V7 recovery](FLYWAY_MYSQL_V7_RECOVERY.md). Do not run `repair`, delete a schema or remove a volume as a routine fix.
+Flyway runs automatically on Backend startup; the current mainline schema includes V1–V21. V20 adds F01 refresh sessions; F05 migrations are V13–V19 and V12 is F04 `f04_preserve_large_raw_import_rows`. Hibernate validates rather than creates schema. On a **new isolated schema**, inspect startup logs and `flyway_schema_history` for successful migrations. For an existing database check its identity and migration history first; see [V7 recovery](FLYWAY_MYSQL_V7_RECOVERY.md). Do not run `repair`, delete a schema or remove a volume as a routine fix.
 
 **Scheduler branch (not yet on `dev`):** adds Flyway V18 (SKIPPED status, `skip_reason`, `failure_message`) and V19 (role `SYSTEM_SCHEDULER` and its credential-free machine user), so the branch is V1–V19. **Scheduled Mining stays off by default.** To exercise it locally set `PASPM_MINING_SCHEDULE_DISPATCH_ENABLED=true` (property `paspm.mining.schedule-dispatch-enabled`), keep `PASPM_STORE_TIME_ZONE` unset or `Asia/Ho_Chi_Minh`, and configure the SPMF jar and Java 25 executable ([F05_SPMF_RUNTIME_SETUP.md](F05_SPMF_RUNTIME_SETUP.md)). Without the flag, enabling a schedule answers 503 and no background thread starts. Never set the flag in a shared or production environment before release sign-off.
 
@@ -47,3 +47,18 @@ For Store-scoped F03 calls, use a Store Admin or Merchandiser assigned to the ta
 To exercise both algorithms through Swagger after preparing eligible data: as SYSTEM_ADMIN read `GET /api/system/mining/config`, then send `PUT /api/system/mining/config` with the returned `version` as `expectedVersion`, for example `{"algorithm":"HUI_MINER","minUtilMode":"ABSOLUTE","minUtilValue":30,"expectedVersion":0}` when the current version really is 0. Pick a threshold valid for your own snapshot. As the Store's MERCHANDISER, create a READY snapshot with `POST /api/utility/snapshots` for the imported date range, then switch back to SYSTEM_ADMIN and submit `POST /api/system/mining/requests` with `{"storeId":1,"snapshotId":1,"requestKey":"a9657ac1-293d-420c-9c99-4df0349bdc91","compareAlgorithms":true}`. Replace both IDs with real IDs and generate a **new UUID** for each request (`uuidgen` on macOS; `[guid]::NewGuid()` in PowerShell). This asks for HUI-Miner and EFIM; inspect both run statuses, patterns and comparison status using the current [F05 API](../api/F05_MINING_API.md). A 503 can mean that the JAR/runtime is unavailable; it is not a successful test.
 
 The `dev,utility-fixture` profiles have additional explicit password/date requirements and synthetic data; they are QA-only and not required for first startup. Test results and the disabled scheduler are documented in the [current F05 feature status](../features/F05/README.md).
+
+## Browser session integration (working-tree update 2026-11-11)
+
+V20 adds persisted refresh sessions. For IntelliJ local HTTP, set the following in **Run Configuration → Environment variables** (the `.env` file is not automatically loaded):
+
+```text
+REFRESH_COOKIE_SECURE=false
+PASPM_SESSION_ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+```
+
+Leave `cookie-secure` at its default true for HTTPS deployment. Use the dev policy: TOKEN_TTL_SECONDS defaults3600, REFRESH_TOKEN_ABSOLUTE_TTL_SECONDS defaults2592000 and REFRESH_TOKEN_IDLE_TTL_SECONDS defaults604800; refresh extends idle expiry only up to absolute expiry. The earlier PASPM_SESSION_REFRESH_TTL_SECONDS setting is not supported by the reconciled build. Do not put JWT/OTP/database secrets in Frontend environment variables. With the existing FE_Kien Vite proxy, open http://localhost:3000, sign in and reload: the browser restores credentials through POST `/api/auth/refresh` and GET `/api/auth/me`. Logout is now a server operation. See [session contract](../api/F01_AUTH_USER_API.md#session-integration-update--2026-11-11) and [executed verification](../testing/reports/F01_SESSION_VERIFICATION.md).
+
+If another Backend is listening on 8080, stop the known local process before starting IntelliJ. Do not run two Backends on the same port. Flyway applies V20 on startup; back up a development database before upgrading. No repair, reset or edit of applied migrations is needed for this change.
+
+V21 adds server-side CSRF binding to published V20. Existing V20 refresh cookies require a new sign-in; no historical token is fabricated. A database that applied the competing local V20 has different tables and checksum: **do not start this build against it or run repair automatically**. Use a fresh/disposable database or a separately approved conversion procedure. This reconciliation task does not modify that local source database.

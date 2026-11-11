@@ -65,7 +65,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain chain(HttpSecurity http, UserRepository userRepository) throws Exception {
+    public SecurityFilterChain chain(HttpSecurity http, UserRepository userRepository, org.springframework.jdbc.core.JdbcTemplate db) throws Exception {
         var converter = new JwtAuthenticationConverter();
         converter.setJwtGrantedAuthoritiesConverter(jwt -> {
             try {
@@ -74,6 +74,11 @@ public class SecurityConfig {
                 if (!user.active() || version == null || version.intValue() != user.version()) {
                     throw new IllegalArgumentException();
                 }
+                String sid = jwt.getClaimAsString("sid");
+                if (sid != null && !Boolean.TRUE.equals(db.queryForObject(
+                        "SELECT COUNT(*) = 1 FROM auth_refresh_session WHERE session_id=? AND user_id=? AND token_version=? " +
+                        "AND revoked_at IS NULL AND absolute_expires_at>CURRENT_TIMESTAMP AND idle_expires_at>CURRENT_TIMESTAMP",
+                        Boolean.class, sid, user.id(), user.version()))) throw new IllegalArgumentException();
                 return List.of(new SimpleGrantedAuthority("ROLE_" + user.role()));
             } catch (Exception e) {
                 throw new OAuth2AuthenticationException("invalid_token");

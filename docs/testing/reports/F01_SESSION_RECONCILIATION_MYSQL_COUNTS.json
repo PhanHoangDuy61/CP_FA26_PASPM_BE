@@ -1,0 +1,44 @@
+{
+  "date": "2026-11-12",
+  "timezone": "Asia/Ho_Chi_Minh",
+  "mysqlVersion": "8.4.13",
+  "method": "Independent Docker MySQL, generated identities and restricted restore helper",
+  "suites": {
+    "SessionMySqlIntegrationTest": {
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "SessionV21MigrationMySqlTest": {
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "FlywayRecoveryTest": {
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "JpaPilotMigrationMySqlTest": {
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "MiningMigrationMySqlTest": {
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "RecommendationMigrationTest": {
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  }
+}

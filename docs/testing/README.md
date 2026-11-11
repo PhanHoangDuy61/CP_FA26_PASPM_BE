@@ -11,7 +11,7 @@
 
 | Area | Reports / evidence |
 |---|---|
-| F01 | [Original tests](../features/F01/reference/TEST_RESULTS.md), [Swagger checklist](../features/F01/reference/SWAGGER_CHECKLIST.md) |
+| F01 | [Current local session report](reports/F01_SESSION_VERIFICATION.md), [counts](reports/F01_SESSION_TEST_COUNTS.json), [browser evidence](reports/F01_SESSION_BROWSER_EVIDENCE.json); [Original tests](../features/F01/reference/TEST_RESULTS.md), [Swagger checklist](../features/F01/reference/SWAGGER_CHECKLIST.md) |
 | F02 | [Original Swagger report](../features/F02/reference_v3/F02_SWAGGER_TEST_REPORT.md), [cases](../features/F02/reference_v3/F02_SWAGGER_TEST_CASES.md) |
 | F03 | [Original linear-era report](../features/F03/reference_v4/F03_SWAGGER_TEST_REPORT.md), [current Catalog/Utility verification](reports/RETAIL_CATALOG_UTILITY_VERIFICATION.md) |
 | F04 | [CSV verification](../features/F04/reference/F04_SWAGGER_TEST_REPORT.md) |
@@ -32,3 +32,9 @@ The docs reorganization runs link/hash/structure validation only. No new Maven, 
 ## F04 / F06 improvement verification
 
 [Combined performance review](F04_F06_PERFORMANCE_REPORT.md) and [F06 hardening report](../features/F06/F06_HARDENING_REPORT.md) distinguish measured local results, injected failures, the successful retest and the five populated-clone cases not run. [F06 current counts](evidence/f06_hardening/FULL_VERIFY_RETEST.json) do not certify GitHub-hosted CI or production acceptance.
+
+## Agent execution records
+
+[Record of Changes](../record-of-changes/README.md) separates prior executed tests from documentation-only checks. The 2026-11-11 documentation follow-up does not rerun Maven, MySQL or browser suites and does not certify hosted CI.
+
+Current F01 reconciliation (2026-11-12): preserves published dev V20/AuthSessionService and adds V21 binding; [current evidence](reports/F01_SESSION_RECONCILIATION_2026-11-12.md). Earlier local-variant details are dated history; no source database repair/deployment was performed.

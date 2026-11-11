@@ -8,6 +8,7 @@ import java.time.Duration;
 import java.time.Instant;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -57,26 +58,30 @@ public class AuthController {
     private final OtpService otp;
     private final GoogleService google;
     private final boolean refreshCookieSecure;
+    private final SessionOriginGuard origins;
 
     public AuthController(
             AuthService auth,
             AccountService accounts,
             OtpService otp,
             GoogleService google,
-            @Value("${paspm.refresh-cookie-secure}") boolean refreshCookieSecure) {
+            @Value("${paspm.refresh-cookie-secure}") boolean refreshCookieSecure, SessionOriginGuard origins) {
         this.auth = auth;
         this.accounts = accounts;
         this.otp = otp;
         this.google = google;
         this.refreshCookieSecure = refreshCookieSecure;
+        this.origins = origins;
     }
 
     @Operation(
             summary = "Đăng nhập bằng email",
             description = "Chỉ tài khoản đã xác minh email và đang ACTIVE mới nhận PASPM access token.",
             security = {})
+    @io.swagger.v3.oas.annotations.security.SecurityRequirements
     @PostMapping("/login")
     public ResponseEntity<Token> login(@Valid @RequestBody Login request, HttpServletRequest servletRequest) {
+        origins.validate(servletRequest);
         return tokenResponse(auth.login(request, servletRequest.getRemoteAddr()));
     }
 
@@ -84,15 +89,27 @@ public class AuthController {
             summary = "Làm mới credentials",
             description = "Xoay vòng opaque refresh token một lần; expiresIn là thời hạn access token mới tính bằng giây.",
             security = {})
+    @io.swagger.v3.oas.annotations.security.SecurityRequirements
     @PostMapping("/refresh")
     public ResponseEntity<Token> refresh(
-            HttpServletRequest servletRequest) {
+            HttpServletRequest servletRequest, HttpServletResponse response) {
+        response.setHeader("Cache-Control", "no-store");
+        response.setHeader("Pragma", "no-cache");
+        origins.validate(servletRequest);
         requireCsrf(servletRequest);
         String refreshToken = cookieValue(servletRequest, refreshCookieName());
-        if (refreshToken == null || refreshToken.isBlank()) {
-            throw new vn.edu.fpt.paspm.common.ApiException(401, "Invalid or expired refresh token");
+        try {
+            if (refreshToken == null || refreshToken.isBlank()) {
+                throw new vn.edu.fpt.paspm.common.ApiException(401, "Invalid or expired refresh token");
+            }
+            return tokenResponse(auth.refresh(refreshToken, servletRequest.getHeader(CSRF_HEADER), servletRequest.getRemoteAddr()));
+        } catch (vn.edu.fpt.paspm.common.ApiException exception) {
+            if (exception.status() == 401) {
+                clearSessionCookies(Map.of()).getHeaders().getOrEmpty(HttpHeaders.SET_COOKIE)
+                        .forEach(cookie -> response.addHeader(HttpHeaders.SET_COOKIE, cookie));
+            }
+            throw exception;
         }
-        return tokenResponse(auth.refresh(refreshToken, servletRequest.getRemoteAddr()));
     }
 
     @Operation(summary = "Đăng xuất thiết bị hiện tại", description = "Thu hồi refresh session gắn với access token hiện tại.")
@@ -100,8 +117,9 @@ public class AuthController {
     public ResponseEntity<Map<String, String>> logout(
             @AuthenticationPrincipal Jwt jwt,
             HttpServletRequest servletRequest) {
+        origins.validate(servletRequest);
         requireCsrf(servletRequest);
-        auth.logout(jwt);
+        auth.logout(jwt, servletRequest.getHeader(CSRF_HEADER));
         return clearSessionCookies(Map.of("message", "Logged out"));
     }
 
@@ -112,8 +130,9 @@ public class AuthController {
     public ResponseEntity<Map<String, String>> logoutAll(
             @AuthenticationPrincipal Jwt jwt,
             HttpServletRequest servletRequest) {
+        origins.validate(servletRequest);
         requireCsrf(servletRequest);
-        auth.logoutAll(jwt);
+        auth.logoutAll(jwt, servletRequest.getHeader(CSRF_HEADER));
         return clearSessionCookies(Map.of("message", "Logged out from all sessions"));
     }
 
@@ -267,8 +286,10 @@ public class AuthController {
             summary = "Đăng nhập bằng Google",
             description = "Đổi Google ID token của identity đã liên kết lấy PASPM access token. Tài khoản phải đang ACTIVE.",
             security = {})
+    @io.swagger.v3.oas.annotations.security.SecurityRequirements
     @PostMapping("/google")
     public ResponseEntity<Token> google(@Valid @RequestBody Google request, HttpServletRequest servletRequest) {
+        origins.validate(servletRequest);
         return tokenResponse(google.login(request.idToken(), servletRequest.getRemoteAddr()));
     }
 
@@ -344,12 +365,14 @@ public class AuthController {
         if (cookies == null) {
             return null;
         }
+        String value = null;
         for (Cookie cookie : cookies) {
             if (name.equals(cookie.getName())) {
-                return cookie.getValue();
+                if (value != null) throw new vn.edu.fpt.paspm.common.ApiException(403, "Ambiguous session cookie");
+                value = cookie.getValue();
             }
         }
-        return null;
+        return value;
     }
 
     private String refreshCookieName() {

@@ -113,7 +113,7 @@ The database identity claims one Store and no request accepts a Store selector. 
 
 ## Readiness evidence
 
-The runtime OpenAPI export records 27 F01, 15 F02, 12 F03, 6 F04, 23 F05 and 8 F06 operations (91 total). The original F01/F02 table below was a historical baseline; existing tests exercise F01 login/current-user/self-registration/OTP/invitation/password-change/role and token-revocation behavior, and F02 authentication, category/product, batch, summary and Store isolation behavior; not every operation is separately exercised in a live browser. Current F01 refresh tests cover rotation/replay, concurrent use, CSRF, cookie policy and per-device logout. F02 browser verification from the prior F02 QA run is summarized in `docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_SWAGGER_TEST_REPORT.md`.
+The runtime OpenAPI export records 27 F01, 15 F02, 12 F03, 6 F04, 24 F05 and 8 F06 operations (92 total). The original F01/F02 table below was a historical baseline; existing tests exercise F01 login/current-user/self-registration/OTP/invitation/password-change/role and token-revocation behavior, and F02 authentication, category/product, batch, summary and Store isolation behavior; not every operation is separately exercised in a live browser. Current F01 refresh tests cover rotation/replay, concurrent use, CSRF, cookie policy and per-device logout. F02 browser verification from the prior F02 QA run is summarized in `docs/PASPM_F02_Inventory_Batch_Backlog_v3/F02_SWAGGER_TEST_REPORT.md`.
 
 Integration-ready: F01 access/refresh, password/OTP/user APIs and F02 all 15 operations. Google operations are conditional on the Google client ID, mail delivery and valid Google-issued ID tokens. Browser cross-origin use is blocked until a same-origin proxy or deployment CORS policy is provided; Backend source contains no CORS mapping. General self-profile editing beyond avatar operations is not implemented. F02 delete and stock-movement/adjustment history APIs do not exist and are not implied by the implemented contract.
 
@@ -179,3 +179,5 @@ F03 v1.2 contains12 operations including the independent Store-scoped expiry-pus
 | F06 | `GET /api/recommendations/config` | PASS | PASS | Yes | Store Admin/Merchandiser, own Store. |
 | F06 | `PUT /api/recommendations/config` | PASS | PASS | Yes | Store Admin only; own Store and expectedVersion required. |
 | F06 | `GET /api/recommendations/expiry-push` | PASS | PASS | Yes | Store Admin/Merchandiser; current Store-local date, independent of Mining. |
+
+Reconciled F01 on 2026-11-12: logout/logout-all require the active JWT family and its stored CSRF cookie/header, without requiring the raw refresh cookie. V20 retained; V21 additive binding. No Store/role permissions changed.
