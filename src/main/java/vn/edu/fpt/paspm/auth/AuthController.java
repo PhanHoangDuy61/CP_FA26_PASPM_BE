@@ -3,6 +3,7 @@ package vn.edu.fpt.paspm.auth;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,21 +42,28 @@ public class AuthController {
     private final AccountService accounts;
     private final OtpService otp;
     private final GoogleService google;
+    private final RefreshSessionService sessions;
+    private final SessionHttpSupport cookies;
 
-    public AuthController(AuthService auth, AccountService accounts, OtpService otp, GoogleService google) {
+    public AuthController(AuthService auth, AccountService accounts, OtpService otp, GoogleService google, RefreshSessionService sessions, SessionHttpSupport cookies) {
         this.auth = auth;
         this.accounts = accounts;
         this.otp = otp;
         this.google = google;
+        this.sessions = sessions;
+        this.cookies = cookies;
     }
 
     @Operation(
             summary = "Đăng nhập bằng email",
             description = "Chỉ tài khoản đã xác minh email và đang ACTIVE mới nhận PASPM access token.",
             security = {})
+    @io.swagger.v3.oas.annotations.security.SecurityRequirements
     @PostMapping("/login")
-    public Token login(@Valid @RequestBody Login request, HttpServletRequest servletRequest) {
-        return auth.login(request, servletRequest.getRemoteAddr());
+    public Token login(@Valid @RequestBody Login request, HttpServletRequest servletRequest, HttpServletResponse response) {
+        cookies.noStore(response);
+        cookies.validateOrigin(servletRequest);
+        return cookies.write(sessions.start(auth.login(request, servletRequest.getRemoteAddr())), response);
     }
 
     @Operation(
@@ -208,9 +216,12 @@ public class AuthController {
             summary = "Đăng nhập bằng Google",
             description = "Đổi Google ID token của identity đã liên kết lấy PASPM access token. Tài khoản phải đang ACTIVE.",
             security = {})
+    @io.swagger.v3.oas.annotations.security.SecurityRequirements
     @PostMapping("/google")
-    public Token google(@Valid @RequestBody Google request, HttpServletRequest servletRequest) {
-        return google.login(request.idToken(), servletRequest.getRemoteAddr());
+    public Token google(@Valid @RequestBody Google request, HttpServletRequest servletRequest, HttpServletResponse response) {
+        cookies.noStore(response);
+        cookies.validateOrigin(servletRequest);
+        return cookies.write(sessions.start(google.login(request.idToken(), servletRequest.getRemoteAddr())), response);
     }
 
     @Operation(

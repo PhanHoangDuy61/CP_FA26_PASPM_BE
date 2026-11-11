@@ -8,6 +8,8 @@ Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and fea
 
 | Feature | Endpoint | System Admin | Store Admin | Merchandiser | End Customer |
 |---|---|---|---|---|---|
+| F01 Refresh | POST `/api/auth/refresh` | Session cookie + CSRF | same | same | same |
+| F01 Logout | POST `/api/auth/logout`, `/api/auth/logout-all` | Own session Bearer + cookie + CSRF | same | same | same |
 | F01 Login | POST `/api/auth/login` | Public | Public | Public | Public |
 | F01 Self-registration OTP request | POST `/api/auth/register` | Public | Public | Public | Public |
 | F01 Complete self-registration | POST `/api/auth/register/complete` | Public (eligible pending account only) | same | same | same |

@@ -65,13 +65,19 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain chain(HttpSecurity http, UserRepository userRepository) throws Exception {
+    public SecurityFilterChain chain(HttpSecurity http, UserRepository userRepository, org.springframework.jdbc.core.JdbcTemplate db) throws Exception {
         var converter = new JwtAuthenticationConverter();
         converter.setJwtGrantedAuthoritiesConverter(jwt -> {
             try {
                 User user = userRepository.findById(Integer.parseInt(jwt.getSubject()));
                 Number version = jwt.getClaim("ver");
                 if (!user.active() || version == null || version.intValue() != user.version()) {
+                    throw new IllegalArgumentException();
+                }
+                String sid = jwt.getClaimAsString("sid");
+                if (sid != null && !Boolean.TRUE.equals(db.queryForObject(
+                        "SELECT COUNT(*) = 1 FROM auth_session WHERE session_id=? AND user_id=? AND token_version=? AND revoked=FALSE AND expires_at>CURRENT_TIMESTAMP",
+                        Boolean.class, sid, user.id(), user.version()))) {
                     throw new IllegalArgumentException();
                 }
                 return List.of(new SimpleGrantedAuthority("ROLE_" + user.role()));
@@ -90,6 +96,7 @@ public class SecurityConfig {
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/mining/runs/*/benchmark").denyAll()
                         .requestMatchers(
                                 "/api/auth/login",
+                                "/api/auth/refresh",
                                 "/api/auth/register",
                                 "/api/auth/register/complete",
                                 "/api/auth/otp/**",

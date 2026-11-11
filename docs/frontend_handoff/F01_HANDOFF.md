@@ -1,6 +1,4 @@
-<!-- docs-reorganization:notice -->
-> **NEEDS_REVIEW — documentation review 2026-10-26.** Duplicate-registration response prose must be reconciled with source 409; no contract is silently changed here. See [current navigation](../features/F01/README.md). Original results and business-rule text below are retained; this notice is not a new execution or approval.
-<!-- /docs-reorganization:notice -->
+> **Updated 2026-11-11 — local working tree.** Registration is 202 for a new email and 409 for an existing email; the current session contract adds refresh/CSRF/logout. Historical reference documents keep their original dates. This documentation update does not re-execute tests. See [current feature guide](../features/F01/README.md).
 
 # F01 Frontend Handoff
 
@@ -10,7 +8,7 @@ For React + TypeScript. Contract and synthetic JSON files: [`../api/F01_AUTH_USE
 
 Backend default is `http://localhost:8080` (`PORT` overrides it). Use `VITE_PASPM_API_BASE_URL` in the Frontend's local environment, without a trailing slash, e.g. `http://localhost:8080`. Swagger UI is `/swagger`; OpenAPI is `/v3/api-docs`. QA has used port8799; that is not the default. Backend environment names used by deployment include `PORT`, `DB_URL`, `DB_USER`, `DB_PASSWORD`, `JWT_SECRET`, `OTP_SECRET`, `TOKEN_TTL_SECONDS`, `OTP_TTL_SECONDS`, `OTP_COOLDOWN_SECONDS`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_AUTH`, `SMTP_TLS`, `MAIL_FROM`, and optional `GOOGLE_CLIENT_ID`. Configure these in the Backend environment/secrets manager; never expose them to React. For the React app, only the API origin belongs in `VITE_PASPM_API_BASE_URL`.
 
-Send `Authorization: Bearer <accessToken>` for protected calls. F01 returns only a short-lived JWT (`expiresIn` seconds; default900), no refresh token. The current source has no logout endpoint: client logout means clear its token/session state. On 401, clear the stale token and send the user through login; role/status changes also invalidate previously issued tokens. Use HTTPS in deployment and keep JWT/OTP/database/mail secrets out of `VITE_*` and browser bundles.
+Send `Authorization: Bearer <accessToken>` for protected calls. HTTP login now returns `accessToken`, `expiresIn`, `tokenType`, `csrfToken`, and sets refresh/CSRF cookies. Use `credentials: include`; keep the access token in memory. POST `/api/auth/refresh` with the matching CSRF cookie/header restores or renews the session. POST `/api/auth/logout` revokes this session; `/api/auth/logout-all` revokes every session of the account. Both require Bearer plus CSRF and cookies. See the [current session contract](../api/F01_AUTH_USER_API.md#session-integration-update--2026-11-11). Use HTTPS in deployment and keep JWT/OTP/database/mail secrets out of `VITE_*` and browser bundles.
 
 Backend source has no CORS mapping or allowed-origin configuration. A browser served from a different origin may fail preflight; for local work use a same-origin dev proxy or arrange allowed origins in deployment infrastructure before browser integration. Do not assume CORS is currently configured by this API.
 
@@ -30,11 +28,11 @@ Backend source has no CORS mapping or allowed-origin configuration. A browser se
 | Edit User | Only name can be changed through current PUT; no email/password edit |
 | Account activation | `/api/auth/activate` invitation flow or successful self-registration completion; no manual OTP bypass |
 | Password reset | `POST /api/auth/password-reset/request` + `POST /api/auth/password-reset/confirm` via separate OTP flow |
-| Logout / refresh token | Not implemented; clear client session for logout; no refresh API |
+| Logout / refresh token | POST `/api/auth/refresh`, `/logout`, `/logout-all`; use cookies + X-CSRF-Token, and Bearer for logout |
 
 ## Real authentication sequences
 
-Self-registration: email request → OTP email → verify → complete with password/name → login → load `/me`. Public registration has no role/store fields and creates only `END_CUSTOMER`. A duplicate email receives the same generic 202 response to avoid account enumeration.
+Self-registration: email request → OTP email → verify → complete with password/name → login → load `/me`. Public registration has no role/store fields and creates only `END_CUSTOMER`. A duplicate email receives 409 `Email already exists`; this discloses registration status.
 
 Staff: System Admin creates an invitation with role and optional Store assignment → recipient receives `ADMIN_INVITE` OTP → recipient sets password and activates → login. For Store Admin/Merchandiser the System Admin must provide an existing `storeId`; global roles and End Customer must have null/no Store.
 
@@ -55,7 +53,7 @@ export type RoleCode = 'SYSTEM_ADMIN' | 'STORE_ADMIN' | 'MERCHANDISER' | 'END_CU
 export type AccountStatus = 'PENDING_VERIFICATION' | 'ACTIVE' | 'INACTIVE';
 export interface LoginRequest { email: string; password: string }
 export interface ChangePasswordRequest { currentPassword: string; newPassword: string }
-export interface TokenResponse { accessToken: string; expiresIn: number; tokenType: 'Bearer' | string }
+export interface TokenResponse { accessToken: string; expiresIn: number; tokenType: 'Bearer'; csrfToken: string }
 export interface UserView { userId: number; email: string; name: string | null; roleCode: RoleCode | string; storeId: number | null; status: AccountStatus | string; emailVerified: boolean; avatarUrl: string | null }
 export interface EmailRequest { email: string }
 export interface RegistrationRequest { name: string; email: string; password: string }
@@ -78,3 +76,7 @@ export interface ApiError { error: string }
 ## Loading and errors
 
 Show pending while requests run; registration may show “check your email” after generic 202. Map 400 to field/form validation, 401 to login/session reset, 403 to access denied, 404 to missing account, 409 to duplicate/identity conflict, 429 to a wait/retry-after style message (server does not return Retry-After contract), 503 to email/Google configuration unavailable, and network/5xx to retryable server error. Handled JSON errors have `{error:string}`; a Spring Security 401 may have no JSON body.
+
+## Local cookie configuration
+
+For local HTTP development set Backend `PASPM_SESSION_COOKIE_SECURE=false` and `PASPM_SESSION_ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000`. Use the existing same-origin Vite `/api` proxy; direct cross-origin requests still require a separate CORS deployment decision. Production keeps Secure cookies and HTTPS. Refresh requires no request JSON and no Bearer. Read `__Host-PASPM-CSRF` (HTTPS) or `PASPM-CSRF` (local HTTP), send the value as `X-CSRF-Token`, and replace the in-memory credentials with each refresh response. On permanent refresh rejection clear local session state and return to sign-in. Do not retry a consumed refresh credential.

@@ -1,5 +1,14 @@
 # API Changelog
 
+## 2026-11-11 — F01 browser session compatibility (uncommitted working tree)
+
+- Email/Google HTTP login now returns `csrfToken` and sets refresh + CSRF cookies.
+- Added POST `/api/auth/refresh`, `/api/auth/logout`, `/api/auth/logout-all` with rotation/reuse detection, explicit CSRF/Origin checks, and persisted revocation.
+- Added V20 auth session/hash tables; V1–V19 unchanged. Session access JWTs carry `sid`; version-based account invalidation remains active.
+- Secure cookies default on; loopback HTTP development needs the explicit local setting. Existing Frontend implementation unchanged.
+- Actual verification and limitations: [F01 session report](../testing/reports/F01_SESSION_VERIFICATION.md).
+
+
 ## 2026-11-02 — F05 Scheduler branch (`Khoi/feat/f05-scheduled-mining-option-b-completion`, not on `dev`)
 
 - **Added** `GET /api/system/stores` (SYSTEM_ADMIN, `Page<StoreView{storeId,name}>`, decision D2). OpenAPI 88 → 89 operations.

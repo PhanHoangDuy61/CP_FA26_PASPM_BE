@@ -6,7 +6,7 @@
   },
   "servers": [
     {
-      "url": "http://127.0.0.1:18084",
+      "url": "http://localhost:8080",
       "description": "Generated server url"
     }
   ],
@@ -2705,7 +2705,8 @@
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           }
-        }
+        },
+        "security": []
       }
     },
     "/api/auth/google": {
@@ -2758,7 +2759,8 @@
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           }
-        }
+        },
+        "security": []
       }
     },
     "/api/auth/google/register": {
@@ -5337,6 +5339,142 @@
           }
         }
       }
+    },
+    "/api/auth/refresh": {
+      "post": {
+        "tags": [
+          "session-controller"
+        ],
+        "summary": "Rotate refresh session",
+        "description": "Requires refresh cookie and matching CSRF cookie / X-CSRF-Token header; returns fresh accessToken and csrfToken. Reuse revokes the session family.",
+        "operationId": "refresh",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": [
+          "session-controller"
+        ],
+        "summary": "Log out this session",
+        "description": "Requires Bearer token, refresh cookie and matching CSRF cookie / X-CSRF-Token. Revokes this session and clears cookies.",
+        "operationId": "logout",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          }
+        }
+      }
+    },
+    "/api/auth/logout-all": {
+      "post": {
+        "tags": [
+          "session-controller"
+        ],
+        "summary": "Log out all sessions",
+        "description": "Requires Bearer token, refresh cookie and CSRF pair. Revokes all sessions and increments the account token version.",
+        "operationId": "logoutAll",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -7188,6 +7326,9 @@
             "format": "int64"
           },
           "tokenType": {
+            "type": "string"
+          },
+          "csrfToken": {
             "type": "string"
           }
         }

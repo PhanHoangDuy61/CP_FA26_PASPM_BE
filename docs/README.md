@@ -14,13 +14,13 @@ PASPM hỗ trợ quản lý sản phẩm, tồn kho, dữ liệu giao dịch, Ut
 
 [Hybrid JPA + JDBC](architecture/README.md) · [diagrams](diagrams/README.md) · [V7 recovery](setup/FLYWAY_MYSQL_V7_RECOVERY.md) · [V5 historical matrix compatibility](architecture/LEGACY_UTILITY_MATRIX_COMPATIBILITY.md).
 
-Product metadata và Category CRUD dùng JPA; Product catalog/inventory và analytical workloads giữ JDBC. Một transaction manager dùng chung datasource; Flyway quản lý V1–V12, bao gồm Java migration V11.
+Product metadata và Category CRUD dùng JPA; Product catalog/inventory và analytical workloads giữ JDBC. Một transaction manager dùng chung datasource; Flyway của working tree hiện có V1–V20, bao gồm Java migration V11; V20 thuộc thay đổi F01 local chưa commit, không phải schema release đã được công bố.
 
 ## Features
 
 | Feature | Name | Backend Status | API Docs | Requirements | Tests |
 |---|---|---|---|---|---|
-| [F01](features/F01/README.md) | Authentication/User/RBAC | Source implemented; registration 202/409 documented | [API](api/F01_AUTH_USER_API.md) | [Scope](features/F01/README.md#1-purpose-and-scope) | [History](features/F01/README.md#9-tests-and-evidence) |
+| [F01](features/F01/README.md) | Authentication/User/RBAC | Local session update: refresh/CSRF/logout, V20; registration 202/409; chưa commit | [API](api/F01_AUTH_USER_API.md) | [Scope](features/F01/README.md#1-purpose-and-scope) | [History](features/F01/README.md#9-tests-and-evidence) |
 | [F02](features/F02/README.md) | Product/Category/Inventory | Source implemented; Product/Category JPA integrated | [API](api/F02_PRODUCT_INVENTORY_API.md) | [Reference v3](features/F02/reference_v3/PASPM_F02_Inventory_Batch_API_Swagger_Backlog_v3.md) | [Tests](features/F02/README.md#9-tests-and-evidence) |
 | [F03](features/F03/README.md) | Utility/Weight Rules | Source implemented; final v1.2 authority missing from dev | [API](api/F03_UTILITY_API.md) | [Gap](requirements/README.md#f03-v12-source-gap) | [Tests](features/F03/README.md#9-tests-and-evidence) |
 | [F04](features/F04/README.md) | Transaction Import | File-based import; CSV available, Excel separately tracked; external ingestion excluded | [API](api/F04_TRANSACTION_API.md) | [Design](features/F04/reference/F04_DESIGN.md) | [History](features/F04/reference/F04_SWAGGER_TEST_REPORT.md) |
@@ -29,7 +29,7 @@ Product metadata và Category CRUD dùng JPA; Product catalog/inventory và anal
 
 ## API Reference
 
-[API index](api/README.md) · [OpenAPI export](api/openapi.json) · [RBAC](api/F01_F02_RBAC_MATRIX.md). The runtime export of the F03/F05 branch contains 88 operations (see the [RBAC matrix](api/F01_F02_RBAC_MATRIX.md)); the older 73 was the documented baseline before F05 administration. Swagger/framework routes are separate. The API Inventory package exists only on a separate local audit branch; see the index for provenance, not a broken link or an implied merge.
+[API index](api/README.md) · [OpenAPI export](api/openapi.json) · [RBAC](api/F01_F02_RBAC_MATRIX.md). The checked-in runtime export reflects the 2026-11-11 local working tree: 92 operations, including three new F01 session operations. The earlier 88-operation Core and 89-operation scheduler exports are historical baselines; the session changes are not committed or published. See [current API index](api/README.md) and [local session evidence](testing/reports/F01_SESSION_VERIFICATION.md). Swagger/framework routes are separate. The API Inventory package exists only on a separate local audit branch; see the index for provenance, not a broken link or an implied merge.
 
 ## Frontend Integration
 
@@ -48,9 +48,13 @@ Product metadata và Category CRUD dùng JPA; Product catalog/inventory và anal
 ## Known Documentation Gaps
 
 - Final F03 v1.2 source and some referenced examples are absent from tracked dev.
-- F01 duplicate-email 202/409 statements conflict; several older F03/F05 handoffs still describe missing F06.
+- F01 canonical contract/handoff now agree on 202/409 and the session lifecycle; older reference documents retain their historical wording. Some older F03/F05 handoffs still describe missing F06.
 - Latest editable ERD omits V11 archive/routing details; migrations govern physical schema.
 - CI/delivery reports contain dated pre-merge statements; current hosted status is not certified here.
 - F07–F11 feature definitions and the separate API Inventory merge remain unresolved.
 
 See [review register](requirements/README.md#documentation-review-register), [complete path map](DOCUMENTATION_MAP.md) and [reorganization validation report](audits/DOCS_REORGANIZATION_REPORT.md).
+
+## Record of Changes — Agent sessions
+
+[Nhật ký thay đổi theo phiên](record-of-changes/README.md) · [mẫu ghi nhận](record-of-changes/TEMPLATE.md). Bắt đầu từ bản ghi F01 ngày 2026-11-11; phân biệt thay đổi local, kiểm thử đã chạy, cập nhật docs, trạng thái commit và giới hạn. Agent các phiên sau cần cập nhật record khi bàn giao; không suy diễn các phiên cũ thiếu bằng chứng.

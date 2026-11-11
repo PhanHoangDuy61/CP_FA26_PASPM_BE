@@ -37,6 +37,8 @@ V10: `recommendation_rule_config`, `recommendation`, `recommendation_item`, `rec
 ## 8. Dependencies
 F01 (roles), F02 (live inventory), F03 (frozen snapshot evidence, Product threshold), F05 (completed runs and patterns).
 
+F01 session update (2026-11-11, local/uncommitted): generation/review/config APIs retain existing role and Store authorization. END_CUSTOMER login does not grant F06 access; a visible demo storefront is not proof of a public recommendation API. Rule policy, frozen evidence and live eligibility are unchanged. See [shared session impact and evidence](../F01/F01_SESSION_MANAGEMENT.md#5-tác-động-tới-feature-khác).
+
 ## 9. Tests and evidence
 `RecommendationIntegrationTest` (real SPMF: configuration → snapshot → manual request → run → generation, H2) and its MySQL subclass, `RecommendationHardeningIntegrationTest`, `RecommendationExpiryIntegrationTest`, `RecommendationRulesTest`, `FrozenEvidenceReaderTest`, `TransactionEvidenceTest`, `RecommendationMigrationTest` — inside the 23/23 script run (Linux Docker `RecommendationMySqlIntegrationTest` 16/16). Dated reports: [hardening](F06_HARDENING_REPORT.md), [implementation summary](F06_IMPLEMENTATION_SUMMARY.md), [performance](../../testing/F04_F06_PERFORMANCE_REPORT.md), [verification](../../testing/reports/F06_VERIFICATION.md).
 

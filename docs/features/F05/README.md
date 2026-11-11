@@ -44,6 +44,8 @@ V9 `mining_request`, `mining_run`, `high_utility_pattern`, `pattern_item`; V13 `
 ## 8. Dependencies
 F01 (roles), F02 (Products), F03 (frozen snapshots), F04 (via F03), external SPMF jar and Java 25. Feeds F06.
 
+F01 session update (2026-11-11, local/uncommitted): HTTP admin/read routes use valid Bearer sessions and existing role/Store rules. Internal scheduled execution does not obtain browser refresh cookies. This update changes no scheduler policy, activation gate, lease/fencing or SPMF runtime. See [shared session impact and evidence](../F01/F01_SESSION_MANAGEMENT.md#5-tác-động-tới-feature-khác).
+
 ## 9. Tests and evidence
 Mining suites under `src/test/java/.../mining` (configuration, gate policy, scheduler-off, lease, worker queue, multi-JVM, SPMF engine/runtime, MySQL integration), `F03F05RbacMatrixTest`, `RecommendationIntegrationTest` (F03→F05→F06). Results on the Scheduler branch (`90ceba1`): script 23/23 (534 H2 tests; opt-in 544 run / 0 failed); macOS multi-JVM 9/9 and clone-API 5/5; Linux Docker (amd64 under emulation, non-root) 179/179. Results on `dev` (PR #11): script 23/23, macOS multi-JVM 6/6. Scheduler crash and recovery evidence: [acceptance matrix](../../reports/F05_SCHEDULER_ACCEPTANCE_MATRIX.md), [policy proposals](../../reports/F05_SCHEDULER_POLICY_DECISIONS.md). The GitHub CI results of PR #11 were not inspected in this documentation task.
 

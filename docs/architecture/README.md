@@ -24,3 +24,7 @@ SPMF is an external pinned binary with a separately configured Java 25 child pro
 [Archived PR/delivery packages](../archive/README.md) retain original decisions and branch identities. They do not define current merge status. [Testing index](../testing/README.md) separates local/CI/real-data evidence.
 
 F04 adds [V12 raw-evidence capacity](../features/F04/F04_IMPROVEMENT_REPORT.md) after the immutable V1–V11 migrations. It widens the existing staging raw_data column only; order identity, snapshots and history are preserved.
+
+## F01 browser session update — 2026-11-11 local changes
+
+[Session design and source map](../features/F01/F01_SESSION_MANAGEMENT.md) covers V20 session families, hashed one-use refresh credentials, row locking, revocation, CSRF/Origin checks and legacy JWT compatibility. This is an uncommitted local addition; it does not change F03–F06 historical data or the hybrid persistence architecture. [Implementation evidence](../testing/reports/F01_SESSION_VERIFICATION.md).

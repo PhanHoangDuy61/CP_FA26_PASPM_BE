@@ -101,16 +101,19 @@ public class AuthService {
         userRepository.updatePassword(user.id(), encodePassword(request.newPassword()));
     }
 
-    public Token token(User user) {
+    public Token token(User user) { return token(user, null, null); }
+
+    public Token token(User user, String sessionId, String csrfToken) {
         Instant now = Instant.now();
-        JwtClaimsSet claims = JwtClaimsSet.builder()
+        var builder = JwtClaimsSet.builder()
                 .issuer("paspm")
                 .subject(String.valueOf(user.id()))
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(ttl))
                 .id(UUID.randomUUID().toString())
-                .claim("ver", user.version())
-                .build();
+                .claim("ver", user.version());
+        if (sessionId != null) builder.claim("sid", sessionId);
+        JwtClaimsSet claims = builder.build();
 
         String tokenValue = encoder.encode(
                 JwtEncoderParameters.from(
@@ -119,7 +122,7 @@ public class AuthService {
                 )
         ).getTokenValue();
 
-        return new Token(tokenValue, ttl, "Bearer");
+        return new Token(tokenValue, ttl, "Bearer", csrfToken);
     }
 
     public User current(Jwt jwt) {
