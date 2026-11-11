@@ -8,7 +8,7 @@
 | Branch / base HEAD | `dev` / `5b30eb1` |
 | Agent | Codex |
 | Feature scope | F01; tài liệu phụ thuộc F02–F06 |
-| Release status | **UNRELEASED** — local changes, chưa commit/merge/deploy |
+| Release status | **FEATURE_BRANCH** — đã push bản local; merge vào dev chờ reconciliation V20 |
 | Record status | COMPLETED — tổng hợp các phiên có bằng chứng bên dưới |
 
 ## 1. Summary
@@ -22,6 +22,7 @@ Sửa lỗi Backend/Frontend không khớp hợp đồng phiên: thêm refresh/C
 | `ROC-20261111-001` | [01 — F01 session implementation](01-f01-session-implementation.md) | Implementation / Security / Database | Local Maven, MySQL và browser đã thực thi; giới hạn ghi trong record |
 | `ROC-20261111-002` | [02 — F01 documentation sync](02-f01-documentation-sync.md) | Documentation | Kiểm tra docs/link/hash; không chạy lại runtime |
 | `ROC-20261111-003` | [03 — Record organization](03-record-organization.md) | Documentation / Organization | Kiểm tra cấu trúc, ID, link và bảo toàn source |
+| `ROC-20261111-004` | [04 — Publication / merge blocker](04-feature-publication-and-merge-blocker.md) | Git integration | Fresh verify 387 PASS / 190 SKIPPED; nhánh đã push; merge chờ quyết định |
 
 ## 3. Added
 
@@ -83,7 +84,11 @@ F02–F06 giữ nguyên API nghiệp vụ, role gate và StoreScope; snapshot l�
 - Diagram session/V20 cần task riêng; không sửa Draw.io/ERD trong các phiên docs.
 - Không dựng nhật ký cho các phiên cũ hơn khi thiếu bằng chứng.
 
-## 11. Delivery
+## 11. Publication update / correction
+
+Đã push feature commit `9d33d88`. Fresh clean verification: 577 discovered / 387 PASS / 190 SKIPPED; số 578/388 của record trước có một stale XML, xem [đính chính](../../testing/reports/F01_SESSION_VERIFICATION.md#publication-verification-and-correction--2026-11-11). Không sửa lịch sử các lượt cũ thành PASS mới. Origin/dev `42b8a9c` có V20 khác; merge đang BLOCKED_PENDING_RECONCILIATION_DECISION.
+
+## 12. Delivery (historical status before publication)
 
 Không commit, push, merge hoặc deploy. Các sửa source local có từ phiên implementation được bảo toàn. Approved requirements, Frontend, diagram và report lịch sử không bị thay đổi nghiệp vụ bởi thao tác chuẩn hóa record.
 

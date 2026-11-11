@@ -99,3 +99,11 @@ Final source `mvn verify` exit 0: **578 discovered, 388 PASS, 190 SKIPPED, zero 
 Independent post-change Docker group: **27 PASS, zero skips/failures/errors**. Of the 190 default-skipped tests, 23 were executed successfully in this independent group (SessionMySql 11, JPA migration 4, mining migration 5, recommendation migration 2, Flyway MySQL recovery 1). The remaining 167 were not rerun by this task. They include other opt-in MySQL suites, Linux-only parent-death process verification, multi-JVM/container scheduler tests and historical release-artifact checks; no claim of their passing is made. Full per-suite counts: [test evidence](F01_SESSION_TEST_COUNTS.json).
 
 Final Backend restarted on localhost:8080; Swagger returns 200 and local development Flyway reports V20 successful. FE remains at localhost:3000 with its implementation unchanged. Final real browser login, refresh and logout each returned 200, and no session cookie remained after logout.
+
+## Publication verification and correction — 2026-11-11
+
+Before publishing feature commit `9d33d88`, exported the staged index to a fresh directory (no existing target, no private application.yml overrides) and ran Java17 Maven verify with the pinned local SPMF JAR and Java25 child executable. Exit 0: **577 discovered / 387 PASS / 190 SKIPPED**, zero failures/errors. [Fresh per-suite counts](F01_SESSION_PUBLISH_VERIFY_COUNTS.json).
+
+Correction: the earlier 578/388 aggregate in this report and its original counts file included one stale `MiningAutomaticSchedulerMySqlTest` XML from target; that test class is absent from the current source. The old totals therefore are not evidence that this extra test was freshly executed. Original evidence files/dated records are retained with this explicit correction. The independent 27-case Docker run and browser evidence remain separate; no new MySQL/browser execution is claimed here.
+
+After fetch, origin/dev `42b8a9c` already contains a different F01 refresh implementation and incompatible V20. This feature branch is published for reconciliation, not merged or deployment-ready against that new schema. [Publication and blocker record](../../record-of-changes/2026-11-11/04-feature-publication-and-merge-blocker.md).

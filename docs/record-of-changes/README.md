@@ -20,7 +20,7 @@ ID ngày: `ROC-YYYYMMDD`; ID phiên: `ROC-YYYYMMDD-NNN`. File phiên dùng số 
 
 | Date / timezone | Daily record | Sessions | Scope | Release status |
 |---|---|---:|---|---|
-| 2026-11-11 / Asia/Ho_Chi_Minh | [ROC-20261111 — thay đổi hôm nay](2026-11-11/README.md) | 3 | F01 implementation, docs F01–F06, chuẩn hóa record | UNRELEASED — local, chưa commit/merge/deploy |
+| 2026-11-11 / Asia/Ho_Chi_Minh | [ROC-20261111 — thay đổi hôm nay](2026-11-11/README.md) | 4 | F01 implementation, docs F01–F06, record và publication | FEATURE_BRANCH — đã push; merge chờ reconciliation |
 
 Bản ghi implementation 01 được tổng hợp từ source và bằng chứng thực thi phiên trước; không phải lượt kiểm thử mới. Chưa có hồ sơ đầy đủ cho các ngày cũ hơn; không suy diễn lịch sử từ tên branch hoặc kết quả chưa xác minh.
 

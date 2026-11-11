@@ -1,6 +1,6 @@
 # F01 — Authentication and User Management
 
-> Current documentation baseline: `dev` HEAD `5b30eb1` plus uncommitted local F01 session changes (2026-11-11). Earlier merged/test baselines retain their dates in linked reports. This documentation-only follow-up reuses existing test evidence; it does not rerun application tests.
+> Feature branch baseline: implementation `9d33d88`, based on old dev `5b30eb1`; published separately on 2026-11-11. Updated origin/dev `42b8a9c` has a different V20; reconciliation is pending. Earlier merged/test baselines retain their dates in linked reports. This documentation-only follow-up reuses existing test evidence; it does not rerun application tests.
 
 ## 1. Purpose and scope
 Identity for every other feature: email/password login, OTP-verified self-registration, administrator invitations, Google sign-in, password reset/change, role and Store assignment, account status, own-account avatar. Store scope of every Store-bound API comes from the authenticated account.
@@ -43,7 +43,7 @@ Every other feature reads role and Store from F01. F02 Products/F03/F04/F05/F06 
 ## 9. Tests and evidence
 `AuthIntegrationTest`, `GoogleRegistrationTest`, the Spring Security rules exercised by every feature's role tests and `F03F05RbacMatrixTest` (anonymous 401 on 26 routes). Historical reports: [reference](reference/TEST_RESULTS.md). Google flows need a real Google client and mail, so they are verified only with test doubles.
 
-Current implementation tests: `SessionHttpIntegrationTest` (11), `SessionMySqlIntegrationTest` (11 opt-in), `SessionHttpSupportTest` (3). Maven verify: 388 PASS / 190 SKIPPED; separate Docker group: 27 PASS, no skips. These are previous execution results, not a new documentation-run result.
+Current implementation tests: `SessionHttpIntegrationTest` (11), `SessionMySqlIntegrationTest` (11 opt-in), `SessionHttpSupportTest` (3). Fresh publication Maven verify: 387 PASS / 190 SKIPPED; separate Docker group: 27 PASS, no skips. These are previous execution results, not a new documentation-run result.
 
 Current session evidence: [F01 session verification](../../testing/reports/F01_SESSION_VERIFICATION.md), including real Customer browser login, reload/refresh and logout.
 
@@ -60,3 +60,5 @@ Session schema/lifecycle diagrams may need a later V20 update; no diagram was ed
 
 ## 13. Historical references
 [Original decisions](reference/DECISIONS.md), [implementation baseline](reference/IMPLEMENTATION_STATUS.md), [Swagger checklist](reference/SWAGGER_CHECKLIST.md); early JDBC-only/F01-only statements are historical. [README baseline](../../archive/F01/ROOT_README_BASELINE.md).
+
+Publication note: this feature branch is separate from origin/dev `42b8a9c`, which contains a different refresh/V20 implementation. [Merge reconciliation blocker](../../record-of-changes/2026-11-11/04-feature-publication-and-merge-blocker.md). Earlier 388-pass totals included one stale report; use the fresh publication counts linked from the verification report.

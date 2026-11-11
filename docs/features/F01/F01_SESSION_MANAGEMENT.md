@@ -1,6 +1,6 @@
 # F01 — Quản lý phiên và tác động tới F02–F06
 
-Ngày đối chiếu: **2026-11-11**, timezone **Asia/Ho_Chi_Minh**. Baseline Git: `dev` tại `5b30eb1`; phần refresh/CSRF/logout hiện là **thay đổi local chưa commit**. Tài liệu này mô tả implementation hiện có, không xác nhận đã merge, triển khai hoặc nghiệm thu production.
+Ngày đối chiếu: **2026-11-11**, timezone **Asia/Ho_Chi_Minh**. Baseline Git: `dev` tại `5b30eb1`; phần refresh/CSRF/logout đã được publish riêng ở feature commit `9d33d88`, **chưa merge vào dev mới**. Tài liệu này mô tả implementation hiện có, không xác nhận đã merge, triển khai hoặc nghiệm thu production.
 
 ## 1. Lý do thay đổi
 
@@ -98,3 +98,7 @@ Chưa thực hiện trong phiên docs:
 - Architecture/security: phân biệt Bearer cho HTTP business API với cookie/CSRF ở route phiên; giữ execution context nội bộ của scheduler tách khỏi phiên trình duyệt.
 
 Đây là backlog trình bày implementation đã có, không phải quyền sửa diagram hoặc thiết kế lại database trong task này.
+
+## 9. Publication correction / reconciliation
+
+Fresh staged-snapshot Maven verify for `9d33d88`: 577 discovered / 387 PASS / 190 SKIPPED, zero failures/errors. Earlier 578/388 totals above included one stale XML; see the [explicit correction](../../testing/reports/F01_SESSION_VERIFICATION.md#publication-verification-and-correction--2026-11-11). Origin/dev now contains a different V20 and AuthSessionService; this branch cannot be merged or deployed over that schema without reconciliation. [Record 04](../../record-of-changes/2026-11-11/04-feature-publication-and-merge-blocker.md).
