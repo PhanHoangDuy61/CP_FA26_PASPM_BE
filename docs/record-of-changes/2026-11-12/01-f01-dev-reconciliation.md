@@ -9,8 +9,8 @@
 | Features | F01; F02–F06 dùng chung xác thực |
 | Bases | dev42b8a9c và local feature689526b |
 | Work branch | Khoi/Fear/f01-session-dev-reconciliation |
-| Execution status | COMPLETED — local verification; Git integration pending below |
-| Release status | PENDING_AUTHORIZED_MERGE — không deploy |
+| Execution status | COMPLETED — local verification và authorized Git integration hoàn tất |
+| Release status | MERGED_TO_DEV — code merge7304e29 đã push; không deploy |
 | Daily summary | [2026-11-12](README.md) |
 
 ## 1. Request and authorization
@@ -65,3 +65,9 @@ Không deploy. Không chuyển đổi database local đã áp dụng V20 của i
 ## 6. Git delivery
 
 All local gates passed. Implementation merge commit `c8b10ba` has parents `42b8a9c` (published dev) and `689526b` (local feature), resolving the earlier schema/controller conflict. Authorized branch publication and non-fast-forward integration into dev follow this verified source. Record này ghi trạng thái tại commit; Git history/remote refs là bằng chứng cuối cho việc merge. Không force-push hoặc bypass branch protection.
+
+## 7. Confirmed delivery
+
+Feature4e18157 được merge vào dev bằng7304e29 (hai parent42b8a9c,4e18157); đã push và xác nhận remote ref. Kiểm tra sau merge47/47 PASS, không skip. [Merged evidence](../../testing/reports/F01_SESSION_RECONCILIATION_MERGED_COUNTS.json). Bản ghi đóng phiên này được đưa lên nhánh docs riêng và merge tiếp theo cùng quy trình; không đổi source đã kiểm chứng.
+
+Giữ workspace BE gốc cùng private config/diagram edits. Không restart backend cũ hoặc sửa DB. Khi cập nhật workspace về dev mới, DB local dùng V20 của variant bị loại vẫn cần chuyển đổi riêng; không chạy repair mặc định.
