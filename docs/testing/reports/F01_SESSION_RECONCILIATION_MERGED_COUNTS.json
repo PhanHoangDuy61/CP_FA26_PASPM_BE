@@ -1,0 +1,37 @@
+{
+  "date": "2026-11-12",
+  "timezone": "Asia/Ho_Chi_Minh",
+  "mergeCommit": "7304e292cf71ad59a7d7fa9860a722535be4c073",
+  "parents": [
+    "42b8a9c",
+    "4e18157"
+  ],
+  "sourceTreeMatchesPublishedFeature": true,
+  "method": "mvn -Dtest=AuthIntegrationTest,SessionHttpIntegrationTest,SessionV21MigrationTest,SessionOriginGuardTest test on merged dev, Java17, exit0",
+  "suites": {
+    "AuthIntegrationTest": {
+      "tests": 28,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "SessionHttpIntegrationTest": {
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "SessionV21MigrationTest": {
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "SessionOriginGuardTest": {
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  }
+}

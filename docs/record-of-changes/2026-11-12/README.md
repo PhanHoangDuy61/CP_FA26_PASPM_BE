@@ -7,7 +7,7 @@
 | Project / agent | PASPM Backend / Codex |
 | Scope | F01 dev reconciliation, verification và Git integration |
 | Base | Published dev42b8a9c + local feature689526b |
-| Status | LOCAL_GATES_PASS — authorized Git delivery ghi trong record |
+| Status | MERGED_TO_DEV — code7304e29 đã push; không deploy |
 
 ## Session records
 
@@ -38,3 +38,5 @@ Clean verify399 PASS/195 SKIPPED; MySQL29 PASS/0 SKIPPED; actual HTTP11 PASS, Op
 Theo quyền người dùng: branch → push → merge vào dev khi gates pass, không deploy. Database đã áp dụng local V20 khác không được repair hoặc dùng build mới tự động; cần quy trình chuyển đổi riêng.
 
 [Parent index](../README.md) · [Template](../TEMPLATE.md).
+
+Code merge7304e29 confirmed on remote dev; post-merge47/47 PASS. [Closing evidence](../../testing/reports/F01_SESSION_RECONCILIATION_MERGED_COUNTS.json). Full verify399PASS/195SKIPPED, independent MySQL29PASS and actual HTTP11PASS retain their separate scopes; no hosted CI claim.

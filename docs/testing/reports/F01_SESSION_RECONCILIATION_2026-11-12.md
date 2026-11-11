@@ -1,6 +1,6 @@
 # F01 reconciliation with dev — 2026-11-12
 
-Status: local engineering verification PASS; authorized Git integration pending; no production/source database changes. Timezone Asia/Ho_Chi_Minh. User approved retaining dev V20/AuthSessionService and integrating additive protections before branch push/merge.
+Status: local engineering verification PASS; merged and pushed to dev; no production/source database changes. Timezone Asia/Ho_Chi_Minh. User approved retaining dev V20/AuthSessionService and integrating additive protections before branch push/merge.
 
 ## Source and migration
 
@@ -44,3 +44,11 @@ Current source DB and running local old-variant Backend are preserved. A DB with
 ## Git status
 
 Verified implementation merge: `c8b10ba`, parents `42b8a9c` and `689526b`. All local gates above pass; branch push and non-fast-forward dev integration are authorized by the user. Final remote refs/Git history determine publication; this evidence does not claim hosted CI or deployment. [Agent record](../../record-of-changes/2026-11-12/01-f01-dev-reconciliation.md).
+
+## Final delivery — 2026-11-12
+
+The feature branch was published at4e18157 and merged into dev with **7304e29**, parents42b8a9c and4e18157. `git ls-remote` confirmed remote dev at7304e292cf71ad59a7d7fa9860a722535be4c073. This is a real non-fast-forward merge; no source copy/force-push occurred.
+
+After merge, reran Auth28 + Session15 + V21Migration1 + OriginGuard3 = **47 PASS /0 SKIPPED**, zero errors/failures. [Merged-state counts](F01_SESSION_RECONCILIATION_MERGED_COUNTS.json). Merged tree equals the published feature tree; source/CI selectors equal the fully verified c8b10ba implementation. No further production source change accompanies this closing documentation record.
+
+Local BE workspace stayed on its original working branch with private config/diagram edits preserved. No source DB was touched, no deploy performed, and hosted CI remains NOT RUN. The separate delivery-docs branch records this already-confirmed code merge without adding new runtime behavior.
