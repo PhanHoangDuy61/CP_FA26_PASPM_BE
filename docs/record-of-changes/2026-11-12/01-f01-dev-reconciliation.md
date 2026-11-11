@@ -64,4 +64,4 @@ Không deploy. Không chuyển đổi database local đã áp dụng V20 của i
 
 ## 6. Git delivery
 
-Pending final gate verification and authorized push/merge. Record này ghi trạng thái tại commit; Git history/remote refs là bằng chứng cuối cho việc merge. Không force-push hoặc bypass branch protection.
+All local gates passed. Implementation merge commit `c8b10ba` has parents `42b8a9c` (published dev) and `689526b` (local feature), resolving the earlier schema/controller conflict. Authorized branch publication and non-fast-forward integration into dev follow this verified source. Record này ghi trạng thái tại commit; Git history/remote refs là bằng chứng cuối cho việc merge. Không force-push hoặc bypass branch protection.

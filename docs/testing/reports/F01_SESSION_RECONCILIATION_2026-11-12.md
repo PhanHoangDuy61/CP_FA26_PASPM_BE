@@ -43,4 +43,4 @@ Current source DB and running local old-variant Backend are preserved. A DB with
 
 ## Git status
 
-Pending authorized branch push and merge after final verification. [Agent record](../../record-of-changes/2026-11-12/01-f01-dev-reconciliation.md).
+Verified implementation merge: `c8b10ba`, parents `42b8a9c` and `689526b`. All local gates above pass; branch push and non-fast-forward dev integration are authorized by the user. Final remote refs/Git history determine publication; this evidence does not claim hosted CI or deployment. [Agent record](../../record-of-changes/2026-11-12/01-f01-dev-reconciliation.md).
