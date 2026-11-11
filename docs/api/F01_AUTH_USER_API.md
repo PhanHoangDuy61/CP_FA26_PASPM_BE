@@ -1,14 +1,12 @@
-<!-- docs-reorganization:notice -->
-> **NEEDS_REVIEW — documentation review 2026-10-26.** Source AuthController returns409 for duplicate registration while generic202 prose below conflicts; this task changes no authentication behavior. See [current navigation](../features/F01/README.md). Original results and business-rule text below are retained; this notice is not a new execution or approval.
-<!-- /docs-reorganization:notice -->
+> **Updated 2026-11-12 — reconciled with published dev V20 plus V21.** Registration is 202 for a new email and 409 for an existing email; the current session contract adds refresh/CSRF/logout. Historical reference documents keep their original dates. This documentation update does not re-execute tests. See [current feature guide](../features/F01/README.md).
 
 # F01 Authentication and User API Contract
 
-Contract checked against the running application OpenAPI export and current source on 2026-10-17. In endpoint table, PASS means the operation and DTO match the runtime OpenAPI and source; it does not mean a separate Swagger UI request was executed for every operation in this documentation task. Full shared OpenAPI is [`openapi.json`](openapi.json). Every protected request uses `Authorization: Bearer <accessToken>`. Public registration never accepts a role or Store. Examples are synthetic; OTP and Google token examples are placeholders and cannot authenticate.
+Original contract checked on 2026-10-17; session fields/routes updated against source, tests and actual runtime OpenAPI on 2026-11-11. In endpoint table, PASS means the operation and DTO match the runtime OpenAPI and source; it does not mean a separate Swagger UI request was executed for every operation in this documentation task. Full shared OpenAPI is [`openapi.json`](openapi.json). Every protected request uses `Authorization: Bearer <accessToken>`. Public registration never accepts a role or Store. Examples are synthetic; OTP and Google token examples are placeholders and cannot authenticate.
 
 ## Models
 
-- `Token`: `{accessToken:string, expiresIn:integer seconds, tokenType:string, csrfToken:string}`. `expiresIn` is the access JWT lifetime only (default 3600 seconds). Refresh token is never in JSON: it is an opaque HttpOnly cookie.
+- `Token`: `{accessToken:string, expiresIn:integer seconds, tokenType:"Bearer", csrfToken:string}` for HTTP email/Google login and refresh. JWT issuer is `paspm`; access expiry is configured by `TOKEN_TTL_SECONDS` (default 3600). The opaque refresh credential is delivered only in an HttpOnly cookie, never in the response JSON.
 - `UserView`: `{userId:int32,email:string,name:string|null,roleCode:string,storeId:int32|null,status:string,emailVerified:boolean,avatarUrl:string|null}`. `storeId` is null for global roles and End Customer; `avatarUrl` is null before upload and otherwise points to the authenticated owner-only image endpoint.
 - User status values: `PENDING_VERIFICATION`, `ACTIVE`, `INACTIVE`. Role values from migration: `SYSTEM_ADMIN`, `STORE_ADMIN`, `MERCHANDISER`, `END_CUSTOMER`.
 - Handled errors use `{ "error": string }`. Validation/deserialization errors use `{"error":"Invalid request fields"}`. Framework-generated authentication errors may have no JSON body.
@@ -17,10 +15,7 @@ Contract checked against the running application OpenAPI export and current sour
 
 | Method and path | Authentication / role | Request → response | Success / notable errors | Verification |
 |---|---|---|---|---|
-| `POST /api/auth/login` | Public | `Login` → `Token` plus refresh and CSRF cookies | 200; 400 invalid fields/password >72 UTF-8 bytes; 401 invalid credentials or unavailable account; 429 limiter; `Cache-Control: no-store` | AuthIntegrationTest |
-| `POST /api/auth/refresh` | Public, refresh cookie + CSRF double-submit required | no body; `Cookie` + `X-CSRF-Token` → `Token` plus rotated cookies | 200; 401 invalid/expired/revoked/replayed session; 403 CSRF failure; 429 per-IP limiter; `Cache-Control: no-store` | AuthIntegrationTest |
-| `POST /api/auth/logout` | Any valid active bearer + matching CSRF cookie/header | none → `{message:string}`; clears current browser cookies | 200; 401 invalid bearer; 403 CSRF failure | AuthIntegrationTest |
-| `POST /api/auth/logout-all` | Any valid active bearer + matching CSRF cookie/header | none → `{message:string}`; clears current browser cookies | 200; revokes all refresh sessions and increments `token_version`; 401/403 | AuthIntegrationTest |
+| `POST /api/auth/login` | Public | `Login` → `Token` | 200; 400 invalid fields/password >72 UTF-8 bytes; 401 invalid credentials or unavailable account; 429 limiter | PASS — source + runtime OpenAPI; AuthIntegrationTest covers login |
 | `GET /api/auth/me` | Any valid active bearer | none → `UserView` | 200; 401 missing/invalid/expired or revoked token | PASS — source + runtime OpenAPI |
 | `POST /api/auth/register` | Public | `EmailRequest` → `{message:string}` | 202 `{message}` for a new email; **409 `{"error":"Email already exists"}` for an existing email** (reveals registration status; pinned by `AuthIntegrationTest`); 400 invalid email; 429 registration limiter | PASS — source + runtime OpenAPI; existing AuthIntegrationTest exercises self-registration flow |
 | `POST /api/auth/register/complete` | Public, but only eligible verified self-registration | `Registration` → `{message:string}` | 200; 400 unless OTP verification happened first, or password invalid | PASS — source + runtime OpenAPI |
@@ -32,7 +27,7 @@ Contract checked against the running application OpenAPI export and current sour
 | `POST /api/auth/password-reset/request` | Public | `EmailRequest` → `{message:string}` | 202 with identical response for unknown/ineligible/existing accounts; 429 rate limit | Implemented — `PASSWORD_RESET` challenge, existing cooldown and request limits |
 | `POST /api/auth/password-reset/confirm` | Public | `PasswordReset` → `{message:string}` | 200; 400 invalid/expired/consumed OTP, invalid password or five attempts | Implemented — consumes challenge and revokes prior JWTs |
 | `POST /api/auth/google/register` | Public | `Google` → `{message:string}` | 202; 401 invalid Google ID token; 429 limiter; 503 Google config/mail unavailable. Creates pending `END_CUSTOMER` and requests PASPM OTP | PASS — source + runtime OpenAPI; GoogleRegistrationTest exists |
-| `POST /api/auth/google` | Public | `Google` → `Token` plus refresh and CSRF cookies | 200; 401 invalid/unlinked Google identity or unavailable account; 429; 503 if Google client is not configured; `Cache-Control: no-store` | AuthIntegrationTest (credential issuance via test double) |
+| `POST /api/auth/google` | Public | `Google` → `Token` | 200; 401 invalid/unlinked Google identity or unavailable account; 429; 503 if Google client is not configured | PASS — source + runtime OpenAPI |
 | `POST /api/auth/google/link` | Any valid active bearer | `Google` → `{message:string}` | 200; 401 invalid Google token; 409 identity already belongs to another account; 503 if Google not configured | PASS — source + runtime OpenAPI |
 
 `Login`: required `email` (valid email), `password` (nonblank, max 72 characters; service also checks BCrypt's 72-byte limit). Invalid password, unknown user, unverified/pending or inactive account intentionally share `401 Invalid credentials or account unavailable`.
@@ -45,13 +40,7 @@ Admin invite sequence: System Admin creates a pending account with `POST /api/us
 
 OTP rules: configured TTL defaults to 600 seconds (10 minutes), accepted config range 60–1800 seconds; resend cooldown defaults to 60 seconds and configured value must be at least 30 seconds. A challenge permits at most five incorrect attempts. Rate limits are in-memory, single-process: login 30/IP and 10/normalized email per 900s; registration 10/IP per 3600s; OTP request 20/IP and 5/email per 3600s; verification 30/IP per 900s. Limits reset on process restart and are not shared across replicas. Do not build a workflow that depends on knowing whether an email exists.
 
-Refresh/session policy: `TOKEN_TTL_SECONDS` defaults to 3600 and accepts 60–3600. `REFRESH_TOKEN_ABSOLUTE_TTL_SECONDS` defaults to 2592000 (30 days; configured maximum 90 days); `REFRESH_TOKEN_IDLE_TTL_SECONDS` defaults to 604800 (7 days) and must be at least 60 seconds and no longer than the absolute TTL. Refresh rotates a cryptographically random 256-bit opaque token; only its SHA-256 hash is stored. Idle expiry moves forward on successful refresh but is capped by the session's immutable absolute expiry. A consumed/revoked token replay revokes its whole session and returns the same generic 401; token hashes remain for replay detection until 30 days after the session expires or is revoked, then are deleted in bounded batches on login/refresh.
-
-The refresh cookie is `__Host-PASPM-REFRESH` with `HttpOnly; Secure; SameSite=Strict; Path=/` when `REFRESH_COOKIE_SECURE=true` (default). For local plain-HTTP development only, set it to `false`; cookie names then use `PASPM-REFRESH`/`PASPM-CSRF`, and neither cookie has `Secure`. The CSRF cookie is readable by the same-origin frontend; copy its response `csrfToken` into `X-CSRF-Token` on refresh/logout/logout-all. Both must match. Deploy behind HTTPS and a same-origin frontend proxy; cross-origin browser CORS is not configured by this Backend.
-
-Each successful email/Google login creates a separate device session. Logout revokes only the session ID (`sid`) in the current access JWT; that access JWT itself remains usable until its one-hour expiry. Logout-all also increments `token_version` and therefore invalidates all access tokens immediately. Password change, OTP password reset, status changes, and role changes both bump `token_version` and revoke refresh sessions. Existing JWTs minted before this feature have no session ID and cannot revoke a refresh session; sign in again to create a refresh session. The refresh rate limiter is process-local (30 requests/IP per 900 seconds), like existing F01 limits.
-
-Password reset only sends to ACTIVE, verified accounts that already have a password credential. A different purpose replaces an older per-user OTP challenge and has a separate cooldown; request response remains generic during cooldown and on SMTP delivery failure. The replacement JWT uses the existing DB-backed `token_version`; previous access tokens fail validation on the next request.
+Password reset only sends to ACTIVE, verified accounts that already have a password credential. A different purpose replaces an older per-user OTP challenge and has a separate cooldown; request response remains generic during cooldown and on SMTP delivery failure. Password reset changes the existing DB-backed `token_version`; previous access tokens and refresh sessions then fail validation. This endpoint does not issue replacement credentials; sign in again.
 
 `PasswordReset`: required email, six-digit OTP and password with the registration rules (12–72 characters, at least one lowercase, uppercase and digit, maximum 72 UTF-8 bytes). Never log or return the OTP/password. The in-memory rate limiter remains single-process and needs a shared gateway/Redis policy for replicas.
 
@@ -87,24 +76,7 @@ Search parameters: `q`, `role`, `status` default empty; `page` defaults 0, range
 Examples are in [`../frontend_handoff/F01_examples/`](../frontend_handoff/F01_examples). Representative success response:
 
 ```json
-{"accessToken":"<synthetic JWT omitted>","expiresIn":3600,"tokenType":"Bearer","csrfToken":"<synthetic CSRF token>"}
-```
-
-The login/Google/refresh response also sets the HttpOnly refresh cookie and the readable CSRF cookie; neither cookie value is part of the JSON body.
-
-Refresh request: send the cookies automatically and copy the latest JSON `csrfToken` into `X-CSRF-Token`; no refresh-token JSON body is accepted.
-
-```http
-POST /api/auth/refresh
-X-CSRF-Token: <csrfToken from latest auth response>
-Cookie: __Host-PASPM-REFRESH=<HttpOnly cookie>; __Host-PASPM-CSRF=<CSRF cookie>
-```
-
-Successful refresh response has the same `Token` JSON shape above and replaces both cookies. Do not cache token responses. Example logout responses:
-
-```json
-{"message":"Logged out"}
-{"message":"Logged out from all sessions"}
+{"accessToken":"<synthetic JWT omitted>","expiresIn":3600,"tokenType":"Bearer","csrfToken":"<synthetic CSRF>"}
 ```
 
 Representative user response:
@@ -136,3 +108,36 @@ Success response (the bearer token used for the request is now revoked):
 JWT authentication maps the current database role to `ROLE_<role>` and checks account active status and token version. F01 admin endpoints require System Admin; `GET /me` requires authentication but has no role restriction. Store association is nullable for global/customer accounts and required for Store Admin/Merchandiser on creation/assignment. F01 user administration intentionally has no Store isolation because it is a global System Admin feature.
 
 Verification status means contract/source mapping only unless a specific existing test covers behavior. The OpenAPI export is runtime-generated and includes all routes, but Springdoc does not emit `@PreAuthorize` role declarations. See the shared RBAC matrix and handoff for source-derived roles. No credentials, actual OTPs, tokens, or Google credentials are included in examples. OpenAPI currently does not mark nullable Java response values: `UserView.name` is null for a pending self-registration and `storeId` is null for global/customer accounts, although the generated schema only says `string` / `integer`. Treat those two fields as nullable in TypeScript.
+
+## Session integration update — 2026-11-11
+
+**Reconciled on 2026-11-12 with dev 42b8a9c; this section supersedes the competing local V20 implementation.** Canonical service is AuthSessionService; V20 is unchanged. V21 adds nullable `auth_refresh_token.csrf_hash BINARY(32)`; no auth_session table or duplicate SessionController is used.
+
+| Endpoint | Authentication / input | Success / errors |
+|---|---|---|
+| POST `/api/auth/login`, `/api/auth/google` | Existing credential DTO, valid active identity; Origin checked when present | 200 Token + refresh/CSRF cookies; existing credential errors; 403 rejected Origin |
+| POST `/api/auth/refresh` | No Bearer/body. Refresh cookie + CSRF cookie + matching X-CSRF-Token, bound to stored token hash | 200 Token and rotated cookies; 401 invalid/expired/reused/unbound old token; 403 CSRF/Origin/duplicate cookie; 429 limiter |
+| POST `/api/auth/logout` | Active Bearer + CSRF cookie/header bound to that JWT family; raw refresh cookie is not required | 200 `{"message":"Logged out"}` and cleared cookies |
+| POST `/api/auth/logout-all` | Same active-session CSRF requirement | 200 `{"message":"Logged out from all sessions"}`, all own families revoked and token_version incremented |
+
+Token JSON: `{accessToken:string,expiresIn:integer,tokenType:"Bearer",csrfToken:string}`. Opaque refresh credentials are cookie-only. Cookie names default to `__Host-PASPM-REFRESH` (HttpOnly) and `__Host-PASPM-CSRF` (readable), both Secure, SameSite=Strict, Path=/, no Domain. Local HTTP with REFRESH_COOKIE_SECURE=false uses PASPM-REFRESH/PASPM-CSRF and requires a loopback hostname.
+
+Use credentials:'include', keep access JWT in memory and send X-CSRF-Token from the readable cookie. Browser Origin must equal the server origin or an exact allowlisted value. No Origin still requires the CSRF pair; allowlisting does not enable CORS. Duplicate matching cookie names are rejected. Credential responses are no-store. Refresh401 clears cookies; CSRF403 leaves the valid session usable.
+
+| Setting | Default | Validation |
+|---|---|---|
+| TOKEN_TTL_SECONDS | 3600 | 60–3600 seconds |
+| REFRESH_TOKEN_ABSOLUTE_TTL_SECONDS | 2592000 (30 days) | 3600–7776000 seconds |
+| REFRESH_TOKEN_IDLE_TTL_SECONDS | 604800 (7 days) | 60 through absolute TTL |
+| REFRESH_COOKIE_SECURE | true | false only for local HTTP |
+| PASPM_SESSION_ALLOWED_ORIGINS | empty | Comma-separated exact origins; local example http://localhost:3000,http://127.0.0.1:3000 |
+
+Properties are paspm.token-ttl-seconds, paspm.refresh-token-absolute-ttl-seconds, paspm.refresh-token-idle-ttl-seconds, paspm.refresh-cookie-secure and paspm.session.allowed-origins. Do not use the earlier local-only paspm.session.refresh-ttl-seconds or paspm.session.cookie-secure settings.
+
+Refresh extends idle expiry up to the immutable absolute expiry. SHA-256 token/CSRF hashes are persisted; row locks serialize rotation. Reuse revokes the family, including its sid JWTs. Two simultaneous requests using the same credential fail closed (one rotates, the reuse revokes); clients must coordinate refresh. Normal rotation does not invalidate earlier access JWTs of the same active family. Logout accepts a stored CSRF value from any token of the same active family, including consumed tokens, so an otherwise valid pre-rotation access token can still log out. Refresh requires the exact token/CSRF pairing.
+
+Published V20 tokens have csrf_hash=NULL after V21: a refresh attempt revokes that family and returns401, requiring sign-in again. No rows/hashes are rewritten or fabricated by migration. Password, role/status and reset version checks remain active. Legacy access tokens without sid keep their prior version/expiry behavior; logout requires a session-bound JWT/CSRF, and logout-all bumps the account version.
+
+Origin and cookie/header checks precede token lookup: no CSRF pair returns403; a syntactically supplied pair with unknown refresh credential returns401. Protected APIs without Bearer return401; wrong role403; Store-scoped foreign records404. New refresh rate limit preserves dev's 30/IP/900s, per process. Bounded cleanup preserves dev's 30-day replay-retention behavior for old revoked/absolute-expired families, up to100 families per issue/refresh. No shared rate limiter is added.
+
+[Session guide](../features/F01/F01_SESSION_MANAGEMENT.md) · [reconciliation evidence](../testing/reports/F01_SESSION_RECONCILIATION_2026-11-12.md). Earlier tests/reports describe their original variant and cannot certify this schema unless listed in the new report. Do not run this build against a database that applied the rejected local V20; checksum/schema reconciliation is a separate operation, never automatic repair.

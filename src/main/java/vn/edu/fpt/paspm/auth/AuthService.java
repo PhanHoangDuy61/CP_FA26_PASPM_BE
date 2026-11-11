@@ -98,16 +98,16 @@ public class AuthService {
         return sessions.issue(user);
     }
 
-    public AuthCredentials refresh(String refreshToken, String ip) {
-        return sessions.refresh(refreshToken, ip);
+    public AuthCredentials refresh(String refreshToken, String csrfToken, String ip) {
+        return sessions.refresh(refreshToken, csrfToken, ip);
     }
 
-    public void logout(Jwt jwt) {
-        sessions.logout(jwt);
+    public void logout(Jwt jwt, String csrfToken) {
+        sessions.logout(jwt, csrfToken);
     }
 
-    public void logoutAll(Jwt jwt) {
-        sessions.logoutAll(jwt);
+    public void logoutAll(Jwt jwt, String csrfToken) {
+        sessions.logoutAll(jwt, csrfToken);
     }
 
     public User current(Jwt jwt) {

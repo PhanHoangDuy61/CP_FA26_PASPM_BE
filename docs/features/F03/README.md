@@ -41,6 +41,8 @@ Policy (System Admin) → Store weights and scores (Merchandiser) → Product th
 ## 8. Dependencies
 F01 (role, Store), F02 (Product, batches, threshold), F04 (transactions). Consumed by F05 (frozen matrix) and F06 (evidence, expiry push).
 
+F01 session reconciliation (2026-11-12, dev V20 retained + additive V21): browser clients can restore their Bearer; utility role gates and Store isolation remain unchanged. Session revocation does not recalculate, delete or alter immutable snapshots. See [shared session impact and evidence](../F01/F01_SESSION_MANAGEMENT.md#5-tác-động-tới-feature-khác).
+
 ## 9. Tests and evidence
 `UtilityIntegrationTest`, `WeightRulesV12IntegrationTest`, `WeightRulesV12MigrationTest`, `UtilityCalculationTest`, `ExpiryBinaryRulesTest`, `ExpiryFefoOrderingTest`, `UtilitySnapshotRoutingTest`, `RetailCatalogUtility*Test`, `F03F05RbacMatrixTest` — all part of the 23/23 script run (H2 and MySQL 8.4). Historical: [linear report](reference_v4/F03_SWAGGER_TEST_REPORT.md).
 

@@ -112,7 +112,7 @@ public class AuthSessionService {
     }
 
     @Transactional(noRollbackFor = ApiException.class)
-    public AuthCredentials refresh(String refreshToken, String ip) {
+    public AuthCredentials refresh(String refreshToken, String csrfToken, String ip) {
         limits.hit("refresh-ip:" + ip, 30, 900);
         byte[] tokenHash = hash(refreshToken);
         TokenReference reference = jdbc.query(
@@ -142,8 +142,8 @@ public class AuthSessionService {
                 .findFirst()
                 .orElseThrow(AuthSessionService::invalidRefresh);
         TokenUse tokenUse = jdbc.query(
-                        "SELECT token_id,consumed_at FROM auth_refresh_token WHERE token_hash=? AND session_id=? FOR UPDATE",
-                        (rs, row) -> new TokenUse(rs.getLong("token_id"), rs.getTimestamp("consumed_at") != null),
+                        "SELECT token_id,consumed_at,csrf_hash FROM auth_refresh_token WHERE token_hash=? AND session_id=? FOR UPDATE",
+                        (rs, row) -> new TokenUse(rs.getLong("token_id"), rs.getTimestamp("consumed_at") != null, rs.getBytes("csrf_hash")),
                         tokenHash,
                         session.sessionId())
                 .stream()
@@ -151,6 +151,14 @@ public class AuthSessionService {
                 .orElseThrow(AuthSessionService::invalidRefresh);
 
         Instant now = Instant.now();
+        if (tokenUse.csrfHash() == null) {
+            // Published V20 tokens have no server-side binding. Require reauthentication.
+            revokeSession(session.sessionId(), now);
+            throw invalidRefresh();
+        }
+        if (csrfToken == null || !MessageDigest.isEqual(tokenUse.csrfHash(), hash(csrfToken))) {
+            throw new ApiException(403, "CSRF validation failed");
+        }
         if (session.userId() != reference.userId() || tokenUse.consumed() || session.revokedAt() != null) {
             revokeSession(session.sessionId(), now);
             throw invalidRefresh();
@@ -185,8 +193,9 @@ public class AuthSessionService {
     }
 
     @Transactional(noRollbackFor = ApiException.class)
-    public void logout(Jwt jwt) {
+    public void logout(Jwt jwt, String csrfToken) {
         lockCurrentUser(jwt);
+        requireSessionCsrf(jwt, csrfToken);
         String sessionId = jwt.getClaimAsString("sid");
         if (sessionId != null) {
             revokeSession(sessionId, Instant.now(), Integer.parseInt(jwt.getSubject()));
@@ -194,8 +203,9 @@ public class AuthSessionService {
     }
 
     @Transactional(noRollbackFor = ApiException.class)
-    public void logoutAll(Jwt jwt) {
+    public void logoutAll(Jwt jwt, String csrfToken) {
         User user = lockCurrentUser(jwt);
+        requireSessionCsrf(jwt, csrfToken);
         users.incrementTokenVersion(user.id());
         revokeUserSessions(user.id());
     }
@@ -207,6 +217,16 @@ public class AuthSessionService {
                         "WHERE user_id=? AND revoked_at IS NULL",
                 java.sql.Timestamp.from(Instant.now()),
                 userId);
+    }
+
+    private void requireSessionCsrf(Jwt jwt, String csrfToken) {
+        if (csrfToken == null || jwt.getClaimAsString("sid") == null || !Boolean.TRUE.equals(jdbc.queryForObject(
+                "SELECT COUNT(*) > 0 FROM auth_refresh_token t JOIN auth_refresh_session s ON s.session_id=t.session_id " +
+                "WHERE s.session_id=? AND s.user_id=? AND s.revoked_at IS NULL " +
+                "AND s.absolute_expires_at>CURRENT_TIMESTAMP AND s.idle_expires_at>CURRENT_TIMESTAMP AND t.csrf_hash=?",
+                Boolean.class, jwt.getClaimAsString("sid"), Integer.parseInt(jwt.getSubject()), hash(csrfToken)))) {
+            throw new ApiException(403, "CSRF validation failed");
+        }
     }
 
     private User lockCurrentUser(Jwt jwt) {
@@ -242,6 +262,8 @@ public class AuthSessionService {
         byte[] csrfBytes = new byte[32];
         RANDOM.nextBytes(csrfBytes);
         String csrfToken = Base64.getUrlEncoder().withoutPadding().encodeToString(csrfBytes);
+        jdbc.update("UPDATE auth_refresh_token SET csrf_hash=? WHERE session_id=? AND token_hash=?",
+                hash(csrfToken), sessionId, hash(refreshToken));
         return new AuthCredentials(
                 new Token(accessTokenValue(user, sessionId), accessTtlSeconds, "Bearer", csrfToken),
                 refreshToken,
@@ -312,6 +334,6 @@ public class AuthSessionService {
             Instant revokedAt) {
     }
 
-    private record TokenUse(long id, boolean consumed) {
+    private record TokenUse(long id, boolean consumed, byte[] csrfHash) {
     }
 }

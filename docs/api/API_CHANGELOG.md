@@ -1,11 +1,23 @@
 # API Changelog
 
-## 2026-11-05 — F01 rotating refresh sessions
+## 2026-11-12 — Reconcile F01 sessions with dev 42b8a9c
 
-- **Changed** email/password and Google login to issue one-hour access JWTs plus an opaque refresh token in a `HttpOnly; Secure; SameSite=Strict` cookie. JSON keeps `accessToken`, `expiresIn` (access lifetime in seconds) and `tokenType`, and adds `csrfToken`; responses use `Cache-Control: no-store`.
-- **Added** `POST /api/auth/refresh` (rotates the cookie), `POST /api/auth/logout` (current session) and `POST /api/auth/logout-all` (all sessions and access tokens). Refresh/logout endpoints require matching CSRF cookie/header.
-- Refresh policy defaults to 30 days absolute / 7 days idle; password change/reset and user role/status changes revoke refresh sessions. Flyway V20 stores only SHA-256 hashes and consumed-token history.
-- Runtime/export now contains 91 operations (F01 27); no F02–F06 endpoint or contract was changed.
+- Preserved published V20 and AuthSessionService, its absolute/idle TTLs, bounded cleanup and existing logout response payloads. Removed the competing local session service/controller.
+- Added V21 nullable BINARY(32) csrf_hash to auth_refresh_token. Existing V20 tokens are preserved but require sign-in again when refreshed; no historical binding is fabricated.
+- Added refresh token/CSRF binding, same-family CSRF validation for logout, Origin/duplicate-cookie checks and JWT sid revocation/absolute/idle expiry validation.
+- Invalid refresh 401 clears cookies; 403 does not rotate or clear valid cookies. Login/google/refresh explicitly public in OpenAPI; no new route added beyond dev's existing three session routes.
+- Canonical settings stay TOKEN_TTL_SECONDS=3600, REFRESH_TOKEN_ABSOLUTE_TTL_SECONDS=2592000, REFRESH_TOKEN_IDLE_TTL_SECONDS=604800, REFRESH_COOKIE_SECURE=true. PASPM_SESSION_ALLOWED_ORIGINS is additive. Earlier local PASPM_SESSION_COOKIE_SECURE/REFRESH_TTL settings are not supported by the reconciled implementation.
+- Evidence/status: [reconciliation report](../testing/reports/F01_SESSION_RECONCILIATION_2026-11-12.md).
+
+
+## 2026-11-11 — F01 browser session compatibility (uncommitted working tree)
+
+- Email/Google HTTP login now returns `csrfToken` and sets refresh + CSRF cookies.
+- Added POST `/api/auth/refresh`, `/api/auth/logout`, `/api/auth/logout-all` with rotation/reuse detection, explicit CSRF/Origin checks, and persisted revocation.
+- Added V20 auth session/hash tables; V1–V19 unchanged. Session access JWTs carry `sid`; version-based account invalidation remains active.
+- Secure cookies default on; loopback HTTP development needs the explicit local setting. Existing Frontend implementation unchanged.
+- Actual verification and limitations: [F01 session report](../testing/reports/F01_SESSION_VERIFICATION.md).
+
 
 ## 2026-11-02 — F05 Scheduler branch (`Khoi/feat/f05-scheduled-mining-option-b-completion`, not on `dev`)
 

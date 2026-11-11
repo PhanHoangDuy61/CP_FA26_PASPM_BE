@@ -1,0 +1,47 @@
+{
+  "loginUrl": "http://localhost:3000/storefront",
+  "restoredUrl": "http://localhost:3000/storefront",
+  "logoutUrl": "http://localhost:3000/login",
+  "logoutStatus": 200,
+  "authResponses": [
+    {
+      "path": "auth/login",
+      "status": 200
+    },
+    {
+      "path": "auth/me",
+      "status": 200
+    },
+    {
+      "path": "auth/refresh",
+      "status": 200
+    },
+    {
+      "path": "auth/me",
+      "status": 200
+    },
+    {
+      "path": "auth/logout",
+      "status": 200
+    }
+  ],
+  "cookieMetadata": [
+    {
+      "name": "PASPM-REFRESH",
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Strict"
+    },
+    {
+      "name": "PASPM-CSRF",
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Strict"
+    }
+  ],
+  "persistedJwtInLocalStorage": false,
+  "remainingSessionCookies": 0,
+  "executionDate": "2026-11-11",
+  "timezone": "Asia/Ho_Chi_Minh",
+  "method": "Real Chromium UI login, document reload and Account menu Sign out; no mocked HTTP routes"
+}

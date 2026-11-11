@@ -3,7 +3,7 @@ from pathlib import Path
 import sys
 
 GROUPS = {
-    "backend": ["AuthIntegrationTest", "GoogleRegistrationTest", "CatalogDevSeederTest", "CatalogIntegrationTest",
+    "backend": ["AuthIntegrationTest", "GoogleRegistrationTest", "SessionHttpIntegrationTest", "SessionOriginGuardTest", "SessionV21MigrationTest", "CatalogDevSeederTest", "CatalogIntegrationTest",
                 "LegacyPreflightTest", "MiningInputTest", "FrozenEvidenceReaderTest", "RecommendationRulesTest",
                 "TransactionEvidenceTest", "DatabaseTransactionSourceTest", "TransactionImportIntegrationTest",
                 "TransactionImportSchemaTest", "TransactionCsvParserTest", "TransactionOrderValidatorTest",
@@ -17,7 +17,7 @@ GROUPS = {
                 "SchedulerPrincipalHttpTest", "ScheduledMiningActivationGateTest", "MiningScheduleReservationTest",
                 "MiningOccurrenceLeaseTest", "MiningOccurrenceReconciliationTest",
                 "WeightRulesV12IntegrationTest", "WeightRulesV12MigrationTest"],
-    "mysql": ["FlywayRecoveryTest", "LegacyRecoveryMySqlTest", "LegacyRecoverySchemaTest",
+    "mysql": ["SessionMySqlIntegrationTest", "SessionV21MigrationMySqlTest", "FlywayRecoveryTest", "LegacyRecoveryMySqlTest", "LegacyRecoverySchemaTest",
               "RecommendationMigrationTest", "TransactionImportMySqlIntegrationTest",
               "TransactionImportCorrectnessMySqlIntegrationTest", "TransactionRawEvidenceMigrationMySqlTest",
               "RetailCatalogUtilityMySqlIntegrationTest", "MiningMigrationMySqlTest"],
