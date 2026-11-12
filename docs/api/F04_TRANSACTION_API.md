@@ -1,6 +1,6 @@
 # F04 Transaction Data API
 
-This contract describes the current F04 file-import implementation in the Spring Boot backend. F04 requires file-based CSV/Excel imports; external transaction APIs, POS integration, polling and webhooks are outside the approved scope. CSV is available; The Excel format contract is approved; endpoint implementation is delivered on a separate stacked branch. The runtime OpenAPI document is [`openapi.json`](openapi.json), generated from `/v3/api-docs` after Flyway V7 started successfully.
+This contract describes the current F04 file-import implementation in the Spring Boot backend. F04 requires file-based CSV/Excel imports; external transaction APIs, POS integration and webhooks are outside the approved scope. CSV is available; the Excel format contract is approved; endpoint implementation is delivered on a separate stacked branch. The runtime OpenAPI document is [`openapi.json`](openapi.json).
 
 ## Authentication and Store scope
 
@@ -18,7 +18,77 @@ An authenticated user outside a record's Store receives `404`; an authenticated 
 
 ### `POST /api/transactions/imports/csv`
 
-Uploads one CSV file as multipart field `file`. Role: `STORE_ADMIN`. Success: `201 Created` with `ImportSummary`.
+Uploads one CSV file as multipart field `file`. Role: `STORE_ADMIN`. Success: `201 Created` with `ImportSummary`. This existing endpoint remains synchronous and retains its prior contract and processing behavior.
+
+### `POST /api/transactions/imports/csv/async`
+
+Uploads one CSV file as multipart field `file` for durable background processing. Role: `STORE_ADMIN`. Send a required `Idempotency-Key` header (1–128 ASCII letters/digits or `. _ : -`; case-insensitive). Success: `202 Accepted` with an `ImportProgress` snapshot. The request validates the complete CSV structure and durably stages its parsed rows before returning; business validation and order persistence run in a background worker.
+
+```http
+POST /api/transactions/imports/csv/async
+Idempotency-Key: 2fbf38dc-8dcc-4a14-8ce3-66dbe92f7125
+Content-Type: multipart/form-data
+```
+
+Example accepted response:
+
+```json
+{
+  "importBatchId": 18,
+  "status": "QUEUED",
+  "stage": "QUEUED",
+  "processedCount": 0,
+  "totalCount": 4,
+  "progressPercent": 0,
+  "createdAt": "2026-11-12T06:25:00Z",
+  "startedAt": null,
+  "updatedAt": "2026-11-12T06:25:00Z",
+  "completedAt": null,
+  "statistics": {
+    "validCount": 0,
+    "rejectedCount": 0,
+    "totalOrderCount": 0,
+    "acceptedOrderCount": 0,
+    "rejectedOrderCount": 0,
+    "duplicateOrderCount": 0,
+    "conflictOrderCount": 0
+  },
+  "errorSummary": null
+}
+```
+
+The same key and identical file bytes return the original batch/current progress; reusing the key with different bytes returns `409`. Use a new key for a deliberate new import. A new key with identical contents creates a new batch; existing Store + CSV source order ID + normalized content rules count matching orders as duplicates and conflicting content as conflicts without overwriting history. A structurally invalid CSV is retained as a `FAILED` batch with an error and no fabricated total or percentage. File extension/content-type/size/request errors remain request-level `400`/`413`.
+
+### `GET /api/transactions/imports/{id}/progress`
+
+Returns an `ImportProgress` for a batch owned by the authenticated Store. Roles: `STORE_ADMIN`, `MERCHANDISER`. A missing or other-Store ID returns `404`.
+
+```json
+{
+  "importBatchId": 18,
+  "status": "PROCESSING",
+  "stage": "IMPORTING",
+  "processedCount": 2,
+  "totalCount": 4,
+  "progressPercent": 50,
+  "createdAt": "2026-11-12T06:25:00Z",
+  "startedAt": "2026-11-12T06:25:01Z",
+  "updatedAt": "2026-11-12T06:25:02Z",
+  "completedAt": null,
+  "statistics": {
+    "validCount": 2,
+    "rejectedCount": 0,
+    "totalOrderCount": 3,
+    "acceptedOrderCount": 1,
+    "rejectedOrderCount": 0,
+    "duplicateOrderCount": 0,
+    "conflictOrderCount": 0
+  },
+  "errorSummary": null
+}
+```
+
+`ImportProgress` contains `importBatchId`, `status`, `stage`, `processedCount`, nullable `totalCount`/`progressPercent`, `createdAt`, nullable `startedAt`/`completedAt`, `updatedAt`, `statistics` and nullable `errorSummary`. `processedCount` counts rows actually marked processed/rejected in persistent staging. A percentage is returned only when the exact parsed row total is known and nonzero; it is derived from `processedCount / totalCount`, never elapsed time or estimation. Async stages are `QUEUED`, `IMPORTING`, `COMPLETED`, `COMPLETED_WITH_ERRORS`, `FAILED`; historical synchronous batches retain `LEGACY`. Terminal statuses are `COMPLETED`, `COMPLETED_WITH_ERRORS`, `FAILED`.
 
 CSV must be UTF-8 and use this exact header order:
 
@@ -59,7 +129,13 @@ Example response:
 }
 ```
 
-`totalCount`, `validCount` and `rejectedCount` count CSV rows. The separately named `*OrderCount` fields count grouped orders. Import status is `PROCESSING`, `COMPLETED`, `COMPLETED_WITH_ERRORS`, or `FAILED`.
+`totalCount`, `validCount` and `rejectedCount` count CSV rows. The separately named `*OrderCount` fields count grouped orders. Synchronous import status remains `PROCESSING`, `COMPLETED`, `COMPLETED_WITH_ERRORS`, or `FAILED`. Async statuses are `QUEUED`, `PROCESSING`, `COMPLETED`, `COMPLETED_WITH_ERRORS`, or `FAILED`.
+
+The lifecycle is `QUEUED → PROCESSING → COMPLETED | COMPLETED_WITH_ERRORS | FAILED`. A DB lease with fencing prevents concurrent workers and a worker interrupted by process/instance loss is reclaimed after lease expiry; staging state and per-order transactions make replay safe. A processing exception is recorded as terminal `FAILED`; submit a new request with a new idempotency key to retry. Existing unique order identity/hash rules remain authoritative.
+
+Async imports do not write uploaded files to an application-owned local temporary directory. Parsed raw rows and progress metadata are durably stored in the database; servlet multipart temporary parts are container-managed and cleaned after the request. Import batches, staging rows, errors and transaction history are retained (no automatic purge). The file is bounded by the configured multipart byte limit and the parser rejects files exceeding the configured nonblank row limit.
+
+Flyway V22 adds async batch metadata, idempotency/lease fields and staging result markers without changing prior migration files. The background import worker starts automatically when the Spring application is ready and Flyway is enabled; no separate process or new dependency is required.
 
 ### `GET /api/transactions/imports`
 
@@ -107,11 +183,12 @@ Example transaction detail:
 
 - `200`: successful query.
 - `201`: CSV import request processed; individual invalid orders are reflected in counters/errors rather than failing the entire file.
-- `400`: missing/empty file, non-CSV filename/media type, invalid UTF-8/CSV/header/columns, invalid filter or pagination. Example: `{"error":"CSV header must match the approved F04 template"}`.
+- `202`: async CSV accepted (or structurally invalid content durably recorded as a failed batch); inspect/poll the returned batch.
+- `400`: missing/empty file, non-CSV filename/media type, invalid metadata/idempotency key, or invalid filter/pagination. On the legacy synchronous route, malformed UTF-8/CSV/header/columns returns 400; on the async route, structurally invalid CSV is recorded as a `FAILED` batch with HTTP 202. Example sync error: `{"error":"CSV header must match the approved F04 template"}`.
 - `401`: missing or invalid bearer token.
 - `403`: authenticated role cannot perform the operation.
 - `404`: unknown import/transaction or a record owned by another Store.
-- `409`: uniqueness/content conflict where raised by the API.
+- `409`: idempotency key reused for different bytes or a uniqueness/content conflict where raised by the API.
 - `413`: file exceeds configured size limit.
 
 Validation errors for parsed orders are returned through the import batch error endpoint, not as one HTTP failure for the whole CSV. The runtime OpenAPI JSON declares the shared error responses and request/response schemas.

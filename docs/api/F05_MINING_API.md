@@ -178,6 +178,8 @@ Run startedAt is null before claim. completedAt is null until terminal. Runtime,
 
 ### RequestView
 
+F05 is asynchronous and status-driven: `PENDING` means queued; request terminal states are `COMPLETED` and `FAILED`, while `TIMED_OUT` is a run-level terminal state. Store users poll `GET /api/mining/requests/{id}` and its `/runs` route; System Admins poll the corresponding `/api/system/mining/stores/{storeId}/requests/{requestId}` and `/runs` routes. Poll at about 1–2 second intervals while nonterminal, then stop once the request is `COMPLETED` or `FAILED` and every run is `COMPLETED`, `FAILED`, or `TIMED_OUT`. Requests and runs are persisted for later reads after navigation or restart. Mining does not expose a measured intermediate item/transaction count, so no percentage is returned.
+
 | Field | Type | Notes |
 |---|---|---|
 | requestId | integer (int64) | See state/business rules above |

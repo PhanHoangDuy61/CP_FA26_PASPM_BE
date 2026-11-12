@@ -26,6 +26,8 @@ SYSTEM_ADMIN and END_CUSTOMER cannot access F06. UI guards improve usability but
 8. **Independent expiry panel.** GET `/api/recommendations/expiry-push?productId=<optional>&page=0&pageSize=20` without requiring mining. Show batch/Product, expiryDate, daysRemaining, remainingQuantity, Product expiryPushDays, status/warnings and server date/timezone/check time. No asOfDate selector is supported. Render page warnings even with no rows.
 9. **Downstream use.** GET detail immediately before handing a recommendation to another feature; require APPROVED and readyForConsumption=true. Recheck at actual activation/fulfillment. Show unready approved records as approved but currently blocked. There is no F06 publish, campaign creation, discount, activation or reservation action to call.
 
+Generation is synchronous: keep loading until the `POST /api/recommendations/generate` response arrives, then end loading and display `createdCount`, `reusedCount`, `recommendationIds` and `skipped`. HTTP 200 with zero candidates is completed success. Any request-level error ends loading as error and follows the shared error contract. No async job API or progress percentage exists for F06.
+
 ## Suggested client structure
 
 Reuse the application's existing HTTP/session layer. Put the exact wire types from the API contract in the existing API types location; separate transport, query/cache hooks and presentation. Suggested query keys include session Store identity and every applied filter/page: `['f06','list',storeContext,params]`, `['f06','detail',storeContext,id]`, `['f06','config',storeContext]`, `['f06','expiry',storeContext,params]`. These are frontend design suggestions, not backend endpoints.

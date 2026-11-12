@@ -59,6 +59,8 @@ Sample responses (captured against synthetic data): [create_response.json](F05_e
 
 ## State and error handling
 
+- Poll the own-Store request endpoint (`GET /api/mining/requests/{id}`) or System Admin equivalent (`GET /api/system/mining/stores/{storeId}/requests/{requestId}`) every 1–2 seconds while request status is `PENDING`/`RUNNING`. Poll the matching runs route for per-algorithm status. Stop when request is `COMPLETED`/`FAILED` and every run is terminal (`COMPLETED`, `FAILED`, or `TIMED_OUT`). Status and results are persisted in the database and can be read again after navigation/restart; there is no percentage field because the engine does not expose measured intermediate progress.
+- Request `PENDING` is the queued equivalent; request terminal states are `COMPLETED` and `FAILED`. `TIMED_OUT` is a run-level terminal status, not a request status.
 - Request `PENDING`/`RUNNING`: execution has not finished; an empty pattern page is not final evidence of zero patterns.
 - Run `COMPLETED`, patternCount 0: valid empty mining result. Request can finish COMPLETED/MATCH with both outputs empty.
 - Run `FAILED` or `TIMED_OUT`: show the sanitized failure; do not render partial patterns as successful output.
