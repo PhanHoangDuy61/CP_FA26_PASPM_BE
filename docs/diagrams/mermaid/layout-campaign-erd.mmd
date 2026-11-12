@@ -1,0 +1,81 @@
+erDiagram
+  campaign {
+    BIGINT campaign_id PK
+    INT store_id FK
+    INT utility_snapshot_id FK
+    VARCHAR status
+    BIGINT version
+    BIGINT layout_a_id FK
+    BIGINT layout_b_id FK
+    BIGINT selected_layout_id FK
+    BIGINT decision_report_id FK
+    INT created_by FK
+  }
+  storefront_layout {
+    BIGINT layout_id PK
+    INT store_id FK
+    BIGINT campaign_id FK
+    INT utility_snapshot_id FK
+    VARCHAR role
+    VARCHAR status
+    BIGINT version
+  }
+  storefront_layout_revision {
+    INT store_id PK, FK
+    BIGINT layout_id PK, FK
+    BIGINT version PK
+    JSON placements_json
+    CHAR content_sha256
+  }
+  layout_placement {
+    BIGINT placement_id PK
+    INT store_id FK
+    BIGINT layout_id FK
+    INT utility_snapshot_id FK
+    BIGINT recommendation_id FK
+    INT product_id FK
+    VARCHAR zone
+    INT block_no
+    INT position
+  }
+  comparison_report {
+    BIGINT report_id PK
+    INT store_id FK
+    BIGINT campaign_id FK
+    DATE test_range_start
+    DATE test_range_end
+    CHAR dataset_hash
+    VARCHAR source_namespace
+    INT evaluation_count
+    BOOLEAN simulated
+    INT created_by FK
+  }
+  comparison_report_layout {
+    BIGINT report_id PK, FK
+    INT store_id FK
+    BIGINT layout_id FK
+    BIGINT layout_version FK
+    VARCHAR role
+  }
+  comparison_report_transaction {
+    INT store_id PK, FK
+    BIGINT report_id PK, FK
+    INT transaction_id PK, FK
+  }
+  campaign_history {
+    BIGINT history_id PK
+    INT store_id FK
+    BIGINT campaign_id FK
+    VARCHAR old_status
+    VARCHAR new_status
+    BIGINT previous_active_campaign_id FK
+  }
+
+  campaign ||--|{ storefront_layout : owns_A_and_B
+  storefront_layout ||--|{ storefront_layout_revision : versions
+  storefront_layout ||--o{ layout_placement : contains
+  campaign ||--o{ comparison_report : records
+  comparison_report ||--|{ comparison_report_layout : evaluates
+  storefront_layout_revision ||--o{ comparison_report_layout : pins_exact_version
+  comparison_report ||--o{ comparison_report_transaction : evaluates_ids
+  campaign ||--o{ campaign_history : records_transitions

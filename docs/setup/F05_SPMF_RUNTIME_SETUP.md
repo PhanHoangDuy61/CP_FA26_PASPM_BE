@@ -76,7 +76,7 @@ Expected versions: backend reports 17; child reports 25 or later; checksum exact
 ## Build, migration and startup
 
 1. Start MySQL 8.4 and provide an empty dedicated development schema plus the existing DB_URL, DB_USER, DB_PASSWORD and F01 secrets through your normal external configuration.
-2. For a fresh database, backend startup applies the current repository migrations in order (V1–V17 on `dev`; F05 mining migrations are V13–V17; V12 is F04 `f04_preserve_large_raw_import_rows`) and validates them automatically. For an existing database, first follow [V7 recovery](FLYWAY_MYSQL_V7_RECOVERY.md); old V7 checksums must not be silently repaired.
+2. For a fresh database, backend startup applies the current source-tree migrations in order through V23 and validates them automatically. F05 mining migrations are V13–V19; V12 is F04 raw-evidence capacity, V20–V21 are F01 browser-session changes, V22 is F04 async import, and V23 is the current F07/F08 layout/campaign migration. The deployed migration head depends on the release branch; V23 is not assumed deployed. For an existing database, first follow [V7 recovery](FLYWAY_MYSQL_V7_RECOVERY.md); old V7 checksums must not be silently repaired.
 3. Build with Maven under JAVA_HOME=JDK17. Tests requiring SPMF must receive the external test paths below.
 4. Start the packaged backend explicitly with JDK 17:
 

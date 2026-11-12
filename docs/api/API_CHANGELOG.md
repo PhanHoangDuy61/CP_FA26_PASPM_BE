@@ -1,5 +1,15 @@
 # API Changelog
 
+## 2026-11-12 — F07 Layout Simulator and F08 Campaign/A-B workflow
+
+- Added 20 Store-scoped operations for layout/policy/recommendation reads, layout preview/edit/READY, campaign create/read/decision/synchronous offline simulation, immutable report reads, publish/withdraw/activate/end/rollback, and the active-layout projection for F09.
+- Added Flyway V23 for campaign, A/B layouts, immutable layout revisions, placements, report/layout-version pins, evaluation transaction membership, and lifecycle history. A is deterministic/read-only; B edits use expectedVersion; active-campaign changes serialize on the Store row.
+- Simulation replays completed F03-eligible transactions outside the snapshot training IDs, stores the evaluation IDs/hash/assumptions/runner/timestamp and exact evaluated layout versions, and returns simulated metrics. Priority coverage is null pending an approved F03 formula; no progress percent or async simulation API was added.
+- Publish alone does not affect the storefront. Activation changes the active-layout projection; end returns to default; rollback restores prior active history or default. Withdrawal clears the previous decision/selection.
+- OpenAPI refreshed from Springdoc: 96 paths, 114 operations. Verification: `LayoutCampaignIntegrationTest` 8/8 passed in H2; MySQL deployment compatibility remains unverified.
+- See [F07/F08 API](F07_F08_LAYOUT_CAMPAIGN_API.md), [frontend handoff](../frontend_handoff/F07_F08_HANDOFF.md), and [schema notes](../architecture/F07_F08_LAYOUT_CAMPAIGN_SCHEMA.md).
+- Research alignment: baseline A now ranks by distinct snapshot transaction frequency (descending, product ID ascending on ties); simulation requests require `rangeStart` strictly after snapshot `rangeEnd` to preserve the temporal holdout.
+
 ## 2026-11-12 — F04 durable asynchronous CSV import and processing visibility
 
 - Added `POST /api/transactions/imports/csv/async` (Store Admin, `202 Accepted`) with required store-scoped idempotency key and database-staged rows; existing synchronous `POST /api/transactions/imports/csv` remains unchanged.

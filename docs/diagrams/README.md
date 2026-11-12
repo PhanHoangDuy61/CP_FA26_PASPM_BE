@@ -14,17 +14,20 @@ The files in [`mermaid/`](mermaid/) are transcribed from the **final clean** dra
 | `state-mining-request-and-schedule-occurrence.mmd` | R2-06.03 — Mining Request State, with the Schedule Occurrence State drawn on the same page | SDD Figure 14 |
 | `state-mining-run.mmd` | R2-06.04 — Mining Run State | SDD Figure 15 |
 | `state-recommendation-review.mmd` | R2-06.05 — Recommendation Review State | SDD Figure 16 |
+| `state-campaign.mmd` | F08 campaign lifecycle implemented in V23 |
+| `layout-campaign-erd.mmd` | Focused F07/F08 physical model from Flyway V23 |
+| `layout-campaign-sequence.mmd` | F07/F08 campaign, layout edit, optional simulation, and activation interactions |
 | `state-staging-row.mmd` | R2-06.06 — Staging Row State | SDD Figure 12 |
 | `activity-ad01-overall-system-workflow.mmd` | AD01 - Overall System Workflow | SDD Figure 19 |
 | `activity-ad02-transaction-data-processing.mmd` | AD02 - Transaction Data Processing | SDD Figure 22 |
 | `activity-ad03-mining-execution-configuration.mmd` | AD03 - Mining Execution & Configuration | SDD Figure 25 |
 | `activity-ad04-algorithm-benchmarking.mmd` | AD04 - Algorithm Benchmarking | SDD Figure 28 |
 | `activity-ad05-product-recommendation-approval.mmd` | AD05 - Product Recommendation & Approval | SDD Figure 31 |
-| `activity-ad06-layout-campaign-management.mmd` | AD06 - Layout & Campaign Management | SDD Figure 34 |
+| `activity-ad06-layout-campaign-management.mmd` | AD06 - Layout & Campaign Management, reconciled with F07/F08 implementation |
 | `activity-ad07-ab-testing-performance-evaluation.mmd` | AD07 - A/B Testing & Performance Evaluation | SDD Figure 37 |
 | `activity-ad08-customer-shopping-bundle.mmd` | AD08 - Customer Shopping & Bundle | SDD Figure 40 |
 
-Activity diagrams use one Mermaid `subgraph` per swimlane exactly as drawn (AD01 has one lane). Use cases, context, screen flow, package diagram, class and sequence diagrams are not part of this pack; they exist only as draw.io pages.
+Activity diagrams use one Mermaid `subgraph` per swimlane exactly as drawn (AD01 has one lane). Use cases, context, screen flow, package diagram, class and sequence diagrams are not part of this pack; they exist only as draw.io pages. The new focused F07/F08 diagrams document the current backend and do not claim to be transcriptions of the historical Review 2 pages.
 
 Re-render with `PUPPETEER_SKIP_DOWNLOAD=1 npx -y @mermaid-js/mermaid-cli@12.2.0 -i mermaid/<file>.mmd -o mermaid/rendered/<file>.svg` (a Chrome executable can be passed with `-p <puppeteer-config.json>`).
 
@@ -85,14 +88,14 @@ Mermaid source diagrams are derived from backend code and migrations in this rep
 ### Source and accuracy notes
 
 - The current repository has Flyway migrations V1–V11. V11 is a Java migration at `src/main/java/db/migration/V11__historical_utility_matrix_storage.java`; it installs/validates the `utility_matrix_item_legacy_v5` archive and `utility_snapshot_storage` registry. The ERD includes these alongside F04 transaction, F05 mining, and F06 recommendation tables. Archived legacy utility data is not treated as valid F04 transaction provenance.
-- State names are copied from database constraints and implementation. Recommendation states stop at `APPROVED` or `REJECTED`: F06 stores reviewable business candidates and does not implement campaign publication or storefront activation. Campaign state is omitted because no campaign entity or F08 implementation is present here.
+- State names are copied from database constraints and implementation. Recommendation states stop at `APPROVED` or `REJECTED`. F08 campaign state and schema are shown in the focused `state-campaign.mmd` and `layout-campaign-erd.mmd`; the historical ERD and draw.io pack are not rewritten.
 - The utility snapshot schema permits `READY` or `FAILED`; the current create service persists `READY` only after successful validation and returns an error before creating a record when validation fails. A snapshot is captured with frozen policy/input values; there is no persisted `DRAFT` or `BUILDING` state.
 - F04 import records `PROCESSING`, `COMPLETED`, `COMPLETED_WITH_ERRORS`, or `FAILED`; staging rows separately use `PENDING`, `VALID`, `REJECTED`, and `PROCESSED`. CSV import is idempotent by `(store_id, source_system, source_order_id)` and does not write inventory batches.
 - Utility base is `(unit_price - unit_cost) * quantity` unless a source utility is supplied. Enabled stock, expiry, and seasonal scores contribute according to the frozen weighting configuration. E is derived from sellable inventory batch expiry metadata; S and M are product priority scores. F05 consumes frozen weighted matrix values.
 - Expiry Push is a recommendation-generation path based on live expiry eligibility; it is not a published campaign. Transaction-backed candidates use frozen mining evidence and live eligibility checks.
 - Screen-flow routes are sourced from the sibling frontend checkout `D:\Capstone\FE-FA26\src\utils\navigationRouter.ts` and screen components. The FE source labels only S01, S02, S05, S06, and S07. Other screen IDs in a putative S01–S18 inventory are not assigned here because the FE source does not identify them.
 - `forgot-password` is rendered by the FE but is absent from its explicit `SCREEN_TO_PATH` map; the app falls back to `/forgot-password`, which is not added to the reverse path map.
-- FE routes and rendered prototype screens do not imply BE integration. Authentication, account management, F02 catalog/inventory, and F03 utility use `/api`. Mining UI actions, Merchandiser recommendations/campaign/simulation pages, and customer storefront purchase flow currently use local/demo state without matching API calls. F04 CSV import has a backend endpoint but no matching CSV import screen in the FE route map.
+- FE routes and rendered prototype screens do not imply BE integration. Authentication, account management, F02 catalog/inventory, and F03 utility use `/api`. Mining UI actions, Merchandiser recommendations/campaign/simulation pages, and customer storefront purchase flow are separate from this backend API contract; the new F07/F08 APIs do not claim end-to-end FE wiring. F04 CSV import has a backend endpoint but no matching CSV import screen in the FE route map.
 - A role mismatch is present in FE source: `SCREEN_OWNER_MAP` assigns recommendation/campaign routes to Merchandiser, but both `ROLE_PERMISSIONS` and post-login `MERCHANDISER` mapping grant only F03 routes, and the Merchandiser sidebar is disabled in `AppLayout`. In BE, mining and recommendation APIs allow Store Admin/Merchandiser, while the FE mining console is grouped under System Admin. Resolve this before presenting end-to-end authorization as verified.
 - Context and role use cases are inferred from the backend API/authorization and FE route/screen sources. The repository tree contains no Report 3/Report 4 files, so exported diagram insertion into those reports remains outstanding.
 

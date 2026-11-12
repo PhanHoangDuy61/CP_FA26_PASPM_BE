@@ -2,27 +2,27 @@ flowchart TB
   subgraph lane0["MERCHANDISER / RETAIL PLANNER"]
     direction TB
     n01(( ))
-    n02("Recheck approved groups<br/>Preserve baseline layout A")
-    n03("Arrange products in B<br/>using drag-and-drop")
-    n04{"Run optional<br/>A/B simulation?"}
+    n02("Create DRAFT campaign<br/>Generate immutable baseline A")
+    n03("Arrange eligible recommendation blocks<br/>in layout B")
+    n04{"Run optional<br/>offline simulation?"}
     n05{" "}
-    n06("Confirm A/B selection<br/>Save draft or prepare campaign")
+    n06("Record KEEP_A / CHOOSE_B<br/>using current versions")
     n07{"Ready to publish?"}
-    n08("Publish campaign draft<br/>Not activated yet")
+    n08("Publish selected valid layout<br/>Storefront remains unchanged")
   end
   subgraph lane1["PASPM / LAYOUT MANAGER"]
     direction TB
-    n09("Show layout Utility<br/>and compare preview to baseline")
-    n10("Run AD07 on A/B<br/>Record Merchandiser decision")
-    n11("Save draft / revision status<br/>Keep current storefront")
+    n09("Preview validity and<br/>snapshot weighted utility")
+    n10("Replay historical evaluation IDs<br/>Persist simulated report")
+    n11("Withdraw to DRAFT / edit revision<br/>Invalidate old decision")
     n12((( )))
-    n13("Save published state<br/>Await Store Admin approval")
-    n14("Apply activated layout<br/>to Storefront blocks")
+    n13("Persist published state<br/>Await Store Admin activation")
+    n14("Serve selected layout to F09<br/>or default when no campaign active")
     n15((( )))
   end
   subgraph lane2["STORE ADMIN / OPERATIONS"]
     direction TB
-    n16("Store Admin activates<br/>after live eligibility check")
+    n16("Activate / end / rollback<br/>with Store-row serialization")
   end
   n01 --> n02
   n02 --> n03

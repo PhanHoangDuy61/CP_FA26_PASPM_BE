@@ -1,0 +1,46 @@
+sequenceDiagram
+  actor M as MERCHANDISER
+  actor A as STORE_ADMIN
+  participant API as LayoutCampaignController
+  participant S as LayoutCampaignService
+  participant F06 as RecommendationService
+  participant DB as Store-scoped database
+  participant F09 as Active-layout reader
+
+  M->>API: POST /api/campaigns(snapshotId, recommendationIds)
+  API->>S: createCampaign
+  S->>DB: validate Store snapshot and rank A by distinct transaction frequency
+  loop each requested recommendation
+    S->>F06: read current recommendation
+    F06-->>S: snapshot, APPROVED, readyForConsumption
+  end
+  S->>DB: insert DRAFT campaign, immutable A, editable B, initial revisions
+  DB-->>M: campaign and layout IDs
+
+  M->>API: PUT /api/layouts/{id}/placements(expectedVersion)
+  API->>S: save whole recommendation blocks
+  S->>F06: recheck current approval and eligibility
+  S->>DB: version-check B, save placements/revision, clear decision
+  DB-->>M: updated B and version
+
+  opt optional offline simulation while DRAFT
+    M->>API: POST /api/campaigns/{id}/simulations(layout versions, date range)
+    API->>S: simulate synchronously
+    S->>DB: require test start after snapshot end; exclude snapshot training IDs
+    S->>DB: persist hash, transaction IDs, assumptions, metrics, exact layout revisions
+    DB-->>M: immutable simulated report
+  end
+
+  M->>API: record decision then publish
+  API->>S: publish(expectedVersion)
+  S->>F06: recheck selected layout recommendations
+  S->>DB: persist PUBLISHED state and history; storefront unchanged
+  DB-->>M: PUBLISHED campaign
+
+  A->>API: POST /api/campaigns/{id}/activate
+  API->>S: activate(expectedVersion)
+  S->>DB: lock Store row; recheck selected layout; end prior active; activate campaign
+  DB-->>A: ACTIVE campaign
+  F09->>API: GET /api/storefront/active-layout
+  API->>DB: read current ACTIVE campaign and selected layout
+  DB-->>F09: selected layout, or default when none is ACTIVE

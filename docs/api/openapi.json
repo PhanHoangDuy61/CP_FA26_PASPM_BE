@@ -7,7 +7,7 @@
   "servers": [
     {
       "url": "http://127.0.0.1:18092",
-      "description": "Generated server url"
+      "description": "Local development/test API"
     }
   ],
   "security": [
@@ -19,6 +19,10 @@
     {
       "name": "F06 Recommendations",
       "description": "Store-scoped reviewable candidates; independent live expiry alerts. Approval never publishes or reserves inventory."
+    },
+    {
+      "name": "F07 Layouts and F08 Campaigns",
+      "description": "Store-scoped layout editing, offline simulated reports, and campaign lifecycle"
     },
     {
       "name": "F05 Mining",
@@ -44,26 +48,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       },
@@ -94,26 +98,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -146,26 +150,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         },
         "deprecated": true
@@ -201,26 +205,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       },
@@ -263,26 +267,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -327,26 +331,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -388,26 +392,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       },
@@ -428,26 +432,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -470,26 +474,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       },
@@ -520,26 +524,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -572,26 +576,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       },
@@ -632,26 +636,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -673,26 +677,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       },
@@ -722,26 +726,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -764,26 +768,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       },
@@ -815,26 +819,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -868,26 +872,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       },
@@ -929,26 +933,90 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          }
+        }
+      }
+    },
+    "/api/layouts/{id}/placements": {
+      "put": {
+        "tags": [
+          "F07 Layouts and F08 Campaigns"
+        ],
+        "summary": "Replace B placements as whole recommendation blocks using expectedVersion",
+        "operationId": "placements",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "exclusiveMinimum": 0
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SavePlacementsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/LayoutView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -982,26 +1050,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       },
@@ -1043,26 +1111,90 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          }
+        }
+      }
+    },
+    "/api/campaigns/{id}/decision": {
+      "put": {
+        "tags": [
+          "F07 Layouts and F08 Campaigns"
+        ],
+        "summary": "Record KEEP_A or CHOOSE_B; an optional report must match both current layout versions",
+        "operationId": "decision",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "exclusiveMinimum": 0
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampaignView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -1095,26 +1227,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -1147,26 +1279,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -1242,26 +1374,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       },
@@ -1293,26 +1425,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -1354,26 +1486,100 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          }
+        }
+      }
+    },
+    "/api/transactions/imports/csv/async": {
+      "post": {
+        "tags": [
+          "transaction-import-controller"
+        ],
+        "summary": "Accept a CSV import for durable background processing",
+        "operationId": "uploadAsync",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Store-scoped retry key; case-insensitive",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportProgress"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -1417,26 +1623,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       },
@@ -1466,26 +1672,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -1517,26 +1723,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -1580,26 +1786,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -1643,26 +1849,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -1696,26 +1902,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -1805,26 +2011,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       },
@@ -1855,26 +2061,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -1911,26 +2117,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       },
@@ -1972,26 +2178,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -2036,26 +2242,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       },
@@ -2087,29 +2293,93 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         },
         "deprecated": true
+      }
+    },
+    "/api/layouts/{id}/ready": {
+      "post": {
+        "tags": [
+          "F07 Layouts and F08 Campaigns"
+        ],
+        "summary": "Recheck recommendation eligibility and move layout B to READY",
+        "operationId": "ready",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "exclusiveMinimum": 0
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransitionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/LayoutView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          }
+        }
       }
     },
     "/api/categories": {
@@ -2133,26 +2403,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       },
@@ -2183,26 +2453,528 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          }
+        }
+      }
+    },
+    "/api/campaigns": {
+      "get": {
+        "tags": [
+          "F07 Layouts and F08 Campaigns"
+        ],
+        "summary": "List campaigns in the authenticated Store",
+        "operationId": "campaigns",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20,
+              "maximum": 100,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageCampaignView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "F07 Layouts and F08 Campaigns"
+        ],
+        "summary": "Create a DRAFT campaign with immutable baseline A and editable recommendation layout B",
+        "operationId": "createCampaign",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCampaignRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampaignView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          }
+        }
+      }
+    },
+    "/api/campaigns/{id}/withdraw": {
+      "post": {
+        "tags": [
+          "F07 Layouts and F08 Campaigns"
+        ],
+        "summary": "Withdraw a published campaign back to DRAFT for further editing",
+        "operationId": "withdraw",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "exclusiveMinimum": 0
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransitionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampaignView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          }
+        }
+      }
+    },
+    "/api/campaigns/{id}/simulations": {
+      "post": {
+        "tags": [
+          "F07 Layouts and F08 Campaigns"
+        ],
+        "summary": "Run a synchronous offline replay and persist an immutable simulated report",
+      "description": "Inclusive Store-local evaluation dates must begin strictly after the selected utility snapshot rangeEnd; overlapping or earlier dates return 400.",
+        "operationId": "simulate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "exclusiveMinimum": 0
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SimulationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampaignReportView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          }
+        }
+      }
+    },
+    "/api/campaigns/{id}/rollback": {
+      "post": {
+        "tags": [
+          "F07 Layouts and F08 Campaigns"
+        ],
+        "summary": "Rollback the active campaign to the previously active campaign in history",
+        "operationId": "rollback",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "exclusiveMinimum": 0
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransitionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActiveLayoutView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          }
+        }
+      }
+    },
+    "/api/campaigns/{id}/publish": {
+      "post": {
+        "tags": [
+          "F07 Layouts and F08 Campaigns"
+        ],
+        "summary": "Publish the selected valid layout without changing the active storefront",
+        "operationId": "publish",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "exclusiveMinimum": 0
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransitionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampaignView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          }
+        }
+      }
+    },
+    "/api/campaigns/{id}/end": {
+      "post": {
+        "tags": [
+          "F07 Layouts and F08 Campaigns"
+        ],
+        "summary": "End the active campaign so F09 returns the default layout",
+        "operationId": "end",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "exclusiveMinimum": 0
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransitionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampaignView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          }
+        }
+      }
+    },
+    "/api/campaigns/{id}/activate": {
+      "post": {
+        "tags": [
+          "F07 Layouts and F08 Campaigns"
+        ],
+        "summary": "Recheck current eligibility and activate a published campaign",
+        "operationId": "activate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "exclusiveMinimum": 0
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransitionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampaignView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -2239,26 +3011,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -2295,28 +3067,72 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
+      }
+    },
+    "/api/auth/refresh": {
+      "post": {
+        "tags": [
+          "auth-controller"
+        ],
+        "summary": "Làm mới credentials",
+        "description": "Xoay vòng opaque refresh token một lần; expiresIn là thời hạn access token mới tính bằng giây.",
+        "operationId": "refresh",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          }
+        },
+        "security": []
       }
     },
     "/api/auth/password/change": {
@@ -2351,26 +3167,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -2407,26 +3223,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -2463,26 +3279,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -2519,26 +3335,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -2575,26 +3391,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -2631,26 +3447,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -2677,26 +3493,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -2723,72 +3539,28 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
-      }
-    },
-    "/api/auth/refresh": {
-      "post": {
-        "tags": [
-          "auth-controller"
-        ],
-        "summary": "Làm mới credentials",
-        "description": "Xoay vòng opaque refresh token một lần; expiresIn là thời hạn access token mới tính bằng giây.",
-        "operationId": "refresh",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/Token"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
-          },
-          "409": {
-            "description": "Conflict"
-          },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          }
-        },
-        "security": []
       }
     },
     "/api/auth/login": {
@@ -2798,7 +3570,6 @@
         ],
         "summary": "Đăng nhập bằng email",
         "description": "Chỉ tài khoản đã xác minh email và đang ACTIVE mới nhận PASPM access token.",
-        "security": [],
         "operationId": "login",
         "requestBody": {
           "content": {
@@ -2821,28 +3592,29 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
-        }
+        },
+        "security": []
       }
     },
     "/api/auth/google": {
@@ -2852,7 +3624,6 @@
         ],
         "summary": "Đăng nhập bằng Google",
         "description": "Đổi Google ID token của identity đã liên kết lấy PASPM access token. Tài khoản phải đang ACTIVE.",
-        "security": [],
         "operationId": "google",
         "requestBody": {
           "content": {
@@ -2875,28 +3646,29 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
-        }
+        },
+        "security": []
       }
     },
     "/api/auth/google/register": {
@@ -2931,26 +3703,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -2987,26 +3759,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -3018,7 +3790,7 @@
         ],
         "summary": "Kích hoạt tài khoản được mời",
         "description": "Dành cho nhân viên được quản trị viên mời: nhập email, OTP và mật khẩu mới để kích hoạt.",
-        "operationId": "activate",
+        "operationId": "activate_1",
         "requestBody": {
           "content": {
             "application/json": {
@@ -3043,26 +3815,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -3097,26 +3869,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       },
@@ -3159,26 +3931,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -3223,26 +3995,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -3286,26 +4058,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -3339,26 +4111,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       },
@@ -3400,26 +4172,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -3463,26 +4235,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -3516,26 +4288,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -3589,26 +4361,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -3672,26 +4444,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -3727,26 +4499,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -3817,26 +4589,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -3870,26 +4642,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -3937,26 +4709,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -3990,26 +4762,79 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          }
+        }
+      }
+    },
+    "/api/transactions/imports/{id}/progress": {
+      "get": {
+        "tags": [
+          "transaction-import-controller"
+        ],
+        "summary": "Get durable progress for one Store-owned asynchronous import",
+        "operationId": "progress",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportProgress"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -4066,126 +4891,73 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
     },
-    "/api/transactions/imports/csv/async": {
-      "post": {
-        "tags": [
-          "transaction-import-controller"
-        ],
-        "summary": "Accept a CSV import for durable background processing",
-        "operationId": "uploadAsync",
-        "parameters": [
-          {
-            "name": "Idempotency-Key",
-            "in": "header",
-            "description": "1–128 URL-safe characters, case-insensitive. Same Store/key/file bytes return the original batch.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^[A-Za-z0-9._:-]{1,128}$",
-              "minLength": 1,
-              "maxLength": 128
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "file": {
-                    "type": "string",
-                    "format": "binary"
-                  }
-                },
-                "required": [
-                  "file"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "202": {
-            "description": "Accepted for background processing; response is the initial durable progress snapshot",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ImportProgress"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid request, file metadata, or idempotency key"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
-          "409": {
-            "description": "Idempotency key already used for different file bytes"
-          },
-          "413": {
-            "description": "File exceeds the configured upload limit"
-          }
-        }
-      }
-    },
-    "/api/transactions/imports/{id}/progress": {
+    "/api/system/stores": {
       "get": {
         "tags": [
-          "transaction-import-controller"
+          "system-store-controller"
         ],
-        "summary": "Get durable progress for one Store-owned asynchronous import",
-        "operationId": "progress",
+        "summary": "System Admin: page through all Stores (id and name only), ordered by name then storeId",
+        "description": "Read-only picker. page is zero-based (default 0), pageSize 1..100 (default 20). A page past the end returns an empty items list.",
+        "operationId": "listStores",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
+            "name": "page",
+            "in": "query",
+            "required": false,
             "schema": {
               "type": "integer",
-              "format": "int32"
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Store-scoped import status and measured row counts",
+            "description": "OK",
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/ImportProgress"
+                  "$ref": "#/components/schemas/PageStoreView"
                 }
               }
             }
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
@@ -4194,7 +4966,16 @@
             "description": "Permission denied"
           },
           "404": {
-            "description": "Import not found or outside the authenticated Store"
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -4250,26 +5031,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -4335,26 +5116,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -4398,26 +5179,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -4472,26 +5253,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -4537,26 +5318,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -4604,26 +5385,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -4676,26 +5457,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -4737,26 +5518,68 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          }
+        }
+      }
+    },
+    "/api/storefront/active-layout": {
+      "get": {
+        "tags": [
+          "F07 Layouts and F08 Campaigns"
+        ],
+        "summary": "F09 read contract: active selected layout or default-layout indicator",
+        "operationId": "activeLayout",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActiveLayoutView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -4784,26 +5607,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -4894,26 +5717,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -4948,26 +5771,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -5033,26 +5856,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -5098,26 +5921,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -5162,26 +5985,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -5215,26 +6038,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -5289,26 +6112,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -5343,26 +6166,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         },
         "deprecated": true
@@ -5397,26 +6220,26 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -5453,26 +6276,515 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403": {
+            "description": "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
           },
           "409": {
             "description": "Conflict"
           },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          }
+        }
+      }
+    },
+    "/api/layouts": {
+      "get": {
+        "tags": [
+          "F07 Layouts and F08 Campaigns"
+        ],
+        "summary": "List layouts in the authenticated Store",
+        "operationId": "layouts",
+        "parameters": [
+          {
+            "name": "campaignId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "exclusiveMinimum": 0
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20,
+              "maximum": 100,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageLayoutSummary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          }
+        }
+      }
+    },
+    "/api/layouts/{id}": {
+      "get": {
+        "tags": [
+          "F07 Layouts and F08 Campaigns"
+        ],
+        "summary": "Read an own-Store layout and its current snapshot utility score",
+        "operationId": "layout",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "exclusiveMinimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/LayoutView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          }
+        }
+      }
+    },
+    "/api/layouts/{id}/preview": {
+      "get": {
+        "tags": [
+          "F07 Layouts and F08 Campaigns"
+        ],
+        "summary": "Preview placements, current recommendation validity, and snapshot utility",
+        "operationId": "preview_1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "exclusiveMinimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/LayoutView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          }
+        }
+      }
+    },
+    "/api/layouts/recommendations": {
+      "get": {
+        "tags": [
+          "F07 Layouts and F08 Campaigns"
+        ],
+        "summary": "List same-snapshot APPROVED recommendations currently ready for B",
+        "operationId": "recommendations",
+        "parameters": [
+          {
+            "name": "snapshotId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "exclusiveMinimum": 0
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20,
+              "maximum": 100,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageRecommendationOption"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          }
+        }
+      }
+    },
+    "/api/layouts/policy": {
+      "get": {
+        "tags": [
+          "F07 Layouts and F08 Campaigns"
+        ],
+        "summary": "Read the shared layout zones and configured capacities used by F07 and F09",
+        "operationId": "policy_2",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/LayoutPolicyView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          }
+        }
+      }
+    },
+    "/api/campaigns/{id}": {
+      "get": {
+        "tags": [
+          "F07 Layouts and F08 Campaigns"
+        ],
+        "summary": "Read an own-Store campaign and its lifecycle/version",
+        "operationId": "campaign",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "exclusiveMinimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampaignView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          }
+        }
+      }
+    },
+    "/api/campaigns/{id}/reports": {
+      "get": {
+        "tags": [
+          "F07 Layouts and F08 Campaigns"
+        ],
+        "summary": "List immutable simulated reports for an own-Store campaign",
+        "operationId": "reports",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "exclusiveMinimum": 0
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20,
+              "maximum": 100,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageCampaignReportView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          }
+        }
+      }
+    },
+    "/api/campaign-reports/{reportId}": {
+      "get": {
+        "tags": [
+          "F07 Layouts and F08 Campaigns"
+        ],
+        "summary": "Read one immutable own-Store simulation report",
+        "operationId": "report",
+        "parameters": [
+          {
+            "name": "reportId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "exclusiveMinimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampaignReportView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -5496,70 +6808,14 @@
               }
             }
           },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
+          "400": {
+            "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
-          },
-          "409": {
-            "description": "Conflict"
-          },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          }
-        }
-      }
-    },
-    "/api/system/stores": {
-      "get": {
-        "tags": [
-          "system-store-controller"
-        ],
-        "summary": "System Admin: page through all Stores (id and name only), ordered by name then storeId",
-        "description": "Read-only picker. page is zero-based (default 0), pageSize 1..100 (default 20). A page past the end returns an empty items list.",
-        "operationId": "listStores",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
-          },
-          {
-            "name": "pageSize",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 20
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/PageStoreView"
-                }
-              }
-            }
+          "403": {
+            "description": "Permission denied"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
@@ -5567,20 +6823,11 @@
           "409": {
             "description": "Conflict"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
-          },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
           "429": {
             "description": "Rate limit exceeded"
           },
-          "403": {
-            "description": "Permission denied"
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -5829,16 +7076,16 @@
           },
           "timeZone": {
             "type": "string",
-            "minLength": 1,
             "description": "Must equal the Store calendar zone, Asia/Ho_Chi_Minh in this release (decision D4).",
-            "example": "Asia/Ho_Chi_Minh"
+            "example": "Asia/Ho_Chi_Minh",
+            "minLength": 1
           },
           "lookbackDays": {
             "type": "integer",
             "format": "int32",
+            "description": "Complete calendar days analysed, ending the day before the analysis date. 7..365 inclusive (decision D3, amended 2026-11-02). Omitted: 30 for WEEKLY, 90 for MONTHLY. UI presets: 30, 60, 90, 180.",
             "maximum": 365,
-            "minimum": 7,
-            "description": "Complete calendar days analysed, ending the day before the analysis date. 7..365 inclusive (decision D3, amended 2026-11-02). Omitted: 30 for WEEKLY, 90 for MONTHLY. UI presets: 30, 60, 90, 180."
+            "minimum": 7
           },
           "compareAlgorithms": {
             "type": "boolean"
@@ -6121,6 +7368,145 @@
           }
         }
       },
+      "SavePlacementsRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "recommendationIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "maxItems": 100,
+            "minItems": 0
+          }
+        },
+        "required": [
+          "expectedVersion",
+          "recommendationIds"
+        ]
+      },
+      "LayoutView": {
+        "type": "object",
+        "properties": {
+          "layoutId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "campaignId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "snapshotId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "A",
+              "B"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "READY",
+              "ARCHIVED"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "weightedUtilityScore": {
+            "type": "number"
+          },
+          "valid": {
+            "type": "boolean"
+          },
+          "validationErrors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "placements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlacementView"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PlacementView": {
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "recommendationId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "recommendationType": {
+            "type": "string",
+            "enum": [
+              "BUNDLE",
+              "CROSS_SELL",
+              "FBT",
+              "BANNER"
+            ]
+          },
+          "sku": {
+            "type": "string"
+          },
+          "productName": {
+            "type": "string"
+          },
+          "zone": {
+            "type": "string"
+          },
+          "blockNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "position": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "snapshotWeightedUtility": {
+            "type": "number"
+          },
+          "valid": {
+            "type": "boolean"
+          },
+          "validationErrors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
       "CategoryRequest": {
         "type": "object",
         "properties": {
@@ -6142,6 +7528,106 @@
           "name",
           "status"
         ]
+      },
+      "DecisionRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "decision": {
+            "type": "string",
+            "enum": [
+              "KEEP_A",
+              "CHOOSE_B"
+            ]
+          },
+          "reportId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "required": [
+          "decision",
+          "expectedVersion"
+        ]
+      },
+      "CampaignView": {
+        "type": "object",
+        "properties": {
+          "campaignId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "snapshotId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "PUBLISHED",
+              "ACTIVE",
+              "ENDED"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "layoutAId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "layoutBId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "selectedLayoutId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "decision": {
+            "type": "string",
+            "enum": [
+              "KEEP_A",
+              "CHOOSE_B"
+            ]
+          },
+          "decisionReportId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "activatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "reportIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        }
       },
       "RangeRequest": {
         "type": "object",
@@ -6600,8 +8086,7 @@
               "null"
             ],
             "format": "int32",
-            "minimum": 0,
-            "maximum": 100
+            "description": "Measured processedCount / totalCount; null when no exact nonzero total is known"
           },
           "createdAt": {
             "type": "string",
@@ -6634,21 +8119,7 @@
               "null"
             ]
           }
-        },
-        "required": [
-          "importBatchId",
-          "status",
-          "stage",
-          "processedCount",
-          "totalCount",
-          "progressPercent",
-          "createdAt",
-          "startedAt",
-          "updatedAt",
-          "completedAt",
-          "statistics",
-          "errorSummary"
-        ]
+        }
       },
       "ImportStatistics": {
         "type": "object",
@@ -6681,16 +8152,7 @@
             "type": "integer",
             "format": "int32"
           }
-        },
-        "required": [
-          "validCount",
-          "rejectedCount",
-          "totalOrderCount",
-          "acceptedOrderCount",
-          "rejectedOrderCount",
-          "duplicateOrderCount",
-          "conflictOrderCount"
-        ]
+        }
       },
       "ManualRequest": {
         "type": "object",
@@ -7418,6 +8880,285 @@
           "snapshotId"
         ]
       },
+      "TransitionRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "required": [
+          "expectedVersion"
+        ]
+      },
+      "CreateCampaignRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 150,
+            "minLength": 0
+          },
+          "snapshotId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "recommendationIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "maxItems": 100,
+            "minItems": 0
+          }
+        },
+        "required": [
+          "name",
+          "recommendationIds",
+          "snapshotId"
+        ]
+      },
+      "SimulationRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "expectedCampaignVersion": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "expectedLayoutAVersion": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "expectedLayoutBVersion": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "rangeStart": {
+            "type": "string",
+            "format": "date"
+          },
+          "rangeEnd": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "required": [
+          "expectedCampaignVersion",
+          "expectedLayoutAVersion",
+          "expectedLayoutBVersion",
+          "rangeEnd",
+          "rangeStart"
+        ]
+      },
+      "CampaignReportView": {
+        "type": "object",
+        "properties": {
+          "reportId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "campaignId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "snapshotId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rangeStart": {
+            "type": "string",
+            "format": "date"
+          },
+          "rangeEnd": {
+            "type": "string",
+            "format": "date"
+          },
+          "sourceNamespace": {
+            "type": "string"
+          },
+          "datasetHash": {
+            "type": "string"
+          },
+          "evaluationCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "simulated": {
+            "type": "boolean"
+          },
+          "algorithmVersion": {
+            "type": "string"
+          },
+          "assumptions": {},
+          "layouts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportLayoutView"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "MetricView": {
+        "type": "object",
+        "properties": {
+          "numerator": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "denominator": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rate": {
+            "type": "number"
+          }
+        }
+      },
+      "ReportLayoutView": {
+        "type": "object",
+        "properties": {
+          "layoutId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "layoutVersion": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "A",
+              "B"
+            ]
+          },
+          "hitRate": {
+            "$ref": "#/components/schemas/MetricView"
+          },
+          "bundleConversion": {
+            "$ref": "#/components/schemas/MetricView"
+          },
+          "capturedUtility": {
+            "$ref": "#/components/schemas/UtilityMetricView"
+          },
+          "priorityCoverage": {
+            "type": "number"
+          },
+          "priorityCoverageDenominator": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "UtilityMetricView": {
+        "type": "object",
+        "properties": {
+          "numerator": {
+            "type": "number"
+          },
+          "denominator": {
+            "type": "number"
+          },
+          "rate": {
+            "type": "number"
+          }
+        }
+      },
+      "ActiveLayoutView": {
+        "type": "object",
+        "properties": {
+          "defaultLayout": {
+            "type": "boolean"
+          },
+          "campaign": {
+            "$ref": "#/components/schemas/CampaignSummary"
+          },
+          "layout": {
+            "$ref": "#/components/schemas/LayoutView"
+          }
+        }
+      },
+      "CampaignSummary": {
+        "type": "object",
+        "properties": {
+          "campaignId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "snapshotId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "PUBLISHED",
+              "ACTIVE",
+              "ENDED"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "layoutAId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "layoutBId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "selectedLayoutId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "decision": {
+            "type": "string",
+            "enum": [
+              "KEEP_A",
+              "CHOOSE_B"
+            ]
+          },
+          "decisionReportId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "activatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
       "EmailRequest": {
         "type": "object",
         "properties": {
@@ -7458,6 +9199,24 @@
           "name",
           "password"
         ]
+      },
+      "Token": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string"
+          },
+          "expiresIn": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "tokenType": {
+            "type": "string"
+          },
+          "csrfToken": {
+            "type": "string"
+          }
+        }
       },
       "ChangePassword": {
         "type": "object",
@@ -7562,24 +9321,6 @@
           "email",
           "password"
         ]
-      },
-      "Token": {
-        "type": "object",
-        "properties": {
-          "accessToken": {
-            "type": "string"
-          },
-          "expiresIn": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "tokenType": {
-            "type": "string"
-          },
-          "csrfToken": {
-            "type": "string"
-          }
-        }
       },
       "Google": {
         "type": "object",
@@ -7947,6 +9688,41 @@
           }
         }
       },
+      "PageStoreView": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StoreView"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "StoreView": {
+        "type": "object",
+        "properties": {
+          "storeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
       "PageSnapshotView": {
         "type": "object",
         "properties": {
@@ -8303,6 +10079,14 @@
           "failureCode": {
             "type": "string"
           },
+          "failureMessage": {
+            "type": "string",
+            "description": "Actionable final cause of a FAILED occurrence (decision D7); null otherwise."
+          },
+          "skipReason": {
+            "type": "string",
+            "description": "Set only for SKIPPED: a missed fire time superseded by a later one (decision D6)."
+          },
           "attemptCount": {
             "type": "integer",
             "format": "int32"
@@ -8318,14 +10102,6 @@
           "updatedAt": {
             "type": "string",
             "format": "date-time"
-          },
-          "failureMessage": {
-            "type": "string",
-            "description": "Actionable final cause of a FAILED occurrence (decision D7); null otherwise."
-          },
-          "skipReason": {
-            "type": "string",
-            "description": "Set only for SKIPPED: a missed fire time superseded by a later one (decision D6)."
           }
         }
       },
@@ -8520,13 +10296,60 @@
           }
         }
       },
-      "PageStoreView": {
+      "LayoutSummary": {
+        "type": "object",
+        "properties": {
+          "layoutId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "campaignId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "snapshotId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "A",
+              "B"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "READY",
+              "ARCHIVED"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PageLayoutSummary": {
         "type": "object",
         "properties": {
           "items": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/StoreView"
+              "$ref": "#/components/schemas/LayoutSummary"
             }
           },
           "page": {
@@ -8543,15 +10366,153 @@
           }
         }
       },
-      "StoreView": {
+      "PageRecommendationOption": {
         "type": "object",
         "properties": {
-          "storeId": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecommendationOption"
+            }
+          },
+          "page": {
             "type": "integer",
             "format": "int32"
           },
-          "name": {
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "RecommendationOption": {
+        "type": "object",
+        "properties": {
+          "recommendationId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "snapshotId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "BUNDLE",
+              "CROSS_SELL",
+              "FBT",
+              "BANNER"
+            ]
+          },
+          "productIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "utility": {
+            "type": "number"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "LayoutPolicyView": {
+        "type": "object",
+        "properties": {
+          "utilityScoreLabel": {
             "type": "string"
+          },
+          "utilityScoreDefinition": {
+            "type": "string"
+          },
+          "capacityPolicy": {
+            "type": "string"
+          },
+          "zones": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ZonePolicy"
+            }
+          }
+        }
+      },
+      "ZonePolicy": {
+        "type": "object",
+        "properties": {
+          "zone": {
+            "type": "string"
+          },
+          "recommendationType": {
+            "type": "string",
+            "enum": [
+              "BUNDLE",
+              "CROSS_SELL",
+              "FBT",
+              "BANNER"
+            ]
+          },
+          "maxBlocks": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxProducts": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "PageCampaignView": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CampaignView"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "PageCampaignReportView": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CampaignReportView"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
           }
         }
       }
