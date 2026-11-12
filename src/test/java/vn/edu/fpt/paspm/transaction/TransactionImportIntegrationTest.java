@@ -1,6 +1,7 @@
 package vn.edu.fpt.paspm.transaction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -24,6 +25,7 @@ import vn.edu.fpt.paspm.auth.AuthService;
 import vn.edu.fpt.paspm.user.User;
 import vn.edu.fpt.paspm.user.UserRepository;
 import vn.edu.fpt.paspm.utility.TransactionSource;
+import vn.edu.fpt.paspm.transaction.importing.TransactionImportLease;
 
 @SpringBootTest(properties = {
         "spring.datasource.url=jdbc:h2:mem:f04imports;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1;NON_KEYWORDS=USER",
@@ -48,6 +50,7 @@ class TransactionImportIntegrationTest {
     @Autowired AuthService auth;
     @Autowired ObjectMapper json;
     @Autowired TransactionSource transactionSource;
+    @Autowired TransactionImportLease importLeases;
 
     private int storeId;
     private int foreignStoreId;
@@ -191,6 +194,112 @@ class TransactionImportIntegrationTest {
     }
 
     @Test
+    void asyncImportIsDurablePollableIdempotentAndStoreScoped() throws Exception {
+        String firstResponse = mvc.perform(multipart("/api/transactions/imports/csv/async")
+                        .file(csvFile(CSV)).header("Idempotency-Key", "async-retry-1")
+                        .header("Authorization", "Bearer " + adminToken))
+                .andExpect(status().isAccepted())
+                .andExpect(jsonPath("$.status").value("QUEUED"))
+                .andExpect(jsonPath("$.stage").value("QUEUED"))
+                .andExpect(jsonPath("$.processedCount").value(0))
+                .andExpect(jsonPath("$.totalCount").value(4))
+                .andExpect(jsonPath("$.progressPercent").value(0))
+                .andExpect(jsonPath("$.createdAt").isNotEmpty())
+                .andExpect(jsonPath("$.startedAt").isEmpty())
+                .andReturn().getResponse().getContentAsString();
+        int batchId = json.readTree(firstResponse).get("importBatchId").asInt();
+
+        String retried = mvc.perform(multipart("/api/transactions/imports/csv/async")
+                        .file(csvFile(CSV)).header("Idempotency-Key", "async-retry-1")
+                        .header("Authorization", "Bearer " + adminToken))
+                .andExpect(status().isAccepted()).andReturn().getResponse().getContentAsString();
+        assertEquals(batchId, json.readTree(retried).get("importBatchId").asInt());
+
+        mvc.perform(multipart("/api/transactions/imports/csv/async")
+                        .file(csvFile(CSV.replace("good-order", "different-order")))
+                        .header("Idempotency-Key", "async-retry-1")
+                        .header("Authorization", "Bearer " + adminToken))
+                .andExpect(status().isConflict());
+
+        var completed = waitForTerminal(batchId, adminToken);
+        assertEquals("COMPLETED_WITH_ERRORS", completed.get("status").asText());
+        assertEquals(4, completed.get("processedCount").asInt());
+        assertEquals(100, completed.get("progressPercent").asInt());
+        assertEquals(2, completed.get("statistics").get("acceptedOrderCount").asInt());
+        assertEquals(1, completed.get("statistics").get("rejectedOrderCount").asInt());
+
+        var reloaded = new vn.edu.fpt.paspm.transaction.importing.TransactionImportRepository(jdbc, json)
+                .getProgress(storeId, batchId);
+        assertEquals("COMPLETED_WITH_ERRORS", reloaded.status());
+
+        TransactionImportLease.Claim stale = new TransactionImportLease.Claim(storeId, batchId, "stale-worker", 0);
+        jdbc.update("""
+                UPDATE import_batch SET status='PROCESSING',stage='IMPORTING',lease_owner=?,lease_fence=0,
+                    lease_until=TIMESTAMP '2000-01-01 00:00:00' WHERE store_id=? AND import_batch_id=?
+                """, stale.owner(), storeId, batchId);
+        TransactionImportLease.Claim recovered = importLeases.claim(storeId, batchId, "recovery-worker", 60).orElseThrow();
+        assertEquals(1, recovered.fence());
+        assertThrows(IllegalStateException.class, () -> importLeases.assertCurrent(stale));
+        importLeases.releaseForRetry(recovered);
+        assertEquals("COMPLETED_WITH_ERRORS", waitForTerminal(batchId, adminToken).get("status").asText());
+
+        String newAttempt = mvc.perform(multipart("/api/transactions/imports/csv/async")
+                        .file(csvFile(CSV)).header("Idempotency-Key", "async-new-import")
+                        .header("Authorization", "Bearer " + adminToken))
+                .andExpect(status().isAccepted()).andReturn().getResponse().getContentAsString();
+        int newBatchId = json.readTree(newAttempt).get("importBatchId").asInt();
+        assertTrue(newBatchId != batchId);
+        var duplicateResult = waitForTerminal(newBatchId, adminToken);
+        assertEquals(2, duplicateResult.get("statistics").get("duplicateOrderCount").asInt());
+
+        mvc.perform(get("/api/transactions/imports/{id}/progress", newBatchId)
+                        .header("Authorization", "Bearer " + foreignAdminToken))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void asyncInvalidCsvIsPersistedAsFailureWithoutInventedProgress() throws Exception {
+        var invalid = csvFile("not,the,approved,header\none,two,three,four\n");
+        String body = mvc.perform(multipart("/api/transactions/imports/csv/async").file(invalid)
+                        .header("Idempotency-Key", "invalid-csv-1")
+                        .header("Authorization", "Bearer " + adminToken))
+                .andExpect(status().isAccepted())
+                .andExpect(jsonPath("$.status").value("FAILED"))
+                .andExpect(jsonPath("$.stage").value("FAILED"))
+                .andExpect(jsonPath("$.processedCount").value(0))
+                .andExpect(jsonPath("$.totalCount").doesNotExist())
+                .andExpect(jsonPath("$.progressPercent").doesNotExist())
+                .andExpect(jsonPath("$.errorSummary").isNotEmpty())
+                .andReturn().getResponse().getContentAsString();
+        int batchId = json.readTree(body).get("importBatchId").asInt();
+        mvc.perform(get("/api/transactions/imports/{id}/progress", batchId)
+                        .header("Authorization", "Bearer " + adminToken))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.status").value("FAILED"));
+    }
+
+    @Test
+    void asyncProgressEndpointPreservesUploadRoleAndOpenApiContract() throws Exception {
+        mvc.perform(multipart("/api/transactions/imports/csv/async").file(csvFile(CSV))
+                        .header("Idempotency-Key", "missing-token"))
+                .andExpect(status().isUnauthorized());
+        mvc.perform(multipart("/api/transactions/imports/csv/async").file(csvFile(CSV))
+                        .header("Idempotency-Key", "wrong-role")
+                        .header("Authorization", "Bearer " + merchandiserToken))
+                .andExpect(status().isForbidden());
+        mvc.perform(get("/v3/api-docs"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.paths['/api/transactions/imports/csv/async'].post").exists())
+                .andExpect(jsonPath("$.paths['/api/transactions/imports/csv/async'].post.parameters[0].name")
+                        .value("Idempotency-Key"))
+                .andExpect(jsonPath("$.paths['/api/transactions/imports/csv/async'].post.parameters[0].schema.pattern")
+                        .value("^[A-Za-z0-9._:-]{1,128}$"))
+                .andExpect(jsonPath("$.paths['/api/transactions/imports/csv/async'].post.responses['202']").exists())
+                .andExpect(jsonPath("$.paths['/api/transactions/imports/{id}/progress'].get").exists())
+                .andExpect(jsonPath("$.components.schemas.ImportProgress.properties.progressPercent.type[1]")
+                        .value("null"));
+    }
+
+    @Test
     void importAndTransactionReadsAreRoleCheckedAndStoreScoped() throws Exception {
         mvc.perform(multipart("/api/transactions/imports/csv").file(csvFile(CSV)))
                 .andExpect(status().isUnauthorized());
@@ -229,6 +338,23 @@ class TransactionImportIntegrationTest {
     private org.springframework.test.web.servlet.ResultActions upload(String token, String contents) throws Exception {
         return mvc.perform(multipart("/api/transactions/imports/csv").file(csvFile(contents))
                 .header("Authorization", "Bearer " + token));
+    }
+
+    private com.fasterxml.jackson.databind.JsonNode waitForTerminal(int batchId, String token) throws Exception {
+        long deadline = System.nanoTime() + java.util.concurrent.TimeUnit.SECONDS.toNanos(10);
+        com.fasterxml.jackson.databind.JsonNode progress;
+        do {
+            String body = mvc.perform(get("/api/transactions/imports/{id}/progress", batchId)
+                            .header("Authorization", "Bearer " + token))
+                    .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+            progress = json.readTree(body);
+            String state = progress.get("status").asText();
+            if (state.equals("COMPLETED") || state.equals("COMPLETED_WITH_ERRORS") || state.equals("FAILED")) {
+                return progress;
+            }
+            Thread.sleep(25);
+        } while (System.nanoTime() < deadline);
+        throw new AssertionError("F04 import did not reach a terminal state");
     }
 
     private String token(String role, Integer store) {

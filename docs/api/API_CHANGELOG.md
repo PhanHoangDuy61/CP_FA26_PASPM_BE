@@ -1,5 +1,13 @@
 # API Changelog
 
+## 2026-11-12 — F04 durable asynchronous CSV import and processing visibility
+
+- Added `POST /api/transactions/imports/csv/async` (Store Admin, `202 Accepted`) with required store-scoped idempotency key and database-staged rows; existing synchronous `POST /api/transactions/imports/csv` remains unchanged.
+- Added `GET /api/transactions/imports/{id}/progress` for store-scoped status, stage, measured row counts/percentage, timestamps, statistics and error summary.
+- Added Flyway V22 for async lifecycle/idempotency metadata, worker lease fencing and persistent row outcomes. The worker starts with the app, resumes queued/expired-lease batches, and keeps DB raw-row evidence (no local file temp storage).
+- Documented F05 request/run status polling. F03 preview/snapshot and F06 recommendation generation remain synchronous; no fabricated percentage or new job API was added.
+- See [F04 API contract](F04_TRANSACTION_API.md) and [frontend handoff](../frontend_handoff/F04_HANDOFF.md).
+
 ## 2026-11-12 — Reconcile F01 sessions with dev 42b8a9c
 
 - Preserved published V20 and AuthSessionService, its absolute/idle TTLs, bounded cleanup and existing logout response payloads. Removed the competing local session service/controller.

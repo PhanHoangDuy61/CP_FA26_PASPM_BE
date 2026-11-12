@@ -21,11 +21,13 @@ This handoff documents the implemented F04 P0 API from the Backend controllers a
 ## Recommended integration order
 
 1. Obtain a valid F01 access token and identify the user's role and Store from the authenticated account flow.
-2. For Store Admin, upload `multipart/form-data` field `file` to `POST /api/transactions/imports/csv`.
-3. Display the returned `ImportSummary`; row counts and order counts are distinct measures.
-4. Poll/read `GET /api/transactions/imports/{id}` and show validation detail from `GET /api/transactions/imports/{id}/errors` when rejected/conflicted rows exist.
+2. For background processing, create one idempotency key per deliberate upload and send multipart field `file` plus `Idempotency-Key` to `POST /api/transactions/imports/csv/async`. Keep the same key for network retries; do not generate a new key just because the response was lost.
+3. Store the returned `importBatchId`. Display its initial state, then poll `GET /api/transactions/imports/{id}/progress` every 1–2 seconds while nonterminal. Stop polling at `COMPLETED`, `COMPLETED_WITH_ERRORS`, or `FAILED`; resume polling by the saved batch ID after refresh/navigation.
+4. Display `processedCount`, `totalCount`, `progressPercent` only when non-null, stage, counters and `errorSummary`. Percent is based only on rows actually completed by the worker. Use `GET /api/transactions/imports/{id}/errors` for rejected/conflicted row detail.
 5. Read the Store's transaction list with `GET /api/transactions`; filters include status and inclusive ISO-8601 `from`/`to` instants. Use `page` and `pageSize` for pagination.
 6. Open a transaction with `GET /api/transactions/{id}` to show persisted historical Product lines, units, prices and costs.
+
+The existing `POST /api/transactions/imports/csv` remains synchronous and returns its original `201 ImportSummary`; clients that do not need background progress can continue to use it.
 
 ## Sample data
 
@@ -39,13 +41,15 @@ The completed order with sale prices at or above costs is marked `f03Eligible=tr
 
 `TransactionView` contains transaction identifiers, UTC `occurredAt`, source system/order ID, status, `f03Eligible`, `totalAmount` and `items`. An item includes Product identifiers/name/SKU, quantity and captured unit price/cost. Treat returned historical values as a transaction snapshot; do not recompute them from the current catalog.
 
-Use the shared Backend error format for request-level errors. Parsed CSV validation errors are batch row errors and are retrieved from the batch errors endpoint. Do not interpret an HTTP `201` as every row accepted; inspect counters and errors.
+Use the shared Backend error format for request-level errors. Parsed CSV validation errors are batch row errors and are retrieved from the batch errors endpoint. Do not interpret an HTTP `201` or `202` as every row accepted; inspect counters and errors. A structurally invalid async CSV is a persisted `FAILED` result; malformed upload metadata, missing idempotency key, or limits remain request errors.
 
 ## APIs ready for integration
 
 - `POST /api/transactions/imports/csv`
+- `POST /api/transactions/imports/csv/async`
 - `GET /api/transactions/imports`
 - `GET /api/transactions/imports/{id}`
+- `GET /api/transactions/imports/{id}/progress`
 - `GET /api/transactions/imports/{id}/errors`
 - `GET /api/transactions`
 - `GET /api/transactions/{id}`
@@ -54,7 +58,8 @@ Use the shared Backend error format for request-level errors. Parsed CSV validat
 
 - CSV only in this P0 scope; exact header order and UTF-8 are required.
 - Default upload limit is 5 MiB and the row limit is 10,000 nonblank rows. Backend values are configurable.
-- Import processing is synchronous and bounded; no background job progress endpoint exists.
+- Async processing has no local file temp directory: parsed rows, raw evidence, batch status and errors are retained in the database. A worker DB lease recovers interrupted batches after lease expiry. Processing failures are terminal; to retry deliberately, use a new key and rely on existing Store/order ID/content duplicate/conflict rules.
+- Same `Idempotency-Key` + identical uploaded bytes returns the same batch. Reuse with different bytes is `409`. A new key always means a new batch even if the bytes match; matching existing orders count as duplicates. No percent is returned until the exact parsed total is known; invalid files and zero-row files have an unknown percentage.
 - API connection records are metadata-only. External POS API synchronization, external API ingestion, polling and webhooks are outside the approved F04 scope. The approved Excel format is a separate stacked implementation; this CSV branch does not advertise an unavailable route.
 - A duplicate order with identical normalized contents is counted as duplicate; a changed payload with the same Store/source/order ID is a conflict and does not overwrite history.
 - Import does not mutate inventory and does not implement F03 scoring or F05 mining.
@@ -62,4 +67,4 @@ Use the shared Backend error format for request-level errors. Parsed CSV validat
 
 ## Mixed valid and invalid identifiers
 
-An invalid order ID must not hide an unrelated valid order. Inspect the 201 summary counters and GET import errors. An overlong staging identifier is returned as nullable `sourceOrderId`; `rowNumber` and `errorDetails` still identify the rejected row. Original parsed values are kept in database raw evidence, never shortened into another identity. The existing limit is 150 UTF-16 code units after `trim()`; this release preserves that rule.
+An invalid order ID must not hide an unrelated valid order. Inspect the sync 201 summary or async progress counters and GET import errors. An overlong staging identifier is returned as nullable `sourceOrderId`; `rowNumber` and `errorDetails` still identify the rejected row. Original parsed values are kept in database raw evidence, never shortened into another identity. The existing limit is 150 UTF-16 code units after `trim()`; this release preserves that rule.

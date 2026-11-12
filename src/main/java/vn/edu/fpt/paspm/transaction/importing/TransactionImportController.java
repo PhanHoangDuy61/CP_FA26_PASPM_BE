@@ -15,11 +15,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import io.swagger.v3.oas.annotations.media.Schema;
 import vn.edu.fpt.paspm.catalog.CatalogAccess;
 import vn.edu.fpt.paspm.common.ApiException;
+import vn.edu.fpt.paspm.transaction.TransactionContracts.ImportProgress;
 import vn.edu.fpt.paspm.transaction.TransactionContracts.ImportError;
 import vn.edu.fpt.paspm.transaction.TransactionContracts.ImportSummary;
 import vn.edu.fpt.paspm.transaction.TransactionContracts.Page;
@@ -46,6 +49,18 @@ public class TransactionImportController {
         return imports.importCsv(jwt, file);
     }
 
+    @Operation(summary = "Accept a CSV import for durable background processing")
+    @PostMapping(path = "/api/transactions/imports/csv/async", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('STORE_ADMIN')")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public ImportProgress uploadAsync(@AuthenticationPrincipal Jwt jwt,
+            @RequestPart("file") MultipartFile file,
+            @Parameter(description = "Store-scoped retry key; case-insensitive",
+                    schema = @Schema(pattern = "^[A-Za-z0-9._:-]{1,128}$", minLength = 1, maxLength = 128))
+            @RequestHeader("Idempotency-Key") String idempotencyKey) {
+        return imports.submitAsync(jwt, file, idempotencyKey);
+    }
+
     @Operation(summary = "List transaction imports for the authenticated Store")
     @GetMapping("/api/transactions/imports")
     @PreAuthorize("hasAnyRole('STORE_ADMIN','MERCHANDISER')")
@@ -64,6 +79,15 @@ public class TransactionImportController {
         ImportSummary summary = repository.getBatch(access.currentStoreId(jwt), id);
         if (summary == null) throw new ApiException(404, "Import batch not found");
         return summary;
+    }
+
+    @Operation(summary = "Get durable progress for one Store-owned asynchronous import")
+    @GetMapping("/api/transactions/imports/{id}/progress")
+    @PreAuthorize("hasAnyRole('STORE_ADMIN','MERCHANDISER')")
+    public ImportProgress progress(@AuthenticationPrincipal Jwt jwt, @PathVariable int id) {
+        ImportProgress progress = repository.getProgress(access.currentStoreId(jwt), id);
+        if (progress == null) throw new ApiException(404, "Import batch not found");
+        return progress;
     }
 
     @Operation(summary = "List rejected or conflicted rows for one Store-owned import")

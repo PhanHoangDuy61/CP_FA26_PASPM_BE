@@ -10,6 +10,8 @@ Authenticate with F01 `POST /api/auth/login` (`email`, `password`), use returned
 
 There are **eight operations total**: seven in RecommendationController and one independent expiry operation. All success responses below are HTTP 200 JSON. STORE_ADMIN and MERCHANDISER can read; only MERCHANDISER can generate/review; only STORE_ADMIN can update configuration. SYSTEM_ADMIN and END_CUSTOMER have no F06 access. Missing/invalid bearer: 401; forbidden role: 403. Own-Store lookup hides foreign records with 404.
 
+`POST /api/recommendations/generate` is synchronous. Treat its HTTP 200 `RecGenerationResult` as completion (including a valid zero-candidate result); request errors end loading as errors. F06 has no job ID, status polling endpoint, or progress percentage.
+
 | Method/path | Input | Response | Mutation role |
 |---|---|---|---|
 | POST `/api/recommendations/generate` | RecGenerateRequest | RecGenerationResult | MERCHANDISER |

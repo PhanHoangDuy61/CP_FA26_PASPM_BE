@@ -26,6 +26,10 @@ The normal transaction provider is now F04_DATABASE_V1, reading validated persis
 8. Save returned snapshotId, then GET metadata and matrix pages. There is no snapshot-history list endpoint. Preserve/display scoringVersion; old F03_LINEAR_V1 snapshots remain decimal and must not be relabeled or recalculated in React.
 9. Hand the frozen `snapshotId` to the System Admin, who starts mining for that Store with `POST /api/system/mining/requests` (Merchandisers and Store Admins only read results through `GET /api/mining/**`; see the [F05 handoff](F05_HANDOFF.md)). Mining/Recommendation execution uses their separate contracts, not the Product score endpoints. Never hide the independent push list because an item was absent from HUI/EFIM output.
 
+### Preview/snapshot loading states
+
+F03 preview and snapshot creation remain synchronous. Keep the relevant button/loading state active until `POST /api/utility/preview` returns its `200 MatrixPage` or `POST /api/utility/snapshots` returns its `201 SnapshotView`; then render the response and end loading. A request-level `4xx/5xx` ends loading as an error and uses the existing error envelope. There is no F03 progress endpoint, job ID or percentage.
+
 SYSTEM_ADMIN cannot edit Store/Product utility inputs. STORE_ADMIN may read current Product scores/E/W but cannot configure weights, edit manual scores or use Preview/snapshots. MERCHANDISER cannot edit Product expiryPushDays or global bounds. END_CUSTOMER has no F03 permissions. Missing token401, wrong role403, foreign record404. No request accepts storeId.
 
 ## Breaking changes

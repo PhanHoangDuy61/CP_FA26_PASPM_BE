@@ -4090,6 +4090,115 @@
         }
       }
     },
+    "/api/transactions/imports/csv/async": {
+      "post": {
+        "tags": [
+          "transaction-import-controller"
+        ],
+        "summary": "Accept a CSV import for durable background processing",
+        "operationId": "uploadAsync",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "1–128 URL-safe characters, case-insensitive. Same Store/key/file bytes return the original batch.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9._:-]{1,128}$",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted for background processing; response is the initial durable progress snapshot",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportProgress"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request, file metadata, or idempotency key"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "409": {
+            "description": "Idempotency key already used for different file bytes"
+          },
+          "413": {
+            "description": "File exceeds the configured upload limit"
+          }
+        }
+      }
+    },
+    "/api/transactions/imports/{id}/progress": {
+      "get": {
+        "tags": [
+          "transaction-import-controller"
+        ],
+        "summary": "Get durable progress for one Store-owned asynchronous import",
+        "operationId": "progress",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Store-scoped import status and measured row counts",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportProgress"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Import not found or outside the authenticated Store"
+          }
+        }
+      }
+    },
     "/api/system/mining/stores/{storeId}/snapshots": {
       "get": {
         "tags": [
@@ -6443,6 +6552,145 @@
             "type": "string"
           }
         }
+      },
+      "ImportProgress": {
+        "type": "object",
+        "properties": {
+          "importBatchId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "RECEIVING",
+              "QUEUED",
+              "PROCESSING",
+              "COMPLETED",
+              "COMPLETED_WITH_ERRORS",
+              "FAILED"
+            ]
+          },
+          "stage": {
+            "type": "string",
+            "enum": [
+              "RECEIVING",
+              "QUEUED",
+              "IMPORTING",
+              "COMPLETED",
+              "COMPLETED_WITH_ERRORS",
+              "FAILED",
+              "LEGACY"
+            ]
+          },
+          "processedCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCount": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32"
+          },
+          "progressPercent": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "startedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "statistics": {
+            "$ref": "#/components/schemas/ImportStatistics"
+          },
+          "errorSummary": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "importBatchId",
+          "status",
+          "stage",
+          "processedCount",
+          "totalCount",
+          "progressPercent",
+          "createdAt",
+          "startedAt",
+          "updatedAt",
+          "completedAt",
+          "statistics",
+          "errorSummary"
+        ]
+      },
+      "ImportStatistics": {
+        "type": "object",
+        "properties": {
+          "validCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rejectedCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalOrderCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "acceptedOrderCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rejectedOrderCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "duplicateOrderCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "conflictOrderCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "required": [
+          "validCount",
+          "rejectedCount",
+          "totalOrderCount",
+          "acceptedOrderCount",
+          "rejectedOrderCount",
+          "duplicateOrderCount",
+          "conflictOrderCount"
+        ]
       },
       "ManualRequest": {
         "type": "object",

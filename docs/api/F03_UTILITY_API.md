@@ -23,6 +23,8 @@ Authoritative business specification: [F03_WEIGHT_RULES_v1_2.md](../requirements
 
 END_CUSTOMER has no permission. SYSTEM_ADMIN cannot use Store-bound F03 actions. STORE_ADMIN manages Product T through the existing F02 Product POST/PUT APIs, not the Merchandiser score patch. All foreign Product/snapshot IDs resolve to 404. Insufficient role → 403; missing/invalid token → 401. Requests with unknown JSON fields are rejected; bodies cannot forge storeId or calculated E.
 
+Preview (`200 MatrixPage`) and snapshot creation (`201 SnapshotView`) are synchronous request/response operations. The client ends loading when the response arrives; request errors end loading as errors. No F03 job ID, status polling endpoint, or percentage progress is exposed.
+
 ## Settings and manual scores
 
 `PolicyRequest`: required nonnegative decimal lambdaMin/lambdaMax (up to 24 integer and 6 fractional digits); max>=min. `LambdaPolicy`: lambdaMin:number, lambdaMax:number, version:int64. Changing bounds increments version and never clamps Store values or rewrites snapshots.
