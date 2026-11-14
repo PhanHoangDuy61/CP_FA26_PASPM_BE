@@ -27,7 +27,12 @@ class SessionV21MigrationTest {
         db.update("INSERT INTO auth_refresh_token(session_id,token_hash,created_at) VALUES(?,?,?)",sid,hash,now);
         var before=db.queryForMap("SELECT * FROM auth_refresh_session WHERE session_id=?",sid);
         int checksum=db.queryForObject("SELECT checksum FROM flyway_schema_history WHERE version='20'",Integer.class);
-        var latest=Flyway.configure().dataSource(url,user,password).load();assertEquals(1,latest.migrate().migrationsExecuted);latest.validate();
+        var latest=Flyway.configure().dataSource(url,user,password).load();
+        int pending=latest.info().pending().length;
+        assertTrue(pending >= 1, "V21 must be pending after V20");
+        assertEquals(pending,latest.migrate().migrationsExecuted);latest.validate();
+        assertEquals(0,latest.info().pending().length);
+        assertEquals(1,db.queryForObject("SELECT COUNT(*) FROM flyway_schema_history WHERE version='21' AND success=TRUE",Integer.class));
         assertEquals(before,db.queryForMap("SELECT * FROM auth_refresh_session WHERE session_id=?",sid));
         assertArrayEquals(hash,db.queryForObject("SELECT token_hash FROM auth_refresh_token WHERE session_id=?",byte[].class,sid));
         assertNull(db.queryForObject("SELECT csrf_hash FROM auth_refresh_token WHERE session_id=?",byte[].class,sid));

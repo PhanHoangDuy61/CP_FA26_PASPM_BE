@@ -46,3 +46,5 @@ Bản ghi implementation 01 được tổng hợp từ source và bằng chứng
 - Quy ước này là hướng dẫn trong repository cho các phiên sau; không có tác vụ tự động đọc chat hoặc theo dõi bên ngoài repository được cài đặt.
 
 [Feature index](../features/README.md) · [API changelog](../api/API_CHANGELOG.md) · [Testing](../testing/README.md) · [Documentation index](../README.md).
+
+- [2026-11-15 — F07/F08 integration](2026-11-15/README.md)
