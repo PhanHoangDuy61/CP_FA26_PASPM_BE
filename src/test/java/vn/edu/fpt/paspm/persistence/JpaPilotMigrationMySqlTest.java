@@ -60,9 +60,11 @@ class JpaPilotMigrationMySqlTest {
     @Test void freshV1ToV17ValidatesJpaConstraintsAndActualCategoryProductHttpApis() {
         var db=MySqlTestDatabase.create();
         var flyway=Flyway.configure().dataSource(db.url(),db.user(),db.password()).load();
-        assertEquals(21,flyway.migrate().migrationsExecuted);flyway.validate();
+        int expectedPending=flyway.info().pending().length;
+        assertTrue(expectedPending>0);assertEquals(expectedPending,flyway.migrate().migrationsExecuted);flyway.validate();
         var jdbc=jdbc(db);
-        assertEquals("21",flyway.info().current().getVersion().toString());
+        assertEquals(0,flyway.info().pending().length);
+        assertEquals(flyway.info().all()[flyway.info().all().length-1].getVersion(),flyway.info().current().getVersion());
         assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM information_schema.statistics WHERE table_schema=DATABASE() AND table_name='product' AND index_name='uq_product_store_sku' AND column_name='sku' AND non_unique=0",Integer.class));
         assertEquals(2,jdbc.queryForObject("SELECT COUNT(*) FROM information_schema.key_column_usage WHERE constraint_schema=DATABASE() AND constraint_name='fk_product_category_store'",Integer.class));
         try(var context=application(db)) {
@@ -96,8 +98,10 @@ class JpaPilotMigrationMySqlTest {
         assertEquals(5,Flyway.configure().dataSource(db.url(),db.user(),db.password()).target("5").load().migrate().migrationsExecuted);
         seedV5(jdbc,false);var before=fingerprints(jdbc);
         var current=Flyway.configure().dataSource(db.url(),db.user(),db.password()).load();
-        assertEquals(16,current.migrate().migrationsExecuted);current.validate();
-        assertEquals("21",current.info().current().getVersion().toString());
+        int expectedPending=current.info().pending().length;
+        assertTrue(expectedPending>0);assertEquals(expectedPending,current.migrate().migrationsExecuted);current.validate();
+        assertEquals(0,current.info().pending().length);
+        assertEquals(current.info().all()[current.info().all().length-1].getVersion(),current.info().current().getVersion());
         assertEquals(before,fingerprints(jdbc));
         assertEquals(0,jdbc.queryForObject("SELECT expiry_push_days FROM product WHERE product_id=201",Integer.class));
         assertNull(jdbc.queryForObject("SELECT validation_warnings FROM utility_snapshot WHERE snapshot_id=401",String.class));
@@ -180,7 +184,8 @@ class JpaPilotMigrationMySqlTest {
         }
         var guarded=Flyway.configure().dataSource(target.url(),target.user(),target.password())
                 .callbacks(new LegacyRecoveryCallback(true,manifest.toString(),restored.url(),user,password)).load();
-        assertTrue(guarded.migrate().success);guarded.validate();assertEquals("21",guarded.info().current().getVersion().toString());
+        assertTrue(guarded.migrate().success);guarded.validate();assertEquals(0,guarded.info().pending().length);
+        assertEquals(guarded.info().all()[guarded.info().all().length-1].getVersion(),guarded.info().current().getVersion());
         try(var context=application(target)) {
             var products=context.getBean(ProductRepository.class);
             new TransactionTemplate(context.getBean(PlatformTransactionManager.class)).executeWithoutResult(status -> {
@@ -220,10 +225,11 @@ class JpaPilotMigrationMySqlTest {
 
     private Map<String,String> fingerprints(JdbcTemplate jdbc) throws Exception {
         var queries=new LinkedHashMap<String,String>();
-        queries.put("store","SELECT store_id,name,utility_config,mining_schedule FROM store ORDER BY store_id");
+        // V25 (W2) rewrites the live utility_config by owner decision 2026-11-15; it is checked separately via utility_weight_v2_conversion.
+        queries.put("store","SELECT store_id,name,mining_schedule FROM store ORDER BY store_id");
         queries.put("category","SELECT category_id,store_id,name,status FROM category ORDER BY category_id");
         queries.put("product","SELECT product_id,store_id,category_id,sku,name,unit,requires_expiry,selling_price,cost_price,status,stock_priority_score,seasonal_priority_score FROM product ORDER BY product_id");
-        queries.put("inventory_batch","SELECT * FROM inventory_batch ORDER BY batch_id");
+        queries.put("inventory_batch","SELECT batch_id,product_id,batch_code,received_at,expiry_date,initial_quantity,remaining_quantity,status,created_at,updated_at FROM inventory_batch ORDER BY batch_id");
         queries.put("utility_snapshot","SELECT snapshot_id,store_id,created_by,range_start,range_end,as_of_date,config_snapshot,source_hash,matrix_hash,total_weighted_utility,rounding_scale,status,created_at FROM utility_snapshot ORDER BY snapshot_id");
         queries.put("utility_matrix_item","SELECT matrix_item_id,snapshot_id,transaction_id,product_id,quantity,base_utility,stock_score,expiry_score,seasonal_score,expiry_status,weight_value,weighted_utility FROM utility_matrix_item ORDER BY matrix_item_id");
         var result=new LinkedHashMap<String,String>();

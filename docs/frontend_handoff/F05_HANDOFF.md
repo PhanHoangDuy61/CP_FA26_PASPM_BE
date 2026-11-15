@@ -1,3 +1,18 @@
+# F05 integration update — 2026-11-15
+
+**New Merchandiser workflow:** select an own-Store READY snapshot → POST `/api/mining/requests` with only snapshotId/requestKey → poll GET `/api/mining/requests/{id}/progress` → read existing request/runs/patterns. Store Admin can poll/read but cannot submit. Keep System Admin submission unchanged and poll `/api/system/mining/stores/{storeId}/requests/{requestId}/progress` for that role.
+
+This replaces the prior decision "System Admin is the only mining submitter". Do not show Merchandiser algorithm/minUtil override fields: the Backend pins the current System Admin configuration. Lambda is frozen in F03; a new submission beyond the current maximum gives 409 and requires a valid new snapshot. Do not modify historical snapshot data. Matching requestKey retries return the original request even after policy changes.
+
+**Contract changes:** the formerly forbidden Store POST now accepts `{requestKey: UUID, snapshotId: integer}`; the old algorithms/minUtil body is rejected with 400. Existing RequestView remains unchanged. Two additive progress endpoints share ProgressView; see [exact fields, nullability and errors](../api/F05_MINING_API.md). F03 two-component config/season APIs are NOT available yet.
+
+Render stage and algorithm, not a simulated time-based percentage. Use percent from the response; it measures completed work and may reset on recovery. FAILED/BLOCKED can be below 100%; a comparison mismatch may be 100% but FAILED. Show attemptNo (request fence, not RunView.attemptNo). Handle LEGACY timing as unavailable. Stop polling on terminal request status; elapsedMs is current-stage age, not total duration. Queue-full leaves durable work pending; never resubmit with a different key merely because progress is slow.
+
+401: sign in; 403: role/read-group restriction; 404: absent or foreign Store record; 409: display Backend conflict including the instruction to create a valid snapshot; 503: dependency unavailable or scheduler intentionally disabled. Use current REQUESTS gate configuration for System Admin progress. No scheduler activation or automatic F06 regeneration is added.
+
+---
+## Earlier handoff (historical; submission restrictions superseded above)
+
 > **Status 2026-11-02 — F03/F05 Core is merged into `dev` (PR #11, `11973a0`).** Verified surface: see [OPTION_B_BACKEND_API_HANDOFF.md](OPTION_B_BACKEND_API_HANDOFF.md) (status table and the per-flow readiness table in its section 12). Closed by design: the five System Admin Store-read routes (403 until decision D1, per group) and schedule activation (503). This file explains how to build the F05 screens; the route/role truth is [F05_MINING_API.md](../api/F05_MINING_API.md).
 
 # F05 Mining — Frontend Integration Handoff

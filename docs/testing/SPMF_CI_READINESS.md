@@ -13,7 +13,7 @@ Continue open PR #3 on Khoi/fix/backend-ci-remote-verification (head5412178; dev
 
 ## Initial observations
 
-PR #3 is OPEN, not merged, author khoinm04, base dev783725c, head5412178, zero requested reviewers/submitted reviews/inline threads. Candidate permission probe403; distinct human identities unverified. Public dev protected=false, active rules/rulesets empty. Release list empty. Latest observed run39981570789: foundation/MySQL SUCCESS; full integration fails at artifact provisioning and aggregate FAILURE. No retrospective approval of PRs #1/#2.
+PR #3 is OPEN, not merged, author <implementation-author>, base dev783725c, head5412178, zero requested reviewers/submitted reviews/inline threads. Candidate permission probe403; distinct human identities unverified. Public dev protected=false, active rules/rulesets empty. Release list empty. Latest observed run39981570789: foundation/MySQL SUCCESS; full integration fails at artifact provisioning and aggregate FAILURE. No retrospective approval of PRs #1/#2.
 
 HEAD-only reference probe of a fixed GitHub CLI checksum asset returned302 to HTTPS release-assets.githubusercontent.com with query parameters. No body was downloaded, and no signed URL was retained. Current require_https rejected this actual redirect. This reference asset is not an approved SPMF source and is never used for provisioning PASPM.
 
@@ -40,7 +40,7 @@ Unchanged foundation/MySQL modules are not rerun locally. Latest observed existi
 
 ## Review gate and next step
 
-PR#3 remains the existing dev-targeted PR; no duplicate is created. Public protection/rules report no required checks, but the explicit task review requirements remain. Candidate PhanHoangDuy61 and author khoinm04 have different account names; distinct humans and eligible permissions are unverified (permission API403). Zero reviews/threads at inspection: **REVIEWER_PENDING**. No review request/self approval/fake review or retrospective approval of PRs#1/#2 occurs.
+PR#3 remains the existing dev-targeted PR; no duplicate is created. Public protection/rules report no required checks, but the explicit task review requirements remain. Candidate PhanHoangDuy61 and author <implementation-author> have different account names; distinct humans and eligible permissions are unverified (permission API403). Zero reviews/threads at inspection: **REVIEWER_PENDING**. No review request/self approval/fake review or retrospective approval of PRs#1/#2 occurs.
 
 READY_FOR_MERGE: **NO**. Full hosted integration, approved artifact hosting and eligible actual independent review must all complete. Product JPA integration remains blocked; Category remains not started. No merge or deployment is performed.
 

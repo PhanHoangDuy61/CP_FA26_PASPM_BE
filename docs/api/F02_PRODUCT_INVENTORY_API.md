@@ -1,5 +1,7 @@
 # F02 Product and Inventory API Contract
 
+> **2026-11-15 (branch `Khoi/feat/f05-progress-f03-weight-v2`):** batches accept `pushDay` and Product `expiryPushDays` is **deprecated, ignored by calculation** (P5) — see the section at the end. Statements below that call `expiryPushDays` the F03 threshold are **legacy (v1.2)**.
+
 ## v1.2 Product expiry priority update (2026-10-19)
 
 The existing Product POST/PUT request accepts optional `expiryPushDays: integer|null`; absent/null is stored as0, values must be >=0, and fractional/string/boolean values are rejected400. Full PUT must send the desired threshold (omitting resets it to0). Product GET/list/create/update/status responses include `expiryPushDays: integer`. Store Admin owns this field in their Store; Merchandiser and System Admin cannot modify it through F02, and cross-Store records return404. No duplicate configuration endpoint was added. `requiresExpiry=false` remains NOT_APPLICABLE in F03 even if a threshold is configured. Inventory quantities are unchanged by threshold updates.
@@ -61,7 +63,7 @@ SKU is unique per Store (database constraint); same SKU may exist in another Sto
 
 ## F02 / F03 ownership
 
-F02 Product create/update owns `expiryPushDays`, `requiresExpiry`, SKU, category, unit, prices, and Product status. F02 batch APIs own batch expiry and quantities. `stockQuantity` is derived and cannot be edited. The F03 API owns `stock_priority_score` and `seasonal_priority_score` through `/api/utility/products/{productId}/scores`; ProductRequest does not accept these fields. F03 derives expiry priority using inventory batches and a fixed analysis date. Do not add F03 score fields to F02 Product forms/contracts.
+F02 Product create/update owns `expiryPushDays` (legacy, ignored since 2026-11-15), `requiresExpiry`, SKU, category, unit, prices, and Product status. F02 batch APIs own batch expiry and quantities. `stockQuantity` is derived and cannot be edited. The F03 API owns `stock_priority_score` and `seasonal_priority_score` through `/api/utility/products/{productId}/scores`; ProductRequest does not accept these fields. F03 derives expiry priority using inventory batches and a fixed analysis date. Do not add F03 score fields to F02 Product forms/contracts.
 
 ## Request and response examples
 
@@ -90,3 +92,14 @@ A more specific service validation may return e.g. `{"error":"Remaining quantity
 All 15 F02 method/path operations appear in the runtime OpenAPI document. `CatalogIntegrationTest` exercises authentication/role denial, category/product CRUD/status, Store isolation, batch CRUD, required expiry, and quantity/status patch. The document is source/spec verified; not every route was separately exercised through a live browser during this handoff. See `F02_SWAGGER_TEST_REPORT.md` for the prior actual F02 Swagger run.
 
 OpenAPI does not encode nullable response fields: `ProductView.category` can be null when no category is assigned and `BatchView.expiryDate` can be null for a non-expiring Product, although its schema shows nonnullable object/date types. Treat these as nullable in TypeScript. The ERD labels the account table `USER`; the implemented schema uses `app_user` to avoid reserved-word issues. The ERD uses `CATEGORY` / `PRODUCT` / `INVENTORY_BATCH`, and migrations V1/V3 implement these entities, including Store-scoped unique SKU, composite Store/category ownership, and unique `(product_id,batch_code)`. No stored Product stock column exists. F03 migration V4 adds score columns separately; this is consistent with field ownership in the F03 utility API.
+
+## 2026-11-15 — Batch push day (F03 Weight v2, Q1/P5)
+
+- `BatchCreateRequest` adds optional `pushDay` (ISO date). `BatchPatchRequest` adds optional `pushDay`; it counts toward the "at least one field" rule, so `{"pushDay":"2026-12-01"}` alone is valid. `BatchView` returns `pushDay` (date or null).
+- `pushDay` must be on or before `expiryDate` → otherwise 400 (also a database CHECK). PATCH cannot clear a push day (null means "not provided").
+- Roles unchanged: Store Admin only for batch writes (Merchandiser 403); foreign batch → 404.
+- `ProductRequest.expiryPushDays` / `ProductView.expiryPushDays` are **deprecated** (P5): still accepted, validated (≥ 0) and stored, but ignored by every calculation. F03 W2 uses `inventory_batch.push_day`.
+- No backfill: existing batches have `pushDay = null` until the Store Admin sets it; F03 only warns (`MISSING_PUSH_DAY`). Tests: `PushDayIntegrationTest`.
+
+## 2026-11-16 — Clear a batch push day (additive)
+`DELETE /api/inventory-batches/{id}/push-day`: Bearer authentication, STORE_ADMIN only, caller's Store. No body. Returns HTTP 200 and the same `BatchView` as GET/PATCH with `pushDay: null`. Repeating on an already-clear batch succeeds without updating its timestamp. Unknown/foreign batch 404, wrong role 403, unauthenticated 401. Persisted quantity, status and expiry are unchanged. PATCH absent/null `pushDay` retains its value; only DELETE clears it. Future calculations report `MISSING_PUSH_DAY` for otherwise eligible batches.

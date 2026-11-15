@@ -19,7 +19,8 @@ public class InventoryBatchRepository {
             rs.getInt("batch_id"), rs.getInt("product_id"), rs.getString("batch_code"),
             rs.getTimestamp("received_at").toInstant(), rs.getObject("expiry_date", LocalDate.class),
             rs.getInt("initial_quantity"), rs.getInt("remaining_quantity"), rs.getString("status"),
-            rs.getTimestamp("created_at").toInstant(), rs.getTimestamp("updated_at").toInstant());
+            rs.getTimestamp("created_at").toInstant(), rs.getTimestamp("updated_at").toInstant(),
+            rs.getObject("push_day", LocalDate.class));
 
     public InventoryBatchRepository(JdbcTemplate jdbc) { this.jdbc = jdbc; }
 
@@ -46,27 +47,43 @@ public class InventoryBatchRepository {
 
     public BatchView create(int productId, String batchCode, Instant receivedAt,
                             LocalDate expiryDate, int initialQuantity) {
+        return create(productId, batchCode, receivedAt, expiryDate, initialQuantity, null);
+    }
+
+    public BatchView create(int productId, String batchCode, Instant receivedAt,
+                            LocalDate expiryDate, int initialQuantity, LocalDate pushDay) {
         KeyHolder key = new GeneratedKeyHolder();
         jdbc.update(connection -> {
             var statement = connection.prepareStatement("""
                     INSERT INTO inventory_batch(product_id, batch_code, received_at, expiry_date,
-                                                initial_quantity, remaining_quantity, status)
-                    VALUES (?, ?, ?, ?, ?, ?, 'ACTIVE')
+                                                initial_quantity, remaining_quantity, status, push_day)
+                    VALUES (?, ?, ?, ?, ?, ?, 'ACTIVE', ?)
                     """, new String[] {"batch_id"});
             statement.setInt(1, productId); statement.setString(2, batchCode.trim());
             statement.setTimestamp(3, java.sql.Timestamp.from(receivedAt));
             if (expiryDate == null) statement.setNull(4, java.sql.Types.DATE); else statement.setObject(4, expiryDate);
             statement.setInt(5, initialQuantity); statement.setInt(6, initialQuantity);
+            if (pushDay == null) statement.setNull(7, java.sql.Types.DATE); else statement.setObject(7, pushDay);
             return statement;
         }, key);
         return jdbc.query("SELECT * FROM inventory_batch WHERE batch_id=?", mapper, key.getKey().intValue())
                 .get(0);
     }
 
-    public void update(int batchId, Integer remainingQuantity, String status) {
+    public void clearPushDay(int storeId, int batchId) {
+        jdbc.update("""
+                UPDATE inventory_batch SET push_day=NULL, updated_at=CURRENT_TIMESTAMP
+                WHERE batch_id=? AND product_id IN (SELECT product_id FROM product WHERE store_id=?)
+                AND push_day IS NOT NULL
+                """, batchId, storeId);
+    }
+
+    public void update(int batchId, Integer remainingQuantity, String status) { update(batchId, remainingQuantity, status, null); }
+
+    public void update(int batchId, Integer remainingQuantity, String status, LocalDate pushDay) {
         jdbc.update("""
                 UPDATE inventory_batch SET remaining_quantity=COALESCE(?, remaining_quantity),
-                    status=COALESCE(?, status), updated_at=CURRENT_TIMESTAMP WHERE batch_id=?
-                """, remainingQuantity, status, batchId);
+                    status=COALESCE(?, status), push_day=COALESCE(?, push_day), updated_at=CURRENT_TIMESTAMP WHERE batch_id=?
+                """, remainingQuantity, status, pushDay, batchId);
     }
 }

@@ -30,7 +30,7 @@ class LegacyReaderMySqlTest {
   var before=fingerprints(target,false);
   LegacyRecoveryMySqlTest.latest(target,new LegacyRecoveryCallback(false,null,null,null,null)).migrate();
   assertEquals(before,fingerprints(target,true));
-  var json=new UtilitySettingsRepository(jdbc,JsonMapper.builder().findAndAddModules().build());
+  var json=new UtilitySettingsRepository(jdbc,JsonMapper.builder().findAndAddModules().addModule(vn.edu.fpt.paspm.utility.UtilityJsonVersions.module()).build());
   var repository=new UtilitySnapshotRepository(jdbc,json);
   for(int store:List.of(1,2)) {
    assertEquals(0,repository.countItems(store,store));
@@ -57,7 +57,7 @@ class LegacyReaderMySqlTest {
   jdbc.update("INSERT INTO product(product_id,store_id,sku,name,unit,selling_price,cost_price) VALUES(3,1,'A2','A2','each',5,1)");
   jdbc.update("INSERT INTO utility_matrix_item(matrix_item_id,snapshot_id,transaction_id,product_id,quantity,base_utility,expiry_status,weight_value,weighted_utility) VALUES(3,1,7,3,1,4,'NOT_APPLICABLE',1,4),(4,1,8,1,1,2,'NOT_APPLICABLE',1,2)");
   jdbc.update("UPDATE utility_snapshot SET total_weighted_utility=8 WHERE snapshot_id=1");
-  var json=new UtilitySettingsRepository(jdbc,JsonMapper.builder().findAndAddModules().build());
+  var json=new UtilitySettingsRepository(jdbc,JsonMapper.builder().findAndAddModules().addModule(vn.edu.fpt.paspm.utility.UtilityJsonVersions.module()).build());
   var date=LocalDate.of(2020,1,1);
   var config=new UtilityMatrixContracts.FrozenConfiguration(UtilityContracts.WeightConfig.defaults(),null,null,date,"DEV_FIXTURE",6,"HALF_UP","PRODUCT_ID_V1","Asia/Ho_Chi_Minh");
   jdbc.update("UPDATE utility_snapshot SET config_snapshot=?",json.write(config));
@@ -119,7 +119,7 @@ class LegacyReaderMySqlTest {
    var properties=new Properties();try(var stream=Files.newInputStream(Path.of(runtimeCredentials))){properties.load(stream);}
    var runtimeJdbc=new JdbcTemplate(new DriverManagerDataSource(target.url(),properties.getProperty("username"),properties.getProperty("password")));
    assertTrue(runtimeJdbc.queryForList("SHOW GRANTS",String.class).stream().noneMatch(grant->grant.toUpperCase(Locale.ROOT).contains("SUPER")));
-   var runtimeRepository=new UtilitySnapshotRepository(runtimeJdbc,new UtilitySettingsRepository(runtimeJdbc,JsonMapper.builder().findAndAddModules().build()));
+   var runtimeRepository=new UtilitySnapshotRepository(runtimeJdbc,new UtilitySettingsRepository(runtimeJdbc,JsonMapper.builder().findAndAddModules().addModule(vn.edu.fpt.paspm.utility.UtilityJsonVersions.module()).build()));
    assertEquals(3,runtimeRepository.countItems(1,1));assertEquals(3,runtimeRepository.page(1,1,0,10).size());
    assertThrows(org.springframework.dao.DataAccessException.class,()->runtimeJdbc.update("UPDATE utility_matrix_item_legacy_v5 SET quantity=2 WHERE matrix_item_id=1"));
   }
@@ -129,10 +129,10 @@ class LegacyReaderMySqlTest {
   assertEquals(409,assertThrows(ApiException.class,()->repository.page(1,1,0,1)).status());
   evidence.put("fixtureLegacyRows",4);evidence.put("stores",2);evidence.put("engineExecutions",8);evidence.put("threshold",1);
   evidence.put("verificationPhase","all-reader-assertions-passed");
-  String evidencePath=System.getProperty("paspm.test.legacy-reader-evidence");if(evidencePath!=null)Files.writeString(Path.of(evidencePath),JsonMapper.builder().findAndAddModules().build().writerWithDefaultPrettyPrinter().writeValueAsString(evidence));
+  String evidencePath=System.getProperty("paspm.test.legacy-reader-evidence");if(evidencePath!=null)Files.writeString(Path.of(evidencePath),JsonMapper.builder().findAndAddModules().addModule(vn.edu.fpt.paspm.utility.UtilityJsonVersions.module()).build().writerWithDefaultPrettyPrinter().writeValueAsString(evidence));
  }
  static UtilityMatrixContracts.MatrixItem row(int tx,int product,int utility,int total) {
-  return new UtilityMatrixContracts.MatrixItem(tx,product,product,1,BigDecimal.valueOf(utility),null,null,null,"NOT_APPLICABLE",BigDecimal.ONE,BigDecimal.valueOf(utility),BigDecimal.valueOf(total),null);
+  return new UtilityMatrixContracts.MatrixItem(tx,product,product,1,BigDecimal.valueOf(utility),null,null,null,"NOT_APPLICABLE",BigDecimal.ONE,BigDecimal.valueOf(utility),BigDecimal.valueOf(total),null,null,null,null);
  }
  final Map<String,String> canonicalColumns=new TreeMap<>();
  Map<String,String> fingerprints(MySqlTestDatabase db,boolean archived)throws Exception {
@@ -140,7 +140,8 @@ class LegacyReaderMySqlTest {
   try(var c=LegacyRecoveryMySqlTest.connect(db)) {
    for(String table:List.of("store","product","category","inventory_batch")) {
     if(!canonicalColumns.containsKey(table))try(var statement=c.createStatement();var rows=statement.executeQuery("SELECT * FROM "+table+" WHERE 1=0")) {
-     var columns=new ArrayList<String>();for(int i=1;i<=rows.getMetaData().getColumnCount();i++)columns.add(rows.getMetaData().getColumnName(i));canonicalColumns.put(table,String.join(",",columns));
+     // V25 (W2) rewrites the live store.utility_config by owner decision 2026-11-15; every other column must stay identical.
+     var columns=new ArrayList<String>();for(int i=1;i<=rows.getMetaData().getColumnCount();i++)if(!(table.equals("store")&&rows.getMetaData().getColumnName(i).equalsIgnoreCase("utility_config")))columns.add(rows.getMetaData().getColumnName(i));canonicalColumns.put(table,String.join(",",columns));
     }
     result.put(table,LegacyDataset.hash(c,"SELECT "+canonicalColumns.get(table)+" FROM "+table+" ORDER BY 1"));
    }

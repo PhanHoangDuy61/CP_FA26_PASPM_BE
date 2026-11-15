@@ -5,14 +5,14 @@ Canonical contract locations stay stable in this directory. `CURRENT` describes 
 | Feature | Contract | Status / caveat | Handoff |
 |---|---|---|---|
 | F01 | [Authentication/User](F01_AUTH_USER_API.md) | Local session update: csrfToken, refresh/logout; 202/409 reconciled; uncommitted | [F01](../frontend_handoff/F01_HANDOFF.md) |
-| F02 | [Product/Inventory](F02_PRODUCT_INVENTORY_API.md) | CURRENT scoped contract; old v3 role/expiry clauses differ | [F02](../frontend_handoff/F02_HANDOFF.md) |
-| F03 | [Utility](F03_UTILITY_API.md) | NEEDS_REVIEW: final source missing; stale F05 paragraph | [F03](../frontend_handoff/F03_HANDOFF.md) |
+| F02 | [Product/Inventory](F02_PRODUCT_INVENTORY_API.md) | CURRENT scoped contract + 2026-11-15 batch `pushDay` (branch); `expiryPushDays` deprecated; old v3 role/expiry clauses differ | [F02](../frontend_handoff/F02_HANDOFF.md) |
+| F03 | [Utility](F03_UTILITY_API.md) | CURRENT on branch 2026-11-15: Weight v2 section first; v1.2 section kept as legacy for pre-V25 data. Requirements are derived, pending formal approval ([F03 W2 requirements](../requirements/F03_WEIGHT_V2_REQUIREMENTS.md)) | [F03](../frontend_handoff/F03_HANDOFF.md) |
 | F04 | [Transaction](F04_TRANSACTION_API.md) | CURRENT CSV P0 contract; broader workflow acceptance separate | [F04](../frontend_handoff/F04_HANDOFF.md) |
-| F05 | [Mining](F05_MINING_API.md) | NEEDS_REVIEW: dated deployment/acceptance summaries | [F05](../frontend_handoff/F05_HANDOFF.md) |
-| F06 | [Recommendation](F06_RECOMMENDATION_API.md) | CURRENT Backend v1.1 contract; historical test statements retain dates | [F06](../frontend_handoff/F06_HANDOFF.md) |
-| F07/F08 | [Layout and Campaign](F07_F08_LAYOUT_CAMPAIGN_API.md) | Current working-tree implementation; V23 pending deployment | [F07/F08](../frontend_handoff/F07_F08_HANDOFF.md) |
+| F05 | [Mining](F05_MINING_API.md) | Progress routes + Merchandiser submission on branch 2026-11-15; dated deployment/acceptance summaries remain NEEDS_REVIEW | [F05](../frontend_handoff/F05_HANDOFF.md) |
+| F06 | [Recommendation](F06_RECOMMENDATION_API.md) | CURRENT Backend v1.1 contract + 2026-11-15 W2 knock-on (EligibilityV2, push-day alerts); historical test statements retain dates | [F06](../frontend_handoff/F06_HANDOFF.md) |
+| F07/F08 | [Layout and Campaign](F07_F08_LAYOUT_CAMPAIGN_API.md) | Merged to dev at `8f94f94` (V23); `priorityCoverage` still null (priority = W > 1 not wired) | [F07/F08](../frontend_handoff/F07_F08_HANDOFF.md) |
 
-[OpenAPI export](openapi.json) was refreshed from the Springdoc endpoint in the current integration context: **96 paths and 114 operations**, including 20 F07/F08 operations. The export's server entry is the local test origin; configure the target origin in the integration environment. The session changes are uncommitted. Earlier operation counts are historical evidence, not the current export. Role prose still needs source-based interpretation; use the [RBAC matrix](F01_F02_RBAC_MATRIX.md). [RBAC matrix](F01_F02_RBAC_MATRIX.md) and [integration notes](F03_V12_F05_F06_INTEGRATION.md) have review notices. [API changelog](API_CHANGELOG.md) remains append-only history.
+[OpenAPI export](openapi.json) (historical counts: 96 paths / 114 operations at the F07/F08 merge, 98 / 116 at F05 Checkpoint 1; current counts below). The export's server entry is the local test origin; configure the target origin in the integration environment. The session changes are uncommitted. Earlier operation counts are historical evidence, not the current export. Role prose still needs source-based interpretation; use the [RBAC matrix](F01_F02_RBAC_MATRIX.md). [RBAC matrix](F01_F02_RBAC_MATRIX.md) and [integration notes](F03_V12_F05_F06_INTEGRATION.md) have review notices. [API changelog](API_CHANGELOG.md) remains append-only history.
 
 ## API Inventory provenance
 
@@ -21,3 +21,10 @@ Canonical contract locations stay stable in this directory. `CURRENT` describes 
 F09–F11 contracts are not defined here. F07/F08 routes are documented in the linked contract. The documented unavailable F03 `GET /api/utility/snapshots` is not an implemented route; F05 `GET /api/mining/snapshots` is a distinct selector. Framework Swagger/OpenAPI paths are not business APIs.
 
 Current F01 reconciliation (2026-11-12): preserves published dev V20/AuthSessionService and adds V21 binding; [current evidence](../testing/reports/F01_SESSION_RECONCILIATION_2026-11-12.md). Earlier local-variant details are dated history; no source database repair/deployment was performed.
+
+2026-11-15 feature branch, Checkpoint 1 (historical): 98 paths / 116 operations with the two F05 progress routes and Merchandiser Store submission.
+
+**Current export on branch `Khoi/feat/f05-progress-f03-weight-v2` @ `c8c837a`: 102 paths, 124 operations** (F01 27, F02 15, F03 20, F04 8, F05 26, F06 8, F07/F08 20), regenerated through the MockMvc export hook of `RecommendationIntegrationTest`; adds the 8 F03 season operations. Every one of the 124 operations is named in a contract in this folder; the only documented route absent from the export is `GET /api/utility/snapshots`, listed as NOT IMPLEMENTED. This is not an interactive Swagger UI execution.
+
+## 2026-11-16 export update
+The follow-up export has **103 paths / 125 operations**, adding DELETE `/api/inventory-batches/{id}/push-day` to the 102/124 baseline. Recommendation views include `seasonEnded` and `endedSeasons`; all local schema references resolve.

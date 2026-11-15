@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -55,6 +56,13 @@ public class InventoryBatchController {
     public BatchView update(@AuthenticationPrincipal Jwt jwt, @PathVariable int id,
                             @Valid @RequestBody BatchPatchRequest request) {
         return batches.update(jwt, id, request);
+    }
+
+    @Operation(summary = "Clear the push day for a Store inventory batch",
+            description = "Idempotent. Returns the updated batch; PATCH absent/null pushDay keeps its existing value.")
+    @DeleteMapping("/api/inventory-batches/{id}/push-day")
+    public BatchView clearPushDay(@AuthenticationPrincipal Jwt jwt, @PathVariable int id) {
+        return batches.clearPushDay(jwt, id);
     }
 
     @Operation(summary = "Summarize derived inventory for a Store product",

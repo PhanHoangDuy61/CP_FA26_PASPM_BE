@@ -179,7 +179,7 @@ class MiningIntegrationTest {
         long version=config.path("version").asLong();
         String policy="{\"algorithm\":\"HUI_MINER\",\"minUtilMode\":\"ABSOLUTE\",\"minUtilValue\":30,\"expectedVersion\":"+version+"}";
         mvc.perform(put("/api/system/mining/config").header("Authorization","Bearer "+system).contentType(MediaType.APPLICATION_JSON).content(policy)).andExpect(status().isOk());
-        postJson("/api/mining/requests",merchant,legacyPayload()).andExpect(status().isForbidden());
+        postJson("/api/mining/requests",merchant,legacyPayload()).andExpect(status().isBadRequest());
         String body="{\"storeId\":"+store+",\"snapshotId\":"+snapshot+",\"requestKey\":\""+UUID.randomUUID()+"\"}";
         postJson("/api/system/mining/requests",merchant,body).andExpect(status().isForbidden());
         var created=json.readTree(postJson("/api/system/mining/requests",system,body).andExpect(status().isAccepted()).andReturn().getResponse().getContentAsString());
@@ -214,9 +214,15 @@ class MiningIntegrationTest {
         assertEquals(16,jdbc.queryForObject("SELECT COUNT(*) FROM high_utility_pattern p JOIN mining_run r ON r.run_id=p.run_id WHERE r.request_id=?",Integer.class,id));
         String before=request.path("inputHash").asText();
         jdbc.update("UPDATE product SET expiry_push_days=99,stock_priority_score=0.9,seasonal_priority_score=0.8,selling_price=999 WHERE store_id=?",store);
-        var changedConfig=new vn.edu.fpt.paspm.utility.UtilityContracts.WeightConfig(true,false,true,new java.math.BigDecimal("0.7"),java.math.BigDecimal.ZERO,new java.math.BigDecimal("0.3"),new java.math.BigDecimal("0.5"),null,2,vn.edu.fpt.paspm.utility.ExpiryScoreCalculator.SCORING_VERSION);
+        // W2: change the live Store config and add an active season; the frozen request input must not change.
+        var changedConfig=new vn.edu.fpt.paspm.utility.UtilityVersionedContracts.WeightV2(new java.math.BigDecimal("0.5"),new java.math.BigDecimal("0.5"),new java.math.BigDecimal("0.5"),30,2,"W2_EXPIRY_SEASON_V1");
         jdbc.update("UPDATE store SET utility_config=? WHERE store_id=?",json.writeValueAsString(changedConfig),store);
-        postJson("/api/utility/preview",merchant,"{\"rangeStart\":\"2026-10-19\",\"rangeEnd\":\"2026-10-19\",\"asOfDate\":\"2026-10-19\"}").andExpect(status().isOk()).andExpect(jsonPath("$.totalWeightedUtility").value(137.76));
+        int seasonActor=jdbc.queryForObject("SELECT MIN(user_id) FROM app_user WHERE store_id=?",Integer.class,store);
+        jdbc.update("INSERT INTO season(store_id,name,start_date,end_date,weight,created_by,updated_by) VALUES (?,'Mining season','2026-10-01','2026-10-31',0.8,?,?)",store,seasonActor,seasonActor);
+        int season=jdbc.queryForObject("SELECT MAX(season_id) FROM season",Integer.class);
+        jdbc.update("INSERT INTO product_season(store_id,season_id,product_id,assigned_by) SELECT store_id,?,product_id,? FROM product WHERE store_id=?",season,seasonActor,store);
+        // W = 1 + 0.5 * (0.5 * 0 + 0.5 * 0.8) = 1.20 on the unchanged historical base utility 96.
+        postJson("/api/utility/preview",merchant,"{\"rangeStart\":\"2026-10-19\",\"rangeEnd\":\"2026-10-19\",\"asOfDate\":\"2026-10-19\"}").andExpect(status().isOk()).andExpect(jsonPath("$.totalWeightedUtility").value(115.2));
         var again=json.readTree(postJson("/api/system/mining/requests",system,payload(UUID.randomUUID().toString())).andExpect(status().isAccepted()).andReturn().getResponse().getContentAsString());
         assertEquals(before,again.path("inputHash").asText());await(again.path("requestId").asLong());
         // Sanitized executed examples; no JWTs or credentials.
@@ -235,7 +241,7 @@ class MiningIntegrationTest {
         for(String token:List.of(customer,system))getJson("/api/mining/requests",token).andExpect(status().isForbidden());
         postJson("/api/mining/requests",admin,legacyPayload()).andExpect(status().isForbidden());
         postJson("/api/system/mining/requests",foreign,payload(UUID.randomUUID().toString())).andExpect(status().isForbidden());
-        postJson("/api/mining/requests",merchant,legacyPayload()).andExpect(status().isForbidden());
+        postJson("/api/mining/requests",merchant,legacyPayload()).andExpect(status().isBadRequest());
         postJson("/api/system/mining/requests",admin,payload(UUID.randomUUID().toString())).andExpect(status().isForbidden());
         getJson("/api/mining/requests?page=-1",merchant).andExpect(status().isBadRequest());
         getJson("/api/mining/snapshots?pageSize=101",admin).andExpect(status().isBadRequest());
@@ -251,12 +257,13 @@ class MiningIntegrationTest {
     @Test void oldScoringMetadataCanBeMinedWithoutRecalculation()throws Exception{
         // H2 JSON is read using the project's established JSON decoder.
         var settings=new vn.edu.fpt.paspm.utility.UtilitySettingsRepository(jdbc,json);
-        var frozen=settings.read(jdbc.queryForObject("SELECT config_snapshot FROM utility_snapshot WHERE snapshot_id=?",String.class,snapshot),vn.edu.fpt.paspm.utility.UtilityMatrixContracts.FrozenConfiguration.class);
-        var old=frozen.config();var legacy=new vn.edu.fpt.paspm.utility.UtilityContracts.WeightConfig(old.enableStock(),old.enableExpiry(),old.enableSeason(),old.alpha(),old.beta(),old.gamma(),old.lambda(),30,1,"EXPIRY_LINEAR_V1");
-        var legacyFrozen=new vn.edu.fpt.paspm.utility.UtilityMatrixContracts.FrozenConfiguration(legacy,frozen.lambdaPolicy(),frozen.effectiveCoefficients(),frozen.analysisDate(),frozen.source(),6,"HALF_UP","PRODUCT_ID_V1",null);
+        var frozen=settings.read(jdbc.queryForObject("SELECT config_snapshot FROM utility_snapshot WHERE snapshot_id=?",String.class,snapshot),vn.edu.fpt.paspm.utility.UtilityVersionedContracts.FrozenSettings.class);
+        var Z=java.math.BigDecimal.ZERO;
+        var legacy=new vn.edu.fpt.paspm.utility.UtilityContracts.WeightConfig(false,false,false,Z,Z,Z,Z,30,1,"F03_LINEAR_V1");
+        var legacyFrozen=new vn.edu.fpt.paspm.utility.UtilityMatrixContracts.FrozenConfiguration(legacy,new vn.edu.fpt.paspm.utility.UtilityContracts.LambdaPolicy(Z,new java.math.BigDecimal("0.5"),1),new vn.edu.fpt.paspm.utility.UtilityMatrixContracts.EffectiveCoefficients(Z,Z,Z),frozen.analysisDate(),frozen.source(),6,"HALF_UP","PRODUCT_ID_V1",null);
         jdbc.update("UPDATE utility_snapshot SET config_snapshot=? WHERE snapshot_id=?",json.writeValueAsString(legacyFrozen),snapshot);
         var result=json.readTree(postJson("/api/system/mining/requests",system,payload(UUID.randomUUID().toString())).andExpect(status().isAccepted()).andReturn().getResponse().getContentAsString());
-        assertEquals("EXPIRY_LINEAR_V1",result.path("snapshot").path("configuration").path("config").path("scoringVersion").asText());await(result.path("requestId").asLong());
+        assertEquals("F03_LINEAR_V1",result.path("snapshot").path("configuration").path("config").path("scoringVersion").asText());await(result.path("requestId").asLong());
     }
     @Test void systemAdminReadsExplicitStoreSnapshotsRequestsRunsAndPatternsWithoutCrossStoreLeak()throws Exception{
         int other=jdbc.queryForObject("SELECT MAX(store_id) FROM store",Integer.class);assertNotEquals(store,other);
@@ -298,21 +305,27 @@ class MiningIntegrationTest {
     }
     @Test void openApiIncludesEveryMiningRoute()throws Exception{
         var spec=json.readTree(mvc.perform(get("/v3/api-docs")).andExpect(status().isOk()).andReturn().getResponse().getContentAsString());
-        assertEquals(1,spec.path("components").path("schemas").path("CreateRequest").path("properties").path("algorithms").path("minItems").asInt());
+        assertTrue(spec.path("components").path("schemas").path("StoreCreateRequest").path("properties").has("snapshotId"));
+        assertFalse(spec.path("components").path("schemas").path("StoreCreateRequest").path("properties").has("algorithms"));
+        assertTrue(spec.path("paths").has("/api/mining/requests/{id}/progress"));
+        assertTrue(spec.path("paths").has("/api/system/mining/stores/{storeId}/requests/{requestId}/progress"));
+        String export=System.getProperty("paspm.test.openapi-export");
+        if(export!=null)java.nio.file.Files.writeString(java.nio.file.Path.of(export),json.writerWithDefaultPrettyPrinter().writeValueAsString(spec));
         assertTrue(spec.path("components").path("schemas").path("PatternView").path("properties").path("supportCount").path("type").toString().contains("null"));
         for(String path:List.of("/api/mining/snapshots","/api/mining/requests","/api/mining/requests/{id}","/api/mining/requests/{id}/runs","/api/mining/runs/{id}","/api/mining/runs/{id}/patterns","/api/mining/runs/{id}/benchmark"))assertTrue(spec.path("paths").has(path),path);
         for(String path:List.of("/api/system/mining/stores/{storeId}/snapshots","/api/system/mining/stores/{storeId}/requests","/api/system/mining/stores/{storeId}/requests/{requestId}","/api/system/mining/stores/{storeId}/requests/{requestId}/runs","/api/system/mining/stores/{storeId}/runs/{runId}/patterns","/api/system/mining/stores/{storeId}/runs/{runId}/benchmark"))assertTrue(spec.path("paths").has(path),path);
-        assertTrue(spec.path("paths").path("/api/mining/requests").path("post").path("deprecated").asBoolean(),"forbidden POST must be documented as deprecated");
+        assertFalse(spec.path("paths").path("/api/mining/requests").path("post").path("deprecated").asBoolean(),"Merchandiser submission is now supported");
         assertTrue(spec.path("paths").path("/api/mining/runs/{id}/benchmark").path("get").path("deprecated").asBoolean(),"forbidden benchmark must be documented as deprecated");
         assertFalse(spec.path("paths").path("/api/mining/requests").path("get").path("deprecated").asBoolean(),"active list route must stay active");
         assertFalse(spec.path("paths").path("/api/system/mining/requests").path("post").path("deprecated").asBoolean(),"System Admin submission is the active route");
     }
+    @Autowired MiningProgressReader progressReader;
     @Autowired MiningRepository miningRepository;
     @Autowired vn.edu.fpt.paspm.utility.UtilitySnapshotRepository snapshotRepository;
     @Autowired MiningInputBuilder inputBuilder;
     @Autowired org.springframework.transaction.PlatformTransactionManager transactions;
     @Autowired MiningWorker worker;
-    @Autowired MiningDispatchLease dispatchLease;
+    @org.springframework.test.context.bean.override.mockito.MockitoSpyBean MiningDispatchLease dispatchLease;
     @org.springframework.test.context.bean.override.mockito.MockitoSpyBean SpmfMiningEngine miningEngine;
 
     @Test void startupDoesNotInterruptRequestOwnedByAnotherInstance() {
@@ -340,6 +353,10 @@ class MiningIntegrationTest {
         var past=java.sql.Timestamp.from(jdbc.queryForObject("SELECT CURRENT_TIMESTAMP",java.sql.Timestamp.class).toInstant().minusSeconds(1));
         jdbc.update("UPDATE mining_request SET lease_until=? WHERE request_id=?",past,id);
         var b=dispatchLease.claim(store,id,"test-owner-b",60).orElseThrow();
+        assertEquals(b.fence(),progressReader.get(store,id).attemptNo());
+        assertTrue(b.fence()>a.fence());
+        assertThrows(IllegalStateException.class,()->dispatchLease.stage(a,"SAVING",run.runId()));
+        assertEquals("QUEUED",progressReader.get(store,id).stage());
         var staleComplete=assertThrows(org.springframework.dao.InvalidDataAccessApiUsageException.class,()->miningRepository.complete(a,run.runId(),request.input(),new MiningEngine.Output(Map.of(products.get(0).toString(),30),1,1,"stale")));
         assertInstanceOf(IllegalStateException.class,staleComplete.getCause());
         var staleFailure=assertThrows(org.springframework.dao.InvalidDataAccessApiUsageException.class,()->miningRepository.failRun(a,run.runId(),"FAILED","stale"));
@@ -430,8 +447,11 @@ class MiningIntegrationTest {
     @Test void invalidSnapshotsFailBeforeDurableRequestIsCreated()throws Exception{
         for(String operation:List.of("UPDATE utility_snapshot SET status='FAILED' WHERE snapshot_id=?","UPDATE utility_snapshot SET total_weighted_utility=97 WHERE snapshot_id=?")){
             jdbc.update(operation,snapshot);postJson("/api/system/mining/requests",system,payload(UUID.randomUUID().toString())).andExpect(status().isBadRequest());
+            postJson("/api/mining/requests",merchant,json.writeValueAsString(Map.of("snapshotId",snapshot,"requestKey",UUID.randomUUID()))).andExpect(status().isBadRequest());
             jdbc.update("UPDATE utility_snapshot SET status='READY',total_weighted_utility=96 WHERE snapshot_id=?",snapshot);
         }
+        jdbc.update("UPDATE utility_snapshot SET config_snapshot='{}' WHERE snapshot_id=?",snapshot);
+        postJson("/api/mining/requests",merchant,json.writeValueAsString(Map.of("snapshotId",snapshot,"requestKey",UUID.randomUUID()))).andExpect(status().isBadRequest());
         postJson("/api/system/mining/requests",system,payload(UUID.randomUUID().toString()).replace("\"snapshotId\":"+snapshot,"\"snapshotId\":2147483647")).andExpect(status().isNotFound());
         assertEquals(0,jdbc.queryForObject("SELECT COUNT(*) FROM mining_request WHERE store_id=?",Integer.class,store));
     }
@@ -459,6 +479,90 @@ class MiningIntegrationTest {
     void terminal(long id)throws Exception{long end=System.nanoTime()+java.util.concurrent.TimeUnit.SECONDS.toNanos(20);while(System.nanoTime()<end){if(!List.of("PENDING","RUNNING").contains(miningRepository.find(store,id).view().status()))return;Thread.sleep(20);}fail("Request never terminated");}
     void await(long id)throws Exception{long end=System.nanoTime()+java.util.concurrent.TimeUnit.SECONDS.toNanos(20);while(System.nanoTime()<end){String s=jdbc.queryForObject("SELECT status FROM mining_request WHERE request_id=?",String.class,id);if(!List.of("PENDING","RUNNING").contains(s)){assertEquals("COMPLETED",s);return;}Thread.sleep(20);}fail("Mining timed out waiting for request "+id);}
     String legacyPayload() { return "{\"requestKey\":\""+UUID.randomUUID()+"\",\"snapshotId\":"+snapshot+",\"algorithms\":[\"HUI_MINER\"],\"minUtilMode\":\"ABSOLUTE\",\"minUtilValue\":30}"; }
+    @Test void scalarProgressPreservesStoreIsolationAndDoesNotParseFrozenJson() throws Exception {
+        var request=pending();long id=request.view().requestId();
+        jdbc.update("UPDATE mining_request SET frozen_input='{}',utility_config_snapshot='{}' WHERE request_id=?",id);
+        String path="/api/mining/requests/"+id+"/progress";
+        getJson(path,merchant).andExpect(status().isOk()).andExpect(jsonPath("$.stage").value("QUEUED"))
+            .andExpect(jsonPath("$.attemptNo").value(0));
+        getJson(path,admin).andExpect(status().isOk());
+        getJson(path,foreign).andExpect(status().isNotFound());
+        getJson(path,system).andExpect(status().isForbidden());
+        getJson("/api/system/mining/stores/"+store+"/requests/"+id+"/progress",system).andExpect(status().isOk());
+    }
+    @Test void merchantSubmissionUsesCurrentPolicyAndRejectsOverrides() throws Exception {
+        String key=UUID.randomUUID().toString();
+        String body=json.writeValueAsString(Map.of("snapshotId",snapshot,"requestKey",key));
+        var accepted=json.readTree(postJson("/api/mining/requests",merchant,body).andExpect(status().isAccepted()).andReturn().getResponse().getContentAsString());
+        long id=accepted.path("requestId").asLong();
+        assertEquals(1,accepted.path("algorithms").size());
+        assertEquals("MERCHANDISER",jdbc.queryForObject("SELECT r.code FROM app_user u JOIN role r ON r.role_id=u.role_id WHERE u.user_id=?",String.class,accepted.path("requestedBy").asInt()));
+        assertEquals(jdbc.queryForObject("SELECT config_version FROM mining_config_head WHERE config_id=1",Long.class),jdbc.queryForObject("SELECT config_version FROM mining_request WHERE request_id=?",Long.class,id));
+        assertEquals(30,accepted.path("minUtilValue").asInt());
+        postJson("/api/mining/requests",merchant,body).andExpect(status().isAccepted()).andExpect(jsonPath("$.requestId").value(id));
+        postJson("/api/mining/requests",merchant,body.replace("\"snapshotId\":"+snapshot,"\"snapshotId\":2147483647")).andExpect(status().isConflict());
+        postJson("/api/mining/requests",foreign,body).andExpect(status().isNotFound());
+        postJson("/api/mining/requests",admin,body).andExpect(status().isForbidden());
+        postJson("/api/mining/requests",merchant,body.replace("}",",\"compareAlgorithms\":true}")).andExpect(status().isBadRequest());
+        getJson("/api/mining/requests/"+id+"/progress",merchant).andExpect(status().isOk());
+        await(id);
+    }
+    @Test void progressStageSequenceForOneAndTwoAlgorithmsAndTimeout() throws Exception {
+        for(boolean compare:List.of(false,true)) {
+            org.mockito.Mockito.clearInvocations(dispatchLease);
+            org.mockito.Mockito.doAnswer(call->{
+                call.callRealMethod();
+                MiningDispatchLease.Claim claim=call.getArgument(0);
+                String stage=call.getArgument(1);
+                var observed=progressReader.get(claim.storeId(),claim.requestId());
+                assertEquals(stage,observed.stage());
+                assertNotNull(observed.elapsedMs());assertTrue(observed.elapsedMs()>=0);
+                if(stage.equals("RUNNING")){assertEquals(60000L,observed.timeoutMs());assertNotNull(observed.algorithm());}
+                else assertNull(observed.timeoutMs());
+                if(stage.equals("SAVING"))assertTrue(observed.completedSteps()==1||observed.completedSteps()==3);
+                if(stage.equals("COMPARING"))assertEquals(4,observed.completedSteps());
+                return null;
+            }).when(dispatchLease).stage(org.mockito.ArgumentMatchers.any(),org.mockito.ArgumentMatchers.anyString(),org.mockito.ArgumentMatchers.nullable(Long.class));
+            String body=payload(UUID.randomUUID().toString()).replace("\"compareAlgorithms\":true","\"compareAlgorithms\":"+compare);
+            long id=json.readTree(postJson("/api/system/mining/requests",system,body).andExpect(status().isAccepted()).andReturn().getResponse().getContentAsString()).path("requestId").asLong();
+            await(id);
+            var calls=org.mockito.Mockito.mockingDetails(dispatchLease).getInvocations().stream()
+                .filter(x->x.getMethod().getName().equals("stage")&&((MiningDispatchLease.Claim)x.getArgument(0)).requestId()==id)
+                .map(x->(String)x.getArgument(1)).toList();
+            assertEquals(compare?List.of("RUNNING","SAVING","RUNNING","SAVING","COMPARING"):List.of("RUNNING","SAVING"),calls);
+            getJson("/api/mining/requests/"+id+"/progress",merchant).andExpect(status().isOk())
+                .andExpect(jsonPath("$.stage").value("COMPLETED")).andExpect(jsonPath("$.totalSteps").value(compare?5:2))
+                .andExpect(jsonPath("$.completedSteps").value(compare?5:2)).andExpect(jsonPath("$.percent").value(100));
+        }
+        org.mockito.Mockito.doCallRealMethod().when(dispatchLease).stage(org.mockito.ArgumentMatchers.any(),org.mockito.ArgumentMatchers.anyString(),org.mockito.ArgumentMatchers.nullable(Long.class));
+        org.mockito.Mockito.doThrow(new SpmfMiningEngine.ExecutionFailure("TIMED_OUT","Safe timeout fixture")).when(miningEngine).execute(org.mockito.ArgumentMatchers.any(),org.mockito.ArgumentMatchers.any(),org.mockito.ArgumentMatchers.anyInt());
+        long id=json.readTree(postJson("/api/system/mining/requests",system,payload(UUID.randomUUID().toString())).andExpect(status().isAccepted()).andReturn().getResponse().getContentAsString()).path("requestId").asLong();
+        terminal(id);
+        getJson("/api/mining/requests/"+id+"/progress",merchant).andExpect(status().isOk())
+            .andExpect(jsonPath("$.stage").value("FAILED")).andExpect(jsonPath("$.comparisonStatus").value("BLOCKED"))
+            .andExpect(jsonPath("$.percent").value(0));
+    }
+    @Test void loweredLambdaMaximumBlocksOnlyNewMerchantRequestsAndPreservesSnapshots() throws Exception {
+        var policyBefore=jdbc.queryForMap("SELECT config_value,config_version FROM system_configuration WHERE config_key='UTILITY_LAMBDA_POLICY'");
+        String frozen=jdbc.queryForObject("SELECT config_snapshot FROM utility_snapshot WHERE snapshot_id=?",String.class,snapshot);
+        var node=json.readTree(frozen);if(node.isTextual())node=json.readTree(node.asText());
+        // Default lambda may be zero; create a valid immutable test fixture through F03 with all criteria disabled.
+        String config="{\"alpha\":0.5,\"beta\":0.5,\"lambda\":0.4}";
+        mvc.perform(put("/api/utility/config").header("Authorization","Bearer "+merchant).contentType(MediaType.APPLICATION_JSON).content(config)).andExpect(status().isOk());
+        snapshot=json.readTree(postJson("/api/utility/snapshots",merchant,"{\"rangeStart\":\"2026-10-19\",\"rangeEnd\":\"2026-10-19\",\"asOfDate\":\"2026-10-19\"}").andExpect(status().isCreated()).andReturn().getResponse().getContentAsString()).path("snapshotId").asInt();
+        String before=jdbc.queryForObject("SELECT config_snapshot FROM utility_snapshot WHERE snapshot_id=?",String.class,snapshot);
+        String body=json.writeValueAsString(Map.of("snapshotId",snapshot,"requestKey",UUID.randomUUID()));
+        long existing=json.readTree(postJson("/api/mining/requests",merchant,body).andExpect(status().isAccepted()).andReturn().getResponse().getContentAsString()).path("requestId").asLong();await(existing);
+        try {
+            jdbc.update("UPDATE system_configuration SET config_value=? WHERE config_key='UTILITY_LAMBDA_POLICY'","{\"scoringVersion\":\"W2_EXPIRY_SEASON_V1\",\"lambdaMax\":0.2}");
+            postJson("/api/mining/requests",merchant,json.writeValueAsString(Map.of("snapshotId",snapshot,"requestKey",UUID.randomUUID()))).andExpect(status().isConflict()).andExpect(jsonPath("$.error").value("The lambda policy changed: this snapshot exceeds the current lambda maximum. Create a new snapshot within the current permitted range before submitting mining."));
+            postJson("/api/mining/requests",merchant,body).andExpect(status().isAccepted()).andExpect(jsonPath("$.requestId").value(existing));
+            long systemRequest=json.readTree(postJson("/api/system/mining/requests",system,payload(UUID.randomUUID().toString())).andExpect(status().isAccepted()).andReturn().getResponse().getContentAsString()).path("requestId").asLong();await(systemRequest);
+            assertEquals(before,jdbc.queryForObject("SELECT config_snapshot FROM utility_snapshot WHERE snapshot_id=?",String.class,snapshot));
+        } finally {
+            jdbc.update("UPDATE system_configuration SET config_value=?,config_version=? WHERE config_key='UTILITY_LAMBDA_POLICY'",policyBefore.get("config_value"),policyBefore.get("config_version"));
+        }
+    }
     void configure(int value) throws Exception {
         long version=jdbc.queryForObject("SELECT config_version FROM mining_config_head WHERE config_id=1",Long.class);
         String body="{\"algorithm\":\"HUI_MINER\",\"minUtilMode\":\"ABSOLUTE\",\"minUtilValue\":"+value+",\"expectedVersion\":"+version+"}";

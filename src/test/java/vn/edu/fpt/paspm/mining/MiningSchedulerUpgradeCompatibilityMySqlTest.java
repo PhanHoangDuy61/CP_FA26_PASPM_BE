@@ -100,6 +100,12 @@ class MiningSchedulerUpgradeCompatibilityMySqlTest {
         String destination = System.getenv("PASPM_MULTIJVM_EVIDENCE_FILE");
         if (destination != null) { Path p = Path.of(destination); Files.createDirectories(p.getParent()); Files.write(p, evidence, java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND); }
     }
+    static int expectedVersionCount(MySqlTestDatabase db) {
+        var flyway=Flyway.configure().dataSource(db.url(),db.user(),db.password()).load();
+        flyway.validate();
+        assertEquals(0,flyway.info().pending().length);
+        return (int)java.util.Arrays.stream(flyway.info().all()).filter(m -> m.getVersion()!=null).count();
+    }
     static int principals(JdbcTemplate jdbc) { return jdbc.queryForObject("SELECT COUNT(*) FROM app_user u JOIN role r ON r.role_id=u.role_id WHERE r.code='SYSTEM_SCHEDULER'", Integer.class); }
 
     @Test void twoBackendsStartingTogetherOnAnEmptySchemaApplyV1ToV19OnceAndCreateOneStableSchedulerPrincipal() throws Exception {
@@ -111,8 +117,8 @@ class MiningSchedulerUpgradeCompatibilityMySqlTest {
             var b = spawn(base.resolve("b"), db, null, false);   // launched before either is ready: they race on Flyway
             bootstrapCredentials = true;
             assertTrue(awaitUp(a, 120000), "A up"); assertTrue(awaitUp(b, 120000), "B up");
-            assertEquals(21, jdbc.queryForObject("SELECT COUNT(*) FROM flyway_schema_history WHERE success=1 AND version IS NOT NULL", Integer.class));
-            assertEquals(21, jdbc.queryForObject("SELECT COUNT(DISTINCT version) FROM flyway_schema_history WHERE version IS NOT NULL", Integer.class));
+            assertEquals(expectedVersionCount(db), jdbc.queryForObject("SELECT COUNT(*) FROM flyway_schema_history WHERE success=1 AND version IS NOT NULL", Integer.class));
+            assertEquals(expectedVersionCount(db), jdbc.queryForObject("SELECT COUNT(DISTINCT version) FROM flyway_schema_history WHERE version IS NOT NULL", Integer.class));
             assertEquals(1, principals(jdbc));
             assertEquals(1, jdbc.queryForObject("SELECT COUNT(*) FROM role WHERE code='SYSTEM_SCHEDULER'", Integer.class));
             int id = jdbc.queryForObject("SELECT u.user_id FROM app_user u JOIN role r ON r.role_id=u.role_id WHERE r.code='SYSTEM_SCHEDULER'", Integer.class);
@@ -125,8 +131,8 @@ class MiningSchedulerUpgradeCompatibilityMySqlTest {
             assertTrue(awaitUp(again, 120000), "restart");
             assertEquals(1, principals(jdbc));
             assertEquals(id, jdbc.queryForObject("SELECT u.user_id FROM app_user u JOIN role r ON r.role_id=u.role_id WHERE r.code='SYSTEM_SCHEDULER'", Integer.class), "same identity after restart");
-            assertEquals(21, jdbc.queryForObject("SELECT COUNT(*) FROM flyway_schema_history WHERE success=1 AND version IS NOT NULL", Integer.class), "restart applies nothing");
-            evidence.add("fresh_simultaneous_start A_pid=" + a.process.pid() + " B_pid=" + b.process.pid() + " flyway_versions=19 principals=1 principal_id=" + id + " hidden_from_users_and_roles=true stable_after_restart=true PASS");
+            assertEquals(expectedVersionCount(db), jdbc.queryForObject("SELECT COUNT(*) FROM flyway_schema_history WHERE success=1 AND version IS NOT NULL", Integer.class), "restart applies nothing");
+            evidence.add("fresh_simultaneous_start A_pid=" + a.process.pid() + " B_pid=" + b.process.pid() + " flyway_versions=" + expectedVersionCount(db) + " principals=1 principal_id=" + id + " hidden_from_users_and_roles=true stable_after_restart=true PASS");
         } finally { killAll(); saveEvidence(); }
     }
 
@@ -156,7 +162,7 @@ class MiningSchedulerUpgradeCompatibilityMySqlTest {
             assertTrue(awaitUp(a, 120000), "new Backend on the upgraded schema");
             waitFor(() -> "FAILED".equals(jdbc.queryForObject("SELECT status FROM mining_schedule_occurrence WHERE occurrence_id=912", String.class))
                 && "COMPLETED".equals(jdbc.queryForObject("SELECT status FROM mining_schedule_occurrence WHERE occurrence_id=911", String.class)), 90000, "dispatcher handled the legacy rows");
-            assertEquals(21, jdbc.queryForObject("SELECT COUNT(*) FROM flyway_schema_history WHERE version IS NOT NULL AND success=1", Integer.class));
+            assertEquals(expectedVersionCount(db), jdbc.queryForObject("SELECT COUNT(*) FROM flyway_schema_history WHERE version IS NOT NULL AND success=1", Integer.class));
             var legacyPending = jdbc.queryForMap("SELECT status,failure_code,failure_message,snapshot_id,request_id,attempt_count FROM mining_schedule_occurrence WHERE occurrence_id=912");
             assertEquals("HTTP_403", legacyPending.get("failure_code"), "a pre-D9 occurrence owned by a human is refused, never executed as that human");
             assertNotNull(legacyPending.get("failure_message")); assertNull(legacyPending.get("snapshot_id")); assertNull(legacyPending.get("request_id"));

@@ -75,7 +75,9 @@ class PilotCloneApiIntegrationTest {
         var payload=body("PILOT-"+UUID.randomUUID());int id=create(payload).path("id").asInt();
         var batch=Map.of("batchCode","PILOT-BATCH-"+UUID.randomUUID(),"receivedAt",Instant.now().toString(),"expiryDate",LocalDate.now(ZoneId.of("Asia/Ho_Chi_Minh")).plusDays(5).toString(),"initialQuantity",8);
         var b=json.readTree(mvc.perform(post("/api/products/{id}/batches",id).header("Authorization","Bearer "+admin).contentType(MediaType.APPLICATION_JSON).content(json.writeValueAsString(batch))).andExpect(status().isCreated()).andReturn().getResponse().getContentAsString());
-        mvc.perform(patch("/api/utility/products/{id}/scores",id).header("Authorization","Bearer "+merchant).contentType(MediaType.APPLICATION_JSON).content("{\"stockPriorityScore\":0.8,\"seasonalPriorityScore\":0.9}")).andExpect(status().isOk());
+        // The score PATCH is gone since W2 (410); write the retained, unused columns natively to keep the preservation check.
+        mvc.perform(patch("/api/utility/products/{id}/scores",id).header("Authorization","Bearer "+merchant).contentType(MediaType.APPLICATION_JSON).content("{\"stockPriorityScore\":0.8,\"seasonalPriorityScore\":0.9}")).andExpect(status().isGone());
+        jdbc.update("UPDATE product SET stock_priority_score=0.8,seasonal_priority_score=0.9 WHERE product_id=?",id);
         String summary=mvc.perform(get("/api/products/{id}/inventory-summary",id).header("Authorization","Bearer "+admin)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
         payload.put("name","Edited metadata");payload.put("sellingPrice",new BigDecimal("75.00"));payload.put("requiresExpiry",true);payload.put("expiryPushDays",7);
         mvc.perform(put("/api/products/{id}",id).header("Authorization","Bearer "+admin).contentType(MediaType.APPLICATION_JSON).content(json.writeValueAsString(payload))).andExpect(status().isOk()).andExpect(jsonPath("$.stockQuantity").value(8));

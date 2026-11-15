@@ -56,6 +56,18 @@ class RecommendationIntegrationTest {
     }
     ResultActions generate(long run,String who)throws Exception {return postJson("/api/recommendations/generate",who,json.writeValueAsString(Map.of("miningRunId",run,"types",List.of("BUNDLE","CROSS_SELL","FBT","BANNER"))));}
     List<Long> ids(JsonNode result) {List<Long> ids=new ArrayList<>();result.path("recommendationIds").forEach(n->ids.add(n.asLong()));return ids;}
+    @Test void endedSnapshotSeasonHasStructuredFlagsAndPreservesFrozenEvidence() throws Exception {
+        long run=mine(snapshot)[0];
+        long id=ids(body(generate(run,merchant).andExpect(status().isOk()))).get(0);
+        String before=jdbc.queryForObject("SELECT generation_eligibility FROM recommendation WHERE recommendation_id=?",String.class,id);
+        jdbc.update("INSERT INTO utility_snapshot_season(snapshot_id,store_id,season_id,name,start_date,end_date,weight,season_version) VALUES (?,?,100,'Past season',?,?,0.5,1)",snapshot,store,day.minusDays(10),day.minusDays(1));
+        var detail=body(getJson("/api/recommendations/"+id,merchant).andExpect(status().isOk()));
+        assertTrue(detail.path("seasonEnded").asBoolean());assertEquals("Past season",detail.path("endedSeasons").get(0).path("name").asText());
+        assertEquals(day.minusDays(1).toString(),detail.path("endedSeasons").get(0).path("endDate").asText());
+        assertTrue(detail.path("explanation").toString().contains("Past season"));
+        assertTrue(body(getJson("/api/recommendations",merchant).andExpect(status().isOk())).path("items").get(0).path("seasonEnded").asBoolean());
+        assertEquals(before,jdbc.queryForObject("SELECT generation_eligibility FROM recommendation WHERE recommendation_id=?",String.class,id));
+    }
     @Test void completedRealMiningGeneratesFourTypesAndDirectionalFrozenEvidence()throws Exception {
         long run=mine(snapshot)[0];JsonNode generated=body(generate(run,merchant).andExpect(status().isOk()));
         assertEquals(8,generated.path("createdCount").asInt());Set<String> types=new HashSet<>();
@@ -189,7 +201,7 @@ class RecommendationIntegrationTest {
         jdbc.update("UPDATE inventory_batch SET expiry_date=?,status='BLOCKED' WHERE product_id=?",day.plusDays(5),product);
         getJson("/api/recommendations/"+id,merchant).andExpect(jsonPath("$.currentEligibility.status").value("INELIGIBLE"));
         jdbc.update("UPDATE inventory_batch SET status='ACTIVE' WHERE product_id=?",product);
-        getJson("/api/recommendations/"+id,merchant).andExpect(jsonPath("$.currentEligibility.status").value("ELIGIBLE")).andExpect(jsonPath("$.currentEligibility.products[0].expiryPriorityScore").value(1));
+        getJson("/api/recommendations/"+id,merchant).andExpect(jsonPath("$.currentEligibility.status").value("ELIGIBLE")).andExpect(jsonPath("$.currentEligibility.products[0].expiryPriorityScore").isNumber()).andExpect(jsonPath("$.currentEligibility.scoringVersion").value("W2_EXPIRY_SEASON_V1"));
     }
     @Test void frozenEvidenceAndHistoricalUtilityStayUnchangedAfterLiveEdits()throws Exception {
         long run=mine(snapshot)[0];long request=jdbc.queryForObject("SELECT request_id FROM mining_run WHERE run_id=?",Long.class,run);
@@ -204,14 +216,13 @@ class RecommendationIntegrationTest {
             immutable.put(query,json.writeValueAsString(jdbc.queryForList(query,store)));
         }
         String inventory=json.writeValueAsString(jdbc.queryForList("SELECT * FROM inventory_batch WHERE product_id IN (SELECT product_id FROM product WHERE store_id=?)",store));
-        for(int product:products)
-            mvc.perform(patch("/api/utility/products/"+product+"/scores").header("Authorization","Bearer "+merchant)
-                .contentType(MediaType.APPLICATION_JSON).content("{\"stockPriorityScore\":0.2,\"seasonalPriorityScore\":0.1}"))
-                .andExpect(status().isOk());
+        // W2 live inputs: Store config and an active season. Frozen evidence must not change.
         mvc.perform(put("/api/utility/config").header("Authorization","Bearer "+merchant).contentType(MediaType.APPLICATION_JSON)
-            .content("{\"enableStock\":true,\"enableExpiry\":false,\"enableSeason\":true,\"alpha\":0.7,\"beta\":0,\"gamma\":0.3,\"lambda\":0.5}"))
-            .andExpect(status().isOk());
-        getJson("/api/utility/products/"+products.get(0)+"/scores",merchant).andExpect(status().isOk()).andExpect(jsonPath("$.weightValue").value(1.085));
+            .content("{\"alpha\":0.5,\"beta\":0.5,\"lambda\":0.5}")).andExpect(status().isOk());
+        int seasonActor=jdbc.queryForObject("SELECT MIN(user_id) FROM app_user WHERE store_id=?",Integer.class,store);
+        jdbc.update("INSERT INTO season(store_id,name,start_date,end_date,weight,created_by,updated_by) VALUES (?,?,?,?,0.2,?,?)",store,"Live "+java.util.UUID.randomUUID(),day.minusDays(1),day.plusDays(1),seasonActor,seasonActor);
+        jdbc.update("INSERT INTO product_season(store_id,season_id,product_id,assigned_by) VALUES (?,(SELECT MAX(season_id) FROM season),?,?)",store,products.get(0),seasonActor);
+        getJson("/api/utility/products/"+products.get(0)+"/scores",merchant).andExpect(status().isOk()).andExpect(jsonPath("$.seasonWeight").value(0.2));
         for(var entry:immutable.entrySet())
             assertEquals(entry.getValue(),json.writeValueAsString(jdbc.queryForList(entry.getKey(),store)),entry.getKey());
         assertEquals(inventory,json.writeValueAsString(jdbc.queryForList("SELECT * FROM inventory_batch WHERE product_id IN (SELECT product_id FROM product WHERE store_id=?)",store)));
@@ -228,7 +239,7 @@ class RecommendationIntegrationTest {
         jdbc.update("DELETE FROM high_utility_pattern WHERE run_id=?",run);jdbc.update("UPDATE mining_run SET itemset_count=0 WHERE run_id=?",run);
         generate(run,merchant).andExpect(status().isOk()).andExpect(jsonPath("$.createdCount").value(0));
         jdbc.update("UPDATE product SET requires_expiry=TRUE,expiry_push_days=7 WHERE product_id=?",products.get(0));
-        jdbc.update("UPDATE inventory_batch SET expiry_date=? WHERE product_id=?",day.plusDays(5),products.get(0));
+        jdbc.update("UPDATE inventory_batch SET expiry_date=?,push_day=? WHERE product_id=?",day.plusDays(5),day.minusDays(2),products.get(0));
         getJson("/api/recommendations/expiry-push",merchant).andExpect(status().isOk()).andExpect(jsonPath("$.totalElements").value(1)).andExpect(jsonPath("$.items[0].pushRequired").value(true));
     }
     @Test void completedIndividualRunRemainsEligibleAcrossComparisonPolicies()throws Exception {
@@ -264,7 +275,7 @@ class RecommendationIntegrationTest {
         java.nio.file.Files.writeString(dir.resolve("approve_request.json"),review);
         java.nio.file.Files.writeString(dir.resolve("approve_response.json"),body(postJson("/api/recommendations/"+id+"/approve",merchant,review).andExpect(status().isOk())).toPrettyString());
         java.nio.file.Files.writeString(dir.resolve("conflict_response.json"),body(postJson("/api/recommendations/"+id+"/reject",merchant,review).andExpect(status().isConflict())).toPrettyString());
-        jdbc.update("UPDATE product SET requires_expiry=TRUE,expiry_push_days=7 WHERE product_id=?",products.get(0));jdbc.update("UPDATE inventory_batch SET expiry_date=? WHERE product_id=?",day.plusDays(5),products.get(0));
+        jdbc.update("UPDATE product SET requires_expiry=TRUE,expiry_push_days=7 WHERE product_id=?",products.get(0));jdbc.update("UPDATE inventory_batch SET expiry_date=?,push_day=? WHERE product_id=?",day.plusDays(5),day.minusDays(2),products.get(0));
         java.nio.file.Files.writeString(dir.resolve("expiry_push_response.json"),body(getJson("/api/recommendations/expiry-push",merchant).andExpect(status().isOk())).toPrettyString());
     }
     @Test void openApiExposesActualRecommendationOperations()throws Exception {
@@ -273,6 +284,8 @@ class RecommendationIntegrationTest {
         assertTrue(spec.path("components").path("schemas").path("RecView").path("properties").path("evidence").path("$ref").asText().endsWith("/RecTransactionEvidence"));
         assertTrue(spec.path("components").path("schemas").path("RecTransactionEvidence").path("properties").path("confidence").path("type").toString().contains("null"));
         assertTrue(spec.path("components").path("schemas").path("Evidence").path("properties").has("earliestEligibleExpiryDate"));
+        assertTrue(spec.path("components").path("schemas").path("FefoEvidence").path("properties").has("riskQuantity"));
+        assertTrue(spec.path("components").path("schemas").path("RecExpiryBatch").path("properties").has("pushDay"));
         for(String request:List.of("RecGenerateRequest","RecPolicyRequest","RecReviewRequest"))assertEquals(false,spec.path("components").path("schemas").path(request).path("additionalProperties").asBoolean(true),request);
         if(System.getProperty("paspm.f06.export-dir")!=null) {
             java.nio.file.Path dir=java.nio.file.Path.of(System.getProperty("paspm.f06.export-dir"));java.nio.file.Files.createDirectories(dir);java.nio.file.Files.writeString(dir.resolve("openapi.json"),spec.toPrettyString());

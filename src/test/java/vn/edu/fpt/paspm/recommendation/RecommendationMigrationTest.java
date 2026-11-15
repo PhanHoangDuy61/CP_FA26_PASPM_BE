@@ -13,8 +13,10 @@ import vn.edu.fpt.paspm.deployment.MySqlTestDatabase;
 class RecommendationMigrationTest {
     @Test void freshMySqlMigratesAllElevenVersions() {
         var db=MySqlTestDatabase.create();var flyway=Flyway.configure().dataSource(db.url(),db.user(),db.password()).load();
-        assertEquals(21,flyway.migrate().migrationsExecuted);flyway.validate();
-        assertEquals("21",flyway.info().current().getVersion().toString());
+        int expectedPending=flyway.info().pending().length;
+        assertTrue(expectedPending>0);assertEquals(expectedPending,flyway.migrate().migrationsExecuted);flyway.validate();
+        assertEquals(0,flyway.info().pending().length);
+        assertEquals(flyway.info().all()[flyway.info().all().length-1].getVersion(),flyway.info().current().getVersion());
         var jdbc=new JdbcTemplate(new DriverManagerDataSource(db.url(),db.user(),db.password()));
         for(String table:List.of("recommendation","recommendation_item","recommendation_source","recommendation_review_history","recommendation_rule_config"))
             assertEquals(0,jdbc.queryForObject("SELECT COUNT(*) FROM "+table,Integer.class));
@@ -29,9 +31,13 @@ class RecommendationMigrationTest {
         jdbc.update("INSERT INTO utility_snapshot(store_id,created_by,range_start,range_end,as_of_date,config_snapshot,source_hash,matrix_hash,total_weighted_utility,rounding_scale,status) VALUES (?,?,CURRENT_DATE,CURRENT_DATE,CURRENT_DATE,'{\"legacy\":true}',?,?,123,6,'READY')",store,user,"a".repeat(64),"b".repeat(64));
         String configuration=jdbc.queryForObject("SELECT utility_config FROM store WHERE store_id=?",String.class,store);
         String snapshot=jdbc.queryForObject("SELECT config_snapshot FROM utility_snapshot WHERE store_id=?",String.class,store);
-        var current=Flyway.configure().dataSource(db.url(),db.user(),db.password()).load();assertEquals(12,current.migrate().migrationsExecuted);current.validate();
-        assertEquals("21",current.info().current().getVersion().toString());
-        assertEquals(configuration,jdbc.queryForObject("SELECT utility_config FROM store WHERE store_id=?",String.class,store));
+        var current=Flyway.configure().dataSource(db.url(),db.user(),db.password()).load();int expectedPending=current.info().pending().length;
+        assertTrue(expectedPending>0);assertEquals(expectedPending,current.migrate().migrationsExecuted);current.validate();
+        assertEquals(0,current.info().pending().length);
+        assertEquals(current.info().all()[current.info().all().length-1].getVersion(),current.info().current().getVersion());
+        // Live Store config is converted by V25 (owner rule 2026-11-15); the old value is kept as migration evidence.
+        assertTrue(jdbc.queryForObject("SELECT utility_config FROM store WHERE store_id=?",String.class,store).contains("W2_EXPIRY_SEASON_V1"));
+        assertTrue(jdbc.queryForObject("SELECT old_value FROM utility_weight_v2_conversion WHERE subject='STORE' AND store_id=?",String.class,store).replace(" ","").contains("\"version\":7"));
         assertEquals(snapshot,jdbc.queryForObject("SELECT config_snapshot FROM utility_snapshot WHERE store_id=?",String.class,store));
         assertEquals(123,jdbc.queryForObject("SELECT total_weighted_utility FROM utility_snapshot WHERE store_id=?",Integer.class,store));
         assertEquals(0,jdbc.queryForObject("SELECT COUNT(*) FROM recommendation",Integer.class));

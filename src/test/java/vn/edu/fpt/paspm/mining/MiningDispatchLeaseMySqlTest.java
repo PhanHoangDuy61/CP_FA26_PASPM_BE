@@ -16,7 +16,7 @@ class MiningDispatchLeaseMySqlTest {
         var a=new DriverManagerDataSource(db.url(),db.user(),db.password());
         var b=new DriverManagerDataSource(db.url(),db.user(),db.password());
         var jdbc=new JdbcTemplate(a);
-        jdbc.execute("CREATE TABLE mining_request(request_id BIGINT PRIMARY KEY,store_id INT NOT NULL,status VARCHAR(12) NOT NULL,lease_owner VARCHAR(36),lease_fence BIGINT NOT NULL DEFAULT 0,lease_until TIMESTAMP(6) NULL)");
+        jdbc.execute("CREATE TABLE mining_request(request_id BIGINT PRIMARY KEY,store_id INT NOT NULL,status VARCHAR(12) NOT NULL,stage VARCHAR(16) DEFAULT 'LEGACY',stage_started_at TIMESTAMP NULL,current_run_id BIGINT NULL,lease_owner VARCHAR(36),lease_fence BIGINT NOT NULL DEFAULT 0,lease_until TIMESTAMP(6) NULL)");
         jdbc.execute("CREATE TABLE output_rows(request_id BIGINT NOT NULL,output_value VARCHAR(20))");
         jdbc.update("INSERT INTO mining_request(request_id,store_id,status) VALUES(10,1,'PENDING')");
         var first=new MiningDispatchLease(jdbc,new DataSourceTransactionManager(a));

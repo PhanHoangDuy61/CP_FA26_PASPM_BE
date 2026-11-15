@@ -41,14 +41,15 @@ public class InventoryBatchService {
         if (product.requiresExpiry() && request.expiryDate() == null) {
             throw new ApiException(400, "Expiry date is required for this product");
         }
+        requirePushDay(request.pushDay(), request.expiryDate());
         return batches.create(productId, request.batchCode(), request.receivedAt(),
-                request.expiryDate(), request.initialQuantity());
+                request.expiryDate(), request.initialQuantity(), request.pushDay());
     }
 
     @Transactional
     public BatchView update(Jwt jwt, int id, BatchPatchRequest request) {
         int storeId = access.currentStoreId(jwt);
-        if (request.remainingQuantity() == null && request.status() == null) {
+        if (request.remainingQuantity() == null && request.status() == null && request.pushDay() == null) {
             throw new ApiException(400, "At least one batch field must be provided");
         }
         if (request.status() != null && !STATUSES.contains(request.status())) {
@@ -59,8 +60,23 @@ public class InventoryBatchService {
         if (request.remainingQuantity() != null && request.remainingQuantity() > current.initialQuantity()) {
             throw new ApiException(400, "Remaining quantity cannot exceed initial quantity");
         }
-        batches.update(id, request.remainingQuantity(), request.status());
+        requirePushDay(request.pushDay(), current.expiryDate());
+        batches.update(id, request.remainingQuantity(), request.status(), request.pushDay());
         return requireBatch(storeId, id);
+    }
+
+    @Transactional
+    public BatchView clearPushDay(Jwt jwt, int id) {
+        int storeId = access.currentStoreId(jwt);
+        if (batches.findForUpdate(storeId, id) == null) throw new ApiException(404, "Inventory batch not found");
+        batches.clearPushDay(storeId, id);
+        return requireBatch(storeId, id);
+    }
+
+    private static void requirePushDay(java.time.LocalDate pushDay, java.time.LocalDate expiryDate) {
+        if (pushDay != null && expiryDate != null && pushDay.isAfter(expiryDate)) {
+            throw new ApiException(400, "pushDay must be on or before expiryDate");
+        }
     }
 
     private ProductView requireProduct(int storeId, int id) {

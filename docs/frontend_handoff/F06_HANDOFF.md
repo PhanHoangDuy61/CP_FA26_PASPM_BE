@@ -1,5 +1,7 @@
 # F06 React / TypeScript integration handoff
 
+> **2026-11-15 — W2.** Eligibility JSON is now `EligibilityV2` (no `expiryPushDays`), expiry-push items are push-day based, every pre-W2 recommendation shows `inventoryChanged = true` once, and an ended-season line may appear in `explanation`. See [F03 W2 breaking changes](F03_W2_BREAKING_CHANGES.md) rows 12–14.
+
 This handoff describes the implemented backend contract, checked against current recommendation controllers, records, rules, frozen-source reader and inventory services on 2026-10-20. It provides a workflow for frontend implementation; it does not claim implementation in FE or FE_Kien. The detailed wire types, exact field nullability and all eight operations are in [F06_RECOMMENDATION_API.md](../api/F06_RECOMMENDATION_API.md). No new F06 authentication flow is needed. Use backend Java17; the [existing runtime setup](../setup/F05_SPMF_RUNTIME_SETUP.md) applies when creating new F05 source runs. Independent F06 expiry and reading/generating from existing completed runs do not execute SPMF. Existing database V7 checksum reconciliation remains the separate [operator recovery workflow](../setup/FLYWAY_MYSQL_V7_RECOVERY.md).
 
 ## Connect and authorize
@@ -84,3 +86,6 @@ Frontend acceptance should cover both roles, forbidden roles, cross-Store 404, s
 Actual executed integration-test fixtures are available: [generate request](F06_examples/generate_request.json), [generate response](F06_examples/generate_response.json), [detail](F06_examples/detail_response.json), [list](F06_examples/list_response.json), [config](F06_examples/config_response.json), [approve request](F06_examples/approve_request.json), [approve response](F06_examples/approve_response.json), [conflict](F06_examples/conflict_response.json), [expiry push](F06_examples/expiry_push_response.json). Replace fixture IDs with target Store results. The exported generation fixture creates eight recommendations and records singleton skips. It is not a credential bundle or a claim of browser Swagger execution.
 
 Verified on2026-10-20: Java17 clean verify210 PASS (63 F06 +147 regression), isolated MySQL V1–V10 and V9→V10,27 actual Swagger UI cases. The [verification report](../testing/reports/F06_VERIFICATION.md) separates these channels. The shared OpenAPI was exported from the actual test origin `http://localhost:18086`; set the Frontend target base URL for your environment. Frontend integration itself was NOT RUN; existing demo code was not changed. Inline requests are illustrative; linked JSON files are actual automated test exports.
+
+## 2026-11-16 — Season-ended badge
+Read `seasonEnded` and `endedSeasons: Array<{seasonId: number; name: string; endDate: string}>` from recommendation views. Display each ended season and preserve the existing explanation. These are additive live warning fields based on frozen season dates; they do not change historical eligibility and do not trigger any automatic mining or generation.

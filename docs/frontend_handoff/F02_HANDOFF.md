@@ -1,8 +1,10 @@
 # F02 Product and Inventory Frontend Handoff
 
+> **2026-11-15 — W2.** Inventory batches accept an optional `pushDay` on create and PATCH (Store Admin only, ≤ expiryDate). Product `expiryPushDays` is deprecated and ignored by scoring. See [F03 W2 breaking changes](F03_W2_BREAKING_CHANGES.md).
+
 ## v1.2 Product expiry priority update (2026-10-19)
 
-The existing Product POST/PUT request accepts optional `expiryPushDays: integer|null`; absent/null is stored as0, values must be >=0, and fractional/string/boolean values are rejected400. Full PUT must send the desired threshold (omitting resets it to0). Product GET/list/create/update/status responses include `expiryPushDays: integer`. Store Admin owns this field in their Store; Merchandiser and System Admin cannot modify it through F02, and cross-Store records return404. No duplicate configuration endpoint was added. `requiresExpiry=false` remains NOT_APPLICABLE in F03 even if a threshold is configured. Inventory quantities are unchanged by threshold updates.
+**Legacy (v1.2, deprecated 2026-11-15):** the existing Product POST/PUT request accepts optional `expiryPushDays: integer|null`; absent/null is stored as0, values must be >=0, and fractional/string/boolean values are rejected400. Full PUT must send the desired threshold (omitting resets it to0). Product GET/list/create/update/status responses include `expiryPushDays: integer`. Store Admin owns this field in their Store; Merchandiser and System Admin cannot modify it through F02, and cross-Store records return404. No duplicate configuration endpoint was added. `requiresExpiry=false` remains NOT_APPLICABLE in F03 even if a threshold is configured. Inventory quantities are unchanged by threshold updates.
 
 F03 uses only this Product threshold: no Store fallback. The legacy Store expiry-window endpoint is deprecated. New E is binary from the earliest-expiring ACTIVE positive-quantity batch with expiry strictly after the analysis date. Batch expiring today is not sellable in the current summary. `GET /api/utility/expiry-push-batches` provides a Store Admin/Merchandiser current push view independently of mining; see the F03 contract.
 
@@ -90,3 +92,6 @@ OpenAPI currently does not mark nullable response members as nullable: Product `
 Use loading state for every list/detail request; empty arrays mean empty list, and `ProductPage.totalElements=0` means no matches. Save 201/200 should display returned resource and use its ID. Handle 400 with the `error` message/field form feedback, 401 by clearing session and signing in again, 403 as insufficient role, 404 as missing or another Store's resource, 409 as duplicate/constraint conflict, network errors as connectivity issue, and 5xx as server failure. Handled error JSON is `{error:string}`; framework auth responses may not have a body. Refresh batch/product/summary reads after successful mutation.
 
 There is no CORS setup in the Backend source. Use same-origin local proxy or deployment CORS configuration when Frontend and API have different origins.
+
+## 2026-11-16 — Optional clear-push-day action
+New non-breaking route: `DELETE /api/inventory-batches/{id}/push-day` (Store Admin). Send Bearer, no body; 200 returns `InventoryBatch` with nullable `pushDay`. Update local batch state from the response, then refresh scores/preview. Already-null succeeds. 404 covers unknown and foreign Store records; 403 wrong role. PATCH null/omitted keeps the old push day. Add `pushDay?: string | null` to create/PATCH types and nullable `pushDay` to the response type.

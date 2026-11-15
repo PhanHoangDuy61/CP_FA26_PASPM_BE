@@ -48,7 +48,7 @@ class RecommendationExpiryIntegrationTest {
             batch(p,-1,5,"ACTIVE",0);batch(p,0,5,"ACTIVE",0);batch(p,1,0,"ACTIVE",0);batch(p,1,5,"BLOCKED",0);
             if(t>0)batch(p,t,5,"ACTIVE",0);batch(p,t+1,5,"ACTIVE",0);
             var result=read(merchant,p);assertEquals(t==0?0:1,result.path("totalElements").asInt());
-            if(t>0){var item=result.path("items").get(0);assertEquals(t,item.path("daysRemaining").asInt());assertTrue(item.path("pushRequired").asBoolean());assertEquals(t,item.path("expiryPushDays").asInt());}
+            if(t>0){var item=result.path("items").get(0);assertEquals(0,item.path("daysToPush").asInt());assertTrue(item.path("pushRequired").asBoolean());assertEquals(day.plusDays(t).minusDays(t).toString(),item.path("pushDay").asText());}
         }
         int non=product(7,false,"ACTIVE"),inactive=product(7,true,"INACTIVE");batch(non,1,3,"ACTIVE",0);batch(inactive,1,3,"ACTIVE",0);
         assertEquals(0,read(merchant,non).path("totalElements").asInt());assertEquals(0,read(merchant,inactive).path("totalElements").asInt());
@@ -63,7 +63,7 @@ class RecommendationExpiryIntegrationTest {
     @Test void missingMetadataWarningsSurviveWithKnownPushBatches() throws Exception {
         int p=product(7,true,"ACTIVE");batch(p,2,4,"ACTIVE",0);batch(p,null,4,"ACTIVE",0);
         var result=read(merchant,p);assertEquals(1,result.path("totalElements").asInt());assertFalse(result.path("warnings").isEmpty());
-        assertEquals("MISSING_METADATA",result.path("items").get(0).path("status").asText());
+        assertTrue(result.path("warnings").toString().contains("no push day"));
         assertEquals(result.path("warnings"),result.path("items").get(0).path("warnings"));
         int missingOnly=product(7,true,"ACTIVE");batch(missingOnly,null,3,"ACTIVE",0);
         var missing=read(merchant,missingOnly);assertEquals(0,missing.path("totalElements").asInt());assertFalse(missing.path("warnings").isEmpty());
@@ -87,5 +87,7 @@ class RecommendationExpiryIntegrationTest {
     int store(){jdbc.update("INSERT INTO store(name) VALUES (?)","Expiry "+UUID.randomUUID());return jdbc.queryForObject("SELECT MAX(store_id) FROM store",Integer.class);}
     String token(String role,Integer storeId){var u=users.createPendingUser("Expiry",UUID.randomUUID()+"@example.test",role,storeId,"unused-test-hash",null);jdbc.update("UPDATE app_user SET status='ACTIVE',email_verified_at=CURRENT_TIMESTAMP WHERE user_id=?",u.id());return auth.token(users.findById(u.id())).accessToken();}
     int product(int t,boolean expiry,String status){String sku=UUID.randomUUID().toString();jdbc.update("INSERT INTO product(store_id,sku,name,unit,requires_expiry,selling_price,cost_price,status,expiry_push_days) VALUES (?,?,?,'unit',?,100,20,?,?)",store,sku,"Expiry",expiry,status,t);return jdbc.queryForObject("SELECT product_id FROM product WHERE store_id=? AND sku=?",Integer.class,store,sku);}
-    int batch(int p,Integer days,int quantity,String status,int receivedAgo){String code=UUID.randomUUID().toString();jdbc.update("INSERT INTO inventory_batch(product_id,batch_code,received_at,expiry_date,initial_quantity,remaining_quantity,status) VALUES (?,?,?,?,?,?,?)",p,code,java.sql.Timestamp.from(day.minusDays(receivedAgo).atStartOfDay(ZoneId.of(zone.id())).toInstant()),days==null?null:day.plusDays(days),Math.max(1,quantity),quantity,status);return jdbc.queryForObject("SELECT batch_id FROM inventory_batch WHERE product_id=? AND batch_code=?",Integer.class,p,code);}
+    int batch(int p,Integer days,int quantity,String status,int receivedAgo){String code=UUID.randomUUID().toString();// W2 equivalent of the old product threshold t: push day = expiry - t (due when expiry - today <= t).
+        int t=jdbc.queryForObject("SELECT expiry_push_days FROM product WHERE product_id=?",Integer.class,p);
+        jdbc.update("INSERT INTO inventory_batch(product_id,batch_code,received_at,expiry_date,initial_quantity,remaining_quantity,status,push_day) VALUES (?,?,?,?,?,?,?,?)",p,code,java.sql.Timestamp.from(day.minusDays(receivedAgo).atStartOfDay(ZoneId.of(zone.id())).toInstant()),days==null?null:day.plusDays(days),Math.max(1,quantity),quantity,status,days==null?null:day.plusDays(days).minusDays(t));return jdbc.queryForObject("SELECT batch_id FROM inventory_batch WHERE product_id=? AND batch_code=?",Integer.class,p,code);}
 }

@@ -31,8 +31,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 import vn.edu.fpt.paspm.catalog.product.ProductRepository;
 import vn.edu.fpt.paspm.catalog.inventory.InventoryBatchRepository;
 import vn.edu.fpt.paspm.transaction.importing.TransactionImportService;
-import vn.edu.fpt.paspm.utility.ProductScoreRepository;
-import vn.edu.fpt.paspm.utility.UtilityContracts.ScorePatch;
 
 @SpringBootTest(properties = {
         "spring.datasource.url=jdbc:h2:mem:productpersistence;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1",
@@ -53,7 +51,6 @@ class ProductPersistenceIntegrationTest {
     @Autowired ProductRepository products;
     @Autowired InventoryBatchRepository batches;
     @Autowired TransactionImportService imports;
-    @Autowired ProductScoreRepository scores;
     @PersistenceContext EntityManager em;
     int store;
 
@@ -232,10 +229,9 @@ class ProductPersistenceIntegrationTest {
             transaction().executeWithoutResult(ignored -> {
                 managed(id);
                 CompletableFuture.runAsync(() -> {
-                    var patch = new ScorePatch();
-                    patch.setStockPriorityScore(new BigDecimal("0.123456"));
-                    patch.setSeasonalPriorityScore(new BigDecimal("0.654321"));
-                    assertTrue(scores.update(store,id,patch));
+                    // Native write to the retained (unused since W2) product score columns.
+                    assertEquals(1,jdbc.update("UPDATE product SET stock_priority_score=?,seasonal_priority_score=? WHERE store_id=? AND product_id=?",
+                            new BigDecimal("0.123456"),new BigDecimal("0.654321"),store,id));
                     jdbc.update("UPDATE product SET selling_price=? WHERE product_id=?",price,id);
                 }).orTimeout(5,TimeUnit.SECONDS).join();
                 assertTrue(products.updateStatus(store,id,"INACTIVE"));
@@ -253,10 +249,9 @@ class ProductPersistenceIntegrationTest {
             transaction().executeWithoutResult(ignored -> {
                 managed(id);
                 CompletableFuture.runAsync(() -> {
-                    var patch = new ScorePatch();
-                    patch.setStockPriorityScore(new BigDecimal("0.777777"));
-                    patch.setSeasonalPriorityScore(new BigDecimal("0.222222"));
-                    assertTrue(scores.update(store,id,patch));
+                    // Native write to the retained (unused since W2) product score columns.
+                    assertEquals(1,jdbc.update("UPDATE product SET stock_priority_score=?,seasonal_priority_score=? WHERE store_id=? AND product_id=?",
+                            new BigDecimal("0.777777"),new BigDecimal("0.222222"),store,id));
                 }).orTimeout(5,TimeUnit.SECONDS).join();
                 assertTrue(products.update(store,id,"CONCURRENT-METADATA-UPDATED-"+id,"Updated",null,"unit",false,
                         BigDecimal.TEN,BigDecimal.ONE,"ACTIVE",7));

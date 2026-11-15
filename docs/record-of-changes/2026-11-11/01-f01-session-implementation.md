@@ -30,11 +30,11 @@ Backend đã có xác thực JWT nhưng response login thiếu `csrfToken` mà F
 | File / nhóm file | Thay đổi | Lý do |
 |---|---|---|
 | [AuthController](../../../src/main/java/vn/edu/fpt/paspm/auth/AuthController.java), [AuthService](../../../src/main/java/vn/edu/fpt/paspm/auth/AuthService.java), [Contracts](../../../src/main/java/vn/edu/fpt/paspm/common/Contracts.java) | Modified | HTTP login email/Google tạo family, JWT có sid và Token có csrfToken |
-| [RefreshSessionService](../../../src/main/java/vn/edu/fpt/paspm/auth/RefreshSessionService.java) | Added | Rotation, hashed credentials, replay detection, row locks, logout và absolute expiry |
-| [SessionController](../../../src/main/java/vn/edu/fpt/paspm/auth/SessionController.java), [SessionHttpSupport](../../../src/main/java/vn/edu/fpt/paspm/auth/SessionHttpSupport.java) | Added | Refresh/logout routes, cookie, CSRF/Origin checks, no-store |
+| `RefreshSessionService` (`src/main/java/vn/edu/fpt/paspm/auth/RefreshSessionService.java`, not present on current branches) | Added | Rotation, hashed credentials, replay detection, row locks, logout và absolute expiry |
+| `SessionController` (`src/main/java/vn/edu/fpt/paspm/auth/SessionController.java`, not present on current branches), `SessionHttpSupport` (`src/main/java/vn/edu/fpt/paspm/auth/SessionHttpSupport.java`, not present on current branches) | Added | Refresh/logout routes, cookie, CSRF/Origin checks, no-store |
 | [SecurityConfig](../../../src/main/java/vn/edu/fpt/paspm/security/SecurityConfig.java) | Modified | Public refresh, kiểm tra family cho access JWT; role gates giữ nguyên |
 | [V20](../../../src/main/resources/db/migration/V20__f01_refresh_sessions.sql) | Added | auth_session và auth_refresh_token, FK/indexes; không sửa V1–V19 |
-| [SessionHttpIntegrationTest](../../../src/test/java/vn/edu/fpt/paspm/SessionHttpIntegrationTest.java), [SessionMySqlIntegrationTest](../../../src/test/java/vn/edu/fpt/paspm/SessionMySqlIntegrationTest.java), [SessionHttpSupportTest](../../../src/test/java/vn/edu/fpt/paspm/auth/SessionHttpSupportTest.java) | Added | Regression phiên, đồng thời/replay, cookie, CSRF và OpenAPI |
+| [SessionHttpIntegrationTest](../../../src/test/java/vn/edu/fpt/paspm/SessionHttpIntegrationTest.java), [SessionMySqlIntegrationTest](../../../src/test/java/vn/edu/fpt/paspm/SessionMySqlIntegrationTest.java), `SessionHttpSupportTest` (`src/test/java/vn/edu/fpt/paspm/auth/SessionHttpSupportTest.java`, not present on current branches) | Added | Regression phiên, đồng thời/replay, cookie, CSRF và OpenAPI |
 | Migration tests: FlywayRecoveryTest, JpaPilotMigrationMySqlTest, MiningMigrationMySqlTest, MiningSchedulerUpgradeCompatibilityMySqlTest, RecommendationMigrationTest | Modified | Kỳ vọng schema latest V20 và số migration tăng một; không sửa assertions nghiệp vụ để che lỗi |
 | application.yml | Cung cấp cấu hình avatar còn thiếu | File đã có sửa local khác; không ghi secret hoặc nhận toàn bộ diff là do agent |
 | [.env.example](../../../.env.example) | Modified | Biến cấu hình phiên không chứa secret |
@@ -87,3 +87,5 @@ NOT RUN: Google thật, HTTPS ingress production, auth nhiều JVM, các nhóm o
 **Không commit, push, merge hoặc deploy.** Giữ nguyên file ERD đã bị xóa và các diagram/temp file ngoài phạm vi; không stage chúng. Tài liệu và source là working-tree changes. Backend/Frontend local đã được chạy để người dùng xem luồng, nhưng không coi tiến trình localhost là dịch vụ luôn hoạt động ở các phiên sau.
 
 Tiếp theo: [record 02 — đồng bộ documentation](02-f01-documentation-sync.md).
+
+> **Link correction 2026-11-15 (ROC-20261115-005):** four links above pointed to session classes of the 2026-11-11 local variant that are not present on current branches (the [2026-11-12 reconciliation](../2026-11-12/README.md) kept dev `AuthSessionService`). They were turned into plain paths; the record content is unchanged.

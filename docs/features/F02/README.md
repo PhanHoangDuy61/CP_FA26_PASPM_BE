@@ -2,8 +2,23 @@
 
 > Last verified Backend: `dev` @ `11973a0` (merge of PR #11; source tree identical to `a4f1115`, whose code passed the full verification script on `45dbd80`). This documentation task ran no new tests.
 
+## Current status — branch `Khoi/feat/f05-progress-f03-weight-v2` (2026-11-15, not merged)
+
+Code paths below are relative to `src/main/java/vn/edu/fpt/paspm/` on `c8c837a` (code identical to `e38b55f`).
+
+| Item | Behaviour on the branch | Evidence |
+|---|---|---|
+| Batch `pushDay` | Optional `DATE` on `BatchCreateRequest`, `BatchPatchRequest` and `BatchView` | `catalog/CatalogContracts.java:57`, `:63`, `:69` |
+| Rule | `pushDay` must be on or before `expiryDate`, else 400 (also a DB CHECK) | `catalog/inventory/InventoryBatchService.java:68-70`; `db/migration/V25__f03_weight_v2_expiry_season.java:22` (under `src/main/java/`) |
+| PATCH | `pushDay` counts toward "at least one batch field"; null means "not provided" (cannot clear) | `catalog/inventory/InventoryBatchService.java:52-53`, `:63-64` |
+| Role | Store Admin only, own Store | `catalog/inventory/InventoryBatchController.java:26` |
+| `product.expiryPushDays` | Still accepted and stored, **deprecated (P5)**, ignored by every calculation | `catalog/CatalogContracts.java:38`; no reader in `utility/` or `recommendation/` (W2 reads `inventory_batch.push_day`: `utility/UtilityProductRepository.java:29`) |
+| Backfill | None: existing batches have `push_day = NULL` until a Store Admin sets it | `db/migration/V25__f03_weight_v2_expiry_season.java:21` |
+
+Verification: `PushDayIntegrationTest` (5 cases) inside the final gate (645 tests, 640 PASS, 5 SKIP; [record 004](../../record-of-changes/2026-11-15/04-f03-weight-v2-expiry-season.md)).
+
 ## 1. Purpose and scope
-Store-scoped product catalogue, categories and inventory batches. Stock is never stored on the product: it is derived from batch remaining quantities. Product `expiryPushDays` (the F03 v1.2 threshold) is owned here.
+Store-scoped product catalogue, categories and inventory batches. Stock is never stored on the product: it is derived from batch remaining quantities. The Store Admin owns each batch's `pushDay`, which F03 Weight v2 uses. Product `expiryPushDays` (the F03 v1.2 threshold) is **legacy since 2026-11-15**: accepted, stored, ignored (P5).
 
 ## 2. Actors and effective RBAC
 | Role | Capability |
@@ -20,22 +35,23 @@ Categories 5, products 5 (`GET` list with search/filter/sort/page, detail, creat
 ## 4. Business rules
 - SKU unique per Store (409); batch code unique per product (409).
 - `requiresExpiry=true` products need an expiry date on every batch; enabling it while a batch lacks one is 400.
-- `PATCH` batch: `remainingQuantity` 0..initial, status `ACTIVE|BLOCKED`; at least one field.
-- `expiryPushDays`: integer ≥ 0, omitted or null stored as 0, **no Store fallback**; a full `PUT` that omits it resets it to 0. Only Store Admin writes it.
+- `PATCH` batch: `remainingQuantity` 0..initial, status `ACTIVE|BLOCKED`, `pushDay` (≤ expiry date); at least one field.
+- Batch `pushDay` (2026-11-15): optional date, ≤ `expiryDate`, Store Admin only; a batch without one only produces an F03 warning.
+- `expiryPushDays` (**deprecated 2026-11-15, P5**): integer ≥ 0, omitted or null stored as 0; a full `PUT` that omits it resets it to 0. Still validated and stored but no longer used by F03 or F06.
 - Sellable stock counts ACTIVE batches with remaining > 0 whose expiry is strictly after today (Store time zone); a batch expiring today is not sellable.
 - Products and categories are deactivated, never deleted.
 
 ## 5. Main workflows
-Create category → create product (with `expiryPushDays` when it expires) → receive batches → read inventory summary. F04 CSV rows resolve products by SKU; F03 reads batches in FEFO order.
+Create category → create product → receive batches with a `pushDay` when the product expires → read inventory summary. F04 CSV rows resolve products by SKU; F03 Weight v2 reads batches ordered by push day then batch id.
 
 ## 6. API documentation
 [F02 API contract](../../api/F02_PRODUCT_INVENTORY_API.md) · [Frontend handoff](../../frontend_handoff/F02_HANDOFF.md) · [runtime OpenAPI](../../api/openapi.json).
 
 ## 7. Entities and migrations
-`category`, `product`, `inventory_batch` (V3); V8 adds the Product binary-expiry priority column `expiry_push_days`; later features add FKs to these tables (F03 scores, F04 transaction items, F05 pattern items).
+`category`, `product`, `inventory_batch` (V3); V8 adds `expiry_push_days` (legacy since V25); **V25 adds `inventory_batch.push_day` + CHECK** and `product_season`; later features add FKs to these tables (F04 transaction items, F05 pattern items). Schema notes: [V24/V25](../../architecture/F03_W2_SCHEMA_V24_V25.md).
 
 ## 8. Dependencies
-Uses F01 (role, Store). Consumed by F03 (threshold and FEFO batches), F04 (SKU resolution), F06 (current sellable quantity).
+Uses F01 (role, Store). Consumed by F03 (batch push days and FEFO), F04 (SKU resolution), F06 (current sellable quantity, push-day expiry alerts).
 
 F01 session reconciliation (2026-11-12, dev V20 retained + additive V21): catalog APIs still require a valid Bearer with their existing role and Store checks. Refresh/logout does not grant END_CUSTOMER catalog access or change stock, expiry or persistence rules. See [shared session impact and evidence](../F01/F01_SESSION_MANAGEMENT.md#5-tác-động-tới-feature-khác).
 
@@ -45,11 +61,16 @@ F01 session reconciliation (2026-11-12, dev V20 retained + additive V21): catalo
 ## 10. Known limitations
 No delete endpoints and no stock movement or adjustment history (only batch `PATCH`). The `dev` profile seeds demo data and a development-only account; never enable it on a shared database.
 
+Known gaps (2026-11-15): a batch `pushDay` cannot be cleared through PATCH; all pre-V25 batches start without a push day; the deprecated `expiryPushDays` column remains in the schema. The F02 ERD drawing does not show `push_day` (diagram not edited, see [schema notes](../../architecture/F03_W2_SCHEMA_V24_V25.md)).
+
 ## 11. Pending decisions
-None recorded for F02.
+P5 (accept but ignore `expiryPushDays`) is an **assumption pending owner confirmation**; Q1 (push day per batch) is an owner decision of 2026-11-15. See [decision register](../../decisions/OWNER_DECISIONS_F03_F05_2026-11-15.md).
 
 ## 12. Related diagrams
 [Diagram index](../../diagrams/README.md) and the editable [27-page Draw.io pack](../../diagrams/PASPM_Unified_27_Diagrams_UML2_Editable.drawio) (QA: [UML27 report](../../reports/UML27_DIAGRAM_QA_2026-11-02.md)); relevant pages: Use Case UC17–UC20, AD01; the F02 ERD is `docs/diagrams/PASPM_Complete_ERD_F02_Inventory_Batch_v3.drawio` (preserved unchanged).
 
 ## 13. Historical references
 [Original v3 backlog](reference_v3/PASPM_F02_Inventory_Batch_API_Swagger_Backlog_v3.md), [issues](reference_v3/F02_GitHub_Issues/README.md), [Product JPA report](../../architecture/PRODUCT_JPA_INTEGRATION_REPORT.md), [Category JPA report](../../architecture/CATEGORY_JPA_IMPLEMENTATION_REPORT.md). Old all-StoreAdmin and expiry-today clauses are superseded.
+
+## 2026-11-16 follow-up
+Store Admin can clear a batch push day with DELETE `/api/inventory-batches/{id}/push-day`; idempotent, returns BatchView, foreign/unknown 404. PATCH null retains the value. See the current API contract.
