@@ -12,12 +12,12 @@ The earlier avatar startup fix supplies the existing storage bean's configuratio
 
 ## Red / green and regression evidence
 
-- Initial execution of the four session tests failed 4/4 with `No value at JSON path "$.csrfToken"` before the production session implementation. Private local log: `/private/tmp/session-red.log`.
-- First targeted green run: SessionHttpIntegrationTest 4 + AuthIntegrationTest 22 = 26 PASS, zero failures/errors/skips. `/private/tmp/session-green.log`.
+- Initial execution of the four session tests failed 4/4 with `No value at JSON path "$.csrfToken"` before the production session implementation. Private local log: `<temporary-dir>/session-red.log`.
+- First targeted green run: SessionHttpIntegrationTest 4 + AuthIntegrationTest 22 = 26 PASS, zero failures/errors/skips. `<temporary-dir>/session-green.log`.
 - Session suite extended to ten business/security scenarios below plus an OpenAPI contract test (11 total), and three cookie-support unit tests.
-- Java17 full verify with the separate Java25 SPMF executable: initial successful run 573 discovered, 384 executed PASS, 189 SKIPPED, zero failures/errors (`/private/tmp/session-final-verify.log`). The final rerun including all additional tests is recorded below after completion.
-- Standalone MySQL 8.4.11 copy of local V19: 10 session tests PASS, V19→V20 migration succeeded; original local DB stayed V19 during this copy verification (`/private/tmp/session-mysql-test.log`).
-- Additional real Docker MySQL 8.4 on loopback port 13317: Final rerun: 27/27 PASS, zero skips/errors/failures. Container `paspm-session-acceptance-final-20261111`, stopped after testing; private log `/private/tmp/session-mysql-docker.log`.
+- Java17 full verify with the separate Java25 SPMF executable: initial successful run 573 discovered, 384 executed PASS, 189 SKIPPED, zero failures/errors (`<temporary-dir>/session-final-verify.log`). The final rerun including all additional tests is recorded below after completion.
+- Standalone MySQL 8.4.11 copy of local V19: 10 session tests PASS, V19→V20 migration succeeded; original local DB stayed V19 during this copy verification (`<temporary-dir>/session-mysql-test.log`).
+- Additional real Docker MySQL 8.4 on loopback port 13317: Final rerun: 27/27 PASS, zero skips/errors/failures. Container `paspm-session-acceptance-final-20261111`, stopped after testing; private log `<temporary-dir>/session-mysql-docker.log`.
 
 | Final Docker group | Tests | Failures | Errors | Skipped |
 |---|---:|---:|---:|---:|
@@ -94,7 +94,7 @@ Opt-in SessionMySqlIntegrationTest uses PASPM_SESSION_MYSQL_URL / USER / PASSWOR
 
 ## Final Maven verify
 
-Final source `mvn verify` exit 0: **578 discovered, 388 PASS, 190 SKIPPED, zero failures/errors**. Backend Java 17.0.21 (Corretto), external SPMF Java 25.0.1 (Homebrew); pinned local JAR SHA-256 `4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a`. Private final log: `/private/tmp/session-delivery-verify.log`.
+Final source `mvn verify` exit 0: **578 discovered, 388 PASS, 190 SKIPPED, zero failures/errors**. Backend Java 17.0.21 (Corretto), external SPMF Java 25.0.1 (Homebrew); pinned local JAR SHA-256 `4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a`. Private final log: `<temporary-dir>/session-delivery-verify.log`.
 
 Independent post-change Docker group: **27 PASS, zero skips/failures/errors**. Of the 190 default-skipped tests, 23 were executed successfully in this independent group (SessionMySql 11, JPA migration 4, mining migration 5, recommendation migration 2, Flyway MySQL recovery 1). The remaining 167 were not rerun by this task. They include other opt-in MySQL suites, Linux-only parent-death process verification, multi-JVM/container scheduler tests and historical release-artifact checks; no claim of their passing is made. Full per-suite counts: [test evidence](F01_SESSION_TEST_COUNTS.json).
 

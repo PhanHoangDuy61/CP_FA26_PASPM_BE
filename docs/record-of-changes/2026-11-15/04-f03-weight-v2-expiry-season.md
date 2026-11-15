@@ -54,7 +54,7 @@ Implemented as `WeightV2Conversion` (rule id `OWNER_2026_11_15_V1`) called by V2
 
 See the Checkpoint 2 report in the session for the per-phase list. Documentation: [F03 README](../../features/F03/README.md), [F05 README](../../features/F05/README.md), [F06 README](../../features/F06/README.md), [F03 API](../../api/F03_UTILITY_API.md), [F02 API](../../api/F02_PRODUCT_INVENTORY_API.md), [F05 API](../../api/F05_MINING_API.md), [F06 API](../../api/F06_RECOMMENDATION_API.md), [RBAC matrix](../../api/F01_F02_RBAC_MATRIX.md), [API changelog](../../api/API_CHANGELOG.md), [OpenAPI](../../api/openapi.json), [W2 breaking changes](../../frontend_handoff/F03_W2_BREAKING_CHANGES.md), [schema/ERD notes](../../architecture/F03_W2_SCHEMA_V24_V25.md).
 
-## 5. Verification (all local, macOS, Java 17 backend, disposable MySQL 8.4.13; logs in `/private/tmp/paspm-phase2-optin/`, not published)
+## 5. Verification (all local, macOS, Java 17 backend, disposable MySQL 8.4.13; logs in `<evidence-dir>/`, not published)
 
 | Run | Scope | Result | Counted |
 |---|---|---|---|

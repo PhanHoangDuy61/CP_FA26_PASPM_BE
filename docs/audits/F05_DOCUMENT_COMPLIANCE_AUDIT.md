@@ -10,7 +10,7 @@
 
 ## A. Executive Summary
 
-The supplied original document at /Users/khoinm/Downloads/Copy of FA26_SE048.docx was available and inspected. Its project requirements call for working HUI-Miner and EFIM, a mining API, a comparison using runtime and RAM, multiple minUtil experiments, public datasets, and raw high-utility patterns for later recommendation logic. It also proposes recurring scheduled mining. Its older React/ASP.NET architecture is not treated as a failure: the current approved backend is Spring Boot.
+The supplied original document at <reference-dir>/Copy of FA26_SE048.docx was available and inspected. Its project requirements call for working HUI-Miner and EFIM, a mining API, a comparison using runtime and RAM, multiple minUtil experiments, public datasets, and raw high-utility patterns for later recommendation logic. It also proposes recurring scheduled mining. Its older React/ASP.NET architecture is not treated as a failure: the current approved backend is Spring Boot.
 
 1. **What library does F05 use?** SPMF, through an external Java process.
 2. **Does it use spmf.jar?** Yes. The local test runtime uses the workspace sibling file spmf_run/spmf.jar. Production configuration expects a trusted external absolute JAR path; the JAR is not in Maven, the BE Git repository, or the packaged application.
@@ -54,7 +54,7 @@ No F06 rule engine or final bundle/layout consumer was found in the code graph o
 ## D. SPMF Dependency Findings
 
 - **Integration type:** External SPMF JAR through ProcessBuilder. No direct SPMF Java imports and no SPMF Maven dependency appear in pom.xml.
-- **Local JAR actually exercised:** /Users/khoinm/Desktop/khoi/fpt/ki9/FA26SE048_HUPAS/spmf_run/spmf.jar. MiningIntegrationTest configures that sibling path for tests. The file is outside the BE Git repository and is not bundled into the backend artifact.
+- **Local JAR actually exercised:** <project-folder>/spmf_run/spmf.jar. MiningIntegrationTest configures that sibling path for tests. The file is outside the BE Git repository and is not bundled into the backend artifact.
 - **Version and pin:** Source labels it SPMF_2.67a and pins SHA-256 4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a. The current file's SHA-256 matched. The actual classes ca/pfv/spmf/algorithms/frequentpatterns/hui_miner/AlgoHUIMiner.class, ca/pfv/spmf/algorithms/frequentpatterns/efim/AlgoEFIM.class, and ca/pfv/spmf/gui/Main.class have Java class major version 69, requiring Java 25.
 - **Origin:** The sibling spmf_run/README.md says the JAR was downloaded from SPMF's official download page. The local file matches the application's pinned hash and its output carries the SPMF source banner. The downloaded file itself has no separately verified upstream signature/checksum in this repository, so chain-of-custody from the upstream publisher is not independently authenticated.
 - **Runtime configuration:** SpmfMiningEngine reads paspm.mining.spmf-jar and paspm.mining.java-executable. The application defaults the JAR path to empty and returns 503 until a trusted absolute JAR and executable are configured. The Java executable defaults to the backend JVM's java.home. Therefore, running the backend on Java 17 requires a separately configured Java 25 child executable; Java 17 cannot load this binary.
@@ -226,7 +226,7 @@ No code was changed during this audit. The following changes need approval befor
 
 ## J. Files and Evidence Referenced
 
-- Original requirements: /Users/khoinm/Downloads/Copy of FA26_SE048.docx (read directly for this audit).
+- Original requirements: <reference-dir>/Copy of FA26_SE048.docx (read directly for this audit).
 - F05 source: src/main/java/vn/edu/fpt/paspm/mining/MiningController.java, MiningService.java, MiningInputBuilder.java, MiningWorker.java, MiningEngine.java, SpmfMiningEngine.java, MiningRepository.java.
 - F03 source: src/main/java/vn/edu/fpt/paspm/utility/UtilitySnapshotService.java and UtilitySnapshotRepository.java.
 - Migrations: src/main/resources/db/migration/V7__f04_transaction_import_pipeline.sql and V9__f05_mining_engine.sql.

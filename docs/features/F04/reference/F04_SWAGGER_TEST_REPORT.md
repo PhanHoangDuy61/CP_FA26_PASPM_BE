@@ -17,7 +17,7 @@ The complete authenticated upload/readback flow and F04 endpoint-by-endpoint Swa
 
 ## Automated verification
 
-Final command `mvn -q -Dpaspm.avatar.directory=/private/tmp/paspm-f04-test-avatars verify` completed successfully. Surefire reports contain 73 tests across 12 suites, with 0 failures, 0 errors and 0 skipped. F04 coverage is 19 passing tests: CSV parser 5, order validator 5, database adapter 2, schema/migration 1 and MockMvc integration 6. The integration suite checks persisted staging rows, all-or-nothing order rejection, idempotency/content conflicts, inventory unchanged, F03 adapter values, authorization and Store isolation. Flyway applied all seven migrations on clean H2 databases.
+Final command `mvn -q -Dpaspm.avatar.directory=<temporary-dir>/paspm-f04-test-avatars verify` completed successfully. Surefire reports contain 73 tests across 12 suites, with 0 failures, 0 errors and 0 skipped. F04 coverage is 19 passing tests: CSV parser 5, order validator 5, database adapter 2, schema/migration 1 and MockMvc integration 6. The integration suite checks persisted staging rows, all-or-nothing order rejection, idempotency/content conflicts, inventory unchanged, F03 adapter values, authorization and Store isolation. Flyway applied all seven migrations on clean H2 databases.
 
 An OpenAPI regression test first failed because SpringDoc described the upload as JSON. The controller was corrected to declare `multipart/form-data` and use `@RequestPart`; the regression test then passed. `git diff --check` also completed without output.
 

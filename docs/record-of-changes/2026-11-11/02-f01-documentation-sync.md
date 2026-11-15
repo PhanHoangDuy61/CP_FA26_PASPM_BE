@@ -52,7 +52,7 @@ Bằng chứng phiên trước: Maven verify 388 PASS / 190 SKIPPED; Docker grou
 | `git diff --check` | Exit 0 |
 | Maven / MySQL / browser / hosted CI / Swagger Execute | NOT RUN trong phiên docs; dùng các evidence có ngày của phiên implementation |
 
-Validator cục bộ: `/private/tmp/paspm-validate-f01-docs.py` (không cần file tạm này để đọc/sử dụng tài liệu). Baseline hash không chứa nội dung source hoặc secrets. Các link mới được kiểm tra anchor; kiểm tra mọi đích file trong tập 21 tài liệu. Không coi kiểm tra JSON tĩnh là một lần gọi runtime mới.
+Validator cục bộ: `<temporary-dir>/paspm-validate-f01-docs.py` (không cần file tạm này để đọc/sử dụng tài liệu). Baseline hash không chứa nội dung source hoặc secrets. Các link mới được kiểm tra anchor; kiểm tra mọi đích file trong tập 21 tài liệu. Không coi kiểm tra JSON tĩnh là một lần gọi runtime mới.
 
 ## Giới hạn và việc tiếp theo
 

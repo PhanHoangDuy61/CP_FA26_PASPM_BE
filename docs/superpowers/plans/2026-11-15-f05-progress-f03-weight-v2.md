@@ -29,7 +29,7 @@
 - [x] Run Java 17 baseline with the two SPMF properties used by scripts/verify-option-b-macos.sh.
 - [x] Investigate two migration-test failures caused by stale fixed migration counts. Replace counts with verified pending migration counts, retain data/checksum assertions and verify V21 explicitly.
 - [x] Full merge-candidate verify: 609 total / 411 pass / 0 fail / 198 skipped. Merge 8f94f94 pushed to dev and confirmed by ls-remote.
-- [x] Created Khoi/feat/f05-progress-f03-weight-v2 from origin/dev at 8f94f94 in /private/tmp/paspm-f05-progress-weight-v2.
+- [x] Created Khoi/feat/f05-progress-f03-weight-v2 from origin/dev at 8f94f94 in <worktree>.
 - Proposed next migrations: V24__f05_mining_progress.sql, V25__f03_two_component_weight.sql. Recheck availability before writing.
 - The old verification shell script has hardcoded V19/V12 history expectations. Its Maven baseline command is reused; its outdated Flyway summary is not evidence for V23.
 

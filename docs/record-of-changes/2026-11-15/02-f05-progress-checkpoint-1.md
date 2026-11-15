@@ -60,7 +60,7 @@ Only the F07/F08 merge was committed/pushed. F05 changes must remain local until
 - Compared with the merged baseline (609 / 411 pass / 198 skipped): +12 discovered = four new mining cases in H2 and their four opt-in MySQL inherited cases, two closed-gate tests, one H2 migration and one opt-in MySQL migration. Net +7 default PASS, +5 default skipped. Of 203 default skipped tests, 32 were independently executed in the MySQL group; **171 remain NOT RUN** in this session. The other H2 migration in that group also appears in default verification and is not an additional unique test.
 - The final full run completed 2026-11-15 11:22:46 Asia/Ho_Chi_Minh. The earlier successful full run was followed by a snapshot-validation ordering change and is not the final-source result.
 - Runtime Springdoc export regenerated through MockMvc: **98 paths / 116 operations**. Assertions verify both progress routes, the active Store POST body and still-forbidden benchmark. This is not an interactive Swagger UI test.
-- Java 17 Maven command: `mvn --batch-mode --no-transfer-progress clean verify -Dpaspm.test.spmf-java=/opt/homebrew/opt/openjdk@25/bin/java -Dpaspm.test.spmf-jar=/Users/khoinm/Desktop/khoi/fpt/ki9/FA26SE048_HUPAS/spmf_run/spmf.jar -Dlogging.level.root=ERROR -Dpaspm.test.openapi-export=/private/tmp/paspm-progress-openapi.json` with JAVA_HOME pointing at the verified temporary Corretto 17 installation. Paths are execution provenance, not portable setup requirements.
+- Java 17 Maven command: `mvn --batch-mode --no-transfer-progress clean verify -Dpaspm.test.spmf-java=/opt/homebrew/opt/openjdk@25/bin/java -Dpaspm.test.spmf-jar=<project-folder>/spmf_run/spmf.jar -Dlogging.level.root=ERROR -Dpaspm.test.openapi-export=<temporary-dir>/paspm-progress-openapi.json` with JAVA_HOME pointing at the verified temporary Corretto 17 installation. Paths are execution provenance, not portable setup requirements.
 - MySQL command: same Java/SPMF flags, `test -Dtest=MiningMySqlIntegrationTest,MiningDispatchLeaseMySqlTest,MiningProgressMigrationTest -Dpaspm.test.mysql=true`; `PASPM_TEST_MYSQL_SERVER=jdbc:mysql://127.0.0.1:59019/`, root with empty disposable-container password, `PASPM_CI_DISPOSABLE_MYSQL=true`. That port belonged exclusively to container `paspm-progress-v24-20261115` created in this session.
 - `git diff --check` passed. Existing migrations compare unchanged against base 8f94f94. No tracked source changes in the original BE checkout; its pre-existing documentation changes remain preserved.
 - Native Linux/multi-container fault injection, all remaining opt-in suites, hosted CI, interactive Swagger UI, Frontend and production startup are **NOT RUN** here. Do not infer overall production/merge readiness from this checkpoint.
@@ -73,7 +73,7 @@ Suggested messages after approval:
 2. `feat(f05): allow scoped merchandiser submissions under system policy`
 3. `docs(f05): synchronize progress contracts and checkpoint evidence`
 
-The code is in `/private/tmp/paspm-f05-progress-weight-v2`, not the original BE working directory, to preserve that directory's uncommitted documentation.
+The code is in `<worktree>`, not the original BE working directory, to preserve that directory's uncommitted documentation.
 
 Final source/test tree SHA-256: `4f74681875083f373bb92ae01c89ae397766ba283237c49d6400f3501e1e8252`.
 
@@ -95,7 +95,7 @@ Final source/test tree SHA-256: `4f74681875083f373bb92ae01c89ae397766ba283237c49
 | `paspm-progress-mysql-final` | 33 | 33 | 0 | 0 | 0 |
 | `paspm-progress-final3-verify` | 621 | 418 | 0 | 0 | 203 |
 
-Raw logs remain local under `/private/tmp/`; failed HTTP-test logs may contain synthetic test tokens and are not published as documentation. The first final-MySQL attempt was rejected before execution by an automatic-approval usage limit; after the owner said continue, the retried approval succeeded and the final run above executed.
+Raw logs remain local under `<temporary-dir>/`; failed HTTP-test logs may contain synthetic test tokens and are not published as documentation. The first final-MySQL attempt was rejected before execution by an automatic-approval usage limit; after the owner said continue, the retried approval succeeded and the final run above executed.
 
 ## Changed files at Checkpoint 1
 

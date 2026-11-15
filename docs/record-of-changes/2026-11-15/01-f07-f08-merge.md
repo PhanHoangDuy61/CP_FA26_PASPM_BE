@@ -24,7 +24,7 @@ Merge the existing F07/F08 implementation and additive V23. Existing migration f
 - Command: `mvn --batch-mode --no-transfer-progress clean verify -Dpaspm.test.spmf-java=<Java25>/bin/java -Dpaspm.test.spmf-jar=<approved-spmf.jar> -Dlogging.level.root=ERROR`, JAVA_HOME=Corretto 17.0.21.
 - SPMF banner 2.67a and SHA-256 4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a verified.
 - H2 disposable databases only; MySQL and other opt-in suites NOT RUN. No claim of complete MySQL/Linux/scheduler acceptance or hosted CI success.
-- Initial/final logs retained locally in /private/tmp/paspm-f07-merge-baseline.log and /private/tmp/paspm-f07-merge-verify.log.
+- Initial/final logs retained locally in <temporary-dir>/paspm-f07-merge-baseline.log and <temporary-dir>/paspm-f07-merge-verify.log.
 
 ## Compatibility and preservation
 No F03 formula, F05 submission RBAC, scheduler flag, frozen data, or Word report changed by this merge. Existing BE uncommitted documentation remains untouched.

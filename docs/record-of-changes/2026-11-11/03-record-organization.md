@@ -72,7 +72,7 @@ Không đổi API/DTO/RBAC, source, migration, OpenAPI hoặc dữ liệu lịch
 | `git diff --check` | Exit 0 |
 | Maven / MySQL / browser / CI | NOT RUN — không cần chạy lại cho thao tác docs-only |
 
-Lệnh validator thực tế: `python3 /private/tmp/paspm-validate-record-layout.py`; script tạm chỉ phục vụ kiểm tra phiên này, không phải dependency của nhật ký.
+Lệnh validator thực tế: `python3 <temporary-dir>/paspm-validate-record-layout.py`; script tạm chỉ phục vụ kiểm tra phiên này, không phải dependency của nhật ký.
 
 ## 6. Previous evidence referenced
 

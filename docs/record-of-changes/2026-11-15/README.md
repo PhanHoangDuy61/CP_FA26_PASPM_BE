@@ -59,7 +59,7 @@ P2–P6 vẫn được ghi là **assumption pending owner confirmation**, chưa 
 ## Delivery và vị trí code
 
 - F07/F08: đã merge/push riêng lên dev tại `8f94f94`; không deploy.
-- F05: nhánh `Khoi/feat/f05-progress-f03-weight-v2`, worktree `/private/tmp/paspm-f05-progress-weight-v2`; hai source commit local `3bdfee3`, `bd60c75`; docs được commit riêng theo phê duyệt Checkpoint 1. Chưa push.
+- F05: nhánh `Khoi/feat/f05-progress-f03-weight-v2`, worktree `<worktree>`; hai source commit local `3bdfee3`, `bd60c75`; docs được commit riêng theo phê duyệt Checkpoint 1. Chưa push.
 - Theo yêu cầu cập nhật docs, bản ghi ngày này được đồng bộ vào `BE/docs/record-of-changes/2026-11-15/` để đọc từ workspace chính. **Sao chép record không có nghĩa code F05 đã được đưa vào checkout BE.** Các thay đổi docs ngày 14/11 được giữ nguyên.
 - Lượt cập nhật record này chỉ chỉnh tài liệu, kiểm tra JSON/link và đối chiếu bản sao; không chạy lại Maven/MySQL.
 - Checkpoint 1 đã được duyệt. Gate opt-in đã đạt: 627 PASS trong full verify + 5 PASS riêng trên dữ liệu JPA giả lập; xem record 03. Được phép tạo ba commit local, sau đó tiếp tục Phase 2; không push/merge/deploy phần mới.

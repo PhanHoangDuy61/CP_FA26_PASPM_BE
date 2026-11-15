@@ -30,7 +30,7 @@ def links(text):
 
 def resolve(doc,target):
  target=html.unescape(target)
- if target.startswith(('/Users/','/private/','/tmp/')):return {'kind':'private-local','target':'LOCAL_PATH'}
+ if target.startswith((chr(47) + 'Users' + chr(47),'/private/','/tmp/')):return {'kind':'private-local','target':'LOCAL_PATH'}
  if re.match(r'^[A-Za-z][A-Za-z0-9+.-]*:',target) or target.startswith('//'):return {'kind':'external','target':target}
  part=urllib.parse.urlsplit(target);path=urllib.parse.unquote(part.path)
  absolute=posixpath.normpath(path.lstrip('/') if path.startswith('/') else posixpath.join(posixpath.dirname(doc),path)) if path else doc

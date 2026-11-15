@@ -30,7 +30,7 @@ Focused migration retest: 11 executed, 11 PASS, 0 FAIL/ERROR/SKIP; BUILD SUCCESS
 
 A second full rerun is IN_PROGRESS, supervised independently with an explicit final exit-code/status file. At that point no Phase 2 code or local commits had started.
 
-Raw logs remain in /private/tmp/paspm-phase2-optin and may include synthetic credentials; do not publish them. Only sanitized counts, test identities and relevant failure categories belong in this record.
+Raw logs remain in <evidence-dir> and may include synthetic credentials; do not publish them. Only sanitized counts, test identities and relevant failure categories belong in this record.
 
 ## Pending owner clarification for Phase 3
 The conversion from the live three-component configuration to the new two-component configuration needs an explicit decision. Proposed: retain lambda, normalize enabled legacy expiry/season coefficients, use 0.5/0.5 if both are zero or config is absent, default N=30, increment version. Owner has been asked; this proposal is NOT approval. Frozen configurations will never be rewritten. Independent verification continues.
