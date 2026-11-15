@@ -20,6 +20,12 @@ public final class MiningContracts {
         @ArraySchema(minItems=1,maxItems=2,uniqueItems=true,schema=@Schema(implementation=Algorithm.class)) @NotEmpty @Size(min=1,max=2) List<@NotNull Algorithm> algorithms,
         @NotNull MinUtilMode minUtilMode,
         @Schema(description="Positive value, at most 6 decimal places; PERCENTAGE in (0,100], ABSOLUTE in frozen weighted utility units",example="30") @NotNull @DecimalMin(value="0",inclusive=false) @Digits(integer=24,fraction=6) BigDecimal minUtilValue) {}
+    public record ProgressView(long requestId,int storeId,String status,String stage,
+        @Schema(types={"string","null"},format="date-time") Instant stageStartedAt,
+        @Schema(types={"integer","null"},format="int64") Long currentRunId,
+        @Schema(types={"string","null"}) String algorithm,long attemptNo,int completedSteps,int totalSteps,int percent,
+        @Schema(types={"integer","null"},format="int64") Long elapsedMs,
+        @Schema(types={"integer","null"},format="int64") Long timeoutMs,String comparisonStatus) {}
     public record Page<T>(List<T> items,int page,int pageSize,long totalElements) {}
     public record RequestView(long requestId,int storeId,int requestedBy,UUID requestKey,int snapshotId,
         List<MiningEngine.Algorithm> algorithms,MinUtilMode minUtilMode,BigDecimal minUtilValue,

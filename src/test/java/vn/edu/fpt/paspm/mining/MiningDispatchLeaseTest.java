@@ -13,7 +13,7 @@ class MiningDispatchLeaseTest {
     @BeforeEach void setup(){
         var ds=new DriverManagerDataSource("jdbc:h2:mem:"+UUID.randomUUID()+";MODE=MySQL;DB_CLOSE_DELAY=-1","sa","");
         jdbc=new JdbcTemplate(ds);
-        jdbc.execute("CREATE TABLE mining_request(request_id BIGINT PRIMARY KEY,store_id INT NOT NULL,status VARCHAR(12) NOT NULL,lease_owner VARCHAR(36),lease_fence BIGINT NOT NULL DEFAULT 0,lease_until TIMESTAMP NULL)");
+        jdbc.execute("CREATE TABLE mining_request(request_id BIGINT PRIMARY KEY,store_id INT NOT NULL,status VARCHAR(12) NOT NULL,stage VARCHAR(16) DEFAULT 'LEGACY',stage_started_at TIMESTAMP NULL,current_run_id BIGINT NULL,lease_owner VARCHAR(36),lease_fence BIGINT NOT NULL DEFAULT 0,lease_until TIMESTAMP NULL)");
         jdbc.execute("CREATE TABLE output_rows(request_id BIGINT NOT NULL, output_value VARCHAR(20))");
         jdbc.update("INSERT INTO mining_request(request_id,store_id,status) VALUES(10,1,'PENDING')");
         leases=new MiningDispatchLease(jdbc,new DataSourceTransactionManager(ds));
@@ -26,6 +26,10 @@ class MiningDispatchLeaseTest {
         var second=leases.claim(1,10,"owner-b",60).orElseThrow();
         assertTrue(second.fence()>first.fence());
         assertFalse(leases.renew(first,60));
+        assertThrows(IllegalStateException.class,()->leases.stage(first,"RUNNING",1L));
+        assertEquals("QUEUED",jdbc.queryForObject("SELECT stage FROM mining_request WHERE request_id=10",String.class));
+        leases.stage(second,"RUNNING",1L);
+        assertEquals("RUNNING",jdbc.queryForObject("SELECT stage FROM mining_request WHERE request_id=10",String.class));
         assertThrows(IllegalStateException.class,()->leases.finish(first,()->jdbc.update("INSERT INTO output_rows VALUES(10,'stale')")));
         assertEquals(0,jdbc.queryForObject("SELECT COUNT(*) FROM output_rows",Integer.class));
         leases.finish(second,()->jdbc.update("INSERT INTO output_rows VALUES(10,'valid')"));
