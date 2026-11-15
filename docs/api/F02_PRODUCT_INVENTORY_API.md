@@ -1,5 +1,7 @@
 # F02 Product and Inventory API Contract
 
+> **2026-11-15 (branch `Khoi/feat/f05-progress-f03-weight-v2`):** batches accept `pushDay` and Product `expiryPushDays` is **deprecated, ignored by calculation** (P5) — see the section at the end. Statements below that call `expiryPushDays` the F03 threshold are **legacy (v1.2)**.
+
 ## v1.2 Product expiry priority update (2026-10-19)
 
 The existing Product POST/PUT request accepts optional `expiryPushDays: integer|null`; absent/null is stored as0, values must be >=0, and fractional/string/boolean values are rejected400. Full PUT must send the desired threshold (omitting resets it to0). Product GET/list/create/update/status responses include `expiryPushDays: integer`. Store Admin owns this field in their Store; Merchandiser and System Admin cannot modify it through F02, and cross-Store records return404. No duplicate configuration endpoint was added. `requiresExpiry=false` remains NOT_APPLICABLE in F03 even if a threshold is configured. Inventory quantities are unchanged by threshold updates.
@@ -61,7 +63,7 @@ SKU is unique per Store (database constraint); same SKU may exist in another Sto
 
 ## F02 / F03 ownership
 
-F02 Product create/update owns `expiryPushDays`, `requiresExpiry`, SKU, category, unit, prices, and Product status. F02 batch APIs own batch expiry and quantities. `stockQuantity` is derived and cannot be edited. The F03 API owns `stock_priority_score` and `seasonal_priority_score` through `/api/utility/products/{productId}/scores`; ProductRequest does not accept these fields. F03 derives expiry priority using inventory batches and a fixed analysis date. Do not add F03 score fields to F02 Product forms/contracts.
+F02 Product create/update owns `expiryPushDays` (legacy, ignored since 2026-11-15), `requiresExpiry`, SKU, category, unit, prices, and Product status. F02 batch APIs own batch expiry and quantities. `stockQuantity` is derived and cannot be edited. The F03 API owns `stock_priority_score` and `seasonal_priority_score` through `/api/utility/products/{productId}/scores`; ProductRequest does not accept these fields. F03 derives expiry priority using inventory batches and a fixed analysis date. Do not add F03 score fields to F02 Product forms/contracts.
 
 ## Request and response examples
 

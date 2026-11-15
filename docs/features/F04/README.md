@@ -37,7 +37,7 @@ Async upload → save `importBatchId` → poll store-scoped progress until `COMP
 `api_connection`, `import_batch`, `sales_transaction`, `transaction_item`, `import_staging_row` (V7); V12 `f04_preserve_large_raw_import_rows`; V22 `f04_async_transaction_imports` adds async status, idempotency, progress and lease/result fields. Existing migrations are not modified. `api_connection` exists in the schema but no API uses it.
 
 ## 8. Dependencies
-F01 (role, Store), F02 (SKU resolution). Feeds F03 (and through it F05, F06 evidence).
+F01 (role, Store), F02 (SKU resolution). Feeds F03 (base utility and, since 2026-11-15, the sales rate v(i) over N days: `utility/WeightV2Calculator.java:30`, `utility/UtilityProductRepository.java:34`) and through it F05, F06 evidence.
 
 F01 session reconciliation (2026-11-12, dev V20 retained + additive V21): browser import/query calls continue using Bearer and existing Store authorization. No change to transaction history, file parsing, idempotency or rollback semantics. See [shared session impact and evidence](../F01/F01_SESSION_MANAGEMENT.md#5-tác-động-tới-feature-khác).
 

@@ -32,3 +32,7 @@ Suggested screens:
 ## Simulation interpretation
 
 The simulator replays historical completed, F03-eligible transactions strictly after the selected snapshot's training date range and excludes training transaction IDs. It retains equal-content baskets with distinct transaction IDs. Hit rate, BUNDLE-only conversion, and captured utility use the formulas and sample sizes in the [API contract](../api/F07_F08_LAYOUT_CAMPAIGN_API.md). Priority coverage is not calculated and is returned as null pending the F03 definition. This is not a real-user A/B test and does not establish causal impact or forecast revenue/profit.
+
+## 2026-11-15 — F03 Weight v2 and priority coverage
+
+`priorityCoverage` and `priorityCoverageDenominator` are still always `null`: the report row is inserted with `NULL,NULL` (`src/main/java/vn/edu/fpt/paspm/layout/LayoutCampaignRepository.java:344-345`) and the stored assumption reads "N/A until the F03 priority coverage formula is confirmed" (`layout/LayoutCampaignService.java:267`). The intended definition "priority item = W(i) > 1" (F03 Weight v2) is **not wired**; no F07/F08 code reads W. F07/F08 routes and bodies did not change on branch `Khoi/feat/f05-progress-f03-weight-v2`.

@@ -1,5 +1,7 @@
 # F06 — Báo cáo triển khai Recommendation Engine v1.1
 
+> **Historical (dated). 2026-11-15:** the expiry-push and eligibility rules based on `Product.expiryPushDays` are superseded by batch push days and `EligibilityV2`; see [F06 README — current status](README.md).
+
 **Trạng thái: Backend API + Swagger đã hoàn tất và kiểm chứng.** Nhánh `Khoi/Fear/F06-recommendation-engine`, tách từ `dev` tại `3f6faaa`. Policy package được người dùng duyệt ngày 2026-10-20. Chưa push hoặc merge vào dev trong công việc này.
 
 ## A. Implementation matrix

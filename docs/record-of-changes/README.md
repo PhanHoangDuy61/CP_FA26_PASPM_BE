@@ -22,7 +22,7 @@ ID ngày: `ROC-YYYYMMDD`; ID phiên: `ROC-YYYYMMDD-NNN`. File phiên dùng số 
 |---|---|---:|---|---|
 | 2026-11-11 / Asia/Ho_Chi_Minh | [ROC-20261111 — thay đổi hôm nay](2026-11-11/README.md) | 4 | F01 implementation, docs F01–F06, record và publication | FEATURE_BRANCH — đã push; merge chờ reconciliation |
 | 2026-11-12 / Asia/Ho_Chi_Minh | [ROC-20261112 — dev reconciliation](2026-11-12/README.md) | 1 | Giữ dev V20, tích hợp V21 và security, verification/Git | MERGED_TO_DEV — code7304e29 pushed; không deploy |
-| 2026-11-15 / Asia/Ho_Chi_Minh | [ROC-20261115 — F07/F08, F05 Checkpoint 1, F03 Weight v2](2026-11-15/README.md) | 4 | Merge F07/F08; mining progress, Merchandiser submit, kế hoạch F03 | F07/F08 MERGED_TO_DEV; F05 UNRELEASED — chờ duyệt Checkpoint 1 |
+| 2026-11-15 / Asia/Ho_Chi_Minh | [ROC-20261115 — F07/F08, F05 Checkpoint 1, F03 Weight v2, docs sync](2026-11-15/README.md) | 5 | Merge F07/F08; mining progress, Merchandiser submit; F03 Weight v2 (V25) and consumers; docs sync | F07/F08 MERGED_TO_DEV; F05 + F03 W2 COMMITTED local (5 commits, not pushed); docs sync 005 uncommitted |
 
 Bản ghi implementation 01 được tổng hợp từ source và bằng chứng thực thi phiên trước; không phải lượt kiểm thử mới. Chưa có hồ sơ đầy đủ cho các ngày cũ hơn; không suy diễn lịch sử từ tên branch hoặc kết quả chưa xác minh.
 

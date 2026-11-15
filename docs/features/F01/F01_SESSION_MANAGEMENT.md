@@ -41,7 +41,7 @@ This upgrade applies to **published dev V20**, not the competing local V20 (diff
 | Feature | Authentication impact | Unchanged |
 |---|---|---|
 | F02 | Valid Bearer, role and StoreScope remain required; Customer gets no catalog access | Product/category/inventory business rules and persistence |
-| F03 | Revoked sessions cannot read/write protected utility APIs | Calculation, expiryPushDays, immutable historical snapshots |
+| F03 | Revoked sessions cannot read/write protected utility APIs | Calculation (W2 since 2026-11-15; `expiryPushDays` is legacy), immutable historical snapshots |
 | F04 | Imports and reads retain role/Store authorization | Parsing, idempotency, transaction rollback/history |
 | F05 | HTTP routes use active sessions; internal machine execution does not use browser cookies | Scheduler policies/gates, leases/fencing, mining configuration |
 | F06 | Same Store/role checks for read/generate/review/config | Rule engine, frozen evidence, live inventory checks |

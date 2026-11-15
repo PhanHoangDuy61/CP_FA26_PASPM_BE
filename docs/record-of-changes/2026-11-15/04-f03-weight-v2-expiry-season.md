@@ -92,3 +92,31 @@ SELECT snapshot_id, JSON_EXTRACT(config_snapshot,'$.config.scoringVersion') v FR
 ## 7. Report changes needed (Word reports not edited)
 
 Listed in the Checkpoint 2 report: SRS BR-05, §3.4, mining use cases and screen authorization table; Report 1 roles; Report 4 §4.1 (formula, 1.115 → 1.12, who runs mining).
+
+## Addendum 2026-11-15 (ROC-20261115-005, docs sync) — commits, deploy checklist, report changes
+
+| Item | Value |
+|---|---|
+| Commits (local, owner-approved at Checkpoint 2, not pushed) | `e38b55f` feat(f03): Weight v2 (FEFO expiry + seasons), versioned readers, V25 conversion; F02 pushDay; F05/F06 consumers · `c8c837a` docs(f03,f05,f06): document Weight v2, season API, breaking changes and gate evidence |
+| Fingerprint | commit `e38b55f` tree (`pom.xml` + `src/**`, 282 files) = phase6c gate fingerprint `8ada1b722bfaefbf139762be71df86523f4850c02fd7142e92747b95080f8cf6` |
+| Migration | V25 `src/main/java/db/migration/V25__f03_weight_v2_expiry_season.java` |
+| Counted verification | phase6c gate **645 tests, 640 PASS, 0 FAIL, 0 ERROR, 5 SKIP**, exit 0; JPA supplementary **5/5** |
+| Not counted | listed in §5 (contaminated, aborted, MySQL disk full, fingerprint test fix, JPA switch missing) |
+| Fixture change | `EXPIRY_LINEAR_V1` → `F03_LINEAR_V1` approved by the owner at Checkpoint 2 ([DEC-20261115-11](../../decisions/2026-11-15/DEC-20261115-11-expiry-linear-fixture-change.md)) |
+| Container | `paspm-phase6-gate-20261115` stopped and removed after the commits (synthetic data only) |
+| NOT RUN | Linux SPMF orphan cleanup (macOS evidence only), GitHub CI (including the `integration` job, which needs `PASPM_CI_SPMF_ARTIFACT_URL`), interactive Swagger UI, real-data conversion/clone, Windows, Frontend |
+
+"Phases 2–6 are uncommitted" in the header table was true at the time of writing.
+
+### Before deploy (checklist, none done)
+- [ ] Run the read-only `scoringVersion` query of §6 on every real database (snapshots, `mining_request.utility_config_snapshot`, `store.utility_config`); any value outside `F03_LINEAR_V1`, `EXPIRY_PRODUCT_EARLIEST_BATCH_BINARY_V1`, `W2_EXPIRY_SEASON_V1` would be rejected on read.
+- [ ] Stop **all** old backend instances before V25 runs; a rolling upgrade with old and new instances was **not tested** (old `WeightConfig` reader cannot read W2 configs).
+- [ ] Back up, run V25, then read `utility_weight_v2_conversion` (λ clamped, defaults applied) and keep it as conversion evidence.
+- [ ] Store Admins enter batch push days; until then every batch only warns `MISSING_PUSH_DAY` and U_expiry ignores it.
+- [ ] Release the Frontend together with the backend (14 breaking changes, [list](../../frontend_handoff/F03_W2_BREAKING_CHANGES.md)).
+- [ ] GitHub CI `integration` job: set `PASPM_CI_SPMF_ARTIFACT_URL` (not run in this work).
+
+### Report changes needed (Word reports not edited here)
+- SRS: BR-05 (Merchandiser submits mining for its own Store with the System Admin configuration), §3.4 (W2 formula, λ ∈ [0, λ_max], α + β = 1, 2-dp rounding, FEFO U_expiry, seasons, push day per batch), mining use cases (Merchandiser as submitter), screen authorization table (season screens, batch push day, Merchandiser mining submit; removed score editor and expiry window).
+- Report 1: roles — System Admin sets λ_max and the mining configuration; Merchandiser sets α, β, λ, N, seasons and runs mining for its Store; Store Admin enters push days.
+- Report 4 §4.1: λ owner (System Admin sets only λ_max; Merchandiser picks λ), M from Store seasons instead of a per-product score, the worked example 1.115 → **1.12**, who runs mining.

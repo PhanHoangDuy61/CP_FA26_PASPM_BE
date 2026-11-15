@@ -72,6 +72,8 @@ interface RecTransactionEvidence {
   supportRatio: Decimal | null; anchorSupportCount: Int32 | null;
   confidence: Decimal | null; status: string;
 }
+// Legacy shape (stored before 2026-11-15). Current/new eligibility uses ProductEligibilityV2 without expiryPushDays
+// (src/main/java/vn/edu/fpt/paspm/recommendation/RecommendationVersionedContracts.java:14); see the 2026-11-15 section below.
 interface RecProductEligibility {
   productId: Int32; productStatus: string; sellableQuantity: Int64;
   status: EligibilityStatus; expiryPriorityScore: Decimal | null;
@@ -117,6 +119,8 @@ interface RecPage {
   items: RecView[]; page: Int32; pageSize: Int32; totalElements: Int64;
   ordering: string;
 }
+// Legacy shape (until 2026-11-15). Current: { productId, batchId, pushDay, expiryDate, daysToPush, remainingQuantity,
+// pushRequired, checkedAt, warnings } (src/main/java/vn/edu/fpt/paspm/recommendation/RecommendationExpiryService.java:23).
 interface RecExpiryBatch {
   productId: Int32; batchId: Int32; expiryDate: ISODate;
   daysRemaining: Int64; remainingQuantity: Int64; expiryPushDays: Int32;
@@ -150,7 +154,7 @@ Generation captures generationEligibility. GET list/detail rechecks currentEligi
 
 `inventoryChanged` compares fingerprints (date, captured minimum quantity and Product/batch metadata); it does not mean stock alone changed and can become true on a date rollover. `checkedAt`, `asOfDate`, and `timeZone` describe the live check. Display old and current checks separately. Historical utility/evidence remain frozen.
 
-Independent expiry-push needs no snapshot or mining run. Product `expiryPushDays` T defaults to 0 with no Store fallback; T=0 disables push. Only expiry-required active Products and active positive, dated, still-sellable batches qualify; `0 < daysRemaining <= T`. Order: expiryDate, productId, batchId ascending. Page warnings can flag missing metadata even when no push row appears. An expiry alert neither guarantees mining pattern inclusion nor approves a recommendation.
+**Legacy rule (superseded 2026-11-15 by batch push days, see below):** Independent expiry-push needs no snapshot or mining run. Product `expiryPushDays` T defaults to 0 with no Store fallback; T=0 disables push. Only expiry-required active Products and active positive, dated, still-sellable batches qualify; `0 < daysRemaining <= T`. Order: expiryDate, productId, batchId ascending. Page warnings can flag missing metadata even when no push row appears. An expiry alert neither guarantees mining pattern inclusion nor approves a recommendation.
 
 ## Review, concurrency and downstream safety
 

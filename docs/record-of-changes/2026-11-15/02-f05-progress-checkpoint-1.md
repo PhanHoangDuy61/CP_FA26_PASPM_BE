@@ -133,3 +133,17 @@ Raw logs remain local under `/private/tmp/`; failed HTTP-test logs may contain s
 Owner approved Checkpoint 1 and retained rejection of new Merchandiser requests above the current lambda maximum. The error must explicitly explain that the lambda policy changed and a new snapshot is needed. Updated error: `The lambda policy changed: this snapshot exceeds the current lambda maximum. Create a new snapshot within the current permitted range before submitting mining.`
 
 Before Phase 2, execute full opt-in/MySQL/multi-JVM/SPMF verification on disposable databases. Only after the verification gate passes, three local commits are authorized; no push, merge or force operation is authorized for the new work. F07/F08 merge/push 8f94f94 was separately authorized by the owner's merge instruction and explicit “Cho phép push riêng merge F07/F08 lên dev” reply.
+
+## Addendum 2026-11-15 (ROC-20261115-005, docs sync) — what was later committed and verified
+
+This record is kept as written; the following facts were added afterwards.
+
+| Item | Value |
+|---|---|
+| Commits (local, owner-authorized after the gate, not pushed) | `3bdfee3` feat(f05): expose fenced mining progress and legacy-safe metadata · `bd60c75` feat(f05): allow scoped merchandiser submissions under system policy · `982094c` docs(f05): synchronize progress contracts and checkpoint evidence |
+| Migration | V24 `src/main/resources/db/migration/V24__f05_mining_progress.sql` (stage, stage_started_at, current_run_id; `LEGACY` default) |
+| Counted verification | Phase 1 full opt-in gate (record 003): **632 tests, 627 PASS, 0 FAIL, 5 SKIP**, Maven exit 0; JPA supplementary **5/5** |
+| Invalid / not counted | first full opt-in (6 FAIL, stale V21 assertions, superseded); interrupted rerun (368 completed, no Maven exit code); first JPA attempt (5 context errors, environment) — details in record 003 |
+| NOT RUN | Linux SPMF orphan cleanup (macOS evidence only), GitHub CI (including the `integration` job, which needs `PASPM_CI_SPMF_ARTIFACT_URL`), interactive Swagger UI, real-data conversion/clone, Windows, Frontend |
+
+"Implementation remains uncommitted/unpublished" above was true at the time; the commits above now exist on branch `Khoi/feat/f05-progress-f03-weight-v2` only.

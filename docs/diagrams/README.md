@@ -52,6 +52,8 @@ Kept unchanged as history; **do not use them for Review 2**. Comparison with the
 | `08-screen-flow.mmd` | R2-03 — Screen Flow | Same screens and paths; the legacy file adds explanatory notes and an `F03` label prefix |
 | `09-f05-scheduler-erd-v14-v19.mmd` | Mining & Scheduling (ERD file) | Subset of the final schema (7 tables) |
 
+> **2026-11-15:** the drawings do not yet show V24 (mining progress) or V25 (F03 Weight v2: seasons, push day, versioned JSON). The pages to redraw are listed in [F03 W2 schema notes](../architecture/F03_W2_SCHEMA_V24_V25.md#diagram-pages-that-must-be-redrawn-not-edited-in-this-pass).
+
 ## Editable UML 2.0 pack (27 pages) — current
 
 [`PASPM_Unified_27_Diagrams_UML2_Editable.drawio`](PASPM_Unified_27_Diagrams_UML2_Editable.drawio) is the maintained, editable source (open with diagrams.net). It covers requirements, context, use cases, eight activity diagrams, screen flow, architecture, six state machines and eight sequence diagrams (F07–F11 pages are marked PLANNED). It was audited page by page against the Backend on `dev` @ `11973a0`: see the [27-page audit](../reports/UML27_DIAGRAM_QA_2026-11-02.md) for per-page results, the pages that are informal rather than UML, and the known gaps. Edit the `.drawio` file; never replace it with exported images.

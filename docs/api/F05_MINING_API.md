@@ -391,6 +391,9 @@ F05 is asynchronous and status-driven: `PENDING` means queued; request terminal 
 
 ### WeightConfig
 
+> **Legacy shape (pre-V25 snapshots only, since 2026-11-15).** New snapshots embed `FrozenV2` with `WeightV2 {alpha, beta, lambda, salesWindowDays, version, scoringVersion}` and `LambdaV2 {scoringVersion, lambdaMax, version}`; readers select by `scoringVersion` (`src/main/java/vn/edu/fpt/paspm/utility/UtilityJsonVersions.java:29-31`). See [F03 API — W2](F03_UTILITY_API.md).
+
+
 | Field | Type | Notes |
 |---|---|---|
 | enableStock | boolean | See state/business rules above |
@@ -405,6 +408,9 @@ F05 is asynchronous and status-driven: `PENDING` means queued; request terminal 
 | scoringVersion | string | See state/business rules above |
 
 ### LambdaPolicy
+
+> **Legacy shape (pre-V25 only).** Current policy is `LambdaV2` without `lambdaMin` (`src/main/java/vn/edu/fpt/paspm/utility/UtilityVersionedContracts.java:27`).
+
 
 | Field | Type | Notes |
 |---|---|---|

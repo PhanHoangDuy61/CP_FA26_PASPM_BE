@@ -4,6 +4,8 @@ ERD notes for `W2_EXPIRY_SEASON_V1` and F05 mining progress. The editable ERD dr
 
 ## V24 — F05 mining progress (`V24__f05_mining_progress.sql`)
 
+Evidence: `src/main/resources/db/migration/V24__f05_mining_progress.sql:2-7`.
+
 | Table | Change |
 |---|---|
 | `mining_request` | `stage VARCHAR(16) NOT NULL DEFAULT 'LEGACY'` (CHECK `LEGACY, QUEUED, RUNNING, SAVING, COMPARING, COMPLETED, FAILED`), `stage_started_at TIMESTAMP NULL`, `current_run_id BIGINT NULL` |
@@ -14,7 +16,7 @@ ERD notes for `W2_EXPIRY_SEASON_V1` and F05 mining progress. The editable ERD dr
 
 ## V25 — F03 Weight v2 (`db/migration/V25__f03_weight_v2_expiry_season.java`)
 
-One Java migration (it converts JSON, so it must behave identically on H2 and MySQL).
+One Java migration (it converts JSON, so it must behave identically on H2 and MySQL). Evidence: `src/main/java/db/migration/V25__f03_weight_v2_expiry_season.java` lines 21-22 (push day), 24 (`season`), 46 (`product_season`), 59 (`utility_snapshot_season`), 80 (`utility_weight_v2_conversion`), 114-130 (expiry-status CHECK lookup and `_w2`), 150 (policy row); conversion rule `src/main/java/vn/edu/fpt/paspm/utility/WeightV2Conversion.java:44-49`.
 
 ### New tables
 
@@ -70,3 +72,21 @@ Unchanged on purpose: `product.stock_priority_score`, `product.seasonal_priority
 | `recommendation.generation_eligibility`, `recommendation_review_history.eligibility_check` | `RecEligibility` (has `expiryPushDays`) | `EligibilityV2` |
 
 Selection is by `scoringVersion` (missing → legacy). An unknown version is rejected; `fail-on-unknown-properties` stays enabled globally, so an unknown field in any version is still rejected.
+
+## Diagram pages that must be redrawn (not edited in this pass)
+
+Drawings are not edited here (record-of-changes rule and task scope). Required changes, by file and page:
+
+| File / page | Change needed |
+|---|---|
+| `PASPM_ERD_V1_V19_clean.drawio` — **Conceptual ERD** | Add Season and Product–Season (many-to-many); Utility Snapshot keeps a season copy; Inventory Batch has a push day |
+| `PASPM_ERD_V1_V19_clean.drawio` — **Logical ERD** (and `mermaid/logical-erd.mmd`) | Add `season`, `product_season`, `utility_snapshot_season`, `utility_weight_v2_conversion`; columns `inventory_batch.push_day`, `utility_matrix_item.expiry_risk/season_weight/season_id`, `mining_request.stage/stage_started_at/current_run_id`; FKs listed above; schema now V1–V25 |
+| `PASPM_Complete_ERD_F03_Three_Weights_v4.drawio` — **F03 area page** | Mark three-weight model legacy; show W2 tables and columns; product score columns kept but unused |
+| `PASPM_Complete_ERD_F02_Inventory_Batch_v3.drawio` | `inventory_batch.push_day` + CHECK (optional; file is SUPERSEDED for later schema) |
+| **R2-06.02 Utility Snapshot State** | Snapshot creation never blocked by missing push day / slow moving (warnings only); λ above λ_max → 409 before capture |
+| **R2-06.03 Mining Request State** | Add `stage` sub-states `QUEUED → RUNNING → SAVING → COMPARING → COMPLETED/FAILED`, `LEGACY` for pre-V24 rows; lease reclaim increments `lease_fence` (= `attemptNo`) |
+| **R2-06.04 Mining Run State** | `SAVING` stage written before result persistence |
+| **Class pages for F03 and F05** (Utility and Mining packages) | Add `ExpiryRiskCalculator`, `WeightV2Calculator`, `UtilityFreezer`, `Season*`, `PushDayRule`, `UtilityJsonVersions`/`RecommendationJsonVersions`, `WeightV2Conversion`; `MiningProgressReader`, `MiningProgressController`, `ProgressView` |
+| **Sequence R2-08.03 (mining)** | Merchandiser as submitter; fenced stage writes; progress polling |
+| **Sequence R2-08.02/F03 snapshot** (and AD01) | Freeze W2 config + active seasons; FEFO risk per product; 2-dp weight |
+| **Use cases UC04–UC09, UC17–UC20** and **R2-03 Screen Flow** | Merchandiser submits mining; Store Admin enters batch push days; season management screens; removed score-edit and expiry-window screens |

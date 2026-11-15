@@ -69,3 +69,7 @@ Natural lease evidence: snapshot-preparation crash recovered after 304 seconds w
 - This record is included in the third documentation commit: `docs(f05): synchronize progress contracts and checkpoint evidence`.
 
 No push, merge, rebase, tag, force operation or deployment was performed in this checkpoint-approval session. Phase 2 can now proceed. Phase 3 configuration conversion still awaits the owner clarification above.
+
+## Addendum 2026-11-15 (ROC-20261115-005, docs sync)
+
+The three Checkpoint 1 commits authorized above were created after this gate: `3bdfee3`, `bd60c75`, `982094c` (local only). The pending conversion question in this record was answered by the owner the same day; see [DEC-20261115-07](../../decisions/2026-11-15/DEC-20261115-07-config-conversion-rule.md) and [record 004](04-f03-weight-v2-expiry-season.md). Counted results stay: **632 tests, 627 PASS, 5 SKIP** (exit 0) + JPA **5/5**. NOT RUN: Linux SPMF orphan cleanup (macOS evidence only), GitHub CI (including the `integration` job, which needs `PASPM_CI_SPMF_ARTIFACT_URL`), interactive Swagger UI, real-data conversion/clone, Windows, Frontend.

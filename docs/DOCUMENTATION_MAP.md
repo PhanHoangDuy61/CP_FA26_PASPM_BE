@@ -398,3 +398,15 @@ These are current documents, not part of the original path map above.
 | `docs/reports/UML27_DIAGRAM_QA_2026-11-02.md` | Page-by-page audit of the 27-page Draw.io pack |
 | `docs/diagrams/PASPM_Unified_27_Diagrams_UML2_Editable.drawio` | Editable 27-page UML 2.0 source |
 | `docs/superpowers/plans/*` | Working plans for the F03/F05 integration |
+
+## Files added on branch `Khoi/feat/f05-progress-f03-weight-v2` (2026-11-15)
+
+Current documents, not part of the original path map.
+
+| File | Purpose |
+|---|---|
+| `docs/architecture/F03_W2_SCHEMA_V24_V25.md` | V24/V25 schema and ERD notes, stored-JSON versions, diagram pages to redraw |
+| `docs/frontend_handoff/F03_W2_BREAKING_CHANGES.md` | 14 breaking request/response changes with screens; F05 progress polling |
+| `docs/requirements/F03_WEIGHT_V2_REQUIREMENTS.md` | F03 Weight v2 requirements — derived from owner decisions 2026-11-15, pending formal approval |
+| `docs/decisions/OWNER_DECISIONS_F03_F05_2026-11-15.md`, `docs/decisions/2026-11-15/DEC-20261115-01…11-*.md` | Owner decisions of 2026-11-15 and assumptions P2–P6 |
+| `docs/record-of-changes/2026-11-15/04-f03-weight-v2-expiry-season.md`, `05-docs-sync-f03-w2-f05-progress.md`, `F03_W2_FULL_OPTIN_COUNTS.json`, `F03_W2_SYNTHETIC_JPA_COUNTS.json` | Checkpoint 2 and docs-sync records with gate evidence |

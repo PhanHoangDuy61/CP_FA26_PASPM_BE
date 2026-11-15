@@ -150,3 +150,7 @@ Only a DRAFT campaign can be edited, simulated, and decided. Simulation is optio
 ## Loading and polling
 
 F07 preview, F08 simulation, and all lifecycle mutations are synchronous. Keep the corresponding action in a loading state until its HTTP response; success ends loading and renders that response, while an error ends loading and follows the shared `{"error":"..."}` contract. There is no polling interval, job ID, or percentage progress for these operations.
+
+## 2026-11-15 — F03 Weight v2 and priority coverage
+
+`priorityCoverage` and `priorityCoverageDenominator` are still always `null`: the report row is inserted with `NULL,NULL` (`src/main/java/vn/edu/fpt/paspm/layout/LayoutCampaignRepository.java:344-345`) and the stored assumption reads "N/A until the F03 priority coverage formula is confirmed" (`layout/LayoutCampaignService.java:267`). The intended definition "priority item = W(i) > 1" (F03 Weight v2) is **not wired**; no F07/F08 code reads W. F07/F08 routes and bodies did not change on branch `Khoi/feat/f05-progress-f03-weight-v2`.

@@ -3,9 +3,9 @@
 | Trường | Giá trị |
 |---|---|
 | Date / timezone | 2026-11-15 / Asia/Ho_Chi_Minh |
-| Phạm vi | Merge F07/F08; F05 mining progress và quyền Merchandiser; kế hoạch F03 Weight v2 |
-| Trạng thái thực hiện | COMPLETED trong phạm vi Checkpoint 1; toàn bộ kế hoạch F03/F05 vẫn PARTIAL |
-| Trạng thái phát hành | F07/F08 đã merge/push dev tại `8f94f94`; phần F05 mới UNRELEASED |
+| Phạm vi | Merge F07/F08; F05 mining progress và quyền Merchandiser; F03 Weight v2 (V25) và consumers; docs sync |
+| Trạng thái thực hiện | COMPLETED đến Checkpoint 2 (F03/F05) và docs sync 005; xem cập nhật cuối ngày |
+| Trạng thái phát hành | F07/F08 đã merge/push dev tại `8f94f94`; F05/F03 COMMITTED local (`3bdfee3`, `bd60c75`, `982094c`, `e38b55f`, `c8c837a`), chưa push; docs sync 005 chưa commit |
 
 ## Các phiên
 
@@ -14,6 +14,7 @@
 
 3. [ROC-20261115-003 — Duyệt Checkpoint 1 và kiểm thử opt-in](03-opt-in-gate-and-weight-v2.md).
 4. [ROC-20261115-004 — F03 Weight v2 (expiry risk + season), Phases 2–6, Checkpoint 2](04-f03-weight-v2-expiry-season.md) — V25, owner conversion rule, seasons, push days, F06 knock-on; UNRELEASED, uncommitted.
+5. [ROC-20261115-005 — Docs sync: feature docs, decisions and records for F03 Weight v2 and F05 progress](05-docs-sync-f03-w2-f05-progress.md) — documentation only, uncommitted.
 
 ## Added
 
@@ -62,3 +63,13 @@ P2–P6 vẫn được ghi là **assumption pending owner confirmation**, chưa 
 - Theo yêu cầu cập nhật docs, bản ghi ngày này được đồng bộ vào `BE/docs/record-of-changes/2026-11-15/` để đọc từ workspace chính. **Sao chép record không có nghĩa code F05 đã được đưa vào checkout BE.** Các thay đổi docs ngày 14/11 được giữ nguyên.
 - Lượt cập nhật record này chỉ chỉnh tài liệu, kiểm tra JSON/link và đối chiếu bản sao; không chạy lại Maven/MySQL.
 - Checkpoint 1 đã được duyệt. Gate opt-in đã đạt: 627 PASS trong full verify + 5 PASS riêng trên dữ liệu JPA giả lập; xem record 03. Được phép tạo ba commit local, sau đó tiếp tục Phase 2; không push/merge/deploy phần mới.
+
+## End-of-day update (ROC-20261115-005)
+
+| Work | Record | Commits | Migration | Counted tests | NOT RUN |
+|---|---|---|---|---|---|
+| Checkpoint 1 — F05 progress, Merchandiser submission | [002](02-f05-progress-checkpoint-1.md), gate [003](03-opt-in-gate-and-weight-v2.md) | `3bdfee3`, `bd60c75`, `982094c` | V24 | full opt-in 632 / **627 PASS** / 5 SKIP, exit 0; JPA 5/5 | Linux SPMF orphan cleanup, GitHub CI, Swagger UI, real-data clone |
+| Checkpoint 2 — F03 Weight v2 + F02/F05/F06 consumers | [004](04-f03-weight-v2-expiry-season.md) | `e38b55f`, `c8c837a` | V25 | phase6c 645 / **640 PASS** / 5 SKIP, exit 0; JPA 5/5 | same + real-data conversion |
+| Docs sync | [005](05-docs-sync-f03-w2-f05-progress.md) | none (proposed) | — | docs checks only | — |
+
+Invalid runs (not counted) are listed in records 003 §Verification and 004 §5. Before-deploy checklist and report changes: [record 004 addendum](04-f03-weight-v2-expiry-season.md#before-deploy-checklist-none-done). Decisions: [owner decision register](../../decisions/OWNER_DECISIONS_F03_F05_2026-11-15.md).

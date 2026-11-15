@@ -2,6 +2,26 @@
 
 > Last verified Backend: `dev` @ `11973a0` (merge of PR #11; source tree identical to `a4f1115`, whose code passed the full verification script on `45dbd80`). This documentation task ran no new tests.
 
+## Current status — branch `Khoi/feat/f05-progress-f03-weight-v2` (2026-11-15, not merged)
+
+Code paths are relative to `src/main/java/vn/edu/fpt/paspm/` on `c8c837a` (code identical to `e38b55f`).
+
+| Item | Behaviour | Evidence |
+|---|---|---|
+| Expiry push | `GET /api/recommendations/expiry-push`: a sellable, unexpired batch is due when its push day ≤ Store-local today; batches without a push day only warn | `recommendation/RecommendationExpiryService.java:43`; `utility/PushDayRule.java:23` |
+| Eligibility record | New and current eligibility is `EligibilityV2` (`scoringVersion`, no `expiryPushDays`); `expiryPriorityScore` = current U_expiry | `recommendation/ProductEligibilityService.java:44`, `:56` |
+| Fingerprint | W2 version, date, minimum quantity, product status/requiresExpiry, each batch incl. push day | `recommendation/ProductEligibilityService.java:28`, `:39` |
+| One-time `inventoryChanged` | Frozen vs current fingerprint compare; the format changed, so every pre-W2 recommendation shows `true` once (accepted by the owner) | `recommendation/RecommendationService.java:81`; `recommendation/RecommendationContracts.java:59` |
+| Old eligibility JSON | No `scoringVersion` → legacy `RecEligibility`, read byte-identical; `W2_EXPIRY_SEASON_V1` → `EligibilityV2`; other → rejected | `recommendation/RecommendationJsonVersions.java:21-22` |
+| Season ended | A season frozen in the recommendation's snapshot with `end_date` before today adds an `explanation` line | `recommendation/RecommendationRepository.java:42`; `recommendation/RecommendationService.java:80` |
+| No automatic re-run | No code path in `recommendation/` triggers mining or generation; generation is only `POST /api/recommendations/generate` | `recommendation/RecommendationController.java:20` |
+
+**Superseded 2026-11-15:** the expiry-push rule `0 < daysRemaining ≤ Product.expiryPushDays` and fingerprints containing `expiryPushDays` (§4 below) are legacy.
+
+**Verification:** final branch gate 645 tests, 640 PASS, 5 SKIP ([record 004](../../record-of-changes/2026-11-15/04-f03-weight-v2-expiry-season.md)); `RecommendationIntegrationTest`, `RecommendationExpiryIntegrationTest` and MySQL subclasses adapted to push days.
+
+**Known gaps:** eligibility computes U_expiry with one sales aggregate per product (`utility/UtilityProductRepository.java:34`), not measured for large lists; the season warning is text in `explanation`, not a structured field.
+
 ## 1. Purpose and scope
 Turns a **COMPLETED own-Store F05 mining run** into persisted, reviewable recommendation candidates (`BUNDLE`, `CROSS_SELL`, `FBT`, `BANNER`). Candidates carry frozen F03/F05 evidence and are rechecked against live F02 inventory. Approving a candidate does **not** publish a layout, activate a campaign or reserve stock. F06 never runs SPMF.
 
@@ -21,8 +41,8 @@ Foreign ids answer 404. Matrix: [RBAC matrix](../../api/F01_F02_RBAC_MATRIX.md).
 - Rules `F06_RULES_V1_1` (approved 2026-10-20). Default policy version 1: max bundle size 4 (2..256), minimum support count 2 and ratio 0.05 for FBT, cross-sell confidence ≥ 0.50, minimum sellable quantity 1; the first update creates version 2. Existing candidates keep the policy captured at generation.
 - Generation is idempotent and deterministic; equivalent HUI-Miner and EFIM evidence can reuse a candidate; incomplete or invalid evidence, or exceeding the candidate cap, gives 409 with no partial rows (rollback tested).
 - Review: `PENDING_REVIEW → APPROVED | REJECTED` only, Merchandiser only, `reason` required (≤ 1000 characters), `expectedVersion` optimistic lock, history kept; live eligibility is rechecked before approval, rejection is allowed even when ineligible.
-- Live eligibility: Product ACTIVE, ACTIVE batches with remaining quantity ≥ the captured minimum, and an expiry strictly after today for expiry-required products. `inventoryChanged` compares fingerprints, not only quantity.
-- The expiry-push operation needs no mining run; `0 < daysRemaining ≤ Product.expiryPushDays`.
+- Live eligibility: Product ACTIVE, ACTIVE batches with remaining quantity ≥ the captured minimum, and an expiry strictly after today for expiry-required products. `inventoryChanged` compares fingerprints, not only quantity (W2 fingerprint since 2026-11-15, see status table).
+- The expiry-push operation needs no mining run. **Legacy (until 2026-11-15):** `0 < daysRemaining ≤ Product.expiryPushDays`. **Current:** batch push day ≤ today.
 - An individual COMPLETED run with valid evidence is accepted even if the request's overall comparison FAILED (policy recorded as under review in the AD05 diagram note).
 
 ## 5. Main workflows
@@ -35,7 +55,7 @@ Mining run COMPLETED (F05) → `generate` → review list/detail with current el
 V10: `recommendation_rule_config`, `recommendation`, `recommendation_item`, `recommendation_source`, `recommendation_review_history`.
 
 ## 8. Dependencies
-F01 (roles), F02 (live inventory), F03 (frozen snapshot evidence, Product threshold), F05 (completed runs and patterns).
+F01 (roles), F02 (live inventory, batch push days), F03 (frozen snapshot evidence, U_expiry calculator, snapshot seasons), F05 (completed runs and patterns).
 
 F01 session reconciliation (2026-11-12, dev V20 retained + additive V21): generation/review/config APIs retain existing role and Store authorization. END_CUSTOMER login does not grant F06 access; a visible demo storefront is not proof of a public recommendation API. Rule policy, frozen evidence and live eligibility are unchanged. See [shared session impact and evidence](../F01/F01_SESSION_MANAGEMENT.md#5-tác-động-tới-feature-khác).
 
