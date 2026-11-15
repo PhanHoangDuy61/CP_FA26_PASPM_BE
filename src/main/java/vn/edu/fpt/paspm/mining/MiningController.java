@@ -14,16 +14,16 @@ import vn.edu.fpt.paspm.utility.UtilityMatrixContracts.SnapshotView;
 
 @RestController
 @RequestMapping("/api/mining")
-@Tag(name="F05 Mining",description="Frozen F03 snapshot mining results. Store-scoped and read-only for Merchandiser and Store Admin. Submitting mining and reading benchmarks are System Admin only under /api/system/mining.")
+@Tag(name="F05 Mining",description="Frozen F03 snapshot mining results. Store-scoped reads for Merchandiser and Store Admin; Merchandiser may submit using the System Admin mining policy. Benchmarks remain System Admin only.")
 @PreAuthorize("hasAnyRole('MERCHANDISER','STORE_ADMIN')")
 public class MiningController {
     private final MiningService service;
     public MiningController(MiningService service){this.service=service;}
     @GetMapping("/snapshots") @Operation(summary="List this Store's READY frozen snapshots; numerical eligibility is validated on submission")
     public Page<SnapshotView> snapshots(@AuthenticationPrincipal Jwt jwt,@RequestParam(defaultValue="0") int page,@RequestParam(defaultValue="20") int pageSize){return service.snapshots(jwt,page,pageSize);}
-    @PostMapping("/requests") @ResponseStatus(HttpStatus.ACCEPTED) @PreAuthorize("denyAll()")
-    @Operation(deprecated=true,summary="FORBIDDEN legacy route: always HTTP 403 for every role; do not call. Use POST /api/system/mining/requests",description="Kept mapped only so the 403 is explicit. Mining submission is System Admin only.")
-    public RequestView create(@AuthenticationPrincipal Jwt jwt,@Valid @RequestBody CreateRequest request){return service.create(jwt,request);}
+    @PostMapping("/requests") @ResponseStatus(HttpStatus.ACCEPTED) @PreAuthorize("hasRole('MERCHANDISER')")
+    @Operation(summary="Submit this Store READY snapshot using the current System Admin mining policy")
+    public RequestView create(@AuthenticationPrincipal Jwt jwt,@Valid @RequestBody StoreCreateRequest request){return service.createMerchandiser(jwt,request);}
     @GetMapping("/requests") @Operation(summary="List this Store's mining requests, newest first")
     public Page<RequestView> requests(@AuthenticationPrincipal Jwt jwt,@RequestParam(defaultValue="0") int page,@RequestParam(defaultValue="20") int pageSize){return service.requests(jwt,page,pageSize);}
     @GetMapping("/requests/{id}") @Operation(summary="Get immutable input provenance and current mining request status")

@@ -48,11 +48,17 @@ public class MiningService {
         worker.enqueue(store,Objects.requireNonNull(created).view().requestId());
         return repository.find(store,created.view().requestId()).view();
     }
-    /** Explicit Store is accepted only by the System Admin controller; all lookups remain Store-scoped. */
+    /** Merchandiser Store is resolved from the authenticated principal, never a request field. */
+    public RequestView createMerchandiser(Jwt jwt,StoreCreateRequest request) {
+        return createConfigured(jwt,access.currentStoreId(jwt),request.snapshotId(),request.requestKey(),false,true);
+    }
     public RequestView createAdministrative(Jwt jwt, int store, int snapshotId, UUID key, boolean compare) {
+        return createConfigured(jwt,store,snapshotId,key,compare,false);
+    }
+    private RequestView createConfigured(Jwt jwt,int store,int snapshotId,UUID key,boolean compare,boolean merchant) {
         if (jdbc.queryForObject("SELECT COUNT(*) FROM store WHERE store_id=?",Integer.class,store)!=1)
             throw new ApiException(404,"Store not found");
-        String hash=MiningInputBuilder.sha("ADMIN|"+snapshotId+"|"+compare);
+        String hash=MiningInputBuilder.sha((merchant?"MERCHANT|":"ADMIN|")+snapshotId+"|"+compare);
         var previous=repository.byKey(store,key);
         if(previous!=null)return same(previous,hash);
         if(snapshots.find(store,snapshotId)==null)throw new ApiException(404,"Utility snapshot not found");
@@ -60,6 +66,8 @@ public class MiningService {
         MiningRepository.Stored created;
         try {
             created=capture.execute(tx->{
+                // Lock the live lambda policy before snapshot capture, matching F03 lock ordering.
+                var lambdaPolicy=merchant?repository.lambdaPolicyForUpdate():null;
                 long version=jdbc.queryForObject("SELECT config_version FROM mining_config_head WHERE config_id=1 FOR UPDATE",Long.class);
                 if(version==0)throw new ApiException(409,"Configure mining policy before execution");
                 var policy=jdbc.queryForObject("SELECT algorithm,min_util_mode,min_util_value FROM mining_config_version WHERE config_version=?",
@@ -70,6 +78,11 @@ public class MiningService {
                 var rows=snapshots.page(store,snapshotId,0,MiningInputBuilder.MAX_ROWS);
                 snapshots.assertMiningOwnership(store,snapshotId);
                 var input=builder.build(snapshot,rows);
+                if(merchant) {
+                    var lambda=snapshot.configuration().config().lambda();
+                    if(lambda==null||lambda.signum()<0||lambda.compareTo(lambdaPolicy.lambdaMax())>0)
+                        throw new ApiException(409,"The lambda policy changed: this snapshot exceeds the current lambda maximum. Create a new snapshot within the current permitted range before submitting mining.");
+                }
                 int threshold=builder.threshold(input,policy.minUtilMode(),policy.minUtilValue());
                 var saved=repository.create(store,auth.current(jwt).id(),policy,hash,snapshot,input,threshold);
                 jdbc.update("UPDATE mining_request SET config_version=? WHERE store_id=? AND request_id=?",version,store,saved.view().requestId());

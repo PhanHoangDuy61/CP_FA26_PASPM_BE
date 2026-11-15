@@ -79,10 +79,10 @@ class F03F05RbacMatrixTest {
         r.add(new Route(HttpMethod.GET, "/api/utility/snapshots/999999/matrix", null, merch));
         r.add(new Route(HttpMethod.GET, "/api/utility/expiry-push-batches", null, stores));
         // F05 Store-scoped reads and the two forbidden legacy routes
-        for (String p : List.of("/api/mining/snapshots", "/api/mining/requests", "/api/mining/requests/999999", "/api/mining/requests/999999/runs",
+        for (String p : List.of("/api/mining/snapshots", "/api/mining/requests", "/api/mining/requests/999999", "/api/mining/requests/999999/runs", "/api/mining/requests/999999/progress",
                 "/api/mining/runs/999999", "/api/mining/runs/999999/patterns"))
             r.add(new Route(HttpMethod.GET, p, null, stores));
-        r.add(new Route(HttpMethod.POST, "/api/mining/requests", MINING, none));
+        r.add(new Route(HttpMethod.POST, "/api/mining/requests", "{\"requestKey\":\""+UUID.randomUUID()+"\",\"snapshotId\":1}", merch));
         r.add(new Route(HttpMethod.GET, "/api/mining/runs/999999/benchmark", null, none));
         // F05 System Admin operator routes that are not behind the D1 read gate
         r.add(new Route(HttpMethod.GET, "/api/system/mining/config", null, admin));
@@ -94,6 +94,7 @@ class F03F05RbacMatrixTest {
         r.add(new Route(HttpMethod.GET, "/api/system/mining/stores/999999/requests/1", null, admin));
         r.add(new Route(HttpMethod.GET, "/api/system/mining/stores/999999/requests/1/runs", null, admin));
         r.add(new Route(HttpMethod.GET, "/api/system/mining/stores/999999/runs/1/patterns", null, none));
+        r.add(new Route(HttpMethod.GET, "/api/system/mining/stores/999999/requests/1/progress", null, admin));
         // D2: Store picker
         r.add(new Route(HttpMethod.GET, "/api/system/stores", null, admin));
         r.add(new Route(HttpMethod.GET, "/api/system/mining/schedules", null, admin));
@@ -124,7 +125,7 @@ class F03F05RbacMatrixTest {
         }
         int expected = routes().stream().mapToInt(r -> 1 + (int) ROLES.stream().filter(x -> !r.allowed().contains(x)).count()).sum();
         org.junit.jupiter.api.Assertions.assertEquals(expected, checked);
-        org.junit.jupiter.api.Assertions.assertEquals(32, routes().size(), "route table must list every F03 route and every ungated F05 route");
+        org.junit.jupiter.api.Assertions.assertEquals(34, routes().size(), "route table must list every F03 route and every ungated F05 route");
     }
 
     @Test void everyDocumentedRolePassesAuthorizationOnReadRoutes() throws Exception {
