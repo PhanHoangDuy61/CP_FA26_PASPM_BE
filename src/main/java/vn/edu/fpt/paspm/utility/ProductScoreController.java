@@ -1,6 +1,5 @@
 package vn.edu.fpt.paspm.utility;
 
-import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -15,10 +14,10 @@ public class ProductScoreController {
     private final ProductScoreService service;
     public ProductScoreController(ProductScoreService service) { this.service=service; }
     @GetMapping @PreAuthorize("hasAnyRole('STORE_ADMIN','MERCHANDISER')")
-    @Operation(summary="Read manual S/M and current Backend-calculated E/W in the authenticated Store",
-        description="Store Admin and Merchandiser read only their Store. Current preview uses Store-local today, not frozen historical values; unavailable Weight is null with ready=false and warnings.")
+    @Operation(summary="Read the current W2 preview of a product in the authenticated Store",
+        description="U_expiry (FEFO), M(i) from active seasons, current W (2 decimals) and the batches missing a push day. Store-local today; not a frozen historical value.")
     public Scores get(@AuthenticationPrincipal Jwt jwt,@PathVariable int productId) { return service.get(jwt,productId); }
-    @PatchMapping @Operation(summary="Merchandiser updates supplied S/M and reads recalculated current E/W",
-        description="Only stockPriorityScore/seasonalPriorityScore are accepted. Explicit null, calculated values and other fields are rejected. Inventory and immutable snapshots/mining results are unchanged.")
-    public Scores patch(@AuthenticationPrincipal Jwt jwt,@PathVariable int productId,@Valid @RequestBody ScorePatch request) { return service.patch(jwt,productId,request); }
+    @PatchMapping @Deprecated
+    @Operation(deprecated=true,summary="Removed: always 410 Gone",description="Manual stock/seasonal scores no longer exist in W2_EXPIRY_SEASON_V1. Use season assignment.")
+    public Scores patch(@PathVariable int productId) { return service.removedPatch(); }
 }

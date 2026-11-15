@@ -15,7 +15,7 @@ class MiningInputTest {
         var date=LocalDate.of(2026,10,19);
         return new SnapshotView(1,1,1,date,date,date,new FrozenConfiguration(WeightConfig.defaults(),new LambdaPolicy(d("0"),d("0.5"),1),new EffectiveCoefficients(d("0"),d("0"),d("0")),date,"F04_DATABASE_V1",6,"HALF_UP","PRODUCT_ID_V1","Asia/Ho_Chi_Minh"),"a".repeat(64),"b".repeat(64),d(total),6,"READY",Instant.now(),List.of());
     }
-    static MatrixItem row(int tx,int product,String u,String total){return new MatrixItem(tx,product,product,1,d(u),null,null,null,"NOT_APPLICABLE",BigDecimal.ONE,d(u),d(total),null);}
+    static MatrixItem row(int tx,int product,String u,String total){return new MatrixItem(tx,product,product,1,d(u),null,null,null,"NOT_APPLICABLE",BigDecimal.ONE,d(u),d(total),null,null,null,null);}
     @Test void convertsExactlyAndMapsSortedProductsDeterministically(){
         var rows=List.of(row(2,99,"0.2","0.2"),row(1,99,"0.4","0.5"),row(1,10,"0.1","0.5"));
         var a=builder.build(snapshot("0.7"),rows);
@@ -35,7 +35,7 @@ class MiningInputTest {
         assertThrows(RuntimeException.class,()->builder.build(snapshot("1"),List.of(row(1,1,"2","2"))));
         assertThrows(RuntimeException.class,()->builder.build(snapshot("1"),List.of(row(1,1,"1","2"))));
         var bad=row(1,1,"1","1");
-        var mapping=new MatrixItem(1,1,2,1,bad.baseUtility(),null,null,null,"AVAILABLE",BigDecimal.ONE,d("1"),d("1"),null);
+        var mapping=new MatrixItem(1,1,2,1,bad.baseUtility(),null,null,null,"AVAILABLE",BigDecimal.ONE,d("1"),d("1"),null,null,null,null);
         assertThrows(RuntimeException.class,()->builder.build(snapshot("1"),List.of(mapping)));
     }
     @Test void validatesThresholdsAndZeroPolicy(){

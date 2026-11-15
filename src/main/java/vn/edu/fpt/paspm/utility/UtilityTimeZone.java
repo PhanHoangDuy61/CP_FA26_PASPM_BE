@@ -11,5 +11,6 @@ public class UtilityTimeZone {
     private final ZoneId zone;
     public UtilityTimeZone(@Value("${paspm.store-time-zone:Asia/Ho_Chi_Minh}") String zone) { this.zone=ZoneId.of(zone); }
     public String id() { return zone.getId(); }
+    public ZoneId zone() { return zone; }
     public LocalDate today() { return LocalDate.now(zone); }
 }

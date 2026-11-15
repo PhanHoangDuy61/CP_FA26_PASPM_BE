@@ -35,7 +35,9 @@ class RecommendationMigrationTest {
         assertTrue(expectedPending>0);assertEquals(expectedPending,current.migrate().migrationsExecuted);current.validate();
         assertEquals(0,current.info().pending().length);
         assertEquals(current.info().all()[current.info().all().length-1].getVersion(),current.info().current().getVersion());
-        assertEquals(configuration,jdbc.queryForObject("SELECT utility_config FROM store WHERE store_id=?",String.class,store));
+        // Live Store config is converted by V25 (owner rule 2026-11-15); the old value is kept as migration evidence.
+        assertTrue(jdbc.queryForObject("SELECT utility_config FROM store WHERE store_id=?",String.class,store).contains("W2_EXPIRY_SEASON_V1"));
+        assertTrue(jdbc.queryForObject("SELECT old_value FROM utility_weight_v2_conversion WHERE subject='STORE' AND store_id=?",String.class,store).replace(" ","").contains("\"version\":7"));
         assertEquals(snapshot,jdbc.queryForObject("SELECT config_snapshot FROM utility_snapshot WHERE store_id=?",String.class,store));
         assertEquals(123,jdbc.queryForObject("SELECT total_weighted_utility FROM utility_snapshot WHERE store_id=?",Integer.class,store));
         assertEquals(0,jdbc.queryForObject("SELECT COUNT(*) FROM recommendation",Integer.class));

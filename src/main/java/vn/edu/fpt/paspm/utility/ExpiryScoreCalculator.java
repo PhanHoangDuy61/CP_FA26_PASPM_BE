@@ -20,7 +20,7 @@ public class ExpiryScoreCalculator {
     public record PushBatch(int productId,int batchId,LocalDate expiryDate,long remainingQuantity,
         int expiryPushDays,long daysRemaining,boolean pushRequired,long pushRequiredQuantity,LocalDate asOfDate) {}
     public record Evidence(int expiryPushDays,LocalDate earliestEligibleExpiryDate,Long daysRemaining,
-        LocalDate asOfDate,String reason,List<PushBatch> batches) {}
+        LocalDate asOfDate,String reason,List<PushBatch> batches) implements UtilityVersionedContracts.ExpiryEvidence {}
     public record Result(BigDecimal score,String status,Evidence evidence) {}
 
     public Result calculate(boolean requiresExpiry,List<Batch> batches,LocalDate asOfDate,Integer configuredDays) {

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import vn.edu.fpt.paspm.common.ApiException;
 import vn.edu.fpt.paspm.utility.UtilitySettingsRepository;
 import static vn.edu.fpt.paspm.recommendation.RecommendationContracts.*;
+import vn.edu.fpt.paspm.recommendation.RecommendationVersionedContracts.EligibilityEvidence;
 
 @Repository
 public class RecommendationRepository {
@@ -17,7 +18,7 @@ public class RecommendationRepository {
     public RecommendationRepository(JdbcTemplate jdbc,UtilitySettingsRepository json){this.jdbc=jdbc;this.json=json;}
     public record Stored(long id,int store,int snapshot,String key,RecType type,List<Integer> products,Integer anchor,
         java.math.BigDecimal utility,ReviewStatus status,long version,RecPolicy policy,TransactionEvidence.Evidence evidence,
-        RecEligibility eligibility,List<String> explanation,Integer reviewer,Instant reviewedAt,String reason,Instant createdAt) {}
+        EligibilityEvidence eligibility,List<String> explanation,Integer reviewer,Instant reviewedAt,String reason,Instant createdAt) {}
     public Stored find(int store,long id,boolean lock) {
         var records=jdbc.query("SELECT * FROM recommendation WHERE store_id=? AND recommendation_id=?"+(lock?" FOR UPDATE":""),this::row,store,id);
         if(records.isEmpty())throw new ApiException(404,"Recommendation not found");
@@ -26,9 +27,9 @@ public class RecommendationRepository {
     public Long byIdentity(int store,String identity){return jdbc.queryForList("SELECT recommendation_id FROM recommendation WHERE store_id=? AND identity_hash=?",Long.class,store,identity).stream().findFirst().orElse(null);}
     private Stored row(ResultSet r,int n)throws SQLException {
         long id=r.getLong("recommendation_id");int store=r.getInt("store_id");var reviewed=r.getTimestamp("reviewed_at");
-        return new Stored(id,store,r.getInt("utility_snapshot_id"),r.getString("canonical_key"),RecType.valueOf(r.getString("type")),List.of(),r.getObject("anchor_product_id",Integer.class),r.getBigDecimal("utility"),ReviewStatus.valueOf(r.getString("review_status")),r.getLong("version"),json.read(r.getString("policy_snapshot"),RecPolicy.class),json.read(r.getString("evidence"),TransactionEvidence.Evidence.class),json.read(r.getString("generation_eligibility"),RecEligibility.class),List.of(json.read(r.getString("explanation"),String[].class)),r.getObject("reviewed_by",Integer.class),reviewed==null?null:reviewed.toInstant(),r.getString("review_reason"),r.getTimestamp("created_at").toInstant());
+        return new Stored(id,store,r.getInt("utility_snapshot_id"),r.getString("canonical_key"),RecType.valueOf(r.getString("type")),List.of(),r.getObject("anchor_product_id",Integer.class),r.getBigDecimal("utility"),ReviewStatus.valueOf(r.getString("review_status")),r.getLong("version"),json.read(r.getString("policy_snapshot"),RecPolicy.class),json.read(r.getString("evidence"),TransactionEvidence.Evidence.class),json.read(r.getString("generation_eligibility"),EligibilityEvidence.class),List.of(json.read(r.getString("explanation"),String[].class)),r.getObject("reviewed_by",Integer.class),reviewed==null?null:reviewed.toInstant(),r.getString("review_reason"),r.getTimestamp("created_at").toInstant());
     }
-    public long create(int store,int actor,int snapshot,String identity,String key,RecommendationRules.Candidate candidate,RecPolicy policy,RecEligibility eligibility) {
+    public long create(int store,int actor,int snapshot,String identity,String key,RecommendationRules.Candidate candidate,RecPolicy policy,RecommendationVersionedContracts.EligibilityV2 eligibility) {
         long id=insert("INSERT INTO recommendation(store_id,utility_snapshot_id,identity_hash,canonical_key,type,anchor_product_id,utility,support_count,rule_version,policy_version,policy_snapshot,evidence,generation_eligibility,explanation,created_by) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)","recommendation_id",store,snapshot,identity,key,candidate.type().name(),candidate.anchor(),candidate.utility(),candidate.evidence().supportCount(),policy.ruleVersion(),policy.version(),json.write(policy),json.write(candidate.evidence()),json.write(eligibility),json.write(candidate.explanation()),actor);
         for(int product:candidate.productIds())jdbc.update("INSERT INTO recommendation_item(recommendation_id,store_id,product_id) VALUES (?,?,?)",id,store,product);
         return id;
@@ -37,8 +38,13 @@ public class RecommendationRepository {
         int existing=jdbc.queryForObject("SELECT COUNT(*) FROM recommendation_source WHERE recommendation_id=? AND run_id=? AND pattern_id=?",Integer.class,id,source.runId(),source.patternId());
         if(existing==0)jdbc.update("INSERT INTO recommendation_source(store_id,recommendation_id,run_id,pattern_id,provenance) VALUES (?,?,?,?,?)",store,id,source.runId(),source.patternId(),json.write(source));
     }
+    /** Seasons frozen in a recommendation's snapshot that have ended (end_date before today). */
+    public List<String> endedSeasons(int store,int snapshot,java.time.LocalDate today) {
+        return jdbc.query("SELECT season_id,name,end_date FROM utility_snapshot_season WHERE store_id=? AND snapshot_id=? AND end_date<? ORDER BY season_id",
+            (r,n)->"Season "+r.getInt(1)+" ("+r.getString(2)+") used by snapshot "+snapshot+" ended on "+r.getObject(3,java.time.LocalDate.class)+"; regenerate recommendations from a new snapshot if needed (no automatic re-run)",store,snapshot,today);
+    }
     public List<RecSource> sources(int store,long id){return jdbc.query("SELECT provenance FROM recommendation_source WHERE store_id=? AND recommendation_id=? ORDER BY run_id,pattern_id",(r,n)->json.read(r.getString(1),RecSource.class),store,id);}
-    public List<RecReview> history(int store,long id){return jdbc.query("SELECT * FROM recommendation_review_history WHERE store_id=? AND recommendation_id=? ORDER BY resulting_version",(r,n)->new RecReview(ReviewStatus.valueOf(r.getString("old_status")),ReviewStatus.valueOf(r.getString("new_status")),r.getInt("reviewed_by"),r.getTimestamp("reviewed_at").toInstant(),r.getString("reason"),r.getLong("resulting_version"),json.read(r.getString("eligibility_check"),RecEligibility.class)),store,id);}
+    public List<RecReview> history(int store,long id){return jdbc.query("SELECT * FROM recommendation_review_history WHERE store_id=? AND recommendation_id=? ORDER BY resulting_version",(r,n)->new RecReview(ReviewStatus.valueOf(r.getString("old_status")),ReviewStatus.valueOf(r.getString("new_status")),r.getInt("reviewed_by"),r.getTimestamp("reviewed_at").toInstant(),r.getString("reason"),r.getLong("resulting_version"),json.read(r.getString("eligibility_check"),EligibilityEvidence.class)),store,id);}
     private record Filter(String sql,List<Object> args) {}
     private Filter filter(int store,Long run,Integer snapshot,RecType type,ReviewStatus status) {
         StringBuilder where=new StringBuilder(" WHERE r.store_id=?");var args=new ArrayList<Object>();args.add(store);
@@ -79,13 +85,13 @@ public class RecommendationRepository {
         sources.replaceAll((id,values)->List.copyOf(values));history.replaceAll((id,values)->List.copyOf(values));
         return new Relations(Map.copyOf(sources),Map.copyOf(history));
     }
-    private RecReview historyRow(ResultSet r)throws SQLException {return new RecReview(ReviewStatus.valueOf(r.getString("old_status")),ReviewStatus.valueOf(r.getString("new_status")),r.getInt("reviewed_by"),r.getTimestamp("reviewed_at").toInstant(),r.getString("reason"),r.getLong("resulting_version"),json.read(r.getString("eligibility_check"),RecEligibility.class));}
+    private RecReview historyRow(ResultSet r)throws SQLException {return new RecReview(ReviewStatus.valueOf(r.getString("old_status")),ReviewStatus.valueOf(r.getString("new_status")),r.getInt("reviewed_by"),r.getTimestamp("reviewed_at").toInstant(),r.getString("reason"),r.getLong("resulting_version"),json.read(r.getString("eligibility_check"),EligibilityEvidence.class));}
     private static List<List<Long>> chunks(List<Long> ids) {
         var result=new ArrayList<List<Long>>();for(int start=0;start<ids.size();start+=RELATION_BATCH_SIZE)result.add(ids.subList(start,Math.min(start+RELATION_BATCH_SIZE,ids.size())));return result;
     }
     private static String placeholders(int size){return String.join(",",Collections.nCopies(size,"?"));}
     private static Object[] arguments(int store,List<Long> ids){var args=new ArrayList<Object>();args.add(store);args.addAll(ids);return args.toArray();}
-    public void review(Stored rec,int actor,RecReviewRequest request,ReviewStatus next,RecEligibility eligibility) {
+    public void review(Stored rec,int actor,RecReviewRequest request,ReviewStatus next,RecommendationVersionedContracts.EligibilityV2 eligibility) {
         int changed=jdbc.update("UPDATE recommendation SET review_status=?,version=version+1,reviewed_by=?,reviewed_at=CURRENT_TIMESTAMP,review_reason=? WHERE store_id=? AND recommendation_id=? AND version=? AND review_status='PENDING_REVIEW'",next.name(),actor,request.reason().trim(),rec.store(),rec.id(),request.expectedVersion());
         if(changed!=1)throw new ApiException(409,"Recommendation review version or state changed");
         jdbc.update("INSERT INTO recommendation_review_history(store_id,recommendation_id,old_status,new_status,reviewed_by,reason,resulting_version,eligibility_check) VALUES (?,?,'PENDING_REVIEW',?,?,?,?,?)",rec.store(),rec.id(),next.name(),actor,request.reason().trim(),rec.version()+1,json.write(eligibility));

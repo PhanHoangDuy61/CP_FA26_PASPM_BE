@@ -12,6 +12,8 @@ import java.time.*;
 import java.util.*;
 import vn.edu.fpt.paspm.common.StrictIntegerDeserializer;
 
+import vn.edu.fpt.paspm.recommendation.RecommendationVersionedContracts.EligibilityEvidence;
+
 public final class RecommendationContracts {
     private RecommendationContracts() {}
     public enum RecType { BUNDLE, CROSS_SELL, FBT, BANNER }
@@ -41,7 +43,7 @@ public final class RecommendationContracts {
     public record RecProductEligibility(int productId,String productStatus,long sellableQuantity,EligibilityStatus status,
         @Schema(types={"number","null"}) BigDecimal expiryPriorityScore,String expiryStatus,int expiryPushDays,List<String> warnings) {}
     public record RecEligibility(EligibilityStatus status,List<RecProductEligibility> products,Instant checkedAt,
-        LocalDate asOfDate,String timeZone,List<String> warnings,String fingerprint) {}
+        LocalDate asOfDate,String timeZone,List<String> warnings,String fingerprint) implements EligibilityEvidence {}
     public record RecSource(long runId,long patternId,long requestId,int snapshotId,String algorithm,String libraryVersion,
         String conversionVersion,String inputHash,String sourceHash,String matrixHash,String minUtilMode,BigDecimal minUtilValue,
         int minUtilSpmf,BigDecimal effectiveMinUtility,BigDecimal patternUtility,LocalDate analysisDate) {}
@@ -49,11 +51,12 @@ public final class RecommendationContracts {
     public record RecGenerationResult(long miningRunId,int snapshotId,long policyVersion,String ruleVersion,int createdCount,
         int reusedCount,List<Long> recommendationIds,List<RecSkipped> skipped) {}
     public record RecReview(ReviewStatus oldStatus,ReviewStatus newStatus,int reviewedBy,Instant reviewedAt,String reason,
-        long resultingVersion,RecEligibility eligibilityCheck) {}
+        long resultingVersion,@Schema(oneOf={RecEligibility.class,RecommendationVersionedContracts.EligibilityV2.class}) EligibilityEvidence eligibilityCheck) {}
     public record RecView(long recommendationId,int storeId,int snapshotId,RecType type,List<Integer> productIds,
         @Schema(types={"integer","null"}) Integer anchorProductId,BigDecimal utility,ReviewStatus reviewStatus,long version,
-        String ruleVersion,RecPolicy policy,TransactionEvidence.Evidence evidence,RecEligibility generationEligibility,
-        RecEligibility currentEligibility,boolean inventoryChanged,boolean readyForConsumption,List<RecSource> sources,
+        String ruleVersion,RecPolicy policy,TransactionEvidence.Evidence evidence,@Schema(oneOf={RecEligibility.class,RecommendationVersionedContracts.EligibilityV2.class}) EligibilityEvidence generationEligibility,
+        RecommendationVersionedContracts.EligibilityV2 currentEligibility,
+        @Schema(description="Current fingerprint differs from the frozen one. True once for every recommendation created before W2 (fingerprint format changed)") boolean inventoryChanged,boolean readyForConsumption,List<RecSource> sources,
         List<String> explanation,List<RecReview> reviewHistory,@Schema(types={"integer","null"}) Integer reviewedBy,
         @Schema(types={"string","null"},format="date-time") Instant reviewedAt,@Schema(types={"string","null"}) String reviewReason,
         Instant createdAt,@Schema(types={"integer","null"}) Integer rank) {}

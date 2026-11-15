@@ -28,7 +28,7 @@ public class RecommendationService {
         if(new HashSet<>(request.types()).size()!=request.types().size())throw new ApiException(400,"Recommendation types must be unique");
         policies.lock(store);var policy=policies.current(store);var input=source.read(store,request.miningRunId());
         int created=0,reused=0;var ids=new LinkedHashSet<Long>();var skipped=new ArrayList<RecSkipped>();
-        var current=new HashMap<String,RecEligibility>();Integer actor=null;
+        var current=new HashMap<String,RecommendationVersionedContracts.EligibilityV2>();Integer actor=null;
         for(var pattern:input.patterns()) {
             var result=rules.apply(input,pattern,request.types(),policy);skipped.addAll(result.skipped());
             for(var candidate:result.candidates()) {
@@ -55,10 +55,11 @@ public class RecommendationService {
         int store=access.currentStoreId(jwt);if(run!=null)mining.run(store,run);
         long total=repository.count(store,run,snapshot,type,status);
         if(run!=null&&total>MAX_GENERATED_CANDIDATES)throw new ApiException(409,"Rank scope exceeds 10000 candidates; narrow type or reviewStatus filters");
-        var stored=repository.list(store,run,snapshot,type,status,run==null?size:MAX_GENERATED_CANDIDATES,run==null?(long)page*size:0);var cache=new HashMap<String,RecEligibility>();
+        var stored=repository.list(store,run,snapshot,type,status,run==null?size:MAX_GENERATED_CANDIDATES,run==null?(long)page*size:0);var cache=new HashMap<String,RecommendationVersionedContracts.EligibilityV2>();
         var views=new ArrayList<RecView>();
         var relations=repository.relations(store,stored.stream().map(RecommendationRepository.Stored::id).toList());
-        for(var record:stored)views.add(view(record,null,cache,relations));
+        var seasons=new HashMap<Integer,List<String>>();
+        for(var record:stored)views.add(view(record,null,cache,relations,seasons));
         if(run!=null)views.sort(Comparator.comparingInt((RecView v)->v.currentEligibility().status().ordinal())
             .thenComparing(RecView::utility,Comparator.reverseOrder())
             .thenComparing(v->v.evidence().supportCount(),Comparator.nullsLast(Comparator.reverseOrder()))
@@ -69,13 +70,14 @@ public class RecommendationService {
         for(int i=start;i<end;i++)items.add(withRank(views.get(i),run==null?null:i+1));
         return new RecPage(List.copyOf(items),page,size,total,run==null?"CREATED_DESC":"RANKED_WITHIN_SOURCE_RUN");
     }
-    RecView view(RecommendationRepository.Stored record,Integer rank,Map<String,RecEligibility> cache) {
-        return view(record,rank,cache,null);
+    RecView view(RecommendationRepository.Stored record,Integer rank,Map<String,RecommendationVersionedContracts.EligibilityV2> cache) {
+        return view(record,rank,cache,null,new HashMap<>());
     }
-    private RecView view(RecommendationRepository.Stored record,Integer rank,Map<String,RecEligibility> cache,RecommendationRepository.Relations relations) {
+    private RecView view(RecommendationRepository.Stored record,Integer rank,Map<String,RecommendationVersionedContracts.EligibilityV2> cache,RecommendationRepository.Relations relations,Map<Integer,List<String>> seasons) {
         String key=record.policy().minimumSellableQuantity()+"|"+record.key();
         var current=cache==null?eligibility.check(record.store(),record.products(),record.policy()):cache.computeIfAbsent(key,k->eligibility.check(record.store(),record.products(),record.policy()));
         var explanations=new ArrayList<>(record.explanation());explanations.addAll(record.eligibility().warnings());explanations.addAll(current.warnings());
+        explanations.addAll(seasons.computeIfAbsent(record.snapshot(),id->repository.endedSeasons(record.store(),id,current.asOfDate())));
         return new RecView(record.id(),record.store(),record.snapshot(),record.type(),record.products(),record.anchor(),record.utility(),record.status(),record.version(),record.policy().ruleVersion(),record.policy(),record.evidence(),record.eligibility(),current,!record.eligibility().fingerprint().equals(current.fingerprint()),record.status()==ReviewStatus.APPROVED&&current.status()==EligibilityStatus.ELIGIBLE,relations==null?repository.sources(record.store(),record.id()):relations.sources().getOrDefault(record.id(),List.of()),List.copyOf(explanations),relations==null?repository.history(record.store(),record.id()):relations.history().getOrDefault(record.id(),List.of()),record.reviewer(),record.reviewedAt(),record.reason(),record.createdAt(),rank);
     }
     private static RecView withRank(RecView v,Integer rank){return new RecView(v.recommendationId(),v.storeId(),v.snapshotId(),v.type(),v.productIds(),v.anchorProductId(),v.utility(),v.reviewStatus(),v.version(),v.ruleVersion(),v.policy(),v.evidence(),v.generationEligibility(),v.currentEligibility(),v.inventoryChanged(),v.readyForConsumption(),v.sources(),v.explanation(),v.reviewHistory(),v.reviewedBy(),v.reviewedAt(),v.reviewReason(),v.createdAt(),rank);}

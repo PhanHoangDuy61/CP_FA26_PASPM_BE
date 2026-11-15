@@ -17,7 +17,7 @@ public class MiningRepository {
     private final UtilitySettingsRepository json;
     private final MiningDispatchLease leases;
     public MiningRepository(JdbcTemplate jdbc,UtilitySettingsRepository json,MiningDispatchLease leases){this.jdbc=jdbc;this.json=json;this.leases=leases;}
-    vn.edu.fpt.paspm.utility.UtilityContracts.LambdaPolicy lambdaPolicyForUpdate(){return json.policy(true);}
+    vn.edu.fpt.paspm.utility.UtilityVersionedContracts.LambdaV2 lambdaPolicyForUpdate(){return json.policy(true);}
     record Stored(RequestView view,MiningInputBuilder.Dataset input,String payloadHash) {}
     Stored find(int store,long id){return jdbc.query("SELECT * FROM mining_request WHERE store_id=? AND request_id=?",this::stored,store,id).stream().findFirst().orElseThrow(()->new ApiException(404,"Mining request not found"));}
     Stored byKey(int store,UUID key){return jdbc.query("SELECT * FROM mining_request WHERE store_id=? AND request_key=?",this::stored,store,key.toString()).stream().findFirst().orElse(null);}

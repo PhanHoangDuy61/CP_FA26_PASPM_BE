@@ -22,7 +22,7 @@ class FrozenEvidenceReaderTest {
         jdbc.execute("CREATE TABLE mining_request(store_id INT,request_id BIGINT,frozen_input JSON,utility_config_snapshot JSON,min_util_mode VARCHAR(30),min_util_value DECIMAL(20,6),min_util_spmf INT,input_snapshot_hash VARCHAR(64),utility_snapshot_id INT)");
         jdbc.execute("CREATE TABLE pattern_item(pattern_id BIGINT,store_id INT,product_id INT,algorithm_item_id INT)");
         jdbc.execute("CREATE TABLE transaction_item(product_id INT)");jdbc.update("INSERT INTO transaction_item VALUES (11)");
-        json=new UtilitySettingsRepository(jdbc,JsonMapper.builder().findAndAddModules().build());
+        json=new UtilitySettingsRepository(jdbc,JsonMapper.builder().findAndAddModules().addModule(vn.edu.fpt.paspm.utility.UtilityJsonVersions.module()).build());
         mining=mock(MiningRepository.class);snapshots=mock(UtilitySnapshotRepository.class);
         snapshot=new UtilityMatrixContracts.SnapshotView(3,7,1,LocalDate.of(2026,10,19),LocalDate.of(2026,10,19),LocalDate.of(2026,10,19),new UtilityMatrixContracts.FrozenConfiguration(UtilityContracts.WeightConfig.defaults(),null,null,LocalDate.of(2026,10,19),"TEST",6,"HALF_UP","PRODUCT_ID_V1","Asia/Ho_Chi_Minh"),"a".repeat(64),"b".repeat(64),BigDecimal.valueOf(2),6,"READY",Instant.EPOCH,List.of());
         input=new MiningInputBuilder.Dataset("1 2:2:2 0\n1:0:0\n",MiningInputBuilder.sha("1 2:2:2 0\n1:0:0\n"),Map.of(1,11,2,22),1000000,2,2);
@@ -34,7 +34,7 @@ class FrozenEvidenceReaderTest {
     }
     MiningContracts.RunView run(String state) {return run(state,1);}
     MiningContracts.RunView run(String state,Integer patternCount) {return new MiningContracts.RunView(9,4,7,3,MiningEngine.Algorithm.HUI_MINER,1,"test",state,1,input.hash(),MiningInputBuilder.VERSION,null,null,null,null,"test","test",null,patternCount,null,null);}
-    UtilityMatrixContracts.MatrixItem row(int tx,int product){return new UtilityMatrixContracts.MatrixItem(tx,product,product,1,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,"NONE",BigDecimal.ONE,BigDecimal.ZERO,BigDecimal.ZERO,null);}
+    UtilityMatrixContracts.MatrixItem row(int tx,int product){return new UtilityMatrixContracts.MatrixItem(tx,product,product,1,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,"NONE",BigDecimal.ONE,BigDecimal.ZERO,BigDecimal.ZERO,null,null,null,null);}
     void save(){jdbc.update("DELETE FROM mining_request");jdbc.update("INSERT INTO mining_request VALUES (7,4,?,?,'ABSOLUTE',1,1,?,3)",json.write(input),json.write(snapshot),input.hash());}
     void conflict(){assertEquals(409,assertThrows(ApiException.class,()->reader.read(7,9)).status());}
     @Test void readsFrozenMembershipIncludingZeroUtilityAndIgnoresNullableSpmfSupportAndLiveEdits(){

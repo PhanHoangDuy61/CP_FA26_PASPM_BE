@@ -225,10 +225,11 @@ class JpaPilotMigrationMySqlTest {
 
     private Map<String,String> fingerprints(JdbcTemplate jdbc) throws Exception {
         var queries=new LinkedHashMap<String,String>();
-        queries.put("store","SELECT store_id,name,utility_config,mining_schedule FROM store ORDER BY store_id");
+        // V25 (W2) rewrites the live utility_config by owner decision 2026-11-15; it is checked separately via utility_weight_v2_conversion.
+        queries.put("store","SELECT store_id,name,mining_schedule FROM store ORDER BY store_id");
         queries.put("category","SELECT category_id,store_id,name,status FROM category ORDER BY category_id");
         queries.put("product","SELECT product_id,store_id,category_id,sku,name,unit,requires_expiry,selling_price,cost_price,status,stock_priority_score,seasonal_priority_score FROM product ORDER BY product_id");
-        queries.put("inventory_batch","SELECT * FROM inventory_batch ORDER BY batch_id");
+        queries.put("inventory_batch","SELECT batch_id,product_id,batch_code,received_at,expiry_date,initial_quantity,remaining_quantity,status,created_at,updated_at FROM inventory_batch ORDER BY batch_id");
         queries.put("utility_snapshot","SELECT snapshot_id,store_id,created_by,range_start,range_end,as_of_date,config_snapshot,source_hash,matrix_hash,total_weighted_utility,rounding_scale,status,created_at FROM utility_snapshot ORDER BY snapshot_id");
         queries.put("utility_matrix_item","SELECT matrix_item_id,snapshot_id,transaction_id,product_id,quantity,base_utility,stock_score,expiry_score,seasonal_score,expiry_status,weight_value,weighted_utility FROM utility_matrix_item ORDER BY matrix_item_id");
         var result=new LinkedHashMap<String,String>();

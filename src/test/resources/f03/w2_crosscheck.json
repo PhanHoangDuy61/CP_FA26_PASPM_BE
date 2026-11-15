@@ -1,0 +1,189 @@
+{
+  "source": "paspm-experiments src/expiry.py + src/weighting.py",
+  "cases": [
+    {
+      "name": "golden_single_batch",
+      "lambda": "0.5",
+      "alpha": "0.6",
+      "beta": "0.4",
+      "salesWindowDays": 30,
+      "unitsSold": 750,
+      "batches": [
+        {
+          "batchId": 1,
+          "quantity": 120,
+          "daysToPush": 3
+        }
+      ],
+      "seasonWeight": "0",
+      "uExpiryNumerator": 3,
+      "uExpiryDenominator": 8,
+      "weight": "1.11"
+    },
+    {
+      "name": "golden_two_batches_reverse",
+      "lambda": "0.5",
+      "alpha": "0.6",
+      "beta": "0.4",
+      "salesWindowDays": 30,
+      "unitsSold": 450,
+      "batches": [
+        {
+          "batchId": 2,
+          "quantity": 60,
+          "daysToPush": 5
+        },
+        {
+          "batchId": 1,
+          "quantity": 40,
+          "daysToPush": 2
+        }
+      ],
+      "seasonWeight": "0.9",
+      "uExpiryNumerator": 1,
+      "uExpiryDenominator": 4,
+      "weight": "1.26"
+    },
+    {
+      "name": "half_up_1_025",
+      "lambda": "0.25",
+      "alpha": "1",
+      "beta": "0",
+      "salesWindowDays": 30,
+      "unitsSold": 0,
+      "batches": [],
+      "seasonWeight": "0",
+      "uExpiryNumerator": 1,
+      "uExpiryDenominator": 10,
+      "weight": "1.03"
+    },
+    {
+      "name": "lambda_zero",
+      "lambda": "0",
+      "alpha": "0.5",
+      "beta": "0.5",
+      "salesWindowDays": 30,
+      "unitsSold": 10,
+      "batches": [
+        {
+          "batchId": 1,
+          "quantity": 9,
+          "daysToPush": 1
+        }
+      ],
+      "seasonWeight": "1",
+      "uExpiryNumerator": 26,
+      "uExpiryDenominator": 27,
+      "weight": "1.00"
+    },
+    {
+      "name": "max_weight",
+      "lambda": "0.5",
+      "alpha": "0.5",
+      "beta": "0.5",
+      "salesWindowDays": 30,
+      "unitsSold": 1,
+      "batches": [
+        {
+          "batchId": 1,
+          "quantity": 50,
+          "daysToPush": 1
+        }
+      ],
+      "seasonWeight": "1",
+      "uExpiryNumerator": 1499,
+      "uExpiryDenominator": 1500,
+      "weight": "1.50"
+    },
+    {
+      "name": "report4_example",
+      "lambda": "0.23",
+      "alpha": "0.5",
+      "beta": "0.5",
+      "salesWindowDays": 30,
+      "unitsSold": 0,
+      "batches": [],
+      "seasonWeight": "1",
+      "uExpiryNumerator": 0,
+      "uExpiryDenominator": 1,
+      "weight": "1.12"
+    },
+    {
+      "name": "thirds",
+      "lambda": "0.3",
+      "alpha": "0.7",
+      "beta": "0.3",
+      "salesWindowDays": 30,
+      "unitsSold": 31,
+      "batches": [
+        {
+          "batchId": 7,
+          "quantity": 10,
+          "daysToPush": 4
+        },
+        {
+          "batchId": 3,
+          "quantity": 25,
+          "daysToPush": 4
+        },
+        {
+          "batchId": 12,
+          "quantity": 8,
+          "daysToPush": 9
+        }
+      ],
+      "seasonWeight": "0.2",
+      "uExpiryNumerator": 337,
+      "uExpiryDenominator": 430,
+      "weight": "1.18"
+    },
+    {
+      "name": "push_day_passed",
+      "lambda": "0.4",
+      "alpha": "0.6",
+      "beta": "0.4",
+      "salesWindowDays": 30,
+      "unitsSold": 300,
+      "batches": [
+        {
+          "batchId": 5,
+          "quantity": 30,
+          "daysToPush": 0
+        },
+        {
+          "batchId": 6,
+          "quantity": 20,
+          "daysToPush": -2
+        }
+      ],
+      "seasonWeight": "0.5",
+      "uExpiryNumerator": 1,
+      "uExpiryDenominator": 1,
+      "weight": "1.32"
+    },
+    {
+      "name": "tie_by_integer_id",
+      "lambda": "0.35",
+      "alpha": "0.55",
+      "beta": "0.45",
+      "salesWindowDays": 30,
+      "unitsSold": 61,
+      "batches": [
+        {
+          "batchId": 10,
+          "quantity": 40,
+          "daysToPush": 2
+        },
+        {
+          "batchId": 9,
+          "quantity": 40,
+          "daysToPush": 2
+        }
+      ],
+      "seasonWeight": "0.75",
+      "uExpiryNumerator": 1139,
+      "uExpiryDenominator": 1200,
+      "weight": "1.30"
+    }
+  ]
+}

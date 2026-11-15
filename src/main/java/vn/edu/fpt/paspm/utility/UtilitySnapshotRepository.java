@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import vn.edu.fpt.paspm.common.ApiException;
 import vn.edu.fpt.paspm.utility.UtilityMatrixContracts.*;
+import vn.edu.fpt.paspm.utility.UtilityVersionedContracts.*;
 
 @Repository
 public class UtilitySnapshotRepository {
@@ -17,7 +18,7 @@ public class UtilitySnapshotRepository {
     private final UtilitySettingsRepository json;
     public UtilitySnapshotRepository(JdbcTemplate jdbc,UtilitySettingsRepository json) { this.jdbc=jdbc;this.json=json; }
     @Transactional
-    public int create(int store,int actor,RangeRequest range,FrozenConfiguration configuration,MatrixResult matrix) {
+    public int create(int store,int actor,RangeRequest range,FrozenSettings configuration,MatrixResult matrix) {
         var key=new GeneratedKeyHolder();
         jdbc.update(connection->{
             var ps=connection.prepareStatement("INSERT INTO utility_snapshot(store_id,created_by,range_start,range_end,as_of_date,config_snapshot,source_hash,matrix_hash,total_weighted_utility,rounding_scale,status,validation_warnings) VALUES (?,?,?,?,?,?,?,?,?,6,'READY',?)",new String[]{"snapshot_id"});
@@ -33,11 +34,17 @@ public class UtilitySnapshotRepository {
         int store=owner(snapshot);
         if(route(store,snapshot,false).legacy())throw invalid();
         jdbc.update("INSERT INTO utility_snapshot_storage(snapshot_id,store_id,storage_kind,source_namespace) SELECT snapshot_id,store_id,'F04_LIVE','F04_DATABASE_V1' FROM utility_snapshot WHERE snapshot_id=? AND NOT EXISTS (SELECT 1 FROM utility_snapshot_storage WHERE snapshot_id=?)",snapshot,snapshot);
-        jdbc.batchUpdate("INSERT INTO utility_matrix_item(snapshot_id,transaction_id,product_id,quantity,base_utility,stock_score,expiry_score,seasonal_score,expiry_status,weight_value,weighted_utility,expiry_evidence) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
-            items,500,(ps,item)-> { ps.setInt(1,snapshot);ps.setInt(2,item.transactionId());ps.setInt(3,item.productId());ps.setInt(4,item.quantity());ps.setBigDecimal(5,item.baseUtility());ps.setBigDecimal(6,item.stockScore());ps.setBigDecimal(7,item.expiryScore());ps.setBigDecimal(8,item.seasonalScore());ps.setString(9,item.expiryStatus());ps.setBigDecimal(10,item.weightValue());ps.setBigDecimal(11,item.weightedUtility());ps.setString(12,json.write(item.expiryEvidence())); });
+        jdbc.batchUpdate("INSERT INTO utility_matrix_item(snapshot_id,transaction_id,product_id,quantity,base_utility,stock_score,expiry_score,seasonal_score,expiry_status,weight_value,weighted_utility,expiry_evidence,expiry_risk,season_weight,season_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            items,500,(ps,item)-> { ps.setInt(1,snapshot);ps.setInt(2,item.transactionId());ps.setInt(3,item.productId());ps.setInt(4,item.quantity());ps.setBigDecimal(5,item.baseUtility());ps.setBigDecimal(6,item.stockScore());ps.setBigDecimal(7,item.expiryScore());ps.setBigDecimal(8,item.seasonalScore());ps.setString(9,item.expiryStatus());ps.setBigDecimal(10,item.weightValue());ps.setBigDecimal(11,item.weightedUtility());ps.setString(12,json.write(item.expiryEvidence()));ps.setBigDecimal(13,item.expiryRisk());ps.setBigDecimal(14,item.seasonWeight());ps.setObject(15,item.seasonId(),java.sql.Types.INTEGER); });
+    }
+    /** Q8: the snapshot keeps its own copy of every active season, by value. */
+    public void saveSeasons(int snapshot,int store,List<SeasonCopy> seasons) {
+        if(owner(snapshot)!=store)throw new ApiException(404,"Utility snapshot not found");
+        jdbc.batchUpdate("INSERT INTO utility_snapshot_season(snapshot_id,store_id,season_id,name,start_date,end_date,weight,season_version) VALUES (?,?,?,?,?,?,?,?)",
+            seasons,100,(ps,s)->{ps.setInt(1,snapshot);ps.setInt(2,store);ps.setInt(3,s.seasonId());ps.setString(4,s.name());ps.setObject(5,s.startDate());ps.setObject(6,s.endDate());ps.setBigDecimal(7,s.weight());ps.setLong(8,s.version());});
     }
     public SnapshotView find(int store,int id) {
-        return jdbc.query("SELECT * FROM utility_snapshot WHERE store_id=? AND snapshot_id=?",(rs,row)->new SnapshotView(rs.getInt("snapshot_id"),rs.getInt("store_id"),rs.getInt("created_by"),rs.getObject("range_start",LocalDate.class),rs.getObject("range_end",LocalDate.class),rs.getObject("as_of_date",LocalDate.class),json.read(rs.getString("config_snapshot"),FrozenConfiguration.class),rs.getString("source_hash"),rs.getString("matrix_hash"),rs.getBigDecimal("total_weighted_utility"),rs.getInt("rounding_scale"),rs.getString("status"),rs.getTimestamp("created_at").toInstant(),warnings(rs.getString("validation_warnings"))),store,id).stream().findFirst().orElse(null);
+        return jdbc.query("SELECT * FROM utility_snapshot WHERE store_id=? AND snapshot_id=?",(rs,row)->new SnapshotView(rs.getInt("snapshot_id"),rs.getInt("store_id"),rs.getInt("created_by"),rs.getObject("range_start",LocalDate.class),rs.getObject("range_end",LocalDate.class),rs.getObject("as_of_date",LocalDate.class),json.read(rs.getString("config_snapshot"),FrozenSettings.class),rs.getString("source_hash"),rs.getString("matrix_hash"),rs.getBigDecimal("total_weighted_utility"),rs.getInt("rounding_scale"),rs.getString("status"),rs.getTimestamp("created_at").toInstant(),warnings(rs.getString("validation_warnings"))),store,id).stream().findFirst().orElse(null);
     }
     private List<String> warnings(String value) { return value==null?List.of():List.of(json.read(value,String[].class)); }
     private record Route(String table,boolean legacy) {}
@@ -59,7 +66,7 @@ public class UtilitySnapshotRepository {
         // Unregistered empty historical headers remain readable, but never gain live provenance.
         if(routes.isEmpty()) {
             try {
-                var frozen=json.read(jdbc.queryForObject("SELECT config_snapshot FROM utility_snapshot WHERE snapshot_id=?",String.class,id),FrozenConfiguration.class);
+                var frozen=json.read(jdbc.queryForObject("SELECT config_snapshot FROM utility_snapshot WHERE snapshot_id=?",String.class,id),FrozenSettings.class);
                 if(frozen==null||!"F04_DATABASE_V1".equals(frozen.source())) {
                     long live=jdbc.queryForObject("SELECT COUNT(*) FROM utility_matrix_item WHERE snapshot_id=?",Long.class,id);
                     long archived=jdbc.queryForObject("SELECT COUNT(*) FROM utility_matrix_item_legacy_v5 WHERE snapshot_id=?",Long.class,id);
@@ -99,13 +106,13 @@ public class UtilitySnapshotRepository {
     public long countItems(int store,int id){var route=route(store,id,true);return jdbc.queryForObject("SELECT COUNT(*) FROM "+route.table()+" WHERE snapshot_id=?",Long.class,id);}
     public List<MatrixItem> page(int store,int id,int page,int size) {
         var route=route(store,id,true);
-        String projection=route.legacy()?"m.*,NULL AS expiry_evidence":"m.*";
+        String projection=route.legacy()?"m.*,NULL AS expiry_evidence,NULL AS expiry_risk,NULL AS season_weight,NULL AS season_id":"m.*";
         return jdbc.query("""
             SELECT %s,t.total AS transaction_total FROM %s m
             JOIN utility_snapshot s ON s.snapshot_id=m.snapshot_id
             JOIN (SELECT transaction_id,SUM(weighted_utility) AS total FROM %s
                   WHERE snapshot_id=? GROUP BY transaction_id) t ON t.transaction_id=m.transaction_id
             WHERE s.store_id=? AND m.snapshot_id=? ORDER BY m.transaction_id,m.product_id LIMIT ? OFFSET ?
-            """.formatted(projection,route.table(),route.table()),(rs,row)->new MatrixItem(rs.getInt("transaction_id"),rs.getInt("product_id"),rs.getInt("product_id"),rs.getInt("quantity"),rs.getBigDecimal("base_utility"),rs.getBigDecimal("stock_score"),rs.getBigDecimal("expiry_score"),rs.getBigDecimal("seasonal_score"),rs.getString("expiry_status"),rs.getBigDecimal("weight_value"),rs.getBigDecimal("weighted_utility"),rs.getBigDecimal("transaction_total"),rs.getString("expiry_evidence")==null?null:json.read(rs.getString("expiry_evidence"),ExpiryScoreCalculator.Evidence.class)),id,store,id,size,(long)page*size);
+            """.formatted(projection,route.table(),route.table()),(rs,row)->new MatrixItem(rs.getInt("transaction_id"),rs.getInt("product_id"),rs.getInt("product_id"),rs.getInt("quantity"),rs.getBigDecimal("base_utility"),rs.getBigDecimal("stock_score"),rs.getBigDecimal("expiry_score"),rs.getBigDecimal("seasonal_score"),rs.getString("expiry_status"),rs.getBigDecimal("weight_value"),rs.getBigDecimal("weighted_utility"),rs.getBigDecimal("transaction_total"),rs.getString("expiry_evidence")==null?null:json.read(rs.getString("expiry_evidence"),ExpiryEvidence.class),rs.getBigDecimal("expiry_risk"),rs.getBigDecimal("season_weight"),rs.getObject("season_id",Integer.class)),id,store,id,size,(long)page*size);
     }
 }

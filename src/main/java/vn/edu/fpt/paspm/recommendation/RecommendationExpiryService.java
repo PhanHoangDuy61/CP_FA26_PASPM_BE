@@ -11,25 +11,23 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import vn.edu.fpt.paspm.catalog.CatalogAccess;
 import vn.edu.fpt.paspm.common.ApiException;
-import vn.edu.fpt.paspm.utility.ExpiryScoreCalculator;
+import vn.edu.fpt.paspm.utility.PushDayRule;
 import vn.edu.fpt.paspm.utility.UtilityProductRepository;
 import vn.edu.fpt.paspm.utility.UtilityTimeZone;
 
-/** Current Store-local expiry alerts, independent of historical recommendation evidence. */
+/** Current Store-local expiry-push alerts from batch push days (W2), independent of historical recommendation evidence. */
 @Service
 public class RecommendationExpiryService {
     public record RecExpiryPage(List<RecExpiryBatch> items,int page,int pageSize,long totalElements,
         LocalDate asOfDate,String timeZone,Instant checkedAt,List<String> warnings) {}
-    public record RecExpiryBatch(int productId,int batchId,LocalDate expiryDate,long daysRemaining,
-        long remainingQuantity,int expiryPushDays,boolean pushRequired,Instant checkedAt,String status,List<String> warnings) {}
+    public record RecExpiryBatch(int productId,int batchId,LocalDate pushDay,LocalDate expiryDate,long daysToPush,
+        long remainingQuantity,boolean pushRequired,Instant checkedAt,List<String> warnings) {}
     private final UtilityProductRepository products;
-    private final ExpiryScoreCalculator calculator;
     private final CatalogAccess access;
     private final UtilityTimeZone timeZone;
 
-    public RecommendationExpiryService(UtilityProductRepository products,ExpiryScoreCalculator calculator,
-        CatalogAccess access,UtilityTimeZone timeZone) {
-        this.products=products;this.calculator=calculator;this.access=access;this.timeZone=timeZone;
+    public RecommendationExpiryService(UtilityProductRepository products,CatalogAccess access,UtilityTimeZone timeZone) {
+        this.products=products;this.access=access;this.timeZone=timeZone;
     }
 
     @Transactional(readOnly=true,isolation=Isolation.REPEATABLE_READ)
@@ -42,16 +40,13 @@ public class RecommendationExpiryService {
         List<RecExpiryBatch> rows=new ArrayList<>();
         List<String> warnings=new ArrayList<>();
         for(var product:products.pushCandidates(store,productId)) {
-            var result=calculator.calculate(product.id(),product.requiresExpiry(),products.batches(store,product.id()),date,product.expiryPushDays());
-            List<String> itemWarnings="MISSING_METADATA".equals(result.status())
-                ?List.of("Product "+product.id()+": missing required expiry metadata"):List.of();
+            var result=PushDayRule.evaluate(product.id(),products.riskBatches(store,product.id()),date);
+            List<String> itemWarnings=result.missingPushDay().isEmpty()?List.of():List.of("Product "+product.id()+": batches "+result.missingPushDay()+" have no push day");
             warnings.addAll(itemWarnings);
-            for(var batch:result.evidence().batches()) {
-                if(batch.pushRequired())rows.add(new RecExpiryBatch(product.id(),batch.batchId(),batch.expiryDate(),
-                    batch.daysRemaining(),batch.remainingQuantity(),batch.expiryPushDays(),true,checkedAt,result.status(),itemWarnings));
-            }
+            for(var batch:result.due())rows.add(new RecExpiryBatch(product.id(),batch.batchId(),batch.pushDay(),batch.expiryDate(),
+                batch.daysToPush(),batch.remainingQuantity(),true,checkedAt,itemWarnings));
         }
-        rows.sort(Comparator.comparing(RecExpiryBatch::expiryDate).thenComparingInt(RecExpiryBatch::productId).thenComparingInt(RecExpiryBatch::batchId));
+        rows.sort(Comparator.comparing(RecExpiryBatch::pushDay).thenComparingInt(RecExpiryBatch::productId).thenComparingInt(RecExpiryBatch::batchId));
         int start=(int)Math.min((long)page*pageSize,rows.size());
         return new RecExpiryPage(List.copyOf(rows.subList(start,Math.min(start+pageSize,rows.size()))),
             page,pageSize,rows.size(),date,timeZone.id(),checkedAt,List.copyOf(warnings));

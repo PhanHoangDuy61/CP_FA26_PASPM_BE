@@ -214,9 +214,15 @@ class MiningIntegrationTest {
         assertEquals(16,jdbc.queryForObject("SELECT COUNT(*) FROM high_utility_pattern p JOIN mining_run r ON r.run_id=p.run_id WHERE r.request_id=?",Integer.class,id));
         String before=request.path("inputHash").asText();
         jdbc.update("UPDATE product SET expiry_push_days=99,stock_priority_score=0.9,seasonal_priority_score=0.8,selling_price=999 WHERE store_id=?",store);
-        var changedConfig=new vn.edu.fpt.paspm.utility.UtilityContracts.WeightConfig(true,false,true,new java.math.BigDecimal("0.7"),java.math.BigDecimal.ZERO,new java.math.BigDecimal("0.3"),new java.math.BigDecimal("0.5"),null,2,vn.edu.fpt.paspm.utility.ExpiryScoreCalculator.SCORING_VERSION);
+        // W2: change the live Store config and add an active season; the frozen request input must not change.
+        var changedConfig=new vn.edu.fpt.paspm.utility.UtilityVersionedContracts.WeightV2(new java.math.BigDecimal("0.5"),new java.math.BigDecimal("0.5"),new java.math.BigDecimal("0.5"),30,2,"W2_EXPIRY_SEASON_V1");
         jdbc.update("UPDATE store SET utility_config=? WHERE store_id=?",json.writeValueAsString(changedConfig),store);
-        postJson("/api/utility/preview",merchant,"{\"rangeStart\":\"2026-10-19\",\"rangeEnd\":\"2026-10-19\",\"asOfDate\":\"2026-10-19\"}").andExpect(status().isOk()).andExpect(jsonPath("$.totalWeightedUtility").value(137.76));
+        int seasonActor=jdbc.queryForObject("SELECT MIN(user_id) FROM app_user WHERE store_id=?",Integer.class,store);
+        jdbc.update("INSERT INTO season(store_id,name,start_date,end_date,weight,created_by,updated_by) VALUES (?,'Mining season','2026-10-01','2026-10-31',0.8,?,?)",store,seasonActor,seasonActor);
+        int season=jdbc.queryForObject("SELECT MAX(season_id) FROM season",Integer.class);
+        jdbc.update("INSERT INTO product_season(store_id,season_id,product_id,assigned_by) SELECT store_id,?,product_id,? FROM product WHERE store_id=?",season,seasonActor,store);
+        // W = 1 + 0.5 * (0.5 * 0 + 0.5 * 0.8) = 1.20 on the unchanged historical base utility 96.
+        postJson("/api/utility/preview",merchant,"{\"rangeStart\":\"2026-10-19\",\"rangeEnd\":\"2026-10-19\",\"asOfDate\":\"2026-10-19\"}").andExpect(status().isOk()).andExpect(jsonPath("$.totalWeightedUtility").value(115.2));
         var again=json.readTree(postJson("/api/system/mining/requests",system,payload(UUID.randomUUID().toString())).andExpect(status().isAccepted()).andReturn().getResponse().getContentAsString());
         assertEquals(before,again.path("inputHash").asText());await(again.path("requestId").asLong());
         // Sanitized executed examples; no JWTs or credentials.
@@ -251,12 +257,13 @@ class MiningIntegrationTest {
     @Test void oldScoringMetadataCanBeMinedWithoutRecalculation()throws Exception{
         // H2 JSON is read using the project's established JSON decoder.
         var settings=new vn.edu.fpt.paspm.utility.UtilitySettingsRepository(jdbc,json);
-        var frozen=settings.read(jdbc.queryForObject("SELECT config_snapshot FROM utility_snapshot WHERE snapshot_id=?",String.class,snapshot),vn.edu.fpt.paspm.utility.UtilityMatrixContracts.FrozenConfiguration.class);
-        var old=frozen.config();var legacy=new vn.edu.fpt.paspm.utility.UtilityContracts.WeightConfig(old.enableStock(),old.enableExpiry(),old.enableSeason(),old.alpha(),old.beta(),old.gamma(),old.lambda(),30,1,"EXPIRY_LINEAR_V1");
-        var legacyFrozen=new vn.edu.fpt.paspm.utility.UtilityMatrixContracts.FrozenConfiguration(legacy,frozen.lambdaPolicy(),frozen.effectiveCoefficients(),frozen.analysisDate(),frozen.source(),6,"HALF_UP","PRODUCT_ID_V1",null);
+        var frozen=settings.read(jdbc.queryForObject("SELECT config_snapshot FROM utility_snapshot WHERE snapshot_id=?",String.class,snapshot),vn.edu.fpt.paspm.utility.UtilityVersionedContracts.FrozenSettings.class);
+        var Z=java.math.BigDecimal.ZERO;
+        var legacy=new vn.edu.fpt.paspm.utility.UtilityContracts.WeightConfig(false,false,false,Z,Z,Z,Z,30,1,"F03_LINEAR_V1");
+        var legacyFrozen=new vn.edu.fpt.paspm.utility.UtilityMatrixContracts.FrozenConfiguration(legacy,new vn.edu.fpt.paspm.utility.UtilityContracts.LambdaPolicy(Z,new java.math.BigDecimal("0.5"),1),new vn.edu.fpt.paspm.utility.UtilityMatrixContracts.EffectiveCoefficients(Z,Z,Z),frozen.analysisDate(),frozen.source(),6,"HALF_UP","PRODUCT_ID_V1",null);
         jdbc.update("UPDATE utility_snapshot SET config_snapshot=? WHERE snapshot_id=?",json.writeValueAsString(legacyFrozen),snapshot);
         var result=json.readTree(postJson("/api/system/mining/requests",system,payload(UUID.randomUUID().toString())).andExpect(status().isAccepted()).andReturn().getResponse().getContentAsString());
-        assertEquals("EXPIRY_LINEAR_V1",result.path("snapshot").path("configuration").path("config").path("scoringVersion").asText());await(result.path("requestId").asLong());
+        assertEquals("F03_LINEAR_V1",result.path("snapshot").path("configuration").path("config").path("scoringVersion").asText());await(result.path("requestId").asLong());
     }
     @Test void systemAdminReadsExplicitStoreSnapshotsRequestsRunsAndPatternsWithoutCrossStoreLeak()throws Exception{
         int other=jdbc.queryForObject("SELECT MAX(store_id) FROM store",Integer.class);assertNotEquals(store,other);
@@ -540,14 +547,14 @@ class MiningIntegrationTest {
         String frozen=jdbc.queryForObject("SELECT config_snapshot FROM utility_snapshot WHERE snapshot_id=?",String.class,snapshot);
         var node=json.readTree(frozen);if(node.isTextual())node=json.readTree(node.asText());
         // Default lambda may be zero; create a valid immutable test fixture through F03 with all criteria disabled.
-        String config="{\"enableStock\":false,\"enableExpiry\":false,\"enableSeason\":false,\"alpha\":0,\"beta\":0,\"gamma\":0,\"lambda\":0.4}";
+        String config="{\"alpha\":0.5,\"beta\":0.5,\"lambda\":0.4}";
         mvc.perform(put("/api/utility/config").header("Authorization","Bearer "+merchant).contentType(MediaType.APPLICATION_JSON).content(config)).andExpect(status().isOk());
         snapshot=json.readTree(postJson("/api/utility/snapshots",merchant,"{\"rangeStart\":\"2026-10-19\",\"rangeEnd\":\"2026-10-19\",\"asOfDate\":\"2026-10-19\"}").andExpect(status().isCreated()).andReturn().getResponse().getContentAsString()).path("snapshotId").asInt();
         String before=jdbc.queryForObject("SELECT config_snapshot FROM utility_snapshot WHERE snapshot_id=?",String.class,snapshot);
         String body=json.writeValueAsString(Map.of("snapshotId",snapshot,"requestKey",UUID.randomUUID()));
         long existing=json.readTree(postJson("/api/mining/requests",merchant,body).andExpect(status().isAccepted()).andReturn().getResponse().getContentAsString()).path("requestId").asLong();await(existing);
         try {
-            jdbc.update("UPDATE system_configuration SET config_value=? WHERE config_key='UTILITY_LAMBDA_POLICY'","{\"lambdaMin\":0,\"lambdaMax\":0.2}");
+            jdbc.update("UPDATE system_configuration SET config_value=? WHERE config_key='UTILITY_LAMBDA_POLICY'","{\"scoringVersion\":\"W2_EXPIRY_SEASON_V1\",\"lambdaMax\":0.2}");
             postJson("/api/mining/requests",merchant,json.writeValueAsString(Map.of("snapshotId",snapshot,"requestKey",UUID.randomUUID()))).andExpect(status().isConflict()).andExpect(jsonPath("$.error").value("The lambda policy changed: this snapshot exceeds the current lambda maximum. Create a new snapshot within the current permitted range before submitting mining."));
             postJson("/api/mining/requests",merchant,body).andExpect(status().isAccepted()).andExpect(jsonPath("$.requestId").value(existing));
             long systemRequest=json.readTree(postJson("/api/system/mining/requests",system,payload(UUID.randomUUID().toString())).andExpect(status().isAccepted()).andReturn().getResponse().getContentAsString()).path("requestId").asLong();await(systemRequest);

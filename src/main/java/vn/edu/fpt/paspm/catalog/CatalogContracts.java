@@ -35,14 +35,15 @@ public final class CatalogContracts {
             @NotNull @PositiveOrZero BigDecimal costPrice,
             @NotBlank @Schema(allowableValues = {"ACTIVE", "INACTIVE"}) String status,
             @PositiveOrZero @JsonDeserialize(using=StrictIntegerDeserializer.class)
-            @Schema(description="Product expiry push threshold in calendar days. Missing or null means 0 (disabled); no Store fallback", minimum="0", example="7") Integer expiryPushDays) {}
+            @Schema(deprecated=true, description="Deprecated since W2_EXPIRY_SEASON_V1 (P5): still accepted and stored, but ignored by every calculation. Use inventory batch pushDay", minimum="0", example="7") Integer expiryPushDays) {}
 
     public record ProductView(
             int id, String sku, String name, String unit, boolean requiresExpiry,
             CategoryView category, BigDecimal sellingPrice, BigDecimal costPrice,
             String status,
             @Schema(accessMode = Schema.AccessMode.READ_ONLY,
-                    description = "Derived sum of inventory batch remainingQuantity values") long stockQuantity, int expiryPushDays) {}
+                    description = "Derived sum of inventory batch remainingQuantity values") long stockQuantity,
+            @Schema(deprecated = true, description = "Deprecated (P5): stored but ignored by W2 scoring") int expiryPushDays) {}
 
     public record ProductPage(List<ProductView> content, int page, int pageSize,
                               long totalElements, int totalPages) {}
@@ -51,16 +52,21 @@ public final class CatalogContracts {
             @NotBlank @Size(max = 80) String batchCode,
             @NotNull Instant receivedAt,
             @Schema(description = "Optional unless the product requires expiry tracking") LocalDate expiryDate,
-            @NotNull @Positive Integer initialQuantity) {}
+            @NotNull @Positive Integer initialQuantity,
+            @Schema(types = {"string", "null"}, format = "date", description = "Store Admin push day used by F03 expiry risk (W2). Must be on or before expiryDate. A batch without one only warns and is excluded from expiry risk")
+            LocalDate pushDay) {}
 
     public record BatchPatchRequest(
             @PositiveOrZero Integer remainingQuantity,
-            @Schema(allowableValues = {"ACTIVE", "BLOCKED"}) String status) {}
+            @Schema(allowableValues = {"ACTIVE", "BLOCKED"}) String status,
+            @Schema(types = {"string", "null"}, format = "date", description = "Set the push day; counts toward the at-least-one-field rule. Must be on or before expiryDate")
+            LocalDate pushDay) {}
 
     public record BatchView(
             int id, int productId, String batchCode, Instant receivedAt,
             LocalDate expiryDate, int initialQuantity, int remainingQuantity,
-            String status, Instant createdAt, Instant updatedAt) {}
+            String status, Instant createdAt, Instant updatedAt,
+            @Schema(types = {"string", "null"}, format = "date") LocalDate pushDay) {}
 
     public record InventorySummary(
             int productId, long totalQuantity, long sellableQuantity,
