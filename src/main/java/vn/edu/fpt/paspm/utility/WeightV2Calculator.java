@@ -49,9 +49,9 @@ public class WeightV2Calculator {
         var expiry=risk.calculate(product.requiresExpiry(),batches,analysisDate,config.salesWindowDays(),unitsSold.getOrDefault(product.id(),0L));
         var season=seasonScores.getOrDefault(product.id(),SeasonScore.NONE);
         var weight=UtilityMath.weightV2(config.lambda(),config.alpha(),config.beta(),expiry.riskScaled(),expiry.eligibleScaled(),season.weight());
-        var warnings=new ArrayList<String>();
+        var warnings=new ArrayList<String>(expiry.evidence().warnings());
         if(!expiry.batchesMissingPushDay().isEmpty())warnings.add("Product "+product.id()+": batches "+expiry.batchesMissingPushDay()+" have no push day and are excluded from expiry risk");
-        if("SLOW_MOVING".equals(expiry.status()))warnings.add("Product "+product.id()+": "+ExpiryRiskCalculator.SLOW_MOVING+" (no units sold in the last "+config.salesWindowDays()+" days; U_expiry = 0)");
+        if(expiry.evidence().warnings().contains(ExpiryRiskCalculator.SLOW_MOVING))warnings.add("Product "+product.id()+": "+ExpiryRiskCalculator.SLOW_MOVING+" (no units sold in the last "+config.salesWindowDays()+" days; U_expiry = 0)");
         if("NO_SELLABLE_BATCH".equals(expiry.status()))warnings.add("Product "+product.id()+": no sellable batch; historical transactions retained");
         return new ProductWeight(product.id(),expiry,season,weight,List.copyOf(warnings));
     }

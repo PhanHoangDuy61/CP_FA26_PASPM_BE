@@ -52,6 +52,7 @@ public final class RecommendationContracts {
         int reusedCount,List<Long> recommendationIds,List<RecSkipped> skipped) {}
     public record RecReview(ReviewStatus oldStatus,ReviewStatus newStatus,int reviewedBy,Instant reviewedAt,String reason,
         long resultingVersion,@Schema(oneOf={RecEligibility.class,RecommendationVersionedContracts.EligibilityV2.class}) EligibilityEvidence eligibilityCheck) {}
+    public record EndedSeason(int seasonId,String name,java.time.LocalDate endDate) {}
     public record RecView(long recommendationId,int storeId,int snapshotId,RecType type,List<Integer> productIds,
         @Schema(types={"integer","null"}) Integer anchorProductId,BigDecimal utility,ReviewStatus reviewStatus,long version,
         String ruleVersion,RecPolicy policy,TransactionEvidence.Evidence evidence,@Schema(oneOf={RecEligibility.class,RecommendationVersionedContracts.EligibilityV2.class}) EligibilityEvidence generationEligibility,
@@ -59,7 +60,7 @@ public final class RecommendationContracts {
         @Schema(description="Current fingerprint differs from the frozen one. True once for every recommendation created before W2 (fingerprint format changed)") boolean inventoryChanged,boolean readyForConsumption,List<RecSource> sources,
         List<String> explanation,List<RecReview> reviewHistory,@Schema(types={"integer","null"}) Integer reviewedBy,
         @Schema(types={"string","null"},format="date-time") Instant reviewedAt,@Schema(types={"string","null"}) String reviewReason,
-        Instant createdAt,@Schema(types={"integer","null"}) Integer rank) {}
+        Instant createdAt,@Schema(types={"integer","null"}) Integer rank,boolean seasonEnded,List<EndedSeason> endedSeasons) {}
     public record RecPage(List<RecView> items,int page,int pageSize,long totalElements,String ordering) {}
     public static class StrictLong extends JsonDeserializer<Long> {
         @Override public Long deserialize(JsonParser parser,DeserializationContext context)throws IOException {

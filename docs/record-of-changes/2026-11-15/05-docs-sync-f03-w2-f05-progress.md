@@ -97,3 +97,6 @@ Paths relative to `src/main/java/vn/edu/fpt/paspm/` unless shown fully.
 ## 8. Proposed commit (not executed)
 
 `docs: sync feature docs, decisions and record of changes for F03 Weight v2 and F05 progress`
+
+## 2026-11-16 delivery addendum
+The owner-approved 43-file documentation sync was committed locally as `369dba4` with message `docs: sync feature docs, decisions and record of changes for F03 Weight v2 and F05 progress`. The working tree was clean immediately afterward. No push or merge. Follow-up implementation is recorded in [record 006](../2026-11-16/06-f03-f05-followup-fixes.md); earlier evidence above remains historical.

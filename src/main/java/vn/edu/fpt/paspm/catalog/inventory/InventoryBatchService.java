@@ -65,6 +65,14 @@ public class InventoryBatchService {
         return requireBatch(storeId, id);
     }
 
+    @Transactional
+    public BatchView clearPushDay(Jwt jwt, int id) {
+        int storeId = access.currentStoreId(jwt);
+        if (batches.findForUpdate(storeId, id) == null) throw new ApiException(404, "Inventory batch not found");
+        batches.clearPushDay(storeId, id);
+        return requireBatch(storeId, id);
+    }
+
     private static void requirePushDay(java.time.LocalDate pushDay, java.time.LocalDate expiryDate) {
         if (pushDay != null && expiryDate != null && pushDay.isAfter(expiryDate)) {
             throw new ApiException(400, "pushDay must be on or before expiryDate");

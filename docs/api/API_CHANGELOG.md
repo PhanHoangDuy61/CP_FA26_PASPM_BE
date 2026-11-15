@@ -178,3 +178,6 @@ No endpoint, DTO, authorization or idempotency-key change. Invalid overlong orde
 - Enable Store POST mining for Merchandiser with snapshotId/requestKey only; pin the System Admin policy.
 - New requests above current lambdaMax return 409; preserve historical snapshots and idempotent replay.
 - System Admin rights and scheduler default 503 unchanged; F03 Weight v2 not implemented.
+
+## 2026-11-16 — W2 follow-up fixes (UNRELEASED)
+Additive clear-push-day DELETE route; independent missing/zero-sales warnings; structured recommendation season-ended fields; 409 UNSUPPORTED_SCORING_VERSION for incompatible stored versions. No migration or frozen JSON rewrite.

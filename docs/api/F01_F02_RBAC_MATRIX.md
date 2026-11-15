@@ -197,3 +197,9 @@ Reconciled F01 on 2026-11-12: logout/logout-all require the active JWT family an
 | GET `/api/system/mining/stores/{storeId}/requests/{requestId}/progress` | REQUESTS group, audited | 403 | 403 | 403 |
 
 Anonymous requests: 401. Foreign Store records: 404 after authorization. New POST Store submission is Merchandiser-only; no algorithm/minUtil overrides; the System Admin route remains unchanged. Earlier F05 23-row inventory is historical; two progress routes are additive. REQUESTS is default-enabled, not default-denied; an operator can remove it.
+
+## 2026-11-16 — Additive F02 route
+| Method / path | SYSTEM_ADMIN | STORE_ADMIN | MERCHANDISER | END_CUSTOMER | Anonymous |
+|---|---|---|---|---|---|
+| DELETE /api/inventory-batches/{id}/push-day | 403 | 200 own Store; 404 foreign/unknown | 403 | 403 | 401 |
+Regenerated OpenAPI verified: 103 paths / 125 operations (124 baseline + this route).

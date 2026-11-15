@@ -7389,6 +7389,60 @@
           }
         }
       }
+    },
+    "/api/inventory-batches/{id}/push-day": {
+      "delete": {
+        "tags": [
+          "inventory-batch-controller"
+        ],
+        "summary": "Clear the push day for a Store inventory batch",
+        "description": "Idempotent. Returns the updated batch; PATCH absent/null pushDay keeps its existing value.",
+        "operationId": "clearPushDay",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatchView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -9336,6 +9390,15 @@
               "null"
             ],
             "format": "int32"
+          },
+          "seasonEnded": {
+            "type": "boolean"
+          },
+          "endedSeasons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EndedSeason"
+            }
           }
         }
       },
@@ -11632,6 +11695,22 @@
             "items": {
               "type": "string"
             }
+          }
+        }
+      },
+      "EndedSeason": {
+        "type": "object",
+        "properties": {
+          "seasonId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date"
           }
         }
       }

@@ -39,9 +39,9 @@ public class RecommendationRepository {
         if(existing==0)jdbc.update("INSERT INTO recommendation_source(store_id,recommendation_id,run_id,pattern_id,provenance) VALUES (?,?,?,?,?)",store,id,source.runId(),source.patternId(),json.write(source));
     }
     /** Seasons frozen in a recommendation's snapshot that have ended (end_date before today). */
-    public List<String> endedSeasons(int store,int snapshot,java.time.LocalDate today) {
+    public List<EndedSeason> endedSeasons(int store,int snapshot,java.time.LocalDate today) {
         return jdbc.query("SELECT season_id,name,end_date FROM utility_snapshot_season WHERE store_id=? AND snapshot_id=? AND end_date<? ORDER BY season_id",
-            (r,n)->"Season "+r.getInt(1)+" ("+r.getString(2)+") used by snapshot "+snapshot+" ended on "+r.getObject(3,java.time.LocalDate.class)+"; regenerate recommendations from a new snapshot if needed (no automatic re-run)",store,snapshot,today);
+            (r,n)->new EndedSeason(r.getInt(1),r.getString(2),r.getObject(3,java.time.LocalDate.class)),store,snapshot,today);
     }
     public List<RecSource> sources(int store,long id){return jdbc.query("SELECT provenance FROM recommendation_source WHERE store_id=? AND recommendation_id=? ORDER BY run_id,pattern_id",(r,n)->json.read(r.getString(1),RecSource.class),store,id);}
     public List<RecReview> history(int store,long id){return jdbc.query("SELECT * FROM recommendation_review_history WHERE store_id=? AND recommendation_id=? ORDER BY resulting_version",(r,n)->new RecReview(ReviewStatus.valueOf(r.getString("old_status")),ReviewStatus.valueOf(r.getString("new_status")),r.getInt("reviewed_by"),r.getTimestamp("reviewed_at").toInstant(),r.getString("reason"),r.getLong("resulting_version"),json.read(r.getString("eligibility_check"),EligibilityEvidence.class)),store,id);}

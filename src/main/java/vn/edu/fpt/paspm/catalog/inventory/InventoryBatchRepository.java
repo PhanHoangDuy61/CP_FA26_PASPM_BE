@@ -70,6 +70,14 @@ public class InventoryBatchRepository {
                 .get(0);
     }
 
+    public void clearPushDay(int storeId, int batchId) {
+        jdbc.update("""
+                UPDATE inventory_batch SET push_day=NULL, updated_at=CURRENT_TIMESTAMP
+                WHERE batch_id=? AND product_id IN (SELECT product_id FROM product WHERE store_id=?)
+                AND push_day IS NOT NULL
+                """, batchId, storeId);
+    }
+
     public void update(int batchId, Integer remainingQuantity, String status) { update(batchId, remainingQuantity, status, null); }
 
     public void update(int batchId, Integer remainingQuantity, String status, LocalDate pushDay) {

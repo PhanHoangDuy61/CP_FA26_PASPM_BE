@@ -20,7 +20,7 @@ Code paths are relative to `src/main/java/vn/edu/fpt/paspm/` on `c8c837a` (code 
 
 **Verification:** final branch gate 645 tests, 640 PASS, 5 SKIP ([record 004](../../record-of-changes/2026-11-15/04-f03-weight-v2-expiry-season.md)); `RecommendationIntegrationTest`, `RecommendationExpiryIntegrationTest` and MySQL subclasses adapted to push days.
 
-**Known gaps:** eligibility computes U_expiry with one sales aggregate per product (`utility/UtilityProductRepository.java:34`), not measured for large lists; the season warning is text in `explanation`, not a structured field.
+**Known gaps:** eligibility computes U_expiry with one sales aggregate per product (`utility/UtilityProductRepository.java:34`), not measured for large lists; the season warning was text-only at the 2026-11-15 baseline; the 2026-11-16 follow-up adds structured `seasonEnded` / `endedSeasons` while retaining the text.
 
 ## 1. Purpose and scope
 Turns a **COMPLETED own-Store F05 mining run** into persisted, reviewable recommendation candidates (`BUNDLE`, `CROSS_SELL`, `FBT`, `BANNER`). Candidates carry frozen F03/F05 evidence and are rechecked against live F02 inventory. Approving a candidate does **not** publish a layout, activate a campaign or reserve stock. F06 never runs SPMF.
@@ -76,3 +76,6 @@ None for F06. Whether a comparison-FAILED request may feed generation is recorde
 
 ## 2026-11-15 — F03 Weight v2 impact
 Eligibility is stored as `EligibilityV2` (no `expiryPushDays`, current U_expiry as `expiryPriorityScore`); old eligibility JSON is read unchanged by a version-aware reader. Expiry alerts use batch push days. Pre-W2 recommendations show `inventoryChanged = true` once (fingerprint format change, accepted). An ended snapshot season adds an `explanation` warning; there is no automatic re-run (Q5). Details: [F06 API](../../api/F06_RECOMMENDATION_API.md#2026-11-15--f03-weight-v2-knock-on-q5).
+
+## 2026-11-16 follow-up
+Recommendation views add structured `seasonEnded` / `endedSeasons` alongside the existing explanation, using frozen season dates and the current Store date. No automatic rerun.

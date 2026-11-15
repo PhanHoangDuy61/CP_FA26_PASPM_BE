@@ -111,6 +111,9 @@ class PushDayIntegrationTest {
             .andExpect(jsonPath("$.components.schemas.BatchCreateRequest.properties.pushDay").exists())
             .andExpect(jsonPath("$.components.schemas.BatchPatchRequest.properties.pushDay").exists())
             .andExpect(jsonPath("$.components.schemas.BatchView.properties.pushDay").exists())
+            .andExpect(jsonPath("$.paths['/api/inventory-batches/{id}/push-day'].delete").exists())
+            .andExpect(jsonPath("$.components.schemas.RecView.properties.seasonEnded").exists())
+            .andExpect(jsonPath("$.components.schemas.RecView.properties.endedSeasons").exists())
             .andExpect(jsonPath("$.paths['/api/utility/products/{productId}/scores'].patch.deprecated").value(true))
             .andExpect(jsonPath("$.paths['/api/utility/config/expiry-window'].put.deprecated").value(true));
     }
@@ -126,6 +129,52 @@ class PushDayIntegrationTest {
         String matrix=mvc.perform(get("/api/utility/snapshots/{id}/matrix",created.path("snapshotId").asInt()).header("Authorization","Bearer "+merchant))
             .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
         assertTrue(json.readTree(matrix).path("warnings").toString().contains("inactive"));
+    }
+
+    @Test void clearPushDayIsIdempotentScopedAndWarnsOnNextPreview() throws Exception {
+        configure();transaction(3);
+        int id=batch("CLEAR",day.plusDays(20),day.plusDays(1),5,"ACTIVE");
+        String path="/api/inventory-batches/"+id+"/push-day";
+        batchPatch(admin,id,"{\"pushDay\":null,\"status\":\"ACTIVE\"}").andExpect(status().isOk()).andExpect(jsonPath("$.pushDay").value(day.plusDays(1).toString()));
+        for(String who:new String[]{merchant,system})mvc.perform(delete(path).header("Authorization","Bearer "+who)).andExpect(status().isForbidden());
+        mvc.perform(delete(path).header("Authorization","Bearer "+foreign)).andExpect(status().isNotFound());
+        mvc.perform(delete("/api/inventory-batches/2147483647/push-day").header("Authorization","Bearer "+admin)).andExpect(status().isNotFound());
+        mvc.perform(delete(path)).andExpect(status().isUnauthorized());
+        for(int i=0;i<2;i++) {
+            mvc.perform(delete(path).header("Authorization","Bearer "+admin)).andExpect(status().isOk()).andExpect(jsonPath("$.pushDay").isEmpty()).andExpect(jsonPath("$.remainingQuantity").value(5));
+            mvc.perform(get("/api/inventory-batches/"+id).header("Authorization","Bearer "+admin)).andExpect(status().isOk()).andExpect(jsonPath("$.pushDay").isEmpty());
+        }
+        assertNull(jdbc.queryForObject("SELECT push_day FROM inventory_batch WHERE batch_id=?",LocalDate.class,id));
+        assertTrue(preview().path("items").get(0).path("expiryEvidence").path("warnings").toString().contains("MISSING_PUSH_DAY"));
+    }
+    @Test void missingPushDayAndZeroSalesBothWarnInScoresPreviewAndFrozenSnapshot() throws Exception {
+        configure();transaction(3);
+        jdbc.update("UPDATE sales_transaction SET occurred_at='2026-01-01 00:00:00' WHERE store_id=?",store);
+        batch("NO-PUSH",day.plusDays(365),null,5,"ACTIVE");
+        var scores=body(mvc.perform(get("/api/utility/products/"+product+"/scores").header("Authorization","Bearer "+merchant)).andExpect(status().isOk()));
+        assertTrue(scores.path("warnings").toString().contains("MISSING_PUSH_DAY"));
+        assertTrue(scores.path("warnings").toString().contains("SLOW_MOVING_NO_RECENT_SALES"));
+        String oldRange=range.replace("2026-10-01","2026-01-01");
+        var preview=body(mvc.perform(post("/api/utility/preview").header("Authorization","Bearer "+merchant).contentType(MediaType.APPLICATION_JSON).content(oldRange)).andExpect(status().isOk()));
+        assertTrue(preview.path("items").get(0).path("expiryEvidence").path("warnings").toString().contains("MISSING_PUSH_DAY"));
+        assertTrue(preview.path("items").get(0).path("expiryEvidence").path("warnings").toString().contains("SLOW_MOVING_NO_RECENT_SALES"));
+        var snap=body(mvc.perform(post("/api/utility/snapshots").header("Authorization","Bearer "+merchant).contentType(MediaType.APPLICATION_JSON).content(oldRange)).andExpect(status().isCreated()));
+        String evidence=jdbc.queryForObject("SELECT expiry_evidence FROM utility_matrix_item WHERE snapshot_id=?",String.class,snap.path("snapshotId").asInt());
+        assertTrue(evidence.contains("MISSING_PUSH_DAY"));assertTrue(evidence.contains("SLOW_MOVING_NO_RECENT_SALES"));
+    }
+    @Test void unsupportedStoredConfigVersionReturnsCodedError() throws Exception {
+        jdbc.update("UPDATE store SET utility_config=? WHERE store_id=?","{\"scoringVersion\":\"FUTURE_UNKNOWN\"}",store);
+        mvc.perform(get("/api/utility/config").header("Authorization","Bearer "+merchant)).andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("UNSUPPORTED_SCORING_VERSION")).andExpect(jsonPath("$.error").value(org.hamcrest.Matchers.containsString("FUTURE_UNKNOWN")));
+    }
+    @Test void corruptSnapshotVersionReturnsCodedErrorWithoutChangingStoredJson() throws Exception {
+        configure();transaction(3);
+        var snap=body(mvc.perform(post("/api/utility/snapshots").header("Authorization","Bearer "+merchant).contentType(MediaType.APPLICATION_JSON).content(range)).andExpect(status().isCreated()));
+        int id=snap.path("snapshotId").asInt();
+        String corrupted="{\"config\":{\"scoringVersion\":42}}";
+        jdbc.update("UPDATE utility_snapshot SET config_snapshot=? WHERE snapshot_id=?",corrupted,id);
+        String before=jdbc.queryForObject("SELECT config_snapshot FROM utility_snapshot WHERE snapshot_id=?",String.class,id);
+        mvc.perform(get("/api/utility/snapshots/"+id).header("Authorization","Bearer "+merchant)).andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("UNSUPPORTED_SCORING_VERSION")).andExpect(jsonPath("$.error").value(org.hamcrest.Matchers.containsString("42")));
+        assertEquals(before,jdbc.queryForObject("SELECT config_snapshot FROM utility_snapshot WHERE snapshot_id=?",String.class,id));
     }
 
     JsonNode body(org.springframework.test.web.servlet.ResultActions r) throws Exception { return json.readTree(r.andReturn().getResponse().getContentAsString()); }

@@ -100,3 +100,6 @@ OpenAPI does not encode nullable response fields: `ProductView.category` can be 
 - Roles unchanged: Store Admin only for batch writes (Merchandiser 403); foreign batch → 404.
 - `ProductRequest.expiryPushDays` / `ProductView.expiryPushDays` are **deprecated** (P5): still accepted, validated (≥ 0) and stored, but ignored by every calculation. F03 W2 uses `inventory_batch.push_day`.
 - No backfill: existing batches have `pushDay = null` until the Store Admin sets it; F03 only warns (`MISSING_PUSH_DAY`). Tests: `PushDayIntegrationTest`.
+
+## 2026-11-16 — Clear a batch push day (additive)
+`DELETE /api/inventory-batches/{id}/push-day`: Bearer authentication, STORE_ADMIN only, caller's Store. No body. Returns HTTP 200 and the same `BatchView` as GET/PATCH with `pushDay: null`. Repeating on an already-clear batch succeeds without updating its timestamp. Unknown/foreign batch 404, wrong role 403, unauthenticated 401. Persisted quantity, status and expiry are unchanged. PATCH absent/null `pushDay` retains its value; only DELETE clears it. Future calculations report `MISSING_PUSH_DAY` for otherwise eligible batches.

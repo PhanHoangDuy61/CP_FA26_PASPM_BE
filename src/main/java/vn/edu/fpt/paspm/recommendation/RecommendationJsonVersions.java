@@ -20,7 +20,7 @@ public class RecommendationJsonVersions {
                 var version=node.path("scoringVersion");
                 if(version.isMissingNode()||version.isNull())return parser.getCodec().treeToValue(node,RecommendationContracts.RecEligibility.class);
                 if(version.isTextual()&&V2.equals(version.asText()))return parser.getCodec().treeToValue(node,EligibilityV2.class);
-                throw JsonMappingException.from(parser,"Unsupported recommendation eligibility scoringVersion");
+                throw new vn.edu.fpt.paspm.common.UnsupportedScoringVersion(version.toString());
             }
         });
         return module;

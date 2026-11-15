@@ -120,3 +120,6 @@ Listed in the Checkpoint 2 report: SRS BR-05, §3.4, mining use cases and screen
 - SRS: BR-05 (Merchandiser submits mining for its own Store with the System Admin configuration), §3.4 (W2 formula, λ ∈ [0, λ_max], α + β = 1, 2-dp rounding, FEFO U_expiry, seasons, push day per batch), mining use cases (Merchandiser as submitter), screen authorization table (season screens, batch push day, Merchandiser mining submit; removed score editor and expiry window).
 - Report 1: roles — System Admin sets λ_max and the mining configuration; Merchandiser sets α, β, λ, N, seasons and runs mining for its Store; Store Admin enters push days.
 - Report 4 §4.1: λ owner (System Admin sets only λ_max; Merchandiser picks λ), M from Store seasons instead of a per-product score, the worked example 1.115 → **1.12**, who runs mining.
+
+### 2026-11-16 follow-up to the before-deploy checklist
+Validate the additive DELETE `/api/inventory-batches/{id}/push-day` action, combined warning codes, structured ended-season fields and 409 unsupported-version handling against the regenerated OpenAPI before deployment. See [record 006](../2026-11-16/06-f03-f05-followup-fixes.md). Earlier verification remains historical.

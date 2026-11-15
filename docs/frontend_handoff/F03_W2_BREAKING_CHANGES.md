@@ -46,3 +46,6 @@ Code paths are relative to `src/main/java/vn/edu/fpt/paspm/` on `c8c837a`.
 - `attemptNo` (= `lease_fence`) **may increase** after a lease loss and recovery (`mining/MiningDispatchLease.java:21`); completed steps can then drop. Treat a higher `attemptNo` as "restarted by the server", not an error.
 - `timeoutMs` is present only while `RUNNING`; `elapsedMs` uses the database clock.
 - Merchandiser submit: `POST /api/mining/requests {requestKey, snapshotId}`; 409 when the snapshot's λ is above the current λ_max (show the message: create a new snapshot) — `mining/MiningService.java:83-84`.
+
+## 2026-11-16 — Additive follow-ups
+Use the new Store-Admin DELETE `/api/inventory-batches/{id}/push-day` to clear a date (PATCH null keeps it). Display both missing-push-day and zero-sales warnings when both apply. Recommendation views expose `seasonEnded` plus `endedSeasons` for badges. Config/snapshot reads may return 409 with `code: UNSUPPORTED_SCORING_VERSION` and readable `error`; present the message and require administrator action rather than blind retry. These additions do not replace the 14 earlier breaking changes.

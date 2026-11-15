@@ -25,3 +25,6 @@ Current F01 reconciliation (2026-11-12): preserves published dev V20/AuthSession
 2026-11-15 feature branch, Checkpoint 1 (historical): 98 paths / 116 operations with the two F05 progress routes and Merchandiser Store submission.
 
 **Current export on branch `Khoi/feat/f05-progress-f03-weight-v2` @ `c8c837a`: 102 paths, 124 operations** (F01 27, F02 15, F03 20, F04 8, F05 26, F06 8, F07/F08 20), regenerated through the MockMvc export hook of `RecommendationIntegrationTest`; adds the 8 F03 season operations. Every one of the 124 operations is named in a contract in this folder; the only documented route absent from the export is `GET /api/utility/snapshots`, listed as NOT IMPLEMENTED. This is not an interactive Swagger UI execution.
+
+## 2026-11-16 export update
+The follow-up export has **103 paths / 125 operations**, adding DELETE `/api/inventory-batches/{id}/push-day` to the 102/124 baseline. Recommendation views include `seasonEnded` and `endedSeasons`; all local schema references resolve.

@@ -24,11 +24,11 @@ public class UtilityJsonVersions {
     private static boolean v2(JsonNode node) {
         var version=node.path("scoringVersion");
         if(version.isMissingNode()||version.isNull())return false;
-        if(!version.isTextual())throw new IllegalArgumentException("Invalid scoringVersion");
+        if(!version.isTextual())throw new vn.edu.fpt.paspm.common.UnsupportedScoringVersion(version.toString());
         return switch(version.asText()) {
             case V2 -> true;
             case "F03_LINEAR_V1",ExpiryScoreCalculator.SCORING_VERSION -> false;
-            default -> throw new IllegalArgumentException("Unsupported persisted scoringVersion: "+version.asText());
+            default -> throw new vn.edu.fpt.paspm.common.UnsupportedScoringVersion(version.toString());
         };
     }
     private static <T> JsonDeserializer<T> reader(Function<JsonNode,Class<? extends T>> select) {

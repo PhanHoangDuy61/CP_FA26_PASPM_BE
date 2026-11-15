@@ -18,7 +18,7 @@ Code paths are relative to `src/main/java/vn/edu/fpt/paspm/` on `c8c837a` (code 
 | Eligible batch | ACTIVE, remaining > 0, not expired (expiry > analysis date), has a push day | `utility/ExpiryRiskCalculator.java:41`, `:45` |
 | Missing push day | Excluded, warning `MISSING_PUSH_DAY`, never blocks | `utility/ExpiryRiskCalculator.java:45`, `:84`; `utility/UtilityMatrixBuilder.java:66` (always ready) |
 | v(i) | Units in the N days ending on and including the analysis date ÷ N; N = 30 default | `utility/WeightV2Calculator.java:30`; `utility/UtilityVersionedContracts.java:17` |
-| v = 0 | U = 0, status `SLOW_MOVING`, warning `SLOW_MOVING_NO_RECENT_SALES` | `utility/ExpiryRiskCalculator.java:60` |
+| v = 0 | U = 0, warning `SLOW_MOVING_NO_RECENT_SALES`; status remains `MISSING_PUSH_DAY` when no eligible batch exists, otherwise `SLOW_MOVING`. Both warnings coexist after the 2026-11-16 fix | `utility/ExpiryRiskCalculator.java:60` |
 | M | Highest weight among active assigned seasons (P2); active = analysis date in [start, end] (P3) | `utility/WeightV2Calculator.java:39-43`; `utility/SeasonRepository.java:69` |
 | λ range | [0, λ_max]; System Admin sets only λ_max | `utility/UtilityConfigurationService.java:38-42`; `utility/UtilityConfigurationController.java:17-20` |
 | Store config | Merchandiser sets α, β (sum 1), λ, N (1..365) | `utility/UtilityConfigurationService.java:31-33`; `utility/UtilityContracts.java:36-42` |
@@ -87,3 +87,6 @@ Owner decisions Q1–Q10 and the conversion rule are recorded in the [decision r
 
 ## 13. Historical references
 [Original v4 backlog](reference_v4/PASPM_F03_Three_Weights_v4_API_Swagger_Backlog.md), [issues](reference_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/README.md), [original F03→F05 handoff](reference_v4/F03_F05_HANDOFF.md) (stale downstream text), [legacy matrix compatibility](../../architecture/LEGACY_UTILITY_MATRIX_COMPATIBILITY.md).
+
+## 2026-11-16 follow-up
+Missing-push-day and no-recent-sales warning codes coexist. Unsupported stored scoring versions return coded 409 conflicts; immutable legacy JSON remains untouched. See the current API contract.

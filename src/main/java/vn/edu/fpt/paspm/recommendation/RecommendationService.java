@@ -58,7 +58,7 @@ public class RecommendationService {
         var stored=repository.list(store,run,snapshot,type,status,run==null?size:MAX_GENERATED_CANDIDATES,run==null?(long)page*size:0);var cache=new HashMap<String,RecommendationVersionedContracts.EligibilityV2>();
         var views=new ArrayList<RecView>();
         var relations=repository.relations(store,stored.stream().map(RecommendationRepository.Stored::id).toList());
-        var seasons=new HashMap<Integer,List<String>>();
+        var seasons=new HashMap<Integer,List<EndedSeason>>();
         for(var record:stored)views.add(view(record,null,cache,relations,seasons));
         if(run!=null)views.sort(Comparator.comparingInt((RecView v)->v.currentEligibility().status().ordinal())
             .thenComparing(RecView::utility,Comparator.reverseOrder())
@@ -73,13 +73,14 @@ public class RecommendationService {
     RecView view(RecommendationRepository.Stored record,Integer rank,Map<String,RecommendationVersionedContracts.EligibilityV2> cache) {
         return view(record,rank,cache,null,new HashMap<>());
     }
-    private RecView view(RecommendationRepository.Stored record,Integer rank,Map<String,RecommendationVersionedContracts.EligibilityV2> cache,RecommendationRepository.Relations relations,Map<Integer,List<String>> seasons) {
+    private RecView view(RecommendationRepository.Stored record,Integer rank,Map<String,RecommendationVersionedContracts.EligibilityV2> cache,RecommendationRepository.Relations relations,Map<Integer,List<EndedSeason>> seasons) {
         String key=record.policy().minimumSellableQuantity()+"|"+record.key();
         var current=cache==null?eligibility.check(record.store(),record.products(),record.policy()):cache.computeIfAbsent(key,k->eligibility.check(record.store(),record.products(),record.policy()));
         var explanations=new ArrayList<>(record.explanation());explanations.addAll(record.eligibility().warnings());explanations.addAll(current.warnings());
-        explanations.addAll(seasons.computeIfAbsent(record.snapshot(),id->repository.endedSeasons(record.store(),id,current.asOfDate())));
-        return new RecView(record.id(),record.store(),record.snapshot(),record.type(),record.products(),record.anchor(),record.utility(),record.status(),record.version(),record.policy().ruleVersion(),record.policy(),record.evidence(),record.eligibility(),current,!record.eligibility().fingerprint().equals(current.fingerprint()),record.status()==ReviewStatus.APPROVED&&current.status()==EligibilityStatus.ELIGIBLE,relations==null?repository.sources(record.store(),record.id()):relations.sources().getOrDefault(record.id(),List.of()),List.copyOf(explanations),relations==null?repository.history(record.store(),record.id()):relations.history().getOrDefault(record.id(),List.of()),record.reviewer(),record.reviewedAt(),record.reason(),record.createdAt(),rank);
+        var ended=seasons.computeIfAbsent(record.snapshot(),id->repository.endedSeasons(record.store(),id,current.asOfDate()));
+        for(var season:ended)explanations.add("Season "+season.seasonId()+" ("+season.name()+") used by snapshot "+record.snapshot()+" ended on "+season.endDate()+"; regenerate recommendations from a new snapshot if needed (no automatic re-run)");
+        return new RecView(record.id(),record.store(),record.snapshot(),record.type(),record.products(),record.anchor(),record.utility(),record.status(),record.version(),record.policy().ruleVersion(),record.policy(),record.evidence(),record.eligibility(),current,!record.eligibility().fingerprint().equals(current.fingerprint()),record.status()==ReviewStatus.APPROVED&&current.status()==EligibilityStatus.ELIGIBLE,relations==null?repository.sources(record.store(),record.id()):relations.sources().getOrDefault(record.id(),List.of()),List.copyOf(explanations),relations==null?repository.history(record.store(),record.id()):relations.history().getOrDefault(record.id(),List.of()),record.reviewer(),record.reviewedAt(),record.reason(),record.createdAt(),rank,!ended.isEmpty(),ended);
     }
-    private static RecView withRank(RecView v,Integer rank){return new RecView(v.recommendationId(),v.storeId(),v.snapshotId(),v.type(),v.productIds(),v.anchorProductId(),v.utility(),v.reviewStatus(),v.version(),v.ruleVersion(),v.policy(),v.evidence(),v.generationEligibility(),v.currentEligibility(),v.inventoryChanged(),v.readyForConsumption(),v.sources(),v.explanation(),v.reviewHistory(),v.reviewedBy(),v.reviewedAt(),v.reviewReason(),v.createdAt(),rank);}
+    private static RecView withRank(RecView v,Integer rank){return new RecView(v.recommendationId(),v.storeId(),v.snapshotId(),v.type(),v.productIds(),v.anchorProductId(),v.utility(),v.reviewStatus(),v.version(),v.ruleVersion(),v.policy(),v.evidence(),v.generationEligibility(),v.currentEligibility(),v.inventoryChanged(),v.readyForConsumption(),v.sources(),v.explanation(),v.reviewHistory(),v.reviewedBy(),v.reviewedAt(),v.reviewReason(),v.createdAt(),rank,v.seasonEnded(),v.endedSeasons());}
     private static String canonical(List<Integer> ids){return ids.stream().map(Object::toString).collect(java.util.stream.Collectors.joining(","));}
 }

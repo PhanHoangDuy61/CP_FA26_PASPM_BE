@@ -71,3 +71,6 @@ P5 (accept but ignore `expiryPushDays`) is an **assumption pending owner confirm
 
 ## 13. Historical references
 [Original v3 backlog](reference_v3/PASPM_F02_Inventory_Batch_API_Swagger_Backlog_v3.md), [issues](reference_v3/F02_GitHub_Issues/README.md), [Product JPA report](../../architecture/PRODUCT_JPA_INTEGRATION_REPORT.md), [Category JPA report](../../architecture/CATEGORY_JPA_IMPLEMENTATION_REPORT.md). Old all-StoreAdmin and expiry-today clauses are superseded.
+
+## 2026-11-16 follow-up
+Store Admin can clear a batch push day with DELETE `/api/inventory-batches/{id}/push-day`; idempotent, returns BatchView, foreign/unknown 404. PATCH null retains the value. See the current API contract.

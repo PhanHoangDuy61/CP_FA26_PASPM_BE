@@ -50,6 +50,7 @@ public class ExpiryRiskCalculator {
             eligible.add(batch);
         }
         if(!missing.isEmpty())warnings.add(MISSING_PUSH_DAY);
+        if(unitsSold==0)warnings.add(SLOW_MOVING);
         long eligibleQuantity=eligible.stream().mapToLong(Batch::remainingQuantity).sum();
         if(eligibleQuantity==0) {
             listed.sort(Comparator.comparingInt(RiskBatch::batchId));
@@ -58,7 +59,6 @@ public class ExpiryRiskCalculator {
         // FEFO: push day ascending, then batch_id as an integer.
         eligible.sort(Comparator.comparing(Batch::pushDay).thenComparingInt(Batch::batchId));
         if(unitsSold==0) { // Q7: no recent sales -> U_expiry = 0 with a warning (hard to sell).
-            warnings.add(SLOW_MOVING);
             var rows=new ArrayList<RiskBatch>();
             for(var b:eligible)rows.add(new RiskBatch(b.batchId(),b.pushDay(),b.expiryDate(),b.remainingQuantity(),days(asOfDate,b.pushDay()),null,null,true,List.of()));
             rows.addAll(listed);

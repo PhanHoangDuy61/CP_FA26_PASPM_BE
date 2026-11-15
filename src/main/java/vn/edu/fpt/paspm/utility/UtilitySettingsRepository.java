@@ -48,6 +48,10 @@ public class UtilitySettingsRepository {
             var node=json.readTree(raw);
             if(node.isTextual()) node=json.readTree(node.asText()); // H2 JSON stores bound strings as JSON strings.
             return json.treeToValue(node,type);
-        } catch(Exception e) { throw new IllegalStateException("Invalid persisted utility settings",e); }
+        } catch(Exception e) {
+            for(Throwable cause=e;cause!=null;cause=cause.getCause())
+                if(cause instanceof vn.edu.fpt.paspm.common.UnsupportedScoringVersion unsupported)throw unsupported;
+            throw new IllegalStateException("Invalid persisted utility settings",e);
+        }
     }
 }

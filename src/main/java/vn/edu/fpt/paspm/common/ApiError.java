@@ -14,6 +14,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class ApiError {
+    @ExceptionHandler(UnsupportedScoringVersion.class)
+    public ResponseEntity<Map<String,String>> unsupportedVersion(UnsupportedScoringVersion exception) {
+        org.slf4j.LoggerFactory.getLogger(ApiError.class).error("Stored scoring model is unsupported",exception);
+        return ResponseEntity.status(exception.status()).body(Map.of("code",UnsupportedScoringVersion.CODE,"error",exception.getMessage()));
+    }
+
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<Map<String, String>> api(ApiException exception) {
         return ResponseEntity.status(exception.status())

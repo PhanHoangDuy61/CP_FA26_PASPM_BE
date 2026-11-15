@@ -92,3 +92,6 @@ OpenAPI currently does not mark nullable response members as nullable: Product `
 Use loading state for every list/detail request; empty arrays mean empty list, and `ProductPage.totalElements=0` means no matches. Save 201/200 should display returned resource and use its ID. Handle 400 with the `error` message/field form feedback, 401 by clearing session and signing in again, 403 as insufficient role, 404 as missing or another Store's resource, 409 as duplicate/constraint conflict, network errors as connectivity issue, and 5xx as server failure. Handled error JSON is `{error:string}`; framework auth responses may not have a body. Refresh batch/product/summary reads after successful mutation.
 
 There is no CORS setup in the Backend source. Use same-origin local proxy or deployment CORS configuration when Frontend and API have different origins.
+
+## 2026-11-16 — Optional clear-push-day action
+New non-breaking route: `DELETE /api/inventory-batches/{id}/push-day` (Store Admin). Send Bearer, no body; 200 returns `InventoryBatch` with nullable `pushDay`. Update local batch state from the response, then refresh scores/preview. Already-null succeeds. 404 covers unknown and foreign Store records; 403 wrong role. PATCH null/omitted keeps the old push day. Add `pushDay?: string | null` to create/PATCH types and nullable `pushDay` to the response type.

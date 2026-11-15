@@ -470,7 +470,7 @@ class LayoutCampaignIntegrationTest {
                 new BigDecimal("999999.000000"), reviewStatus, 2L, "F06_TEST",
                 null, null, null, null, false, ready, List.of(), List.of(), List.of(),
                 approved ? merchantUserId : null, approved ? Instant.now() : null,
-                approved ? "test review" : null, Instant.now(), null);
+                approved ? "test review" : null, Instant.now(), null, false, List.of());
     }
 
     private BigDecimal snapshotProductScore(List<Integer> productIds) {

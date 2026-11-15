@@ -56,6 +56,18 @@ class RecommendationIntegrationTest {
     }
     ResultActions generate(long run,String who)throws Exception {return postJson("/api/recommendations/generate",who,json.writeValueAsString(Map.of("miningRunId",run,"types",List.of("BUNDLE","CROSS_SELL","FBT","BANNER"))));}
     List<Long> ids(JsonNode result) {List<Long> ids=new ArrayList<>();result.path("recommendationIds").forEach(n->ids.add(n.asLong()));return ids;}
+    @Test void endedSnapshotSeasonHasStructuredFlagsAndPreservesFrozenEvidence() throws Exception {
+        long run=mine(snapshot)[0];
+        long id=ids(body(generate(run,merchant).andExpect(status().isOk()))).get(0);
+        String before=jdbc.queryForObject("SELECT generation_eligibility FROM recommendation WHERE recommendation_id=?",String.class,id);
+        jdbc.update("INSERT INTO utility_snapshot_season(snapshot_id,store_id,season_id,name,start_date,end_date,weight,season_version) VALUES (?,?,100,'Past season',?,?,0.5,1)",snapshot,store,day.minusDays(10),day.minusDays(1));
+        var detail=body(getJson("/api/recommendations/"+id,merchant).andExpect(status().isOk()));
+        assertTrue(detail.path("seasonEnded").asBoolean());assertEquals("Past season",detail.path("endedSeasons").get(0).path("name").asText());
+        assertEquals(day.minusDays(1).toString(),detail.path("endedSeasons").get(0).path("endDate").asText());
+        assertTrue(detail.path("explanation").toString().contains("Past season"));
+        assertTrue(body(getJson("/api/recommendations",merchant).andExpect(status().isOk())).path("items").get(0).path("seasonEnded").asBoolean());
+        assertEquals(before,jdbc.queryForObject("SELECT generation_eligibility FROM recommendation WHERE recommendation_id=?",String.class,id));
+    }
     @Test void completedRealMiningGeneratesFourTypesAndDirectionalFrozenEvidence()throws Exception {
         long run=mine(snapshot)[0];JsonNode generated=body(generate(run,merchant).andExpect(status().isOk()));
         assertEquals(8,generated.path("createdCount").asInt());Set<String> types=new HashSet<>();
