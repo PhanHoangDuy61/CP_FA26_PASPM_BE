@@ -70,3 +70,6 @@ All ten business choices are `BUSINESS_CHOICE_CONFIRMED` (2026-11-02; D3 amended
 
 ## 13. Historical references
 [Gap analysis](reference/F05_GAP_ANALYSIS.md), [original verification](reference/F05_VERIFICATION.md) (retired Merchandiser flow, dated), [F05→F06 handoff](reference/F05_F06_HANDOFF.md), [P0 deployment fix report](../../audits/F05_P0_DEPLOYMENT_FIX_REPORT.md), [legacy RUNNING reconciliation](../../architecture/F05_LEGACY_RUNNING_RECONCILIATION.md).
+
+## 2026-11-15 — F03 Weight v2 impact
+Scheduled snapshots (`MiningScheduledSnapshot`) use the same freezer as manual snapshots: W2 config, λ check (409), and seasons active on the occurrence analysis date (P3), copied by value. The old "requires complete enabled scores and expiry metadata" failure no longer exists, because missing push days only warn; an empty matrix still fails with `No eligible transaction items in the selected range`. Merchandiser submissions keep the λ_max block: a snapshot whose frozen λ exceeds the current λ_max → 409. Frozen `mining_request.utility_config_snapshot` JSON is read by a version-aware reader (legacy `FrozenConfiguration` or `FrozenV2`). Scheduling stays disabled (enable → 503).

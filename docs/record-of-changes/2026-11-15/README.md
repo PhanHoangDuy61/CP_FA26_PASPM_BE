@@ -13,6 +13,7 @@
 2. [ROC-20261115-002 — F05 progress, quyền Merchandiser và Checkpoint 1](02-f05-progress-checkpoint-1.md).
 
 3. [ROC-20261115-003 — Duyệt Checkpoint 1 và kiểm thử opt-in](03-opt-in-gate-and-weight-v2.md).
+4. [ROC-20261115-004 — F03 Weight v2 (expiry risk + season), Phases 2–6, Checkpoint 2](04-f03-weight-v2-expiry-season.md) — V25, owner conversion rule, seasons, push days, F06 knock-on; UNRELEASED, uncommitted.
 
 ## Added
 
@@ -30,7 +31,7 @@
 ## Fixed / Database
 
 - Sửa hai test migration có số lượng cố định từ V21, vẫn giữ kiểm tra checksum và bảo toàn dữ liệu; bản sửa thuộc merge F07/F08.
-- Không sửa migration V1–V23. V25 cho F03 mới chỉ được dự kiến, chưa tạo.
+- Không sửa migration V1–V23. (Cập nhật 004: V25 cho F03 đã được tạo trong record 004; V1–V24 không bị sửa.)
 - Chỉ dùng H2 và MySQL 8.4.13 dùng một lần. Container MySQL kiểm thử đã dừng.
 
 ## Verification — bằng chứng của phiên triển khai, không chạy lại trong lượt cập nhật docs

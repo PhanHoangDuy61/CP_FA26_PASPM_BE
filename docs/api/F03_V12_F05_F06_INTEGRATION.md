@@ -1,4 +1,6 @@
 <!-- docs-reorganization:notice -->
+
+> **2026-11-15:** new snapshots use `W2_EXPIRY_SEASON_V1` (U_expiry from batch push days, M from seasons, W rounded to 2 decimals). This page describes the v1.2 flow, which still applies to reading pre-V25 snapshots. See [F03 API — W2](F03_UTILITY_API.md) and [V24/V25 schema notes](../architecture/F03_W2_SCHEMA_V24_V25.md).
 > **NEEDS_REVIEW — documentation review 2026-10-26.** Old absent-F06 and V7-blocker statements do not describe all current source/recovery state. See [current navigation](../features/F06/README.md). Original results and business-rule text below are retained; this notice is not a new execution or approval.
 <!-- /docs-reorganization:notice -->
 

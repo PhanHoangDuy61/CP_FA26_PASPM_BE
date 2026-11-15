@@ -1,5 +1,7 @@
 # F06 React / TypeScript integration handoff
 
+> **2026-11-15 — W2.** Eligibility JSON is now `EligibilityV2` (no `expiryPushDays`), expiry-push items are push-day based, every pre-W2 recommendation shows `inventoryChanged = true` once, and an ended-season line may appear in `explanation`. See [F03 W2 breaking changes](F03_W2_BREAKING_CHANGES.md) rows 12–14.
+
 This handoff describes the implemented backend contract, checked against current recommendation controllers, records, rules, frozen-source reader and inventory services on 2026-10-20. It provides a workflow for frontend implementation; it does not claim implementation in FE or FE_Kien. The detailed wire types, exact field nullability and all eight operations are in [F06_RECOMMENDATION_API.md](../api/F06_RECOMMENDATION_API.md). No new F06 authentication flow is needed. Use backend Java17; the [existing runtime setup](../setup/F05_SPMF_RUNTIME_SETUP.md) applies when creating new F05 source runs. Independent F06 expiry and reading/generating from existing completed runs do not execute SPMF. Existing database V7 checksum reconciliation remains the separate [operator recovery workflow](../setup/FLYWAY_MYSQL_V7_RECOVERY.md).
 
 ## Connect and authorize

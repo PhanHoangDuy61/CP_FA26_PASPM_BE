@@ -1,5 +1,7 @@
 > **Status 2026-11-02.** FEFO tie order is expiry date, oldest receipt, then batch ID; historical snapshots are unchanged. The routes and roles in this file are checked by `F03F05RbacMatrixTest` and the F03 suites listed in the [audit matrix](../reports/F03_F05_API_AUDIT_MATRIX_2026-11-02.md). The Weight Rules v1.2 source file is not tracked in the repository, so [F03_UTILITY_API.md](../api/F03_UTILITY_API.md) is the only written v1.2 contract.
 
+> **2026-11-15 — Weight v2 (`W2_EXPIRY_SEASON_V1`).** Config, policy, product scores and expiry-push bodies changed and seasons were added. Read [F03 W2 breaking changes](F03_W2_BREAKING_CHANGES.md) first; the text below describes the legacy v1.2 contract, still valid only for reading pre-V25 snapshots.
+
 <!-- docs-reorganization:notice -->
 > **NEEDS_REVIEW — documentation review 2026-10-26.** Final v1.2 source and some referenced examples are absent from tracked dev; untracked originals are not imported. See [current navigation](../features/F03/README.md). Original results and business-rule text below are retained; this notice is not a new execution or approval.
 <!-- /docs-reorganization:notice -->

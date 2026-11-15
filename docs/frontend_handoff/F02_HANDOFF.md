@@ -1,5 +1,7 @@
 # F02 Product and Inventory Frontend Handoff
 
+> **2026-11-15 — W2.** Inventory batches accept an optional `pushDay` on create and PATCH (Store Admin only, ≤ expiryDate). Product `expiryPushDays` is deprecated and ignored by scoring. See [F03 W2 breaking changes](F03_W2_BREAKING_CHANGES.md).
+
 ## v1.2 Product expiry priority update (2026-10-19)
 
 The existing Product POST/PUT request accepts optional `expiryPushDays: integer|null`; absent/null is stored as0, values must be >=0, and fractional/string/boolean values are rejected400. Full PUT must send the desired threshold (omitting resets it to0). Product GET/list/create/update/status responses include `expiryPushDays: integer`. Store Admin owns this field in their Store; Merchandiser and System Admin cannot modify it through F02, and cross-Store records return404. No duplicate configuration endpoint was added. `requiresExpiry=false` remains NOT_APPLICABLE in F03 even if a threshold is configured. Inventory quantities are unchanged by threshold updates.

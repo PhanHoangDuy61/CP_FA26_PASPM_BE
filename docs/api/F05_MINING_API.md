@@ -589,3 +589,9 @@ Retry (D7): a retryable failure (HTTP 5xx such as an unavailable SPMF runtime, o
 **Catch-up (D6)** — after downtime only the latest missed fire time becomes `PENDING`; each older one is recorded `SKIPPED` in the same transaction that advances the cursor. A very long backlog is recorded in batches of at most 500 per transaction and continues until the latest fire time is reserved. There is no maximum catch-up age.
 
 Evidence: [acceptance matrix](../reports/F05_SCHEDULER_ACCEPTANCE_MATRIX.md). Real-HTTP weekly and monthly activation, SKIPPED history, failure visibility, RBAC and Store isolation ran on MySQL 8.4 with the pinned SPMF 2.67a (Java 25) in `MiningScheduledActivationE2EMySqlTest`; two Backend processes and `kill -9` recovery in `MiningSchedulerMultiJvmMySqlTest`. These are local, opt-in results: they do not constitute release acceptance.
+
+## 2026-11-15 — F03 Weight v2 impact on F05
+
+- Request/response routes and RBAC are unchanged. `snapshot.configuration` inside `RequestView` is either the legacy `FrozenConfiguration` or `FrozenV2` (branch on `configuration.config.scoringVersion`).
+- The Merchandiser λ_max block compares the frozen `configuration.config.lambda` with the current `lambdaMax` (the policy no longer has `lambdaMin`).
+- Scheduled snapshots freeze the seasons active on the occurrence analysis date; failure text for a not-ready matrix was removed (cannot happen in W2).

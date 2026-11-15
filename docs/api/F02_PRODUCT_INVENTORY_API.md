@@ -90,3 +90,11 @@ A more specific service validation may return e.g. `{"error":"Remaining quantity
 All 15 F02 method/path operations appear in the runtime OpenAPI document. `CatalogIntegrationTest` exercises authentication/role denial, category/product CRUD/status, Store isolation, batch CRUD, required expiry, and quantity/status patch. The document is source/spec verified; not every route was separately exercised through a live browser during this handoff. See `F02_SWAGGER_TEST_REPORT.md` for the prior actual F02 Swagger run.
 
 OpenAPI does not encode nullable response fields: `ProductView.category` can be null when no category is assigned and `BatchView.expiryDate` can be null for a non-expiring Product, although its schema shows nonnullable object/date types. Treat these as nullable in TypeScript. The ERD labels the account table `USER`; the implemented schema uses `app_user` to avoid reserved-word issues. The ERD uses `CATEGORY` / `PRODUCT` / `INVENTORY_BATCH`, and migrations V1/V3 implement these entities, including Store-scoped unique SKU, composite Store/category ownership, and unique `(product_id,batch_code)`. No stored Product stock column exists. F03 migration V4 adds score columns separately; this is consistent with field ownership in the F03 utility API.
+
+## 2026-11-15 — Batch push day (F03 Weight v2, Q1/P5)
+
+- `BatchCreateRequest` adds optional `pushDay` (ISO date). `BatchPatchRequest` adds optional `pushDay`; it counts toward the "at least one field" rule, so `{"pushDay":"2026-12-01"}` alone is valid. `BatchView` returns `pushDay` (date or null).
+- `pushDay` must be on or before `expiryDate` → otherwise 400 (also a database CHECK). PATCH cannot clear a push day (null means "not provided").
+- Roles unchanged: Store Admin only for batch writes (Merchandiser 403); foreign batch → 404.
+- `ProductRequest.expiryPushDays` / `ProductView.expiryPushDays` are **deprecated** (P5): still accepted, validated (≥ 0) and stored, but ignored by every calculation. F03 W2 uses `inventory_batch.push_day`.
+- No backfill: existing batches have `pushDay = null` until the Store Admin sets it; F03 only warns (`MISSING_PUSH_DAY`). Tests: `PushDayIntegrationTest`.

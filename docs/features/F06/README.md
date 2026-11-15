@@ -53,3 +53,6 @@ None for F06. Whether a comparison-FAILED request may feed generation is recorde
 
 ## 13. Historical references
 [Readiness plan with appended approval](../../archive/F06/F06_IMPLEMENTATION_READINESS.md). Historical F03/F05 texts saying F06 is absent are not authoritative.
+
+## 2026-11-15 — F03 Weight v2 impact
+Eligibility is stored as `EligibilityV2` (no `expiryPushDays`, current U_expiry as `expiryPriorityScore`); old eligibility JSON is read unchanged by a version-aware reader. Expiry alerts use batch push days. Pre-W2 recommendations show `inventoryChanged = true` once (fingerprint format change, accepted). An ended snapshot season adds an `explanation` warning; there is no automatic re-run (Q5). Details: [F06 API](../../api/F06_RECOMMENDATION_API.md#2026-11-15--f03-weight-v2-knock-on-q5).
