@@ -87,3 +87,13 @@ Final checks below record this pass; they do not claim runtime verification. Pro
 - `git diff --check` passed. Four tracked docs modified plus two new docs; the new release directory contains only the merge plan. Staged diff empty. Both external drafts verified outside Git; FE notice has exactly 14 old→new rows and PR draft has the requested footer.
 - Full wildcard remote tracking was verified after fetch; no origin tracking ref for this feature branch exists. This supports the unpushed state in the inspected remote snapshot, not a guarantee about other copies/remotes.
 - No commit created. Proposed message remains `docs: add record 007 and F03/F05 merge plan`. No push, PR, merge, rebase, pull, reset, amend, tag, deployment or message send.
+
+### Owner-approved CI selector follow-up — 2026-11-16
+
+The sole CI/script reference to the removed integration class was `.github/scripts/test-groups.py:19`. Only that backend entry is replaced with `PushDayIntegrationTest`, `WeightV2CalculationTest`, `VersionedUtilityJsonTest` and `VersionedUtilityPersistenceTest`: batch rules, W2 calculation and legacy/frozen JSON compatibility. Already-selected UtilityIntegrationTest and WeightRulesV12MigrationTest remain; all other entries/order and the MySQL group are unchanged (checked by parsed-list equality).
+
+Both selector validations exited 0: **51 backend classes and 11 MySQL classes**, every selected class present on the inspected committed source tree. One Maven execution ran **only the four newly selected classes** on Java 17 / disposable H2 memory databases: **31 PASS, 0 FAIL, 0 ERROR, 0 SKIP; exit 0 / BUILD SUCCESS**. Breakdown: PushDayIntegrationTest 9, WeightV2CalculationTest 12, VersionedUtilityJsonTest 7, VersionedUtilityPersistenceTest 3. No MySQL or shared database used; no full-gate rerun claimed.
+
+External run evidence: `outputs/evidence/2026-11-16/ci-selector/` in the project folder (not in Git). This resolves the earlier backend-selector blocker only. Integration still requires an approved PASPM_CI_SPMF_ARTIFACT_URL, exact hash/banner and Java25 child; repository variables/secrets, workflow triggers and integration settings were not changed. Skip-free CI coverage and actual hosted job results remain unverified. Source/tests/migrations unchanged.
+
+The owner authorized a local commit `ci: update backend test selector after Weight v1.2 test removal` and normal push of this feature branch only. No PR creation or merge authorized; the external PR-body draft is updated after a verified push.

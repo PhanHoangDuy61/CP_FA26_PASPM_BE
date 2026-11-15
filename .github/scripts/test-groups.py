@@ -16,7 +16,7 @@ GROUPS = {
                 "ScheduledMiningZoneGuardTest", "SystemStoreListHttpTest", "MiningScheduleCatchUpTest", "MiningScheduleChangeSemanticsTest",
                 "SchedulerPrincipalHttpTest", "ScheduledMiningActivationGateTest", "MiningScheduleReservationTest",
                 "MiningOccurrenceLeaseTest", "MiningOccurrenceReconciliationTest",
-                "WeightRulesV12IntegrationTest", "WeightRulesV12MigrationTest"],
+                "PushDayIntegrationTest", "WeightV2CalculationTest", "VersionedUtilityJsonTest", "VersionedUtilityPersistenceTest", "WeightRulesV12MigrationTest"],
     "mysql": ["SessionMySqlIntegrationTest", "SessionV21MigrationMySqlTest", "FlywayRecoveryTest", "LegacyRecoveryMySqlTest", "LegacyRecoverySchemaTest",
               "RecommendationMigrationTest", "TransactionImportMySqlIntegrationTest",
               "TransactionImportCorrectnessMySqlIntegrationTest", "TransactionRawEvidenceMigrationMySqlTest",
