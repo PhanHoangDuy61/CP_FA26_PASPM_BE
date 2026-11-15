@@ -60,3 +60,7 @@ See [review register](requirements/README.md#documentation-review-register), [co
 [Nhật ký thay đổi theo phiên](record-of-changes/README.md) · [mẫu ghi nhận](record-of-changes/TEMPLATE.md). Bắt đầu từ bản ghi F01 ngày 2026-11-11; phân biệt thay đổi local, kiểm thử đã chạy, cập nhật docs, trạng thái commit và giới hạn. Agent các phiên sau cần cập nhật record khi bàn giao; không suy diễn các phiên cũ thiếu bằng chứng.
 
 Current F01 reconciliation (2026-11-12): preserves published dev V20/AuthSessionService and adds V21 binding; [current evidence](testing/reports/F01_SESSION_RECONCILIATION_2026-11-12.md). Earlier local-variant details are dated history; no source database repair/deployment was performed.
+
+## F03/F05 merge preparation — 2026-11-16
+
+[Proposed merge plan](release/F03_F05_MERGE_PLAN.md) · [Record 007](record-of-changes/2026-11-16/07-cleanup-and-merge-plan.md). origin/dev is checked in record 007; publication, CI, review, FE coordination and deployment remain gated. No PR created or merge performed.

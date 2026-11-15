@@ -410,3 +410,7 @@ Current documents, not part of the original path map.
 | `docs/requirements/F03_WEIGHT_V2_REQUIREMENTS.md` | F03 Weight v2 requirements — derived from owner decisions 2026-11-15, pending formal approval |
 | `docs/decisions/OWNER_DECISIONS_F03_F05_2026-11-15.md`, `docs/decisions/2026-11-15/DEC-20261115-01…11-*.md` | Owner decisions of 2026-11-15 and assumptions P2–P6 |
 | `docs/record-of-changes/2026-11-15/04-f03-weight-v2-expiry-season.md`, `05-docs-sync-f03-w2-f05-progress.md`, `F03_W2_FULL_OPTIN_COUNTS.json`, `F03_W2_SYNTHETIC_JPA_COUNTS.json` | Checkpoint 2 and docs-sync records with gate evidence |
+
+## F03/F05 merge preparation — 2026-11-16
+
+[Merge plan](release/F03_F05_MERGE_PLAN.md) — proposed ordered gates/deploy/rollback plan, not merge approval. [Record 007](record-of-changes/2026-11-16/07-cleanup-and-merge-plan.md) contains the executed fetch, migration and evidence checks; historical runtime counts come from record 006.

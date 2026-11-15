@@ -8,3 +8,7 @@
 - No push, merge or deployment. Local fix commit authorized after coverage review; see record 006 and Git log. No push.
 
 Verification: full opt-in **646 PASS / 0 FAIL / 5 SKIP** (651 discovered), JPA supplementary **5/5 PASS**; MySQL group **72/72**. No migration changes. Linux orphan cleanup / CI / Swagger UI / real-data conversion NOT RUN.
+
+## Record 007 — cleanup and merge planning
+
+[Record 007](07-cleanup-and-merge-plan.md) records the owner-approved HEAD amend and metadata cleanup, the fresh origin/dev check and [merge plan](../../release/F03_F05_MERGE_PLAN.md). This docs pass is UNRELEASED/uncommitted; external PR/FE drafts are unsent. Current source evidence remains record 006; no new runtime test.
