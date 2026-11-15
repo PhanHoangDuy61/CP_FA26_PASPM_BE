@@ -1,5 +1,14 @@
 # ROC-20261115-001 — F07/F08 integration
 
+| Trường | Giá trị |
+|---|---|
+| Record ID | ROC-20261115-001 |
+| Date / timezone | 2026-11-15 / Asia/Ho_Chi_Minh |
+| Features | F07/F08; migration regression |
+| Execution status | COMPLETED trong phạm vi phiên; xem giới hạn bên dưới |
+| Release status | MERGED_TO_DEV — 8f94f94 |
+| Daily summary | [Tổng hợp ngày](README.md) |
+
 Date: 2026-11-15, Asia/Ho_Chi_Minh.
 
 ## Scope and authorization

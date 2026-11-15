@@ -6,8 +6,8 @@
   },
   "servers": [
     {
-      "url": "http://127.0.0.1:18092",
-      "description": "Local development/test API"
+      "url": "http://localhost",
+      "description": "Generated server url"
     }
   ],
   "security": [
@@ -17,16 +17,16 @@
   ],
   "tags": [
     {
+      "name": "F05 Mining",
+      "description": "Frozen F03 snapshot mining results. Store-scoped reads for Merchandiser and Store Admin; Merchandiser may submit using the System Admin mining policy. Benchmarks remain System Admin only."
+    },
+    {
       "name": "F06 Recommendations",
       "description": "Store-scoped reviewable candidates; independent live expiry alerts. Approval never publishes or reserves inventory."
     },
     {
       "name": "F07 Layouts and F08 Campaigns",
       "description": "Store-scoped layout editing, offline simulated reports, and campaign lifecycle"
-    },
-    {
-      "name": "F05 Mining",
-      "description": "Frozen F03 snapshot mining results. Store-scoped and read-only for Merchandiser and Store Admin. Submitting mining and reading benchmarks are System Admin only under /api/system/mining."
     }
   ],
   "paths": {
@@ -48,23 +48,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -98,23 +98,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -150,23 +150,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -205,23 +205,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -267,23 +267,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -331,23 +331,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -392,23 +392,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -432,23 +432,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -474,23 +474,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -524,23 +524,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -576,23 +576,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -636,23 +636,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -677,23 +677,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -726,23 +726,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -768,23 +768,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -819,23 +819,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -872,23 +872,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -933,23 +933,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -997,23 +997,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -1050,23 +1050,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -1111,23 +1111,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -1175,23 +1175,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -1227,23 +1227,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -1279,23 +1279,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -1374,23 +1374,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -1425,23 +1425,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -1486,23 +1486,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -1560,23 +1560,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -1623,23 +1623,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -1672,23 +1672,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -1723,23 +1723,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -1786,23 +1786,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -1849,23 +1849,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -1902,23 +1902,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -2011,23 +2011,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -2061,23 +2061,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -2117,23 +2117,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -2178,23 +2178,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -2242,23 +2242,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -2269,14 +2269,13 @@
         "tags": [
           "F05 Mining"
         ],
-        "summary": "FORBIDDEN legacy route: always HTTP 403 for every role; do not call. Use POST /api/system/mining/requests",
-        "description": "Kept mapped only so the 403 is explicit. Mining submission is System Admin only.",
+        "summary": "Submit this Store READY snapshot using the current System Admin mining policy",
         "operationId": "create_5",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateRequest"
+                "$ref": "#/components/schemas/StoreCreateRequest"
               }
             }
           },
@@ -2293,29 +2292,28 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
           },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
           }
-        },
-        "deprecated": true
+        }
       }
     },
     "/api/layouts/{id}/ready": {
@@ -2358,23 +2356,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -2403,23 +2401,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -2453,23 +2451,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -2520,23 +2518,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -2570,23 +2568,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -2634,23 +2632,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -2664,7 +2662,7 @@
           "F07 Layouts and F08 Campaigns"
         ],
         "summary": "Run a synchronous offline replay and persist an immutable simulated report",
-      "description": "Inclusive Store-local evaluation dates must begin strictly after the selected utility snapshot rangeEnd; overlapping or earlier dates return 400.",
+        "description": "Inclusive Store-local evaluation dates must begin strictly after the selected utility snapshot rangeEnd; overlapping or earlier dates return 400.",
         "operationId": "simulate",
         "parameters": [
           {
@@ -2699,23 +2697,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -2763,23 +2761,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -2827,23 +2825,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -2891,23 +2889,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -2955,23 +2953,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -3011,23 +3009,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -3067,23 +3065,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -3110,23 +3108,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -3167,23 +3165,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -3223,23 +3221,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -3279,23 +3277,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -3335,23 +3333,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -3391,23 +3389,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -3447,23 +3445,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -3493,23 +3491,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -3539,23 +3537,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -3592,23 +3590,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -3646,23 +3644,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -3703,23 +3701,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -3759,23 +3757,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -3815,23 +3813,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -3869,23 +3867,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -3931,23 +3929,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -3995,23 +3993,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -4058,23 +4056,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -4111,23 +4109,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -4172,23 +4170,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -4235,23 +4233,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -4288,23 +4286,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -4361,23 +4359,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -4444,23 +4442,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -4499,23 +4497,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -4589,23 +4587,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -4642,23 +4640,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -4709,23 +4707,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -4762,23 +4760,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -4815,23 +4813,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -4891,23 +4889,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -4956,23 +4954,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -5031,23 +5029,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -5116,23 +5114,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -5179,23 +5177,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -5253,23 +5251,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -5318,23 +5316,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -5385,23 +5383,85 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          }
+        }
+      }
+    },
+    "/api/system/mining/stores/{storeId}/requests/{requestId}/progress": {
+      "get": {
+        "tags": [
+          "F05 Mining"
+        ],
+        "summary": "System Admin: read scalar mining progress (REQUESTS read-policy group)",
+        "operationId": "system",
+        "parameters": [
+          {
+            "name": "storeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "requestId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgressView"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -5457,23 +5517,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -5518,23 +5578,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -5560,23 +5620,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -5607,23 +5667,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -5717,23 +5777,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -5771,23 +5831,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -5856,23 +5916,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -5921,23 +5981,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -5985,23 +6045,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -6038,23 +6098,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -6112,23 +6172,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -6166,23 +6226,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -6220,23 +6280,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -6276,23 +6336,77 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          }
+        }
+      }
+    },
+    "/api/mining/requests/{id}/progress": {
+      "get": {
+        "tags": [
+          "F05 Mining"
+        ],
+        "summary": "Read lightweight mining progress for this Store",
+        "description": "Percent measures completed work, not success or an ETA. FAILED may be below 100%; a completed comparison mismatch may be 100%. Legacy timing is unavailable.",
+        "operationId": "store",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgressView"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -6353,23 +6467,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -6407,23 +6521,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -6461,23 +6575,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -6538,23 +6652,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -6580,23 +6694,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -6634,23 +6748,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -6711,23 +6825,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -6765,23 +6879,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -6808,23 +6922,23 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          },
-          "403": {
-            "description": "Permission denied"
+          "409": {
+            "description": "Conflict"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
           },
-          "409": {
-            "description": "Conflict"
+          "403": {
+            "description": "Permission denied"
           },
           "429": {
             "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
           },
           "503": {
             "description": "Service configuration or required dependency unavailable"
@@ -8829,7 +8943,7 @@
           }
         }
       },
-      "CreateRequest": {
+      "StoreCreateRequest": {
         "type": "object",
         "properties": {
           "requestKey": {
@@ -8838,44 +8952,10 @@
           },
           "snapshotId": {
             "type": "integer",
-            "format": "int32",
-            "example": 2,
-            "minimum": 1
-          },
-          "algorithms": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "enum": [
-                "HUI_MINER",
-                "EFIM"
-              ],
-              "maxItems": 2,
-              "minItems": 1,
-              "uniqueItems": true
-            },
-            "maxItems": 2,
-            "minItems": 1,
-            "uniqueItems": true
-          },
-          "minUtilMode": {
-            "type": "string",
-            "enum": [
-              "PERCENTAGE",
-              "ABSOLUTE"
-            ]
-          },
-          "minUtilValue": {
-            "type": "number",
-            "description": "Positive value, at most 6 decimal places; PERCENTAGE in (0,100], ABSOLUTE in frozen weighted utility units",
-            "example": 30,
-            "minimum": 0
+            "format": "int32"
           }
         },
         "required": [
-          "algorithms",
-          "minUtilMode",
-          "minUtilValue",
           "requestKey",
           "snapshotId"
         ]
@@ -9982,6 +10062,78 @@
           "totalElements": {
             "type": "integer",
             "format": "int64"
+          }
+        }
+      },
+      "ProgressView": {
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "storeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string"
+          },
+          "stage": {
+            "type": "string"
+          },
+          "stageStartedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "currentRunId": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64"
+          },
+          "algorithm": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "attemptNo": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "completedSteps": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalSteps": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "percent": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "elapsedMs": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64"
+          },
+          "timeoutMs": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64"
+          },
+          "comparisonStatus": {
+            "type": "string"
           }
         }
       },

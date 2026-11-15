@@ -12,7 +12,7 @@ Canonical contract locations stay stable in this directory. `CURRENT` describes 
 | F06 | [Recommendation](F06_RECOMMENDATION_API.md) | CURRENT Backend v1.1 contract; historical test statements retain dates | [F06](../frontend_handoff/F06_HANDOFF.md) |
 | F07/F08 | [Layout and Campaign](F07_F08_LAYOUT_CAMPAIGN_API.md) | Current working-tree implementation; V23 pending deployment | [F07/F08](../frontend_handoff/F07_F08_HANDOFF.md) |
 
-[OpenAPI export](openapi.json) was refreshed from the Springdoc endpoint in the current integration context: **96 paths and 114 operations**, including 20 F07/F08 operations. The export's server entry is the local test origin; configure the target origin in the integration environment. The session changes are uncommitted. Earlier operation counts are historical evidence, not the current export. Role prose still needs source-based interpretation; use the [RBAC matrix](F01_F02_RBAC_MATRIX.md). [RBAC matrix](F01_F02_RBAC_MATRIX.md) and [integration notes](F03_V12_F05_F06_INTEGRATION.md) have review notices. [API changelog](API_CHANGELOG.md) remains append-only history.
+[OpenAPI export](openapi.json) was refreshed from the Springdoc endpoint in the current integration context: **98 paths and 116 operations**, including 20 F07/F08 operations. The export's server entry is the local test origin; configure the target origin in the integration environment. The session changes are uncommitted. Earlier operation counts are historical evidence, not the current export. Role prose still needs source-based interpretation; use the [RBAC matrix](F01_F02_RBAC_MATRIX.md). [RBAC matrix](F01_F02_RBAC_MATRIX.md) and [integration notes](F03_V12_F05_F06_INTEGRATION.md) have review notices. [API changelog](API_CHANGELOG.md) remains append-only history.
 
 ## API Inventory provenance
 
@@ -21,3 +21,5 @@ Canonical contract locations stay stable in this directory. `CURRENT` describes 
 F09–F11 contracts are not defined here. F07/F08 routes are documented in the linked contract. The documented unavailable F03 `GET /api/utility/snapshots` is not an implemented route; F05 `GET /api/mining/snapshots` is a distinct selector. Framework Swagger/OpenAPI paths are not business APIs.
 
 Current F01 reconciliation (2026-11-12): preserves published dev V20/AuthSessionService and adds V21 binding; [current evidence](../testing/reports/F01_SESSION_RECONCILIATION_2026-11-12.md). Earlier local-variant details are dated history; no source database repair/deployment was performed.
+
+2026-11-15 feature branch: OpenAPI regenerated from Springdoc through the Spring Boot MockMvc integration test. Includes two new F05 progress routes and Merchandiser Store submission. This is not an interactive Swagger UI execution. F03 Weight v2 is deferred at Checkpoint 1.

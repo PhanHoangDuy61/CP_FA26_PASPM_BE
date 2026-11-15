@@ -4,6 +4,11 @@
 >
 > **Scheduler branch status (2026-11-02, `Khoi/feat/f05-scheduled-mining-option-b-completion`, not yet on `dev`, nothing pushed):** the business decisions D1–D10 are **confirmed** by the project owner in conversation (no approver name recorded; PO identity verification outstanding) and **implemented** with Flyway V18–V19. Scheduled mining is **locally verified** (default suite, MySQL 8.4 + real SPMF over HTTP, two-process crash recovery) but **not release accepted**: GitHub CI has not run, native Linux evidence is missing and final review / release sign-off are pending. Activation still answers HTTP 503 and the dispatcher stays off unless an instance sets `paspm.mining.schedule-dispatch-enabled=true`.
 
+## Current branch update — 2026-11-15
+V24 adds scalar progress stages and two progress read routes. Merchandiser may now submit mining for their own Store using the current System Admin algorithm/minUtil configuration; Store Admin remains read-only. New Merchandiser requests using a snapshot whose frozen lambda exceeds the current maximum are rejected with 409; existing idempotent requests and System Admin submission remain unchanged. No F03 Weight v2 behavior is implemented yet. Scheduler activation stays disabled/503 in the default configuration.
+
+See [updated API contract](../../api/F05_MINING_API.md) and [Checkpoint 1 record](../../record-of-changes/2026-11-15/02-f05-progress-checkpoint-1.md). Earlier dated release evidence below is historical, not evidence for this feature branch.
+
 ## 1. Purpose and scope
 Mines a Store's frozen F03 utility snapshot with HUI-Miner and EFIM (external SPMF 2.67a, Java 25 child), stores patterns, compares the two algorithms and exposes results. The approved requirements give the System Admin three duties: configure `minUtil` and the active algorithm, run scheduled weekly/monthly mining, and view a benchmark comparing HUI-Miner and EFIM.
 
@@ -11,7 +16,8 @@ Mines a Store's frozen F03 utility snapshot with HUI-Miner and EFIM (external SP
 | Role | Capability |
 |---|---|
 | `SYSTEM_ADMIN` | mining configuration, manual Store-targeted request, benchmark, schedule administration and history |
-| `MERCHANDISER`, `STORE_ADMIN` | read-only, own Store: snapshots, requests, runs, patterns. **Cannot** submit or read benchmarks |
+| `MERCHANDISER` | own-Store reads and submission using System Admin policy; no benchmark access |
+| `STORE_ADMIN` | own-Store reads only; cannot submit or read benchmarks |
 | `END_CUSTOMER` | none |
 
 System Admin has **no** access to the Store-scoped `/api/mining/**` routes (403). Matrix: [RBAC matrix](../../api/F01_F02_RBAC_MATRIX.md) (23 F05 rows).
@@ -23,7 +29,7 @@ System Admin has **no** access to the Store-scoped `/api/mining/**` routes (403)
 | **Implemented, default-enabled (D1, branch)** | System Admin reads of Store **snapshots, requests and runs** (`/api/system/mining/stores/{storeId}/…`); an operator may only remove groups via `paspm.mining.system-store-read.routes`. Every such read is audit-logged. **Raw patterns stay closed to System Admin** (always 403; Store Admin / Merchandiser read them Store-scoped) |
 | **Implemented (D2, branch)** | `GET /api/system/stores` — read-only, paginated Store picker `{storeId,name}` for System Admin |
 | **Implemented, default-disabled (D3–D10, branch)** | schedules (weekly/monthly, lookback 7–365, zone `Asia/Ho_Chi_Minh`, month-end clamp), latest-only catch-up with `SKIPPED` history, 3 attempts (15 s / 30 s) with a stored final error, frozen versions, execution as the scheduler machine principal. `PUT … enabled=true` is accepted only where `paspm.mining.schedule-dispatch-enabled=true`; otherwise **503** and nothing is written |
-| **Forbidden, unchanged** | `POST /api/mining/requests` and `GET /api/mining/runs/{id}/benchmark` answer 403 for every role (`deprecated` in OpenAPI) |
+| **Forbidden, unchanged** | `GET /api/mining/runs/{id}/benchmark` remains forbidden/deprecated. Store submission is now Merchandiser-only |
 
 ## 4. Business rules
 - The algorithm, minUtil mode (`PERCENTAGE` or `ABSOLUTE`) and value come from the active configuration version, pinned into each request when captured; later changes affect only new requests.
@@ -33,7 +39,7 @@ System Admin has **no** access to the Store-scoped `/api/mining/**` routes (403)
 - `supportCount` is always null (SPMF output has no support); utility is frozen weighted utility, not revenue.
 
 ## 5. Main workflows
-Configuration (System Admin) → F03 snapshot (Merchandiser) → manual request (System Admin) → asynchronous worker → status and patterns read by Store users → benchmark (System Admin) → F06 generation. Core example without any PO decision: [Option B handoff §10](../../frontend_handoff/OPTION_B_BACKEND_API_HANDOFF.md).
+Configuration (System Admin) → F03 snapshot (Merchandiser) → manual request (System Admin, or Merchandiser for their own Store) → asynchronous worker → status and patterns read by Store users → benchmark (System Admin) → F06 generation. Core example without any PO decision: [Option B handoff §10](../../frontend_handoff/OPTION_B_BACKEND_API_HANDOFF.md).
 
 ## 6. API documentation
 [F05 API contract](../../api/F05_MINING_API.md) · [Frontend handoff](../../frontend_handoff/F05_HANDOFF.md) · [Backend handoff for all Core flows](../../frontend_handoff/OPTION_B_BACKEND_API_HANDOFF.md) · [runtime OpenAPI](../../api/openapi.json) · [worker architecture](../../architecture/F05_WORKER_DISPATCH.md) · [SPMF runtime setup](../../setup/F05_SPMF_RUNTIME_SETUP.md).

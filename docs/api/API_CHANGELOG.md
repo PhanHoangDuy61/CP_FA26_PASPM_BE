@@ -163,3 +163,9 @@ No endpoint contract changes were made as part of this documentation export; thi
 ## 2026-10-26 — F04 CSV staging validation correction
 
 No endpoint, DTO, authorization or idempotency-key change. Invalid overlong order IDs use NULL in the staging lookup projection while raw row evidence remains exact; unrelated valid orders return the existing 201 summary contract. See [F04 improvement report](../features/F04/F04_IMPROVEMENT_REPORT.md). F04 is file-based CSV/Excel scope; external API/POS ingestion is excluded.
+
+## 2026-11-15 — F05 progress and Merchandiser submission (uncommitted)
+- Add two scoped scalar progress GET endpoints.
+- Enable Store POST mining for Merchandiser with snapshotId/requestKey only; pin the System Admin policy.
+- New requests above current lambdaMax return 409; preserve historical snapshots and idempotent replay.
+- System Admin rights and scheduler default 503 unchanged; F03 Weight v2 not implemented.

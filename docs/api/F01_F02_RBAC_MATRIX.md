@@ -70,7 +70,7 @@ Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and fea
 | F04 Transaction list | GET `/api/transactions` | Forbidden | Allowed, own Store | Allowed, own Store | Forbidden |
 | F04 Transaction detail | GET `/api/transactions/{id}` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign→404 | Forbidden |
 | F05 | GET `/api/mining/requests` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign→404 | Forbidden |
-| F05 | POST `/api/mining/requests` | Forbidden (`denyAll`) | Forbidden (`denyAll`) | Forbidden (`denyAll`) | Forbidden (`denyAll`) |
+| F05 | POST `/api/mining/requests` | Forbidden | Forbidden | Allowed, own Store; current mining policy and lambda maximum | Forbidden |
 | F05 | GET `/api/mining/requests/{id}` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign→404 | Forbidden |
 | F05 | GET `/api/mining/requests/{id}/runs` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign→404 | Forbidden |
 | F05 | GET `/api/mining/runs/{id}` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign→404 | Forbidden |
@@ -86,12 +86,12 @@ Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and fea
 | F05 | PUT `/api/system/mining/schedules/{id}` | Disable/edit allowed; `enabled=true` → **503** | Forbidden | Forbidden | Forbidden |
 | F05 | GET `/api/system/mining/schedules/{id}/occurrences` | Allowed | Forbidden | Forbidden | Forbidden |
 | F05 | GET `/api/system/mining/schedules/{id}/occurrences/{occurrenceId}` | Allowed | Forbidden | Forbidden | Forbidden |
-| F05 | GET `/api/system/mining/stores/{storeId}/requests` | **403 by default** (D1 group `REQUESTS`); allowed only if the instance lists the group | Forbidden | Forbidden | Forbidden |
-| F05 | GET `/api/system/mining/stores/{storeId}/requests/{requestId}` | **403 by default** (D1 group `REQUESTS`); allowed only if the instance lists the group | Forbidden | Forbidden | Forbidden |
-| F05 | GET `/api/system/mining/stores/{storeId}/requests/{requestId}/runs` | **403 by default** (D1 group `RUNS`); allowed only if the instance lists the group | Forbidden | Forbidden | Forbidden |
+| F05 | GET `/api/system/mining/stores/{storeId}/requests` | Allowed by default (D1 `REQUESTS`); 403 if the operator removes this group | Forbidden | Forbidden | Forbidden |
+| F05 | GET `/api/system/mining/stores/{storeId}/requests/{requestId}` | Allowed by default (D1 `REQUESTS`); 403 if the operator removes this group | Forbidden | Forbidden | Forbidden |
+| F05 | GET `/api/system/mining/stores/{storeId}/requests/{requestId}/runs` | Allowed by default (D1 `RUNS`); 403 if the operator removes this group | Forbidden | Forbidden | Forbidden |
 | F05 | GET `/api/system/mining/stores/{storeId}/runs/{runId}/benchmark` | Allowed; unknown Store or foreign run→404 | Forbidden | Forbidden | Forbidden |
 | F05 | GET `/api/system/mining/stores/{storeId}/runs/{runId}/patterns` | **403 by default** (D1 group `PATTERNS`); allowed only if the instance lists the group | Forbidden | Forbidden | Forbidden |
-| F05 | GET `/api/system/mining/stores/{storeId}/snapshots` | **403 by default** (D1 group `SNAPSHOTS`); allowed only if the instance lists the group | Forbidden | Forbidden | Forbidden |
+| F05 | GET `/api/system/mining/stores/{storeId}/snapshots` | Allowed by default (D1 `SNAPSHOTS`); 403 if the operator removes this group | Forbidden | Forbidden | Forbidden |
 | F06 Generate recommendations | POST `/api/recommendations/generate` | Forbidden | Forbidden | Allowed, own Store; completed own-Store mining run required | Forbidden |
 | F06 List recommendations | GET `/api/recommendations` | Forbidden | Allowed, own Store | Allowed, own Store | Forbidden |
 | F06 Recommendation detail | GET `/api/recommendations/{id}` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign→404 | Forbidden |
@@ -181,3 +181,12 @@ F03 v1.2 contains12 operations including the independent Store-scoped expiry-pus
 | F06 | `GET /api/recommendations/expiry-push` | PASS | PASS | Yes | Store Admin/Merchandiser; current Store-local date, independent of Mining. |
 
 Reconciled F01 on 2026-11-12: logout/logout-all require the active JWT family and its stored CSRF cookie/header, without requiring the raw refresh cookie. V20 retained; V21 additive binding. No Store/role permissions changed.
+
+## 2026-11-15 progress routes (uncommitted feature branch)
+
+| Route | SYSTEM_ADMIN | STORE_ADMIN | MERCHANDISER | END_CUSTOMER |
+|---|---|---|---|---|
+| GET `/api/mining/requests/{id}/progress` | 403 | Own Store | Own Store | 403 |
+| GET `/api/system/mining/stores/{storeId}/requests/{requestId}/progress` | REQUESTS group, audited | 403 | 403 | 403 |
+
+Anonymous requests: 401. Foreign Store records: 404 after authorization. New POST Store submission is Merchandiser-only; no algorithm/minUtil overrides; the System Admin route remains unchanged. Earlier F05 23-row inventory is historical; two progress routes are additive. REQUESTS is default-enabled, not default-denied; an operator can remove it.
