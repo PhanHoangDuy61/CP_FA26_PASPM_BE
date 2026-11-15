@@ -12,3 +12,7 @@ Verification: full opt-in **646 PASS / 0 FAIL / 5 SKIP** (651 discovered), JPA s
 ## Record 007 — cleanup and merge planning
 
 [Record 007](07-cleanup-and-merge-plan.md) records the owner-approved HEAD amend and metadata cleanup, the fresh origin/dev check and [merge plan](../../release/F03_F05_MERGE_PLAN.md). This docs pass is UNRELEASED/uncommitted; external PR/FE drafts are unsent. Current source evidence remains record 006; no new runtime test.
+
+## Record 008 — known Flyway checksum mismatches
+
+[Record 008](08-flyway-checksum-troubleshooting.md): verified the V20 (`89726244` → `1793889682`) and V7 (`-1762009830` → `-1490036030`) checksums with Flyway 11.7.2's own calculator on Git history, added [known checksum mismatches](../../setup/LOCAL_SETUP_TROUBLESHOOTING.md#known-flyway-checksum-mismatches) with a guarded local-only recreate, and updated the setup schema range to V1–V25. Branch `Khoi/docs/flyway-checksum-troubleshooting` from `origin/dev` `3e438f8`; documentation only; no real database touched.

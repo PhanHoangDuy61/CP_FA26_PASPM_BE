@@ -81,7 +81,7 @@ docker compose -f compose.yml -f compose.backend.yml -f compose.staging.yml up -
 docker compose -f compose.yml -f compose.backend.yml -f compose.staging.yml ps
 ```
 
-On an empty volume the backend applies Flyway V1-V19 and creates the bootstrap System Admin. If port 3306 is already used on the
+On an empty volume the backend applies Flyway V1–V25 (the current `dev`; this said V1-V19 when written) and creates the bootstrap System Admin. If port 3306 is already used on the
 host, add a fourth file with `services: { mysql: { ports: !override ["127.0.0.1:33306:3306"] } }` (needs Compose 2.24+).
 
 ## 5. Seed the demo data (empty database only)
