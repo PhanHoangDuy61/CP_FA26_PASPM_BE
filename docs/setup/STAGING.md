@@ -97,7 +97,10 @@ inventory batches and the two CSV imports. The only direct SQL is one `INSERT IN
 that creates a store. The product rows are parsed from `scripts/seed/data/FoodMart_Product_Direct_Insert.sql` (the SQL file itself is
 not executed). Running it again changes nothing (see the evidence below). The OTP codes are read from Mailpit, so the stack must be the
 compose one (a real SMTP server cannot be read back). Seeded data: 1 store, 4 accounts (one per role; the System Admin is the bootstrap account) plus the internal scheduler account,
-1 category, 1,559 products with one batch of 1,000 units each, and 4,141 imported orders (18,319 order lines, 3 days of October 2026).
+1 category, 1,559 products with one batch each, and 4,141 imported orders (18,319 order lines, 2026-10-01 to 2026-10-04).
+Since 2026-11-17 the seed also creates Weight v2 demo data: 551 products that require expiry (batches with expiry date and push day), four seasons and the weight
+configuration α 0.6 / β 0.4 / λ 0.3 / N 30. It is switched off with `SEED_WEIGHT_V2=0`. What it contains, the environment variables, how to reseed (recreate the
+database), the date to analyse and the recommended F05 snapshot range are in [scripts/seed/README.md](../../scripts/seed/README.md).
 
 ## 6. Health check
 
