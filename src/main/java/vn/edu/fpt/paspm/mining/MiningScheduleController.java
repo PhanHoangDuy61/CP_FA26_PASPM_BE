@@ -25,15 +25,14 @@ public class MiningScheduleController {
         @NotNull LocalTime localTime,
         @Schema(description="Must equal the Store calendar zone, Asia/Ho_Chi_Minh in this release (decision D4).",example="Asia/Ho_Chi_Minh") @NotBlank String timeZone,
         @Schema(description="Complete calendar days analysed, ending the day before the analysis date. 7..365 inclusive (decision D3, amended 2026-11-02). Omitted: 30 for WEEKLY, 90 for MONTHLY. UI presets: 30, 60, 90, 180.",minimum="7",maximum="365",nullable=true)
-        @Min(MIN_LOOKBACK_DAYS) @Max(MAX_LOOKBACK_DAYS) @JsonDeserialize(using=StrictIntegerDeserializer.class) Integer lookbackDays,
-        Boolean compareAlgorithms) {}
+        @Min(MIN_LOOKBACK_DAYS) @Max(MAX_LOOKBACK_DAYS) @JsonDeserialize(using=StrictIntegerDeserializer.class) Integer lookbackDays) {}
     public record View(long scheduleId,int storeId,int createdBy,int updatedBy,Frequency frequency,
         Integer dayOfWeek,Integer dayOfMonth,LocalTime localTime,String timeZone,int lookbackDays,
-        boolean compareAlgorithms,boolean enabled,Instant nextFireAt,long version) {}
+        @Schema(description="Legacy stored value, retained for history only; new scheduled mining always uses EFIM without comparison.") boolean compareAlgorithms,boolean enabled,Instant nextFireAt,long version) {}
     public record Update(@NotNull @Valid Request schedule,@NotNull Boolean enabled,@NotNull @Min(1) Long expectedVersion) {}
     public record OccurrenceView(long occurrenceId,long scheduleId,int storeId,Instant scheduledAt,long scheduleVersion,
         long configVersion,Integer actorId,LocalDate rangeStart,LocalDate rangeEnd,LocalDate analysisDate,String timeZone,
-        Boolean compareAlgorithms,Integer snapshotId,Long requestId,@Schema(allowableValues={"PENDING","PROCESSING","DISPATCHED","COMPLETED","FAILED","SKIPPED"}) String status,String failureCode,@Schema(description="Actionable final cause of a FAILED occurrence (decision D7); null otherwise.",nullable=true) String failureMessage,@Schema(description="Set only for SKIPPED: a missed fire time superseded by a later one (decision D6).",nullable=true) String skipReason,int attemptCount,Instant nextRetryAt,Instant createdAt,Instant updatedAt) {}
+        @Schema(description="Legacy stored value, retained for history only; the occurrence runs EFIM without comparison.",types={"boolean","null"}) Boolean compareAlgorithms,Integer snapshotId,Long requestId,@Schema(allowableValues={"PENDING","PROCESSING","DISPATCHED","COMPLETED","FAILED","SKIPPED"}) String status,String failureCode,@Schema(description="Actionable final cause of a FAILED occurrence (decision D7); null otherwise.",nullable=true) String failureMessage,@Schema(description="Set only for SKIPPED: a missed fire time superseded by a later one (decision D6).",nullable=true) String skipReason,int attemptCount,Instant nextRetryAt,Instant createdAt,Instant updatedAt) {}
     @PostMapping @ResponseStatus(HttpStatus.CREATED)
     public View create(@AuthenticationPrincipal Jwt jwt,@Valid @RequestBody Request request){return service.create(jwt,request);}
     @GetMapping

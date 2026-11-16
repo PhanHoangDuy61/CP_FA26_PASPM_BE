@@ -24,7 +24,7 @@ import vn.edu.fpt.paspm.user.User;
 import vn.edu.fpt.paspm.user.UserRepository;
 
 /**
- * Role matrix for every F03 route and every F05 route that is not behind the D1 gate: each role outside the documented
+ * Role matrix for every F03 route and every active F05 route that is not behind the D1 gate: each role outside the documented
  * set must be refused (403, anonymous 401) and each documented role must get past authorization (anything but 401/403).
  * Bodies are syntactically valid so the refusal can only come from authorization, not from request binding.
  */
@@ -41,7 +41,7 @@ class F03F05RbacMatrixTest {
     static final String RANGE = "{\"rangeStart\":\"2026-10-01\",\"rangeEnd\":\"2026-10-31\",\"asOfDate\":\"2026-10-31\"}";
     static final String WEIGHTS = "{\"alpha\":0.6,\"beta\":0.4,\"lambda\":0.1}";
     static final String SEASON = "{\"name\":\"Rbac season\",\"startDate\":\"2026-10-01\",\"endDate\":\"2026-10-31\",\"weight\":0.5}";
-    static final String MINING = "{\"requestKey\":\"" + UUID.randomUUID() + "\",\"snapshotId\":1,\"algorithms\":[\"HUI_MINER\"],\"minUtilMode\":\"ABSOLUTE\",\"minUtilValue\":1}";
+    static final String MINING = "{\"requestKey\":\"" + UUID.randomUUID() + "\",\"storeId\":1,\"snapshotId\":1}";
 
     record Route(HttpMethod method, String path, String body, Set<String> allowed) {
         @Override public String toString() { return method + " " + path; }
@@ -68,43 +68,31 @@ class F03F05RbacMatrixTest {
         List<Route> r = new ArrayList<>();
         // F03
         r.add(new Route(HttpMethod.GET, "/api/system/utility/lambda-policy", null, admin));
-        r.add(new Route(HttpMethod.PUT, "/api/system/utility/lambda-policy", "{\"lambdaMax\":1}", admin));
+        r.add(new Route(HttpMethod.PUT, "/api/system/utility/lambda-policy", "{\"lambdaMin\":0,\"lambdaMax\":1}", admin));
         r.add(new Route(HttpMethod.GET, "/api/utility/config", null, stores));
         r.add(new Route(HttpMethod.PUT, "/api/utility/config", WEIGHTS, merch));
         r.add(new Route(HttpMethod.PUT, "/api/utility/config/expiry-window", "{\"expiryWindowDays\":7}", storeAdmin));
         r.add(new Route(HttpMethod.GET, "/api/utility/products/" + product + "/scores", null, stores));
-        r.add(new Route(HttpMethod.PATCH, "/api/utility/products/" + product + "/scores", "{\"stockPriorityScore\":0.5}", merch)); // 410 Gone for the Merchandiser
-        // F03 W2 seasons: Merchandiser writes, Store Admin reads
-        r.add(new Route(HttpMethod.GET, "/api/utility/seasons", null, stores));
-        r.add(new Route(HttpMethod.GET, "/api/utility/seasons/999999", null, stores));
-        r.add(new Route(HttpMethod.GET, "/api/utility/seasons/999999/products", null, stores));
-        r.add(new Route(HttpMethod.POST, "/api/utility/seasons", SEASON, merch));
-        r.add(new Route(HttpMethod.PUT, "/api/utility/seasons/999999", SEASON, merch));
-        r.add(new Route(HttpMethod.DELETE, "/api/utility/seasons/999999", null, merch));
-        r.add(new Route(HttpMethod.PUT, "/api/utility/seasons/999999/products/" + product, null, merch));
-        r.add(new Route(HttpMethod.DELETE, "/api/utility/seasons/999999/products/" + product, null, merch));
+        r.add(new Route(HttpMethod.PATCH, "/api/utility/products/" + product + "/scores", "{\"stockPriorityScore\":0.5}", merch));
         r.add(new Route(HttpMethod.POST, "/api/utility/preview", RANGE, merch));
         r.add(new Route(HttpMethod.POST, "/api/utility/snapshots", RANGE, merch));
         r.add(new Route(HttpMethod.GET, "/api/utility/snapshots/999999", null, merch));
         r.add(new Route(HttpMethod.GET, "/api/utility/snapshots/999999/matrix", null, merch));
         r.add(new Route(HttpMethod.GET, "/api/utility/expiry-push-batches", null, stores));
-        // F05 Store-scoped reads and the two forbidden legacy routes
+        // F05 Store-scoped reads and the retired Store-scoped submit route
         for (String p : List.of("/api/mining/snapshots", "/api/mining/requests", "/api/mining/requests/999999", "/api/mining/requests/999999/runs", "/api/mining/requests/999999/progress",
                 "/api/mining/runs/999999", "/api/mining/runs/999999/patterns"))
             r.add(new Route(HttpMethod.GET, p, null, stores));
         r.add(new Route(HttpMethod.POST, "/api/mining/requests", "{\"requestKey\":\""+UUID.randomUUID()+"\",\"snapshotId\":1}", merch));
-        r.add(new Route(HttpMethod.GET, "/api/mining/runs/999999/benchmark", null, none));
         // F05 System Admin operator routes that are not behind the D1 read gate
         r.add(new Route(HttpMethod.GET, "/api/system/mining/config", null, admin));
         r.add(new Route(HttpMethod.POST, "/api/system/mining/requests", MINING, admin));
-        r.add(new Route(HttpMethod.GET, "/api/system/mining/stores/999999/runs/999999/benchmark", null, admin));
         // D1 (confirmed 2026-11-02): System Admin reads snapshots, requests and runs of an explicit Store; raw patterns stay closed to everyone on this prefix
         r.add(new Route(HttpMethod.GET, "/api/system/mining/stores/999999/snapshots", null, admin));
         r.add(new Route(HttpMethod.GET, "/api/system/mining/stores/999999/requests", null, admin));
         r.add(new Route(HttpMethod.GET, "/api/system/mining/stores/999999/requests/1", null, admin));
         r.add(new Route(HttpMethod.GET, "/api/system/mining/stores/999999/requests/1/runs", null, admin));
         r.add(new Route(HttpMethod.GET, "/api/system/mining/stores/999999/runs/1/patterns", null, none));
-        r.add(new Route(HttpMethod.GET, "/api/system/mining/stores/999999/requests/1/progress", null, admin));
         // D2: Store picker
         r.add(new Route(HttpMethod.GET, "/api/system/stores", null, admin));
         r.add(new Route(HttpMethod.GET, "/api/system/mining/schedules", null, admin));
@@ -135,7 +123,7 @@ class F03F05RbacMatrixTest {
         }
         int expected = routes().stream().mapToInt(r -> 1 + (int) ROLES.stream().filter(x -> !r.allowed().contains(x)).count()).sum();
         org.junit.jupiter.api.Assertions.assertEquals(expected, checked);
-        org.junit.jupiter.api.Assertions.assertEquals(42, routes().size(), "route table must list every F03 route and every ungated F05 route");
+        org.junit.jupiter.api.Assertions.assertEquals(40, routes().size(), "route table must list every F03 route and every ungated F05 route");
     }
 
     @Test void everyDocumentedRolePassesAuthorizationOnReadRoutes() throws Exception {

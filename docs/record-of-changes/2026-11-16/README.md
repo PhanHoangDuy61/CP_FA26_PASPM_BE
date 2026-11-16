@@ -12,3 +12,7 @@ Verification: full opt-in **646 PASS / 0 FAIL / 5 SKIP** (651 discovered), JPA s
 ## Record 007 — cleanup and merge planning
 
 [Record 007](07-cleanup-and-merge-plan.md) records the owner-approved HEAD amend and metadata cleanup, the fresh origin/dev check and [merge plan](../../release/F03_F05_MERGE_PLAN.md). This docs pass is UNRELEASED/uncommitted; external PR/FE drafts are unsent. Current source evidence remains record 006; no new runtime test.
+
+## Record 008 — F05 EFIM-only mining
+
+[Record 008](08-f05-efim-only-and-benchmark-removal.md) records the local F05 change to fix new mining to EFIM, remove benchmark operations, preserve historical reads, correct the OpenAPI schemas, and document verification limits. Source and documentation changes are UNRELEASED and uncommitted; no migration, push, merge, or deployment.

@@ -17,7 +17,7 @@ public final class MiningContracts {
     public enum State { PENDING, RUNNING, COMPLETED, FAILED, TIMED_OUT }
     public record CreateRequest(@NotNull UUID requestKey,
         @Schema(minimum="1",example="2") @NotNull @Positive @JsonDeserialize(using=StrictIntegerDeserializer.class) Integer snapshotId,
-        @ArraySchema(minItems=1,maxItems=2,uniqueItems=true,schema=@Schema(implementation=Algorithm.class)) @NotEmpty @Size(min=1,max=2) List<@NotNull Algorithm> algorithms,
+        @ArraySchema(minItems=1,maxItems=1,uniqueItems=true,schema=@Schema(allowableValues={"EFIM"})) @NotEmpty @Size(min=1,max=1) List<@NotNull Algorithm> algorithms,
         @NotNull MinUtilMode minUtilMode,
         @Schema(description="Positive value, at most 6 decimal places; PERCENTAGE in (0,100], ABSOLUTE in frozen weighted utility units",example="30") @NotNull @DecimalMin(value="0",inclusive=false) @Digits(integer=24,fraction=6) BigDecimal minUtilValue) {}
     public record StoreCreateRequest(@NotNull UUID requestKey,
@@ -42,7 +42,4 @@ public final class MiningContracts {
         @Schema(types={"integer","null"},format="int32") Integer patternCount,@Schema(types={"string","null"}) String failureCode,@Schema(types={"string","null"}) String failureMessage) {}
     public record PatternView(long patternId,long runId,List<Integer> productIds,BigDecimal utility,
         int utilitySpmf,int patternSize,@Schema(types={"integer","null"},format="int32",description="Not measured by SPMF; always null") Integer supportCount) {}
-    public record BenchmarkView(RunView run,String snapshotHash,int transactionCount,int distinctItems,
-        int inputBytes,long divisor,int utilityScale,BigDecimal effectiveMinUtility,String comparisonStatus,
-        String repetitionPolicy) {}
 }

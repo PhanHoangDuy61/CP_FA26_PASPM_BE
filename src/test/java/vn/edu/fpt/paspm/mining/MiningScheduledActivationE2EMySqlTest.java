@@ -100,12 +100,12 @@ class MiningScheduledActivationE2EMySqlTest {
     }
     void policy(Actor admin) {
         long head = jdbc.queryForObject("SELECT config_version FROM mining_config_head WHERE config_id=1", Long.class);
-        if (head == 0) ok(HttpMethod.PUT, "/api/system/mining/config", admin, "{\"algorithm\":\"HUI_MINER\",\"minUtilMode\":\"ABSOLUTE\",\"minUtilValue\":30,\"expectedVersion\":0}", HttpStatus.OK);
+        if (head == 0) ok(HttpMethod.PUT, "/api/system/mining/config", admin, "{\"minUtilMode\":\"ABSOLUTE\",\"minUtilValue\":30,\"expectedVersion\":0}", HttpStatus.OK);
     }
     /** The latest occurrence time of the recurrence that is already in the past, truncated to the minute. */
     ZonedDateTime recentFire() { return Instant.now().atZone(HCM).minusMinutes(2).withSecond(0).withNano(0); }
     String body(int store, String recurrence, ZonedDateTime fire, int lookback) {
-        return "{\"storeId\":" + store + "," + recurrence + ",\"localTime\":\"" + fire.toLocalTime() + "\",\"timeZone\":\"Asia/Ho_Chi_Minh\",\"lookbackDays\":" + lookback + ",\"compareAlgorithms\":true}";
+        return "{\"storeId\":" + store + "," + recurrence + ",\"localTime\":\"" + fire.toLocalTime() + "\",\"timeZone\":\"Asia/Ho_Chi_Minh\",\"lookbackDays\":" + lookback + "}";
     }
     long createSchedule(Actor admin, String schedule) { return ok(HttpMethod.POST, "/api/system/mining/schedules", admin, schedule, HttpStatus.CREATED).path("scheduleId").asLong(); }
     JsonNode activate(Actor admin, long id, String schedule, long version) {

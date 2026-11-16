@@ -1,5 +1,13 @@
 # API Changelog
 
+## 2026-11-16 — F05 EFIM-only mining and benchmark removal
+
+- New manual and scheduled mining requests create exactly one EFIM run. The System Admin minUtil configuration no longer accepts an algorithm; existing configuration history is retained and reads report effective EFIM.
+- `compareAlgorithms` is removed from new manual and schedule request bodies. Existing comparison metadata and results remain readable; historical schedule flags are ignored for future occurrences.
+- Removed both mining benchmark routes. Per-run runtime and memory telemetry remains available through `RunView`; it is not a benchmark endpoint.
+- OpenAPI now distinguishes mining configuration request/response schemas from schedule schemas; the config response advertises only EFIM, while comparison metadata is documented only on historical schedule/occurrence responses.
+- No migration or historical data rewrite. See the [current F05 contract](F05_MINING_API.md#current-contract--2026-11-16).
+
 ## 2026-11-15 — F03 Weight v2 (`W2_EXPIRY_SEASON_V1`) and F05 mining progress (branch, not merged)
 
 - **F05 (V24):** `GET /api/mining/requests/{id}/progress` (Store Admin, Merchandiser, own Store) and `GET /api/system/mining/stores/{storeId}/requests/{requestId}/progress` (System Admin, `REQUESTS` read gate, audited). Merchandiser may submit `POST /api/mining/requests` for its own Store using the System Admin mining configuration (P1). Details in [F05 API](F05_MINING_API.md).
@@ -172,12 +180,3 @@ No endpoint contract changes were made as part of this documentation export; thi
 ## 2026-10-26 — F04 CSV staging validation correction
 
 No endpoint, DTO, authorization or idempotency-key change. Invalid overlong order IDs use NULL in the staging lookup projection while raw row evidence remains exact; unrelated valid orders return the existing 201 summary contract. See [F04 improvement report](../features/F04/F04_IMPROVEMENT_REPORT.md). F04 is file-based CSV/Excel scope; external API/POS ingestion is excluded.
-
-## 2026-11-15 — F05 progress and Merchandiser submission (uncommitted)
-- Add two scoped scalar progress GET endpoints.
-- Enable Store POST mining for Merchandiser with snapshotId/requestKey only; pin the System Admin policy.
-- New requests above current lambdaMax return 409; preserve historical snapshots and idempotent replay.
-- System Admin rights and scheduler default 503 unchanged; F03 Weight v2 not implemented.
-
-## 2026-11-16 — W2 follow-up fixes (UNRELEASED)
-Additive clear-push-day DELETE route; independent missing/zero-sales warnings; structured recommendation season-ended fields; 409 UNSUPPORTED_SCORING_VERSION for incompatible stored versions. No migration or frozen JSON rewrite.

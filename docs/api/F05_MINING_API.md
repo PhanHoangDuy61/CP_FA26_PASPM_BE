@@ -1,3 +1,24 @@
+# Current contract — 2026-11-16
+
+This section supersedes every older contract below where it conflicts. The current backend creates **EFIM-only** mining requests and has no benchmark or algorithm-comparison operation.
+
+| Operation | Current behavior |
+|---|---|
+| `PUT /api/system/mining/config` | Accepts `minUtilMode`, `minUtilValue`, `expectedVersion`; algorithm is fixed to EFIM. `algorithm` is an unknown field (400). GET reports effective `algorithm: EFIM`, including before the first minUtil configuration. |
+| `POST /api/mining/requests` | MERCHANDISER only, own Store, body `{requestKey,snapshotId}`; the new request has one EFIM run. |
+| `POST /api/system/mining/requests` | SYSTEM_ADMIN only, body `{storeId,snapshotId,requestKey}`; `compareAlgorithms` is not accepted. The new request has one EFIM run and `comparisonStatus: NOT_REQUESTED`. |
+| Schedule create/update | Request body has no `compareAlgorithms`; sending it is a 400. New schedule and occurrence writes store comparison disabled. Existing stored compare flags remain readable as legacy metadata but never affect future runs. |
+| Benchmark routes | Neither `/api/mining/runs/{id}/benchmark` nor `/api/system/mining/stores/{storeId}/runs/{runId}/benchmark` is mapped; requests return 404. |
+| Historical reads | Existing requests, HUI-Miner runs, comparison statuses, metrics and patterns remain readable. HUI-Miner execution support remains for already-created legacy work; no new API or scheduled submission selects it. `RunView` runtime/memory fields remain per-run execution telemetry, not a benchmark endpoint. |
+
+Unknown request fields are rejected. No schema migration or historical data rewrite is required. Existing `mining_config_version.algorithm`, `mining_request.algorithms`, run rows and schedule/occurrence comparison metadata are retained for history and legacy dispatch.
+
+---
+
+# Historical F05 API documentation
+
+> The dated contract, verification notes and examples below describe earlier implementations. They are retained as history; use the **Current contract — 2026-11-16** section above and the committed runtime OpenAPI export for current API behavior.
+
 # F05 update — 2026-11-15 (uncommitted feature branch)
 
 This section supersedes earlier System-Admin-only submission statements below. F03 Weight v2 is **not implemented** at Checkpoint 1; legacy F03 calculation/configuration remains unchanged.
@@ -63,7 +84,7 @@ This block supersedes any older text below that says a Merchandiser may submit m
 | GET | `/api/mining/snapshots` | MERCHANDISER, STORE_ADMIN (own Store) | Ready |
 | GET | `/api/mining/requests`, `/api/mining/requests/{id}`, `/api/mining/requests/{id}/runs` | MERCHANDISER, STORE_ADMIN (own Store) | Ready |
 | GET | `/api/mining/runs/{id}`, `/api/mining/runs/{id}/patterns` | MERCHANDISER, STORE_ADMIN (own Store) | Ready |
-| POST | `/api/mining/requests` | MERCHANDISER, own Store | **202; see 2026-11-15 body above** |
+| POST | `/api/mining/requests` | nobody (`denyAll`, always 403) | **Forbidden — do not call** |
 | GET | `/api/mining/runs/{id}/benchmark` | nobody (`denyAll`, always 403) | **Forbidden — use the System Admin route** |
 | GET / PUT | `/api/system/mining/config` | SYSTEM_ADMIN | Ready (versioned configuration) |
 | GET | `/api/system/mining/stores/{storeId}/snapshots` | SYSTEM_ADMIN | **Ready (decision D1 confirmed 2026-11-02; default-enabled)**; READY snapshots of the selected Store (`Page<SnapshotView>`). 403 only if an operator removed group `SNAPSHOTS` |
@@ -92,7 +113,7 @@ All routes require the F01 Bearer JWT (`Authorization: Bearer <accessToken>`). R
 | Role | Allowed F05 operations |
 |---|---|
 | SYSTEM_ADMIN | Mining configuration (read/write), manual Store-targeted mining request, benchmark, schedule administration and history. Store reads of snapshots, requests and runs (decision D1, default-enabled; raw patterns never), the Store picker `GET /api/system/stores` (D2), and schedule activation only on an explicitly enabled instance (D10). **No** access to the Store-scoped `/api/mining/**` routes (403). |
-| MERCHANDISER | Own-Store reads and mining submission using the current System Admin policy; may create F03 snapshots. Cannot read benchmarks. |
+| MERCHANDISER | Read-only, own Store: snapshots, requests, runs, patterns. May create the F03 snapshots that F05 consumes. **Cannot** submit mining or read benchmarks. |
 | STORE_ADMIN | Read-only, own Store, same routes as Merchandiser. |
 | END_CUSTOMER | None. |
 
@@ -391,9 +412,6 @@ F05 is asynchronous and status-driven: `PENDING` means queued; request terminal 
 
 ### WeightConfig
 
-> **Legacy shape (pre-V25 snapshots only, since 2026-11-15).** New snapshots embed `FrozenV2` with `WeightV2 {alpha, beta, lambda, salesWindowDays, version, scoringVersion}` and `LambdaV2 {scoringVersion, lambdaMax, version}`; readers select by `scoringVersion` (`src/main/java/vn/edu/fpt/paspm/utility/UtilityJsonVersions.java:29-31`). See [F03 API — W2](F03_UTILITY_API.md).
-
-
 | Field | Type | Notes |
 |---|---|---|
 | enableStock | boolean | See state/business rules above |
@@ -408,9 +426,6 @@ F05 is asynchronous and status-driven: `PENDING` means queued; request terminal 
 | scoringVersion | string | See state/business rules above |
 
 ### LambdaPolicy
-
-> **Legacy shape (pre-V25 only).** Current policy is `LambdaV2` without `lambdaMin` (`src/main/java/vn/edu/fpt/paspm/utility/UtilityVersionedContracts.java:27`).
-
 
 | Field | Type | Notes |
 |---|---|---|
@@ -595,9 +610,3 @@ Retry (D7): a retryable failure (HTTP 5xx such as an unavailable SPMF runtime, o
 **Catch-up (D6)** — after downtime only the latest missed fire time becomes `PENDING`; each older one is recorded `SKIPPED` in the same transaction that advances the cursor. A very long backlog is recorded in batches of at most 500 per transaction and continues until the latest fire time is reserved. There is no maximum catch-up age.
 
 Evidence: [acceptance matrix](../reports/F05_SCHEDULER_ACCEPTANCE_MATRIX.md). Real-HTTP weekly and monthly activation, SKIPPED history, failure visibility, RBAC and Store isolation ran on MySQL 8.4 with the pinned SPMF 2.67a (Java 25) in `MiningScheduledActivationE2EMySqlTest`; two Backend processes and `kill -9` recovery in `MiningSchedulerMultiJvmMySqlTest`. These are local, opt-in results: they do not constitute release acceptance.
-
-## 2026-11-15 — F03 Weight v2 impact on F05
-
-- Request/response routes and RBAC are unchanged. `snapshot.configuration` inside `RequestView` is either the legacy `FrozenConfiguration` or `FrozenV2` (branch on `configuration.config.scoringVersion`).
-- The Merchandiser λ_max block compares the frozen `configuration.config.lambda` with the current `lambdaMax` (the policy no longer has `lambdaMin`).
-- Scheduled snapshots freeze the seasons active on the occurrence analysis date; failure text for a not-ready matrix was removed (cannot happen in W2).

@@ -217,7 +217,7 @@ class MiningMultiJvmMySqlTest {
         }
         var snap=parentHttp.exchange("/api/utility/snapshots",HttpMethod.POST,new HttpEntity<>("{\"rangeStart\":\"2026-10-19\",\"rangeEnd\":\"2026-10-19\",\"asOfDate\":\"2026-10-19\"}",merchant),JsonNode.class);
         assertEquals(HttpStatus.CREATED,snap.getStatusCode());snapshot=snap.getBody().path("snapshotId").asInt();
-        var policy=parentHttp.exchange("/api/system/mining/config",HttpMethod.PUT,new HttpEntity<>("{\"algorithm\":\"HUI_MINER\",\"minUtilMode\":\"ABSOLUTE\",\"minUtilValue\":30,\"expectedVersion\":0}",admin),JsonNode.class);assertEquals(HttpStatus.OK,policy.getStatusCode());
+        var policy=parentHttp.exchange("/api/system/mining/config",HttpMethod.PUT,new HttpEntity<>("{\"minUtilMode\":\"ABSOLUTE\",\"minUtilValue\":30,\"expectedVersion\":0}",admin),JsonNode.class);assertEquals(HttpStatus.OK,policy.getStatusCode());
     }
     HttpHeaders headers(String token){var h=new HttpHeaders();h.setBearerAuth(token);h.setContentType(MediaType.APPLICATION_JSON);return h;}
     Node start(Path dir)throws Exception{
@@ -231,7 +231,7 @@ class MiningMultiJvmMySqlTest {
     String url(Node n){return "http://127.0.0.1:"+n.port;}
     long submit(Node n)throws Exception{return submit(n,UUID.randomUUID());}
     long submit(Node n,UUID key)throws Exception{
-        String body=json.writeValueAsString(Map.of("requestKey",key,"storeId",store,"snapshotId",snapshot,"compareAlgorithms",false));
+        String body=json.writeValueAsString(Map.of("requestKey",key,"storeId",store,"snapshotId",snapshot));
         var result=http.exchange(url(n)+"/api/system/mining/requests",HttpMethod.POST,new HttpEntity<>(body,admin),JsonNode.class);
         assertEquals(HttpStatus.ACCEPTED,result.getStatusCode());return result.getBody().path("requestId").asLong();
     }
@@ -246,7 +246,7 @@ class MiningMultiJvmMySqlTest {
         var pattern=java.util.regex.Pattern.compile("SPMF_PROCESS_STARTED [^\\n]*pid=([0-9]+)");
         while(System.nanoTime()<end){
             var match=pattern.matcher(Files.readString(n.log));long pid=-1;while(match.find())pid=Long.parseLong(match.group(1));
-            if(pid>0){var child=ProcessHandle.of(pid);if(child.isPresent()&&child.get().parent().map(p->p.pid()==n.process.pid()).orElse(false)&&child.get().info().arguments().map(args->Arrays.asList(args).contains("HUI-Miner")&&!Arrays.asList(args).contains("-c")).orElse(false))return child.get();}
+            if(pid>0){var child=ProcessHandle.of(pid);if(child.isPresent()&&child.get().parent().map(p->p.pid()==n.process.pid()).orElse(false)&&child.get().info().arguments().map(args->Arrays.asList(args).contains("EFIM")).orElse(false))return child.get();}
             Thread.sleep(1);
         }
         throw new AssertionError("actual SPMF child not observed in process log and ancestry");

@@ -53,7 +53,7 @@ class MiningSystemStoreReadGranularGateTest {
                 mvc.perform(get(path).header("Authorization",other)).andExpect(status().isForbidden());
         }
         mvc.perform(get(base+"/requests")).andExpect(status().isUnauthorized());
-        // the approved benchmark route is not part of the gate
+        // The removed benchmark route is not part of the read gate.
         mvc.perform(get(base+"/runs/987654/benchmark").header("Authorization",bearer)).andExpect(status().isNotFound());
     }
 }

@@ -92,7 +92,6 @@ public class SecurityConfig {
                         .requestMatchers("/swagger", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/system/mining/**").hasRole("SYSTEM_ADMIN")
                         .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/mining/requests").hasRole("MERCHANDISER")
-                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/mining/runs/*/benchmark").denyAll()
                         .requestMatchers(
                                 "/api/auth/login",
                                 "/api/auth/refresh",
