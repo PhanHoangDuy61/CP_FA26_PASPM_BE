@@ -44,15 +44,16 @@ class RecommendationIntegrationTest {
     int createSnapshot()throws Exception {return body(postJson("/api/utility/snapshots",merchant,"{\"rangeStart\":\""+day+"\",\"rangeEnd\":\""+day+"\",\"asOfDate\":\""+day+"\"}").andExpect(status().isCreated())).path("snapshotId").asInt();}
     long[] mine(int snapshotId)throws Exception {
         long version=body(getJson("/api/system/mining/config",system)).path("version").asLong();
-        String config=json.writeValueAsString(Map.of("algorithm","HUI_MINER","minUtilMode","ABSOLUTE","minUtilValue",1,"expectedVersion",version));
+        String config=json.writeValueAsString(Map.of("minUtilMode","ABSOLUTE","minUtilValue",1,"expectedVersion",version));
         mvc.perform(put("/api/system/mining/config").header("Authorization","Bearer "+system).contentType(MediaType.APPLICATION_JSON).content(config)).andExpect(status().isOk());
-        String payload=json.writeValueAsString(Map.of("requestKey",UUID.randomUUID(),"storeId",store,"snapshotId",snapshotId,"compareAlgorithms",true));
+        String payload=json.writeValueAsString(Map.of("requestKey",UUID.randomUUID(),"storeId",store,"snapshotId",snapshotId));
         long request=body(postJson("/api/system/mining/requests",system,payload).andExpect(status().isAccepted())).path("requestId").asLong();
         long end=System.nanoTime()+java.util.concurrent.TimeUnit.SECONDS.toNanos(20);
         JsonNode result;
         do {result=body(getJson("/api/mining/requests/"+request,merchant));if(!List.of("PENDING","RUNNING").contains(result.path("status").asText()))break;Thread.sleep(25);}while(System.nanoTime()<end);
-        assertEquals("COMPLETED",result.path("status").asText());assertEquals("MATCH",result.path("comparisonStatus").asText());
-        JsonNode runs=body(getJson("/api/mining/requests/"+request+"/runs",merchant));return new long[]{runs.get(0).path("runId").asLong(),runs.get(1).path("runId").asLong()};
+        assertEquals("COMPLETED",result.path("status").asText());assertEquals("NOT_REQUESTED",result.path("comparisonStatus").asText());
+        JsonNode runs=body(getJson("/api/mining/requests/"+request+"/runs",merchant));assertEquals(1,runs.size());assertEquals("EFIM",runs.get(0).path("algorithm").asText());
+        return new long[]{runs.get(0).path("runId").asLong()};
     }
     ResultActions generate(long run,String who)throws Exception {return postJson("/api/recommendations/generate",who,json.writeValueAsString(Map.of("miningRunId",run,"types",List.of("BUNDLE","CROSS_SELL","FBT","BANNER"))));}
     List<Long> ids(JsonNode result) {List<Long> ids=new ArrayList<>();result.path("recommendationIds").forEach(n->ids.add(n.asLong()));return ids;}
@@ -75,12 +76,12 @@ class RecommendationIntegrationTest {
         assertEquals(0,jdbc.queryForObject("SELECT COUNT(*) FROM high_utility_pattern WHERE store_id=? AND support_count IS NOT NULL",Integer.class,store));
         assertEquals(30,jdbc.queryForObject("SELECT SUM(b.remaining_quantity) FROM inventory_batch b JOIN product p ON p.product_id=b.product_id WHERE p.store_id=?",Integer.class,store));
     }
-    @Test void generationIsIdempotentAcrossEquivalentAlgorithmsButNotDifferentSnapshots()throws Exception {
+    @Test void generationIsIdempotentForOneEfimRunButNotDifferentSnapshots()throws Exception {
         long[] runs=mine(snapshot);JsonNode first=body(generate(runs[0],merchant).andExpect(status().isOk()));
         assertEquals(0,body(generate(runs[0],merchant)).path("createdCount").asInt());
-        JsonNode second=body(generate(runs[1],merchant));assertEquals(0,second.path("createdCount").asInt());assertEquals(8,second.path("reusedCount").asInt());
+        JsonNode second=body(generate(runs[0],merchant));assertEquals(0,second.path("createdCount").asInt());assertEquals(8,second.path("reusedCount").asInt());
         assertEquals(new HashSet<>(ids(first)),new HashSet<>(ids(second)));
-        assertEquals(2,body(getJson("/api/recommendations/"+ids(first).get(0),merchant)).path("sources").size());
+        assertEquals(1,body(getJson("/api/recommendations/"+ids(first).get(0),merchant)).path("sources").size());
         generate(mine(createSnapshot())[0],merchant).andExpect(status().isOk()).andExpect(jsonPath("$.createdCount").value(8));
         assertEquals(16,jdbc.queryForObject("SELECT COUNT(*) FROM recommendation WHERE store_id=?",Integer.class,store));
     }
@@ -231,7 +232,7 @@ class RecommendationIntegrationTest {
         jdbc.update("UPDATE inventory_batch SET expiry_date=? WHERE product_id=?",day.plusDays(5),products.get(0));
         getJson("/api/recommendations/expiry-push",merchant).andExpect(status().isOk()).andExpect(jsonPath("$.totalElements").value(1)).andExpect(jsonPath("$.items[0].pushRequired").value(true));
     }
-    @Test void completedIndividualRunRemainsEligibleAcrossComparisonPolicies()throws Exception {
+    @Test void completedIndividualRunRemainsEligibleWithoutComparison()throws Exception {
         long run=mine(snapshot)[0];long request=jdbc.queryForObject("SELECT request_id FROM mining_run WHERE run_id=?",Long.class,run);
         String frozen=jdbc.queryForObject("SELECT frozen_input FROM mining_request WHERE request_id=?",String.class,request);
         String snapshotHash=jdbc.queryForObject("SELECT matrix_hash FROM utility_snapshot WHERE snapshot_id=?",String.class,snapshot);

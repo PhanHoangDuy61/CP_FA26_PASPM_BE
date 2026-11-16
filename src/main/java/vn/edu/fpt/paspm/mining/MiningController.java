@@ -14,7 +14,11 @@ import vn.edu.fpt.paspm.utility.UtilityMatrixContracts.SnapshotView;
 
 @RestController
 @RequestMapping("/api/mining")
+<<<<<<< Updated upstream
 @Tag(name="F05 Mining",description="Frozen F03 snapshot mining results. Store-scoped and read-only for Merchandiser and Store Admin. Submitting mining and reading benchmarks are System Admin only under /api/system/mining.")
+=======
+@Tag(name="F05 Mining",description="Frozen F03 snapshot mining results. New mining requests use EFIM. Store-scoped reads for Merchandiser and Store Admin; Merchandiser may submit using the System Admin minUtil policy.")
+>>>>>>> Stashed changes
 @PreAuthorize("hasAnyRole('MERCHANDISER','STORE_ADMIN')")
 public class MiningController {
     private final MiningService service;
@@ -34,6 +38,4 @@ public class MiningController {
     public RunView run(@AuthenticationPrincipal Jwt jwt,@PathVariable long id){return service.run(jwt,id);}
     @GetMapping("/runs/{id}/patterns") @Operation(summary="Page raw high-utility patterns by utility descending, canonical Product IDs ascending",description="Empty while pending/failed; check run status. Utility is frozen weighted utility, not revenue. pageSize controls display only and never changes minUtil. Support is not measured.")
     public Page<PatternView> patterns(@AuthenticationPrincipal Jwt jwt,@PathVariable long id,@RequestParam(defaultValue="0") int page,@RequestParam(defaultValue="20") int pageSize){return service.patterns(jwt,id,page,pageSize);}
-    @GetMapping("/runs/{id}/benchmark") @PreAuthorize("denyAll()") @Operation(deprecated=true,summary="FORBIDDEN legacy route: always HTTP 403 for every role; do not call. Use GET /api/system/mining/stores/{storeId}/runs/{runId}/benchmark",description="Kept mapped only so the 403 is explicit. Benchmarks are System Admin only.")
-    public BenchmarkView benchmark(@AuthenticationPrincipal Jwt jwt,@PathVariable long id){return service.benchmark(jwt,id);}
 }

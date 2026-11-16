@@ -30,10 +30,10 @@ public class MiningSystemController {
         audit.info("system-admin read route={} storeId={} actor={}",route,storeId,jwt==null?"unknown":jwt.getSubject());
     }
     public record ManualRequest(@NotNull @Positive @JsonDeserialize(using=StrictIntegerDeserializer.class) Integer storeId,
-        @NotNull @Positive @JsonDeserialize(using=StrictIntegerDeserializer.class) Integer snapshotId,@NotNull UUID requestKey, Boolean compareAlgorithms) {}
+        @NotNull @Positive @JsonDeserialize(using=StrictIntegerDeserializer.class) Integer snapshotId,@NotNull UUID requestKey) {}
     @PostMapping("/requests") @ResponseStatus(HttpStatus.ACCEPTED)
     public MiningContracts.RequestView create(@AuthenticationPrincipal Jwt jwt,@Valid @RequestBody ManualRequest request) {
-        return mining.createAdministrative(jwt,request.storeId(),request.snapshotId(),request.requestKey(),Boolean.TRUE.equals(request.compareAlgorithms()));
+        return mining.createAdministrative(jwt,request.storeId(),request.snapshotId(),request.requestKey());
     }
     @GetMapping("/stores/{storeId}/snapshots") @Operation(summary="System Admin: list READY Utility Snapshots of an explicitly selected Store (decision D1; HTTP 403 only if the operator removed SNAPSHOTS from paspm.mining.system-store-read.routes)",description="Read-only. Same representation as GET /api/mining/snapshots. Unknown Store returns 404.")
     public MiningContracts.Page<vn.edu.fpt.paspm.utility.UtilityMatrixContracts.SnapshotView> snapshots(@AuthenticationPrincipal Jwt jwt,@PathVariable @Positive int storeId,@RequestParam(defaultValue="0") int page,@RequestParam(defaultValue="20") int pageSize) {
@@ -58,9 +58,5 @@ public class MiningSystemController {
     @GetMapping("/stores/{storeId}/runs/{runId}/patterns") @Operation(summary="Always HTTP 403 for System Admin (decision D1): raw high-utility patterns are read through the Store-scoped route GET /api/mining/runs/{runId}/patterns",description="Kept only so the refusal is explicit and independent of Store existence.")
     public MiningContracts.Page<MiningContracts.PatternView> patterns(@PathVariable @Positive int storeId,@PathVariable @Positive long runId,@RequestParam(defaultValue="0") int page,@RequestParam(defaultValue="20") int pageSize) {
         throw readPolicy.patternsRefusal();
-    }
-    @GetMapping("/stores/{storeId}/runs/{runId}/benchmark")
-    public MiningContracts.BenchmarkView benchmark(@PathVariable @Positive int storeId,@PathVariable @Positive long runId) {
-        return mining.benchmarkForStore(storeId,runId);
     }
 }

@@ -51,7 +51,7 @@ class MiningScheduleAdministrationHttpTest {
     }
 
     String weekly() { return "{\"storeId\":" + store + ",\"frequency\":\"WEEKLY\",\"dayOfWeek\":1,\"localTime\":\"09:00\",\"timeZone\":\"Asia/Ho_Chi_Minh\",\"lookbackDays\":7}"; }
-    String monthly() { return "{\"storeId\":" + store + ",\"frequency\":\"MONTHLY\",\"dayOfMonth\":31,\"localTime\":\"09:00\",\"timeZone\":\"Asia/Ho_Chi_Minh\",\"lookbackDays\":30,\"compareAlgorithms\":true}"; }
+    String monthly() { return "{\"storeId\":" + store + ",\"frequency\":\"MONTHLY\",\"dayOfMonth\":31,\"localTime\":\"09:00\",\"timeZone\":\"Asia/Ho_Chi_Minh\",\"lookbackDays\":30}"; }
     ResultActions postSchedule(String body) throws Exception { return mvc.perform(post("/api/system/mining/schedules").header("Authorization", "Bearer " + system).contentType(MediaType.APPLICATION_JSON).content(body)); }
     ResultActions putSchedule(long id, String schedule, boolean enabled, long version) throws Exception {
         return mvc.perform(put("/api/system/mining/schedules/" + id).header("Authorization", "Bearer " + system).contentType(MediaType.APPLICATION_JSON)
@@ -62,7 +62,7 @@ class MiningScheduleAdministrationHttpTest {
     @Test void createReturnsADisabledScheduleWithoutAFireTimeAndBothRecurrenceKindsAreSupported() throws Exception {
         postSchedule(weekly()).andExpect(status().isCreated()).andExpect(jsonPath("$.enabled").value(false)).andExpect(jsonPath("$.nextFireAt").doesNotExist())
             .andExpect(jsonPath("$.version").value(1)).andExpect(jsonPath("$.frequency").value("WEEKLY")).andExpect(jsonPath("$.dayOfWeek").value(1)).andExpect(jsonPath("$.compareAlgorithms").value(false));
-        postSchedule(monthly()).andExpect(status().isCreated()).andExpect(jsonPath("$.dayOfMonth").value(31)).andExpect(jsonPath("$.compareAlgorithms").value(true)).andExpect(jsonPath("$.enabled").value(false));
+        postSchedule(monthly()).andExpect(status().isCreated()).andExpect(jsonPath("$.dayOfMonth").value(31)).andExpect(jsonPath("$.compareAlgorithms").value(false)).andExpect(jsonPath("$.enabled").value(false));
     }
 
     @Test void invalidRecurrenceLookbackTimeAndStoreInputsAreRejectedWith400Or404() throws Exception {
@@ -81,6 +81,7 @@ class MiningScheduleAdministrationHttpTest {
         postSchedule(weekly().replace("\"frequency\":\"WEEKLY\"", "\"frequency\":\"DAILY\"")).andExpect(status().isBadRequest());
         postSchedule(weekly().replace("Asia/Ho_Chi_Minh", "UTC+7")).andExpect(status().isBadRequest());
         postSchedule(weekly().replace("}", ",\"unknown\":1}")).andExpect(status().isBadRequest());
+        postSchedule(weekly().replace("}", ",\"compareAlgorithms\":true}")).andExpect(status().isBadRequest());
         postSchedule(weekly().replace("\"storeId\":" + store, "\"storeId\":\"1\"")).andExpect(status().isBadRequest());
         postSchedule(weekly().replace("\"storeId\":" + store, "\"storeId\":0")).andExpect(status().isBadRequest());
         postSchedule(weekly().replace("\"storeId\":" + store, "\"storeId\":987654321")).andExpect(status().isNotFound());

@@ -1,17 +1,58 @@
-# F05 — HUI-Miner and EFIM Mining
+# F05 — EFIM Mining (legacy HUI-Miner history)
+
+## Current policy — 2026-11-16
+
+The current local change on `dev` (base `3e438f8`, not committed) fixes all new manual and scheduled mining requests to one EFIM run. The minUtil configuration no longer accepts an algorithm. Comparison input and both benchmark routes are removed. Existing HUI-Miner runs, comparison results, runtime metrics and stored schedule metadata remain readable; historical schedule comparison flags do not affect new occurrences. No database migration or historical rewrite is planned. See the [current API contract](../../api/F05_MINING_API.md#current-contract-2026-11-16).
 
 > **Release status (2026-11-02): the F03/F05 Core is merged into `dev`** by [PR #11](https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/pull/11), merge commit `11973a0`. Backend tree at `11973a0` is identical to `a4f1115`, whose code passed the full verification script (23/23) on `45dbd80`. Evidence: [Core release readiness](../../reports/F03_F05_CORE_RELEASE_READINESS_2026-11-02.md), [audit matrix](../../reports/F03_F05_API_AUDIT_MATRIX_2026-11-02.md).
 >
 > **Scheduler branch status (2026-11-02, `Khoi/feat/f05-scheduled-mining-option-b-completion`, not yet on `dev`, nothing pushed):** the business decisions D1–D10 are **confirmed** by the project owner in conversation (no approver name recorded; PO identity verification outstanding) and **implemented** with Flyway V18–V19. Scheduled mining is **locally verified** (default suite, MySQL 8.4 + real SPMF over HTTP, two-process crash recovery) but **not release accepted**: GitHub CI has not run, native Linux evidence is missing and final review / release sign-off are pending. Activation still answers HTTP 503 and the dispatcher stays off unless an instance sets `paspm.mining.schedule-dispatch-enabled=true`.
 
+<<<<<<< Updated upstream
 ## 1. Purpose and scope
 Mines a Store's frozen F03 utility snapshot with HUI-Miner and EFIM (external SPMF 2.67a, Java 25 child), stores patterns, compares the two algorithms and exposes results. The approved requirements give the System Admin three duties: configure `minUtil` and the active algorithm, run scheduled weekly/monthly mining, and view a benchmark comparing HUI-Miner and EFIM.
+=======
+## Historical status — branch `Khoi/feat/f05-progress-f03-weight-v2` (2026-11-15)
+
+Commits `3bdfee3`, `bd60c75`, `982094c` (Checkpoint 1) and `e38b55f` (F03 Weight v2 consumers). Code paths are relative to `src/main/java/vn/edu/fpt/paspm/` on `c8c837a`.
+
+| Item | Behaviour | Evidence |
+|---|---|---|
+| Progress routes | `GET /api/mining/requests/{id}/progress` (Merchandiser, Store Admin, own Store); `GET /api/system/mining/stores/{storeId}/requests/{requestId}/progress` (System Admin, `REQUESTS` gate, audited) | `mining/MiningProgressController.java:22-29`; `security/SecurityConfig.java:93` |
+| DTO | `ProgressView {requestId, storeId, status, stage, stageStartedAt, currentRunId, algorithm, attemptNo, completedSteps, totalSteps, percent, elapsedMs, timeoutMs, comparisonStatus}` | `mining/MiningContracts.java:25-30` |
+| Stages | `QUEUED` at claim → `RUNNING` → `SAVING` per algorithm → `COMPARING` (two algorithms only) → `COMPLETED`/`FAILED`; rows before V24 read `LEGACY` | `mining/MiningDispatchLease.java:21`, `:41-43`; `mining/MiningWorker.java:66`, `:79`, `:84`, `:86`; V24 |
+| Fencing | Stage writes go through `guarded(...)` (lease owner + fence must still match) | `mining/MiningDispatchLease.java:41-43` |
+| Steps | `totalSteps = 2 × algorithms (+1 when comparing)`; completed run = 2, saving run = 1; computed at read time | `mining/MiningProgressReader.java:22-32` |
+| `attemptNo` | = `mining_request.lease_fence`; increases by 1 on every claim, including recovery after a lease loss | `mining/MiningProgressReader.java:37`; `mining/MiningDispatchLease.java:21` |
+| `elapsedMs` / `timeoutMs` | Database clock since `stage_started_at`; engine timeout only while `RUNNING` | `mining/MiningProgressReader.java:35-38` |
+| Merchandiser submission | `POST /api/mining/requests {requestKey, snapshotId}`; Store from the JWT; algorithm and minUtil from the current System Admin configuration (no overrides) | `mining/MiningController.java:24-26`; `mining/MiningContracts.java:23-24`; `mining/MiningService.java:52-53`; `security/SecurityConfig.java:94` |
+| λ_max block | New Merchandiser request → 409 when the snapshot's frozen λ is above the current λ_max; idempotent replay returns the existing request | `mining/MiningService.java:83-84` |
+| Scheduler | Enabling a schedule still returns 503 unless dispatch is enabled | `mining/MiningScheduleService.java:67` |
+| Scheduled snapshot (W2) | Same freezer as manual snapshots; seasons active on the occurrence date copied by value | `mining/MiningScheduledSnapshot.java:44-45`; `utility/UtilityFreezer.java:23-25` |
+
+**Superseded 2026-11-15:** "System Admin is the only mining submitter" (requirements and the 2026-11-02 text below) — replaced by owner decision P1 (Merchandiser submits for its own Store). The System Admin route is unchanged.
+
+**Verification:** Phase 1 gate 632 tests, 627 PASS, 5 SKIP plus JPA 5/5 ([record 003](../../record-of-changes/2026-11-15/03-opt-in-gate-and-weight-v2.md)); final branch gate 645 tests, 640 PASS, 5 SKIP plus JPA 5/5 ([record 004](../../record-of-changes/2026-11-15/04-f03-weight-v2-expiry-season.md)). **NOT VERIFIED:** Linux SPMF orphan cleanup (macOS evidence only: surviving children were cleaned up by the tests), GitHub CI, interactive Swagger UI.
+
+**Known gaps:** progress `percent` is completed work, not time, and may be FAILED at 100% or terminate below 100%; `attemptNo` can increase after recovery, so clients must not treat it as a retry counter from the user; `mining_run.attempt_no` is exposed in `RunView` (`mining/MiningRepository.java:46`) but never incremented (V9 default 1); it is not the progress `attemptNo`.
+
+Earlier dated release evidence below is historical, not evidence for this feature branch.
+
+## 1. Purpose and scope
+Mines a Store's frozen F03 utility snapshot with EFIM (external SPMF 2.67a, Java 25 child), stores patterns and exposes results. HUI-Miner execution and comparison data are retained only for legacy requests/results. There is no benchmark endpoint.
+>>>>>>> Stashed changes
 
 ## 2. Actors and effective RBAC
 | Role | Capability |
 |---|---|
+<<<<<<< Updated upstream
 | `SYSTEM_ADMIN` | mining configuration, manual Store-targeted request, benchmark, schedule administration and history |
 | `MERCHANDISER`, `STORE_ADMIN` | read-only, own Store: snapshots, requests, runs, patterns. **Cannot** submit or read benchmarks |
+=======
+| `SYSTEM_ADMIN` | minUtil configuration (EFIM fixed), manual Store-targeted request, schedule administration and history; no benchmark endpoint |
+| `MERCHANDISER` | own-Store reads and submission using System Admin minUtil policy |
+| `STORE_ADMIN` | own-Store reads only; cannot submit |
+>>>>>>> Stashed changes
 | `END_CUSTOMER` | none |
 
 System Admin has **no** access to the Store-scoped `/api/mining/**` routes (403). Matrix: [RBAC matrix](../../api/F01_F02_RBAC_MATRIX.md) (23 F05 rows).
@@ -19,21 +60,30 @@ System Admin has **no** access to the Store-scoped `/api/mining/**` routes (403)
 ## 3. Status by area
 | Area | State |
 |---|---|
-| **Merged and verified (Core)** | System Admin configuration (versioned, optimistic lock); manual Store-targeted request (202, idempotent by `requestKey`); HUI-Miner and EFIM; durable DB dispatch; lease, heartbeat and fencing; Linux parent-death launcher; benchmark; Store-scoped results; F06 consumption |
+| **Core** | Versioned minUtil policy; new requests are EFIM-only; durable DB dispatch; lease, heartbeat and fencing; Linux parent-death launcher; Store-scoped results; F06 consumption. HUI-Miner and comparisons are legacy-read/dispatch compatibility only |
 | **Implemented, default-enabled (D1, branch)** | System Admin reads of Store **snapshots, requests and runs** (`/api/system/mining/stores/{storeId}/…`); an operator may only remove groups via `paspm.mining.system-store-read.routes`. Every such read is audit-logged. **Raw patterns stay closed to System Admin** (always 403; Store Admin / Merchandiser read them Store-scoped) |
 | **Implemented (D2, branch)** | `GET /api/system/stores` — read-only, paginated Store picker `{storeId,name}` for System Admin |
 | **Implemented, default-disabled (D3–D10, branch)** | schedules (weekly/monthly, lookback 7–365, zone `Asia/Ho_Chi_Minh`, month-end clamp), latest-only catch-up with `SKIPPED` history, 3 attempts (15 s / 30 s) with a stored final error, frozen versions, execution as the scheduler machine principal. `PUT … enabled=true` is accepted only where `paspm.mining.schedule-dispatch-enabled=true`; otherwise **503** and nothing is written |
+<<<<<<< Updated upstream
 | **Forbidden, unchanged** | `POST /api/mining/requests` and `GET /api/mining/runs/{id}/benchmark` answer 403 for every role (`deprecated` in OpenAPI) |
+=======
+| **Current API change** | Both benchmark routes are removed (404); new request/schedule comparison inputs are rejected. Merchandiser submission is active; Store Admin cannot submit |
+| **Branch 2026-11-15** | V24 progress stages + two progress routes; Merchandiser submission (P1); W2 snapshots (see status table above) |
+>>>>>>> Stashed changes
 
 ## 4. Business rules
-- The algorithm, minUtil mode (`PERCENTAGE` or `ABSOLUTE`) and value come from the active configuration version, pinned into each request when captured; later changes affect only new requests.
-- Only a READY, frozen F03 snapshot of the chosen Store can be mined; F05 never recalculates F03 values. Input is converted exactly (scale 6, GCD normalisation, int32 limits); both algorithms receive identical bytes; exact itemset and utility equality gives `MATCH`.
+- EFIM is fixed for all new requests. The minUtil mode (`PERCENTAGE` or `ABSOLUTE`) and value come from the active configuration version and are pinned into each request; legacy algorithm values are not rewritten.
+- Only a READY, frozen F03 snapshot of the chosen Store can be mined; F05 never recalculates F03 values. Input is converted exactly (scale 6, GCD normalisation, int32 limits). Historical multi-algorithm runs/comparisons remain readable.
 - Request states `PENDING`, `RUNNING`, `COMPLETED`, `FAILED`; run states add `TIMED_OUT`. A full queue leaves the request `PENDING` for the next database poll; an expired lease lets another instance reclaim it with a higher fence; stale writes are rejected. No transition `PENDING → FAILED` exists.
 - Store isolation is enforced by Store-qualified queries and composite foreign keys; foreign ids answer 404.
 - `supportCount` is always null (SPMF output has no support); utility is frozen weighted utility, not revenue.
 
 ## 5. Main workflows
+<<<<<<< Updated upstream
 Configuration (System Admin) → F03 snapshot (Merchandiser) → manual request (System Admin) → asynchronous worker → status and patterns read by Store users → benchmark (System Admin) → F06 generation. Core example without any PO decision: [Option B handoff §10](../../frontend_handoff/OPTION_B_BACKEND_API_HANDOFF.md).
+=======
+Configuration (System Admin) → F03 snapshot (Merchandiser) → EFIM request (System Admin, or Merchandiser for their own Store) → asynchronous worker → status and patterns read by Store users → F06 generation. There is no benchmark step. Core example without any PO decision: [Option B handoff §10](../../frontend_handoff/OPTION_B_BACKEND_API_HANDOFF.md).
+>>>>>>> Stashed changes
 
 ## 6. API documentation
 [F05 API contract](../../api/F05_MINING_API.md) · [Frontend handoff](../../frontend_handoff/F05_HANDOFF.md) · [Backend handoff for all Core flows](../../frontend_handoff/OPTION_B_BACKEND_API_HANDOFF.md) · [runtime OpenAPI](../../api/openapi.json) · [worker architecture](../../architecture/F05_WORKER_DISPATCH.md) · [SPMF runtime setup](../../setup/F05_SPMF_RUNTIME_SETUP.md).
@@ -60,7 +110,7 @@ System Admin has no pattern access (by decision D1); an edit to an enabled sched
 All ten business choices are `BUSINESS_CHOICE_CONFIRMED` (2026-11-02; D3 amended the same day to 7–365 days). See the [package](../../decisions/PO_DECISION_PACKAGE_D1_D10_2026-11-01.md) and the [register](../../decisions/PO_DECISION_REGISTER_F05_2026-11-01.md), which track `IMPLEMENTED`, `TESTED` and `RELEASE_ACCEPTED` separately. `RELEASE_ACCEPTED` is granted for none; verifying the confirmer's formal Product Owner identity is outstanding.
 
 ## 12. Related diagrams
-[Diagram index](../../diagrams/README.md) and the editable [27-page Draw.io pack](../../diagrams/PASPM_Unified_27_Diagrams_UML2_Editable.drawio) (QA: [UML27 report](../../reports/UML27_DIAGRAM_QA_2026-11-02.md)); relevant pages: Use Case UC04–UC08, AD03 (mining), AD04 (benchmark), State R2-06.03 (request) and R2-06.04 (run), Sequence AD03 and AD04, System Architecture.
+[Diagram index](../../diagrams/README.md) and the editable [27-page Draw.io pack](../../diagrams/PASPM_Unified_27_Diagrams_UML2_Editable.drawio) (QA: [UML27 report](../../reports/UML27_DIAGRAM_QA_2026-11-02.md)); relevant pages: Use Case UC04–UC08, AD03 (mining), State R2-06.03 (request) and R2-06.04 (run), Sequence AD03 and System Architecture. AD04 benchmark material is historical; benchmark routes were removed on 2026-11-16.
 
 ## 13. Historical references
 [Gap analysis](reference/F05_GAP_ANALYSIS.md), [original verification](reference/F05_VERIFICATION.md) (retired Merchandiser flow, dated), [F05→F06 handoff](reference/F05_F06_HANDOFF.md), [P0 deployment fix report](../../audits/F05_P0_DEPLOYMENT_FIX_REPORT.md), [legacy RUNNING reconciliation](../../architecture/F05_LEGACY_RUNNING_RECONCILIATION.md).

@@ -27,6 +27,8 @@ public class MiningService {
     }
     public RequestView create(Jwt jwt,CreateRequest request){
         int store=access.currentStoreId(jwt);
+        if(!List.of(MiningEngine.Algorithm.EFIM).equals(request.algorithms()))
+            throw new ApiException(400,"Only EFIM is supported for new mining requests");
         if(new HashSet<>(request.algorithms()).size()!=request.algorithms().size())throw new ApiException(400,"Algorithms must be unique");
         String hash=MiningInputBuilder.sha(request.snapshotId()+"|"+request.algorithms().stream().sorted().toList()+"|"+request.minUtilMode()+"|"+request.minUtilValue().stripTrailingZeros().toPlainString());
         var previous=repository.byKey(store,request.requestKey());if(previous!=null)return same(previous,hash);
@@ -48,11 +50,25 @@ public class MiningService {
         worker.enqueue(store,Objects.requireNonNull(created).view().requestId());
         return repository.find(store,created.view().requestId()).view();
     }
+<<<<<<< Updated upstream
     /** Explicit Store is accepted only by the System Admin controller; all lookups remain Store-scoped. */
     public RequestView createAdministrative(Jwt jwt, int store, int snapshotId, UUID key, boolean compare) {
         if (jdbc.queryForObject("SELECT COUNT(*) FROM store WHERE store_id=?",Integer.class,store)!=1)
             throw new ApiException(404,"Store not found");
         String hash=MiningInputBuilder.sha("ADMIN|"+snapshotId+"|"+compare);
+=======
+    /** Merchandiser Store is resolved from the authenticated principal, never a request field. */
+    public RequestView createMerchandiser(Jwt jwt,StoreCreateRequest request) {
+        return createConfigured(jwt,access.currentStoreId(jwt),request.snapshotId(),request.requestKey(),true);
+    }
+    public RequestView createAdministrative(Jwt jwt, int store, int snapshotId, UUID key) {
+        return createConfigured(jwt,store,snapshotId,key,false);
+    }
+    private RequestView createConfigured(Jwt jwt,int store,int snapshotId,UUID key,boolean merchant) {
+        if (jdbc.queryForObject("SELECT COUNT(*) FROM store WHERE store_id=?",Integer.class,store)!=1)
+            throw new ApiException(404,"Store not found");
+        String hash=MiningInputBuilder.sha((merchant?"MERCHANT|":"ADMIN|")+snapshotId+"|false");
+>>>>>>> Stashed changes
         var previous=repository.byKey(store,key);
         if(previous!=null)return same(previous,hash);
         if(snapshots.find(store,snapshotId)==null)throw new ApiException(404,"Utility snapshot not found");
@@ -62,8 +78,8 @@ public class MiningService {
             created=capture.execute(tx->{
                 long version=jdbc.queryForObject("SELECT config_version FROM mining_config_head WHERE config_id=1 FOR UPDATE",Long.class);
                 if(version==0)throw new ApiException(409,"Configure mining policy before execution");
-                var policy=jdbc.queryForObject("SELECT algorithm,min_util_mode,min_util_value FROM mining_config_version WHERE config_version=?",
-                    (rs,row)->new CreateRequest(key,snapshotId,compare?List.of(MiningEngine.Algorithm.HUI_MINER,MiningEngine.Algorithm.EFIM):List.of(MiningEngine.Algorithm.valueOf(rs.getString(1))),MinUtilMode.valueOf(rs.getString(2)),rs.getBigDecimal(3)),version);
+                var policy=jdbc.queryForObject("SELECT min_util_mode,min_util_value FROM mining_config_version WHERE config_version=?",
+                    (rs,row)->new CreateRequest(key,snapshotId,List.of(MiningEngine.Algorithm.EFIM),MinUtilMode.valueOf(rs.getString(1)),rs.getBigDecimal(2)),version);
                 jdbc.queryForObject("SELECT snapshot_id FROM utility_snapshot WHERE store_id=? AND snapshot_id=? FOR UPDATE",Integer.class,store,snapshotId);
                 var snapshot=snapshots.find(store,snapshotId);
                 if(snapshots.countItems(store,snapshotId)>MiningInputBuilder.MAX_ROWS)throw new ApiException(400,"Snapshot matrix exceeds mining row limit");
@@ -93,7 +109,5 @@ public class MiningService {
     public List<RunView> runsForStore(int store,long request){requireStore(store);return repository.runs(store,request);}
     public Page<PatternView> patternsForStore(int store,long run,int page,int size){pagination(page,size);requireStore(store);return repository.patterns(store,run,page,size);}
     private void requireStore(int store){if(jdbc.queryForObject("SELECT COUNT(*) FROM store WHERE store_id=?",Integer.class,store)!=1)throw new ApiException(404,"Store not found");}
-    public BenchmarkView benchmark(Jwt jwt,long id){return benchmarkForStore(access.currentStoreId(jwt),id);}
-    public BenchmarkView benchmarkForStore(int store,long id){var run=repository.run(store,id);var request=repository.find(store,run.requestId()).view();return new BenchmarkView(run,request.snapshotHash(),request.transactionCount(),request.distinctItems(),request.inputBytes(),request.divisor(),request.utilityScale(),request.effectiveMinUtility(),request.comparisonStatus(),"ONE_COLD_RUN_PER_ALGORITHM_NO_WARMUP_SEQUENTIAL_SAME_LIMITS");}
     private void pagination(int page,int size){if(page<0||size<1||size>100)throw new ApiException(400,"page must be >=0 and pageSize in 1..100");}
 }

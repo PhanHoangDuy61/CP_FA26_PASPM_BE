@@ -1,5 +1,25 @@
 # API Changelog
 
+<<<<<<< Updated upstream
+=======
+## 2026-11-16 — F05 EFIM-only mining and benchmark removal
+
+- New manual and scheduled mining requests create exactly one EFIM run. The System Admin minUtil configuration no longer accepts an algorithm; existing configuration history is retained and reads report effective EFIM.
+- `compareAlgorithms` is removed from new manual and schedule request bodies. Existing comparison metadata and results remain readable; historical schedule flags are ignored for future occurrences.
+- Removed both mining benchmark routes. Per-run runtime and memory telemetry remains available through `RunView`; it is not a benchmark endpoint.
+- OpenAPI now distinguishes mining configuration request/response schemas from schedule schemas; the config response advertises only EFIM, while comparison metadata is documented only on historical schedule/occurrence responses.
+- No migration or historical data rewrite. See the [current F05 contract](F05_MINING_API.md#current-contract--2026-11-16).
+
+## 2026-11-15 — F03 Weight v2 (`W2_EXPIRY_SEASON_V1`) and F05 mining progress (branch, not merged)
+
+- **F05 (V24):** `GET /api/mining/requests/{id}/progress` (Store Admin, Merchandiser, own Store) and `GET /api/system/mining/stores/{storeId}/requests/{requestId}/progress` (System Admin, `REQUESTS` read gate, audited). Merchandiser may submit `POST /api/mining/requests` for its own Store using the System Admin mining configuration (P1). Details in [F05 API](F05_MINING_API.md).
+- **F03 (V25):** new formula `W = 1 + λ[α·U_expiry + β·M]`, rounded half-up to 2 decimals; FEFO expiry risk from batch push days and sales rate v(i) over N days; seasons with weights. Same paths, new bodies (P6). Policy `{lambdaMax}`; config `{alpha, beta, lambda, salesWindowDays}`; Store expiry window and product score PATCH → 410; 8 new season operations; product scores, matrix rows, expiry-push items and snapshot configuration have new shapes. Full list: [F03 W2 breaking changes](../frontend_handoff/F03_W2_BREAKING_CHANGES.md); contract: [F03 API](F03_UTILITY_API.md).
+- **F02:** optional `pushDay` on batch create/PATCH/view; `expiryPushDays` deprecated and ignored (P5).
+- **F06:** `EligibilityV2` (no `expiryPushDays`), push-day expiry alerts, one-time `inventoryChanged = true` for pre-W2 recommendations, ended-season warning in `explanation`, no automatic re-run.
+- **Data:** V25 converts live Store configs and the λ policy with the owner rule of 2026-11-15 (evidence table `utility_weight_v2_conversion`); frozen JSON is never rewritten and is read by version-aware readers. Schema: [V24/V25 notes](../architecture/F03_W2_SCHEMA_V24_V25.md).
+- OpenAPI regenerated from Springdoc ([openapi.json](openapi.json)); legacy stored shapes (`Evidence`, `FrozenConfiguration`, `RecEligibility`) are registered explicitly so every `oneOf` reference resolves.
+
+>>>>>>> Stashed changes
 ## 2026-11-12 — F07 Layout Simulator and F08 Campaign/A-B workflow
 
 - Added 20 Store-scoped operations for layout/policy/recommendation reads, layout preview/edit/READY, campaign create/read/decision/synchronous offline simulation, immutable report reads, publish/withdraw/activate/end/rollback, and the active-layout projection for F09.

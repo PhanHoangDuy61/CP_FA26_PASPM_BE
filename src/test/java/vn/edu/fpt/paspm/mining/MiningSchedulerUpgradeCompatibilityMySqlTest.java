@@ -190,7 +190,7 @@ class MiningSchedulerUpgradeCompatibilityMySqlTest {
             // a row that was enabled by other means (restore, SQL) and is long overdue: the shipped configuration must still leave it alone
             jdbc.update("INSERT INTO mining_schedule(schedule_id,store_id,created_by,updated_by,frequency,day_of_week,local_time,time_zone,lookback_days,enabled,next_fire_at) VALUES (77,77,?,?,'WEEKLY',1,'09:00','Asia/Ho_Chi_Minh',7,TRUE,?)",
                 adminId, adminId, Timestamp.from(Instant.now().minusSeconds(86400L * 14)));
-            String body = "{\"schedule\":{\"storeId\":77,\"frequency\":\"WEEKLY\",\"dayOfWeek\":1,\"localTime\":\"09:00\",\"timeZone\":\"Asia/Ho_Chi_Minh\",\"lookbackDays\":7,\"compareAlgorithms\":false},\"enabled\":true,\"expectedVersion\":1}";
+            String body = "{\"schedule\":{\"storeId\":77,\"frequency\":\"WEEKLY\",\"dayOfWeek\":1,\"localTime\":\"09:00\",\"timeZone\":\"Asia/Ho_Chi_Minh\",\"lookbackDays\":7},\"enabled\":true,\"expectedVersion\":1}";
             var activation = http.exchange(url(a) + "/api/system/mining/schedules/77", HttpMethod.PUT, new HttpEntity<>(body, h), String.class);
             assertEquals(503, activation.getStatusCode().value());
             assertEquals(1L, jdbc.queryForObject("SELECT schedule_version FROM mining_schedule WHERE schedule_id=77", Long.class), "refused before any write");

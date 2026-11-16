@@ -55,25 +55,25 @@ class MiningHttpMySqlTest {
         var systemUser=users.createPendingUser("P0 System",UUID.randomUUID()+"@example.test","SYSTEM_ADMIN",null,null,null);
         jdbc.update("UPDATE app_user SET status='ACTIVE',email_verified_at=CURRENT_TIMESTAMP WHERE user_id=?",systemUser.id());
         var adminHeaders=new HttpHeaders();adminHeaders.setBearerAuth(auth.token(users.findById(systemUser.id())).accessToken());adminHeaders.setContentType(MediaType.APPLICATION_JSON);
-        String policy=json.writeValueAsString(Map.of("algorithm","HUI_MINER","minUtilMode","ABSOLUTE","minUtilValue",30,"expectedVersion",0));
+        String policy=json.writeValueAsString(Map.of("minUtilMode","ABSOLUTE","minUtilValue",30,"expectedVersion",0));
         assertEquals(HttpStatus.OK,http.exchange("/api/system/mining/config",HttpMethod.PUT,new HttpEntity<>(policy,adminHeaders),JsonNode.class).getStatusCode());
-        String body=json.writeValueAsString(Map.of("requestKey",UUID.randomUUID(),"storeId",store,"snapshotId",snapshot.getBody().path("snapshotId").asInt(),"compareAlgorithms",true));
+        String body=json.writeValueAsString(Map.of("requestKey",UUID.randomUUID(),"storeId",store,"snapshotId",snapshot.getBody().path("snapshotId").asInt()));
         assertEquals(HttpStatus.FORBIDDEN,http.exchange("/api/system/mining/requests",HttpMethod.POST,new HttpEntity<>(body,headers),JsonNode.class).getStatusCode());
         var created=http.exchange("/api/system/mining/requests",HttpMethod.POST,new HttpEntity<>(body,adminHeaders),JsonNode.class);
         assertEquals(HttpStatus.ACCEPTED,created.getStatusCode());long id=created.getBody().path("requestId").asLong();
         long deadline=System.nanoTime()+java.util.concurrent.TimeUnit.SECONDS.toNanos(20);JsonNode request;
         do { request=get("/api/mining/requests/"+id,headers);if(!List.of("PENDING","RUNNING").contains(request.path("status").asText()))break;Thread.sleep(25); } while(System.nanoTime()<deadline);
-        assertEquals("COMPLETED",request.path("status").asText());assertEquals("MATCH",request.path("comparisonStatus").asText());
-        var runs=get("/api/mining/requests/"+id+"/runs",headers);assertEquals(2,runs.size());
+        assertEquals("COMPLETED",request.path("status").asText());assertEquals("NOT_REQUESTED",request.path("comparisonStatus").asText());
+        var runs=get("/api/mining/requests/"+id+"/runs",headers);assertEquals(1,runs.size());assertEquals("EFIM",runs.get(0).path("algorithm").asText());
         for(var run:runs) {
             assertEquals(8,run.path("patternCount").asInt());
             assertEquals(request.path("inputHash").asText(),run.path("inputHash").asText());
             assertEquals(8,get("/api/mining/runs/"+run.path("runId").asLong()+"/patterns",headers).path("totalElements").asInt());
         }
-        assertEquals(16,jdbc.queryForObject("SELECT COUNT(*) FROM high_utility_pattern WHERE store_id=?",Integer.class,store));
+        assertEquals(8,jdbc.queryForObject("SELECT COUNT(*) FROM high_utility_pattern WHERE store_id=?",Integer.class,store));
         var spec=http.getForEntity("/v3/api-docs",JsonNode.class);assertEquals(HttpStatus.OK,spec.getStatusCode());assertTrue(spec.getBody().path("paths").has("/api/mining/requests"));
         assertEquals(HttpStatus.UNAUTHORIZED,http.getForEntity("/api/mining/requests",String.class).getStatusCode());
-        System.out.println("P0_HTTP backendJava="+System.getProperty("java.version")+" port="+port+" realAlgorithms=HUI_MINER,EFIM patternsPerRun=8 comparison=MATCH MySQLPersistence=16 OpenAPI=PASS");
+        System.out.println("P0_HTTP backendJava="+System.getProperty("java.version")+" port="+port+" newAlgorithm=EFIM patternsPerRun=8 comparison=NOT_REQUESTED MySQLPersistence=8 OpenAPI=PASS");
     }
     private JsonNode get(String path,HttpHeaders headers) {
         var response=http.exchange(path,HttpMethod.GET,new HttpEntity<>(headers),JsonNode.class);

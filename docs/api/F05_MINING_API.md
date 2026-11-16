@@ -1,3 +1,75 @@
+<<<<<<< Updated upstream
+=======
+# Current contract — 2026-11-16
+
+This section supersedes every older contract below where it conflicts. The current backend creates **EFIM-only** mining requests and has no benchmark or algorithm-comparison operation.
+
+| Operation | Current behavior |
+|---|---|
+| `PUT /api/system/mining/config` | Accepts `minUtilMode`, `minUtilValue`, `expectedVersion`; algorithm is fixed to EFIM. `algorithm` is an unknown field (400). GET reports effective `algorithm: EFIM`, including before the first minUtil configuration. |
+| `POST /api/mining/requests` | MERCHANDISER only, own Store, body `{requestKey,snapshotId}`; the new request has one EFIM run. |
+| `POST /api/system/mining/requests` | SYSTEM_ADMIN only, body `{storeId,snapshotId,requestKey}`; `compareAlgorithms` is not accepted. The new request has one EFIM run and `comparisonStatus: NOT_REQUESTED`. |
+| Schedule create/update | Request body has no `compareAlgorithms`; sending it is a 400. New schedule and occurrence writes store comparison disabled. Existing stored compare flags remain readable as legacy metadata but never affect future runs. |
+| Benchmark routes | Neither `/api/mining/runs/{id}/benchmark` nor `/api/system/mining/stores/{storeId}/runs/{runId}/benchmark` is mapped; requests return 404. |
+| Historical reads | Existing requests, HUI-Miner runs, comparison statuses, metrics and patterns remain readable. HUI-Miner execution support remains for already-created legacy work; no new API or scheduled submission selects it. `RunView` runtime/memory fields remain per-run execution telemetry, not a benchmark endpoint. |
+
+Unknown request fields are rejected. No schema migration or historical data rewrite is required. Existing `mining_config_version.algorithm`, `mining_request.algorithms`, run rows and schedule/occurrence comparison metadata are retained for history and legacy dispatch.
+
+---
+
+# Historical F05 API documentation
+
+> The dated contract, verification notes and examples below describe earlier implementations. They are retained as history; use the **Current contract — 2026-11-16** section above and the committed runtime OpenAPI export for current API behavior.
+
+# F05 update — 2026-11-15 (uncommitted feature branch)
+
+This section supersedes earlier System-Admin-only submission statements below. F03 Weight v2 is **not implemented** at Checkpoint 1; legacy F03 calculation/configuration remains unchanged.
+
+| Method | Route | Roles | Result |
+|---|---|---|---|
+| POST | `/api/mining/requests` | MERCHANDISER, own Store | 202; current System Admin algorithm/minUtil policy |
+| GET | `/api/mining/requests/{id}/progress` | MERCHANDISER, STORE_ADMIN, own Store | 200 scalar `ProgressView` |
+| GET | `/api/system/mining/stores/{storeId}/requests/{requestId}/progress` | SYSTEM_ADMIN | 200; REQUESTS policy group; audited |
+
+### Merchandiser submission
+Bearer authentication required. JSON body: `{"requestKey":"f1065250-798b-4487-b86a-e3bfe868f9aa","snapshotId":123}`.
+Both fields required; requestKey is a UUID, snapshotId is a positive integer. Store comes from the authenticated user's scope. Do not send storeId, algorithms, compareAlgorithms, minUtilMode or minUtilValue: unknown fields return 400. Response is the existing `RequestView`, with requestedBy identifying the Merchandiser and algorithms/minUtil captured from the current policy. The policy version is persisted on the request.
+
+The current lambda policy is locked while capturing a **new** Merchandiser request. A snapshot lambda outside `[0, current lambdaMax]` returns 409: `{"error":"The lambda policy changed: this snapshot exceeds the current lambda maximum. Create a new snapshot within the current permitted range before submitting mining."}`. Its frozen JSON is never rewritten. A matching retry of an already committed requestKey returns the original request even if the policy subsequently changes; it does not create new work. A different payload under that key returns 409. The administrative route and its compareAlgorithms option remain unchanged and are not subject to the new Merchandiser-only lambda check.
+
+Other responses: 401 unauthenticated; 403 unauthorized role (including Store Admin); 404 foreign/absent snapshot; 400 non-READY or numerically invalid snapshot; 409 unconfigured mining policy/key conflict; 503 unavailable SPMF. Queue rejection does not reject a durable request: it remains pending for database redispatch. No new public benchmark or System Admin raw-pattern access.
+
+### ProgressView fields and semantics
+| Field | Type | Meaning |
+|---|---|---|
+| requestId, storeId | integer | Scoped request identity |
+| status | string | Unchanged PENDING/RUNNING/COMPLETED/FAILED |
+| stage | string | LEGACY, QUEUED, RUNNING, SAVING, COMPARING, COMPLETED, FAILED |
+| stageStartedAt | ISO instant or null | Database timestamp of current stage; null for untouched legacy rows |
+| currentRunId | integer or null | Current algorithm run; null in queued/comparison/terminal stages |
+| algorithm | string or null | HUI_MINER or EFIM for the current run |
+| attemptNo | integer | Request lease_fence; 0 before first claim, increases on recovery |
+| completedSteps, totalSteps | integer | Derived at read time from run statuses/current stage |
+| percent | integer | Floor(100 * completedSteps / totalSteps); 0 when no run rows |
+| elapsedMs | integer or null | Database now minus current stage start, bounded at zero; not total request duration |
+| timeoutMs | integer or null | Configured engine timeout only during RUNNING |
+| comparisonStatus | string | Existing NOT_REQUESTED/PENDING/MATCH/FAILED/BLOCKED |
+
+Example during first algorithm saving in a two-algorithm request:
+```json
+{"requestId":42,"storeId":3,"status":"RUNNING","stage":"SAVING","stageStartedAt":"2026-11-15T03:00:00Z","currentRunId":81,"algorithm":"HUI_MINER","attemptNo":1,"completedSteps":1,"totalSteps":5,"percent":20,"elapsedMs":12,"timeoutMs":null,"comparisonStatus":"PENDING"}
+```
+
+Each completed run contributes two steps. SAVING contributes one step for the active RUNNING run. Two algorithms add one comparison step; it counts only for MATCH or FAILED (comparison actually completed), not BLOCKED. Failed/timed-out algorithm runs contribute zero. Consequently FAILED may be below 100%, while a completed comparison mismatch may be 100% with FAILED status. Percent describes completed work, **not** success or an ETA, and may decrease on retry. Terminal elapsedMs is time since the terminal transition, not algorithm runtime. Legacy run statuses can still provide counts but stage/timing are not reconstructed.
+
+Stage writes are fenced: claim atomically sets QUEUED; claimed algorithm RUNNING; separately committed SAVING before pattern persistence; COMPARING only for two algorithms; terminal status/stage written atomically. The read uses one scalar SQL query and does not deserialize any frozen input/configuration JSON. Foreign or absent requests return 404; the System Admin REQUESTS gate is checked before lookup and emits the existing audit format.
+
+Scheduler configuration was not changed: keep schedule-dispatch-enabled unset/false; activation returns 503. No snapshot, historical request payload or stored recommendation JSON is rewritten.
+
+---
+## Prior contract and historical evidence
+
+>>>>>>> Stashed changes
 > **Status 2026-11-02 — merged into `dev` by PR #11 (`11973a0`).** The contract below is the current `dev` contract; the Core code was verified by `scripts/verify-option-b-macos.sh --run` (23/23 stages, see the [audit matrix](../reports/F03_F05_API_AUDIT_MATRIX_2026-11-02.md)). **Update 2026-11-02 (Scheduler branch, not yet on `dev`):** business decisions D1–D10 are confirmed and implemented (Flyway V18–V19, `GET /api/system/stores`, System Admin reads of snapshots/requests/runs, `SKIPPED` history, scheduler machine principal, lookback 7–365). Schedule activation still answers **503** unless an instance explicitly sets `paspm.mining.schedule-dispatch-enabled=true`; release sign-off is pending. `POST /api/mining/requests` and `GET /api/mining/runs/{id}/benchmark` are forbidden for every role. Sections that still describe the retired Merchandiser submit flow are labelled *legacy*.
 
 <!-- docs-reorganization:notice -->

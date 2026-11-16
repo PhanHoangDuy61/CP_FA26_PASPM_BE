@@ -35,7 +35,7 @@ public class MiningScheduleService {
     @Transactional public View create(Jwt jwt,Request r){
         validate(r);int actor=auth.current(jwt).id();var key=new GeneratedKeyHolder();
         jdbc.update(c->{var p=c.prepareStatement("INSERT INTO mining_schedule(store_id,created_by,updated_by,frequency,day_of_week,day_of_month,local_time,time_zone,lookback_days,compare_algorithms) VALUES(?,?,?,?,?,?,?,?,?,?)",new String[]{"schedule_id"});
-            p.setInt(1,r.storeId());p.setInt(2,actor);p.setInt(3,actor);p.setString(4,r.frequency().name());p.setObject(5,r.dayOfWeek());p.setObject(6,r.dayOfMonth());p.setString(7,r.localTime().toString());p.setString(8,r.timeZone());p.setInt(9,lookback(r));p.setBoolean(10,Boolean.TRUE.equals(r.compareAlgorithms()));return p;},key);
+            p.setInt(1,r.storeId());p.setInt(2,actor);p.setInt(3,actor);p.setString(4,r.frequency().name());p.setObject(5,r.dayOfWeek());p.setObject(6,r.dayOfMonth());p.setString(7,r.localTime().toString());p.setString(8,r.timeZone());p.setInt(9,lookback(r));p.setBoolean(10,false);return p;},key);
         return get(key.getKey().longValue());
     }
     @Transactional(readOnly=true) public View get(long id){
@@ -69,7 +69,7 @@ public class MiningScheduleService {
             principal.id();
         }
         Instant next=u.enabled()?next(r,Instant.now()):null;
-        jdbc.update("UPDATE mining_schedule SET updated_by=?,frequency=?,day_of_week=?,day_of_month=?,local_time=?,time_zone=?,lookback_days=?,compare_algorithms=?,enabled=?,next_fire_at=?,schedule_version=schedule_version+1,updated_at=CURRENT_TIMESTAMP WHERE schedule_id=?",auth.current(jwt).id(),r.frequency().name(),r.dayOfWeek(),r.dayOfMonth(),r.localTime().toString(),r.timeZone(),lookback(r),Boolean.TRUE.equals(r.compareAlgorithms()),u.enabled(),next==null?null:Timestamp.from(next),id);
+        jdbc.update("UPDATE mining_schedule SET updated_by=?,frequency=?,day_of_week=?,day_of_month=?,local_time=?,time_zone=?,lookback_days=?,compare_algorithms=?,enabled=?,next_fire_at=?,schedule_version=schedule_version+1,updated_at=CURRENT_TIMESTAMP WHERE schedule_id=?",auth.current(jwt).id(),r.frequency().name(),r.dayOfWeek(),r.dayOfMonth(),r.localTime().toString(),r.timeZone(),lookback(r),false,u.enabled(),next==null?null:Timestamp.from(next),id);
         return get(id);
     }
     static Instant next(Request r,Instant after){var zone=ZoneId.of(r.timeZone());return r.frequency()==Frequency.WEEKLY?MiningScheduleTime.nextWeekly(after,zone,DayOfWeek.of(r.dayOfWeek()),r.localTime()):MiningScheduleTime.nextMonthly(after,zone,r.dayOfMonth(),r.localTime());}

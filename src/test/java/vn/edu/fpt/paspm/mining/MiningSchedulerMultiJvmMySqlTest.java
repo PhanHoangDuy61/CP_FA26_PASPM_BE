@@ -120,13 +120,13 @@ class MiningSchedulerMultiJvmMySqlTest {
             for (int i = 0; i < ids.length; i++)
                 jdbc.update("INSERT INTO transaction_item(store_id,transaction_id,product_id,quantity,unit_price,unit_cost) VALUES (?,?,?,1,?,0)", store, tx, products.get(Integer.parseInt(ids[i]) - 1), Integer.parseInt(util[i]));
         }
-        var policy = parentHttp.exchange("/api/system/mining/config", HttpMethod.PUT, new HttpEntity<>("{\"algorithm\":\"HUI_MINER\",\"minUtilMode\":\"ABSOLUTE\",\"minUtilValue\":30,\"expectedVersion\":0}", admin), JsonNode.class);
+        var policy = parentHttp.exchange("/api/system/mining/config", HttpMethod.PUT, new HttpEntity<>("{\"minUtilMode\":\"ABSOLUTE\",\"minUtilValue\":30,\"expectedVersion\":0}", admin), JsonNode.class);
         assertEquals(HttpStatus.OK, policy.getStatusCode());
     }
     /** Creates and activates a weekly schedule through the given node's public API; returns its id. */
     long activeSchedule(Node via, ZonedDateTime fire) {
         String schedule = "{\"storeId\":" + store + ",\"frequency\":\"WEEKLY\",\"dayOfWeek\":" + fire.getDayOfWeek().getValue() + ",\"localTime\":\"" + fire.toLocalTime()
-            + "\",\"timeZone\":\"Asia/Ho_Chi_Minh\",\"lookbackDays\":7,\"compareAlgorithms\":true}";
+            + "\",\"timeZone\":\"Asia/Ho_Chi_Minh\",\"lookbackDays\":7}";
         var created = http.exchange(url(via) + "/api/system/mining/schedules", HttpMethod.POST, new HttpEntity<>(schedule, admin), JsonNode.class);
         assertEquals(HttpStatus.CREATED, created.getStatusCode());
         long id = created.getBody().path("scheduleId").asLong();
@@ -159,9 +159,9 @@ class MiningSchedulerMultiJvmMySqlTest {
             assertEquals(1, jdbc.queryForObject("SELECT COUNT(*) FROM mining_schedule_occurrence WHERE schedule_id=? AND status='COMPLETED' AND attempt_count=1", Integer.class, id));
             assertEquals(1, jdbc.queryForObject("SELECT COUNT(*) FROM mining_request WHERE store_id=?", Integer.class, store));
             assertEquals(1, jdbc.queryForObject("SELECT COUNT(*) FROM utility_snapshot WHERE store_id=?", Integer.class, store));
-            assertEquals(2, jdbc.queryForObject("SELECT COUNT(*) FROM mining_run WHERE store_id=? AND status='COMPLETED'", Integer.class, store));
-            assertEquals(16, jdbc.queryForObject("SELECT COUNT(*) FROM high_utility_pattern p JOIN mining_run r ON p.run_id=r.run_id WHERE r.store_id=?", Integer.class, store));
-            evidence.add("scheduler_concurrency A_pid=" + a.process.pid() + " B_pid=" + b.process.pid() + " schedule=" + id + " occurrences=4 skipped=3 completed=1 requests=1 snapshots=1 runs=2 patterns=16 PASS");
+            assertEquals(1, jdbc.queryForObject("SELECT COUNT(*) FROM mining_run WHERE store_id=? AND status='COMPLETED'", Integer.class, store));
+            assertEquals(8, jdbc.queryForObject("SELECT COUNT(*) FROM high_utility_pattern p JOIN mining_run r ON p.run_id=r.run_id WHERE r.store_id=?", Integer.class, store));
+            evidence.add("scheduler_concurrency A_pid=" + a.process.pid() + " B_pid=" + b.process.pid() + " schedule=" + id + " occurrences=4 skipped=3 completed=1 requests=1 snapshots=1 runs=1 patterns=8 PASS");
         } finally { killAll(); saveEvidence(); }
     }
 
@@ -198,7 +198,7 @@ class MiningSchedulerMultiJvmMySqlTest {
             assertNull(row.get("failure_code"));
             assertEquals(1, jdbc.queryForObject("SELECT COUNT(*) FROM utility_snapshot WHERE store_id=?", Integer.class, store));
             assertEquals(1, jdbc.queryForObject("SELECT COUNT(*) FROM mining_request WHERE store_id=?", Integer.class, store));
-            assertEquals(2, jdbc.queryForObject("SELECT COUNT(*) FROM mining_run WHERE store_id=? AND status='COMPLETED'", Integer.class, store));
+            assertEquals(1, jdbc.queryForObject("SELECT COUNT(*) FROM mining_run WHERE store_id=? AND status='COMPLETED'", Integer.class, store));
             evidence.add("scheduler_crash_in_transaction killed_C_pid=" + c.process.pid() + " B_pid=" + b.process.pid() + " schedule=" + id + " snapshots_after_kill=0 lease_not_stolen=true new_fence=2 attempts=2 requests=1 snapshots=1 PASS (300 s lease expiry simulated)");
         } finally { killAll(); saveEvidence(); }
     }
@@ -222,15 +222,15 @@ class MiningSchedulerMultiJvmMySqlTest {
             Node b = start(base.resolve("b"));
             // disabling the schedule now must not stop the committed request (D8)
             var disabled = http.exchange(url(b) + "/api/system/mining/schedules/" + id, HttpMethod.PUT, new HttpEntity<>("{\"schedule\":{\"storeId\":" + store + ",\"frequency\":\"WEEKLY\",\"dayOfWeek\":" + fire.getDayOfWeek().getValue()
-                + ",\"localTime\":\"" + fire.toLocalTime() + "\",\"timeZone\":\"Asia/Ho_Chi_Minh\",\"lookbackDays\":7,\"compareAlgorithms\":true},\"enabled\":false,\"expectedVersion\":2}", admin), JsonNode.class);
+                + ",\"localTime\":\"" + fire.toLocalTime() + "\",\"timeZone\":\"Asia/Ho_Chi_Minh\",\"lookbackDays\":7},\"enabled\":false,\"expectedVersion\":2}", admin), JsonNode.class);
             assertEquals(HttpStatus.OK, disabled.getStatusCode());
             waitFor(() -> "COMPLETED".equals(status(id)), 150000, "request recovered by the surviving instance and occurrence reconciled");
             assertEquals("COMPLETED", jdbc.queryForObject("SELECT status FROM mining_request WHERE request_id=?", String.class, request));
             assertTrue(jdbc.queryForObject("SELECT lease_fence FROM mining_request WHERE request_id=?", Long.class, request) > fenceBefore);
             assertEquals(1, jdbc.queryForObject("SELECT COUNT(*) FROM mining_request WHERE store_id=?", Integer.class, store));
             assertEquals(1, jdbc.queryForObject("SELECT COUNT(*) FROM utility_snapshot WHERE store_id=?", Integer.class, store));
-            assertEquals(16, jdbc.queryForObject("SELECT COUNT(*) FROM high_utility_pattern p JOIN mining_run r ON p.run_id=r.run_id WHERE r.store_id=?", Integer.class, store));
-            evidence.add("scheduler_crash_after_request_commit killed_C_pid=" + c.process.pid() + " B_pid=" + b.process.pid() + " request=" + request + " schedule_disabled_meanwhile=true occurrence=COMPLETED patterns=16 PASS");
+            assertEquals(8, jdbc.queryForObject("SELECT COUNT(*) FROM high_utility_pattern p JOIN mining_run r ON p.run_id=r.run_id WHERE r.store_id=?", Integer.class, store));
+            evidence.add("scheduler_crash_after_request_commit killed_C_pid=" + c.process.pid() + " B_pid=" + b.process.pid() + " request=" + request + " schedule_disabled_meanwhile=true occurrence=COMPLETED patterns=8 PASS");
         } finally { killAll(); saveEvidence(); }
     }
 
@@ -276,9 +276,9 @@ class MiningSchedulerMultiJvmMySqlTest {
         var pattern = java.util.regex.Pattern.compile("SPMF_PROCESS_STARTED [^\\n]*pid=([0-9]+)");
         while (System.nanoTime() < end) {
             var match = pattern.matcher(Files.readString(n.log)); long pid = -1; while (match.find()) pid = Long.parseLong(match.group(1));
-            // wait for the real SPMF java (HUI-Miner, no "-c"): on Linux the same pid first runs the Python parent-death launcher, and stopping it before its prctl registration would test the documented startup race, not the safety guarantee
+            // Wait for the real SPMF EFIM process before exercising parent-death cleanup.
             if (pid > 0) { var child = ProcessHandle.of(pid); if (child.isPresent() && child.get().parent().map(p -> p.pid() == n.process.pid()).orElse(false)
-                && child.get().info().arguments().map(args -> java.util.Arrays.asList(args).contains("HUI-Miner") && !java.util.Arrays.asList(args).contains("-c")).orElse(false)) return child.get(); }
+                && child.get().info().arguments().map(args -> java.util.Arrays.asList(args).contains("EFIM")).orElse(false)) return child.get(); }
             Thread.sleep(2);
         }
         throw new AssertionError("actual SPMF child not observed in the process log and ancestry");
@@ -405,10 +405,10 @@ class MiningSchedulerMultiJvmMySqlTest {
             Node b = start(base.resolve("b"));
             waitFor(() -> "COMPLETED".equals(status(id)), 150000, "recovery instance claims the committed request and reconciles the occurrence");
             assertEquals(1L, jdbc.queryForObject("SELECT lease_fence FROM mining_request WHERE request_id=?", Long.class, request));
-            assertEquals(16, count("SELECT COUNT(*) FROM high_utility_pattern p JOIN mining_run r ON p.run_id=r.run_id WHERE r.store_id=?", store));
+            assertEquals(8, count("SELECT COUNT(*) FROM high_utility_pattern p JOIN mining_run r ON p.run_id=r.run_id WHERE r.store_id=?", store));
             String inv = integrity(id, 1);
             evidence.add("crash_point=5_before_worker_claim killed_pid=" + c.process.pid() + " blocked_in=\"" + statement + "\" committed_before_kill=snapshot+request+link request=" + request + " server_noticed_disconnect=" + noticed + " recovery_pid=" + b.process.pid()
-                + " request_fence=1 request=COMPLETED occurrence=COMPLETED patterns=16 " + inv + " PASS");
+                + " request_fence=1 request=COMPLETED occurrence=COMPLETED patterns=8 " + inv + " PASS");
         } finally { killAll(); saveEvidence(); }
     }
 
@@ -441,11 +441,11 @@ class MiningSchedulerMultiJvmMySqlTest {
             waitFor(() -> "COMPLETED".equals(status(id)), 180000, "request recovered after the worker lease expired and occurrence reconciled");
             long fenceAfter = jdbc.queryForObject("SELECT lease_fence FROM mining_request WHERE request_id=?", Long.class, request);
             assertTrue(fenceAfter > fenceBefore, "new worker fence");
-            assertEquals(16, count("SELECT COUNT(*) FROM high_utility_pattern p JOIN mining_run r ON p.run_id=r.run_id WHERE r.store_id=?", store));
-            assertEquals(2, count("SELECT COUNT(*) FROM mining_run WHERE store_id=? AND status='COMPLETED'", store));
+            assertEquals(8, count("SELECT COUNT(*) FROM high_utility_pattern p JOIN mining_run r ON p.run_id=r.run_id WHERE r.store_id=?", store));
+            assertEquals(1, count("SELECT COUNT(*) FROM mining_run WHERE store_id=? AND status='COMPLETED'", store));
             String inv = integrity(id, 1);
             evidence.add("crash_point=6_during_spmf killed_pid=" + c.process.pid() + " spmf_pid=" + childPid + " spmf_uid=" + childOwner + " backend_uid=" + backendOwner + " os=" + System.getProperty("os.name") + " orphan_alive_after_backend_sigkill=" + orphanAlive
-                + " parent_death_enforced_by_kernel=" + linux + " recovery_pid=" + b.process.pid() + " request=" + request + " old_fence=" + fenceBefore + " new_fence=" + fenceAfter + " occurrence=COMPLETED patterns=16 " + inv + " PASS");
+                + " parent_death_enforced_by_kernel=" + linux + " recovery_pid=" + b.process.pid() + " request=" + request + " old_fence=" + fenceBefore + " new_fence=" + fenceAfter + " occurrence=COMPLETED patterns=8 " + inv + " PASS");
         } finally {
             if (child != null && child.isAlive()) new ProcessBuilder("kill", "-KILL", Long.toString(child.pid())).start().waitFor();
             killAll(); saveEvidence();
@@ -482,10 +482,10 @@ class MiningSchedulerMultiJvmMySqlTest {
             waitFor(() -> "COMPLETED".equals(status(id)), 60000, "third instance reconciles");
             var row = occ(id);
             assertEquals(1L, ((Number) row.get("lease_fence")).longValue(), "reconciliation does not touch the lease");
-            assertEquals(16, count("SELECT COUNT(*) FROM high_utility_pattern p JOIN mining_run r ON p.run_id=r.run_id WHERE r.store_id=?", store));
+            assertEquals(8, count("SELECT COUNT(*) FROM high_utility_pattern p JOIN mining_run r ON p.run_id=r.run_id WHERE r.store_id=?", store));
             String inv = integrity(id, 1);
             evidence.add("crash_point=7_occurrence_finalization killed_pid=" + c.process.pid() + " blocked_in=\"" + statementC + "\" committed_before_kill=request_COMPLETED_occurrence_DISPATCHED server_noticed_disconnect=" + noticedC
-                + " | crash_point=9_reconciliation killed_pid=" + b.process.pid() + " blocked_in=\"" + statementB + "\" server_noticed_disconnect=" + noticedB + " | recovery_pid=" + d.process.pid() + " occurrence=COMPLETED fence=1 patterns=16 " + inv + " PASS");
+                + " | crash_point=9_reconciliation killed_pid=" + b.process.pid() + " blocked_in=\"" + statementB + "\" server_noticed_disconnect=" + noticedB + " | recovery_pid=" + d.process.pid() + " occurrence=COMPLETED fence=1 patterns=8 " + inv + " PASS");
         } finally { killAll(); saveEvidence(); }
     }
 
@@ -561,7 +561,7 @@ class MiningSchedulerMultiJvmMySqlTest {
             due(id, fire.toInstant());
             waitFor(() -> Files.exists(c.dir.resolve("occurrence-held")), 60000, "occurrence preparing (schedule row locked by the preparation)");
             var frozen = occ(id);
-            String edit = "{\"schedule\":{\"storeId\":" + store + ",\"frequency\":\"WEEKLY\",\"dayOfWeek\":" + ((fire.getDayOfWeek().getValue() % 7) + 1) + ",\"localTime\":\"" + fire.toLocalTime() + "\",\"timeZone\":\"Asia/Ho_Chi_Minh\",\"lookbackDays\":30,\"compareAlgorithms\":true},\"enabled\":true,\"expectedVersion\":2}";
+            String edit = "{\"schedule\":{\"storeId\":" + store + ",\"frequency\":\"WEEKLY\",\"dayOfWeek\":" + ((fire.getDayOfWeek().getValue() % 7) + 1)             + ",\"localTime\":\"" + fire.toLocalTime() + "\",\"timeZone\":\"Asia/Ho_Chi_Minh\",\"lookbackDays\":30},\"enabled\":true,\"expectedVersion\":2}";
             var pool = java.util.concurrent.Executors.newSingleThreadExecutor();
             var update = pool.submit(() -> http.exchange(url(c) + "/api/system/mining/schedules/" + id, HttpMethod.PUT, new HttpEntity<>(edit, admin), JsonNode.class));
             Thread.sleep(3000);
