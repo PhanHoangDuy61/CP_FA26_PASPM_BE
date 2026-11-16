@@ -27,3 +27,7 @@ Verification: full opt-in **646 PASS / 0 FAIL / 5 SKIP** (651 discovered), JPA s
 It also covers a separate test-only repair for the stale tests left by merge `2a944c5`. The work is committed locally only and is UNRELEASED.
 
 Verification: Final gate: feature **478 total / 330 PASS / 148 SKIP**, MySQL **72/72**, full opt-in **662 total / 657 PASS / 5 SKIP**, supplementary JPA **5/5**; all exits 0, zero FAIL/ERROR. The Flyway-checksum docs branch renumbers its record 008 to 011; 009 is unused.
+
+## Record 011 — known Flyway checksum mismatches
+
+[Record 011](11-flyway-checksum-troubleshooting.md) (first committed as 008): verified the V20 (`89726244` → `1793889682`) and V7 (`-1762009830` → `-1490036030`) checksums with Flyway 11.7.2's own calculator on Git history, added [known checksum mismatches](../../setup/LOCAL_SETUP_TROUBLESHOOTING.md#known-flyway-checksum-mismatches) with a guarded local-only recreate, and originally updated the setup schema range to V1–V25. This merge extends the current setup range to V1–V26. Branch `Khoi/docs/flyway-checksum-troubleshooting` from `origin/dev` `3e438f8`; documentation only; no real database touched.
