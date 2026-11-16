@@ -37,6 +37,8 @@ The current lambda policy is locked while capturing a **new** Merchandiser reque
 
 Other responses: 401 unauthenticated; 403 unauthorized role (including Store Admin); 404 foreign/absent snapshot; 400 non-READY or numerically invalid snapshot; 409 unconfigured mining policy/key conflict; 503 unavailable SPMF. Queue rejection does not reject a durable request: it remains pending for database redispatch. No new public benchmark or System Admin raw-pattern access.
 
+> **Superseded 2026-11-16 ([DEC-20261116-04](../decisions/2026-11-16/DEC-20261116-04-f05-efim-only-mining.md)).** New requests are EFIM-only. In the progress contract below, `algorithm = HUI_MINER`, the `COMPARING` stage and a `comparisonStatus` other than `NOT_REQUESTED` occur only on historical requests, or on a legacy two-run request reclaimed after the upgrade (`mining/MiningWorker.java:84`). The sample shows a historical HUI-Miner run.
+
 ### ProgressView fields and semantics
 | Field | Type | Meaning |
 |---|---|---|
@@ -72,6 +74,8 @@ Scheduler configuration was not changed: keep schedule-dispatch-enabled unset/fa
 <!-- docs-reorganization:notice -->
 > **NEEDS_REVIEW — documentation review 2026-10-26.** Useful endpoint contracts coexist with dated deployment/verification summaries; source availability is separate from historical failure evidence. See [current navigation](../features/F05/README.md). Original results and business-rule text below are retained; this notice is not a new execution or approval.
 <!-- /docs-reorganization:notice -->
+
+> **Superseded 2026-11-16 ([DEC-20261116-04](../decisions/2026-11-16/DEC-20261116-04-f05-efim-only-mining.md)).** Everything from here on describes HUI-Miner + EFIM requests, `compareAlgorithms`, algorithm selection and the benchmark routes. These are history only; the current contract is at the top of this file.
 
 # F05 Mining API Contract
 

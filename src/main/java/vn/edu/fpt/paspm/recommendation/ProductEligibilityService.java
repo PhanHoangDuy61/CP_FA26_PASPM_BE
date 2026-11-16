@@ -11,7 +11,7 @@ import static vn.edu.fpt.paspm.recommendation.RecommendationContracts.*;
 
 /**
  * Current F02 sellability, deliberately independent of historical stock/Weight. W2: expiryPriorityScore is the
- * current U_expiry; the fingerprint covers batch push days and no longer Product.expiryPushDays, so an older
+ * current U_expiry; the fingerprint covers batch push days and no longer the removed product push-day threshold, so an older
  * recommendation reports inventoryChanged=true once after the upgrade (accepted).
  */
 @Service

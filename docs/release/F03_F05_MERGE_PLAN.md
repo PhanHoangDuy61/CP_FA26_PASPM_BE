@@ -2,6 +2,8 @@
 
 Status: **PROPOSED / NOT MERGE_READY**, 2026-11-16, Asia/Ho_Chi_Minh. Branch `Khoi/feat/f05-progress-f03-weight-v2`; inspected HEAD `8f9ec7d`. This plan authorizes no publication, integration, database operation or deployment. Owners must close the gates below. [Record 007](../record-of-changes/2026-11-16/07-cleanup-and-merge-plan.md) records the executed checks; [record 006](../record-of-changes/2026-11-16/06-f03-f05-followup-fixes.md) holds the verified implementation evidence.
 
+> **Update 2026-11-16:** this plan's branch was merged as PR #19; the plan is closed. The follow-up (V26, two deleted routes, test repair) is in [F03_V26_RELEASE_NOTE.md](F03_V26_RELEASE_NOTE.md).
+
 No existing release/merge-notes directory was found at documentation root or one level below; `docs/release/` is created for this plan. Existing feature contracts and dated records remain canonical for implementation details.
 
 ## 1. What the branch delivers

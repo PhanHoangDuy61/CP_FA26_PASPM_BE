@@ -192,7 +192,7 @@ class RecommendationIntegrationTest {
         long run=mine(snapshot)[0];long id=ids(body(generate(run,merchant))).get(0);int product=products.get(0);
         jdbc.update("UPDATE product SET status='INACTIVE' WHERE product_id=?",product);
         getJson("/api/recommendations/"+id,merchant).andExpect(jsonPath("$.currentEligibility.status").value("INELIGIBLE"));
-        jdbc.update("UPDATE product SET status='ACTIVE',requires_expiry=TRUE,expiry_push_days=7 WHERE product_id=?",product);
+        jdbc.update("UPDATE product SET status='ACTIVE',requires_expiry=TRUE WHERE product_id=?",product);
         getJson("/api/recommendations/"+id,merchant).andExpect(jsonPath("$.currentEligibility.status").value("NEEDS_RECHECK"));
         postJson("/api/recommendations/"+id+"/approve",merchant,"{\"expectedVersion\":1,\"reason\":\"Missing metadata\"}").andExpect(status().isConflict());
         for(LocalDate expiry:List.of(day.minusDays(1),day)) {
@@ -228,7 +228,7 @@ class RecommendationIntegrationTest {
             assertEquals(entry.getValue(),json.writeValueAsString(jdbc.queryForList(entry.getKey(),store)),entry.getKey());
         assertEquals(inventory,json.writeValueAsString(jdbc.queryForList("SELECT * FROM inventory_batch WHERE product_id IN (SELECT product_id FROM product WHERE store_id=?)",store)));
         jdbc.update("UPDATE transaction_item SET quantity=99,unit_price=99,unit_cost=1 WHERE store_id=?",store);
-        jdbc.update("UPDATE product SET selling_price=999,cost_price=10,stock_priority_score=0.9,seasonal_priority_score=0.8,expiry_push_days=99 WHERE store_id=?",store);
+        jdbc.update("UPDATE product SET selling_price=999,cost_price=10 WHERE store_id=?",store);
         generate(run,merchant).andExpect(status().isOk()).andExpect(jsonPath("$.createdCount").value(0));
         JsonNode after=body(getJson("/api/recommendations/"+id,merchant));assertEquals(candidate.path("evidence"),after.path("evidence"));assertEquals(candidate.path("utility"),after.path("utility"));
         assertEquals(frozen,jdbc.queryForObject("SELECT frozen_input FROM mining_request WHERE request_id=?",String.class,request));
@@ -239,7 +239,7 @@ class RecommendationIntegrationTest {
         long run=mine(snapshot)[0];jdbc.update("DELETE FROM pattern_item WHERE pattern_id IN (SELECT pattern_id FROM high_utility_pattern WHERE run_id=?)",run);
         jdbc.update("DELETE FROM high_utility_pattern WHERE run_id=?",run);jdbc.update("UPDATE mining_run SET itemset_count=0 WHERE run_id=?",run);
         generate(run,merchant).andExpect(status().isOk()).andExpect(jsonPath("$.createdCount").value(0));
-        jdbc.update("UPDATE product SET requires_expiry=TRUE,expiry_push_days=7 WHERE product_id=?",products.get(0));
+        jdbc.update("UPDATE product SET requires_expiry=TRUE WHERE product_id=?",products.get(0));
         jdbc.update("UPDATE inventory_batch SET expiry_date=?,push_day=? WHERE product_id=?",day.plusDays(5),day.minusDays(2),products.get(0));
         getJson("/api/recommendations/expiry-push",merchant).andExpect(status().isOk()).andExpect(jsonPath("$.totalElements").value(1)).andExpect(jsonPath("$.items[0].pushRequired").value(true));
     }
@@ -276,7 +276,7 @@ class RecommendationIntegrationTest {
         java.nio.file.Files.writeString(dir.resolve("approve_request.json"),review);
         java.nio.file.Files.writeString(dir.resolve("approve_response.json"),body(postJson("/api/recommendations/"+id+"/approve",merchant,review).andExpect(status().isOk())).toPrettyString());
         java.nio.file.Files.writeString(dir.resolve("conflict_response.json"),body(postJson("/api/recommendations/"+id+"/reject",merchant,review).andExpect(status().isConflict())).toPrettyString());
-        jdbc.update("UPDATE product SET requires_expiry=TRUE,expiry_push_days=7 WHERE product_id=?",products.get(0));jdbc.update("UPDATE inventory_batch SET expiry_date=?,push_day=? WHERE product_id=?",day.plusDays(5),day.minusDays(2),products.get(0));
+        jdbc.update("UPDATE product SET requires_expiry=TRUE WHERE product_id=?",products.get(0));jdbc.update("UPDATE inventory_batch SET expiry_date=?,push_day=? WHERE product_id=?",day.plusDays(5),day.minusDays(2),products.get(0));
         java.nio.file.Files.writeString(dir.resolve("expiry_push_response.json"),body(getJson("/api/recommendations/expiry-push",merchant).andExpect(status().isOk())).toPrettyString());
     }
     @Test void openApiExposesActualRecommendationOperations()throws Exception {

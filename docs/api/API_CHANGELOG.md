@@ -1,5 +1,14 @@
 # API Changelog
 
+## 2026-11-16 — Legacy product fields and two obsolete F03 routes removed (branch, not merged)
+
+- **Removed fields (DEC-20261116-02):** `expiryPushDays` from `ProductRequest`/`ProductView`; `stockPriorityScore`/`seasonalPriorityScore` from every live path. Sending one → **400** (`fail-on-unknown-properties` stays on). Migration **V26** drops `product.expiry_push_days`, `product.stock_priority_score`, `product.seasonal_priority_score`; back up first — not reversible without the backup.
+- **Deleted routes (DEC-20261116-03):** `PUT /api/utility/config/expiry-window` (now 404) and `PATCH /api/utility/products/{productId}/scores` (now 405; the GET stays). Replacements: batch `pushDay` (create, PATCH, `DELETE /api/inventory-batches/{id}/push-day`) and season assignment.
+- **`expiryWindowDays`:** not in `GET/PUT /api/utility/config` (`config` is `WeightV2`); a PUT body containing it → 400. It stays only in the frozen legacy snapshot configuration (`WeightConfig` reader). Breaking change 18.
+- **Approved (DEC-20261116-01):** P2, P3, P4 as built; no behaviour change.
+- Frozen JSON unchanged and still readable (legacy reader records keep the old names). W2 scoring and the F06 fingerprint for new recommendations unchanged.
+- OpenAPI: 101 paths / 123 operations → 100 / 121. Frontend list: [breaking changes 15–18](../frontend_handoff/F03_W2_BREAKING_CHANGES.md). Record: [ROC-20261116-010](../record-of-changes/2026-11-16/10-remove-legacy-product-fields-and-routes.md).
+
 ## 2026-11-16 — F05 EFIM-only mining and benchmark removal
 
 - New manual and scheduled mining requests create exactly one EFIM run. The System Admin minUtil configuration no longer accepts an algorithm; existing configuration history is retained and reads report effective EFIM.

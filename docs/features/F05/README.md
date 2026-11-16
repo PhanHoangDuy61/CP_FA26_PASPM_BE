@@ -8,6 +8,8 @@ The current local change on `dev` (base `3e438f8`, not committed) fixes all new 
 >
 > **Scheduler branch status (2026-11-02, `Khoi/feat/f05-scheduled-mining-option-b-completion`, not yet on `dev`, nothing pushed):** the business decisions D1–D10 are **confirmed** by the project owner in conversation (no approver name recorded; PO identity verification outstanding) and **implemented** with Flyway V18–V19. Scheduled mining is **locally verified** (default suite, MySQL 8.4 + real SPMF over HTTP, two-process crash recovery) but **not release accepted**: GitHub CI has not run, native Linux evidence is missing and final review / release sign-off are pending. Activation still answers HTTP 503 and the dispatcher stays off unless an instance sets `paspm.mining.schedule-dispatch-enabled=true`.
 
+> **Superseded 2026-11-16 ([DEC-20261116-04](../../decisions/2026-11-16/DEC-20261116-04-f05-efim-only-mining.md), EFIM-only, `cd90e58` merged into `dev` by `2a944c5`).** The "Current policy" section above is no longer an uncommitted local change; it is on `dev`. In the table below, "per algorithm", "`COMPARING` (two algorithms only)" and "`+1 when comparing`" describe two-algorithm requests, which new requests can no longer create. `COMPARING` remains only for legacy two-run requests reclaimed after the upgrade (`mining/MiningWorker.java:84`).
+
 ## Historical status — branch `Khoi/feat/f05-progress-f03-weight-v2` (2026-11-15)
 
 Commits `3bdfee3`, `bd60c75`, `982094c` (Checkpoint 1) and `e38b55f` (F03 Weight v2 consumers). Code paths are relative to `src/main/java/vn/edu/fpt/paspm/` on `c8c837a`.

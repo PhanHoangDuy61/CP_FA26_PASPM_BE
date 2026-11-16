@@ -16,9 +16,9 @@ public class ProductMetadataPersistence {
     ProductMetadataPersistence(ProductJpaRepository products) { this.products = products; }
 
     public int create(int storeId, String sku, String name, Integer categoryId, String unit,
-            boolean requiresExpiry, BigDecimal sellingPrice, BigDecimal costPrice, String status, int expiryPushDays) {
+            boolean requiresExpiry, BigDecimal sellingPrice, BigDecimal costPrice, String status) {
         var product = new ProductEntity(storeId);
-        product.replaceMetadata(sku,name,categoryId,unit,requiresExpiry,sellingPrice,costPrice,status,expiryPushDays);
+        product.replaceMetadata(sku,name,categoryId,unit,requiresExpiry,sellingPrice,costPrice,status);
         em.persist(product);
         // JDBC readbacks do not trigger JPA auto-flush. Surface constraints inside this translated boundary.
         em.flush();
@@ -26,12 +26,12 @@ public class ProductMetadataPersistence {
     }
 
     public boolean update(int storeId, int id, String sku, String name, Integer categoryId, String unit,
-            boolean requiresExpiry, BigDecimal sellingPrice, BigDecimal costPrice, String status, int expiryPushDays) {
+            boolean requiresExpiry, BigDecimal sellingPrice, BigDecimal costPrice, String status) {
         var product = products.findByStoreIdAndProductId(storeId,id).orElse(null);
         if (product == null) return false;
         // A previous native/JDBC write in the same transaction may have made this managed instance stale.
         em.refresh(product);
-        product.replaceMetadata(sku,name,categoryId,unit,requiresExpiry,sellingPrice,costPrice,status,expiryPushDays);
+        product.replaceMetadata(sku,name,categoryId,unit,requiresExpiry,sellingPrice,costPrice,status);
         em.flush();
         return true;
     }

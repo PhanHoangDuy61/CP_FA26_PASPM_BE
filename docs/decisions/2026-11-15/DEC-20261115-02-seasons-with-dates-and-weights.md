@@ -18,3 +18,6 @@ Seasons are a new Store-scoped table: name, start_date, end_date, weight in [0,1
 
 ## Tests
 `UtilityIntegrationTest.seasonsAreStoreScopedMerchandiserWrittenAndProtectedWhileAssigned`, `WeightV2CalculationTest.productInSeveralActiveSeasonsGetsTheHighestWeightP2` — inside the final gate (645 tests, 640 PASS, 0 FAIL, 5 SKIP; [record 004](../../record-of-changes/2026-11-15/04-f03-weight-v2-expiry-season.md)).
+
+## Update 2026-11-16
+The manual product stock/seasonal scores that seasons replaced are gone: the PATCH route was deleted and the columns dropped by V26 ([DEC-20261116-02](../2026-11-16/DEC-20261116-02-p5-remove-legacy-product-fields.md), [DEC-20261116-03](../2026-11-16/DEC-20261116-03-p6-delete-obsolete-routes.md)). P2 and P3 are approved ([DEC-20261116-01](../2026-11-16/DEC-20261116-01-p2-p4-approved.md)).

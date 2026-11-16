@@ -51,7 +51,7 @@ class ScheduledMiningDisabledByDefaultTest {
         String system = token("SYSTEM_ADMIN", null);
         // a real mining configuration exists, so a running dispatcher would have no reason to refuse the reservation
         mvc.perform(put("/api/system/mining/config").header("Authorization", "Bearer " + system).contentType(MediaType.APPLICATION_JSON)
-            .content("{\"algorithm\":\"EFIM\",\"minUtilMode\":\"ABSOLUTE\",\"minUtilValue\":1,\"expectedVersion\":0}")).andExpect(status().isOk());
+            .content("{\"minUtilMode\":\"ABSOLUTE\",\"minUtilValue\":1,\"expectedVersion\":0}")).andExpect(status().isOk());
         int actor = jdbc.queryForObject("SELECT MAX(u.user_id) FROM app_user u JOIN role r ON r.role_id=u.role_id WHERE r.code='SYSTEM_ADMIN'", Integer.class);
         jdbc.update("INSERT INTO mining_schedule(store_id,created_by,updated_by,frequency,day_of_week,local_time,time_zone,lookback_days,enabled,next_fire_at) VALUES(?,?,?,?,?,?,?,?,TRUE,?)",
             store, actor, actor, "WEEKLY", 1, "09:00", "Asia/Ho_Chi_Minh", 7, Timestamp.from(Instant.now().minusSeconds(3600)));

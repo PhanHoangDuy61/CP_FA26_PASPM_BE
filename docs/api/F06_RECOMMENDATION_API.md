@@ -183,3 +183,9 @@ List relation hydration now uses bounded Store-scoped batches; response fields, 
 
 ## 2026-11-16 — Structured ended-season state (additive)
 Every recommendation view (list/detail/review responses) adds `seasonEnded: boolean` and `endedSeasons: {seasonId: integer, name: string, endDate: string(date)}[]`. Empty list/false when no frozen season has `end_date < current Store date`; end date today is not ended. Data comes from Store-scoped snapshot season copies, ordered by seasonId. Existing explanation text stays. No stored eligibility or snapshot is rewritten, and nothing automatically reruns mining/generation.
+
+## 2026-11-16 — no F06 contract change from V26 (DEC-20261116-02)
+
+- F06 routes, the eligibility rules and the fingerprint for new recommendations are unchanged (`EligibilityV2` never contained `expiryPushDays`; the W2 fingerprint never read the product columns).
+- Stored v1 eligibility (`RecEligibility` / `RecProductEligibility`, created before W2) still contains `expiryPushDays`; the legacy reader record keeps that field, so old recommendations, review history and stored F06 evidence read back byte-identical after V26 (`LegacyProductColumnsV26MigrationTest`).
+- Live eligibility reads product facts through `UtilityProductRepository.Product (id, requiresExpiry, status)`, which no longer selects the dropped columns.

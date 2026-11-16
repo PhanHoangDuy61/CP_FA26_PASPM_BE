@@ -16,3 +16,14 @@ Verification: full opt-in **646 PASS / 0 FAIL / 5 SKIP** (651 discovered), JPA s
 ## Record 008 — F05 EFIM-only mining
 
 [Record 008](08-f05-efim-only-and-benchmark-removal.md) records the local F05 change to fix new mining to EFIM, remove benchmark operations, preserve historical reads, correct the OpenAPI schemas, and document verification limits. Source and documentation changes are UNRELEASED and uncommitted; no migration, push, merge, or deployment.
+
+## Record 010 — legacy product fields and two F03 routes removed (P5/P6)
+
+[Record 010](10-remove-legacy-product-fields-and-routes.md) records the owner decisions of 2026-11-16 and their implementation on branch `Khoi/feat/f03-remove-legacy-product-fields` from `origin/dev` `2a944c5`:
+- [P2–P4 approved](../../decisions/2026-11-16/DEC-20261116-01-p2-p4-approved.md);
+- [P5: product legacy fields removed, migration V26](../../decisions/2026-11-16/DEC-20261116-02-p5-remove-legacy-product-fields.md);
+- [P6: two routes deleted](../../decisions/2026-11-16/DEC-20261116-03-p6-delete-obsolete-routes.md).
+
+It also covers a separate test-only repair for the stale tests left by merge `2a944c5`. The work is committed locally only and is UNRELEASED.
+
+Verification: Final gate: feature **478 total / 330 PASS / 148 SKIP**, MySQL **72/72**, full opt-in **662 total / 657 PASS / 5 SKIP**, supplementary JPA **5/5**; all exits 0, zero FAIL/ERROR. The Flyway-checksum docs branch renumbers its record 008 to 011; 009 is unused.

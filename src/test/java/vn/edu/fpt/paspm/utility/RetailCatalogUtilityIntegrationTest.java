@@ -112,11 +112,9 @@ class RetailCatalogUtilityIntegrationTest {
         getJson(scorePath(),merchant).andExpect(jsonPath("$.expiryStatus").value("AVAILABLE"))
             .andExpect(jsonPath("$.expiryRisk").value(0.8)).andExpect(jsonPath("$.expiryEvidence.unitsSold").value(30))
             .andExpect(jsonPath("$.weightValue").value(1.44)); // 1 + 0.5 * (0.6 * 0.8 + 0.4 * 1)
-        jdbc.update("UPDATE product SET expiry_push_days=99 WHERE product_id=?",product);
-        getJson(scorePath(),merchant).andExpect(jsonPath("$.weightValue").value(1.44));
     }
 
-    @Test void scoreReadsAreStoreScopedAndTheRemovedPatchIsGone() throws Exception {
+    @Test void scoreReadsAreStoreScopedAndTheDeletedPatchIsAnUnsupportedMethod() throws Exception {
         var inventory=jdbc.queryForList("SELECT * FROM inventory_batch WHERE product_id=?",product);
         getJson(scorePath(),admin).andExpect(status().isOk());
         mvc.perform(get(scorePath())).andExpect(status().isUnauthorized());
@@ -124,10 +122,11 @@ class RetailCatalogUtilityIntegrationTest {
         getJson(scorePath(),foreign).andExpect(status().isNotFound());
         for(String who:new String[]{system,customer}) {
             getJson(scorePath(),who).andExpect(status().isForbidden());
-            scores(who,"{\"stockPriorityScore\":0.1}").andExpect(status().isForbidden());
+            scores(who,"{\"stockPriorityScore\":0.1}").andExpect(status().isMethodNotAllowed());
         }
-        scores(admin,"{\"stockPriorityScore\":0.1}").andExpect(status().isForbidden());
-        scores(merchant,"{\"stockPriorityScore\":0.1}").andExpect(status().isGone());
+        // PATCH was deleted on 2026-11-16 (DEC-20261116-03): no handler remains, so every authenticated role gets 405.
+        scores(admin,"{\"stockPriorityScore\":0.1}").andExpect(status().isMethodNotAllowed());
+        scores(merchant,"{\"stockPriorityScore\":0.1}").andExpect(status().isMethodNotAllowed());
         putJson("/api/utility/config",admin,WEIGHTS).andExpect(status().isForbidden());
         putJson("/api/system/utility/lambda-policy",merchant,"{\"lambdaMax\":1}").andExpect(status().isForbidden());
         assertEquals(inventory,jdbc.queryForList("SELECT * FROM inventory_batch WHERE product_id=?",product));
@@ -194,6 +193,6 @@ class RetailCatalogUtilityIntegrationTest {
     JsonNode body(ResultActions result) throws Exception{return json.readTree(result.andReturn().getResponse().getContentAsString());}
     int store(){jdbc.update("INSERT INTO store(name) VALUES (?)","Retail "+UUID.randomUUID());return jdbc.queryForObject("SELECT MAX(store_id) FROM store",Integer.class);}
     int category(int owner){jdbc.update("INSERT INTO category(store_id,name,status) VALUES (?,?,'ACTIVE')",owner,"Dairy "+UUID.randomUUID());return jdbc.queryForObject("SELECT MAX(category_id) FROM category",Integer.class);}
-    int product(int owner,int cat){jdbc.update("INSERT INTO product(store_id,category_id,sku,name,unit,requires_expiry,selling_price,cost_price,status,expiry_push_days,stock_priority_score,seasonal_priority_score) VALUES (?,?,?,'Priority Milk','bottle',TRUE,100,20,'ACTIVE',7,0.8,0.9)",owner,cat,UUID.randomUUID().toString());return jdbc.queryForObject("SELECT MAX(product_id) FROM product",Integer.class);}
+    int product(int owner,int cat){jdbc.update("INSERT INTO product(store_id,category_id,sku,name,unit,requires_expiry,selling_price,cost_price,status) VALUES (?,?,?,'Priority Milk','bottle',TRUE,100,20,'ACTIVE')",owner,cat,UUID.randomUUID().toString());return jdbc.queryForObject("SELECT MAX(product_id) FROM product",Integer.class);}
     String token(String role,Integer owner){var user=users.createPendingUser("Retail QA",UUID.randomUUID()+"@example.test",role,owner,"unused-test-hash",null);jdbc.update("UPDATE app_user SET status='ACTIVE',email_verified_at=CURRENT_TIMESTAMP WHERE user_id=?",user.id());return auth.token(users.findById(user.id())).accessToken();}
 }

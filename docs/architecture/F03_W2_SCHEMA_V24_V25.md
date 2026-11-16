@@ -1,6 +1,8 @@
-# F03 Weight v2 and F05 progress — schema notes (V24, V25)
+# F03 Weight v2 and F05 progress — schema notes (V24, V25, V26)
 
 ERD notes for `W2_EXPIRY_SEASON_V1` and F05 mining progress. The editable ERD drawings in `docs/diagrams/` are **not** updated here (the change-record rules forbid editing diagrams in this pass); these notes are the delta to apply to them.
+
+> **Superseded 2026-11-16 for new requests ([DEC-20261116-04](../decisions/2026-11-16/DEC-20261116-04-f05-efim-only-mining.md)).** V24 is unchanged and still allows `COMPARING`. Since EFIM-only (`cd90e58`), only legacy two-run requests can reach that stage (`mining/MiningWorker.java:84`). The R2-06.03 redraw below should show `COMPARING` as a legacy path.
 
 ## V24 — F05 mining progress (`V24__f05_mining_progress.sql`)
 
@@ -60,6 +62,18 @@ Unchanged on purpose: `product.stock_priority_score`, `product.seasonal_priority
 3. Both 0/disabled, or no config: α = β = 0.5.
 4. `salesWindowDays = 30`, `version + 1` (a Store with no config counts as version 1 → 2), `scoringVersion = W2_EXPIRY_SEASON_V1`.
 5. Invalid JSON, non-object JSON, non-boolean flags, non-numeric or negative coefficients, or a config already on W2 fail the migration (no guessing).
+
+## V26 — drop legacy product scoring columns (`db/migration/V26__f03_drop_legacy_product_scoring_columns.java`, 2026-11-16)
+
+Owner decision [DEC-20261116-02](../decisions/2026-11-16/DEC-20261116-02-p5-remove-legacy-product-fields.md). One Java migration, same pattern as V25: it finds every CHECK constraint on `product` whose clause covers one of the columns through `INFORMATION_SCHEMA` (MySQL and H2), drops it, then drops the columns. Constraint names are not assumed.
+
+| Table | Change |
+|---|---|
+| `product` | **Drops** `expiry_push_days` (added by V8, CHECK `ck_product_expiry_push_days`), `stock_priority_score` and `seasonal_priority_score` (added by V4, CHECKs `ck_product_stock_priority`, `ck_product_seasonal_priority`) |
+
+Unchanged: every other `product` column and constraint, `inventory_batch.push_day`, and all frozen JSON. `utility_matrix_item.stock_score`/`expiry_score`/`seasonal_score` are frozen matrix columns (not product columns) and stay. **Not reversible without a backup taken before V26.** Tests: `LegacyProductColumnsV26MigrationTest` (H2 and MySQL: from V25 with data, fresh database, idempotent rerun, frozen JSON byte-identical and readable).
+
+ERD update needed (not done): remove the three columns from `product` in the logical and conceptual ERD and in the F02/F03 ERD drawings.
 
 ## Stored JSON versions (readers in `UtilityJsonVersions`, `RecommendationJsonVersions`)
 

@@ -1,5 +1,7 @@
 # F05 executed JSON examples
 
+> **Superseded 2026-11-16 ([DEC-20261116-04](../../decisions/2026-11-16/DEC-20261116-04-f05-efim-only-mining.md), EFIM-only).** These examples show two-algorithm requests (`MATCH`), HUI-Miner patterns and a benchmark response captured on 2026-10-19. They are history only; new requests have one EFIM run, `comparisonStatus = NOT_REQUESTED`, and there is no benchmark route.
+
 These JSON files were captured from actual Swagger UI requests/responses against the isolated native MySQL QA backend on2026-10-19. They contain synthetic Store/Product/user IDs, no credentials or tokens. IDs refer to that test database and must be replaced when integrating another Store/environment. The create requestKey is an example; generate a fresh UUID per deliberate submission and retain it for transport retry.
 
 - create_request.json / create_response.json: POST202, captured PENDING.

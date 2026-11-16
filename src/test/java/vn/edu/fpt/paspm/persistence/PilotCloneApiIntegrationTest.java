@@ -48,7 +48,7 @@ class PilotCloneApiIntegrationTest {
     private Map<String,Object> body(String sku){var b=new LinkedHashMap<String,Object>();b.put("sku",sku);b.put("name","Synthetic pilot product");b.put("categoryId",category);b.put("unit","each");b.put("requiresExpiry",false);b.put("sellingPrice",new BigDecimal("50.00"));b.put("costPrice",new BigDecimal("20.00"));b.put("status","ACTIVE");return b;}
     private JsonNode create(Map<String,Object> payload)throws Exception{return json.readTree(mvc.perform(post("/api/products").header("Authorization","Bearer "+admin).contentType(MediaType.APPLICATION_JSON).content(json.writeValueAsString(payload))).andExpect(status().isCreated()).andReturn().getResponse().getContentAsString());}
     @Test void productRoundtripDefaultsAndDatabaseMetadataMatch()throws Exception{
-        var payload=body("PILOT-"+UUID.randomUUID());var created=create(payload);int id=created.path("id").asInt();assertEquals(0,created.path("expiryPushDays").asInt());
+        var payload=body("PILOT-"+UUID.randomUUID());var created=create(payload);int id=created.path("id").asInt();assertFalse(created.has("expiryPushDays"),"removed by V26 / DEC-20261116-02");
         mvc.perform(get("/api/products/{id}",id).header("Authorization","Bearer "+admin)).andExpect(status().isOk()).andExpect(content().json(created.toString()));
         assertEquals(payload.get("sku"),jdbc.queryForObject("SELECT sku FROM product WHERE store_id=? AND product_id=?",String.class,store,id));
         assertEquals(0,new BigDecimal("50.00").compareTo(jdbc.queryForObject("SELECT selling_price FROM product WHERE product_id=?",BigDecimal.class,id)));
@@ -71,26 +71,21 @@ class PilotCloneApiIntegrationTest {
         mvc.perform(get("/api/products/{id}",id)).andExpect(status().isUnauthorized());
         assertEquals("ACTIVE",jdbc.queryForObject("SELECT status FROM product WHERE product_id=?",String.class,id));
     }
-    @Test void metadataAndStatusPreserveScoresAndBatchInventory()throws Exception{
+    @Test void metadataAndStatusPreserveBatchInventory()throws Exception{
         var payload=body("PILOT-"+UUID.randomUUID());int id=create(payload).path("id").asInt();
         var batch=Map.of("batchCode","PILOT-BATCH-"+UUID.randomUUID(),"receivedAt",Instant.now().toString(),"expiryDate",LocalDate.now(ZoneId.of("Asia/Ho_Chi_Minh")).plusDays(5).toString(),"initialQuantity",8);
         var b=json.readTree(mvc.perform(post("/api/products/{id}/batches",id).header("Authorization","Bearer "+admin).contentType(MediaType.APPLICATION_JSON).content(json.writeValueAsString(batch))).andExpect(status().isCreated()).andReturn().getResponse().getContentAsString());
-        // The score PATCH is gone since W2 (410); write the retained, unused columns natively to keep the preservation check.
-        mvc.perform(patch("/api/utility/products/{id}/scores",id).header("Authorization","Bearer "+merchant).contentType(MediaType.APPLICATION_JSON).content("{\"stockPriorityScore\":0.8,\"seasonalPriorityScore\":0.9}")).andExpect(status().isGone());
-        jdbc.update("UPDATE product SET stock_priority_score=0.8,seasonal_priority_score=0.9 WHERE product_id=?",id);
         String summary=mvc.perform(get("/api/products/{id}/inventory-summary",id).header("Authorization","Bearer "+admin)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-        payload.put("name","Edited metadata");payload.put("sellingPrice",new BigDecimal("75.00"));payload.put("requiresExpiry",true);payload.put("expiryPushDays",7);
+        payload.put("name","Edited metadata");payload.put("sellingPrice",new BigDecimal("75.00"));payload.put("requiresExpiry",true);
         mvc.perform(put("/api/products/{id}",id).header("Authorization","Bearer "+admin).contentType(MediaType.APPLICATION_JSON).content(json.writeValueAsString(payload))).andExpect(status().isOk()).andExpect(jsonPath("$.stockQuantity").value(8));
         for(String state:List.of("INACTIVE","ACTIVE"))mvc.perform(patch("/api/products/{id}/status",id).header("Authorization","Bearer "+admin).contentType(MediaType.APPLICATION_JSON).content("{\"status\":\""+state+"\"}")).andExpect(status().isOk());
-        assertEquals(0,new BigDecimal("0.8").compareTo(jdbc.queryForObject("SELECT stock_priority_score FROM product WHERE product_id=?",BigDecimal.class,id)));
-        assertEquals(0,new BigDecimal("0.9").compareTo(jdbc.queryForObject("SELECT seasonal_priority_score FROM product WHERE product_id=?",BigDecimal.class,id)));
         mvc.perform(get("/api/inventory-batches/{id}",b.path("id").asInt()).header("Authorization","Bearer "+admin)).andExpect(status().isOk()).andExpect(content().json(b.toString()));
         mvc.perform(get("/api/products/{id}/inventory-summary",id).header("Authorization","Bearer "+admin)).andExpect(status().isOk()).andExpect(content().json(summary));
     }
     @Test void simulatedFoodStoreKeepsExactInventoryFixtureAfterJpaMetadataWrites() throws Exception {
         jdbc.update("UPDATE category SET name='Simulated dairy and fresh food' WHERE category_id=?",category);
         var milk=body("FOOD-MILK-"+UUID.randomUUID());milk.put("name","Simulated fresh milk");
-        milk.put("requiresExpiry",true);milk.put("expiryPushDays",7);
+        milk.put("requiresExpiry",true);
         int id=create(milk).path("id").asInt();
         for (var food:List.of(Map.of("name","Simulated bread","sku","FOOD-BREAD-"),Map.of("name","Simulated coffee","sku","FOOD-COFFEE-"))) {
             var item=body(food.get("sku")+UUID.randomUUID());item.put("name",food.get("name"));create(item);

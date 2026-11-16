@@ -36,8 +36,6 @@ class ProductEntity {
     private BigDecimal costPrice;
     @Column(nullable = false, length = 20)
     private String status;
-    @Column(name = "expiry_push_days", nullable = false)
-    private Integer expiryPushDays;
 
     protected ProductEntity() {}
 
@@ -46,7 +44,7 @@ class ProductEntity {
     Integer id() { return productId; }
 
     void replaceMetadata(String sku, String name, Integer categoryId, String unit, boolean requiresExpiry,
-            BigDecimal sellingPrice, BigDecimal costPrice, String status, int expiryPushDays) {
+            BigDecimal sellingPrice, BigDecimal costPrice, String status) {
         this.sku = sku.trim();
         this.name = name.trim();
         this.categoryId = categoryId;
@@ -55,6 +53,5 @@ class ProductEntity {
         this.sellingPrice = sellingPrice;
         this.costPrice = costPrice;
         this.status = status;
-        this.expiryPushDays = expiryPushDays;
     }
 }

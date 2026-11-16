@@ -62,7 +62,7 @@ public class UtilityFixtureSource implements TransactionSource,ApplicationRunner
     private int product(int store,String sku,boolean expiry) {
         var ids=jdbc.query("SELECT product_id FROM product WHERE store_id=? AND sku=?",(rs,row)->rs.getInt(1),store,sku);
         if(!ids.isEmpty())return ids.get(0);
-        jdbc.update("INSERT INTO product(store_id,sku,name,unit,requires_expiry,selling_price,cost_price,status,stock_priority_score,seasonal_priority_score) VALUES (?,?,?,'each',?,100,20,'ACTIVE',0.8,0.9)",store,sku,"F03 Fixture "+sku,expiry);
+        jdbc.update("INSERT INTO product(store_id,sku,name,unit,requires_expiry,selling_price,cost_price,status) VALUES (?,?,?,'each',?,100,20,'ACTIVE')",store,sku,"F03 Fixture "+sku,expiry);
         return jdbc.queryForObject("SELECT product_id FROM product WHERE store_id=? AND sku=?",Integer.class,store,sku);
     }
     private void batch(int product,String code,LocalDate expiry,int quantity,String status) {

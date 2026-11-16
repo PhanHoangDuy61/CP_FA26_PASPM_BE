@@ -17,7 +17,7 @@ public class ProductRepository {
     private static final String SELECT_PRODUCT = """
             SELECT p.product_id, p.sku, p.name, p.unit, p.requires_expiry,
                    p.category_id, c.name AS category_name, c.status AS category_status,
-                   p.selling_price, p.cost_price, p.status, p.expiry_push_days,
+                   p.selling_price, p.cost_price, p.status,
                    COALESCE(stock.stock_quantity, 0) AS stock_quantity
             FROM product p
             LEFT JOIN category c ON c.category_id=p.category_id AND c.store_id=p.store_id
@@ -34,7 +34,7 @@ public class ProductRepository {
         return new ProductView(rs.getInt("product_id"), rs.getString("sku"), rs.getString("name"),
                 rs.getString("unit"), rs.getBoolean("requires_expiry"), category,
                 rs.getBigDecimal("selling_price"), rs.getBigDecimal("cost_price"),
-                rs.getString("status"), rs.getLong("stock_quantity"), rs.getInt("expiry_push_days"));
+                rs.getString("status"), rs.getLong("stock_quantity"));
     };
 
     public ProductRepository(JdbcTemplate jdbc, ProductMetadataPersistence metadata) {
@@ -72,15 +72,15 @@ public class ProductRepository {
 
     public ProductView create(int storeId, String sku, String name, Integer categoryId, String unit,
                               boolean requiresExpiry, java.math.BigDecimal sellingPrice,
-                              java.math.BigDecimal costPrice, String status, int expiryPushDays) {
-        int id = metadata.create(storeId,sku,name,categoryId,unit,requiresExpiry,sellingPrice,costPrice,status,expiryPushDays);
+                              java.math.BigDecimal costPrice, String status) {
+        int id = metadata.create(storeId,sku,name,categoryId,unit,requiresExpiry,sellingPrice,costPrice,status);
         return find(storeId,id);
     }
 
     public boolean update(int storeId, int id, String sku, String name, Integer categoryId, String unit,
                           boolean requiresExpiry, java.math.BigDecimal sellingPrice,
-                          java.math.BigDecimal costPrice, String status, int expiryPushDays) {
-        return metadata.update(storeId,id,sku,name,categoryId,unit,requiresExpiry,sellingPrice,costPrice,status,expiryPushDays);
+                          java.math.BigDecimal costPrice, String status) {
+        return metadata.update(storeId,id,sku,name,categoryId,unit,requiresExpiry,sellingPrice,costPrice,status);
     }
 
     public boolean hasExpirylessBatches(int productId) {
