@@ -47,4 +47,19 @@ class MiningInputTest {
         assertThrows(RuntimeException.class,()->builder.threshold(b,MiningContracts.MinUtilMode.ABSOLUTE,d("0.0000001")));
         assertThrows(RuntimeException.class,()->builder.threshold(b,MiningContracts.MinUtilMode.ABSOLUTE,d("2147483648")));
     }
+    @Test void acceptsProductCountAtFoodMartScaleAndRejectsOneAboveConfiguredLimit(){
+        int supported=MiningInputBuilder.MAX_ITEMS;
+        assertEquals(1600,supported);
+        var rows=new ArrayList<MatrixItem>();
+        for(int product=1;product<=supported;product++)rows.add(row(1,product,"1",Integer.toString(supported)));
+
+        var dataset=builder.build(snapshot(Integer.toString(supported)),rows);
+
+        assertEquals(supported,dataset.products().size());
+        assertEquals(1,dataset.transactionCount());
+        assertEquals(1,dataset.products().get(1));
+        assertEquals(supported,dataset.products().get(supported));
+        rows.add(row(1,supported+1,"1",Integer.toString(supported+1)));
+        assertThrows(RuntimeException.class,()->builder.build(snapshot(Integer.toString(supported+1)),rows));
+    }
 }

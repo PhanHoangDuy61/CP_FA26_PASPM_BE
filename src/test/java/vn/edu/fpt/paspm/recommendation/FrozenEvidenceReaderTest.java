@@ -43,6 +43,29 @@ class FrozenEvidenceReaderTest {
         jdbc.update("DELETE FROM transaction_item");assertEquals(2,reader.read(7,9).evidence().transactionCount());
         assertEquals(List.of(11,22),source.patterns().get(0).productIds());
     }
+    @Test void readsFrozenEvidenceAtTheConfiguredFoodMartProductLimit(){
+        int count=MiningInputBuilder.MAX_ITEMS;
+        assertEquals(1600,count);
+        var products=new LinkedHashMap<Integer,Integer>();var text=new StringBuilder();var rows=new ArrayList<UtilityMatrixContracts.MatrixItem>();
+        for(int product=1;product<=count;product++){
+            products.put(product,product);text.append(product).append(":1:1\n");rows.add(row(product,product));
+        }
+        input=new MiningInputBuilder.Dataset(text.toString(),MiningInputBuilder.sha(text.toString()),products,1000000,count,count);
+        var date=snapshot.asOfDate();
+        snapshot=new UtilityMatrixContracts.SnapshotView(3,7,1,date,date,date,snapshot.configuration(),"a".repeat(64),"b".repeat(64),BigDecimal.valueOf(count),6,"READY",Instant.EPOCH,List.of());
+        run=run("COMPLETED",0);
+        when(mining.run(7,9)).thenReturn(run);
+        when(snapshots.find(7,3)).thenReturn(snapshot);
+        when(snapshots.countItems(3)).thenReturn((long)count);
+        when(snapshots.page(7,3,0,MiningInputBuilder.MAX_ROWS)).thenReturn(rows);
+        when(mining.patterns(7,9,0,MiningInputBuilder.MAX_ROWS)).thenReturn(new MiningContracts.Page<>(List.of(),0,MiningInputBuilder.MAX_ROWS,0));
+        jdbc.update("DELETE FROM pattern_item");save();
+
+        var source=reader.read(7,9);
+
+        assertEquals(count,source.evidence().transactionCount());
+        assertEquals(count,source.snapshot().totalWeightedUtility().intValueExact());
+    }
     @Test void rejectsHashMismatch(){jdbc.update("UPDATE mining_request SET input_snapshot_hash=?","c".repeat(64));conflict();}
     @Test void rejectsMissingOrWrongDenseMapping(){jdbc.update("UPDATE pattern_item SET algorithm_item_id=9 WHERE product_id=22");conflict();}
     @Test void rejectsForeignPatternItems(){jdbc.update("UPDATE pattern_item SET store_id=8 WHERE product_id=22");conflict();}
