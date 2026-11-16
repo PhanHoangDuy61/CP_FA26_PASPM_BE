@@ -234,9 +234,15 @@ class MiningIntegrationTest {
         assertEquals(8,jdbc.queryForObject("SELECT COUNT(*) FROM high_utility_pattern p JOIN mining_run r ON r.run_id=p.run_id WHERE r.request_id=?",Integer.class,id));
         String before=request.path("inputHash").asText();
         jdbc.update("UPDATE product SET expiry_push_days=99,stock_priority_score=0.9,seasonal_priority_score=0.8,selling_price=999 WHERE store_id=?",store);
-        var changedConfig=new vn.edu.fpt.paspm.utility.UtilityContracts.WeightConfig(true,false,true,new java.math.BigDecimal("0.7"),java.math.BigDecimal.ZERO,new java.math.BigDecimal("0.3"),new java.math.BigDecimal("0.5"),null,2,vn.edu.fpt.paspm.utility.ExpiryScoreCalculator.SCORING_VERSION);
+        // W2: change the live Store config and add an active season; the frozen request input must not change.
+        var changedConfig=new vn.edu.fpt.paspm.utility.UtilityVersionedContracts.WeightV2(new java.math.BigDecimal("0.5"),new java.math.BigDecimal("0.5"),new java.math.BigDecimal("0.5"),30,2,"W2_EXPIRY_SEASON_V1");
         jdbc.update("UPDATE store SET utility_config=? WHERE store_id=?",json.writeValueAsString(changedConfig),store);
-        postJson("/api/utility/preview",merchant,"{\"rangeStart\":\"2026-10-19\",\"rangeEnd\":\"2026-10-19\",\"asOfDate\":\"2026-10-19\"}").andExpect(status().isOk()).andExpect(jsonPath("$.totalWeightedUtility").value(137.76));
+        int seasonActor=jdbc.queryForObject("SELECT MIN(user_id) FROM app_user WHERE store_id=?",Integer.class,store);
+        jdbc.update("INSERT INTO season(store_id,name,start_date,end_date,weight,created_by,updated_by) VALUES (?,'Mining season','2026-10-01','2026-10-31',0.8,?,?)",store,seasonActor,seasonActor);
+        int season=jdbc.queryForObject("SELECT MAX(season_id) FROM season",Integer.class);
+        jdbc.update("INSERT INTO product_season(store_id,season_id,product_id,assigned_by) SELECT store_id,?,product_id,? FROM product WHERE store_id=?",season,seasonActor,store);
+        // W = 1 + 0.5 * (0.5 * 0 + 0.5 * 0.8) = 1.20 on the unchanged historical base utility 96.
+        postJson("/api/utility/preview",merchant,"{\"rangeStart\":\"2026-10-19\",\"rangeEnd\":\"2026-10-19\",\"asOfDate\":\"2026-10-19\"}").andExpect(status().isOk()).andExpect(jsonPath("$.totalWeightedUtility").value(115.2));
         var again=json.readTree(postJson("/api/system/mining/requests",system,payload(UUID.randomUUID().toString())).andExpect(status().isAccepted()).andReturn().getResponse().getContentAsString());
         assertEquals(before,again.path("inputHash").asText());await(again.path("requestId").asLong());
         // Sanitized executed examples; no JWTs or credentials.
@@ -271,12 +277,13 @@ class MiningIntegrationTest {
     @Test void oldScoringMetadataCanBeMinedWithoutRecalculation()throws Exception{
         // H2 JSON is read using the project's established JSON decoder.
         var settings=new vn.edu.fpt.paspm.utility.UtilitySettingsRepository(jdbc,json);
-        var frozen=settings.read(jdbc.queryForObject("SELECT config_snapshot FROM utility_snapshot WHERE snapshot_id=?",String.class,snapshot),vn.edu.fpt.paspm.utility.UtilityMatrixContracts.FrozenConfiguration.class);
-        var old=frozen.config();var legacy=new vn.edu.fpt.paspm.utility.UtilityContracts.WeightConfig(old.enableStock(),old.enableExpiry(),old.enableSeason(),old.alpha(),old.beta(),old.gamma(),old.lambda(),30,1,"EXPIRY_LINEAR_V1");
-        var legacyFrozen=new vn.edu.fpt.paspm.utility.UtilityMatrixContracts.FrozenConfiguration(legacy,frozen.lambdaPolicy(),frozen.effectiveCoefficients(),frozen.analysisDate(),frozen.source(),6,"HALF_UP","PRODUCT_ID_V1",null);
+        var frozen=settings.read(jdbc.queryForObject("SELECT config_snapshot FROM utility_snapshot WHERE snapshot_id=?",String.class,snapshot),vn.edu.fpt.paspm.utility.UtilityVersionedContracts.FrozenSettings.class);
+        var Z=java.math.BigDecimal.ZERO;
+        var legacy=new vn.edu.fpt.paspm.utility.UtilityContracts.WeightConfig(false,false,false,Z,Z,Z,Z,30,1,"F03_LINEAR_V1");
+        var legacyFrozen=new vn.edu.fpt.paspm.utility.UtilityMatrixContracts.FrozenConfiguration(legacy,new vn.edu.fpt.paspm.utility.UtilityContracts.LambdaPolicy(Z,new java.math.BigDecimal("0.5"),1),new vn.edu.fpt.paspm.utility.UtilityMatrixContracts.EffectiveCoefficients(Z,Z,Z),frozen.analysisDate(),frozen.source(),6,"HALF_UP","PRODUCT_ID_V1",null);
         jdbc.update("UPDATE utility_snapshot SET config_snapshot=? WHERE snapshot_id=?",json.writeValueAsString(legacyFrozen),snapshot);
         var result=json.readTree(postJson("/api/system/mining/requests",system,payload(UUID.randomUUID().toString())).andExpect(status().isAccepted()).andReturn().getResponse().getContentAsString());
-        assertEquals("EXPIRY_LINEAR_V1",result.path("snapshot").path("configuration").path("config").path("scoringVersion").asText());await(result.path("requestId").asLong());
+        assertEquals("F03_LINEAR_V1",result.path("snapshot").path("configuration").path("config").path("scoringVersion").asText());await(result.path("requestId").asLong());
     }
     @Test void systemAdminReadsExplicitStoreSnapshotsRequestsRunsAndPatternsWithoutCrossStoreLeak()throws Exception{
         int other=jdbc.queryForObject("SELECT MAX(store_id) FROM store",Integer.class);assertNotEquals(store,other);
@@ -294,7 +301,7 @@ class MiningIntegrationTest {
         assertEquals(0,json.readTree(getJson("/api/system/mining/stores/"+other+"/requests",system).andExpect(status().isOk()).andReturn().getResponse().getContentAsString()).path("totalElements").asLong());
         getJson(base+"/requests/"+id,system).andExpect(status().isOk()).andExpect(jsonPath("$.requestId").value(id)).andExpect(jsonPath("$.status").value("COMPLETED")).andExpect(jsonPath("$.storeId").value(store));
         var runs=json.readTree(getJson(base+"/requests/"+id+"/runs",system).andExpect(status().isOk()).andReturn().getResponse().getContentAsString());
-        assertEquals(2,runs.size());for(var run:runs){assertEquals(id,run.path("requestId").asLong());assertEquals(store,run.path("storeId").asInt());}
+        assertEquals(1,runs.size(),"new requests run EFIM only");for(var run:runs){assertEquals(id,run.path("requestId").asLong());assertEquals(store,run.path("storeId").asInt());}
         long runId=runs.get(0).path("runId").asLong();
         // decision D1: raw patterns are not released to System Admin; the Store-scoped route stays available to the Store's staff
         getJson(base+"/runs/"+runId+"/patterns?page=0&pageSize=3",system).andExpect(status().isForbidden());
@@ -317,7 +324,10 @@ class MiningIntegrationTest {
     }
     @Test void openApiIncludesEveryMiningRoute()throws Exception{
         var spec=json.readTree(mvc.perform(get("/v3/api-docs")).andExpect(status().isOk()).andReturn().getResponse().getContentAsString());
-        assertEquals(1,spec.path("components").path("schemas").path("CreateRequest").path("properties").path("algorithms").path("minItems").asInt());
+        // CreateRequest is internal; the exposed bodies are StoreCreateRequest (Merchandiser) and ManualRequest (System Admin).
+        assertTrue(spec.path("components").path("schemas").path("StoreCreateRequest").path("properties").has("snapshotId"));
+        assertFalse(spec.path("components").path("schemas").path("StoreCreateRequest").path("properties").has("algorithms"));
+        assertTrue(spec.path("paths").has("/api/mining/requests/{id}/progress"));
         assertTrue(spec.path("components").path("schemas").path("PatternView").path("properties").path("supportCount").path("type").toString().contains("null"));
         for(String path:List.of("/api/mining/snapshots","/api/mining/requests","/api/mining/requests/{id}","/api/mining/requests/{id}/runs","/api/mining/runs/{id}","/api/mining/runs/{id}/patterns"))assertTrue(spec.path("paths").has(path),path);
         for(String path:List.of("/api/system/mining/stores/{storeId}/snapshots","/api/system/mining/stores/{storeId}/requests","/api/system/mining/stores/{storeId}/requests/{requestId}","/api/system/mining/stores/{storeId}/requests/{requestId}/runs","/api/system/mining/stores/{storeId}/runs/{runId}/patterns"))assertTrue(spec.path("paths").has(path),path);
@@ -340,7 +350,7 @@ class MiningIntegrationTest {
     @Autowired MiningInputBuilder inputBuilder;
     @Autowired org.springframework.transaction.PlatformTransactionManager transactions;
     @Autowired MiningWorker worker;
-    @Autowired MiningDispatchLease dispatchLease;
+    @org.springframework.test.context.bean.override.mockito.MockitoSpyBean MiningDispatchLease dispatchLease;
     @Autowired MiningProgressReader progressReader;
     @org.springframework.test.context.bean.override.mockito.MockitoSpyBean SpmfMiningEngine miningEngine;
 
