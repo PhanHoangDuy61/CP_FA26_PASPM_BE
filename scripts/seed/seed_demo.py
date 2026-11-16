@@ -7,12 +7,18 @@ Creates through the public REST API, so the business rules apply:
   * one category and the FoodMart products (data from FoodMart_Product_Direct_Insert.sql, which is only
     PARSED here; the SQL file itself is not executed) and one inventory batch per product
   * the two transaction CSV files through POST /api/transactions/imports/csv
+  * Weight v2 / F06 demo data (skip with SEED_WEIGHT_V2=0): a deterministic share of the products requires expiry
+    and its batches carry expiry dates and push days; four seasons assigned to product groups (Merchandiser);
+    the Store weight configuration alpha/beta/lambda/N (Merchandiser). The plan itself is in weight_v2_plan.py.
 
 The ONLY direct SQL is `INSERT INTO store`: the backend has no endpoint that creates a store
 (GET /api/system/stores is read-only). The statement is sent through SEED_SQL_COMMAND.
 
 Safe to run twice: every step first looks for the record and skips it when present; an already
 imported CSV file (same file name, COMPLETED / COMPLETED_WITH_ERRORS) is not uploaded again.
+Expiry dates cannot be added to a batch that already exists (the batch API has no such field) and a product
+cannot be switched to requiresExpiry while one of its batches has no expiry date, so a database seeded before
+Weight v2 keeps its undated batches; recreate the database for the full demo (see scripts/seed/README.md).
 
 Secrets come from the environment only (see .env.seed.example); nothing secret is printed.
 Standard library only (Python 3.9+).
@@ -28,10 +34,14 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import uuid
+from datetime import datetime
+from decimal import Decimal
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parent.parent
+sys.path.insert(0, str(HERE))  # seed.sh runs `python3 -I`, which does not add the script directory itself
+import weight_v2_plan as w2  # noqa: E402
 
 
 def env(name, default=None, required=False):
@@ -65,6 +75,22 @@ SQL_COMMAND = env(
 )
 CSV_FILES = ["Transactions_F04_Import_Test_Part1.csv", "Transactions_F04_Import_Test_Part2.csv"]
 PRODUCT_SQL = "FoodMart_Product_Direct_Insert.sql"
+
+
+
+def store_today():
+    """Default SEED_AS_OF: the calendar date in the Store time zone (the backend uses Asia/Ho_Chi_Minh)."""
+    try:
+        from zoneinfo import ZoneInfo
+        return datetime.now(ZoneInfo("Asia/Ho_Chi_Minh")).date()
+    except Exception:  # no tz database: fall back to the local date
+        return datetime.now().date()
+
+
+try:
+    PLAN = w2.config_from_env(os.environ, store_today())
+except w2.PlanConfigError as e:
+    sys.exit(f"ERROR: {e}")
 
 if not re.fullmatch(r"[A-Za-z0-9 _.\-]{1,150}", STORE_NAME):
     sys.exit("ERROR: SEED_STORE_NAME may contain only letters, digits, space, '_', '.', '-'")
@@ -275,24 +301,100 @@ def ensure_catalog(token):
     for p in wanted:
         if p["sku"] in existing:
             continue
-        view = api("POST", "/api/products", token, dict(p, categoryId=category_id))
+        body = dict(p, categoryId=category_id)
+        if PLAN.enabled:  # the SQL file marks every product as non-perishable; Weight v2 flags a deterministic share
+            body["requiresExpiry"] = w2.plan_product(PLAN, p["sku"]).requires_expiry
+        view = api("POST", "/api/products", token, body)
         existing[p["sku"]] = view
         created += 1
     summary["products"] = f"{created} created, {len(wanted) - created} already present (of {len(wanted)} in the SQL file)"
 
-    batches = 0
+    batches = dated = undated_legacy = 0
     for p in wanted:
         view = existing[p["sku"]]
         if view.get("stockQuantity", 0) > 0:
+            if (PLAN.enabled and not view.get("requiresExpiry")
+                    and w2.plan_product(PLAN, p["sku"]).requires_expiry):
+                undated_legacy += 1  # seeded before Weight v2: cannot be switched to requiresExpiry any more
             continue
         pid = view["id"]
         if any(b["batchCode"] == BATCH_CODE for b in api("GET", f"/api/products/{pid}/batches", token)):
             continue
-        api("POST", f"/api/products/{pid}/batches", token, {
-            "batchCode": BATCH_CODE, "receivedAt": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-            "initialQuantity": BATCH_QTY})
+        received = f"{PLAN.as_of}T00:00:00Z" if PLAN.enabled else time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+        body = {"batchCode": BATCH_CODE, "receivedAt": received, "initialQuantity": BATCH_QTY}
+        if view.get("requiresExpiry"):
+            plan = w2.plan_product(PLAN, p["sku"], force_expiry=True)
+            body.update(initialQuantity=plan.quantity, expiryDate=plan.expiry_date.isoformat())
+            if plan.push_day:
+                body["pushDay"] = plan.push_day.isoformat()
+            dated += 1
+        api("POST", f"/api/products/{pid}/batches", token, body)
         batches += 1
-    summary["inventory"] = f"{batches} batches '{BATCH_CODE}' x {BATCH_QTY} created"
+    summary["inventory"] = f"{batches} batches '{BATCH_CODE}' created ({dated} with expiry date, {batches - dated} undated, x {BATCH_QTY} for the undated ones)"
+    if PLAN.enabled:
+        summary["perishable products"] = (
+            f"{sum(1 for v in existing.values() if v.get('requiresExpiry'))} of {len(existing)} require expiry")
+        if undated_legacy:
+            summary["WARNING legacy batches"] = (
+                f"{undated_legacy} products would be perishable under this seed but already have an undated batch "
+                "(seeded before Weight v2). The API cannot add an expiry date to a batch or flag the product while it has "
+                "one; recreate the database for the full demo.")
+    return existing
+
+
+def paged(token, path, size=100):
+    """All items of an `items`/`page`/`pageSize`/`totalElements` list endpoint."""
+    items, page = [], 0
+    while True:
+        res = api("GET", f"{path}?page={page}&pageSize={size}", token)
+        items += res["items"]
+        page += 1
+        if not res["items"] or page * size >= res["totalElements"]:
+            return items
+
+
+def ensure_seasons(merchandiser, products):
+    """Create the demo seasons and assign product groups (SKU blocks; the FoodMart data has one category only)."""
+    skus = sorted(products)
+    present = {s["name"].lower(): s for s in paged(merchandiser, "/api/utility/seasons")}
+    created = assigned = 0
+    notes = []
+    for sp in w2.season_plans(PLAN):
+        season = present.get(sp.name.lower())
+        if season is None:
+            season = api("POST", "/api/utility/seasons", merchandiser, {
+                "name": sp.name, "startDate": sp.start.isoformat(), "endDate": sp.end.isoformat(),
+                "weight": float(sp.weight)})
+            created += 1
+        elif (season["startDate"], season["endDate"]) != (sp.start.isoformat(), sp.end.isoformat()):
+            notes.append(f"'{sp.name}' kept with its dates {season['startDate']}..{season['endDate']} (SEED_AS_OF differs)")
+        sid = season["seasonId"]
+        have = {i["productId"] for i in paged(merchandiser, f"/api/utility/seasons/{sid}/products")}
+        for index, sku in enumerate(skus):
+            pid = products[sku]["id"]
+            if sp.state in w2.season_states_for(PLAN, index, len(skus)) and pid not in have:
+                api("PUT", f"/api/utility/seasons/{sid}/products/{pid}", merchandiser)
+                assigned += 1
+    summary["seasons"] = f"{created} created, {len(w2.season_plans(PLAN)) - created} already present; {assigned} product assignments added"
+    if notes:
+        summary["season note"] = "; ".join(notes)
+
+
+def ensure_weight_config(admin, merchandiser):
+    view = api("GET", "/api/utility/config", merchandiser)
+    cfg = view["config"]
+    wanted = (PLAN.alpha, PLAN.beta, PLAN.lam, PLAN.sales_window_days)
+    if (Decimal(str(cfg["alpha"])), Decimal(str(cfg["beta"])), Decimal(str(cfg["lambda"])), cfg["salesWindowDays"]) == wanted:
+        summary["weight config"] = "already set (version %s)" % cfg["version"]
+        return
+    if Decimal(str(view["lambdaPolicy"]["lambdaMax"])) < PLAN.lam:
+        api("PUT", "/api/system/utility/lambda-policy", admin, {"lambdaMax": float(PLAN.lam)})
+        summary["lambda policy"] = f"lambdaMax raised to {PLAN.lam} by the System Admin (it was lower than lambda)"
+    done = api("PUT", "/api/utility/config", merchandiser, {
+        "alpha": float(PLAN.alpha), "beta": float(PLAN.beta), "lambda": float(PLAN.lam),
+        "salesWindowDays": PLAN.sales_window_days})["config"]
+    summary["weight config"] = (f"alpha={done['alpha']} beta={done['beta']} lambda={done['lambda']} "
+                                f"salesWindowDays={done['salesWindowDays']} (version {done['version']})")
 
 
 def multipart_file(field, path):
@@ -330,7 +432,7 @@ def import_csvs(token):
 
 def counts():
     tables = ["store", "app_user", "category", "product", "inventory_batch", "import_batch", "import_staging_row",
-              "sales_transaction", "transaction_item"]
+              "sales_transaction", "transaction_item", "season", "product_season"]
     query = " UNION ALL ".join(f"SELECT '{t}', COUNT(*) FROM {t}" for t in tables) + ";"
     out = sql(query)
     result = {}
@@ -343,6 +445,7 @@ def counts():
 
 def main():
     log(f"PASPM demo seed -> {API}")
+    log(f"Weight v2: {'on' if PLAN.enabled else 'off'}, SEED_AS_OF={PLAN.as_of}")
     wait_for_backend()
     admin = login(SYSADMIN_EMAIL, SYSADMIN_PASSWORD)
     if not admin:
@@ -353,8 +456,14 @@ def main():
         ensure_staff(admin, role, email, name, store_id)
     ensure_customer()
     store_admin = login(ACCOUNTS[0][1], ACCOUNT_PASSWORD)
-    ensure_catalog(store_admin)
+    products = ensure_catalog(store_admin)
     import_csvs(store_admin)
+    if PLAN.enabled:
+        merchandiser = login(ACCOUNTS[1][1], ACCOUNT_PASSWORD)
+        ensure_seasons(merchandiser, products)
+        ensure_weight_config(admin, merchandiser)
+    else:
+        summary["weight v2"] = "skipped (SEED_WEIGHT_V2=0)"
     log("\n== Seed summary ==")
     for k, v in summary.items():
         log(f"  {k}: {v}")
