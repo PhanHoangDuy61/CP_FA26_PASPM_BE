@@ -123,3 +123,7 @@ Listed in the Checkpoint 2 report: SRS BR-05, §3.4, mining use cases and screen
 
 ### 2026-11-16 follow-up to the before-deploy checklist
 Validate the additive DELETE `/api/inventory-batches/{id}/push-day` action, combined warning codes, structured ended-season fields and 409 unsupported-version handling against the regenerated OpenAPI before deployment. See [record 006](../2026-11-16/06-f03-f05-followup-fixes.md). Earlier verification remains historical.
+
+## Addendum 2026-11-16 (ROC-20261116-010) — P2–P6 resolved
+
+The assumptions P2–P6 recorded here as "pending owner confirmation" were resolved by the owner on 2026-11-16: P2, P3 and P4 approved as built ([DEC-20261116-01](../../decisions/2026-11-16/DEC-20261116-01-p2-p4-approved.md)); P5 changed to full removal of the legacy product fields with migration V26 ([DEC-20261116-02](../../decisions/2026-11-16/DEC-20261116-02-p5-remove-legacy-product-fields.md)); P6 changed for `PUT /api/utility/config/expiry-window` and `PATCH /api/utility/products/{productId}/scores`, which are deleted instead of returning 410 ([DEC-20261116-03](../../decisions/2026-11-16/DEC-20261116-03-p6-delete-obsolete-routes.md)). Implementation: [record 010](../2026-11-16/10-remove-legacy-product-fields-and-routes.md). The text above is kept unchanged as history.

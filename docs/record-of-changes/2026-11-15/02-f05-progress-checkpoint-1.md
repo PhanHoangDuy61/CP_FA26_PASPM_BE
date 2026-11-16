@@ -147,3 +147,9 @@ This record is kept as written; the following facts were added afterwards.
 | NOT RUN | Linux SPMF orphan cleanup (macOS evidence only), GitHub CI (including the `integration` job, which needs `PASPM_CI_SPMF_ARTIFACT_URL`), interactive Swagger UI, real-data conversion/clone, Windows, Frontend |
 
 "Implementation remains uncommitted/unpublished" above was true at the time; the commits above now exist on branch `Khoi/feat/f05-progress-f03-weight-v2` only.
+
+## Addendum 2026-11-16 (ROC-20261116-010) — P2–P6 resolved
+
+The assumptions P2–P6 recorded here as "pending owner confirmation" were resolved by the owner on 2026-11-16: P2, P3 and P4 approved as built ([DEC-20261116-01](../../decisions/2026-11-16/DEC-20261116-01-p2-p4-approved.md)); P5 changed to full removal of the legacy product fields with migration V26 ([DEC-20261116-02](../../decisions/2026-11-16/DEC-20261116-02-p5-remove-legacy-product-fields.md)); P6 changed for `PUT /api/utility/config/expiry-window` and `PATCH /api/utility/products/{productId}/scores`, which are deleted instead of returning 410 ([DEC-20261116-03](../../decisions/2026-11-16/DEC-20261116-03-p6-delete-obsolete-routes.md)). Implementation: [record 010](../2026-11-16/10-remove-legacy-product-fields-and-routes.md). The text above is kept unchanged as history.
+
+> **Superseded 2026-11-16 ([DEC-20261116-04](../../decisions/2026-11-16/DEC-20261116-04-f05-efim-only-mining.md), EFIM-only, `cd90e58`).** The two-algorithm stages, `COMPARING` and the step formula with "+1 when comparing" described above apply only to historical requests and to legacy two-run requests reclaimed after the upgrade.

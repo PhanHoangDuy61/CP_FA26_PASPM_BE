@@ -56,9 +56,9 @@ Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and fea
 | F03 Lambda policy (W2: `{lambdaMax}` only) | PUT `/api/system/utility/lambda-policy` | Allowed, global | Forbidden | Forbidden | Forbidden |
 | F03 Store utility config | GET `/api/utility/config` | Forbidden | Allowed, own Store | Allowed, own Store | Forbidden |
 | F03 Weight config α, β, λ, N (W2) | PUT `/api/utility/config` | Forbidden | Forbidden | Allowed, own Store | Forbidden |
-| F03 Legacy Store window (removed: 410 Gone) | PUT `/api/utility/config/expiry-window` | Forbidden | Allowed (410), own Store | Forbidden | Forbidden |
+| ~~F03 Legacy Store window~~ — **route deleted 2026-11-16** ([DEC-20261116-03](../decisions/2026-11-16/DEC-20261116-03-p6-delete-obsolete-routes.md)); 404 for every authenticated role (410 until then) | ~~PUT `/api/utility/config/expiry-window`~~ | — | — | — | — |
 | F03 Product score read | GET `/api/utility/products/{productId}/scores` | Forbidden | Allowed, own Store | Allowed, own Store; foreign Product→404 | Forbidden |
-| F03 Product score update (removed: 410 Gone) | PATCH `/api/utility/products/{productId}/scores` | Forbidden | Forbidden | Allowed (410) | Forbidden |
+| ~~F03 Product score update~~ — **route deleted 2026-11-16**; GET stays, so PATCH is 405 for every authenticated role (410 until then) | ~~PATCH `/api/utility/products/{productId}/scores`~~ | — | — | — | — |
 | F03 Season list/read | GET `/api/utility/seasons`, `/api/utility/seasons/{seasonId}`, `/api/utility/seasons/{seasonId}/products` | Forbidden | Allowed, own Store | Allowed, own Store; foreign season→404 | Forbidden |
 | F03 Season write | POST `/api/utility/seasons`; PUT/DELETE `/api/utility/seasons/{seasonId}` | Forbidden | Forbidden | Allowed, own Store; foreign→404 | Forbidden |
 | F03 Season assignment | PUT/DELETE `/api/utility/seasons/{seasonId}/products/{productId}` | Forbidden | Forbidden | Allowed, own Store; foreign product/season→404 | Forbidden |

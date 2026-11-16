@@ -1,10 +1,12 @@
 # F02 Product and Inventory Frontend Handoff
 
-> **2026-11-15 — W2.** Inventory batches accept an optional `pushDay` on create and PATCH (Store Admin only, ≤ expiryDate). Product `expiryPushDays` is deprecated and ignored by scoring. See [F03 W2 breaking changes](F03_W2_BREAKING_CHANGES.md).
+> **2026-11-16 — product form:** remove the `expiryPushDays` input. The field is no longer accepted (sending it → **400**) or returned, and V26 drops the column ([breaking change 15](F03_W2_BREAKING_CHANGES.md), [DEC-20261116-02](../decisions/2026-11-16/DEC-20261116-02-p5-remove-legacy-product-fields.md)). The push day lives on the **batch form**: optional `pushDay` on create and PATCH (Store Admin only, ≤ expiryDate), cleared with `DELETE /api/inventory-batches/{id}/push-day`.
+>
+> *2026-11-15 (history):* inventory batches accept an optional `pushDay`; product `expiryPushDays` was deprecated and ignored by scoring.
 
 ## v1.2 Product expiry priority update (2026-10-19)
 
-**Legacy (v1.2, deprecated 2026-11-15):** the existing Product POST/PUT request accepts optional `expiryPushDays: integer|null`; absent/null is stored as0, values must be >=0, and fractional/string/boolean values are rejected400. Full PUT must send the desired threshold (omitting resets it to0). Product GET/list/create/update/status responses include `expiryPushDays: integer`. Store Admin owns this field in their Store; Merchandiser and System Admin cannot modify it through F02, and cross-Store records return404. No duplicate configuration endpoint was added. `requiresExpiry=false` remains NOT_APPLICABLE in F03 even if a threshold is configured. Inventory quantities are unchanged by threshold updates.
+**Legacy (v1.2, deprecated 2026-11-15, removed 2026-11-16):** the existing Product POST/PUT request accepts optional `expiryPushDays: integer|null`; absent/null is stored as0, values must be >=0, and fractional/string/boolean values are rejected400. Full PUT must send the desired threshold (omitting resets it to0). Product GET/list/create/update/status responses include `expiryPushDays: integer`. Store Admin owns this field in their Store; Merchandiser and System Admin cannot modify it through F02, and cross-Store records return404. No duplicate configuration endpoint was added. `requiresExpiry=false` remains NOT_APPLICABLE in F03 even if a threshold is configured. Inventory quantities are unchanged by threshold updates.
 
 F03 uses only this Product threshold: no Store fallback. The legacy Store expiry-window endpoint is deprecated. New E is binary from the earliest-expiring ACTIVE positive-quantity batch with expiry strictly after the analysis date. Batch expiring today is not sellable in the current summary. `GET /api/utility/expiry-push-batches` provides a Store Admin/Merchandiser current push view independently of mining; see the F03 contract.
 
@@ -49,10 +51,10 @@ export interface Category { id: number; name: string; status: CatalogStatus }
 export interface CategoryRequest { name: string; status: CatalogStatus }
 export interface ProductRequest {
   sku: string; name: string; categoryId?: number | null; unit: string;
-  requiresExpiry: boolean; expiryPushDays?: number | null; sellingPrice: number; costPrice: number; status: CatalogStatus;
+  requiresExpiry: boolean; sellingPrice: number; costPrice: number; status: CatalogStatus; // expiryPushDays removed 2026-11-16 (400 if sent)
 }
 export interface Product {
-  id: number; sku: string; name: string; unit: string; requiresExpiry: boolean; expiryPushDays: number;
+  id: number; sku: string; name: string; unit: string; requiresExpiry: boolean; // expiryPushDays removed 2026-11-16
   category: Category | null; sellingPrice: number; costPrice: number; status: CatalogStatus; stockQuantity: number;
 }
 export interface ProductPage { content: Product[]; page: number; pageSize: number; totalElements: number; totalPages: number }

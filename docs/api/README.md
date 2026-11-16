@@ -5,8 +5,8 @@ Canonical contract locations stay stable in this directory. `CURRENT` describes 
 | Feature | Contract | Status / caveat | Handoff |
 |---|---|---|---|
 | F01 | [Authentication/User](F01_AUTH_USER_API.md) | Local session update: csrfToken, refresh/logout; 202/409 reconciled; uncommitted | [F01](../frontend_handoff/F01_HANDOFF.md) |
-| F02 | [Product/Inventory](F02_PRODUCT_INVENTORY_API.md) | CURRENT scoped contract + 2026-11-15 batch `pushDay` (branch); `expiryPushDays` deprecated; old v3 role/expiry clauses differ | [F02](../frontend_handoff/F02_HANDOFF.md) |
-| F03 | [Utility](F03_UTILITY_API.md) | CURRENT on branch 2026-11-15: Weight v2 section first; v1.2 section kept as legacy for pre-V25 data. Requirements are derived, pending formal approval ([F03 W2 requirements](../requirements/F03_WEIGHT_V2_REQUIREMENTS.md)) | [F03](../frontend_handoff/F03_HANDOFF.md) |
+| F02 | [Product/Inventory](F02_PRODUCT_INVENTORY_API.md) | CURRENT scoped contract + batch `pushDay`; product `expiryPushDays` **removed 2026-11-16** (400 if sent; V26); old v3 role/expiry clauses differ | [F02](../frontend_handoff/F02_HANDOFF.md) |
+| F03 | [Utility](F03_UTILITY_API.md) | CURRENT: two routes deleted 2026-11-16 (expiry-window, score PATCH); P2–P6 resolved. Weight v2 since 2026-11-15: Weight v2 section first; v1.2 section kept as legacy for pre-V25 data. Requirements are derived, pending formal approval ([F03 W2 requirements](../requirements/F03_WEIGHT_V2_REQUIREMENTS.md)) | [F03](../frontend_handoff/F03_HANDOFF.md) |
 | F04 | [Transaction](F04_TRANSACTION_API.md) | CURRENT CSV P0 contract; broader workflow acceptance separate | [F04](../frontend_handoff/F04_HANDOFF.md) |
 | F05 | [Mining](F05_MINING_API.md) | Progress routes + Merchandiser submission on branch 2026-11-15; dated deployment/acceptance summaries remain NEEDS_REVIEW | [F05](../frontend_handoff/F05_HANDOFF.md) |
 | F06 | [Recommendation](F06_RECOMMENDATION_API.md) | CURRENT Backend v1.1 contract + 2026-11-15 W2 knock-on (EligibilityV2, push-day alerts); historical test statements retain dates | [F06](../frontend_handoff/F06_HANDOFF.md) |
@@ -28,3 +28,5 @@ Current F01 reconciliation (2026-11-12): preserves published dev V20/AuthSession
 
 ## 2026-11-16 export update
 The follow-up export has **103 paths / 125 operations**, adding DELETE `/api/inventory-batches/{id}/push-day` to the 102/124 baseline. Recommendation views include `seasonEnded` and `endedSeasons`; all local schema references resolve.
+
+**Branch `Khoi/feat/f03-remove-legacy-product-fields` (2026-11-16, not merged): 100 paths, 121 operations** (F01 27, F02 16, F03 18, F04 8, F05 24, F06 8, F07/F08 20). Before: 101 paths / 123 operations in the export committed on `dev` `2a944c5`. Removed: `PUT /api/utility/config/expiry-window`, `PATCH /api/utility/products/{productId}/scores`. Regenerated through the MockMvc export hook of `RecommendationIntegrationTest` (`-Dpaspm.f06.export-dir`); this is not an interactive Swagger UI execution. Besides the two removals, the regenerated file renumbers two springdoc `operationId`s and picks up the current EFIM-only summary of `POST /api/mining/requests`.

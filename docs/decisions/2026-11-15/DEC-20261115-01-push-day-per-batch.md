@@ -19,3 +19,6 @@ The push day is stored per inventory batch (`inventory_batch.push_day`, DATE, nu
 
 ## Tests
 `PushDayIntegrationTest`, `WeightV2CalculationTest.missingPushDayOnlyWarnsAndIsExcludedFromRiskAndEligible`, `WeightV2MigrationTest` — inside the final gate (645 tests, 640 PASS, 0 FAIL, 5 SKIP; [record 004](../../record-of-changes/2026-11-15/04-f03-weight-v2-expiry-season.md)).
+
+## Update 2026-11-16
+`product.expiry_push_days` is no longer only unused: it was removed from the product API and dropped by migration V26 ([DEC-20261116-02](../2026-11-16/DEC-20261116-02-p5-remove-legacy-product-fields.md)). The replacement routes for the deleted Store expiry window are the batch `pushDay` fields and `DELETE /api/inventory-batches/{id}/push-day` ([DEC-20261116-03](../2026-11-16/DEC-20261116-03-p6-delete-obsolete-routes.md)).

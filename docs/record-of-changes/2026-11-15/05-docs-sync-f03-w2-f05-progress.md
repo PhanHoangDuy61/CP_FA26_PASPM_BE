@@ -100,3 +100,7 @@ Paths relative to `src/main/java/vn/edu/fpt/paspm/` unless shown fully.
 
 ## 2026-11-16 delivery addendum
 The owner-approved 43-file documentation sync was committed locally as `369dba4` with message `docs: sync feature docs, decisions and record of changes for F03 Weight v2 and F05 progress`. The working tree was clean immediately afterward. No push or merge. Follow-up implementation is recorded in [record 006](../2026-11-16/06-f03-f05-followup-fixes.md); earlier evidence above remains historical.
+
+## Addendum 2026-11-16 (ROC-20261116-010) — P2–P6 resolved
+
+The assumptions P2–P6 recorded here as "pending owner confirmation" were resolved by the owner on 2026-11-16: P2, P3 and P4 approved as built ([DEC-20261116-01](../../decisions/2026-11-16/DEC-20261116-01-p2-p4-approved.md)); P5 changed to full removal of the legacy product fields with migration V26 ([DEC-20261116-02](../../decisions/2026-11-16/DEC-20261116-02-p5-remove-legacy-product-fields.md)); P6 changed for `PUT /api/utility/config/expiry-window` and `PATCH /api/utility/products/{productId}/scores`, which are deleted instead of returning 410 ([DEC-20261116-03](../../decisions/2026-11-16/DEC-20261116-03-p6-delete-obsolete-routes.md)). Implementation: [record 010](../2026-11-16/10-remove-legacy-product-fields-and-routes.md). The text above is kept unchanged as history.

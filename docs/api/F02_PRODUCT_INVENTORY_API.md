@@ -1,6 +1,6 @@
 # F02 Product and Inventory API Contract
 
-> **2026-11-15 (branch `Khoi/feat/f05-progress-f03-weight-v2`):** batches accept `pushDay` and Product `expiryPushDays` is **deprecated, ignored by calculation** (P5) — see the section at the end. Statements below that call `expiryPushDays` the F03 threshold are **legacy (v1.2)**.
+> **2026-11-16:** Product `expiryPushDays` is **removed** from `ProductRequest` and `ProductView` (sending it → 400) and V26 drops the column — see the last section. *2026-11-15 (history):* batches accept `pushDay`; Product `expiryPushDays` was deprecated and ignored (P5). Statements below that call `expiryPushDays` the F03 threshold are **legacy (v1.2)**.
 
 ## v1.2 Product expiry priority update (2026-10-19)
 
@@ -103,3 +103,11 @@ OpenAPI does not encode nullable response fields: `ProductView.category` can be 
 
 ## 2026-11-16 — Clear a batch push day (additive)
 `DELETE /api/inventory-batches/{id}/push-day`: Bearer authentication, STORE_ADMIN only, caller's Store. No body. Returns HTTP 200 and the same `BatchView` as GET/PATCH with `pushDay: null`. Repeating on an already-clear batch succeeds without updating its timestamp. Unknown/foreign batch 404, wrong role 403, unauthenticated 401. Persisted quantity, status and expiry are unchanged. PATCH absent/null `pushDay` retains its value; only DELETE clears it. Future calculations report `MISSING_PUSH_DAY` for otherwise eligible batches.
+
+## 2026-11-16 — `expiryPushDays` removed (DEC-20261116-02, V26)
+
+- `ProductRequest` (create `POST /api/products`, full update `PUT /api/products/{id}`) no longer has `expiryPushDays`. The backend rejects unknown JSON fields, so a request that still sends it — any value, including `null` — gets **400** and nothing is written.
+- `ProductView` (list, detail, create/update responses) no longer contains `expiryPushDays`.
+- The JPA entity no longer maps the column, and migration V26 drops `product.expiry_push_days` together with `product.stock_priority_score` and `product.seasonal_priority_score` (and their CHECK constraints). Not reversible without a backup taken before V26.
+- Use the batch `pushDay` (create, PATCH, `DELETE /api/inventory-batches/{id}/push-day`). Roles unchanged.
+- Tests: `LegacyProductFieldsRemovedTest`, `LegacyProductColumnsV26MigrationTest` (H2 + MySQL), `PushDayIntegrationTest.productExpiryPushDaysIsRejectedAndScoringUsesBatchPushDays`.

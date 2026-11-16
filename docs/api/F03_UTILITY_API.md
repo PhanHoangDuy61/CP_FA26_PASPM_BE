@@ -23,9 +23,9 @@
 | PUT | `/api/system/utility/lambda-policy` | SYSTEM_ADMIN | `PolicyUpdate {lambdaMax}` → `LambdaV2` | `lambdaMin` in the body → 400 |
 | GET | `/api/utility/config` | STORE_ADMIN, MERCHANDISER | → `ConfigView {config: WeightV2, lambdaPolicy: LambdaV2, lambdaValid}` | |
 | PUT | `/api/utility/config` | MERCHANDISER | `WeightUpdate {alpha, beta, lambda, salesWindowDays?}` → `ConfigView` | 400 if `alpha + beta ≠ 1`, either outside [0,1], `lambda` outside `[0, lambdaMax]`, `salesWindowDays` outside 1..365 or not an integer, or any removed field (`enableStock`, `enableExpiry`, `enableSeason`, `gamma`) |
-| PUT | `/api/utility/config/expiry-window` | STORE_ADMIN | → **410 Gone** | deprecated; use batch `pushDay` |
+| ~~PUT~~ | ~~`/api/utility/config/expiry-window`~~ | — | **Deleted 2026-11-16** ([DEC-20261116-03](../decisions/2026-11-16/DEC-20261116-03-p6-delete-obsolete-routes.md)); 404 like any unknown path (410 until then) | use batch `pushDay` (create/PATCH, `DELETE /api/inventory-batches/{id}/push-day`) |
 | GET | `/api/utility/products/{productId}/scores` | STORE_ADMIN, MERCHANDISER | → `Scores` (W2) | current preview, Store-local today |
-| PATCH | `/api/utility/products/{productId}/scores` | MERCHANDISER | → **410 Gone** | manual S/M removed; use seasons |
+| ~~PATCH~~ | ~~`/api/utility/products/{productId}/scores`~~ | — | **Deleted 2026-11-16**; `GET` stays, so `PATCH` answers 405 (410 until then) | use season assignment |
 | POST | `/api/utility/preview` | MERCHANDISER | `PreviewRequest` → `MatrixPage` | unchanged request |
 | POST | `/api/utility/snapshots` | MERCHANDISER | `RangeRequest` → `SnapshotView` 201 | missing push days / slow movers only warn |
 | GET | `/api/utility/snapshots/{id}` and `/{id}/matrix` | MERCHANDISER | → `SnapshotView` / `MatrixPage` | `configuration` is `FrozenConfiguration` (legacy) or `FrozenV2` |
@@ -40,6 +40,14 @@
 | DELETE | `/api/utility/seasons/{seasonId}/products/{productId}` | MERCHANDISER | → 204 | not assigned → 404 |
 
 SYSTEM_ADMIN and END_CUSTOMER cannot use Store-bound F03 routes (403). Foreign seasons, products and snapshots → 404.
+
+## 2026-11-16 — legacy product fields and two routes removed
+
+- The two routes above are deleted (P6 changed): 18 F03 operations remain (20 before).
+- `expiryPushDays`, `stockPriorityScore` and `seasonalPriorityScore` are not in any live request or response; sending one to a product route returns **400** (`fail-on-unknown-properties`). Migration **V26** drops `product.expiry_push_days`, `product.stock_priority_score`, `product.seasonal_priority_score` ([DEC-20261116-02](../decisions/2026-11-16/DEC-20261116-02-p5-remove-legacy-product-fields.md)).
+- Unchanged: W2 scoring, golden values, F06 fingerprint for new recommendations, frozen JSON. Legacy evidence records (`Evidence`, `PushBatch`, `RecProductEligibility`) keep `expiryPushDays` so pre-V25 payloads still read.
+- `expiryWindowDays` is not in the live config contract: `ConfigView.config` is `WeightV2`, and a `PUT /api/utility/config` body that contains it returns **400**. Only the legacy reader `WeightConfig` (frozen `configuration.config` of F03_LINEAR_V1 and EXPIRY_PRODUCT_EARLIEST_BATCH_BINARY_V1 snapshots) keeps it, so old snapshots read back unchanged ([breaking change 18](../frontend_handoff/F03_W2_BREAKING_CHANGES.md)).
+- P2, P3 and P4 are approved as built ([DEC-20261116-01](../decisions/2026-11-16/DEC-20261116-01-p2-p4-approved.md)).
 
 ## Shapes
 

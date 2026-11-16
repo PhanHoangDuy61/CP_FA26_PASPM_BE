@@ -73,3 +73,7 @@ P2–P6 vẫn được ghi là **assumption pending owner confirmation**, chưa 
 | Docs sync | [005](05-docs-sync-f03-w2-f05-progress.md) | none (proposed) | — | docs checks only | — |
 
 Invalid runs (not counted) are listed in records 003 §Verification and 004 §5. Before-deploy checklist and report changes: [record 004 addendum](04-f03-weight-v2-expiry-season.md#before-deploy-checklist-none-done). Decisions: [owner decision register](../../decisions/OWNER_DECISIONS_F03_F05_2026-11-15.md).
+
+## Addendum 2026-11-16 (ROC-20261116-010) — P2–P6 resolved
+
+The assumptions P2–P6 recorded here as "pending owner confirmation" were resolved by the owner on 2026-11-16: P2, P3 and P4 approved as built ([DEC-20261116-01](../../decisions/2026-11-16/DEC-20261116-01-p2-p4-approved.md)); P5 changed to full removal of the legacy product fields with migration V26 ([DEC-20261116-02](../../decisions/2026-11-16/DEC-20261116-02-p5-remove-legacy-product-fields.md)); P6 changed for `PUT /api/utility/config/expiry-window` and `PATCH /api/utility/products/{productId}/scores`, which are deleted instead of returning 410 ([DEC-20261116-03](../../decisions/2026-11-16/DEC-20261116-03-p6-delete-obsolete-routes.md)). Implementation: [record 010](../2026-11-16/10-remove-legacy-product-fields-and-routes.md). The text above is kept unchanged as history.

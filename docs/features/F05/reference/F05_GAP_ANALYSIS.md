@@ -1,5 +1,7 @@
 # F05 audit and design — 2026-10-19
 
+> **Superseded 2026-11-16 ([DEC-20261116-04](../../../decisions/2026-11-16/DEC-20261116-04-f05-efim-only-mining.md), EFIM-only).** This 2026-10-19 design plans HUI-Miner + EFIM comparison and benchmarks.
+
 | Component | Existing code | Missing work | Dependencies | Priority |
 |---|---|---|---|---|
 | Schema | ERD has MINING_REQUEST, MINING_RUN, HIGH_UTILITY_PATTERN, PATTERN_ITEM; no physical tables | V9; composite Store ownership; durable input and results | V1–V8 | P0 |

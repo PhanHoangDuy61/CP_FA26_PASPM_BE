@@ -6,7 +6,21 @@
 >
 > **Requirements caveat (legacy v1.2 only):** the formally approved Weight Rules v1.2 source file is **not tracked** in the repository ([gap notice](../../requirements/README.md#f03-v12-source-gap)). [F03_UTILITY_API.md](../../api/F03_UTILITY_API.md) is the written v1.2 implementation contract; it is not a substitute approval.
 
-## Current status — branch `Khoi/feat/f05-progress-f03-weight-v2` (2026-11-15, not merged)
+## Current status — branch `Khoi/feat/f03-remove-legacy-product-fields` (2026-11-16, not merged)
+
+Code paths are relative to `src/main/java/vn/edu/fpt/paspm/`; V26 is `src/main/java/db/migration/V26__f03_drop_legacy_product_scoring_columns.java`.
+
+| Change | Behaviour | Evidence |
+|---|---|---|
+| P2–P4 | Approved as built; no code change | [DEC-20261116-01](../../decisions/2026-11-16/DEC-20261116-01-p2-p4-approved.md) |
+| Routes deleted | `PUT /api/utility/config/expiry-window` (now 404) and `PATCH /api/utility/products/{productId}/scores` (now 405; `GET` stays because it serves the W2 preview) | `utility/UtilityConfigurationController.java`; `utility/ProductScoreController.java`; `LegacyProductFieldsRemovedTest`; [DEC-20261116-03](../../decisions/2026-11-16/DEC-20261116-03-p6-delete-obsolete-routes.md) |
+| Live product read for W2/F06 | `UtilityProductRepository.Product` is `(id, requiresExpiry, status)`; it no longer selects the three dropped columns | `utility/UtilityProductRepository.java` |
+| Fields | `expiryPushDays`, `stockPriorityScore`, `seasonalPriorityScore` absent from live contracts; frozen-JSON records keep them | `recommendation/RecommendationContracts.java` (`RecProductEligibility`); `utility/ExpiryScoreCalculator.java` (`Evidence`, `PushBatch`) |
+| Unchanged | W2 formula, golden 0.375/0.25, F06 fingerprint for new recommendations, store isolation, λ_max block, scheduler 503 | `WeightV2CalculationTest`; `RecommendationIntegrationTest`; `ScheduledMiningDisabledByDefaultTest` |
+
+18 F03 operations remain (20 before). Clients still sending a removed field get 400; see [breaking changes 15–18](../../frontend_handoff/F03_W2_BREAKING_CHANGES.md).
+
+## Status 2026-11-15 (history) — branch `Khoi/feat/f05-progress-f03-weight-v2`
 
 Code paths are relative to `src/main/java/vn/edu/fpt/paspm/` on `c8c837a` (code identical to `e38b55f`). Requirements: [F03 Weight v2 requirements](../../requirements/F03_WEIGHT_V2_REQUIREMENTS.md) (derived, pending formal approval). Decisions: [owner decision register 2026-11-15](../../decisions/OWNER_DECISIONS_F03_F05_2026-11-15.md).
 
@@ -23,7 +37,7 @@ Code paths are relative to `src/main/java/vn/edu/fpt/paspm/` on `c8c837a` (code 
 | λ range | [0, λ_max]; System Admin sets only λ_max | `utility/UtilityConfigurationService.java:38-42`; `utility/UtilityConfigurationController.java:17-20` |
 | Store config | Merchandiser sets α, β (sum 1), λ, N (1..365) | `utility/UtilityConfigurationService.java:31-33`; `utility/UtilityContracts.java:36-42` |
 | Seasons | CRUD + assignment; Merchandiser writes, Store Admin reads; duplicate name 409; delete with products 409; foreign product 404 | `utility/SeasonController.java:14-42`; `utility/SeasonService.java:32`, `:51`, `:63` |
-| 410 routes | `PUT /api/utility/config/expiry-window` → batch `pushDay`; `PATCH /api/utility/products/{id}/scores` → season assignment | `utility/UtilityConfigurationController.java:30-33`; `utility/ProductScoreService.java:46` |
+| 410 routes *(superseded 2026-11-16: deleted)* | `PUT /api/utility/config/expiry-window` → batch `pushDay`; `PATCH /api/utility/products/{id}/scores` → season assignment | `utility/UtilityConfigurationController.java:30-33`; `utility/ProductScoreService.java:46` |
 | Snapshot freeze | λ check 409, seasons copied by value | `utility/UtilityFreezer.java:23-25`; `utility/UtilitySnapshotService.java:39`; `utility/UtilitySnapshotRepository.java:43` |
 | Old snapshots | Selected by `scoringVersion`: `F03_LINEAR_V1` and `EXPIRY_PRODUCT_EARLIEST_BATCH_BINARY_V1` → legacy records, `W2_EXPIRY_SEASON_V1` → W2, other → rejected | `utility/UtilityJsonVersions.java:29-31` |
 | V25 conversion | Owner rule `OWNER_2026_11_15_V1`: α ← old expiry, β ← old season, stock dropped, defaults 0.5/0.5, λ clamped to [0, λ_max], N = 30, version + 1; evidence in `utility_weight_v2_conversion` | `utility/WeightV2Conversion.java:14-16`, `:44-49`; `db/migration/V25__f03_weight_v2_expiry_season.java:80`, `:150` |
@@ -43,15 +57,15 @@ Turns Store sales history (F04), batch push days (F02) and Store seasons into a 
 | `STORE_ADMIN` | read Store config, product scores and seasons; expiry-push query; owns batch `pushDay` through F02 |
 | `END_CUSTOMER` | none |
 
-System Admin cannot use Store-bound F03 routes; foreign Product, season or snapshot ids answer 404. `F03F05RbacMatrixTest` covers all 20 F03 operations role by role.
+System Admin cannot use Store-bound F03 routes; foreign Product, season or snapshot ids answer 404. `F03F05RbacMatrixTest` covers all 18 F03 operations role by role (20 until the 2026-11-16 deletions).
 
-## 3. Implemented functionality (20 operations)
-Lambda policy (2), Store config (3: read, weights, removed window → 410), product scores (2: read, removed PATCH → 410), preview, snapshot create/read/matrix (3), push-day expiry query (1), seasons (8: list, read, create, update, delete, list products, assign, unassign). No snapshot list or delete endpoint; Store snapshot listing for mining is `GET /api/mining/snapshots` (F05).
+## 3. Implemented functionality (18 operations)
+Lambda policy (2), Store config (2: read, weights; the expiry window was deleted 2026-11-16), product scores (1: read; the PATCH was deleted 2026-11-16), preview, snapshot create/read/matrix (3), push-day expiry query (1), seasons (8: list, read, create, update, delete, list products, assign, unassign). No snapshot list or delete endpoint; Store snapshot listing for mining is `GET /api/mining/snapshots` (F05).
 
 ## 4. Business rules (W2)
 - **U_expiry = Q_risk / Q_eligible** by FEFO over eligible batches (ACTIVE, remaining > 0, not expired, with a push day), ordered by push day then integer `batch_id`; selling capacity `v(i) × days_to_push`; push day on/before the analysis date puts the whole batch at risk (P4). Golden: 0.375 and 0.25.
 - **v(i)** = units of COMPLETED, F03-eligible transactions in the N days ending on and including the analysis date (Store zone) ÷ N; N = 30 by default, editable by the Merchandiser (Q6). v = 0 → U = 0 with `SLOW_MOVING_NO_RECENT_SALES` (Q7).
-- **Push day** per inventory batch, entered by the Store Admin; `product.expiry_push_days` is accepted by the Product API but ignored (P5). A batch without one only warns and is excluded (Q1). No backfill.
+- **Push day** per inventory batch, entered by the Store Admin; `product.expiry_push_days` was accepted but ignored (P5) until 2026-11-16, when it was removed and dropped by V26. A batch without one only warns and is excluded (Q1). No backfill.
 - **M** = highest weight among active seasons the product is assigned to (P2), active = analysis date in `[startDate, endDate]` inclusive (P3), else 0. A season with products cannot be deleted (409, Q8).
 - α + β = 1, each in [0,1]; λ ∈ [0, λ_max] → otherwise 400. A λ above a lowered λ_max makes `lambdaValid=false`, blocks new snapshots (409) and new Merchandiser mining requests; it is never clamped.
 - Snapshots freeze λ, α, β, N, λ_max, the active seasons by value (`utility_snapshot_season` + `FrozenV2.seasons`), U_expiry, M, W and warnings. Missing push days and slow movers never block a snapshot.
@@ -77,10 +91,10 @@ F01 session reconciliation (2026-11-12, dev V20 retained + additive V21): browse
 W2: `WeightV2CalculationTest` (golden values, rounding, bounds, P2, cross-check with `paspm-experiments`), `WeightV2MigrationTest` (owner conversion rule, frozen JSON byte-identical, H2 + MySQL), `VersionedUtilityJsonTest`, `VersionedUtilityPersistence*Test`, `UtilityIntegrationTest`, `RetailCatalogUtility*Test`, `PushDayIntegrationTest`, `F03F05RbacMatrixTest`. Legacy readers: `ExpiryBinaryRulesTest`, `ExpiryFefoOrderingTest`, `UtilitySnapshotRoutingTest`, `WeightRulesV12MigrationTest` (now up to V24). Run results: [record of changes 2026-11-15](../../record-of-changes/2026-11-15/04-f03-weight-v2-expiry-season.md).
 
 ## 10. Known limitations
-No snapshot list/update/delete endpoint; no trigger enforcing immutability against direct SQL; existing batches have no push day until the Store Admin sets one; product score columns and `expiry_push_days` remain in the schema unused; the v1.2 source gap above (legacy only).
+No snapshot list/update/delete endpoint; no trigger enforcing immutability against direct SQL; existing batches have no push day until the Store Admin sets one; V26 (dropping the legacy product columns) cannot be undone without a pre-migration backup; the v1.2 source gap above (legacy only).
 
 ## 11. Pending decisions
-Owner decisions Q1–Q10 and the conversion rule are recorded in the [decision register](../../decisions/OWNER_DECISIONS_F03_F05_2026-11-15.md). Assumptions applied pending owner confirmation: P2 (highest weight), P3 (inclusive active dates), P4 (push day reached → whole batch at risk), P5 (`expiryPushDays` accepted but ignored), P6 (same paths, new bodies). Report text changes listed in the record of changes.
+Owner decisions Q1–Q10 and the conversion rule are recorded in the [decision register](../../decisions/OWNER_DECISIONS_F03_F05_2026-11-15.md). None open. The 2026-11-15 assumptions were resolved on 2026-11-16: P2, P3, P4 approved; P5 changed to removal (V26); P6 changed for two routes now deleted ([DEC-20261116-01..03](../../decisions/2026-11-16/)). Report text changes listed in the record of changes.
 
 ## 12. Related diagrams
 [Diagram index](../../diagrams/README.md) and the editable [27-page Draw.io pack](../../diagrams/PASPM_Unified_27_Diagrams_UML2_Editable.drawio) (QA: [UML27 report](../../reports/UML27_DIAGRAM_QA_2026-11-02.md)); relevant pages: Use Case UC09 and UC31, AD01 (F03 snapshot step), State R2-06.02 (Utility Snapshot), Context (M1, A2 flows), System Architecture.

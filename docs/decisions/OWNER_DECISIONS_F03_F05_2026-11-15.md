@@ -2,6 +2,8 @@
 
 Decisions stated by the project owner in the working conversation on 2026-11-15 and implemented on branch `Khoi/feat/f05-progress-f03-weight-v2` (HEAD `c8c837a`, not merged). No approver name or signature is recorded, and none is invented. Requirement text derived from them: [F03 Weight v2 requirements](../requirements/F03_WEIGHT_V2_REQUIREMENTS.md) (pending formal approval).
 
+> **Update 2026-11-16:** the owner approved P2–P4, removed the legacy product fields (P5 changed, V26) and deleted two obsolete routes (P6 changed): [DEC-20261116-01](2026-11-16/DEC-20261116-01-p2-p4-approved.md), [DEC-20261116-02](2026-11-16/DEC-20261116-02-p5-remove-legacy-product-fields.md), [DEC-20261116-03](2026-11-16/DEC-20261116-03-p6-delete-obsolete-routes.md). The table of assumptions below shows the resolved status.
+
 ## Decisions
 
 | ID | Decision | Source | Status |
@@ -18,17 +20,17 @@ Decisions stated by the project owner in the working conversation on 2026-11-15 
 | [DEC-20261115-10](2026-11-15/DEC-20261115-10-f06-one-time-inventory-changed.md) | Accept a one-time `inventoryChanged = true` on old recommendations | Q5 (resume instruction, Phase 5) | Implemented, tested |
 | [DEC-20261115-11](2026-11-15/DEC-20261115-11-expiry-linear-fixture-change.md) | Test fixture `EXPIRY_LINEAR_V1` → `F03_LINEAR_V1` | Checkpoint 2 approval, 2026-11-15 | Implemented, tested |
 
-## Assumptions pending owner confirmation
+## Assumptions P2–P6 — resolved 2026-11-16
 
-These defaults were applied because the prompt fixed them as defaults; each is **assumption pending owner confirmation**.
+These defaults were applied on 2026-11-15 as **assumption pending owner confirmation**. On 2026-11-16 the owner resolved all five (statuses below); the 2026-11-15 text is kept as history.
 
-| ID | Assumption | Code evidence (paths relative to `src/main/java/vn/edu/fpt/paspm/`) |
-|---|---|---|
-| P2 | A product in several active seasons gets the highest weight (ties: lowest seasonId) | `utility/WeightV2Calculator.java:39-43` |
-| P3 | A season is active when the analysis date lies in [start_date, end_date] inclusive; preview, manual and scheduled snapshots use the same rule | `utility/SeasonRepository.java:69`; `utility/UtilityFreezer.java:25`; `mining/MiningScheduledSnapshot.java:44-45` |
-| P4 | A push day on or before the analysis date puts the whole remaining batch at risk | `utility/ExpiryRiskCalculator.java:74` |
-| P5 | The Product API still accepts `expiryPushDays` but ignores it; deprecated in OpenAPI | `catalog/CatalogContracts.java:38` |
-| P6 | Same route paths, new bodies; breaking changes documented for the Frontend | [breaking changes](../frontend_handoff/F03_W2_BREAKING_CHANGES.md) |
+| ID | Assumption (2026-11-15) | Status (2026-11-16) | Code evidence (paths relative to `src/main/java/vn/edu/fpt/paspm/`) |
+|---|---|---|---|
+| P2 | A product in several active seasons gets the highest weight (ties: lowest seasonId) | **Approved 2026-11-16** — [DEC-20261116-01](2026-11-16/DEC-20261116-01-p2-p4-approved.md) | `utility/WeightV2Calculator.java` (`seasonScores`) |
+| P3 | A season is active when the analysis date lies in [start_date, end_date] inclusive; preview, manual and scheduled snapshots use the same rule | **Approved 2026-11-16** — [DEC-20261116-01](2026-11-16/DEC-20261116-01-p2-p4-approved.md) | `utility/SeasonRepository.java` (`active`); `utility/UtilityFreezer.java`; `mining/MiningScheduledSnapshot.java` |
+| P4 | A push day on or before the analysis date puts the whole remaining batch at risk | **Approved 2026-11-16** — [DEC-20261116-01](2026-11-16/DEC-20261116-01-p2-p4-approved.md) | `utility/ExpiryRiskCalculator.java` |
+| P5 | The Product API still accepts `expiryPushDays` but ignores it; deprecated in OpenAPI | **Superseded 2026-11-16** — fields removed and columns dropped by V26: [DEC-20261116-02](2026-11-16/DEC-20261116-02-p5-remove-legacy-product-fields.md) | `db/migration/V26__f03_drop_legacy_product_scoring_columns.java` (under `src/main/java/`) |
+| P6 | Same route paths, new bodies; breaking changes documented for the Frontend | **Changed 2026-11-16** for two routes — `PUT /api/utility/config/expiry-window` and `PATCH /api/utility/products/{productId}/scores` deleted instead of 410: [DEC-20261116-03](2026-11-16/DEC-20261116-03-p6-delete-obsolete-routes.md). Still valid for every other F03 route | [breaking changes](../frontend_handoff/F03_W2_BREAKING_CHANGES.md) |
 
 ## Superseded by these decisions (kept as history)
 

@@ -13,3 +13,7 @@ See ../F03_HANDOFF.md and ../../api/F03_UTILITY_API.md for full current contract
 ## Current Product read model — 2026-10-21
 
 `current_product_scores_e1_response.json`, `current_product_scores_e0_response.json` and `current_product_scores_stale_lambda_response.json` are actual standalone MySQL GET/PATCH results from the Backend Catalog integration verification. They demonstrate E1/W1.435, E0/W1.335 and an out-of-policy lambda (Wnull/readyfalse), using current Store-local dates and no transaction requirement. They are not frozen snapshot responses. See ../../requirements/RETAIL_CATALOG_UTILITY_VERIFICATION.md for separate HTTP and interactive Swagger UI evidence. No credentials are included.
+
+## 2026-11-16 — deleted routes (DEC-20261116-03)
+
+`expiry_window_update_request.json`, `stock_priority_update_request.json` and `seasonal_priority_update_request.json` are kept only as history. Their routes (`PUT /api/utility/config/expiry-window`, `PATCH /api/utility/products/{productId}/scores`) were deleted; they now answer 404 and 405. The captured responses in this folder still show `expiryPushDays`, `stockPriorityScore` and `seasonalPriorityScore` because they were captured before the removal. Current responses do not contain these fields. See [F03_W2_BREAKING_CHANGES.md](../F03_W2_BREAKING_CHANGES.md) rows 15–18.
