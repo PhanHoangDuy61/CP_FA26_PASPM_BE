@@ -128,4 +128,74 @@ The owner approved merging the F05 input-limit change into `dev` on 2026-11-16 a
 | Authentic FoodMart acceptance | NOT RUN: available source lacks canonical order-grouping identifiers and approved expiry/push-day/season evidence, so a truthful valid F03 snapshot cannot be constructed from it. |
 | Platform and hosted CI verification | Not verified on Linux or on the target server: child JVM cleanup, memory under container limits, peak RSS. GitHub CI integration is still blocked on `PASPM_CI_SPMF_ARTIFACT_URL`. |
 
-The owner-approved disposition is **APPROVED FOR MERGE WITH KNOWN LIMITATIONS**. The actual merged status and remote `dev` head will be recorded after the authorized Git operations succeed. The passing synthetic E2E, clean 72/72 MySQL group, multi-JVM coverage, and Flyway/API checks are reported separately above; this disposition does not claim the deferred scenarios passed.
+The owner-approved disposition is **APPROVED FOR MERGE WITH KNOWN LIMITATIONS**. Record 013 below adds a later local-only acceptance run on the merged `dev` base; it closes the dense synthetic, pattern-cap, output-overshoot and JPA-clone items but does not change authentic FoodMart or platform/hosted-CI limitations.
+
+## Follow-up — realistic utility conversion and remaining multi-JVM cases (2026-11-17)
+
+This section adds evidence to the local acceptance follow-up in [Record 013](../record-of-changes/2026-11-17/13-f05-dense-acceptance.md). It does not revise the historical merge decision in Record 012 or represent authentic FoodMart data.
+
+### Realistic-utility variant
+
+An additional opt-in MySQL E2E fixture retained the same approximate density: **4,100 orders, 18,040 transaction-item/F03 matrix rows, 1,559 distinct products, 4.4 products/order**. It used 2-decimal unit prices spanning 0.50–200.00, quantities spanning 1–10, and `W2_EXPIRY_SEASON_V1` with push-day batches, batches missing push days, and products assigned to an active season. F04 imported the CSV fixture, F03 produced a READY snapshot, then scale-6/GCD conversion was evaluated against the production int32 guard.
+
+The test fixture set the System Admin mining policy to the current value `ABSOLUTE 500.0`; the mining configuration was not reduced to force acceptance.
+
+| Converted measurement | Value | Relation to signed int32 maximum |
+|---|---:|---:|
+| Scale-6 GCD divisor | 100 | — |
+| Largest transaction utility | 26,225,721 | 2,121,257,926 below maximum |
+| Largest item TWU | 3,217,593,703 | 1,070,110,056 above maximum |
+| Total utility | 53,254,362,673 | 51,106,879,026 above maximum |
+
+F05 returned HTTP 400 with the exact error `Lossless converted dataset exceeds SPMF int32 capacity`. No mining request was persisted, so EFIM runtime, pattern count and output bytes are **NOT RUN**; F06 consumption for this rejected variant is **NOT RUN**. The rejection is expected and the limit was not changed. Full snapshot and conversion metrics are in external evidence `outputs/evidence/2026-11-17/f05-dense-acceptance/followup/realistic-utilities/foodmart-dense-realistic-utilities.json`.
+
+### Non-POSIX/Windows fallback
+
+On OS names other than macOS/Linux, `MiningProcessLauncher` returns the original child argv without a shell or `ulimit`; `SpmfMiningEngine` uses the existing process polling and final output-size checks. `MiningProcessOutputLimitTest#nonPosixLauncherLeavesCommandUnwrappedAndCanStartChildJvm` mocked `Windows 11` and launched a Java 17 child successfully (1/1 PASS). The whole `MiningProcessOutputLimitTest` class passed 2/2 on macOS. A real Windows host run is **NOT RUN**. The fallback still has polling-based output enforcement; Windows overshoot is not measured and the kernel file-size ceiling is unavailable there.
+
+### Previously skipped multi-JVM cases
+
+With a disposable MySQL 8.4.13 database, `-Dpaspm.test.natural-lease=true`, the c8d778f legacy backend JAR prerequisite, Java 17 Backend and Java 25 SPMF, final class outcomes were:
+
+| Test class | Final result |
+|---|---|
+| `MiningMultiJvmMySqlTest` | 6/6 PASS after rerun with the required inherited `PASPM_MINING_SPMF_JAR` and `PASPM_MINING_JAVA_EXECUTABLE` variables |
+| `MiningSchedulerMultiJvmMySqlTest` | 12/12 PASS |
+| `MiningSchedulerUpgradeCompatibilityMySqlTest` | 5/5 PASS |
+
+The three cases that had been skipped by the prior verifier now passed: natural occurrence-lease expiry after 309 seconds; stale-owner fencing after a natural 384-second wait; and `characterizeTheOldBackendRunningOnTheNewSchema` using the c8d778f legacy JAR. Neither natural-lease test edited timestamps. The initial combined invocation omitted the two SPMF environment variables, causing six unrelated request-submission tests to receive 503; its 17 PASS / 6 FAIL result is retained as a failed configuration attempt. The class-only corrected rerun passed 6/6. Therefore all 23 unique tests have successful corrected class evidence, but no single aggregate 23-test invocation was green.
+
+The previous `scripts/verify-option-b-macos.sh --run` result remains the last complete 24/24-stage verifier. It was not rerun after these test-only additions; the realistic E2E and the corrected multi-JVM class were run independently. Native Windows, authentic FoodMart, and target-server/cgroup/RSS acceptance remain open. Evidence and commands are outside Git in `outputs/evidence/2026-11-17/f05-dense-acceptance/followup/`; its manifest SHA-256 is `fe13ffd0093898d339c63a264a3cf737051ee5de6672624950ae845ddeb58415`.
+
+## Follow-up acceptance — 2026-11-17
+
+This section supersedes the 2026-11-16 deferred status for the dense fixture, 2,000-pattern behavior, output overshoot and JPA clone tests. Historical tables above remain dated evidence and are not rewritten.
+
+### Dense synthetic F04 → F03 → F05 → F06 fixture
+
+On a disposable MySQL 8.4.13 database, the E2E used 4,100 synthetic orders, 18,040 transaction-item rows and 1,559 distinct products (4.4 products/order). F04's existing 10,000 data-row/file limit was preserved by importing two files with 9,840 and 8,200 rows. F03 created a READY snapshot with 18,040 `utility_matrix_item` rows. F05 EFIM completed in 152 ms, persisted 3 patterns and wrote 141 output bytes. F06 consumed the persisted evidence and produced an AVAILABLE Bundle with support count 250.
+
+F03 scale-6/GCD conversion used divisor 10,000,000. Largest converted transaction utility: 5, leaving `2,147,483,642` int32 headroom. Total converted utility: 18,040, leaving `2,147,465,607` headroom. The combined synthetic fixture is 1,371,109 bytes, SHA-256 `80cbb5bb6cae381c5b11e6f81ef234d3c8ad73e4dcd9895aac6324df63bb5102`. Detailed result: `outputs/evidence/2026-11-17/f05-dense-acceptance/dense/foodmart-dense-synthetic-e2e.json` in the project folder, outside Git. This is synthetic acceptance only; authentic FoodMart snapshot dimensions remain unknown.
+
+### Pattern cap and F06 handling
+
+Real SPMF EFIM with a 12-item single-transaction fixture and `minUtil=1` exceeded the configured 2,000-pattern bound. The run failed as `OUTPUT_LIMIT`; partial patterns were not reported as a successful/truncated run. The persisted mining request/run remained FAILED with zero patterns, and F06's evidence reader rejected it with HTTP 409. Focused test methods: `SpmfMiningEngineTest#actualEfimFailsAtThePatternCapInsteadOfReturningTruncatedResults` and `MiningIntegrationTest#durableFailureAndTimeoutStatusesContainNoPartialPatterns`; both passed.
+
+### Output cap and overshoot
+
+The 4 MiB output guard is now backed by a kernel file-size limit in the child process on Linux and macOS. Producers asked to write 4,259,840 bytes and 20,971,520 bytes; both wrote exactly 4,194,304 bytes, with 0-byte overshoot. A direct Linux-container 20,971,520-byte write also stopped at 4,194,304 bytes (writer exit 153 / `SIGXFSZ`). A real EFIM output crossing the limit is classified `OUTPUT_LIMIT`. The cap is unchanged. The 64 KiB process-log poll and non-POSIX fallback remain unchanged; Windows overshoot was not measured.
+
+### JPA clone tests and full verification
+
+`PilotCloneApiIntegrationTest`: 5/5 PASS on a newly provisioned disposable schema; Flyway migration used the disposable container admin because binary logging rejected function creation by the schema-only account, while the test application used the schema-only account. The failed initial migration was discarded with its disposable container; no shared/source DB was used.
+
+One complete `scripts/verify-option-b-macos.sh --run` finished exit 0 with all 24 runner stages PASS. Stages: default Maven 658 discovered / 448 PASS / 210 SKIP; dispatcher flag 6/6; MySQL 72/72; full opt-in 668 discovered / 641 PASS / 27 SKIP; multi-JVM 23 invocations / 20 PASS / 3 SKIP; Flyway fresh V1–V26, V11, restart-identical history, upgrade-preserved data, JPA schema validation and runtime OpenAPI all PASS. The 3 multi-JVM skips were two natural-lease tests requiring `paspm.test.natural-lease` and one legacy-upgrade case requiring `paspm.test.legacy-jar`; these properties were not supplied in that run. The 5 clone API skips in full-opt-in were executed separately and passed 5/5. Skips are not counted as passes.
+
+The database-outage test deliberately injected connection loss and logged database communication errors during recovery; its test passed 1/1. Full logs, Surefire reports, focused output probes and the dense result are under `outputs/evidence/2026-11-17/f05-dense-acceptance/` outside Git; `manifest.json` contains SHA-256 hashes.
+
+### Remaining limitations
+
+- Authentic FoodMart F03 → F05 → F06 remains **NOT RUN**: the available source lacks canonical F04 order grouping plus approved inventory/batch-season evidence.
+- Production target-server/Backend image process cleanup, memory under container limits and peak RSS remain **NOT VERIFIED**. The Linux file-limit probe does not establish deployment acceptance.
+- Hosted GitHub CI remains **NOT RUN** and still depends on the approved SPMF artifact setup.
+- Two natural-lease and one legacy-JAR multi-JVM test methods were skipped in the full verifier's explicit multi-JVM stage; this follow-up does not claim they ran.

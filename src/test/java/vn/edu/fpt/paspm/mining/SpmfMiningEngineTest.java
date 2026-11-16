@@ -16,7 +16,9 @@ class SpmfMiningEngineTest {
         var runner=engine(10000);var a=runner.execute(MiningEngine.Algorithm.HUI_MINER,data(INPUT),30);var b=runner.execute(MiningEngine.Algorithm.EFIM,data(INPUT),30);
         Map<String,Integer> expected=Map.of("2,4",30,"2,5",31,"1,3,5",31,"2,3,4",34,"2,3,5",37,"2,4,5",36,"2,3,4,5",40,"1,2,3,4,5,6",30);
         assertEquals(expected,a.patterns());assertEquals(expected,b.patterns());assertTrue(a.memoryMiB()>0);assertTrue(b.memoryMiB()>0);
-        assertTrue(a.runtimeMillis()>0);assertEquals(a.environment(),b.environment());
+        assertTrue(a.runtimeMillis()>0);
+        assertEquals(a.environment().replaceAll(";outputBytes=[0-9]+$",""),b.environment().replaceAll(";outputBytes=[0-9]+$",""));
+        assertTrue(a.environment().matches(".*;outputBytes=[1-9][0-9]*$"));assertTrue(b.environment().matches(".*;outputBytes=[1-9][0-9]*$"));
         System.out.println("F05_REAL_SPMF HUI="+a+" EFIM="+b);
     }
     @Test void actualZeroUtilityAndEmptyResultsAreValid() throws Exception {
@@ -48,5 +50,23 @@ class SpmfMiningEngineTest {
         var runner=engine(10000);
         for(String out:List.of("1 #UTIL: 999","99 #UTIL: 30","2 4 #UTIL: 30\n4 2 #UTIL: 30","nonsense","1 1 #UTIL: 30","1 #UTIL: -1"))
             assertThrows(SpmfMiningEngine.ExecutionFailure.class,()->runner.parse(out,data(INPUT),30));
+    }
+    @Test void actualEfimFailsAtThePatternCapInsteadOfReturningTruncatedResults() throws Exception {
+        var ids=new StringJoiner(" ");var utilities=new StringJoiner(" ");var products=new LinkedHashMap<Integer,Integer>();
+        for(int id=1;id<=12;id++){ids.add(Integer.toString(id));utilities.add("1");products.put(id,id);}
+        String input=ids+":12:"+utilities+"\n";
+        var dense=new MiningInputBuilder.Dataset(input,MiningInputBuilder.sha(input),products,1,12,1);
+        var capped=new SpmfMiningEngine(JAR.toString(),JAVA,60000,256,2000);
+        var failure=assertThrows(SpmfMiningEngine.ExecutionFailure.class,()->capped.execute(MiningEngine.Algorithm.EFIM,dense,1));
+        assertEquals("OUTPUT_LIMIT",failure.code());
+    }
+    @Test void actualEfimOutputBeyondFourMiBStopsAtTheKernelFileCap() throws Exception {
+        var ids=new StringJoiner(" ");var utilities=new StringJoiner(" ");var products=new LinkedHashMap<Integer,Integer>();
+        for(int id=1;id<=18;id++){ids.add(Integer.toString(id));utilities.add("1");products.put(id,id);}
+        String input=ids+":18:"+utilities+"\n";
+        var dense=new MiningInputBuilder.Dataset(input,MiningInputBuilder.sha(input),products,1,18,1);
+        var capped=new SpmfMiningEngine(JAR.toString(),JAVA,60000,256,2000);
+        var failure=assertThrows(SpmfMiningEngine.ExecutionFailure.class,()->capped.execute(MiningEngine.Algorithm.EFIM,dense,1));
+        assertEquals("OUTPUT_LIMIT",failure.code());
     }
 }

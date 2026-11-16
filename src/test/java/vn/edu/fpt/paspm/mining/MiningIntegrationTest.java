@@ -16,6 +16,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import vn.edu.fpt.paspm.auth.AuthService;
 import vn.edu.fpt.paspm.user.UserRepository;
+import vn.edu.fpt.paspm.recommendation.FrozenEvidenceReader;
 
 @SpringBootTest(properties={"spring.datasource.url=jdbc:h2:mem:mining;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1","spring.datasource.username=sa","spring.datasource.password=","spring.flyway.enabled=true","paspm.jwt-secret=01234567890123456789012345678901","paspm.otp-secret=01234567890123456789012345678901","paspm.bootstrap-email=","paspm.bootstrap-password=","paspm.mining.spmf-jar=${paspm.test.spmf-jar:${user.dir}/../spmf_run/spmf.jar}","paspm.mining.java-executable=${paspm.test.spmf-java:${java.home}/bin/java}","paspm.avatar.directory=/tmp/paspm-test-avatars"})
 @AutoConfigureMockMvc
@@ -350,6 +351,7 @@ class MiningIntegrationTest {
     @Autowired MiningInputBuilder inputBuilder;
     @Autowired org.springframework.transaction.PlatformTransactionManager transactions;
     @Autowired MiningWorker worker;
+    @Autowired FrozenEvidenceReader frozenEvidenceReader;
     @org.springframework.test.context.bean.override.mockito.MockitoSpyBean MiningDispatchLease dispatchLease;
     @Autowired MiningProgressReader progressReader;
     @org.springframework.test.context.bean.override.mockito.MockitoSpyBean SpmfMiningEngine miningEngine;
@@ -454,11 +456,14 @@ class MiningIntegrationTest {
         assertEquals("RUNNING",miningRepository.run(store,run.runId()).status());
     }
     @Test void durableFailureAndTimeoutStatusesContainNoPartialPatterns()throws Exception{
-        for(String code:List.of("SPMF_FAILED","TIMED_OUT")){
+        for(String code:List.of("SPMF_FAILED","TIMED_OUT","OUTPUT_LIMIT")){
             org.mockito.Mockito.doThrow(new SpmfMiningEngine.ExecutionFailure(code,"Safe test failure")).when(miningEngine).execute(org.mockito.ArgumentMatchers.any(),org.mockito.ArgumentMatchers.any(),org.mockito.ArgumentMatchers.anyInt());
             long id=json.readTree(postJson("/api/system/mining/requests",system,payload(UUID.randomUUID().toString())).andExpect(status().isAccepted()).andReturn().getResponse().getContentAsString()).path("requestId").asLong();
             terminal(id);assertEquals("FAILED",miningRepository.find(store,id).view().status());
-            for(var run:miningRepository.runs(store,id)){assertEquals(code.equals("TIMED_OUT")?"TIMED_OUT":"FAILED",run.status());assertEquals(code,run.failureCode());assertEquals(0,miningRepository.patterns(store,run.runId(),0,20).totalElements());}
+            for(var run:miningRepository.runs(store,id)){
+                assertEquals(code.equals("TIMED_OUT")?"TIMED_OUT":"FAILED",run.status());assertEquals(code,run.failureCode());assertEquals(0,miningRepository.patterns(store,run.runId(),0,20).totalElements());
+                if(code.equals("OUTPUT_LIMIT"))assertEquals(409,assertThrows(vn.edu.fpt.paspm.common.ApiException.class,()->frozenEvidenceReader.read(store,run.runId())).status());
+            }
         }
     }
     @Test void comparisonCannotBeRequestedForNewMiningRequests()throws Exception{

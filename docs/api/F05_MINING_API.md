@@ -1,5 +1,7 @@
 # Current contract — 2026-11-16
 
+<a id="current-contract-2026-11-16"></a>
+
 This section supersedes every older contract below where it conflicts. The current backend creates **EFIM-only** mining requests and has no benchmark or algorithm-comparison operation.
 
 | Operation | Current behavior |
@@ -301,7 +303,7 @@ F05 is asynchronous and status-driven: `PENDING` means queued; request terminal 
 | memoryMiB | number/null (double) | Nullable |
 | memoryMethod | string | See state/business rules above |
 | runtimeMethod | string | See state/business rules above |
-| environment | string/null | Nullable |
+| environment | string/null | Nullable; successful SPMF runs include `outputBytes=<actual output file size>` as an additional diagnostic segment. This is metadata within the existing string, not a new response field. |
 | patternCount | integer/null (int32) | Nullable |
 | failureCode | string/null | Nullable |
 | failureMessage | string/null | Nullable |
@@ -568,7 +570,7 @@ The external JAR is not bundled in Git/backend artifact. Verified SPMF Main vers
 
 Hard limits: **20,000 snapshot rows, 1,600 distinct Products, 4 MiB algorithm output, 64 KiB process log**. The prior 256-Product maximum was an application validation, not an EFIM limit; it was raised after a bounded 1,559-Product EFIM benchmark. A snapshot above the product limit is rejected before enqueueing with HTTP 400, `{"error":"Snapshot exceeds 1600 distinct products"}`. A matrix above the row limit is rejected with HTTP 400, `{"error":"Snapshot matrix exceeds mining row limit"}`. These bounds apply to new requests; saved historical requests and their frozen input are unchanged. F06's `FrozenEvidenceReader` uses the same item/row constants when validating a completed run. Numeric overflow rejected before enqueueing. Child commands use ProcessBuilder fixed arguments, never shell concatenation; temp files are cleaned on completion/failure/interruption. No temporary paths are exposed through APIs. Configure database connection/session timestamps consistently, normally UTC (`forceConnectionTimeZoneToSession=true` was used in isolated MySQL QA).
 
-The SPMF output limit is polled while the child runs and checked again after exit; a process can write slightly beyond 4 MiB between checks before it is terminated. The FoodMart `minUtil=1,000` standalone probe reached 4,481,024 bytes and was terminated with OUTPUT_LIMIT. A separate standalone run at `minUtil=10,000` produced 428 patterns / 7,579 output bytes. The disposable-MySQL synthetic scale acceptance also completed a 1,559-Product persisted F03 → F05 → F06 lifecycle; it does not use or claim an authentic FoodMart snapshot. Source-data limitations and detailed evidence are in [the benchmark report](../testing/F05_FOODMART_SCALABILITY_BENCHMARK.md).
+Update 2026-11-17: on Linux and macOS, the SPMF child receives a kernel file-size ceiling of 4 MiB; at the cap the result is failed as `OUTPUT_LIMIT` before any nonzero child exit is classified as generic SPMF failure. A Linux-container probe and a real EFIM output test both stopped at exactly 4,194,304 bytes (0-byte overshoot). The application poll remains as a secondary check; non-POSIX fallback behavior is still polling-based. The separate 64 KiB process-log bound remains polled. A 4,100-order / 18,040-row / 1,559-product **synthetic** F04 → F03 → F05 → F06 lifecycle passed with 3 EFIM patterns; it is not an authentic FoodMart snapshot. Authentic-data and production/hosted-CI limitations remain. See [the benchmark report](../testing/F05_FOODMART_SCALABILITY_BENCHMARK.md) and [Record 013](../record-of-changes/2026-11-17/13-f05-dense-acceptance.md).
 
 The 2026-10-20 P0 correction quotes row_number in V7 and F04 SQL. Fresh MySQL8.4 V1–V9 and F04/F05 regression tests now pass. Existing applied V7 history needs controlled checksum reconciliation; see [V7 recovery](../setup/FLYWAY_MYSQL_V7_RECOVERY.md). No automatic repair or baselining occurs.
 
