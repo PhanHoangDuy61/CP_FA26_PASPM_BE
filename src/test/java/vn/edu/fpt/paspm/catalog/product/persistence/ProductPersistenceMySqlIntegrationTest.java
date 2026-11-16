@@ -22,7 +22,7 @@ class ProductPersistenceMySqlIntegrationTest extends ProductPersistenceIntegrati
 
     @Test void repeatableReadJdbcSnapshotSurvivesIndependentNativeCommit() {
         int id = products.create(store,"RR-SNAPSHOT","Original name",null,"unit",false,
-                BigDecimal.TEN,BigDecimal.ONE,"ACTIVE",0).id();
+                BigDecimal.TEN,BigDecimal.ONE,"ACTIVE").id();
         var repeatableRead = new TransactionTemplate(manager);
         repeatableRead.setIsolationLevel(TransactionDefinition.ISOLATION_REPEATABLE_READ);
         repeatableRead.executeWithoutResult(ignored -> {

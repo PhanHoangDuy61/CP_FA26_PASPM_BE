@@ -79,7 +79,7 @@ class ProductPersistenceIntegrationTest {
         assertEquals(Set.of("ProductEntity", "CategoryEntity"), entities.stream().map(e -> e.getName()).collect(Collectors.toSet()));
         var entity = entities.stream().filter(e -> e.getName().equals("ProductEntity")).findFirst().orElseThrow();
         assertEquals(Set.of("productId", "storeId", "categoryId", "sku", "name", "unit", "requiresExpiry",
-                "sellingPrice", "costPrice", "status", "expiryPushDays"),
+                "sellingPrice", "costPrice", "status"),
                 entity.getAttributes().stream().map(a -> a.getName()).collect(Collectors.toSet()));
         assertTrue(entity.getAttributes().stream().noneMatch(a -> a.isAssociation() || a.isCollection()));
     }
@@ -109,7 +109,7 @@ class ProductPersistenceIntegrationTest {
         assertEquals(inserts + 1, statistics.getEntityInsertCount());
         long updates = statistics.getEntityUpdateCount();
         assertTrue(products.update(store,id,"JPA-WRITER","Updated",null,"unit",false,
-                BigDecimal.TEN,BigDecimal.ONE,"ACTIVE",0));
+                BigDecimal.TEN,BigDecimal.ONE,"ACTIVE"));
         assertEquals(updates + 1, statistics.getEntityUpdateCount());
     }
 
@@ -170,7 +170,7 @@ class ProductPersistenceIntegrationTest {
         transaction().executeWithoutResult(ignored -> {
             managed(id);
             assertTrue(products.update(store,id,"EXISTING-COMMIT","Committed name",null,"unit",false,
-                    new BigDecimal("12.34"),new BigDecimal("2.00"),"ACTIVE",0));
+                    new BigDecimal("12.34"),new BigDecimal("2.00"),"ACTIVE"));
             batches.update(batch,4,null);
             assertEquals("Committed name",products.find(store,id).name());
             assertEquals(4,batches.find(store,batch).remainingQuantity());
@@ -184,7 +184,7 @@ class ProductPersistenceIntegrationTest {
         assertThrows(IllegalStateException.class,() -> transaction().executeWithoutResult(ignored -> {
             managed(id);
             assertTrue(products.update(store,id,"EXISTING-ROLLBACK","Must roll back",null,"unit",false,
-                    new BigDecimal("12.34"),new BigDecimal("2.00"),"ACTIVE",0));
+                    new BigDecimal("12.34"),new BigDecimal("2.00"),"ACTIVE"));
             batches.update(batch,4,null);
             assertEquals("Must roll back",products.find(store,id).name());
             assertEquals(4,batches.find(store,batch).remainingQuantity());
@@ -193,19 +193,15 @@ class ProductPersistenceIntegrationTest {
         assertCommittedProductAndBatch(id,batch,"Product",9);
     }
 
-    @Test void metadataUpdatesFlushBeforeJdbcReadbackAndPreserveNativeScoresAndInventory() {
+    @Test void metadataUpdatesFlushBeforeJdbcReadbackAndPreserveInventory() {
         int id = create("SCORES").id();
         batches.create(id, "scores", Instant.now(), null, 8);
         transaction().executeWithoutResult(ignored -> {
             managed(id);
-            jdbc.update("UPDATE product SET stock_priority_score=0.123456,seasonal_priority_score=0.654321 WHERE product_id=?", id);
             assertTrue(products.update(store,id," SCORES "," Changed ",null," item ",false,
-                    new BigDecimal("99.99"),new BigDecimal("1.25"),"ACTIVE",5));
+                    new BigDecimal("99.99"),new BigDecimal("1.25"),"ACTIVE"));
             assertEquals("Changed", products.find(store,id).name());
-            assertEquals(5, products.find(store,id).expiryPushDays());
         });
-        assertEquals(new BigDecimal("0.123456"), jdbc.queryForObject("SELECT stock_priority_score FROM product WHERE product_id=?", BigDecimal.class,id));
-        assertEquals(new BigDecimal("0.654321"), jdbc.queryForObject("SELECT seasonal_priority_score FROM product WHERE product_id=?", BigDecimal.class,id));
         assertEquals(8, products.find(store,id).stockQuantity());
     }
 
@@ -222,43 +218,38 @@ class ProductPersistenceIntegrationTest {
         });
     }
 
-    @Test void repeatedConcurrentNativeScoresAndPriceSurviveStatusWritesFromStaleJpaState() {
+    @Test void repeatedConcurrentNativePriceSurvivesStatusWritesFromStaleJpaState() {
         for (int attempt = 0; attempt < 5; attempt++) {
             int id = create("CONCURRENT-STATUS-" + attempt).id();
             BigDecimal price = new BigDecimal("456.78");
             transaction().executeWithoutResult(ignored -> {
                 managed(id);
                 CompletableFuture.runAsync(() -> {
-                    // Native write to the retained (unused since W2) product score columns.
-                    assertEquals(1,jdbc.update("UPDATE product SET stock_priority_score=?,seasonal_priority_score=? WHERE store_id=? AND product_id=?",
-                            new BigDecimal("0.123456"),new BigDecimal("0.654321"),store,id));
                     jdbc.update("UPDATE product SET selling_price=? WHERE product_id=?",price,id);
                 }).orTimeout(5,TimeUnit.SECONDS).join();
                 assertTrue(products.updateStatus(store,id,"INACTIVE"));
             });
             assertEquals(price,products.find(store,id).sellingPrice());
             assertEquals("INACTIVE",products.find(store,id).status());
-            assertEquals(new BigDecimal("0.123456"),jdbc.queryForObject("SELECT stock_priority_score FROM product WHERE product_id=?",BigDecimal.class,id));
-            assertEquals(new BigDecimal("0.654321"),jdbc.queryForObject("SELECT seasonal_priority_score FROM product WHERE product_id=?",BigDecimal.class,id));
         }
     }
 
-    @Test void repeatedConcurrentF03ScoreWritesSurviveJpaMetadataUpdates() {
+    /** V26 dropped the only product columns JPA did not own; the concurrent native write now targets the product's batch. */
+    @Test void repeatedConcurrentInventoryWritesSurviveJpaMetadataUpdates() {
         for (int attempt = 0; attempt < 5; attempt++) {
             int id = create("CONCURRENT-METADATA-" + attempt).id();
+            int batch = batches.create(id, "concurrent-" + attempt, Instant.now(), null, 9).id();
             transaction().executeWithoutResult(ignored -> {
                 managed(id);
                 CompletableFuture.runAsync(() -> {
-                    // Native write to the retained (unused since W2) product score columns.
-                    assertEquals(1,jdbc.update("UPDATE product SET stock_priority_score=?,seasonal_priority_score=? WHERE store_id=? AND product_id=?",
-                            new BigDecimal("0.777777"),new BigDecimal("0.222222"),store,id));
+                    assertEquals(1,jdbc.update("UPDATE inventory_batch SET remaining_quantity=4 WHERE batch_id=?",batch));
                 }).orTimeout(5,TimeUnit.SECONDS).join();
                 assertTrue(products.update(store,id,"CONCURRENT-METADATA-UPDATED-"+id,"Updated",null,"unit",false,
-                        BigDecimal.TEN,BigDecimal.ONE,"ACTIVE",7));
+                        BigDecimal.TEN,BigDecimal.ONE,"ACTIVE"));
                 assertEquals("Updated",products.find(store,id).name());
             });
-            assertEquals(new BigDecimal("0.777777"),jdbc.queryForObject("SELECT stock_priority_score FROM product WHERE product_id=?",BigDecimal.class,id));
-            assertEquals(new BigDecimal("0.222222"),jdbc.queryForObject("SELECT seasonal_priority_score FROM product WHERE product_id=?",BigDecimal.class,id));
+            assertEquals(4,jdbc.queryForObject("SELECT remaining_quantity FROM inventory_batch WHERE batch_id=?",Integer.class,batch));
+            assertEquals(4,products.find(store,id).stockQuantity());
         }
     }
 
@@ -273,7 +264,7 @@ class ProductPersistenceIntegrationTest {
             jdbc.update("UPDATE product SET name='Second native name',unit='box' WHERE product_id=?",id);
             // These requested values equal the stale managed snapshot. Refresh must still restore them in SQL.
             assertTrue(products.update(store,id,"STALE","Native name",null,"unit",false,
-                    new BigDecimal("12.34"),new BigDecimal("2.00"),"ACTIVE",0));
+                    new BigDecimal("12.34"),new BigDecimal("2.00"),"ACTIVE"));
             assertEquals("Native name",products.find(store,id).name());
             assertEquals("unit",products.find(store,id).unit());
         });
@@ -283,7 +274,7 @@ class ProductPersistenceIntegrationTest {
         int id = create("UNIQUE").id();
         assertFalse(products.updateStatus(store+1,id,"INACTIVE"));
         assertFalse(products.update(store+1,id,"UNIQUE","Foreign",null,"unit",false,
-                BigDecimal.ONE,BigDecimal.ONE,"ACTIVE",0));
+                BigDecimal.ONE,BigDecimal.ONE,"ACTIVE"));
         assertEquals("Product",products.find(store,id).name());
         assertThrows(DataIntegrityViolationException.class, () -> create("UNIQUE"));
         assertEquals("ACTIVE",products.find(store,id).status());
@@ -297,7 +288,7 @@ class ProductPersistenceIntegrationTest {
         int foreignCategory = jdbc.queryForObject("SELECT category_id FROM category WHERE store_id=?",Integer.class,foreignStore);
         int before = jdbc.queryForObject("SELECT COUNT(*) FROM product WHERE store_id=?",Integer.class,store);
         assertThrows(DataIntegrityViolationException.class,() -> products.create(store,"FOREIGN-CATEGORY",
-                "Rejected product",foreignCategory,"unit",false,BigDecimal.TEN,BigDecimal.ONE,"ACTIVE",0));
+                "Rejected product",foreignCategory,"unit",false,BigDecimal.TEN,BigDecimal.ONE,"ACTIVE"));
         assertEquals(before,jdbc.queryForObject("SELECT COUNT(*) FROM product WHERE store_id=?",Integer.class,store));
         assertEquals(0,jdbc.queryForObject("SELECT COUNT(*) FROM product WHERE store_id=? AND sku='FOREIGN-CATEGORY'",Integer.class,store));
     }
@@ -324,7 +315,7 @@ class ProductPersistenceIntegrationTest {
 
     private vn.edu.fpt.paspm.catalog.CatalogContracts.ProductView create(String sku) {
         return products.create(store,sku," Product ",null," unit ",false,new BigDecimal("12.34"),
-                new BigDecimal("2.00"),"ACTIVE",0);
+                new BigDecimal("2.00"),"ACTIVE");
     }
 
     private TransactionTemplate transaction() { return new TransactionTemplate(manager); }

@@ -19,7 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import vn.edu.fpt.paspm.auth.AuthService;
 import vn.edu.fpt.paspm.user.UserRepository;
 
-/** Replaces the v1.2 binary-threshold test: Q1 push day per batch (F02), P5 deprecated expiryPushDays, W2 expiry-push lists. */
+/** Replaces the v1.2 binary-threshold test: Q1 push day per batch (F02), product expiryPushDays removed (DEC-20261116-02), W2 expiry-push lists. */
 @SpringBootTest(properties={
     "spring.datasource.url=jdbc:h2:mem:pushday;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1",
     "spring.datasource.username=sa","spring.datasource.password=","spring.flyway.enabled=true",
@@ -46,7 +46,7 @@ class PushDayIntegrationTest {
         foreign=token("STORE_ADMIN",other);system=token("SYSTEM_ADMIN",null);
         jdbc.update("UPDATE system_configuration SET config_value=? WHERE config_key='UTILITY_LAMBDA_POLICY'","{\"scoringVersion\":\"W2_EXPIRY_SEASON_V1\",\"lambdaMax\":0.5}");
         product=json.readTree(mvc.perform(post("/api/products").header("Authorization","Bearer "+admin)
-            .contentType(MediaType.APPLICATION_JSON).content(productBody("7")))
+            .contentType(MediaType.APPLICATION_JSON).content(productBody(null)))
             .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString()).path("id").asInt();
     }
 
@@ -68,15 +68,16 @@ class PushDayIntegrationTest {
         mvc.perform(get("/api/products/{id}/batches",product).header("Authorization","Bearer "+admin)).andExpect(status().isOk()).andExpect(jsonPath("$[0].pushDay").exists());
     }
 
-    @Test void productExpiryPushDaysIsStillAcceptedButIgnoredByScoring() throws Exception {
-        updateThreshold("3").andExpect(status().isOk()).andExpect(jsonPath("$.expiryPushDays").value(3));
-        updateThreshold("null").andExpect(status().isOk()).andExpect(jsonPath("$.expiryPushDays").value(0));
-        updateThreshold("-1").andExpect(status().isBadRequest());
+    @Test void productExpiryPushDaysIsRejectedAndScoringUsesBatchPushDays() throws Exception {
+        // Removed from the product contract on 2026-11-16 (DEC-20261116-02): any value, even null, is an unknown field.
+        for(String value:new String[]{"3","null","0","-1"})updateThreshold(value).andExpect(status().isBadRequest());
+        mvc.perform(put("/api/products/{id}",product).header("Authorization","Bearer "+admin).contentType(MediaType.APPLICATION_JSON).content(productBody(null)))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.expiryPushDays").doesNotExist());
         configure();transaction(30);
         batch("SOON",day.plusDays(20),day.plusDays(1),10,"ACTIVE");
         var before=preview().path("items").get(0).path("weightValue").decimalValue();
-        updateThreshold("99").andExpect(status().isOk());
-        assertEquals(0,before.compareTo(preview().path("items").get(0).path("weightValue").decimalValue()),"expiryPushDays is ignored");
+        updateThreshold("99").andExpect(status().isBadRequest());
+        assertEquals(0,before.compareTo(preview().path("items").get(0).path("weightValue").decimalValue()),"a rejected request changes nothing");
     }
 
     @Test void expiryPushListsUsePushDaysWarnForMissingOnesAndKeepRbac() throws Exception {
@@ -105,17 +106,19 @@ class PushDayIntegrationTest {
             .andExpect(jsonPath("$.items[0].pushRequired").value(true));
     }
 
-    @Test void openApiMarksDeprecatedFieldsAndPublishesPushDay() throws Exception {
+    @Test void openApiDropsTheRemovedFieldsAndRoutesAndPublishesPushDay() throws Exception {
         mvc.perform(get("/v3/api-docs")).andExpect(status().isOk())
-            .andExpect(jsonPath("$.components.schemas.ProductRequest.properties.expiryPushDays.deprecated").value(true))
+            .andExpect(jsonPath("$.components.schemas.ProductRequest.properties.expiryPushDays").doesNotExist())
+            .andExpect(jsonPath("$.components.schemas.ProductView.properties.expiryPushDays").doesNotExist())
             .andExpect(jsonPath("$.components.schemas.BatchCreateRequest.properties.pushDay").exists())
             .andExpect(jsonPath("$.components.schemas.BatchPatchRequest.properties.pushDay").exists())
             .andExpect(jsonPath("$.components.schemas.BatchView.properties.pushDay").exists())
             .andExpect(jsonPath("$.paths['/api/inventory-batches/{id}/push-day'].delete").exists())
             .andExpect(jsonPath("$.components.schemas.RecView.properties.seasonEnded").exists())
             .andExpect(jsonPath("$.components.schemas.RecView.properties.endedSeasons").exists())
-            .andExpect(jsonPath("$.paths['/api/utility/products/{productId}/scores'].patch.deprecated").value(true))
-            .andExpect(jsonPath("$.paths['/api/utility/config/expiry-window'].put.deprecated").value(true));
+            .andExpect(jsonPath("$.paths['/api/utility/products/{productId}/scores'].get").exists())
+            .andExpect(jsonPath("$.paths['/api/utility/products/{productId}/scores'].patch").doesNotExist())
+            .andExpect(jsonPath("$.paths['/api/utility/config/expiry-window']").doesNotExist());
     }
 
     @Test void inactiveHistoricalProductWarningIsFrozenEvenWhenExpiryIsNotApplicable() throws Exception {
@@ -201,8 +204,9 @@ class PushDayIntegrationTest {
     org.springframework.test.web.servlet.ResultActions updateThreshold(String days) throws Exception {
         return mvc.perform(put("/api/products/{id}",product).header("Authorization","Bearer "+admin).contentType(MediaType.APPLICATION_JSON).content(productBody(days)));
     }
+    /** @param days null for the current contract; any other value adds the removed legacy field. */
     String productBody(String days) {
-        return "{\"sku\":\"MILK\",\"name\":\"Milk\",\"unit\":\"bottle\",\"requiresExpiry\":true,\"sellingPrice\":100,\"costPrice\":20,\"status\":\"ACTIVE\",\"expiryPushDays\":"+days+"}";
+        return "{\"sku\":\"MILK\",\"name\":\"Milk\",\"unit\":\"bottle\",\"requiresExpiry\":true,\"sellingPrice\":100,\"costPrice\":20,\"status\":\"ACTIVE\""+(days==null?"":",\"expiryPushDays\":"+days)+"}";
     }
     int store() {jdbc.update("INSERT INTO store(name) VALUES (?)","PushDay "+UUID.randomUUID());return jdbc.queryForObject("SELECT MAX(store_id) FROM store",Integer.class);}
     String token(String role,Integer storeId) {

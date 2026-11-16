@@ -233,7 +233,7 @@ class MiningIntegrationTest {
         }
         assertEquals(8,jdbc.queryForObject("SELECT COUNT(*) FROM high_utility_pattern p JOIN mining_run r ON r.run_id=p.run_id WHERE r.request_id=?",Integer.class,id));
         String before=request.path("inputHash").asText();
-        jdbc.update("UPDATE product SET expiry_push_days=99,stock_priority_score=0.9,seasonal_priority_score=0.8,selling_price=999 WHERE store_id=?",store);
+        jdbc.update("UPDATE product SET selling_price=999 WHERE store_id=?",store);
         // W2: change the live Store config and add an active season; the frozen request input must not change.
         var changedConfig=new vn.edu.fpt.paspm.utility.UtilityVersionedContracts.WeightV2(new java.math.BigDecimal("0.5"),new java.math.BigDecimal("0.5"),new java.math.BigDecimal("0.5"),30,2,"W2_EXPIRY_SEASON_V1");
         jdbc.update("UPDATE store SET utility_config=? WHERE store_id=?",json.writeValueAsString(changedConfig),store);

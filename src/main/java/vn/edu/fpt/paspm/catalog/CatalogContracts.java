@@ -1,8 +1,6 @@
 package vn.edu.fpt.paspm.catalog;
 
 import java.math.BigDecimal;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import vn.edu.fpt.paspm.common.StrictIntegerDeserializer;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
@@ -33,17 +31,14 @@ public final class CatalogContracts {
             @NotNull Boolean requiresExpiry,
             @NotNull @PositiveOrZero BigDecimal sellingPrice,
             @NotNull @PositiveOrZero BigDecimal costPrice,
-            @NotBlank @Schema(allowableValues = {"ACTIVE", "INACTIVE"}) String status,
-            @PositiveOrZero @JsonDeserialize(using=StrictIntegerDeserializer.class)
-            @Schema(deprecated=true, description="Deprecated since W2_EXPIRY_SEASON_V1 (P5): still accepted and stored, but ignored by every calculation. Use inventory batch pushDay", minimum="0", example="7") Integer expiryPushDays) {}
+            @NotBlank @Schema(allowableValues = {"ACTIVE", "INACTIVE"}) String status) {}
 
     public record ProductView(
             int id, String sku, String name, String unit, boolean requiresExpiry,
             CategoryView category, BigDecimal sellingPrice, BigDecimal costPrice,
             String status,
             @Schema(accessMode = Schema.AccessMode.READ_ONLY,
-                    description = "Derived sum of inventory batch remainingQuantity values") long stockQuantity,
-            @Schema(deprecated = true, description = "Deprecated (P5): stored but ignored by W2 scoring") int expiryPushDays) {}
+                    description = "Derived sum of inventory batch remainingQuantity values") long stockQuantity) {}
 
     public record ProductPage(List<ProductView> content, int page, int pageSize,
                               long totalElements, int totalPages) {}

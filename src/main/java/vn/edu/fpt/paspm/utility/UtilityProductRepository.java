@@ -10,9 +10,10 @@ import vn.edu.fpt.paspm.common.ApiException;
 
 @Repository
 public class UtilityProductRepository {
-    public record Product(int id,boolean requiresExpiry,BigDecimal stockScore,BigDecimal seasonalScore,int expiryPushDays,String status) {}
-    private static final String COLUMNS="product_id,requires_expiry,stock_priority_score,seasonal_priority_score,expiry_push_days,status";
-    private final RowMapper<Product> mapper=(rs,row)->new Product(rs.getInt(1),rs.getBoolean(2),rs.getBigDecimal(3),rs.getBigDecimal(4),rs.getInt(5),rs.getString(6));
+    /** Live product facts used by W2 scoring and F06 eligibility. The legacy scoring columns were dropped by V26. */
+    public record Product(int id,boolean requiresExpiry,String status) {}
+    private static final String COLUMNS="product_id,requires_expiry,status";
+    private final RowMapper<Product> mapper=(rs,row)->new Product(rs.getInt(1),rs.getBoolean(2),rs.getString(3));
     private final JdbcTemplate jdbc;
     public UtilityProductRepository(JdbcTemplate jdbc) { this.jdbc=jdbc; }
     public Product product(int storeId,int id) {
@@ -20,7 +21,7 @@ public class UtilityProductRepository {
             .stream().findFirst().orElseThrow(()->new ApiException(404,"Product not found"));
     }
     public List<Product> pushCandidates(int storeId,Integer productId) {
-        // W2: push days live on batches; Product.expiryPushDays is ignored (P5).
+        // W2: push days live on inventory batches.
         String sql="SELECT "+COLUMNS+" FROM product WHERE store_id=? AND status='ACTIVE' AND requires_expiry=TRUE";
         return productId==null?jdbc.query(sql+" ORDER BY product_id",mapper,storeId)
             :jdbc.query(sql+" AND product_id=?",mapper,storeId,productId);

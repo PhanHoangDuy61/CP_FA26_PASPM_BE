@@ -235,8 +235,7 @@ def ensure_customer():
     summary["END_CUSTOMER"] = "created through self-registration and OTP"
 
 
-ROW = re.compile(r"^\((\d+),\s*(\d+),\s*'([^']*)',\s*'([^']*)',\s*'([^']*)',\s*([01]),\s*([\d.]+),\s*([\d.]+),\s*'(ACTIVE|INACTIVE)',"
-                 r"\s*(NULL|[\d.]+),\s*(NULL|[\d.]+),\s*(\d+)\)[,;]?\s*$")
+ROW = re.compile(r"^\((\d+),\s*(\d+),\s*'([^']*)',\s*'([^']*)',\s*'([^']*)',\s*([01]),\s*([\d.]+),\s*([\d.]+),\s*'(ACTIVE|INACTIVE)'\)[,;]?\s*$")
 
 
 def read_products():
@@ -247,7 +246,6 @@ def read_products():
             products.append({
                 "sku": m.group(3), "name": m.group(4), "unit": m.group(5), "requiresExpiry": m.group(6) == "1",
                 "sellingPrice": m.group(7), "costPrice": m.group(8), "status": m.group(9),
-                "expiryPushDays": int(m.group(12)),
             })
     if not products:
         sys.exit(f"ERROR: no product rows parsed from {DATA / PRODUCT_SQL}")

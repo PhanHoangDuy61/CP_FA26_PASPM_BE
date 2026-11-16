@@ -134,16 +134,21 @@ class LegacyReaderMySqlTest {
  static UtilityMatrixContracts.MatrixItem row(int tx,int product,int utility,int total) {
   return new UtilityMatrixContracts.MatrixItem(tx,product,product,1,BigDecimal.valueOf(utility),null,null,null,"NOT_APPLICABLE",BigDecimal.ONE,BigDecimal.valueOf(utility),BigDecimal.valueOf(total),null,null,null,null);
  }
+ static final List<String> V26_DROPPED=List.of("expiry_push_days","stock_priority_score","seasonal_priority_score");
  final Map<String,String> canonicalColumns=new TreeMap<>();
  Map<String,String> fingerprints(MySqlTestDatabase db,boolean archived)throws Exception {
   var result=new TreeMap<String,String>();
   try(var c=LegacyRecoveryMySqlTest.connect(db)) {
    for(String table:List.of("store","product","category","inventory_batch")) {
     if(!canonicalColumns.containsKey(table))try(var statement=c.createStatement();var rows=statement.executeQuery("SELECT * FROM "+table+" WHERE 1=0")) {
-     // V25 (W2) rewrites the live store.utility_config by owner decision 2026-11-15; every other column must stay identical.
-     var columns=new ArrayList<String>();for(int i=1;i<=rows.getMetaData().getColumnCount();i++)if(!(table.equals("store")&&rows.getMetaData().getColumnName(i).equalsIgnoreCase("utility_config")))columns.add(rows.getMetaData().getColumnName(i));canonicalColumns.put(table,String.join(",",columns));
+     // V25 (W2) rewrites the live store.utility_config by owner decision 2026-11-15, and V26 drops the three legacy
+     // product columns by owner decision 2026-11-16 (DEC-20261116-02); every other column must stay identical.
+     var columns=new ArrayList<String>();for(int i=1;i<=rows.getMetaData().getColumnCount();i++){String name=rows.getMetaData().getColumnName(i);if(!(table.equals("store")&&name.equalsIgnoreCase("utility_config"))&&!(table.equals("product")&&V26_DROPPED.contains(name.toLowerCase(java.util.Locale.ROOT))))columns.add(name);}canonicalColumns.put(table,String.join(",",columns));
     }
     result.put(table,LegacyDataset.hash(c,"SELECT "+canonicalColumns.get(table)+" FROM "+table+" ORDER BY 1"));
+   }
+   if(archived)try(var statement=c.createStatement();var rows=statement.executeQuery("SELECT * FROM product WHERE 1=0")) {
+    for(int i=1;i<=rows.getMetaData().getColumnCount();i++)assertFalse(V26_DROPPED.contains(rows.getMetaData().getColumnName(i).toLowerCase(java.util.Locale.ROOT)),"V26 drops "+rows.getMetaData().getColumnName(i));
    }
    result.put("utility_snapshot",LegacyDataset.hash(c,"SELECT "+LegacyDataset.SNAPSHOT_COLUMNS+" FROM utility_snapshot ORDER BY snapshot_id"));
    result.put("utility_matrix_item",LegacyDataset.hash(c,"SELECT "+LegacyDataset.MATRIX_COLUMNS+" FROM "+(archived?"utility_matrix_item_legacy_v5":"utility_matrix_item")+" ORDER BY matrix_item_id"));

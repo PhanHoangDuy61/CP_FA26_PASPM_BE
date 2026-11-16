@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.oauth2.jwt.Jwt;
 import vn.edu.fpt.paspm.catalog.CatalogAccess;
-import vn.edu.fpt.paspm.common.ApiException;
 import vn.edu.fpt.paspm.utility.UtilityContracts.*;
 
 /** Current (not frozen) W2 preview for one product on the Store-local today. */
@@ -41,8 +40,5 @@ public class ProductScoreService {
         return new Scores(id,result.expiry().score(),result.season().weight(),result.season().seasonId(),weight,result.expiry().status(),
             result.expiry().evidence(),result.expiry().batchesMissingPushDay(),seasons,date,timeZone.id(),config.version(),config.scoringVersion(),
             lambdaValid,weight!=null,List.copyOf(warnings));
-    }
-    public Scores removedPatch() {
-        throw new ApiException(410,"Manual stock and seasonal scores were removed; assign the product to a season instead (PUT /api/utility/seasons/{seasonId}/products/{productId})");
     }
 }

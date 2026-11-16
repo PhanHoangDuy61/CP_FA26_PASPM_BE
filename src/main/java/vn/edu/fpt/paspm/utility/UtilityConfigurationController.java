@@ -6,7 +6,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
-import vn.edu.fpt.paspm.common.ApiException;
 import vn.edu.fpt.paspm.utility.UtilityContracts.*;
 import vn.edu.fpt.paspm.utility.UtilityVersionedContracts.LambdaV2;
 
@@ -27,8 +26,4 @@ public class UtilityConfigurationController {
     @Operation(summary="Merchandiser sets alpha (expiry) + beta (season) = 1, lambda in [0, lambdaMax] and the sales window N",
         description="400 when alpha + beta != 1 or lambda is outside [0, lambdaMax]. Removed fields (enableStock/enableExpiry/enableSeason/gamma) are rejected as unknown.")
     public ConfigView config(@AuthenticationPrincipal Jwt jwt,@Valid @RequestBody WeightUpdate request) { return service.weights(jwt,request); }
-    @PutMapping("/api/utility/config/expiry-window") @PreAuthorize("hasRole('STORE_ADMIN')")
-    @Deprecated
-    @Operation(deprecated=true,summary="Removed: always 410 Gone",description="W2_EXPIRY_SEASON_V1 uses inventory_batch.pushDay entered by the Store Admin on each batch.")
-    public ConfigView expiry() { throw new ApiException(410,"The Store expiry window was removed; set pushDay on each inventory batch"); }
 }

@@ -61,7 +61,7 @@ class CategoryPersistenceIntegrationTest {
     int newStore(){jdbc.update("INSERT INTO store(name) VALUES (?)",UUID.randomUUID().toString());return jdbc.queryForObject("SELECT MAX(store_id) FROM store",Integer.class);}
     TransactionTemplate transaction(){return new TransactionTemplate(manager);}
     Class<?> categoryClass(){return emf.getMetamodel().getEntities().stream().filter(e->e.getName().equals("CategoryEntity")).findFirst().orElseThrow().getJavaType();}
-    int product(int category){return products.create(store,"CAT-"+UUID.randomUUID(),"Product",category,"each",false,BigDecimal.TEN,BigDecimal.ONE,"ACTIVE",0).id();}
+    int product(int category){return products.create(store,"CAT-"+UUID.randomUUID(),"Product",category,"each",false,BigDecimal.TEN,BigDecimal.ONE,"ACTIVE").id();}
     String token(int owner,String role){var u=users.createPendingUser("Synthetic category",UUID.randomUUID()+"@example.test",role,owner,null,null);jdbc.update("UPDATE app_user SET status='ACTIVE',email_verified_at=CURRENT_TIMESTAMP WHERE user_id=?",u.id());return auth.token(users.findById(u.id())).accessToken();}
 
     @Test void categoryMappingOwnsOnlyScalarMetadataWithoutCascade(){
@@ -128,18 +128,16 @@ class CategoryPersistenceIntegrationTest {
             try(var rows=statement.executeQuery()){assertTrue(rows.next());assertEquals(0,rows.getInt(1));}
         }
     }
-    @Test void rollbackRestoresExistingCategoryProductInventoryAndScores(){
+    @Test void rollbackRestoresExistingCategoryProductAndInventory(){
         int category=categories.create(store,"Before","ACTIVE").id();int product=product(category);
         int batch=batches.create(product,"Existing batch",Instant.now(),null,8).id();
-        jdbc.update("UPDATE product SET stock_priority_score=.8,seasonal_priority_score=.9 WHERE product_id=?",product);
         transaction().executeWithoutResult(status->{
             categories.update(store,category,"Transient","INACTIVE");
             products.updateStatus(store,product,"INACTIVE");batches.update(batch,2,null);status.setRollbackOnly();
         });
         assertEquals("Before",categories.find(store,category).name());assertEquals("ACTIVE",products.find(store,product).status());
         assertEquals(8,products.find(store,product).stockQuantity());
-        assertEquals(0,new BigDecimal("0.8").compareTo(jdbc.queryForObject("SELECT stock_priority_score FROM product WHERE product_id=?",BigDecimal.class,product)));
-        assertEquals(0,new BigDecimal("0.9").compareTo(jdbc.queryForObject("SELECT seasonal_priority_score FROM product WHERE product_id=?",BigDecimal.class,product)));
+        assertEquals(8,batches.find(store,batch).remainingQuantity(),"rolled-back batch write is not visible");
     }
     @Test void dtoReadsObserveNativeCategoryEditsEvenWithStaleManagedEntity(){
         int category=categories.create(store,"Original","ACTIVE").id();
@@ -188,7 +186,7 @@ class CategoryPersistenceIntegrationTest {
         assertEquals(category,products.find(store,product).category().id());assertEquals("Renamed referenced",products.find(store,product).category().name());
         assertEquals("ACTIVE",products.find(store,product).status());assertEquals(4,products.find(store,product).stockQuantity());
         int otherCategory=categories.create(foreign,"Foreign","ACTIVE").id();
-        assertThrows(DataIntegrityViolationException.class,()->products.update(store,product,"NEW-SKU","Product",otherCategory,"each",false,BigDecimal.TEN,BigDecimal.ONE,"ACTIVE",0));
+        assertThrows(DataIntegrityViolationException.class,()->products.update(store,product,"NEW-SKU","Product",otherCategory,"each",false,BigDecimal.TEN,BigDecimal.ONE,"ACTIVE"));
     }
     @Test void invalidPersistenceValuesStillFailConstraints(){
         assertThrows(org.springframework.dao.DataAccessException.class,()->categories.create(store,"Bad status","ARCHIVED"));

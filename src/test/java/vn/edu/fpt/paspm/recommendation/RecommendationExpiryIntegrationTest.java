@@ -86,8 +86,10 @@ class RecommendationExpiryIntegrationTest {
     }
     int store(){jdbc.update("INSERT INTO store(name) VALUES (?)","Expiry "+UUID.randomUUID());return jdbc.queryForObject("SELECT MAX(store_id) FROM store",Integer.class);}
     String token(String role,Integer storeId){var u=users.createPendingUser("Expiry",UUID.randomUUID()+"@example.test",role,storeId,"unused-test-hash",null);jdbc.update("UPDATE app_user SET status='ACTIVE',email_verified_at=CURRENT_TIMESTAMP WHERE user_id=?",u.id());return auth.token(users.findById(u.id())).accessToken();}
-    int product(int t,boolean expiry,String status){String sku=UUID.randomUUID().toString();jdbc.update("INSERT INTO product(store_id,sku,name,unit,requires_expiry,selling_price,cost_price,status,expiry_push_days) VALUES (?,?,?,'unit',?,100,20,?,?)",store,sku,"Expiry",expiry,status,t);return jdbc.queryForObject("SELECT product_id FROM product WHERE store_id=? AND sku=?",Integer.class,store,sku);}
+    // Test-local threshold t per product (the product column was dropped by V26); push day = expiry - t keeps the old equivalence.
+    final java.util.Map<Integer,Integer> thresholds=new java.util.HashMap<>();
+    int product(int t,boolean expiry,String status){String sku=UUID.randomUUID().toString();jdbc.update("INSERT INTO product(store_id,sku,name,unit,requires_expiry,selling_price,cost_price,status) VALUES (?,?,?,'unit',?,100,20,?)",store,sku,"Expiry",expiry,status);int id=jdbc.queryForObject("SELECT product_id FROM product WHERE store_id=? AND sku=?",Integer.class,store,sku);thresholds.put(id,t);return id;}
     int batch(int p,Integer days,int quantity,String status,int receivedAgo){String code=UUID.randomUUID().toString();// W2 equivalent of the old product threshold t: push day = expiry - t (due when expiry - today <= t).
-        int t=jdbc.queryForObject("SELECT expiry_push_days FROM product WHERE product_id=?",Integer.class,p);
+        int t=thresholds.getOrDefault(p,0);
         jdbc.update("INSERT INTO inventory_batch(product_id,batch_code,received_at,expiry_date,initial_quantity,remaining_quantity,status,push_day) VALUES (?,?,?,?,?,?,?,?)",p,code,java.sql.Timestamp.from(day.minusDays(receivedAgo).atStartOfDay(ZoneId.of(zone.id())).toInstant()),days==null?null:day.plusDays(days),Math.max(1,quantity),quantity,status,days==null?null:day.plusDays(days).minusDays(t));return jdbc.queryForObject("SELECT batch_id FROM inventory_batch WHERE product_id=? AND batch_code=?",Integer.class,p,code);}
 }

@@ -71,9 +71,8 @@ class F03F05RbacMatrixTest {
         r.add(new Route(HttpMethod.PUT, "/api/system/utility/lambda-policy", "{\"lambdaMax\":1}", admin));
         r.add(new Route(HttpMethod.GET, "/api/utility/config", null, stores));
         r.add(new Route(HttpMethod.PUT, "/api/utility/config", WEIGHTS, merch));
-        r.add(new Route(HttpMethod.PUT, "/api/utility/config/expiry-window", "{\"expiryWindowDays\":7}", storeAdmin));
         r.add(new Route(HttpMethod.GET, "/api/utility/products/" + product + "/scores", null, stores));
-        r.add(new Route(HttpMethod.PATCH, "/api/utility/products/" + product + "/scores", "{\"stockPriorityScore\":0.5}", merch)); // 410 Gone for the Merchandiser
+        // PUT /api/utility/config/expiry-window and PATCH .../scores were deleted on 2026-11-16 (DEC-20261116-03); see LegacyProductFieldsRemovedTest.
         // F03 W2 seasons: Merchandiser writes, Store Admin reads
         r.add(new Route(HttpMethod.GET, "/api/utility/seasons", null, stores));
         r.add(new Route(HttpMethod.GET, "/api/utility/seasons/999999", null, stores));
@@ -133,7 +132,7 @@ class F03F05RbacMatrixTest {
         }
         int expected = routes().stream().mapToInt(r -> 1 + (int) ROLES.stream().filter(x -> !r.allowed().contains(x)).count()).sum();
         org.junit.jupiter.api.Assertions.assertEquals(expected, checked);
-        org.junit.jupiter.api.Assertions.assertEquals(40, routes().size(), "route table must list every F03 route and every ungated F05 route");
+        org.junit.jupiter.api.Assertions.assertEquals(38, routes().size(), "route table must list every F03 route and every ungated F05 route");
     }
 
     @Test void everyDocumentedRolePassesAuthorizationOnReadRoutes() throws Exception {

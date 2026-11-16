@@ -83,8 +83,9 @@ class UtilityIntegrationTest {
             put("/api/utility/config",merchant,bad).andExpect(status().isBadRequest());
         mvc.perform(get("/api/utility/config").header("Authorization","Bearer "+merchant)).andExpect(jsonPath("$.config.alpha").value(0.7));
         put("/api/utility/config",admin,config("0.5","0.5","0.1")).andExpect(status().isForbidden());
-        put("/api/utility/config/expiry-window",admin,"{\"expiryWindowDays\":30}").andExpect(status().isGone());
-        put("/api/utility/config/expiry-window",merchant,"{\"expiryWindowDays\":30}").andExpect(status().isForbidden());
+        // Route deleted on 2026-11-16 (DEC-20261116-03): it answers like any unknown path.
+        put("/api/utility/config/expiry-window",admin,"{\"expiryWindowDays\":30}").andExpect(status().isNotFound());
+        put("/api/utility/config/expiry-window",merchant,"{\"expiryWindowDays\":30}").andExpect(status().isNotFound());
         mvc.perform(get("/api/utility/config")).andExpect(status().isUnauthorized());
         policy("0.1");
         mvc.perform(get("/api/utility/config").header("Authorization","Bearer "+merchant)).andExpect(jsonPath("$.lambdaValid").value(false));
@@ -121,7 +122,7 @@ class UtilityIntegrationTest {
         send(get("/api/utility/seasons/{id}",tet),merchant,null).andExpect(status().isNotFound());
     }
 
-    @Test void productScoresPreviewRiskSeasonAndMissingPushDaysAndThePatchIsGone() throws Exception {
+    @Test void productScoresPreviewRiskSeasonAndMissingPushDaysAndThePatchIsDeleted() throws Exception {
         policy("0.5");
         put("/api/utility/config",merchant,config("0.5","0.5","0.5")).andExpect(status().isOk());
         var today=java.time.LocalDate.now(java.time.ZoneId.of("Asia/Ho_Chi_Minh"));
@@ -136,8 +137,9 @@ class UtilityIntegrationTest {
             .andExpect(jsonPath("$.weightValue").value(1.23)) // 1 + 0.5 * (0.5 * 0 + 0.5 * 0.9) = 1.225 -> 1.23
             .andExpect(jsonPath("$.ready").value(true));
         send(get("/api/utility/products/{id}/scores",product),foreign,null).andExpect(status().isNotFound());
-        send(patch("/api/utility/products/{id}/scores",product),merchant,"{\"stockPriorityScore\":0.8}").andExpect(status().isGone());
-        send(patch("/api/utility/products/{id}/scores",product),admin,"{\"stockPriorityScore\":0.8}").andExpect(status().isForbidden());
+        // PATCH deleted on 2026-11-16 (DEC-20261116-03); GET stays, so PATCH is an unsupported method for every role.
+        send(patch("/api/utility/products/{id}/scores",product),merchant,"{\"stockPriorityScore\":0.8}").andExpect(status().isMethodNotAllowed());
+        send(patch("/api/utility/products/{id}/scores",product),admin,"{\"stockPriorityScore\":0.8}").andExpect(status().isMethodNotAllowed());
     }
 
     @Test void snapshotFreezesWeightV2AndSeasonsByValueAndOnlyWarnsForMissingPushDays() throws Exception {
@@ -213,7 +215,7 @@ class UtilityIntegrationTest {
     @Test void openApiAndDatabaseConstraintsCoverF03() throws Exception {
         mvc.perform(get("/v3/api-docs")).andExpect(status().isOk())
             .andExpect(jsonPath("$.paths['/api/system/utility/lambda-policy'].put").exists())
-            .andExpect(jsonPath("$.paths['/api/utility/config/expiry-window'].put.deprecated").value(true))
+            .andExpect(jsonPath("$.paths['/api/utility/config/expiry-window']").doesNotExist())
             .andExpect(jsonPath("$.paths['/api/utility/seasons'].post").exists())
             .andExpect(jsonPath("$.paths['/api/utility/seasons/{seasonId}/products/{productId}'].put").exists())
             .andExpect(jsonPath("$.paths['/api/utility/snapshots/{id}/matrix'].get").exists())
