@@ -125,6 +125,7 @@ The clean group exposed seven `LegacyRecoveryMySqlTest` setup failures because `
 - Output-overshoot follow-up: deferred; the observed 286,720-byte polling overshoot remains measured, but a process-level hard quota analysis was not performed.
 - Authentic FoodMart F03 snapshot row count and F05/F06 evidence flow: NOT RUN; canonical order grouping plus approved inventory/season source values are unavailable.
 - Five JPA clone tests: NOT RUN; required clone properties were absent and mutation opt-in remained disabled. Hosted GitHub CI and production Linux image acceptance were also NOT RUN.
+- Not verified on Linux or on the target server: child JVM cleanup, memory under container limits, peak RSS. GitHub CI integration is still blocked on `PASPM_CI_SPMF_ARTIFACT_URL`.
 - Existing F03 snapshots, historical F05 records and F06 frozen recommendation JSON were not rewritten. The production database was not accessed. No migration was added. No Frontend was changed.
 
 **Status:** the owner approved these items as known limitations, not blockers to merging the F05 limit change. The record's final integration status and `dev` head must be confirmed from the authorized Git operations; deferred checks remain NOT RUN as listed.

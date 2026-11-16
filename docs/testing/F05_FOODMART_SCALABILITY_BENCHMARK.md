@@ -126,5 +126,6 @@ The owner approved merging the F05 input-limit change into `dev` on 2026-11-16 a
 | Output-overshoot analysis | The standalone poller observed 4,481,024 bytes, 286,720 above the configured 4 MiB threshold. A process-level hard quota/overshoot follow-up was deferred; the existing cap and child cleanup remain in place. |
 | JPA-clone tests | Five clone API tests were NOT RUN because the clone properties were absent and the mutation opt-in was not enabled. The test safety gate was not bypassed. |
 | Authentic FoodMart acceptance | NOT RUN: available source lacks canonical order-grouping identifiers and approved expiry/push-day/season evidence, so a truthful valid F03 snapshot cannot be constructed from it. |
+| Platform and hosted CI verification | Not verified on Linux or on the target server: child JVM cleanup, memory under container limits, peak RSS. GitHub CI integration is still blocked on `PASPM_CI_SPMF_ARTIFACT_URL`. |
 
 The owner-approved disposition is **APPROVED FOR MERGE WITH KNOWN LIMITATIONS**. The actual merged status and remote `dev` head will be recorded after the authorized Git operations succeed. The passing synthetic E2E, clean 72/72 MySQL group, multi-JVM coverage, and Flyway/API checks are reported separately above; this disposition does not claim the deferred scenarios passed.
