@@ -15,7 +15,7 @@
 | F02 | [Original Swagger report](../features/F02/reference_v3/F02_SWAGGER_TEST_REPORT.md), [cases](../features/F02/reference_v3/F02_SWAGGER_TEST_CASES.md) |
 | F03 | [Original linear-era report](../features/F03/reference_v4/F03_SWAGGER_TEST_REPORT.md), [current Catalog/Utility verification](reports/RETAIL_CATALOG_UTILITY_VERIFICATION.md) |
 | F04 | [CSV verification](../features/F04/reference/F04_SWAGGER_TEST_REPORT.md) |
-| F05 | [Historical mining verification](../features/F05/reference/F05_VERIFICATION.md), [P0 report](../audits/F05_P0_DEPLOYMENT_FIX_REPORT.md) |
+| F05 | [Historical mining verification](../features/F05/reference/F05_VERIFICATION.md), [P0 report](../audits/F05_P0_DEPLOYMENT_FIX_REPORT.md), [FoodMart-scale benchmark and current acceptance status](F05_FOODMART_SCALABILITY_BENCHMARK.md) |
 | F06 | [Verification](reports/F06_VERIFICATION.md), [captured evidence](evidence/feature_verification) |
 | JPA | [Pilot real-data report](JPA_PILOT_REAL_DATA_VERIFICATION.md), [Swagger](JPA_PILOT_SWAGGER_VERIFICATION.md), [V5→V11 verification record](JPA_V5_TO_V10_MIGRATION_VERIFICATION.md) |
 | Recovery | [Populated matrix plan](V5_V10_POPULATED_MATRIX_RECOVERY_TEST_PLAN.md), [evidence](evidence/historical_matrix_recovery) |
