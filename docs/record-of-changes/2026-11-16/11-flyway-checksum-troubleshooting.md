@@ -1,8 +1,10 @@
-# ROC-20261116-008 — Known Flyway checksum mismatches (V20, V7) and schema range in setup docs
+# ROC-20261116-011 — Known Flyway checksum mismatches (V20, V7) and schema range in setup docs
+
+> **Renumbered 2026-11-16:** this record was first committed as 008 (`a692cd0`). That number collides with ROC-20261116-008 (F05 EFIM-only) on `dev`, so it is now 011, the next number after ROC-20261116-010 (legacy product fields, branch `Khoi/feat/f03-remove-legacy-product-fields`). Its content is unchanged.
 
 | Field | Value |
 |---|---|
-| Record ID | ROC-20261116-008 |
+| Record ID | ROC-20261116-011 |
 | Date / timezone | 2026-11-16 / Asia/Ho_Chi_Minh |
 | Type | Documentation |
 | Features | Shared setup (F01 V20/V21, F04 V7); schema range V1–V25 |

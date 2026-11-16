@@ -24,7 +24,7 @@ Start with [common setup](LOCAL_SETUP_COMMON.md), then [Windows](LOCAL_SETUP_WIN
 
 ## Known Flyway checksum mismatches
 
-Verified 2026-11-16 with Flyway 11.7.2 (the version this project resolves: `mvn dependency:list` → `org.flywaydb:flyway-core:jar:11.7.2`), by running Flyway's own `org.flywaydb.core.internal.resolver.ChecksumCalculator` on each file version taken from Git history (`git show <commit>:<path>`). No database was used. Details: [record ROC-20261116-008](../record-of-changes/2026-11-16/08-flyway-checksum-troubleshooting.md).
+Verified 2026-11-16 with Flyway 11.7.2 (the version this project resolves: `mvn dependency:list` → `org.flywaydb:flyway-core:jar:11.7.2`), by running Flyway's own `org.flywaydb.core.internal.resolver.ChecksumCalculator` on each file version taken from Git history (`git show <commit>:<path>`). No database was used. Details: [record ROC-20261116-008](../record-of-changes/2026-11-16/11-flyway-checksum-troubleshooting.md).
 
 | Version | Applied checksum (old) | Current checksum | Old file came from | Why it happened | Safe fix |
 |---|---|---|---|---|---|
