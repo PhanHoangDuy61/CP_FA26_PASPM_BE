@@ -17,6 +17,12 @@
 - OpenAPI now distinguishes mining configuration request/response schemas from schedule schemas; the config response advertises only EFIM, while comparison metadata is documented only on historical schedule/occurrence responses.
 - No migration or historical data rewrite. See the [current F05 contract](F05_MINING_API.md#current-contract--2026-11-16).
 
+## 2026-11-16 — F05 FoodMart-scale input bound
+
+- Raised the distinct-Product limit for new mining requests from 256 to 1,600 after bounded EFIM measurements on the 1,559-Product FoodMart reference input. The 20,000-row bound and 4 MiB output, 64 KiB log, 256 MiB child heap, 60-second timeout and 2,000-pattern protections remain.
+- Inputs above the bound still return HTTP 400 before enqueueing; the validation text now names 1,600. The F06 frozen-evidence reader shares the bound. No request/response schema or OpenAPI shape changed; no migration or historical input rewrite.
+- Standalone EFIM completed at `minUtil=10,000`; a lower-threshold attempt reached OUTPUT_LIMIT. A synthetic 1,559-Product persisted F03 → F05 → F06 acceptance passed on disposable MySQL; authentic FoodMart F03 snapshot acceptance remains NOT RUN because source order grouping and approved inventory expiry/push-day/season evidence are unavailable. See [benchmark report](../testing/F05_FOODMART_SCALABILITY_BENCHMARK.md).
+
 ## 2026-11-15 — F03 Weight v2 (`W2_EXPIRY_SEASON_V1`) and F05 mining progress (branch, not merged)
 
 - **F05 (V24):** `GET /api/mining/requests/{id}/progress` (Store Admin, Merchandiser, own Store) and `GET /api/system/mining/stores/{storeId}/requests/{requestId}/progress` (System Admin, `REQUESTS` read gate, audited). Merchandiser may submit `POST /api/mining/requests` for its own Store using the System Admin mining configuration (P1). Details in [F05 API](F05_MINING_API.md).

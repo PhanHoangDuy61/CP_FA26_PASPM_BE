@@ -1,4 +1,4 @@
-# ROC-20261116 — W2 follow-up fixes
+# ROC-20261116 — W2 follow-up, F05 scale and documentation updates
 
 2026-11-16 / Asia/Ho_Chi_Minh. UNRELEASED, COMPLETED within local follow-up scope.
 
@@ -8,6 +8,12 @@
 - No push, merge or deployment. Local fix commit authorized after coverage review; see record 006 and Git log. No push.
 
 Verification: full opt-in **646 PASS / 0 FAIL / 5 SKIP** (651 discovered), JPA supplementary **5/5 PASS**; MySQL group **72/72**. No migration changes. Linux orphan cleanup / CI / Swagger UI / real-data conversion NOT RUN.
+
+## Record 012 — F05 FoodMart-scale mining input
+
+[Record 012](12-f05-foodmart-scale.md) records the local change from 256 to 1,600 distinct Products (20,000 matrix rows unchanged), bounded FoodMart SPMF/EFIM measurements and the synthetic 1,559-Product persisted F03 → F05 → F06 acceptance. Synthetic scale E2E and the corrected MySQL group passed; the `minUtil=1,000` attempt hit OUTPUT_LIMIT. Authentic FoodMart F03 acceptance remains NOT RUN because the source lacks canonical order grouping and approved inventory/season evidence. The owner approved merging this change with the dense-fixture, pattern-cap, output-overshoot, JPA-clone and authentic-data items recorded as known limitations, not blockers. Git integration remains pending.
+
+Latest gate: default verify 654 discovered / 445 PASS / 0 FAIL / 0 ERROR / 209 SKIP; corrected MySQL 72/72; full opt-in 664 discovered / 637 PASS / 0 FAIL / 0 ERROR / 27 SKIP; Flyway fresh/restart/upgrade V1–V26 PASS. A MySQL retest initially failed seven backup-test prerequisites when the restricted restore helper was not supplied; the subsequent disposable-MySQL run supplied the existing repository helper and passed all 72 selected cases. All 22 owner-grouped multi-JVM cases passed: 12 scheduler, 5 upgrade compatibility, and 5 MiningMultiJvm methods (6 Maven invocations because one is repeated). The 5 JPA clone cases remain NOT RUN. The first full-runner attempt's Flyway FAIL statuses came from stale V1–V19 assertions; the verifier was corrected and Flyway rerun passed. See external evidence manifest at `outputs/evidence/2026-11-16/f05-foodmart-scalability/manifest.json` (outside Git). No deployment.
 
 ## Record 007 — cleanup and merge planning
 

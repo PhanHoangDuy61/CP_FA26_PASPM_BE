@@ -12,7 +12,8 @@ import vn.edu.fpt.paspm.utility.UtilityMatrixContracts.*;
 @Component
 public class MiningInputBuilder {
     public static final String VERSION="F03_SCALE6_GCD_INT32_DENSE_V1";
-    public static final int MAX_ROWS=20000, MAX_ITEMS=256;
+    /** Bounded by the measured FoodMart target (1,559 distinct products) with a small input headroom. */
+    public static final int MAX_ROWS=20000, MAX_ITEMS=1600;
     public record Dataset(String text,String hash,Map<Integer,Integer> products,long divisor,
                           int totalUtility,int transactionCount,String conversionVersion,int utilityScale,String roundingMode) {
         public Dataset(String text,String hash,Map<Integer,Integer> products,long divisor,int totalUtility,int transactionCount){

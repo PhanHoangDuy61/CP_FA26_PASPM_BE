@@ -160,9 +160,7 @@ server, TLS or a reverse proxy, the multi-process crash and recovery tests on na
 
 1. `compose.yml` + `compose.backend.yml` alone cannot start the backend (V11 needs `--log-bin-trust-function-creators=1` for the non-root
    database user); `compose.staging.yml` carries the flag. CI runs the migrations as MySQL root, which hides this.
-2. The seeded FoodMart data cannot be mined as a whole: the API accepts at most 256 distinct products per request, and every day of
-   the 4,141-order data set contains about 1,500 distinct products (`Snapshot exceeds 256 distinct products`, HTTP 400). The demo scenario
-   DS-02a needs a smaller product set or a different data subset.
+2. **Historical staging finding — superseded by the 2026-11-16 F05 input-bound change:** the old Backend rejected requests above 256 distinct products. The current code accepts up to 1,600 Products and 20,000 matrix rows. The public FoodMart SPMF reference input (1,559 Products / 18,319 item rows) completed a bounded standalone EFIM run. A separate synthetic PASPM fixture then passed the persisted F03 → F05 → F06 lifecycle at 1,559 Products on disposable MySQL; its 1,759 matrix rows are synthetic, not actual FoodMart dimensions. Authentic FoodMart F03 acceptance remains NOT RUN because the extract does not provide canonical order grouping or approved inventory expiry/push-day/season evidence. Do not treat either standalone mining or the synthetic lifecycle as authentic FoodMart staging acceptance; see [the scalability report](../testing/F05_FOODMART_SCALABILITY_BENCHMARK.md).
 3. The seed files contain no unknown SKU or conflicting order, so scenario DS-01b (`COMPLETED_WITH_ERRORS`) needs an extra file.
 4. Avatar files are written inside the container (`/var/lib/paspm/profile-images`); they are lost when the container is recreated.
 5. `GOOGLE_CLIENT_ID` is read by the backend but not passed through by `compose.backend.yml`; Google sign-in therefore stays disabled.
