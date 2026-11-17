@@ -6,7 +6,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost",
+      "url": "http://127.0.0.1:18084",
       "description": "Generated server url"
     }
   ],
@@ -8814,7 +8814,7 @@
           },
           "totalScaledUtility": {
             "type": "integer",
-            "format": "int32"
+            "format": "int64"
           },
           "transactionCount": {
             "type": "integer",

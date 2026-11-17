@@ -193,6 +193,85 @@ One complete `scripts/verify-option-b-macos.sh --run` finished exit 0 with all 2
 
 The database-outage test deliberately injected connection loss and logged database communication errors during recovery; its test passed 1/1. Full logs, Surefire reports, focused output probes and the dense result are under `outputs/evidence/2026-11-17/f05-dense-acceptance/` outside Git; `manifest.json` contains SHA-256 hashes.
 
+## EFIM-aware exact int32 guard — 2026-11-17
+
+This addendum records owner decision [DEC-20261117-01](../decisions/2026-11-17/DEC-20261117-01-efim-aware-lossless-int32-guard.md). It supersedes the earlier realistic-utility result above only for the reason for rejection and current numeric contract: that run correctly exposed a Product TWU above int32, but the old message also rejected because the global total exceeded int32. The exact conversion remains lossless; no rounding or quantization is used.
+
+### Demo seed snapshot measurements
+
+The seed worktree used commit `331fe910900ce6689211cef5976645785aea6713`; the two imported CSV files had SHA-256 `5e45ffbdccd4947a1e4c2ee2528e6ae58e8b7364b999288c268d3dcc39b2a8ff` and `7357315a4d485901a5f2344d8d39eb3b2d16514e0e33880df39deecaca07c46f`. F03 analysis date was 2026-10-05. The following are the exact persisted frozen matrix measurements after scale-6/GCD conversion. `TU` is maximum transaction utility, `TWU` is maximum Product TWU, and minUtil is `PERCENTAGE 0.25` rounded upward. Each checked value fits signed int32; only the full/global normalized total and multi-day range totals exceed it. This is demo seed data, not authentic FoodMart acceptance.
+
+| Date range | Rows | Transactions | Products | Exact divisor | Total (int64) | max TU | max TWU | minUtil | EFIM bounds fit? |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| Full 4 days | 18,319 | 4,141 | 1,559 | 10,000 | 5,196,907,628 | 5,189,374 | 43,859,587 | 12,992,270 | Yes; global total alone exceeds int32 |
+| Day 1 | 4,066 | 900 | 1,444 | 10,000 | 1,163,610,588 | 3,746,798 | 17,550,210 | 2,909,027 | Yes |
+| Day 2 | 6,243 | 1,440 | 1,527 | 10,000 | 1,791,992,761 | 5,189,374 | 20,203,259 | 4,479,982 | Yes |
+| Day 3 | 6,389 | 1,440 | 1,530 | 10,000 | 1,779,174,736 | 4,347,417 | 18,543,286 | 4,447,937 | Yes |
+| Day 4 | 1,621 | 361 | 1,002 | 10,000 | 462,129,543 | 3,401,688 | 11,865,908 | 1,155,324 | Yes |
+| Days 1–2 | 10,309 | 2,340 | 1,554 | 10,000 | 2,955,603,349 | 5,189,374 | 28,883,771 | 7,389,009 | Yes; global total alone exceeds int32 |
+| Days 2–3 | 12,632 | 2,880 | 1,559 | 10,000 | 3,571,167,497 | 5,189,374 | 33,169,667 | 8,927,919 | Yes; global total alone exceeds int32 |
+| Days 3–4 | 8,010 | 1,801 | 1,551 | 10,000 | 2,241,304,279 | 4,347,417 | 21,603,172 | 5,603,261 | Yes; global total alone exceeds int32 |
+| Days 1–3 | 16,698 | 3,780 | 1,559 | 10,000 | 4,734,778,085 | 5,189,374 | 41,349,131 | 11,836,946 | Yes; global total alone exceeds int32 |
+| Days 2–4 | 14,253 | 3,241 | 1,559 | 10,000 | 4,033,297,040 | 5,189,374 | 34,952,669 | 10,083,243 | Yes; global total alone exceeds int32 |
+
+The seed project verification states a total weighted utility of 54,013,051.55. The persisted READY snapshot measured here normalizes to `5,196,907,628 × 10,000 / 1,000,000 = 51,969,076.28`. This difference of 2,043,975.27 is not explained by the checked snapshot measurement; it remains an evidence discrepancy to reconcile before treating the seed's stated aggregate as equivalent to the F03 frozen weighted-utility total.
+
+### Break-even under the measured seed profile (projection, not a benchmark)
+
+For the exact seed conversion quantum `10,000 / 1,000,000 = 0.01` weighted utility per normalized unit, the retired global-total cap corresponded to `2,147,483,647 × 0.01 = 21,474,836.47` weighted utility. At the observed average `51,969,076.28 / 4,141 = 12,549.8856` per order, this was about 1,711 orders; the actual full-range seed has 4,141 orders and 51,969,076.28 utility, so the old guard rejected it despite all EFIM int32 accumulators fitting.
+
+Under the new guard with this distribution and `PERCENTAGE 0.25`, projected Product-TWU capacity would be about 202,754 orders, while converted percentage `minUtil` capacity would be about 684,463 orders. Both are projections holding observed maxima/ratios and conversion quantum constant. The unchanged 20,000-row ceiling binds first at about 4,520 whole orders (18,319 rows / 4,141 orders), corresponding to roughly 56.7 million weighted utility at the observed average. This is an estimate under unchanged density and utility profile; it is not a universal capacity claim or a reason to raise the 1,600-product/20,000-row bounds.
+
+### W=1.3 sensitivity and conservative raw bounds
+
+For the owner-provided `λ=0.3, α=0.6, β=0.4` scenario, a separately constructed W=1.3 fixture has exact GCD 1,300,000; all its resulting normalized totals/TUs/TWUs/minUtil values fit int32 for all ten ranges. This is a scenario, not a bound: the divisor changes with the data. The conservative bound instead applies W=1.3 to scale-6 source values and forces divisor 1 (actual GCD is at least 1). Those raw upper bounds are listed below; they exceed int32 and therefore are not sufficient to prove that an arbitrary W=1.3 snapshot is admissible. The guard evaluates the actual frozen values and actual GCD per snapshot.
+
+| Range | Exact W=1.3 GCD | Total | max TU | max TWU | 0.25% minUtil |
+|---|---:|---:|---:|---:|---:|
+| Full 4 days | 1,300,000 | 50,544,274 | 49,333 | 429,184 | 126,361 |
+| Day 1 | 1,300,000 | 11,316,164 | 36,781 | 172,266 | 28,291 |
+| Day 2 | 1,300,000 | 17,432,174 | 49,333 | 195,924 | 43,581 |
+| Day 3 | 1,300,000 | 17,304,344 | 41,399 | 182,186 | 43,261 |
+| Day 4 | 1,300,000 | 4,491,592 | 33,538 | 115,660 | 11,229 |
+| Days 1–2 | 1,300,000 | 28,748,338 | 49,333 | 281,416 | 71,871 |
+| Days 2–3 | 1,300,000 | 34,736,518 | 49,333 | 326,767 | 86,842 |
+| Days 3–4 | 1,300,000 | 21,795,936 | 41,399 | 209,326 | 54,490 |
+| Days 1–3 | 1,300,000 | 46,052,682 | 49,333 | 405,086 | 115,132 |
+| Days 2–4 | 1,300,000 | 39,228,110 | 49,333 | 341,482 | 98,071 |
+
+| Range | Conservative raw total | max TU | max TWU | 0.25% minUtil |
+|---|---:|---:|---:|---:|
+| Full 4 days | 65,707,556,200,000 | 64,132,900,000 | 557,939,200,000 | 164,268,890,500 |
+| Day 1 | 14,711,013,200,000 | 47,815,300,000 | 223,945,800,000 | 36,777,533,000 |
+| Day 2 | 22,661,826,200,000 | 64,132,900,000 | 254,701,200,000 | 56,654,565,500 |
+| Day 3 | 22,495,647,200,000 | 53,818,700,000 | 236,841,800,000 | 56,239,118,000 |
+| Day 4 | 5,839,069,600,000 | 43,599,400,000 | 150,358,000,000 | 14,597,674,000 |
+| Days 1–2 | 37,372,839,400,000 | 64,132,900,000 | 365,840,800,000 | 93,432,098,500 |
+| Days 2–3 | 45,157,473,400,000 | 64,132,900,000 | 424,797,100,000 | 112,893,683,500 |
+| Days 3–4 | 28,334,716,800,000 | 53,818,700,000 | 272,123,800,000 | 70,836,792,000 |
+| Days 1–3 | 59,868,486,600,000 | 64,132,900,000 | 526,611,800,000 | 149,671,216,500 |
+| Days 2–4 | 50,996,543,000,000 | 64,132,900,000 | 443,926,600,000 | 127,491,357,500 |
+
+### SPMF EFIM bound and implementation result
+
+Offline inspection of the pinned SPMF 2.67a JAR (SHA-256 `4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a`) found: `Dataset.createTransaction(String)` parses transaction and item utilities using `Integer.parseInt`; `Transaction` stores `int transactionUtility`, `int prefixUtility` and `int[] utilities`; `AlgoEFIM.runAlgorithm(int,...)` and `minUtil` use int; `utilityBinArrayLU` and `utilityBinArraySU` are int arrays; `backtrackingEFIM` uses int for local pattern utility and output. PASPM's utilities are nonnegative. Each transaction utility is checked; a Product's TWU is the sum of transaction utilities containing that Product, computed in checked long and bounded by int32. EFIM's projected TU/prefix, LU/SU for a candidate and pattern utility are bounded by that candidate's TWU; no global database-total accumulator was found in the inspected EFIM path. `minUtil` remains positive int32. The removed global sum guard was sufficient but stricter than the SPMF accumulators require.
+
+The implementation widens `Dataset.totalUtility`, frozen-input total arithmetic, `RequestView.totalScaledUtility` and F06 total validation to signed 64-bit; keeps exact scale-6/GCD and int64 overflow checks; and rejects transaction utility, Product TWU or minUtil overflow with separate 400 messages. The global sum is no longer an EFIM rejection criterion. A real EFIM unit fixture with global total 3,000,000,001 and per-item TWU 1,500,000,001 completed and pattern utilities matched an independent long recomputation.
+
+### Disposable MySQL F03 → F05 → F06 acceptance
+
+On the 4,141-transaction, 1,559-product demo snapshot at `PERCENTAGE 0.25`, request creation and mining completed: 232,502 input bytes, `totalScaledUtility=5,196,907,628`, 4,141 transactions, 1,559 Products; EFIM 236 ms, 0 patterns, 100 output bytes, sampled heap 16.6228 MiB. F06 generation completed with 0 recommendations for that run. This exercises successful F05/F06 processing with a total above int32.
+
+The threshold search found `minUtilSpmf=3,836,041` (`ABSOLUTE 38,360.409900`) as the lowest tested threshold completing within the pattern cap: request/run 25 completed in 386 ms, persisted 2,000 patterns, output 92,758 bytes, sampled heap 19.122848 MiB. The next lower tested threshold (`3,836,040`, ABSOLUTE `38,360.399900`) failed `OUTPUT_LIMIT` with “Pattern count exceeds configured limit”; request/run 26 failed and F06 was not invoked for it. F06 generation on run 25 returned HTTP 200 and created 2,006 recommendations; disposable-database frozen eligibility counts were 2,003 ELIGIBLE / 3 INELIGIBLE. An API list pagination attempt was stopped due to slow response; all pages were not verified. Heap figures are Java heap samples, not peak RSS.
+
+### Verification and remaining capacity limits
+
+Final `scripts/verify-option-b-macos.sh --run` after correcting the realistic fixture's expected error completed all 24 stages with exit 0: default Maven verify 667 run / 0 fail / 0 error / 211 skipped; flag and migration tests 6/6; MySQL group 72/72; full opt-in 677 run / 0 fail / 0 error / 27 skipped; multi-JVM runner 23 invocations / 0 fail / 0 error / 3 skipped. Separate natural-lease/legacy-JAR opt-in run passed all 23/23 multi-JVM tests, and isolated JPA clone passed 5/5. Flyway fresh/restart/upgrade and runtime OpenAPI export passed through V26; no migration was added. Relative-to-baseline full opt-in is +9 executed tests, +9 passes, same 27 skipped (baseline 668 total, 641 pass, 27 skip). The skipped multi-JVM cases are covered by the separate 23/23 run, not counted as passes in the full runner. Actual runtime API export remains 100 paths / 121 operations; only `RequestView.totalScaledUtility` widens to `integer/int64`.
+
+This guard makes the measured demo full-range snapshot admissible, but does not eliminate the realistic synthetic 4,100-order TWU overflow: its maximum Product TWU is 3,217,593,703, so it remains correctly rejected before request persistence. The 1,600 Product, 20,000 matrix-row, positive int32 minUtil, per-TU/TWU int32, 60-second timeout, 256 MiB child heap, 2,000-pattern and 4 MiB output protections remain. Authentic FoodMart F03 evidence, native Windows, target Linux image/cgroup peak RSS, hosted GitHub CI, and all-page verification of the 2,006 F06 records remain NOT RUN or NOT VERIFIED.
+
+External evidence files and SHA-256 values are listed in [Record 015](../record-of-changes/2026-11-17/15-f05-efim-aware-int32-guard.md). They are kept outside Git; the evidence set includes the Step 0 range metrics, final verifier summary/runtime OpenAPI and disposable MySQL demo JSON.
+
 ### Remaining limitations
 
 - Authentic FoodMart F03 → F05 → F06 remains **NOT RUN**: the available source lacks canonical F04 order grouping plus approved inventory/batch-season evidence.

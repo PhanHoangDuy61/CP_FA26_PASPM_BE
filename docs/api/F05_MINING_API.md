@@ -4,6 +4,12 @@
 
 This section supersedes every older contract below where it conflicts. The current backend creates **EFIM-only** mining requests and has no benchmark or algorithm-comparison operation.
 
+## Lossless EFIM numeric bounds — 2026-11-17
+
+For new requests, F05 preserves the existing scale-6/GCD conversion and applies signed-int32 checks to the values EFIM 2.67a actually accumulates: each serialized transaction utility, each Product's transaction-weighted utility (TWU), and the converted positive `minUtil`. A violation returns HTTP 400 with one of: `Transaction utility exceeds SPMF int32 capacity`, `Product <productId> TWU exceeds SPMF int32 capacity`, or `Converted minUtil exceeds SPMF int32 capacity`. Product TWU is accumulated with checked signed-64-bit arithmetic before comparison. A dataset is no longer rejected only because its global normalized total exceeds int32.
+
+`RequestView.totalScaledUtility` is now a nonnegative signed 64-bit integer (`integer/int64` in OpenAPI). Percentage `minUtil` derivation and F06 frozen-evidence total validation use exact signed-64-bit totals. The database stores this total inside the existing frozen JSON input, not in an int32 total column; no Flyway migration or stored-data rewrite was required. The JSON property name and conversion version remain unchanged: old int-sized values deserialize as long and serialize identically, while new large totals are validated exactly. See [DEC-20261117-01](../decisions/2026-11-17/DEC-20261117-01-efim-aware-lossless-int32-guard.md) and [Record 015](../record-of-changes/2026-11-17/15-f05-efim-aware-int32-guard.md).
+
 | Operation | Current behavior |
 |---|---|
 | `PUT /api/system/mining/config` | Accepts `minUtilMode`, `minUtilValue`, `expectedVersion`; algorithm is fixed to EFIM. `algorithm` is an unknown field (400). GET reports effective `algorithm: EFIM`, including before the first minUtil configuration. |
@@ -223,8 +229,8 @@ GET path `id` is a signed int64 request/run identifier. Missing/foreign/nonexist
 1. Read only existing stored weighted utilities, transaction IDs and Product mapping in a repeatable-read transaction. Freeze input/mapping and snapshot metadata into MINING_REQUEST before enqueueing. A running worker never reloads current Product/configuration or F03 matrix.
 2. Require stored values exact at scale6; F03 already applied HALF_UP. Reject unsupported finer precision, negative/null values or signed64 overflow; do not silently truncate or recalculate values.
 3. Find GCD of all scale6 integers, using divisor1 for an all-zero dataset. Divide exactly by GCD. Dense SPMF IDs are assigned to sorted real Product IDs; transactions and IDs are sorted.
-4. Recompute transaction utility solely by summing these normalized item utilities. Dataset total must fit signed int32 because verified HUI-Miner/EFIM implementations use int32 TWU/utility arrays and threshold APIs.
-5. PERCENTAGE: `ceil(minUtilValue * totalScaledUtility / 100)`. ABSOLUTE: `ceil(minUtilValue * 10^6 / divisor)`. Require positive int32. Record minUtilSpmf and `effectiveMinUtility = minUtilSpmf * divisor / 10^6`.
+4. Recompute transaction utility solely by summing these normalized item utilities. Require each transaction utility and each Product TWU to fit signed int32, matching EFIM's input and per-item accumulation bounds. The global normalized total is signed int64 and may exceed int32.
+5. PERCENTAGE: `ceil(minUtilValue * totalScaledUtility / 100)` using checked signed-64-bit arithmetic. ABSOLUTE: `ceil(minUtilValue * 10^6 / divisor)`. Require positive signed int32 `minUtilSpmf`; overflow returns `Converted minUtil exceeds SPMF int32 capacity`. Record `effectiveMinUtility = minUtilSpmf * divisor / 10^6`.
 6. Both algorithms receive exactly the same text bytes/hash, dense mapping and threshold. Pattern utilities return in original units using the same exact divisor; no new rounding is introduced.
 
 Zero-valued items were actually verified with both algorithms. Positive absolute thresholds on all-zero datasets can complete with no patterns. Percentage on total0 is rejected. A threshold above the maximum possible utility is valid and may yield an empty result. Suggested 0.2/0.5/1 percent presets are not business restrictions.
@@ -275,7 +281,7 @@ F05 is asynchronous and status-driven: `PENDING` means queued; request terminal 
 | utilityScale | integer (int32) | See state/business rules above |
 | roundingMode | string | See state/business rules above |
 | divisor | integer (int64) | See state/business rules above |
-| totalScaledUtility | integer (int32) | See state/business rules above |
+| totalScaledUtility | integer (int64) | Nonnegative global normalized total; may exceed signed int32 |
 | transactionCount | integer (int32) | See state/business rules above |
 | distinctItems | integer (int32) | See state/business rules above |
 | inputBytes | integer (int32) | See state/business rules above |

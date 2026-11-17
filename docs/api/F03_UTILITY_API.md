@@ -69,7 +69,7 @@ SYSTEM_ADMIN and END_CUSTOMER cannot use Store-bound F03 routes (403). Foreign s
 
 ## Stored JSON compatibility
 
-Old snapshots, mining requests and recommendations keep their exact JSON and are read through version-aware readers (selection by `scoringVersion`; unknown version rejected; unknown fields still rejected). See [schema notes](../architecture/F03_W2_SCHEMA_V24_V25.md#stored-json-versions-readers-in-utilityjsonversions-recommendationjsonversions).
+Old snapshots, mining requests and recommendations keep their exact JSON and are read through version-aware readers (selection by `scoringVersion`; unknown version rejected; unknown fields still rejected). See [schema notes](../architecture/F03_W2_SCHEMA_V24_V25.md).
 
 ---
 
