@@ -15,8 +15,8 @@ public class MiningInputBuilder {
     /** Bounded by the measured FoodMart target (1,559 distinct products) with a small input headroom. */
     public static final int MAX_ROWS=20000, MAX_ITEMS=1600;
     public record Dataset(String text,String hash,Map<Integer,Integer> products,long divisor,
-                          int totalUtility,int transactionCount,String conversionVersion,int utilityScale,String roundingMode) {
-        public Dataset(String text,String hash,Map<Integer,Integer> products,long divisor,int totalUtility,int transactionCount){
+                          long totalUtility,int transactionCount,String conversionVersion,int utilityScale,String roundingMode) {
+        public Dataset(String text,String hash,Map<Integer,Integer> products,long divisor,long totalUtility,int transactionCount){
             this(text,hash,products,divisor,totalUtility,transactionCount,VERSION,6,"HALF_UP");
         }
         public int inputBytes(){return text.getBytes(StandardCharsets.UTF_8).length;}
@@ -53,19 +53,25 @@ public class MiningInputBuilder {
             if(products.size()>MAX_ITEMS)throw bad("Snapshot exceeds "+MAX_ITEMS+" distinct products");
             if(scaled(snapshot.totalWeightedUtility())!=total)throw bad("Snapshot total does not match frozen matrix");
             if(divisor==0)divisor=1;
-            if(total/divisor>Integer.MAX_VALUE)throw bad("Lossless converted dataset exceeds SPMF int32 capacity");
             var mapping=new LinkedHashMap<Integer,Integer>();var reverse=new HashMap<Integer,Integer>();
             for(int product:products){int id=mapping.size()+1;mapping.put(id,product);reverse.put(product,id);}
-            var text=new StringBuilder();
+            var text=new StringBuilder();var productTwu=new HashMap<Integer,Long>();
             for(var entry:transactions.entrySet()){
                 long sum=0;var ids=new StringJoiner(" ");var values=new StringJoiner(" ");
                 for(var item:entry.getValue().entrySet()){
                     sum=Math.addExact(sum,item.getValue());ids.add(reverse.get(item.getKey()).toString());values.add(Long.toString(item.getValue()/divisor));
                 }
                 if(sum!=scaled(totals.get(entry.getKey())))throw bad("Transaction utility does not match items at "+entry.getKey());
-                text.append(ids).append(':').append(sum/divisor).append(':').append(values).append('\n');
+                long convertedTransaction=sum/divisor;
+                if(convertedTransaction>Integer.MAX_VALUE)throw bad("Transaction utility exceeds SPMF int32 capacity");
+                text.append(ids).append(':').append(convertedTransaction).append(':').append(values).append('\n');
+                for(int product:entry.getValue().keySet()){
+                    long twu=Math.addExact(productTwu.getOrDefault(product,0L),convertedTransaction);
+                    if(twu>Integer.MAX_VALUE)throw bad("Product "+product+" TWU exceeds SPMF int32 capacity");
+                    productTwu.put(product,twu);
+                }
             }
-            return new Dataset(text.toString(),sha(text.toString()),Collections.unmodifiableMap(mapping),divisor,(int)(total/divisor),transactions.size());
+            return new Dataset(text.toString(),sha(text.toString()),Collections.unmodifiableMap(mapping),divisor,total/divisor,transactions.size());
         }catch(ArithmeticException ex){throw bad("Frozen utility precision or signed 64-bit capacity exceeded");}
     }
     public int threshold(Dataset dataset,MiningContracts.MinUtilMode mode,BigDecimal value){
@@ -75,9 +81,11 @@ public class MiningInputBuilder {
             BigDecimal threshold=mode==MiningContracts.MinUtilMode.PERCENTAGE
                 ?value.multiply(BigDecimal.valueOf(dataset.totalUtility())).divide(BigDecimal.valueOf(100),0,RoundingMode.CEILING)
                 :value.movePointRight(6).divide(BigDecimal.valueOf(dataset.divisor()),0,RoundingMode.CEILING);
-            int result=threshold.intValueExact();if(result<1)throw bad("Dataset has no positive utility for percentage minUtil; use a positive absolute threshold");
+            int result;
+            try{result=threshold.intValueExact();}catch(ArithmeticException e){throw bad("Converted minUtil exceeds SPMF int32 capacity");}
+            if(result<1)throw bad("Dataset has no positive utility for percentage minUtil; use a positive absolute threshold");
             return result;
-        }catch(ArithmeticException e){throw bad("minUtil exceeds SPMF int32 capacity");}
+        }catch(ArithmeticException e){throw bad("Converted minUtil exceeds SPMF int32 capacity");}
     }
     private static long scaled(BigDecimal x){if(x==null || x.signum()<0)throw bad("Null or negative frozen weighted utility");return x.setScale(6,RoundingMode.UNNECESSARY).movePointRight(6).longValueExact();}
     private static long gcd(long a,long b){while(b!=0){long t=a%b;a=b;b=t;}return a;}

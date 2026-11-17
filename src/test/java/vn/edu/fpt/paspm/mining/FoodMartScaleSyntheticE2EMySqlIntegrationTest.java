@@ -339,9 +339,9 @@ class FoodMartScaleSyntheticE2EMySqlIntegrationTest {
         assertTrue(httpStatus==202||httpStatus==400,"mining request must either be accepted or rejected by the expected input guard; status="+httpStatus+" body="+responseBody);
         long requestId=0,runId=0,efimMillis=-1,outputBytes=-1;int patternCount=-1;String miningStatus=httpStatus==202?"ACCEPTED":"REJECTED",failureCode="";String f06Status="NOT_RUN";
         if(httpStatus==400){
-            assertTrue(totalUtility>Integer.MAX_VALUE,"a non-overflow fixture must not be classified as an expected int32 rejection");
-            assertTrue(responseBody.contains("Lossless converted dataset exceeds SPMF int32 capacity"),"unexpected exact rejection: "+responseBody);
-            failureCode="Lossless converted dataset exceeds SPMF int32 capacity";
+            assertTrue(maxItemTwu>Integer.MAX_VALUE,"the rejection must be explained by an EFIM accumulator bound, not by the global total");
+            assertTrue(responseBody.contains("TWU exceeds SPMF int32 capacity"),"unexpected exact rejection: "+responseBody);
+            failureCode="Product TWU exceeds SPMF int32 capacity";
         }else{
             assertTrue(totalUtility<=Integer.MAX_VALUE,"builder should accept a losslessly convertible total");
             JsonNode accepted=json.readTree(responseBody);requestId=accepted.path("requestId").asLong();

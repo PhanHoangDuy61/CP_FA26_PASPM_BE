@@ -1,5 +1,11 @@
 # API Changelog
 
+## 2026-11-17 — F05 EFIM-aware lossless numeric guard (local feature branch)
+
+- Replaced the global normalized-total int32 rejection with exact EFIM-specific checks for each converted transaction utility, each Product TWU, and converted positive `minUtil`. New validation errors identify the failed value: transaction utility, `Product <id> TWU`, or minUtil. The conversion remains scale-6/GCD and lossless; no quantization was introduced.
+- `RequestView.totalScaledUtility` widens from OpenAPI `integer/int32` to `integer/int64`; percentage threshold calculation and F06 frozen-evidence validation also use signed-64-bit totals. JSON property names and conversion version are unchanged. Existing int-sized frozen JSON remains compatible and byte-identical; no database column stores this total, so no migration or historical rewrite was needed.
+- OpenAPI remains 100 paths / 121 operations; this is a response-type widening, not a route change. Frontend impact: handle the JSON number as potentially larger than int32; under the current 20,000-row × int32-per-transaction bound, the theoretical total remains below JavaScript's `2^53` safe integer limit. See [F05 API](F05_MINING_API.md#lossless-efim-numeric-bounds--2026-11-17), [handoff](../frontend_handoff/F05_HANDOFF.md), [decision](../decisions/2026-11-17/DEC-20261117-01-efim-aware-lossless-int32-guard.md), and [Record 015](../record-of-changes/2026-11-17/15-f05-efim-aware-int32-guard.md).
+
 ## 2026-11-16 — Legacy product fields and two obsolete F03 routes removed (branch, not merged)
 
 - **Removed fields (DEC-20261116-02):** `expiryPushDays` from `ProductRequest`/`ProductView`; `stockPriorityScore`/`seasonalPriorityScore` from every live path. Sending one → **400** (`fail-on-unknown-properties` stays on). Migration **V26** drops `product.expiry_push_days`, `product.stock_priority_score`, `product.seasonal_priority_score`; back up first — not reversible without the backup.

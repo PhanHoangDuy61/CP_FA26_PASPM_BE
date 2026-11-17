@@ -35,7 +35,7 @@ OpenAPI: **124 → 125 operations** (102 → 103 paths) after the follow-up; the
 | CI skipped-test coverage/provisioning | OPEN | `.github/scripts/test-summary.py:20` rejects skips. Current workflow :154–165 supplies multi-JVM but not natural-lease, baseline-JAR or synthetic-JPA opt-ins. Local supplementary success does not turn PR skips into CI PASS; define and execute valid CI coverage without weakening safeguards |
 | Independent reviewer approval | OPEN | No review eligibility or approval verified this session; require an eligible independent human's approval on exact PR head, no self/retroactive approval |
 | Linux SPMF orphan-cleanup acceptance | OPEN | record 006: NOT RUN; macOS recovery evidence is not Linux parent-death acceptance. Require the existing Linux deployment acceptance before production-readiness claims |
-| P2–P6 business confirmation | OPEN | [Decision register](../decisions/OWNER_DECISIONS_F03_F05_2026-11-15.md#assumptions-pending-owner-confirmation); do not relabel assumptions as approval |
+| P2–P6 business confirmation | OPEN | [Decision register](../decisions/OWNER_DECISIONS_F03_F05_2026-11-15.md); do not relabel assumptions as approval |
 
 Recommendation: **Squash and merge**, because the branch is unpushed and older intermediate commits contain machine paths/generated artifacts removed from the final tree (record 007). Squashing prevents those intermediate branch commits from entering dev ancestry. It does not purge pre-existing dev history or hide commits uploaded for PR review. Pushing the current branch would publish those intermediate commits; the owner must consider that exposure, or separately authorize a clean publication strategy. No further history rewrite is authorized by this plan.
 

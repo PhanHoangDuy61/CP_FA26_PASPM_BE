@@ -38,7 +38,9 @@ class FrozenEvidenceReaderTest {
     void save(){jdbc.update("DELETE FROM mining_request");jdbc.update("INSERT INTO mining_request VALUES (7,4,?,?,'ABSOLUTE',1,1,?,3)",json.write(input),json.write(snapshot),input.hash());}
     void conflict(){assertEquals(409,assertThrows(ApiException.class,()->reader.read(7,9)).status());}
     @Test void readsFrozenMembershipIncludingZeroUtilityAndIgnoresNullableSpmfSupportAndLiveEdits(){
-        var source=reader.read(7,9);assertEquals(1,source.evidence().measure(List.of(11,22),11).supportCount());
+        String frozenJsonBefore=jdbc.queryForObject("SELECT frozen_input FROM mining_request WHERE store_id=7 AND request_id=4",String.class);
+        var source=reader.read(7,9);assertEquals(frozenJsonBefore,jdbc.queryForObject("SELECT frozen_input FROM mining_request WHERE store_id=7 AND request_id=4",String.class));
+        assertEquals(1,source.evidence().measure(List.of(11,22),11).supportCount());
         assertEquals(new BigDecimal("0.500000"),source.evidence().measure(List.of(11,22),11).confidence());
         jdbc.update("DELETE FROM transaction_item");assertEquals(2,reader.read(7,9).evidence().transactionCount());
         assertEquals(List.of(11,22),source.patterns().get(0).productIds());
@@ -65,6 +67,41 @@ class FrozenEvidenceReaderTest {
 
         assertEquals(count,source.evidence().transactionCount());
         assertEquals(count,source.snapshot().totalWeightedUtility().intValueExact());
+    }
+    @Test void readsNewFrozenEvidenceWithLongTotalExactly(){
+        String text="1:1500000000:1500000000\n2:1500000000:1500000000\n3:1:1\n";
+        input=new MiningInputBuilder.Dataset(text,MiningInputBuilder.sha(text),Map.of(1,11,2,22,3,33),1,3000000001L,3);
+        var date=snapshot.asOfDate();
+        snapshot=new UtilityMatrixContracts.SnapshotView(3,7,1,date,date,date,snapshot.configuration(),"a".repeat(64),"b".repeat(64),new BigDecimal("3000.000001"),6,"READY",Instant.EPOCH,List.of());
+        run=run("COMPLETED",0);
+        when(mining.run(7,9)).thenReturn(run);
+        when(snapshots.find(7,3)).thenReturn(snapshot);
+        when(snapshots.countItems(3)).thenReturn(3L);
+        when(snapshots.page(7,3,0,MiningInputBuilder.MAX_ROWS)).thenReturn(List.of(row(1,11),row(2,22),row(3,33)));
+        when(mining.patterns(7,9,0,MiningInputBuilder.MAX_ROWS)).thenReturn(new MiningContracts.Page<>(List.of(),0,MiningInputBuilder.MAX_ROWS,0));
+        save();
+
+        var source=reader.read(7,9);
+
+        assertEquals(3000000001L,input.totalUtility());
+        assertEquals(new BigDecimal("3000.000001"),input.originalUtility(input.totalUtility()));
+        assertEquals(new BigDecimal("3000.000001"),source.snapshot().totalWeightedUtility());
+        assertEquals(3,source.evidence().transactionCount());
+    }
+    @Test void rejectsTamperedLongFrozenTotal(){
+        String text="1:1500000000:1500000000\n2:1500000000:1500000000\n3:1:1\n";
+        input=new MiningInputBuilder.Dataset(text,MiningInputBuilder.sha(text),Map.of(1,11,2,22,3,33),1,3000000002L,3);
+        var date=snapshot.asOfDate();
+        snapshot=new UtilityMatrixContracts.SnapshotView(3,7,1,date,date,date,snapshot.configuration(),"a".repeat(64),"b".repeat(64),new BigDecimal("3000.000001"),6,"READY",Instant.EPOCH,List.of());
+        run=run("COMPLETED",0);
+        when(mining.run(7,9)).thenReturn(run);
+        when(snapshots.find(7,3)).thenReturn(snapshot);
+        when(snapshots.countItems(3)).thenReturn(3L);
+        when(snapshots.page(7,3,0,MiningInputBuilder.MAX_ROWS)).thenReturn(List.of(row(1,11),row(2,22),row(3,33)));
+        when(mining.patterns(7,9,0,MiningInputBuilder.MAX_ROWS)).thenReturn(new MiningContracts.Page<>(List.of(),0,MiningInputBuilder.MAX_ROWS,0));
+        save();
+
+        conflict();
     }
     @Test void rejectsHashMismatch(){jdbc.update("UPDATE mining_request SET input_snapshot_hash=?","c".repeat(64));conflict();}
     @Test void rejectsMissingOrWrongDenseMapping(){jdbc.update("UPDATE pattern_item SET algorithm_item_id=9 WHERE product_id=22");conflict();}

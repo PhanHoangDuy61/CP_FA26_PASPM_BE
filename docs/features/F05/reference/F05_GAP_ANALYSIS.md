@@ -1,5 +1,7 @@
 # F05 audit and design — 2026-10-19
 
+> **Historical numeric rule superseded — 2026-11-17:** the dated guidance below predates [DEC-20261117-01](../../../decisions/2026-11-17/DEC-20261117-01-efim-aware-lossless-int32-guard.md). Current F05 keeps exact scale-6/GCD conversion, but does **not** require the global normalized total to fit int32. It checks transaction utility, Product TWU and converted positive `minUtil` against EFIM's int32 accumulators; the aggregate is checked signed int64. See the [current F05 API numeric contract](../../../api/F05_MINING_API.md#lossless-efim-numeric-bounds--2026-11-17).
+
 > **Superseded 2026-11-16 ([DEC-20261116-04](../../../decisions/2026-11-16/DEC-20261116-04-f05-efim-only-mining.md), EFIM-only).** This 2026-10-19 design plans HUI-Miner + EFIM comparison and benchmarks.
 
 | Component | Existing code | Missing work | Dependencies | Priority |
