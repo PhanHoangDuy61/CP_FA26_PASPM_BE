@@ -33,7 +33,7 @@ public final class MiningContracts {
         List<MiningEngine.Algorithm> algorithms,MinUtilMode minUtilMode,BigDecimal minUtilValue,
         int minUtilSpmf,BigDecimal effectiveMinUtility,@Schema(allowableValues={"PENDING","RUNNING","COMPLETED","FAILED"}) String status,@Schema(allowableValues={"NOT_REQUESTED","PENDING","MATCH","FAILED","BLOCKED"}) String comparisonStatus,
         String snapshotHash,String inputHash,String conversionVersion,int utilityScale,String roundingMode,
-        long divisor,int totalScaledUtility,int transactionCount,int distinctItems,int inputBytes,
+        long divisor,@Schema(format="int64") long totalScaledUtility,int transactionCount,int distinctItems,int inputBytes,
         SnapshotView snapshot,Instant createdAt) {}
     public record RunView(long runId,long requestId,int storeId,int snapshotId,MiningEngine.Algorithm algorithm,
         int attemptNo,String libraryVersion,@Schema(allowableValues={"PENDING","RUNNING","COMPLETED","FAILED","TIMED_OUT"}) String status,int minUtilSpmf,String inputHash,

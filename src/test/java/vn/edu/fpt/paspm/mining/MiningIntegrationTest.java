@@ -328,6 +328,8 @@ class MiningIntegrationTest {
         // CreateRequest is internal; the exposed bodies are StoreCreateRequest (Merchandiser) and ManualRequest (System Admin).
         assertTrue(spec.path("components").path("schemas").path("StoreCreateRequest").path("properties").has("snapshotId"));
         assertFalse(spec.path("components").path("schemas").path("StoreCreateRequest").path("properties").has("algorithms"));
+        assertEquals("int64",spec.path("components").path("schemas").path("RequestView").path("properties").path("totalScaledUtility").path("format").asText());
+        assertEquals("integer",spec.path("components").path("schemas").path("RequestView").path("properties").path("totalScaledUtility").path("type").asText());
         assertTrue(spec.path("paths").has("/api/mining/requests/{id}/progress"));
         assertTrue(spec.path("components").path("schemas").path("PatternView").path("properties").path("supportCount").path("type").toString().contains("null"));
         for(String path:List.of("/api/mining/snapshots","/api/mining/requests","/api/mining/requests/{id}","/api/mining/requests/{id}/runs","/api/mining/runs/{id}","/api/mining/runs/{id}/patterns"))assertTrue(spec.path("paths").has(path),path);

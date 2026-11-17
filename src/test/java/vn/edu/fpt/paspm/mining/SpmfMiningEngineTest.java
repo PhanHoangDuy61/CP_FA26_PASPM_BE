@@ -21,6 +21,20 @@ class SpmfMiningEngineTest {
         assertTrue(a.environment().matches(".*;outputBytes=[1-9][0-9]*$"));assertTrue(b.environment().matches(".*;outputBytes=[1-9][0-9]*$"));
         System.out.println("F05_REAL_SPMF HUI="+a+" EFIM="+b);
     }
+    @Test void actualEfimAcceptsGlobalLongTotalWhenTransactionAndTwuBoundsFit() throws Exception {
+        var rows=List.of(MiningInputTest.row(1,11,"1500","1500"),MiningInputTest.row(2,22,"1500","1500"),
+            MiningInputTest.row(3,33,"0.000001","0.000001"));
+        var dataset=new MiningInputBuilder().build(MiningInputTest.snapshot("3000.000001"),rows);
+        assertEquals(3000000001L,dataset.totalUtility());
+        int minUtil=new MiningInputBuilder().threshold(dataset,MiningContracts.MinUtilMode.PERCENTAGE,new java.math.BigDecimal("25"));
+
+        var output=engine(60000).execute(MiningEngine.Algorithm.EFIM,dataset,minUtil);
+
+        assertEquals(Map.of("11",1500000000,"22",1500000000),output.patterns());
+        long recomputed=output.patterns().values().stream().mapToLong(Integer::longValue).sum();
+        assertEquals(3000000000L,recomputed);
+        assertTrue(output.runtimeMillis()>0);
+    }
     @Test void actualZeroUtilityAndEmptyResultsAreValid() throws Exception {
         var runner=engine(10000);var input=data("1 2:10:0 10\n1 2:5:0 5\n");
         for(var algo:MiningEngine.Algorithm.values()){

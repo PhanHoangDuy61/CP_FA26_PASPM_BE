@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.math.BigDecimal;
 import java.time.*;
 import java.util.*;
+import vn.edu.fpt.paspm.common.ApiException;
 import vn.edu.fpt.paspm.utility.UtilityMatrixContracts.*;
 import vn.edu.fpt.paspm.utility.UtilityContracts.*;
 
@@ -61,5 +62,47 @@ class MiningInputTest {
         assertEquals(supported,dataset.products().get(supported));
         rows.add(row(1,supported+1,"1",Integer.toString(supported+1)));
         assertThrows(RuntimeException.class,()->builder.build(snapshot(Integer.toString(supported+1)),rows));
+    }
+
+    @Test void efimInt32GuardAcceptsMaxTransactionUtilityAndRejectsOneAbove(){
+        var atMax=List.of(row(1,1,"2147.483646","2147.483647"),row(1,2,"0.000001","2147.483647"));
+        var accepted=builder.build(snapshot("2147.483647"),atMax);
+        assertEquals(Integer.MAX_VALUE,accepted.totalUtility());
+
+        var aboveMax=List.of(row(1,1,"2147.483647","2147.483648"),row(1,2,"0.000001","2147.483648"));
+        var failure=assertThrows(ApiException.class,()->builder.build(snapshot("2147.483648"),aboveMax));
+        assertEquals(400,failure.status());
+        assertEquals("Transaction utility exceeds SPMF int32 capacity",failure.getMessage());
+    }
+
+    @Test void efimInt32GuardChecksProductTwuAtExactBoundary(){
+        var atMax=List.of(row(1,7,"1073.741823","1073.741823"),
+            row(2,7,"1073.741824","1073.741824"),row(3,8,"0.000001","0.000001"));
+        var accepted=builder.build(snapshot("2147.483648"),atMax);
+        assertEquals(2147483648L,accepted.totalUtility());
+
+        var aboveMax=List.of(row(1,7,"1073.741824","1073.741824"),
+            row(2,7,"1073.741824","1073.741824"),row(3,8,"0.000001","0.000001"));
+        var failure=assertThrows(ApiException.class,()->builder.build(snapshot("2147.483649"),aboveMax));
+        assertEquals(400,failure.status());
+        assertEquals("Product 7 TWU exceeds SPMF int32 capacity",failure.getMessage());
+    }
+
+    @Test void globalTotalMayExceedInt32WhenEveryProductTwuFits(){
+        var rows=List.of(row(1,11,"1500","1500"),row(2,22,"1500","1500"),row(3,33,"0.000001","0.000001"));
+        var dataset=builder.build(snapshot("3000.000001"),rows);
+        assertEquals(3000000001L,dataset.totalUtility());
+        assertEquals(750000001,builder.threshold(dataset,MiningContracts.MinUtilMode.PERCENTAGE,d("25")));
+    }
+
+    @Test void convertedPercentageMinUtilAboveInt32IsRejectedClearly(){
+        var rows=new ArrayList<MatrixItem>();
+        for(int tx=1;tx<=9;tx++)rows.add(row(tx,tx,"1000","1000"));
+        rows.add(row(10,10,"0.000001","0.000001"));
+        var dataset=builder.build(snapshot("9000.000001"),rows);
+        assertTrue(dataset.totalUtility()>Integer.MAX_VALUE);
+        var failure=assertThrows(ApiException.class,()->builder.threshold(dataset,MiningContracts.MinUtilMode.PERCENTAGE,d("25")));
+        assertEquals(400,failure.status());
+        assertEquals("Converted minUtil exceeds SPMF int32 capacity",failure.getMessage());
     }
 }
