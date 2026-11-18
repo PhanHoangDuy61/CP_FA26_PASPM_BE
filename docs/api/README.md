@@ -34,3 +34,7 @@ The follow-up export has **103 paths / 125 operations**, adding DELETE `/api/inv
 ## 2026-11-17 F05 numeric contract update
 
 The current local export remains **100 paths / 121 operations**. No route was added or removed. `RequestView.totalScaledUtility` is now `integer/int64`; transaction utility, Product TWU and converted positive `minUtil` remain int32-bounded for EFIM. The export matches the captured runtime OpenAPI document. See [DEC-20261117-01](../decisions/2026-11-17/DEC-20261117-01-efim-aware-lossless-int32-guard.md) and [Record 015](../record-of-changes/2026-11-17/15-f05-efim-aware-int32-guard.md).
+
+## 2026-11-19 F04 Excel export update
+
+Branch `Khoi/feat/f04-excel-import-v26` (on `dev` `530651b`, PR to `dev`): **101 paths / 122 operations** — the 100 / 121 export plus `POST /api/transactions/imports/excel`. The path was taken from the runtime `/v3/api-docs` export (`-Dpaspm.test.export-openapi=true` on `TransactionExcelImportIntegrationTest`) and inserted into the checked-in file; a semantic comparison shows no other path, schema or server change.

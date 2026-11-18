@@ -29,7 +29,7 @@ Product metadata và Category CRUD dùng JPA; Product catalog/inventory và anal
 
 ## API Reference
 
-[API index](api/README.md) · [OpenAPI export](api/openapi.json) · [RBAC](api/F01_F02_RBAC_MATRIX.md). The checked-in runtime export was regenerated from the Spring Boot runtime on 2026-11-17 and contains 100 paths / 121 operations. The latest F05 branch changes `RequestView.totalScaledUtility` from int32 to int64 without changing routes; the branch is local and unpublished. Earlier operation counts and session reconciliation details remain dated evidence in the [API changelog](api/API_CHANGELOG.md). Swagger/framework routes are separate. The API Inventory package exists only on a separate local audit branch; see the index for provenance, not a broken link or an implied merge.
+[API index](api/README.md) · [OpenAPI export](api/openapi.json) · [RBAC](api/F01_F02_RBAC_MATRIX.md). The checked-in runtime export was regenerated from the Spring Boot runtime on 2026-11-17 and contained 100 paths / 121 operations; the F04 Excel route (2026-11-19, [API index](api/README.md)) makes it 101 paths / 122 operations. The latest F05 branch changes `RequestView.totalScaledUtility` from int32 to int64 without changing routes; the branch is local and unpublished. Earlier operation counts and session reconciliation details remain dated evidence in the [API changelog](api/API_CHANGELOG.md). Swagger/framework routes are separate. The API Inventory package exists only on a separate local audit branch; see the index for provenance, not a broken link or an implied merge.
 
 ## Frontend Integration
 

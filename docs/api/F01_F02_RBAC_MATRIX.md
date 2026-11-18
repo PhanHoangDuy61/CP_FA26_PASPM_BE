@@ -69,6 +69,7 @@ Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and fea
 | F03 Independent expiry pushes | GET `/api/utility/expiry-push-batches` | Forbidden | Allowed, own Store | Allowed, own Store | Forbidden |
 | F03 Snapshot history list | GET `/api/utility/snapshots` | NOT IMPLEMENTED | NOT IMPLEMENTED | NOT IMPLEMENTED | NOT IMPLEMENTED |
 | F04 CSV import | POST `/api/transactions/imports/csv` | Forbidden | Allowed, own Store (multipart `file`) | Forbidden | Forbidden |
+| F04 Excel import | POST `/api/transactions/imports/excel` | Forbidden | Allowed, own Store (multipart `file`, `.xlsx`/`.xls`) | Forbidden | Forbidden |
 | F04 Import list | GET `/api/transactions/imports` | Forbidden | Allowed, own Store | Allowed, own Store | Forbidden |
 | F04 Import detail | GET `/api/transactions/imports/{id}` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign→404 | Forbidden |
 | F04 Import errors | GET `/api/transactions/imports/{id}/errors` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign→404 | Forbidden |

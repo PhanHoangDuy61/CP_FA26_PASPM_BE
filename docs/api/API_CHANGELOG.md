@@ -1,5 +1,9 @@
 # API Changelog
 
+## 2026-11-19 — F04 Excel import brought onto current `dev` (branch `Khoi/feat/f04-excel-import-v26`, PR to `dev`)
+
+The Excel route of 2026-10-26 (entry at the end of this file) is cherry-picked onto `dev` `530651b` without contract change: `POST /api/transactions/imports/excel`, `STORE_ADMIN`, multipart `file`, synchronous `201 ImportSummary`; there is no async Excel route. The sync and async CSV routes keep their behavior and messages. OpenAPI: **101 paths / 122 operations** (100 / 121 plus the Excel route); no existing path or component schema changed. New runtime dependencies: Apache POI `poi-ooxml` 6.0.0 and `commons-io` 2.22.0. No migration.
+
 ## 2026-11-17 — F05 EFIM-aware lossless numeric guard (local feature branch)
 
 - Replaced the global normalized-total int32 rejection with exact EFIM-specific checks for each converted transaction utility, each Product TWU, and converted positive `minUtil`. New validation errors identify the failed value: transaction utility, `Product <id> TWU`, or minUtil. The conversion remains scale-6/GCD and lossless; no quantization was introduced.
