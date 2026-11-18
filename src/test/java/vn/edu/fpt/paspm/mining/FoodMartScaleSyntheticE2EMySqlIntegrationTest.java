@@ -267,7 +267,7 @@ class FoodMartScaleSyntheticE2EMySqlIntegrationTest {
     }
 
     @Test
-    void realisticUtilityDenseFixtureReportsInt32AndEfimOutcomeAtCurrentMinUtil() throws Exception {
+    void realisticUtilityDenseFixtureIsMinedInWholeDongModeThroughF06() throws Exception {
         int store=createStore("Synthetic FoodMart realistic-utility PASPM E2E");
         String admin=token("STORE_ADMIN",store),merchant=token("MERCHANDISER",store),system=token("SYSTEM_ADMIN",null);
         LocalDate analysisDate=LocalDate.now(ZoneId.of("Asia/Ho_Chi_Minh"));
@@ -330,42 +330,63 @@ class FoodMartScaleSyntheticE2EMySqlIntegrationTest {
         long maxItemTwu=itemTwuScaled.values().stream().mapToLong(value->value/measuredDivisor).max().orElse(0);
         assertTrue(divisor>0&&divisor<10_000_000,"varied cent prices, quantities and W2 scores should lower the scale-6 GCD from the prior fixture");
 
+        assertTrue(maxItemTwu>Integer.MAX_VALUE,"the lossless input still overflows the EFIM product TWU bound");
+        // DEC-20261119-05: the SPMF input falls back to whole đồng HALF_UP; recompute its bounds from the rounded frozen items.
+        Map<Integer,Long> roundedTransactions=new java.util.TreeMap<>();long roundedTotal=0;
+        for(Map<String,Object> row:matrix){
+            long rounded=((BigDecimal)row.get("weighted_utility")).setScale(0,java.math.RoundingMode.HALF_UP).longValueExact();
+            roundedTransactions.merge(((Number)row.get("transaction_id")).intValue(),rounded,Math::addExact);roundedTotal=Math.addExact(roundedTotal,rounded);
+        }
+        Map<Integer,Long> roundedTwu=new java.util.HashMap<>();
+        for(var transaction:roundedTransactions.entrySet())
+            for(int productId:productsByTransaction.get(transaction.getKey()))roundedTwu.merge(productId,transaction.getValue(),Math::addExact);
+        long maxRoundedTu=roundedTransactions.values().stream().mapToLong(Long::longValue).max().orElse(0);
+        long maxRoundedTwu=roundedTwu.values().stream().mapToLong(Long::longValue).max().orElse(0);
+        assertTrue(maxRoundedTu<=Integer.MAX_VALUE&&maxRoundedTwu<=Integer.MAX_VALUE,"whole-đồng bounds must fit int32");
+        String override=System.getProperty("paspm.test.realistic-minutil");
+        if(override!=null&&!override.isBlank()){
+            String[] parts=override.split(":");
+            currentConfig=body(put("/api/system/mining/config",system,"{\"minUtilMode\":\""+parts[0]+"\",\"minUtilValue\":"+parts[1]+",\"expectedVersion\":"+currentConfig.path("version").asLong()+"}").andExpect(status().isOk()));
+        }
+
         String requestKey=UUID.randomUUID().toString();
         var response=mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/api/mining/requests")
                 .header("Authorization","Bearer "+merchant).contentType(MediaType.APPLICATION_JSON)
                 .content(json.writeValueAsString(Map.of("requestKey",requestKey,"snapshotId",snapshotId))))
             .andReturn().getResponse();
         int httpStatus=response.getStatus();String responseBody=response.getContentAsString();
-        assertTrue(httpStatus==202||httpStatus==400,"mining request must either be accepted or rejected by the expected input guard; status="+httpStatus+" body="+responseBody);
-        long requestId=0,runId=0,efimMillis=-1,outputBytes=-1;int patternCount=-1;String miningStatus=httpStatus==202?"ACCEPTED":"REJECTED",failureCode="";String f06Status="NOT_RUN";
-        if(httpStatus==400){
-            assertTrue(maxItemTwu>Integer.MAX_VALUE,"the rejection must be explained by an EFIM accumulator bound, not by the global total");
-            assertTrue(responseBody.contains("TWU exceeds SPMF int32 capacity"),"unexpected exact rejection: "+responseBody);
-            failureCode="Product TWU exceeds SPMF int32 capacity";
-        }else{
-            assertTrue(totalUtility<=Integer.MAX_VALUE,"builder should accept a losslessly convertible total");
-            JsonNode accepted=json.readTree(responseBody);requestId=accepted.path("requestId").asLong();
-            JsonNode terminal=awaitRequest(requestId,merchant,120);miningStatus=terminal.path("status").asText();
-            JsonNode request=body(get("/api/mining/requests/"+requestId,merchant).andExpect(status().isOk()));
-            assertEquals(currentConfig.path("minUtilMode").asText(),request.path("minUtilMode").asText());
-            assertEquals(0,currentConfig.path("minUtilValue").decimalValue().compareTo(request.path("minUtilValue").decimalValue()));
-            List<Map<String,Object>> runs=jdbc.queryForList("SELECT run_id,status,runtime_millis,environment,pattern_count,failure_code FROM mining_run WHERE store_id=? AND request_id=?",store,requestId);
-            if(!runs.isEmpty()){
-                Map<String,Object> run=runs.get(0);runId=((Number)run.get("run_id")).longValue();patternCount=run.get("pattern_count")==null?-1:((Number)run.get("pattern_count")).intValue();
-                efimMillis=run.get("runtime_millis")==null?-1:((Number)run.get("runtime_millis")).longValue();failureCode=run.get("failure_code")==null?"":run.get("failure_code").toString();
-                String environment=run.get("environment")==null?"":run.get("environment").toString();if(environment.contains("outputBytes="))outputBytes=environmentMetric(environment,"outputBytes");
-            }
-            if("COMPLETED".equals(miningStatus)){
-                JsonNode generated=body(post("/api/recommendations/generate",merchant,json.writeValueAsString(Map.of("miningRunId",runId,"types",List.of("BUNDLE")))).andExpect(status().isOk()));
-                if(generated.path("createdCount").asInt()>0){
-                    JsonNode candidate=body(get("/api/recommendations/"+generated.path("recommendationIds").get(0).asLong(),merchant).andExpect(status().isOk()));
-                    f06Status=candidate.path("evidence").path("status").asText();
-                }else f06Status="NO_CANDIDATE";
-            }
+        assertEquals(202,httpStatus,"realistic-utility fixture must now be accepted in whole-đồng mode: "+responseBody);
+        long requestId=0,runId=0,efimMillis=-1,outputBytes=-1;int patternCount=-1,recommendations=-1;String miningStatus,failureCode="";String f06Status="NOT_RUN";
+        JsonNode accepted=json.readTree(responseBody);requestId=accepted.path("requestId").asLong();
+        assertEquals(MiningInputBuilder.WHOLE_UNIT_VERSION,accepted.path("conversionVersion").asText());
+        assertEquals("WHOLE_UNIT_HALF_UP",accepted.path("conversionMode").asText());
+        assertEquals(1,accepted.path("divisor").asLong());assertEquals(roundedTotal,accepted.path("totalScaledUtility").asLong());
+        JsonNode terminal=awaitRequest(requestId,merchant,120);miningStatus=terminal.path("status").asText();
+        JsonNode request=body(get("/api/mining/requests/"+requestId,merchant).andExpect(status().isOk()));
+        assertEquals(currentConfig.path("minUtilMode").asText(),request.path("minUtilMode").asText());
+        assertEquals(0,currentConfig.path("minUtilValue").decimalValue().compareTo(request.path("minUtilValue").decimalValue()));
+        int minUtilSpmf=request.path("minUtilSpmf").asInt();
+        List<Map<String,Object>> runs=jdbc.queryForList("SELECT run_id,status,runtime_ms,environment,itemset_count,failure_code FROM mining_run WHERE store_id=? AND request_id=?",store,requestId);
+        if(!runs.isEmpty()){
+            Map<String,Object> run=runs.get(0);runId=((Number)run.get("run_id")).longValue();patternCount=run.get("itemset_count")==null?-1:((Number)run.get("itemset_count")).intValue();
+            efimMillis=run.get("runtime_ms")==null?-1:((Number)run.get("runtime_ms")).longValue();failureCode=run.get("failure_code")==null?"":run.get("failure_code").toString();
+            String environment=run.get("environment")==null?"":run.get("environment").toString();if(environment.contains("outputBytes="))outputBytes=environmentMetric(environment,"outputBytes");
         }
+        if("COMPLETED".equals(miningStatus)){
+            JsonNode generated=body(post("/api/recommendations/generate",merchant,json.writeValueAsString(Map.of("miningRunId",runId,"types",List.of("BUNDLE","CROSS_SELL","FBT","BANNER")))).andExpect(status().isOk()));
+            recommendations=generated.path("createdCount").asInt();
+            f06Status=recommendations>0?"GENERATED":"NO_CANDIDATE";
+        }
+        var wholeUnit=new java.util.LinkedHashMap<String,Object>();
+        wholeUnit.put("conversionMode","WHOLE_UNIT_HALF_UP");wholeUnit.put("conversionVersion",MiningInputBuilder.WHOLE_UNIT_VERSION);wholeUnit.put("divisor",1);
+        wholeUnit.put("maxTransactionUtility",maxRoundedTu);wholeUnit.put("maxItemTwu",maxRoundedTwu);wholeUnit.put("totalUtility",roundedTotal);
+        wholeUnit.put("minUtilSpmf",minUtilSpmf);wholeUnit.put("recommendationsCreated",recommendations);
+        System.out.printf("F05_REALISTIC_WHOLE_DONG mode=WHOLE_UNIT_HALF_UP divisor=1 maxTU=%d maxTWU=%d total=%d minUtil=%s/%s minUtilSpmf=%d status=%s failure=%s efimMs=%d patterns=%d outputBytes=%d recommendations=%d%n",
+            maxRoundedTu,maxRoundedTwu,roundedTotal,currentConfig.path("minUtilMode").asText(),currentConfig.path("minUtilValue").asText(),minUtilSpmf,
+            miningStatus,failureCode,efimMillis,patternCount,outputBytes,recommendations);
         writeRealisticEvidence(snapshotId,analysisDate,productIds.size(),matrix.size(),minPrice,maxPrice,minQuantity,maxQuantity,divisor,
             maxTransactionUtility,maxItemTwu,totalUtility,currentConfig.path("minUtilMode").asText(),currentConfig.path("minUtilValue").asText(),
-            httpStatus,miningStatus,failureCode,requestId,runId,efimMillis,patternCount,outputBytes,f06Status);
+            httpStatus,miningStatus,failureCode,requestId,runId,efimMillis,patternCount,outputBytes,f06Status,wholeUnit);
         System.out.printf("F05_REALISTIC_DENSE divisor=%d maxTransactionUtility=%d maxItemTWU=%d totalUtility=%d int32=%d status=%d/%s minUtil=%s/%s efimMs=%d patterns=%d outputBytes=%d F06=%s%n",
             divisor,maxTransactionUtility,maxItemTwu,totalUtility,Integer.MAX_VALUE,httpStatus,miningStatus,currentConfig.path("minUtilMode").asText(),
             currentConfig.path("minUtilValue").asText(),efimMillis,patternCount,outputBytes,f06Status);
@@ -487,7 +508,7 @@ class FoodMartScaleSyntheticE2EMySqlIntegrationTest {
     private void writeRealisticEvidence(int snapshotId,LocalDate analysisDate,int products,int rows,BigDecimal minPrice,BigDecimal maxPrice,
             int minQuantity,int maxQuantity,long divisor,long maxTransactionUtility,long maxItemTwu,long totalUtility,
             String minUtilMode,String minUtilValue,int httpStatus,String miningStatus,String failureCode,long requestId,long runId,
-            long efimMillis,int patternCount,long outputBytes,String f06Status)throws Exception {
+            long efimMillis,int patternCount,long outputBytes,String f06Status,Map<String,Object> wholeUnit)throws Exception {
         String target=System.getProperty("paspm.f05.foodmart-e2e.output");if(target==null||target.isBlank())return;
         Path directory=Path.of(target).resolve("realistic-utilities");Files.createDirectories(directory);
         var evidence=Map.ofEntries(Map.entry("fixtureType","SYNTHETIC_FOODMART_SHAPED_REALISTIC_UTILITIES_NOT_AUTHENTIC_FOODMART"),
@@ -505,7 +526,7 @@ class FoodMartScaleSyntheticE2EMySqlIntegrationTest {
             Map.entry("currentMinUtil",Map.of("mode",minUtilMode,"value",minUtilValue)),Map.entry("miningHttpStatus",httpStatus),
             Map.entry("miningStatus",miningStatus),Map.entry("failureCode",failureCode),Map.entry("requestId",requestId),Map.entry("runId",runId),
             Map.entry("efimRuntimeMillis",efimMillis),Map.entry("patternCount",patternCount),Map.entry("outputBytes",outputBytes),
-            Map.entry("f06Status",f06Status),Map.entry("runtimeLimits",Map.of("heapMiB",256,"timeoutMillis",60_000,"maxPatterns",2_000,"maxOutputBytes",4_194_304)));
+            Map.entry("f06Status",f06Status),Map.entry("wholeUnitInput",wholeUnit),Map.entry("runtimeLimits",Map.of("heapMiB",256,"timeoutMillis",60_000,"maxPatterns",2_000,"maxOutputBytes",4_194_304)));
         Files.writeString(directory.resolve("foodmart-dense-realistic-utilities.json"),json.writerWithDefaultPrettyPrinter().writeValueAsString(evidence));
     }
 
