@@ -95,7 +95,7 @@ public class TransactionImportService {
 
     public ImportProgress submitAsync(Jwt jwt, MultipartFile file, String idempotencyKey) {
         int storeId = access.currentStoreId(jwt);
-        validateFile(file);
+        validateFile(file, false);
         String key = validateIdempotencyKey(idempotencyKey);
         byte[] content;
         try {
