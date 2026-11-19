@@ -13,6 +13,8 @@ This map covers every 349 originally tracked docs file at dev 6601f62, plus the 
 
 The [machine-readable map](audits/evidence/docs_reorganization/PATH_MAP.json) supplies per-file purpose/type/status reason, current reference, inbound/outbound links, hashes and conflict IDs. Machine-readable/frozen payloads retain original bytes. Old paths inside manifests identify their recorded execution; use this map without rewriting those records.
 
+Added after this map (2026-11-19): [product documents](product/README.md), agent-facing summaries; not classified here.
+
 ## Old to new paths
 
 | Original path | Final path | Feature/domain | Type | Classification | Current reference / limitation | Inbound / outbound | Notes |

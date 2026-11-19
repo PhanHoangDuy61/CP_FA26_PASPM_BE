@@ -6,6 +6,8 @@ PASPM hỗ trợ quản lý sản phẩm, tồn kho, dữ liệu giao dịch, Ut
 
 Đọc [requirements và quy tắc thẩm quyền](requirements/README.md), [feature index](features/README.md) và [trạng thái tài liệu](DOCUMENTATION_MAP.md#classification-policy). F07–F11 chưa có feature map/đặc tả được track đầy đủ; không tự gán tên từ các work package.
 
+Agent-facing product summaries (glossary, BRD, SRS, architecture): [product documents](product/README.md).
+
 ## Getting Started
 
 [Local development](setup/LOCAL_DEVELOPMENT.md) · [setup index](setup/README.md) · [SPMF local](setup/F05_SPMF_RUNTIME_SETUP.md).
