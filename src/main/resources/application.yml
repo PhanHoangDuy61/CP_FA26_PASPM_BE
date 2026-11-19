@@ -42,3 +42,17 @@ paspm:
   google-client-id: ${GOOGLE_CLIENT_ID:}
   bootstrap-email: ${BOOTSTRAP_EMAIL:}
   bootstrap-password: ${BOOTSTRAP_PASSWORD:}
+  # DEC-20261119-06: layout B / baseline A zone capacities (blocks and distinct products per zone).
+  layout:
+    max-blocks-by-zone:
+      "[BANNER]": ${PASPM_LAYOUT_MAX_BLOCKS_BANNER:3}
+      "[BUNDLE]": ${PASPM_LAYOUT_MAX_BLOCKS_BUNDLE:4}
+      "[CROSS_SELL]": ${PASPM_LAYOUT_MAX_BLOCKS_CROSS_SELL:2}
+      "[FBT]": ${PASPM_LAYOUT_MAX_BLOCKS_FBT:2}
+      "[BASELINE]": ${PASPM_LAYOUT_MAX_BLOCKS_BASELINE:35}
+    max-products-by-zone:
+      "[BANNER]": ${PASPM_LAYOUT_MAX_PRODUCTS_BANNER:3}
+      "[BUNDLE]": ${PASPM_LAYOUT_MAX_PRODUCTS_BUNDLE:16}
+      "[CROSS_SELL]": ${PASPM_LAYOUT_MAX_PRODUCTS_CROSS_SELL:8}
+      "[FBT]": ${PASPM_LAYOUT_MAX_PRODUCTS_FBT:8}
+      "[BASELINE]": ${PASPM_LAYOUT_MAX_PRODUCTS_BASELINE:35}
