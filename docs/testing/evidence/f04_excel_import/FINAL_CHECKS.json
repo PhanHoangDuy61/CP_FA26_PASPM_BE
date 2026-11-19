@@ -1,0 +1,9 @@
+{
+  "internalLinks": 596,
+  "brokenInternalLinks": 0,
+  "immutableMigrationsUnchanged": 11,
+  "java17FullVerification": "477 total/472PASS/0FAIL/0ERROR/5SKIP",
+  "secretCheck": "New docs/evidence checked for private workstation paths; test credentials synthetic only",
+  "combinedVerification": "510 total /505PASS /0FAIL /0ERROR /5cloneSKIP; privatepatchcomposition,noGitmerge",
+  "draftPrCreation": "403 Resource not accessible by integration; manualcomparisonURLrecorded"
+}
