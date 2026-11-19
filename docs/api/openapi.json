@@ -1069,6 +1069,7 @@
           "product-controller"
         ],
         "summary": "Get a product and batch-derived stock for the authenticated Store",
+        "description": "STORE_ADMIN or MERCHANDISER.",
         "operationId": "get_3",
         "parameters": [
           {
@@ -1092,26 +1093,26 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
           "403": {
             "description": "Permission denied"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       },
@@ -1120,6 +1121,7 @@
           "product-controller"
         ],
         "summary": "Update product information without changing stock",
+        "description": "STORE_ADMIN. A similar name in this Store returns 409 with code PRODUCT_NAME_CONFIRMATION_REQUIRED; retry with confirmSimilarName=true after user confirmation. Existing batches without expiry prevent enabling requiresExpiry.",
         "operationId": "update_3",
         "parameters": [
           {
@@ -1143,36 +1145,26 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProductView"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict"
-          },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
           "403": {
             "description": "Permission denied"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -1862,7 +1854,7 @@
             "schema": {
               "type": "string",
               "maxLength": 128,
-              "minLength": 1,
+              "minLength": 0,
               "pattern": "^[A-Za-z0-9._:-]{1,128}$"
             }
           }
@@ -2268,6 +2260,7 @@
           "product-controller"
         ],
         "summary": "Search and filter products in the authenticated Store",
+        "description": "STORE_ADMIN or MERCHANDISER. sortBy supports name, sku, category, unit, costPrice, sellingPrice, status, requiresExpiry and stockQuantity; equal values are ordered by product ID.",
         "operationId": "list_2",
         "parameters": [
           {
@@ -2323,7 +2316,17 @@
             "required": false,
             "schema": {
               "type": "string",
-              "default": "name"
+              "enum": [
+                "name",
+                "sku",
+                "category",
+                "unit",
+                "costPrice",
+                "sellingPrice",
+                "status",
+                "requiresExpiry",
+                "stockQuantity"
+              ]
             }
           },
           {
@@ -2332,7 +2335,10 @@
             "required": false,
             "schema": {
               "type": "string",
-              "default": "asc"
+              "enum": [
+                "asc",
+                "desc"
+              ]
             }
           }
         ],
@@ -2347,26 +2353,26 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
           "403": {
             "description": "Permission denied"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       },
@@ -2375,6 +2381,7 @@
           "product-controller"
         ],
         "summary": "Create a product in the authenticated Store; stock is managed through batches",
+        "description": "STORE_ADMIN. Product ID is generated by the database. Duplicate Store SKU returns 409. A similar name returns 409 with code PRODUCT_NAME_CONFIRMATION_REQUIRED; retry with confirmSimilarName=true after user confirmation.",
         "operationId": "create_4",
         "requestBody": {
           "content": {
@@ -2397,26 +2404,26 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
           "403": {
             "description": "Permission denied"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -2427,6 +2434,7 @@
           "inventory-batch-controller"
         ],
         "summary": "List inventory batches for a Store product",
+        "description": "STORE_ADMIN only.",
         "operationId": "list_3",
         "parameters": [
           {
@@ -2453,26 +2461,26 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
           "403": {
             "description": "Permission denied"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       },
@@ -2481,6 +2489,7 @@
           "inventory-batch-controller"
         ],
         "summary": "Receive an inventory batch for a Store product",
+        "description": "STORE_ADMIN only. Batch ID and batchCode are generated by the backend. Do not send batchCode. It uses receivedAt's Store-local date and the next Product-scoped sequence (minimum three digits). Expiry date is required when the product requires expiry; pushDay must not be after expiryDate.",
         "operationId": "create_5",
         "parameters": [
           {
@@ -2514,26 +2523,26 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
           "403": {
             "description": "Permission denied"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -4243,6 +4252,7 @@
           "product-controller"
         ],
         "summary": "Activate or deactivate a product",
+        "description": "STORE_ADMIN.",
         "operationId": "updateStatus",
         "parameters": [
           {
@@ -4276,26 +4286,26 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
           "403": {
             "description": "Permission denied"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -4306,6 +4316,7 @@
           "inventory-batch-controller"
         ],
         "summary": "Get a Store inventory batch",
+        "description": "STORE_ADMIN only; foreign Store batches return 404.",
         "operationId": "get_5",
         "parameters": [
           {
@@ -4329,26 +4340,26 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
           "403": {
             "description": "Permission denied"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       },
@@ -4356,7 +4367,8 @@
         "tags": [
           "inventory-batch-controller"
         ],
-        "summary": "Set remaining quantity and/or block state for a Store inventory batch",
+        "summary": "Update remaining quantity, block state and/or expiry date for a Store inventory batch",
+        "description": "STORE_ADMIN only. remainingQuantity must be 0..initialQuantity. batchCode, receivedAt and initialQuantity are immutable. Expiry date null/omitted is unchanged; DELETE /api/inventory-batches/{id}/expiry-date clears it when the product does not require expiry. pushDay must not be after expiryDate.",
         "operationId": "update_5",
         "parameters": [
           {
@@ -4390,26 +4402,26 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
           "403": {
             "description": "Permission denied"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -6230,7 +6242,7 @@
           "inventory-batch-controller"
         ],
         "summary": "Summarize derived inventory for a Store product",
-        "description": "Expiry dates are inclusive through the configured Store time zone's local date.",
+        "description": "STORE_ADMIN only. Expiry dates are inclusive through the configured Store time zone's local date.",
         "operationId": "summary",
         "parameters": [
           {
@@ -6265,26 +6277,26 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict"
-          },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
-          },
           "400": {
             "description": "Invalid request / verification"
           },
           "401": {
             "description": "Authentication required / invalid"
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
           "403": {
             "description": "Permission denied"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -7181,7 +7193,7 @@
           "inventory-batch-controller"
         ],
         "summary": "Clear the push day for a Store inventory batch",
-        "description": "Idempotent. Returns the updated batch; PATCH absent/null pushDay keeps its existing value.",
+        "description": "STORE_ADMIN only. Idempotent. Returns the updated batch; PATCH absent/null pushDay keeps its existing value.",
         "operationId": "clearPushDay",
         "parameters": [
           {
@@ -7205,11 +7217,59 @@
               }
             }
           },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
           "409": {
             "description": "Conflict"
           },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
           "503": {
             "description": "Service configuration or required dependency unavailable"
+          }
+        }
+      }
+    },
+    "/api/inventory-batches/{id}/expiry-date": {
+      "delete": {
+        "tags": [
+          "inventory-batch-controller"
+        ],
+        "summary": "Clear the expiry date for a Store inventory batch",
+        "description": "STORE_ADMIN only. Only allowed when the owning product does not require expiry. Idempotent.",
+        "operationId": "clearExpiryDate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/BatchView"
+                }
+              }
+            }
           },
           "400": {
             "description": "Invalid request / verification"
@@ -7217,14 +7277,20 @@
           "401": {
             "description": "Authentication required / invalid"
           },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
           "403": {
             "description": "Permission denied"
           },
           "404": {
             "description": "Resource not found or outside the authenticated Store"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
           }
         }
       }
@@ -7765,7 +7831,9 @@
           "sku": {
             "type": "string",
             "maxLength": 80,
-            "minLength": 0
+            "minLength": 1,
+            "pattern": "^SKU-[A-Z0-9-]{11}$",
+            "description": "After trimming and uppercasing: exactly SKU- followed by 11 A-Z, 0-9 or hyphen characters"
           },
           "name": {
             "type": "string",
@@ -7797,6 +7865,10 @@
               "INACTIVE"
             ],
             "minLength": 1
+          },
+          "confirmSimilarName": {
+            "type": "boolean",
+            "description": "Set true only after confirming the similar-name warning returned with 409"
           }
         },
         "required": [
@@ -7829,7 +7901,9 @@
         "properties": {
           "id": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "description": "Database-generated product ID",
+            "readOnly": true
           },
           "sku": {
             "type": "string"
@@ -9344,19 +9418,17 @@
       "BatchCreateRequest": {
         "type": "object",
         "properties": {
-          "batchCode": {
-            "type": "string",
-            "maxLength": 80,
-            "minLength": 0
-          },
           "receivedAt": {
             "type": "string",
             "format": "date-time"
           },
           "expiryDate": {
-            "type": "string",
+            "type": [
+              "string",
+              "null"
+            ],
             "format": "date",
-            "description": "Optional unless the product requires expiry tracking"
+            "description": "Required when the product requires expiry tracking"
           },
           "initialQuantity": {
             "type": "integer",
@@ -9372,7 +9444,6 @@
           }
         },
         "required": [
-          "batchCode",
           "initialQuantity",
           "receivedAt"
         ]
@@ -9382,21 +9453,29 @@
         "properties": {
           "id": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "description": "Database-generated batch ID",
+            "readOnly": true
           },
           "productId": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "readOnly": true
           },
           "batchCode": {
-            "type": "string"
+            "type": "string",
+            "description": "Generated as BATCH-YYYYMMDD-NNN; sequence is scoped to the Product",
+            "readOnly": true
           },
           "receivedAt": {
             "type": "string",
             "format": "date-time"
           },
           "expiryDate": {
-            "type": "string",
+            "type": [
+              "string",
+              "null"
+            ],
             "format": "date"
           },
           "initialQuantity": {
@@ -9975,6 +10054,14 @@
             ],
             "format": "date",
             "description": "Set the push day; counts toward the at-least-one-field rule. Must be on or before expiryDate"
+          },
+          "expiryDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "description": "Set a corrected expiry date; null/omitted means unchanged. Clear with DELETE /api/inventory-batches/{id}/expiry-date"
           }
         }
       },

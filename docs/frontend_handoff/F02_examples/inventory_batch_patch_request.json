@@ -1,4 +1,6 @@
 {
+  "expiryDate": "2026-11-18",
   "remainingQuantity": 18,
-  "status": "BLOCKED"
+  "status": "BLOCKED",
+  "pushDay": "2026-11-15"
 }

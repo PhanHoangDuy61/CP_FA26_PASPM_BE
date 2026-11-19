@@ -70,7 +70,7 @@ class RetailCatalogUtilityIntegrationTest {
     }
 
     @Test void catalogReadDoesNotGrantProductCategoryOrInventoryWrites() throws Exception {
-        String productBody="{\"sku\":\"DENIED\",\"name\":\"Denied\",\"unit\":\"bottle\",\"requiresExpiry\":true,\"sellingPrice\":100,\"costPrice\":20,\"status\":\"ACTIVE\"}";
+        String productBody="{\"sku\":\"SKU-DENIE-00001\",\"name\":\"Denied\",\"unit\":\"bottle\",\"requiresExpiry\":true,\"sellingPrice\":100,\"costPrice\":20,\"status\":\"ACTIVE\"}";
         String categoryBody="{\"name\":\"Denied\",\"status\":\"ACTIVE\"}";
         for(String path:new String[]{"/api/products","/api/categories"}) {
             mvc.perform(post(path).header("Authorization","Bearer "+merchant).contentType(MediaType.APPLICATION_JSON).content(path.endsWith("products")?productBody:categoryBody))
@@ -81,7 +81,7 @@ class RetailCatalogUtilityIntegrationTest {
             mvc.perform(patch(path+"/status").header("Authorization","Bearer "+merchant).contentType(MediaType.APPLICATION_JSON).content("{\"status\":\"INACTIVE\"}"))
                 .andExpect(status().isForbidden());
         }
-        mvc.perform(post("/api/products/"+product+"/batches").header("Authorization","Bearer "+merchant).contentType(MediaType.APPLICATION_JSON).content("{\"batchCode\":\"DENIED\",\"receivedAt\":\"2026-10-01T00:00:00Z\",\"expiryDate\":\"2099-01-01\",\"initialQuantity\":1}"))
+        mvc.perform(post("/api/products/"+product+"/batches").header("Authorization","Bearer "+merchant).contentType(MediaType.APPLICATION_JSON).content("{\"receivedAt\":\"2026-10-01T00:00:00Z\",\"expiryDate\":\"2099-01-01\",\"initialQuantity\":1}"))
             .andExpect(status().isForbidden());
     }
 
