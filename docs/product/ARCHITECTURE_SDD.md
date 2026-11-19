@@ -3,10 +3,10 @@
 | Field | Value |
 |---|---|
 | Project | PASPM (FA26SE048) |
-| Version / date | 0.3.1 — 2026-11-19 (synced with `dev` @ `222e54f`; owner answers of 2026-11-19 15:51) |
+| Version / date | 0.4 — 2026-11-20 (synced with `dev` @ `636952b`) |
 | Baseline | Backend `dev` @ `530651b` (repo `PhanHoangDuy61/CP_FA26_PASPM_BE`); frontend `ThaiTuKien1012/FE-FA26` `dev` @ `86d677d` |
 | Audited against code | `530651bad5b02d90bcb48ecffaf7fa5a0f6b0b7e`, see (audit report kept outside the repo, 2026-11-19) |
-| Synced with | `dev` @ `222e54f` (2026-11-19): F02 update `d22f735`, PR #20 (decisions), PR #21 (F04 Excel). Checked for these changes only, not a full re-audit |
+| Synced with | `dev` @ `636952b` (2026-11-20): F02 update `d22f735`; PR #20 (decisions); PR #21 (F04 Excel); PR #22 (zone caps, top-K baseline, equal-size simulation, DEC-20261119-06); PR #23 (SPMF whole-đồng fallback, DEC-20261119-05); PR #25 (agent kit). Checked for these changes only, not a full re-audit |
 | Based on | Report 4 (SDD, 04 Nov 2026) updated with code through V26 |
 | Companion files | [BRD_VISION.md](BRD_VISION.md) · [SRS.md](SRS.md) · [GLOSSARY.md](GLOSSARY.md) |
 
@@ -196,7 +196,7 @@ There are **45 tables**: 31 from V1–V19, plus 2 (V20), 8 (V23) and 4 (V25), wi
 ```mermaid
 flowchart LR
   S[READY snapshot] --> B[Build input<br/>scale 6, GCD]
-  B --> G{int32 guard<br/>TU, TWU, minUtil<br/>≤1,600 products, ≤20,000 rows}
+  B --> G{int32 guard<br/>TU, TWU, minUtil<br/>≤1,600 products, ≤20,000 rows<br/>retry once with 1-đồng HALF_UP}
   G -- fail --> E400[400 before enqueue]
   G -- ok --> Q[(mining_request<br/>QUEUED)]
   Q --> L[Worker lease + fencing]
@@ -218,11 +218,11 @@ flowchart LR
 
 ### 6.4 Layout and campaign (F07/F08)
 
-- **Baseline A** is the snapshot's products ordered by transaction frequency.
+- **Baseline A** is the top-K snapshot products by transaction frequency (`F07_BASELINE_V2`, K = BASELINE capacity 35; older V1 layouts hold every product).
 - **Layout B** is built from whole APPROVED and ready blocks, within the configured zone capacities.
-- **Zones** are `BASELINE`, `BUNDLE`, `CROSS_SELL`, `FBT` and `BANNER`. `application.yml` sets no `paspm.layout` capacities, so every zone is currently unbounded (`UNCONFIGURED_LIMITS_ARE_UNBOUNDED`). Decided 2026-11-19 (planned): BANNER 3 blocks / 3 products, BUNDLE 4 / 16, CROSS_SELL 2 / 8, FBT 2 / 8, BASELINE 35 / 35; baseline A becomes top-K (`F07_BASELINE_V2`) and simulation compares equal sizes (B vs top-N of A).
+- **Zones** are `BASELINE`, `BUNDLE`, `CROSS_SELL`, `FBT` and `BANNER`. Capacities are configured in `application.yml` since PR #22, and environment-overridable: BANNER 3 blocks / 3 products, BUNDLE 4 / 16, CROSS_SELL 2 / 8, FBT 2 / 8, BASELINE 35 / 35.
 - **Score** = Σ weighted utility of the distinct products shown.
-- **Simulation** runs only on a DRAFT campaign. It replays later eligible transactions that are not in the snapshot, and stores the dataset hash, the transaction ids and the assumptions.
+- **Simulation** runs only on a DRAFT campaign. It replays later eligible transactions that are not in the snapshot, and stores the dataset hash, the transaction ids and the assumptions. Since PR #22 (`OFFLINE_REPLAY_V2`), B is compared with the top-N prefix of A, where N = products in B.
 - **Activation** locks the Store row, rechecks validity, ends the previously active campaign and records history.
 - **Planned extension:** `priorityCoverage` = |products with W > 1 on the layout| ÷ |products on the layout|, with W read from `utility_matrix_item` of the campaign snapshot. Fill `priority_coverage` and `priority_coverage_denominator` in `comparison_report_layout` instead of NULL. Today the code still writes `NULL,NULL`, and the stored assumption still reads "N/A until the F03 priority coverage formula is confirmed".
 

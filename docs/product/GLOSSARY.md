@@ -4,10 +4,10 @@
 |---|---|
 | Project | PASPM — Product Arrangement Support Platform (FA26SE048, FPT SWP490) |
 | Document | Glossary of domain and technical terms |
-| Version / date | 0.3.1 — 2026-11-19 (synced with `dev` @ `222e54f`; owner answers of 2026-11-19 15:51) |
+| Version / date | 0.4 — 2026-11-20 (synced with `dev` @ `636952b`) |
 | Baseline | Backend `dev` @ `530651b` (Flyway V1–V26), owner decisions up to 2026-11-17 |
 | Audited against code | `530651bad5b02d90bcb48ecffaf7fa5a0f6b0b7e`, see (audit report kept outside the repo, 2026-11-19) |
-| Synced with | `dev` @ `222e54f` (2026-11-19): F02 update `d22f735`, PR #20 (decisions), PR #21 (F04 Excel). Checked for these changes only, not a full re-audit |
+| Synced with | `dev` @ `636952b` (2026-11-20): F02 update `d22f735`; PR #20 (decisions); PR #21 (F04 Excel); PR #22 (zone caps, top-K baseline, equal-size simulation, DEC-20261119-06); PR #23 (SPMF whole-đồng fallback, DEC-20261119-05); PR #25 (agent kit). Checked for these changes only, not a full re-audit |
 | Companion files | [BRD_VISION.md](BRD_VISION.md) · [SRS.md](SRS.md) · [ARCHITECTURE_SDD.md](ARCHITECTURE_SDD.md) |
 
 **How to use.** Use these words exactly as defined here, in code reviews, prompts, reports and the frontend. If the code or a newer decision disagrees with this file, the code and decision win. Fix this file in the same change. Terms marked *(legacy)* still appear in old data or old reports, but new features must not use them.
@@ -81,7 +81,8 @@
 | **Transaction utility (TU)** | Sum of the weighted utility of one transaction. |
 | **TWU** | Transaction-Weighted Utility of a product, meaning the sum of the TU of the transactions that contain it. |
 | **Scale-6 / GCD conversion** | Lossless conversion of decimal utilities into SPMF integers: multiply by 10⁶, then divide by the GCD. |
-| **EFIM-aware int32 guard** | SPMF uses signed 32-bit integers. Each transaction's utility, each product's TWU and the converted minUtil must all be ≤ 2,147,483,647, or the request gets 400. Totals use int64; `totalScaledUtility` is int64. Planned (2026-11-19): when a bound is exceeded, the input falls back to whole-đồng rounding (HALF_UP) before the guard is applied again. |
+| **EFIM-aware int32 guard** | SPMF uses signed 32-bit integers. Each transaction's utility, each product's TWU and the converted minUtil must all be ≤ 2,147,483,647, or the request gets 400. Totals use int64; `totalScaledUtility` is int64. Since 2026-11-19 (DEC-20261119-05), when a bound is exceeded the input is rebuilt with each item rounded to 1 đồng HALF_UP and checked again (see **Conversion mode**). |
+| **Conversion mode** | How a mining request's SPMF input was built: `LOSSLESS` (scale-6/GCD, `F03_SCALE6_GCD_INT32_DENSE_V1`) or `WHOLE_UNIT_HALF_UP` (1 đồng, `F03_WHOLE_UNIT_HALF_UP_INT32_DENSE_V1`). It is frozen in the request; readers dispatch on `conversionVersion`. |
 | **Mining configuration** | The global, **versioned** minUtil policy. A request keeps the version it was created with. |
 | **Mining request** | A request to mine one READY snapshot of one Store, idempotent by `requestKey` (UUID). Status: `PENDING → RUNNING → COMPLETED / FAILED`. |
 | **Mining run** | One algorithm execution for a request, with runtime, memory, itemset count and failure details. |
@@ -114,8 +115,9 @@
 | Term | Definition |
 |---|---|
 | **Layout** | An ordered set of **placements**, also called blocks, in zones for the storefront homepage. Each placement is a whole approved recommendation. |
-| **Zone** | Layout area mapped to a recommendation type: `BASELINE`, `BUNDLE`, `CROSS_SELL`, `FBT`, `BANNER`. Capacities come from the shared policy (`GET /api/layouts/policy`), with no invented defaults. Decided 2026-11-19 (planned): BANNER 3 blocks / 3 products, BUNDLE 4 / 16, CROSS_SELL 2 / 8, FBT 2 / 8, BASELINE 35 / 35. A capacity that is not configured is unbounded (`UNCONFIGURED_LIMITS_ARE_UNBOUNDED`), and none is configured today. |
-| **Layout A (baseline)** | Read-only layout built deterministically from the snapshot, ordered by how many transactions contain each product. It is a frequency baseline, not a utility ranking. Today it holds every snapshot product. Planned (2026-11-19): top-K only (K = 35, `F07_BASELINE_V2`), and simulations compare B with the top-N of A (N = products in B). |
+| **Zone** | Layout area mapped to a recommendation type: `BASELINE`, `BUNDLE`, `CROSS_SELL`, `FBT`, `BANNER`. Capacities come from the shared policy (`GET /api/layouts/policy`), with no invented defaults. Configured since 2026-11-19 (DEC-20261119-06): BANNER 3 blocks / 3 products, BUNDLE 4 / 16, CROSS_SELL 2 / 8, FBT 2 / 8, BASELINE 35 / 35. A capacity that is not configured is unbounded (`UNCONFIGURED_LIMITS_ARE_UNBOUNDED`). |
+| **Layout A (baseline)** | Read-only layout built deterministically from the snapshot, ordered by how many transactions contain each product. It is a frequency baseline, not a utility ranking. Since 2026-11-19 it holds the top-K products only (K = 35, `F07_BASELINE_V2`); older V1 layouts hold every product. |
+| **Equal-size comparison** | `OFFLINE_REPLAY_V2` compares B with the first N products of A, with N = distinct products in B, because the metrics and score grow with the number of products shown. F07 shows `equalSizeBaselineScore`. |
 | **Layout B (proposed)** | Editable layout the Merchandiser builds from approved, ready recommendations. A product may appear only once. B must be `READY` before it can be selected. |
 | **Layout revision** | Every edit creates a new revision. Reports pin exact revisions. |
 | **Layout utility score** | "Weighted utility (snapshot)": the sum of `weighted_utility` of the distinct displayed products in the same snapshot. It is not revenue. |

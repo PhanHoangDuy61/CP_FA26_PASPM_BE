@@ -3,10 +3,10 @@
 | Field | Value |
 |---|---|
 | Project | PASPM (FA26SE048) |
-| Version / date | 0.3.1 — 2026-11-19 (synced with `dev` @ `222e54f`; owner answers of 2026-11-19 15:51) |
+| Version / date | 0.4 — 2026-11-20 (synced with `dev` @ `636952b`) |
 | Baseline | Backend `dev` @ `530651b`: Flyway V1–V26, OpenAPI 102 paths / 123 operations (at `222e54f`) |
 | Audited against code | `530651bad5b02d90bcb48ecffaf7fa5a0f6b0b7e`, see (audit report kept outside the repo, 2026-11-19) |
-| Synced with | `dev` @ `222e54f` (2026-11-19): F02 update `d22f735`, PR #20 (decisions), PR #21 (F04 Excel). Checked for these changes only, not a full re-audit |
+| Synced with | `dev` @ `636952b` (2026-11-20): F02 update `d22f735`; PR #20 (decisions); PR #21 (F04 Excel); PR #22 (zone caps, top-K baseline, equal-size simulation, DEC-20261119-06); PR #23 (SPMF whole-đồng fallback, DEC-20261119-05); PR #25 (agent kit). Checked for these changes only, not a full re-audit |
 | Based on | Report 3 (SRS) plus newer owner decisions and current code |
 | Companion files | [BRD_VISION.md](BRD_VISION.md) · [ARCHITECTURE_SDD.md](ARCHITECTURE_SDD.md) · [GLOSSARY.md](GLOSSARY.md) |
 
@@ -150,7 +150,8 @@ Each line gives the behaviour an agent must preserve. Exact request and response
   - submissions are idempotent by `requestKey`.
 - FR-05.3: Input bounds are checked before the request is queued:
   - ≤ 1,600 distinct products and ≤ 20,000 matrix rows;
-  - EFIM int32 guard on transaction utility, product TWU and converted minUtil, each with its own 400 message.
+  - EFIM int32 guard on transaction utility, product TWU and converted minUtil, each with its own 400 message;
+  - since PR #23 (DEC-20261119-05) the input is built losslessly first and, **only** if a bound is exceeded, rebuilt with each item rounded to 1 đồng HALF_UP (`conversionVersion F03_WHOLE_UNIT_HALF_UP_INT32_DENSE_V1`, `conversionMode WHOLE_UNIT_HALF_UP`, `roundingUnit 1`, shown as additive view fields). If it still overflows, the request gets 400 naming `WHOLE_UNIT_HALF_UP`. Snapshots stay exact.
 - FR-05.4: Worker and runtime:
   - the worker claims requests with a lease and fencing token;
   - SPMF runs in a Java 25 child process with 256 MiB heap and a 60 s timeout;
@@ -190,8 +191,8 @@ Each line gives the behaviour an agent must preserve. Exact request and response
 
 ### F07 — Layout simulator (DONE API; PARTIAL)
 
-- FR-07.1: Baseline A is deterministic (frequency order, ties broken by product id) and read-only. Today it holds **every** snapshot product (`F07_BASELINE_V1`). Decided 2026-11-19 (planned): keep only the top-K products, K = BASELINE capacity (35), as `F07_BASELINE_V2`. Old A layouts are unchanged.
-- FR-07.2: Layout B is built only from recommendations that are in the same Store and snapshot, APPROVED and ready. A product appears at most once. Zone capacities come from configuration (`paspm.layout.*`). None are set in `application.yml`, so every zone is currently unbounded. Decided 2026-11-19 (planned): BANNER 3 blocks / 3 products, BUNDLE 4 / 16, CROSS_SELL 2 / 8, FBT 2 / 8, BASELINE 35 / 35.
+- FR-07.1: Baseline A is deterministic (frequency order, ties broken by product id) and read-only. Since PR #22 (DEC-20261119-06) it holds only the top-K products, with K = the BASELINE product capacity (35), as `F07_BASELINE_V2`. `baseline_params` stores `k` and `candidateProducts`. Older `F07_BASELINE_V1` layouts, which hold every product, are unchanged and stay valid.
+- FR-07.2: Layout B is built only from recommendations that are in the same Store and snapshot, APPROVED and ready. A product appears at most once. Zone capacities come from configuration (`paspm.layout.*`). Configured in `application.yml` since PR #22, and overridable through `PASPM_LAYOUT_MAX_BLOCKS_<ZONE>` / `PASPM_LAYOUT_MAX_PRODUCTS_<ZONE>`: BANNER 3 blocks / 3 products, BUNDLE 4 / 16, CROSS_SELL 2 / 8, FBT 2 / 8, BASELINE 35 / 35.
 - FR-07.3: Each edit is a new revision. A block that becomes invalid is shown with errors and blocks READY, publish and activate.
 - FR-07.4: The utility score is the sum of snapshot weighted utility over distinct displayed products. Preview returns validation and score.
 - FR-07.5: Priority coverage is products with W > 1 on the layout ÷ products on the layout. **Not implemented**: the response returns null.
@@ -202,7 +203,7 @@ Each line gives the behaviour an agent must preserve. Exact request and response
   - Merchandiser: create, decide, publish, withdraw.
   - Store Admin: activate, end, rollback.
 - FR-08.2: There is at most one ACTIVE campaign per Store. Activation rechecks validity and ends the previously active campaign.
-- FR-08.3: Simulation (decided 2026-11-19, planned: new reports compare B with the top-N of A, N = distinct products in B, and store N, |A| and K in `assumptions` under a new `algorithm_version`; old reports unchanged):
+- FR-08.3: Simulation. Since PR #22, `OFFLINE_REPLAY_V2` compares B with the first N products of A, with N = distinct products in B (all of A when N > |A|), and stores `comparisonMode`, N, |A| and K in `assumptions`. Old V1 reports are unchanged. F07 shows the difference against `LayoutView.equalSizeBaselineScore` (additive, next to `equalSizeProductCount`):
   - offline replay over eligible transactions after the snapshot range, excluding snapshot transactions;
   - stores the dataset hash, transaction ids, assumptions and layout revisions;
   - returns `simulated:true`.
@@ -325,7 +326,7 @@ MSG01–MSG18 from Report 3 remain valid, with these changes:
 |---|---|
 | MSG12 | Actual texts (400): `Snapshot exceeds 1600 distinct products`; `Snapshot matrix must contain 1..20000 rows`; `Snapshot matrix exceeds mining row limit` (this last one, from the submit path, does not name the number) |
 | MSG15 | Unchanged. Scheduler enable still returns 503 (`Scheduled mining dispatch is not available`) |
-| *new* | `Transaction utility exceeds SPMF int32 capacity`; `Product <id> TWU exceeds SPMF int32 capacity`; `Converted minUtil exceeds SPMF int32 capacity` (all 400) |
+| *new* | `Transaction utility exceeds SPMF int32 capacity`; `Product <id> TWU exceeds SPMF int32 capacity`; `Converted minUtil exceeds SPMF int32 capacity` (all 400). Since PR #23 they are raised only after the whole-đồng fallback, and the message names the mode |
 | *new* | `UNSUPPORTED_SCORING_VERSION` (409, raised by the F03 and F06 versioned JSON readers; the body adds `"code"`) |
 | *new* | Unknown or removed field → 400 `Invalid request fields`. Removed routes → 404 / 405 |
 | *new* | `PRODUCT_NAME_CONFIRMATION_REQUIRED` (409, F02): similar product name; retry with `confirmSimilarName: true` |
@@ -389,7 +390,7 @@ Update Report 3 using the template layout, changing content only.
 1. `priorityCoverage` (Direction 1) is not implemented.
 2. N+1 queries in F06 `ProductEligibilityService` (3 queries per product: product, batches, units sold) have not been measured.
 3. Frontend still calls removed APIs and fields (breaking changes #15–#18). This is still true on FE `dev` @ `86d677d` (for example `expiryPushDays`, `compareAlgorithms`, `HUI_MINER`, `/benchmark`). `origin/feature/fe-v26-integration` removes part of it and is not merged.
-4. Demo minUtil: on the demo seed, the single day 2026-10-02 at `PERCENTAGE 0.25` gave 179 patterns (inside the 100–300 target). The full range 2026-10-01..04 at 0.25 gave 0 patterns. A value for a multi-day demo still needs to be chosen. It will be re-measured after the owner decides how realistic VND prices avoid the per-product TWU int32 limit.
+4. Demo minUtil: on the demo seed, the single day 2026-10-02 at `PERCENTAGE 0.25` gave 179 patterns (inside the 100–300 target). The full range 2026-10-01..04 at 0.25 gave 0 patterns. For the full range 2026-10-01..04, `PERCENTAGE 0.12` gives 180 patterns (EFIM 385 ms, `LOSSLESS`), measured 2026-11-19 (DEC-20261119-05). The demo still has to set it as policy.
 5. Demo seed is broken on `dev` @ `222e54f` by the 2026-11-19 F02 rules (SKU format, similar-name 409, `batchCode` no longer accepted); the FoodMart import files still use `FOODMART-xxxx` SKUs. Fix deferred by the owner.
 6. The F02 rules of 2026-11-19 have no DEC or record-of-changes entry yet.
 7. Open F09/F10 questions:

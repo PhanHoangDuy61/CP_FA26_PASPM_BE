@@ -77,12 +77,13 @@ The product docs give the details; these are the traps.
   - Weighted utility is a priority score, **not revenue or profit**.
   - Push day is set per inventory batch. Seasons give M.
 - **Mining** is **EFIM-only**. HUI-Miner, compare mode and benchmarks were removed on 2026-11-16.
-  - SPMF uses int32, which the EFIM-aware guard enforces.
+  - SPMF uses int32, which the EFIM-aware guard enforces. The input is lossless first and falls back to 1-đồng HALF_UP only on overflow (DEC-20261119-05). The mode is frozen in the request as `conversionVersion`.
   - Limits: 1,600 products and 20,000 matrix rows; 60 s and 256 MiB; 4 MiB output and at most 2,000 patterns, otherwise the run fails with `OUTPUT_LIMIT`.
 - **Recommendations:** downstream features may use a recommendation only when `reviewStatus=APPROVED` **and** `readyForConsumption=true`, rechecked at the moment of use.
 - **Layout & campaign**
   - Baseline A is read-only and frequency-ordered. B is built from whole recommendation blocks, and a product appears once per layout.
   - Campaign lifecycle: `DRAFT → PUBLISHED → ACTIVE → ENDED`. A Store has at most one ACTIVE campaign.
+  - Zone caps are configured (DEC-20261119-06). Baseline A holds only the top-35 by frequency (`F07_BASELINE_V2`). A/B compares B with A's first N products, where N = the number of products in B (`OFFLINE_REPLAY_V2`).
   - A/B results come from an offline replay and are always labelled **simulated**.
 - **F02 since 2026-11-19**
   - SKU must match `^SKU-[A-Z0-9-]{11}$`.
