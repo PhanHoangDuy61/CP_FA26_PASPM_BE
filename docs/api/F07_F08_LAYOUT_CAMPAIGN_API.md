@@ -82,6 +82,28 @@ Record a decision; a report is optional. When supplied, it must belong to this c
 
 Publish, withdraw, activate, end, and rollback accept `{"expectedVersion": <current campaign version>}`. Re-read the campaign after each mutation and use the returned version for the next command.
 
+## 2026-11-19 — zone capacities, top-K baseline and equal-size comparison
+
+[DEC-20261119-06](../decisions/2026-11-19/DEC-20261119-06-layout-caps-topk-baseline-equal-size.md). This section supersedes the rules below where they differ.
+
+**Capacities** (`GET /api/layouts/policy` now returns them; `capacityPolicy` keeps its value because an absent cap is still unbounded):
+
+| Zone | maxBlocks | maxProducts | Environment override |
+|---|---:|---:|---|
+| BANNER | 3 | 3 | `PASPM_LAYOUT_MAX_BLOCKS_BANNER`, `PASPM_LAYOUT_MAX_PRODUCTS_BANNER` |
+| BUNDLE | 4 | 16 | `PASPM_LAYOUT_MAX_BLOCKS_BUNDLE`, `PASPM_LAYOUT_MAX_PRODUCTS_BUNDLE` |
+| CROSS_SELL | 2 | 8 | `PASPM_LAYOUT_MAX_BLOCKS_CROSS_SELL`, `PASPM_LAYOUT_MAX_PRODUCTS_CROSS_SELL` |
+| FBT | 2 | 8 | `PASPM_LAYOUT_MAX_BLOCKS_FBT`, `PASPM_LAYOUT_MAX_PRODUCTS_FBT` |
+| BASELINE | 35 | 35 | `PASPM_LAYOUT_MAX_BLOCKS_BASELINE`, `PASPM_LAYOUT_MAX_PRODUCTS_BASELINE` |
+
+A B placement that exceeds a cap is rejected with 400 (`<ZONE> exceeds configured blocks|products capacity <n>`); a stored layout that exceeds one is shown with that validation error and cannot become READY.
+
+**Baseline A (`F07_BASELINE_V2`)**: a new campaign's A keeps only the top-K snapshot products in the existing frequency order, `K` = BASELINE `maxProducts`; `baseline_params` stores `ruleVersion`, `k` and `candidateProducts`. Campaign creation therefore succeeds for snapshots with more than 35 products. Without a BASELINE cap the V1 behaviour (all products, `F07_BASELINE_V1`) is kept. Existing A layouts are not changed; the BASELINE cap is validated only for V2 baselines.
+
+**Equal-size simulation (`OFFLINE_REPLAY_V2`)**: B is compared with the first N products of A in placement order, N = distinct products in B's revision; when N > |A| all of A is used and `nExceedsBaseline` is `true`. The report's `assumptions` add `comparisonMode: EQUAL_SIZE_TOP_N_OF_A`, `comparisonRule`, `comparedProductCountN`, `baselineProductCount` (|A|), `baselineProductsCompared` (min(N, |A|)), `baselineK` and `nExceedsBaseline`. The A row of the report is A's layout and version, with metrics over that prefix. Reports with `algorithmVersion: OFFLINE_REPLAY_V1` are returned exactly as stored (A measured in full).
+
+**Additive `LayoutView` fields** (layout B only, `null` for A): `equalSizeBaselineScore` — weighted utility score of A's first N products; `equalSizeProductCount` — min(N, |A|). For the F07 "difference vs A" use `weightedUtilityScore(B) − equalSizeBaselineScore(B)`; A's `weightedUtilityScore` remains the full-A score. No field was removed or renamed; no route changed.
+
 ## Layout rules and utility
 
 - Baseline A is generated deterministically from the campaign snapshot by the number of distinct snapshot transactions containing each product, descending; ties are ordered by `product_id` ascending. A is read-only. This is the frequency baseline defined for the F08 comparison, not a weighted-utility ranking.
