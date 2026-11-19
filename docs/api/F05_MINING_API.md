@@ -10,6 +10,19 @@ For new requests, F05 preserves the existing scale-6/GCD conversion and applies 
 
 `RequestView.totalScaledUtility` is now a nonnegative signed 64-bit integer (`integer/int64` in OpenAPI). Percentage `minUtil` derivation and F06 frozen-evidence total validation use exact signed-64-bit totals. The database stores this total inside the existing frozen JSON input, not in an int32 total column; no Flyway migration or stored-data rewrite was required. The JSON property name and conversion version remain unchanged: old int-sized values deserialize as long and serialize identically, while new large totals are validated exactly. See [DEC-20261117-01](../decisions/2026-11-17/DEC-20261117-01-efim-aware-lossless-int32-guard.md) and [Record 015](../record-of-changes/2026-11-17/15-f05-efim-aware-int32-guard.md).
 
+## Whole-đồng fallback for the SPMF input — 2026-11-19
+
+[DEC-20261119-05](../decisions/2026-11-19/DEC-20261119-05-spmf-whole-dong-fallback.md) amends the bounds above. A new request first builds the exact input above (`conversionVersion: F03_SCALE6_GCD_INT32_DENSE_V1`, `conversionMode: LOSSLESS`); its text, hash, divisor and threshold are unchanged. **Only** if that input fails one of the three EFIM int32 bounds is a whole-unit input built instead:
+
+1. Each frozen item weighted utility is rounded to **1 đồng**, `HALF_UP` (`setScale(0, HALF_UP)`). An item that rounds to 0 stays in its transaction with utility 0.
+2. Transaction utility = the sum of that transaction's rounded items; Product TWU and the total are recomputed from these values only.
+3. `ABSOLUTE` minUtil = `ceil(minUtilValue)`; `PERCENTAGE` = `ceil(minUtilValue × roundedTotal / 100)`.
+4. The int32 guard is applied again. A second failure returns HTTP 400 with the bound and the mode, e.g. `Product <productId> TWU exceeds SPMF int32 capacity even after WHOLE_UNIT_HALF_UP rounding to 1 đồng` (also for transaction utility and converted minUtil). There is no further escalation (for example to thousands of đồng); that needs a new owner decision.
+
+The frozen F03 snapshot is never rounded. A whole-unit request stores `conversionVersion: F03_WHOLE_UNIT_HALF_UP_INT32_DENSE_V1`, `utilityScale: 0`, `divisor: 1`, `conversionMode: WHOLE_UNIT_HALF_UP` and `roundingUnit: 1` in its frozen input; `totalScaledUtility`, `minUtilSpmf`, pattern `utilitySpmf` and `effectiveMinUtility` are then whole đồng, and pattern `utility` is đồng in both modes. Lossless frozen JSON keeps its previous fields. F06 reads frozen inputs by `conversionVersion`; any other version is rejected (409).
+
+**Additive response fields** on `RequestView` and `RunView`: `conversionMode` (`LOSSLESS` | `WHOLE_UNIT_HALF_UP`; `null` only for an unknown stored version) and `roundingUnit` (`1` for whole-unit, `null` for lossless). Historical requests report `LOSSLESS`. No field was removed or renamed; no route changed (100 paths / 121 operations).
+
 | Operation | Current behavior |
 |---|---|
 | `PUT /api/system/mining/config` | Accepts `minUtilMode`, `minUtilValue`, `expectedVersion`; algorithm is fixed to EFIM. `algorithm` is an unknown field (400). GET reports effective `algorithm: EFIM`, including before the first minUtil configuration. |
@@ -287,6 +300,8 @@ F05 is asynchronous and status-driven: `PENDING` means queued; request terminal 
 | inputBytes | integer (int32) | See state/business rules above |
 | snapshot | SnapshotView | See state/business rules above |
 | createdAt | string (date-time) | See state/business rules above |
+| conversionMode | string, nullable | `LOSSLESS` or `WHOLE_UNIT_HALF_UP` (2026-11-19, additive) |
+| roundingUnit | number, nullable | `1` (đồng) for `WHOLE_UNIT_HALF_UP`, `null` for `LOSSLESS` (2026-11-19, additive) |
 
 ### RunView
 
@@ -313,6 +328,8 @@ F05 is asynchronous and status-driven: `PENDING` means queued; request terminal 
 | patternCount | integer/null (int32) | Nullable |
 | failureCode | string/null | Nullable |
 | failureMessage | string/null | Nullable |
+| conversionMode | string, nullable | Derived from `conversionVersion`: `LOSSLESS` or `WHOLE_UNIT_HALF_UP` (2026-11-19, additive) |
+| roundingUnit | number, nullable | `1` for `WHOLE_UNIT_HALF_UP`, `null` for `LOSSLESS` (2026-11-19, additive) |
 
 ### PatternView
 
