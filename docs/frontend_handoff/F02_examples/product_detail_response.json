@@ -1,8 +1,7 @@
 {
   "id": 21,
-  "sku": "MILK-01",
+  "sku": "SKU-MILK-000001",
   "name": "Fresh Milk",
-  "categoryId": 4,
   "unit": "bottle",
   "requiresExpiry": true,
   "sellingPrice": 2.5,
@@ -13,6 +12,5 @@
     "name": "Dairy",
     "status": "ACTIVE"
   },
-  "stockQuantity": 12,
-  "expiryPushDays": 7
+  "stockQuantity": 12
 }

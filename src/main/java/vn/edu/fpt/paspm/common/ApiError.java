@@ -11,6 +11,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import vn.edu.fpt.paspm.catalog.product.ProductNameConfirmationRequiredException;
 
 @RestControllerAdvice
 public class ApiError {
@@ -18,6 +19,15 @@ public class ApiError {
     public ResponseEntity<Map<String,String>> unsupportedVersion(UnsupportedScoringVersion exception) {
         org.slf4j.LoggerFactory.getLogger(ApiError.class).error("Stored scoring model is unsupported",exception);
         return ResponseEntity.status(exception.status()).body(Map.of("code",UnsupportedScoringVersion.CODE,"error",exception.getMessage()));
+    }
+
+    @ExceptionHandler(ProductNameConfirmationRequiredException.class)
+    public ResponseEntity<Map<String, Object>> productNameConfirmation(
+            ProductNameConfirmationRequiredException exception) {
+        return ResponseEntity.status(exception.status()).body(Map.of(
+                "code", ProductNameConfirmationRequiredException.CODE,
+                "error", exception.getMessage(),
+                "confirmWith", "confirmSimilarName=true"));
     }
 
     @ExceptionHandler(ApiException.class)

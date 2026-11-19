@@ -2,11 +2,18 @@ package vn.edu.fpt.paspm.catalog;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeSet;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -94,7 +101,7 @@ class CatalogIntegrationTest {
                 .andExpect(status().isOk()).andExpect(jsonPath("$.status").value("INACTIVE"));
 
         String product = """
-                {"sku":"MILK-01","name":"Fresh Milk","categoryId":%d,"unit":"bottle","requiresExpiry":true,"sellingPrice":2.50,"costPrice":1.25,"status":"ACTIVE"}
+                {"sku":"SKU-MILK-000001","name":"Fresh Milk","categoryId":%d,"unit":"bottle","requiresExpiry":true,"sellingPrice":2.50,"costPrice":1.25,"status":"ACTIVE"}
                 """.formatted(categoryId);
         String forgedStoreProduct = product.replace("{\"sku\":", "{\"storeId\":" + secondStoreId + ",\"sku\":");
         mvc.perform(post("/api/products")
@@ -105,7 +112,7 @@ class CatalogIntegrationTest {
                         .header("Authorization", "Bearer " + storeAdminToken)
                         .contentType(MediaType.APPLICATION_JSON).content(product))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.sku").value("MILK-01"))
+                .andExpect(jsonPath("$.sku").value("SKU-MILK-000001"))
                 .andExpect(jsonPath("$.stockQuantity").value(0))
                 .andReturn().getResponse().getContentAsString();
         int productId = json.readTree(productResponse).get("id").asInt();
@@ -133,12 +140,13 @@ class CatalogIntegrationTest {
         String batchResponse = mvc.perform(post("/api/products/{id}/batches", productId)
                         .header("Authorization", "Bearer " + storeAdminToken)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"batchCode\":\"B-001\",\"receivedAt\":\"2026-10-01T10:00:00Z\",\"expiryDate\":\"2099-12-31\",\"initialQuantity\":12}"))
+                        .content("{\"receivedAt\":\"2026-10-01T10:00:00Z\",\"expiryDate\":\"2099-12-31\",\"initialQuantity\":12}"))
                 .andExpect(status().isCreated()).andExpect(jsonPath("$.remainingQuantity").value(12))
+                .andExpect(jsonPath("$.batchCode").value("BATCH-20261001-001"))
                 .andReturn().getResponse().getContentAsString();
         int batchId = json.readTree(batchResponse).get("id").asInt();
         mvc.perform(get("/api/products/{id}/batches", productId).header("Authorization", "Bearer " + storeAdminToken))
-                .andExpect(status().isOk()).andExpect(jsonPath("$[0].batchCode").value("B-001"));
+                .andExpect(status().isOk()).andExpect(jsonPath("$[0].batchCode").value("BATCH-20261001-001"));
         mvc.perform(get("/api/inventory-batches/{id}", batchId).header("Authorization", "Bearer " + storeAdminToken))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.initialQuantity").value(12));
         mvc.perform(patch("/api/inventory-batches/{id}", batchId).header("Authorization", "Bearer " + storeAdminToken)
@@ -149,7 +157,12 @@ class CatalogIntegrationTest {
 
         mvc.perform(post("/api/products/{id}/batches", productId).header("Authorization", "Bearer " + storeAdminToken)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"batchCode\":\"NO-EXPIRY\",\"receivedAt\":\"2026-10-01T10:00:00Z\",\"initialQuantity\":2}"))
+                        .content("{\"receivedAt\":\"2026-10-01T10:00:00Z\",\"initialQuantity\":2}"))
+                .andExpect(status().isBadRequest());
+        mvc.perform(post("/api/products/{id}/batches", productId).header("Authorization", "Bearer " + storeAdminToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"id\":99,\"receivedAt\":\"2026-10-01T10:00:00Z\","
+                                + "\"expiryDate\":\"2099-12-31\",\"initialQuantity\":2}"))
                 .andExpect(status().isBadRequest());
 
         mvc.perform(get("/api/products/{id}", productId).header("Authorization", "Bearer " + otherStoreToken))
@@ -165,8 +178,14 @@ class CatalogIntegrationTest {
                 .andExpect(status().isBadRequest());
         mvc.perform(post("/api/products/{id}/batches", productId).header("Authorization", "Bearer " + storeAdminToken)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"batchCode\":\"B-001\",\"receivedAt\":\"2026-10-01T10:00:00Z\",\"expiryDate\":\"2099-12-31\",\"initialQuantity\":12}"))
-                .andExpect(status().isConflict());
+                        .content("{\"receivedAt\":\"2026-10-02T10:00:00Z\",\"expiryDate\":\"2099-12-31\",\"initialQuantity\":12}"))
+                .andExpect(status().isCreated()).andExpect(jsonPath("$.batchCode").value("BATCH-20261002-002"));
+
+        mvc.perform(post("/api/products/{id}/batches", productId).header("Authorization", "Bearer " + storeAdminToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"batchCode\":\"CLIENT-BATCH\",\"receivedAt\":\"2026-10-01T10:00:00Z\","
+                                + "\"expiryDate\":\"2099-12-31\",\"initialQuantity\":1}"))
+                .andExpect(status().isBadRequest());
 
         mvc.perform(get("/api/products/2147483000").header("Authorization", "Bearer " + storeAdminToken))
                 .andExpect(status().isNotFound());
@@ -176,7 +195,7 @@ class CatalogIntegrationTest {
     void rejectsDuplicateSkuNegativePriceAndInvalidBatchQuantities() throws Exception {
         int categoryId = createCategory("Produce");
         String product = """
-                {"sku":"APPLE-01","name":"Apple","categoryId":%d,"unit":"each","requiresExpiry":false,"sellingPrice":1,"costPrice":0.5,"status":"ACTIVE"}
+                {"sku":"SKU-APPLE-00001","name":"Apple","categoryId":%d,"unit":"each","requiresExpiry":false,"sellingPrice":1,"costPrice":0.5,"status":"ACTIVE"}
                 """.formatted(categoryId);
         String response = mvc.perform(post("/api/products").header("Authorization", "Bearer " + storeAdminToken)
                         .contentType(MediaType.APPLICATION_JSON).content(product))
@@ -192,8 +211,238 @@ class CatalogIntegrationTest {
                 .andExpect(status().isBadRequest());
         mvc.perform(post("/api/products/{id}/batches", productId).header("Authorization", "Bearer " + storeAdminToken)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"batchCode\":\"BAD\",\"receivedAt\":\"2026-10-01T10:00:00Z\",\"initialQuantity\":-1}"))
+                        .content("{\"receivedAt\":\"2026-10-01T10:00:00Z\",\"initialQuantity\":-1}"))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void concurrentBatchCreatesUseUniquePerProductSequence() throws Exception {
+        int productId = createProduct("SKU-CONCUR-0001", "Concurrent batches", false);
+        int count = 4;
+        ExecutorService executor = Executors.newFixedThreadPool(count);
+        CountDownLatch ready = new CountDownLatch(count);
+        CountDownLatch start = new CountDownLatch(1);
+        List<Future<String>> responses = new ArrayList<>();
+        try {
+            for (int i = 0; i < count; i++) {
+                responses.add(executor.submit(() -> {
+                    ready.countDown();
+                    start.await();
+                    return mvc.perform(post("/api/products/{id}/batches", productId)
+                                    .header("Authorization", "Bearer " + storeAdminToken)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content("{\"receivedAt\":\"2026-10-01T20:00:00Z\",\"initialQuantity\":1}"))
+                            .andReturn().getResponse().getContentAsString();
+                }));
+            }
+            ready.await();
+            start.countDown();
+            TreeSet<String> codes = new TreeSet<>();
+            for (Future<String> response : responses) {
+                var result = json.readTree(response.get());
+                assertTrue(result.path("id").asInt() > 0);
+                codes.add(result.path("batchCode").asText());
+            }
+            assertEquals(java.util.Set.of("BATCH-20261002-001", "BATCH-20261002-002",
+                    "BATCH-20261002-003", "BATCH-20261002-004"), codes);
+        } finally {
+            executor.shutdownNow();
+        }
+    }
+
+    @Test
+    void productIdsAreServerGeneratedSkuIsStoreScopedAndSimilarNamesRequireConfirmation() throws Exception {
+        int categoryId = createCategory("Catalog");
+        String firstProduct = productBody(" sku-abcd-000001 ", "Fresh Milk", categoryId, "bottle", false, 2, 1, "ACTIVE", null);
+        String created = mvc.perform(post("/api/products").header("Authorization", "Bearer " + storeAdminToken)
+                        .contentType(MediaType.APPLICATION_JSON).content(firstProduct))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").isNumber())
+                .andExpect(jsonPath("$.sku").value("SKU-ABCD-000001"))
+                .andReturn().getResponse().getContentAsString();
+        int productId = json.readTree(created).get("id").asInt();
+        org.junit.jupiter.api.Assertions.assertTrue(productId > 0);
+
+        mvc.perform(post("/api/products").header("Authorization", "Bearer " + storeAdminToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(firstProduct.replace("\"sku\":\" sku-abcd-000001 \"", "\"sku\":\"SKU-ABCD-000001\"")))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.error").value("SKU already exists in this Store"));
+
+        String alternateSku = productBody("MILK-02", "Another product", categoryId, "bottle", false, 2, 1, "ACTIVE", null);
+        mvc.perform(post("/api/products").header("Authorization", "Bearer " + storeAdminToken)
+                        .contentType(MediaType.APPLICATION_JSON).content(alternateSku))
+                .andExpect(status().isCreated()).andExpect(jsonPath("$.sku").value("MILK-02"));
+
+        String similar = productBody("SKU-ABCD-000002", "Fresh Milks", categoryId, "bottle", false, 2, 1, "ACTIVE", null);
+        mvc.perform(post("/api/products").header("Authorization", "Bearer " + storeAdminToken)
+                        .contentType(MediaType.APPLICATION_JSON).content(similar))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.code").value("PRODUCT_NAME_CONFIRMATION_REQUIRED"))
+                .andExpect(jsonPath("$.confirmWith").value("confirmSimilarName=true"));
+        org.junit.jupiter.api.Assertions.assertEquals(2,
+                jdbc.queryForObject("SELECT COUNT(*) FROM product WHERE store_id=?", Integer.class, firstStoreId));
+
+        String confirmed = similar.replace("\"status\":\"ACTIVE\"", "\"status\":\"ACTIVE\",\"confirmSimilarName\":true");
+        mvc.perform(post("/api/products").header("Authorization", "Bearer " + storeAdminToken)
+                        .contentType(MediaType.APPLICATION_JSON).content(confirmed))
+                .andExpect(status().isCreated());
+        String conflictingUpdate = firstProduct.replace("\"name\":\"Fresh Milk\"", "\"name\":\"Fresh Milks\"");
+        mvc.perform(put("/api/products/{id}", productId).header("Authorization", "Bearer " + storeAdminToken)
+                        .contentType(MediaType.APPLICATION_JSON).content(conflictingUpdate))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.code").value("PRODUCT_NAME_CONFIRMATION_REQUIRED"));
+        mvc.perform(get("/api/products/{id}", productId).header("Authorization", "Bearer " + storeAdminToken))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.name").value("Fresh Milk"));
+        mvc.perform(put("/api/products/{id}", productId).header("Authorization", "Bearer " + storeAdminToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(conflictingUpdate.replace("\"status\":\"ACTIVE\"", "\"status\":\"ACTIVE\",\"confirmSimilarName\":true")))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.name").value("Fresh Milks"));
+
+        String foreignStoreSameSku = productBody(" sku-abcd-000001 ", "Other Store Product", null,
+                "each", false, 1, 1, "ACTIVE", null);
+        mvc.perform(post("/api/products").header("Authorization", "Bearer " + otherStoreToken)
+                        .contentType(MediaType.APPLICATION_JSON).content(foreignStoreSameSku))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.sku").value("SKU-ABCD-000001"));
+
+        mvc.perform(post("/api/products").header("Authorization", "Bearer " + storeAdminToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(firstProduct.replace("{\"sku\":", "{\"id\":999,\"sku\":")))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void productSortingSupportsAllowlistedColumnsAndStablePagination() throws Exception {
+        int alphaCategory = createCategory("A Category");
+        int zuluCategory = createCategory("Z Category");
+        String alphaResponse = mvc.perform(post("/api/products").header("Authorization", "Bearer " + storeAdminToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(productBody("SKU-SORTA-00001", "Apple", alphaCategory, "box", false, 1, 1, "ACTIVE", null)))
+                .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();
+        int alphaId = json.readTree(alphaResponse).get("id").asInt();
+        String zuluResponse = mvc.perform(post("/api/products").header("Authorization", "Bearer " + storeAdminToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(productBody("SKU-SORTZ-00001", "Zucchini", zuluCategory, "each", true, 2, 2, "INACTIVE", null)))
+                .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();
+        int zuluId = json.readTree(zuluResponse).get("id").asInt();
+
+        createBatch(alphaId, null, 1);
+        createBatch(zuluId, java.time.LocalDate.now().plusDays(30), 2);
+        mvc.perform(get("/api/products/{id}/batches", alphaId).header("Authorization", "Bearer " + storeAdminToken))
+                .andExpect(status().isOk()).andExpect(jsonPath("$[0].batchCode").value("BATCH-20261001-001"));
+        mvc.perform(get("/api/products/{id}/batches", zuluId).header("Authorization", "Bearer " + storeAdminToken))
+                .andExpect(status().isOk()).andExpect(jsonPath("$[0].batchCode").value("BATCH-20261001-001"));
+
+        for (String sortBy : java.util.List.of("name", "sku", "category", "unit", "costPrice",
+                "sellingPrice", "status", "requiresExpiry", "stockQuantity")) {
+            mvc.perform(get("/api/products?sortBy={sortBy}&sortDirection=asc", sortBy)
+                            .header("Authorization", "Bearer " + storeAdminToken))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.content[0].id").value(alphaId))
+                    .andExpect(jsonPath("$.content[1].id").value(zuluId));
+            mvc.perform(get("/api/products?sortBy={sortBy}&sortDirection=desc", sortBy)
+                            .header("Authorization", "Bearer " + storeAdminToken))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.content[0].id").value(zuluId))
+                    .andExpect(jsonPath("$.content[1].id").value(alphaId));
+        }
+
+        String tiedName = productBody("SKU-SORTA-00002", "Apple", alphaCategory, "box", false, 1, 1,
+                "ACTIVE", true);
+        String tiedResponse = mvc.perform(post("/api/products").header("Authorization", "Bearer " + storeAdminToken)
+                        .contentType(MediaType.APPLICATION_JSON).content(tiedName))
+                .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();
+        int tiedId = json.readTree(tiedResponse).get("id").asInt();
+        mvc.perform(get("/api/products?sortBy=name&sortDirection=asc&page=0&pageSize=1")
+                        .header("Authorization", "Bearer " + storeAdminToken))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.content[0].id").value(alphaId));
+        mvc.perform(get("/api/products?sortBy=name&sortDirection=asc&page=1&pageSize=1")
+                        .header("Authorization", "Bearer " + storeAdminToken))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.content[0].id").value(tiedId));
+        mvc.perform(get("/api/products?sortBy=sku%20DESC").header("Authorization", "Bearer " + storeAdminToken))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void batchExpiryCanBeCorrectedAndClearedOnlyWhenAllowed() throws Exception {
+        int expiringProduct = createProduct("SKU-EXPIRY-0001", "Required expiry", true);
+        mvc.perform(get("/api/products/{id}", expiringProduct).header("Authorization", "Bearer " + storeAdminToken))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.requiresExpiry").value(true));
+        java.time.LocalDate expiry = java.time.LocalDate.now().plusDays(30);
+        String batchResponse = mvc.perform(post("/api/products/{id}/batches", expiringProduct)
+                        .header("Authorization", "Bearer " + storeAdminToken).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"receivedAt\":\"2026-10-01T10:00:00Z\","
+                                + "\"expiryDate\":\"" + expiry + "\",\"initialQuantity\":10,\"pushDay\":\""
+                                + expiry.minusDays(2) + "\"}"))
+                .andExpect(status().isCreated()).andExpect(jsonPath("$.id").isNumber())
+                .andReturn().getResponse().getContentAsString();
+        int batchId = json.readTree(batchResponse).get("id").asInt();
+
+        mvc.perform(patch("/api/inventory-batches/{id}", batchId).header("Authorization", "Bearer " + storeAdminToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"expiryDate\":\"" + expiry.minusDays(3) + "\"}"))
+                .andExpect(status().isBadRequest());
+        mvc.perform(patch("/api/inventory-batches/{id}", batchId).header("Authorization", "Bearer " + storeAdminToken)
+                        .contentType(MediaType.APPLICATION_JSON).content("{\"expiryDate\":null}"))
+                .andExpect(status().isBadRequest());
+        mvc.perform(patch("/api/inventory-batches/{id}", batchId).header("Authorization", "Bearer " + storeAdminToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"expiryDate\":\"" + expiry.plusDays(5) + "\"}"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.expiryDate").value(expiry.plusDays(5).toString()));
+        mvc.perform(delete("/api/inventory-batches/{id}/expiry-date", batchId)
+                        .header("Authorization", "Bearer " + storeAdminToken))
+                .andExpect(status().isBadRequest());
+
+        mvc.perform(patch("/api/inventory-batches/{id}", batchId).header("Authorization", "Bearer " + storeAdminToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"remainingQuantity\":-1}"))
+                .andExpect(status().isBadRequest());
+        mvc.perform(patch("/api/inventory-batches/{id}", batchId).header("Authorization", "Bearer " + storeAdminToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"remainingQuantity\":11}"))
+                .andExpect(status().isBadRequest());
+        mvc.perform(patch("/api/inventory-batches/{id}", batchId).header("Authorization", "Bearer " + storeAdminToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"batchCode\":\"CHANGED\",\"receivedAt\":\"2026-10-02T10:00:00Z\","
+                                + "\"initialQuantity\":50}"))
+                .andExpect(status().isBadRequest());
+
+        int optionalProduct = createProduct("SKU-OPTIONAL-01", "Optional expiry", false);
+        mvc.perform(get("/api/products/{id}", optionalProduct).header("Authorization", "Bearer " + storeAdminToken))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.requiresExpiry").value(false));
+        int optionalBatch = createBatch(optionalProduct, expiry, 5);
+        mvc.perform(patch("/api/inventory-batches/{id}", optionalBatch)
+                        .header("Authorization", "Bearer " + storeAdminToken).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"expiryDate\":\"" + expiry.plusDays(2) + "\"}"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.expiryDate").value(expiry.plusDays(2).toString()));
+        mvc.perform(delete("/api/inventory-batches/{id}/expiry-date", optionalBatch)
+                        .header("Authorization", "Bearer " + storeAdminToken))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.expiryDate").value(org.hamcrest.Matchers.nullValue()));
+        mvc.perform(delete("/api/inventory-batches/{id}/expiry-date", optionalBatch)
+                        .header("Authorization", "Bearer " + storeAdminToken))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.expiryDate").value(org.hamcrest.Matchers.nullValue()));
+        mvc.perform(patch("/api/inventory-batches/{id}", batchId)
+                        .header("Authorization", "Bearer " + otherStoreToken).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"remainingQuantity\":1}"))
+                .andExpect(status().isNotFound());
+
+        User merchandiser = active("catalog-batch-merch-" + UUID.randomUUID() + "@example.test",
+                "MERCHANDISER", firstStoreId);
+        mvc.perform(patch("/api/inventory-batches/{id}", optionalBatch)
+                        .header("Authorization", "Bearer " + token(merchandiser)).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"remainingQuantity\":1}"))
+                .andExpect(status().isForbidden());
+
+        int legacyProduct = createProduct("SKU-LEGACY-0001", "Legacy batch", false);
+        createBatch(legacyProduct, null, 3);
+        String enableExpiry = productBody("SKU-LEGACY-0001", "Legacy batch", null, "each", true,
+                1, 1, "ACTIVE", null);
+        mvc.perform(put("/api/products/{id}", legacyProduct).header("Authorization", "Bearer " + storeAdminToken)
+                        .contentType(MediaType.APPLICATION_JSON).content(enableExpiry))
+                .andExpect(status().isBadRequest());
+        mvc.perform(get("/api/products/{id}", legacyProduct).header("Authorization", "Bearer " + storeAdminToken))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.requiresExpiry").value(false));
     }
 
     @Test
@@ -203,7 +452,7 @@ class CatalogIntegrationTest {
                 "SELECT category_id FROM category WHERE store_id=? AND name='Foreign category'",
                 Integer.class, secondStoreId);
         String product = """
-                {"sku":"FOREIGN-CATEGORY-01","name":"Foreign category product","categoryId":%d,"unit":"each","requiresExpiry":false,"sellingPrice":1,"costPrice":0.5,"status":"ACTIVE"}
+                {"sku":"SKU-FORGN-00001","name":"Foreign category product","categoryId":%d,"unit":"each","requiresExpiry":false,"sellingPrice":1,"costPrice":0.5,"status":"ACTIVE"}
                 """.formatted(foreignCategoryId);
 
         mvc.perform(post("/api/products").header("Authorization", "Bearer " + storeAdminToken)
@@ -213,15 +462,33 @@ class CatalogIntegrationTest {
 
     @Test
     void openApiListsF02Endpoints() throws Exception {
-        mvc.perform(get("/v3/api-docs")).andExpect(status().isOk())
+        var result = mvc.perform(get("/v3/api-docs")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.paths['/api/categories']").exists())
                 .andExpect(jsonPath("$.paths['/api/categories/{id}']").exists())
                 .andExpect(jsonPath("$.paths['/api/products']").exists())
+                .andExpect(jsonPath("$.paths['/api/products'].post.description").value(
+                        org.hamcrest.Matchers.containsString("PRODUCT_NAME_CONFIRMATION_REQUIRED")))
                 .andExpect(jsonPath("$.paths['/api/products/{id}']").exists())
                 .andExpect(jsonPath("$.paths['/api/products/{id}/status']").exists())
                 .andExpect(jsonPath("$.paths['/api/products/{id}/batches']").exists())
                 .andExpect(jsonPath("$.paths['/api/products/{id}/inventory-summary']").exists())
-                .andExpect(jsonPath("$.paths['/api/inventory-batches/{id}']").exists());
+                .andExpect(jsonPath("$.paths['/api/inventory-batches/{id}']").exists())
+                .andExpect(jsonPath("$.paths['/api/inventory-batches/{id}/push-day'].delete").exists())
+                .andExpect(jsonPath("$.paths['/api/inventory-batches/{id}/expiry-date'].delete").exists())
+                .andExpect(jsonPath("$.components.schemas.ProductRequest.properties.confirmSimilarName").exists())
+                .andExpect(jsonPath("$.components.schemas.ProductRequest.properties.sku.pattern").doesNotExist())
+                .andExpect(jsonPath("$.components.schemas.BatchCreateRequest.properties.batchCode").doesNotExist())
+                .andExpect(jsonPath("$.components.schemas.ProductView.properties.id.readOnly").value(true))
+                .andExpect(jsonPath("$.components.schemas.BatchView.properties.batchCode.readOnly").value(true))
+                .andExpect(jsonPath("$.components.schemas.BatchPatchRequest.properties.expiryDate").exists())
+                .andReturn();
+        String exportDir = System.getProperty("paspm.f02.export-dir");
+        if (exportDir != null) {
+            java.nio.file.Path directory = java.nio.file.Path.of(exportDir);
+            java.nio.file.Files.createDirectories(directory);
+            java.nio.file.Files.writeString(directory.resolve("openapi.json"),
+                    json.readTree(result.getResponse().getContentAsString()).toPrettyString());
+        }
     }
 
     @Test
@@ -242,7 +509,7 @@ class CatalogIntegrationTest {
     void inventorySummarySeparatesExpiredBlockedAndSellableBatches() throws Exception {
         int categoryId = createCategory("Summary category");
         String productBody = """
-                {"sku":"SUMMARY-01","name":"Summary Product","categoryId":%d,"unit":"each","requiresExpiry":true,"sellingPrice":1,"costPrice":0.5,"status":"ACTIVE"}
+                {"sku":"SKU-SUMMARY-001","name":"Summary Product","categoryId":%d,"unit":"each","requiresExpiry":true,"sellingPrice":1,"costPrice":0.5,"status":"ACTIVE"}
                 """.formatted(categoryId);
         String response = mvc.perform(post("/api/products").header("Authorization", "Bearer " + storeAdminToken)
                         .contentType(MediaType.APPLICATION_JSON).content(productBody))
@@ -256,15 +523,15 @@ class CatalogIntegrationTest {
                 .andExpect(jsonPath("$.blockedQuantity").value(0));
 
         java.time.LocalDate today = java.time.LocalDate.now(java.time.ZoneId.of("Asia/Ho_Chi_Minh"));
-        createBatch(productId, "SUMMARY-EXPIRED", today.minusDays(1), 3);
-        createBatch(productId, "SUMMARY-TODAY", today, 4);
-        createBatch(productId, "SUMMARY-SOON", today.plusDays(5), 5);
-        int blockedBatchId = createBatch(productId, "SUMMARY-BLOCKED", today.minusDays(3), 6);
+        createBatch(productId, today.minusDays(1), 3);
+        createBatch(productId, today, 4);
+        createBatch(productId, today.plusDays(5), 5);
+        int blockedBatchId = createBatch(productId, today.minusDays(3), 6);
         mvc.perform(patch("/api/inventory-batches/{id}", blockedBatchId)
                         .header("Authorization", "Bearer " + storeAdminToken)
                         .contentType(MediaType.APPLICATION_JSON).content("{\"status\":\"BLOCKED\"}"))
                 .andExpect(status().isOk());
-        createBatch(productId, "SUMMARY-LATER", today.plusDays(30), 7);
+        createBatch(productId, today.plusDays(30), 7);
 
         mvc.perform(get("/api/products/{id}/inventory-summary?expiringWithinDays=7", productId)
                         .header("Authorization", "Bearer " + storeAdminToken))
@@ -306,13 +573,38 @@ class CatalogIntegrationTest {
         return json.readTree(response).get("id").asInt();
     }
 
-    private int createBatch(int productId, String batchCode, java.time.LocalDate expiryDate, int quantity) throws Exception {
-        String body = json.writeValueAsString(java.util.Map.of(
-                "batchCode", batchCode, "receivedAt", "2026-10-01T10:00:00Z",
-                "expiryDate", expiryDate.toString(), "initialQuantity", quantity));
+    private int createBatch(int productId, java.time.LocalDate expiryDate, int quantity) throws Exception {
+        var request = new java.util.LinkedHashMap<String, Object>();
+        request.put("receivedAt", "2026-10-01T10:00:00Z");
+        if (expiryDate != null) request.put("expiryDate", expiryDate.toString());
+        request.put("initialQuantity", quantity);
+        String body = json.writeValueAsString(request);
         String response = mvc.perform(post("/api/products/{id}/batches", productId).header("Authorization", "Bearer " + storeAdminToken)
                         .contentType(MediaType.APPLICATION_JSON).content(body))
                 .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();
         return json.readTree(response).get("id").asInt();
+    }
+
+    private int createProduct(String sku, String name, boolean requiresExpiry) throws Exception {
+        String body = productBody(sku, name, null, "each", requiresExpiry, 1, 1, "ACTIVE", null);
+        String response = mvc.perform(post("/api/products").header("Authorization", "Bearer " + storeAdminToken)
+                        .contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();
+        return json.readTree(response).get("id").asInt();
+    }
+
+    private String productBody(String sku, String name, Integer categoryId, String unit, boolean requiresExpiry,
+            int sellingPrice, int costPrice, String status, Boolean confirmSimilarName) throws Exception {
+        var body = new java.util.LinkedHashMap<String, Object>();
+        body.put("sku", sku);
+        body.put("name", name);
+        if (categoryId != null) body.put("categoryId", categoryId);
+        body.put("unit", unit);
+        body.put("requiresExpiry", requiresExpiry);
+        body.put("sellingPrice", sellingPrice);
+        body.put("costPrice", costPrice);
+        body.put("status", status);
+        if (confirmSimilarName != null) body.put("confirmSimilarName", confirmSimilarName);
+        return json.writeValueAsString(body);
     }
 }

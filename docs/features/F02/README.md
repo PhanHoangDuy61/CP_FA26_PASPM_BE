@@ -1,8 +1,12 @@
 # F02 — Product, Category and Inventory
 
-> Last verified Backend: `dev` @ `11973a0` (merge of PR #11; source tree identical to `a4f1115`, whose code passed the full verification script on `45dbd80`). This documentation task ran no new tests.
+## Current backend follow-up — 2026-11-19
 
-## Current status — branch `Khoi/feat/f03-remove-legacy-product-fields` (2026-11-16, not merged)
+The current branch adds allowlisted/stable sorting for all product-list display fields; database-generated, read-only Product/Batch IDs; Store-scoped SKU uniqueness and 409 conflicts; backend-generated per-Product batch codes (`BATCH-YYYYMMDD-NNN`); a confirm-and-retry warning for similar product names; and expiry-date correction/clearing for inventory batches. Batch source fields (`batchCode`, `receivedAt`, `initialQuantity`) remain immutable. No migration was needed, and this repository has no frontend UI; see the current [API contract](../../api/F02_PRODUCT_INVENTORY_API.md) and [frontend handoff](../../frontend_handoff/F02_HANDOFF.md).
+
+> Historical verification record: Backend `dev` @ `11973a0` (merge of PR #11; source tree identical to `a4f1115`, whose code passed the full verification script on `45dbd80`). See the 2026-11-19 follow-up above for current changes and tests.
+
+## Historical status — branch `Khoi/feat/f03-remove-legacy-product-fields` (2026-11-16)
 
 Code paths are relative to `src/main/java/vn/edu/fpt/paspm/`; V26 is `src/main/java/db/migration/V26__f03_drop_legacy_product_scoring_columns.java`.
 
@@ -31,7 +35,7 @@ Code paths below are relative to `src/main/java/vn/edu/fpt/paspm/` on `c8c837a` 
 Verification: `PushDayIntegrationTest` (5 cases) inside the final gate (645 tests, 640 PASS, 5 SKIP; [record 004](../../record-of-changes/2026-11-15/04-f03-weight-v2-expiry-season.md)).
 
 ## 1. Purpose and scope
-Store-scoped product catalogue, categories and inventory batches. Stock is never stored on the product: it is derived from batch remaining quantities. The Store Admin owns each batch's `pushDay`, which F03 Weight v2 uses. Product `expiryPushDays` (the F03 v1.2 threshold) is **legacy since 2026-11-15**: accepted, stored, ignored (P5).
+Store-scoped product catalogue, categories and inventory batches. Stock is never stored on the product: it is derived from batch remaining quantities. The Store Admin owns each batch's `pushDay`, which F03 Weight v2 uses. Product `expiryPushDays` was removed with V26 on 2026-11-16; it is not in the current request or response contract.
 
 ## 2. Actors and effective RBAC
 | Role | Capability |
@@ -42,13 +46,14 @@ Store-scoped product catalogue, categories and inventory batches. Stock is never
 
 Foreign or absent records answer 404 after the role gate. Matrix: [RBAC matrix](../../api/F01_F02_RBAC_MATRIX.md).
 
-## 3. Implemented functionality (15 operations)
-Categories 5, products 5 (`GET` list with search/filter/sort/page, detail, create, full update, status), batches 4 (`GET`/`POST /api/products/{id}/batches`, `GET`/`PATCH /api/inventory-batches/{id}`), inventory summary 1. Product and Category writes use JPA; catalogue reads and inventory use JDBC (hybrid persistence, see [architecture decisions](../../architecture/HYBRID_PERSISTENCE_DECISIONS.md)).
+## 3. Implemented functionality (17 operations)
+Categories 5, products 5 (`GET` list with search/filter/sort/page, detail, create, full update, status), batches 6 (list/create, detail/PATCH, and clear-expiry/clear-push-day DELETE routes), inventory summary 1 — 17 operations total. Product and Category writes use JPA; catalogue reads and inventory use JDBC (hybrid persistence, see [architecture decisions](../../architecture/HYBRID_PERSISTENCE_DECISIONS.md)).
 
 ## 4. Business rules
-- SKU unique per Store (409); batch code unique per product (409).
+- SKU is trimmed/uppercased and is unique per Store (409 for conflict); batch code is generated as `BATCH-YYYYMMDD-NNN` with a Product-scoped sequence. Similar product names are confirmable warnings, not unique constraints.
 - `requiresExpiry=true` products need an expiry date on every batch; enabling it while a batch lacks one is 400.
-- `PATCH` batch: `remainingQuantity` 0..initial, status `ACTIVE|BLOCKED`, `pushDay` (≤ expiry date); at least one field.
+- `PATCH` batch: `remainingQuantity` 0..initial, status `ACTIVE|BLOCKED`, `pushDay` and/or `expiryDate`; null/omitted dates are unchanged, source receipt fields are immutable, and `pushDay` must not exceed expiry date.
+- Batch `expiryDate` can be cleared only for a product with `requiresExpiry=false`; batch `pushDay` and optional expiry are cleared by separate idempotent DELETE routes.
 - Batch `pushDay` (2026-11-15): optional date, ≤ `expiryDate`, Store Admin only; a batch without one only produces an F03 warning.
 - `expiryPushDays`: deprecated 2026-11-15 (P5) and **removed 2026-11-16** (DEC-20261116-02): no longer part of the product request or response; sending it → 400.
 - Sellable stock counts ACTIVE batches with remaining > 0 whose expiry is strictly after today (Store time zone); a batch expiring today is not sellable.
@@ -72,7 +77,7 @@ F01 session reconciliation (2026-11-12, dev V20 retained + additive V21): catalo
 `CatalogIntegrationTest`, `CatalogDevSeederTest`, `CategoryPersistence*Test`, `ProductPersistence*Test` (H2 and MySQL), `JpaPilotMigrationMySqlTest`, `PilotCloneApiIntegrationTest` (opt-in, 5/5 on 2026-11-02), `ExpiryFefoOrderingTest` (FEFO order `expiry_date → received_at → batch_id`). Historical Swagger evidence: [reference_v3](reference_v3/F02_SWAGGER_TEST_REPORT.md).
 
 ## 10. Known limitations
-No delete endpoints and no stock movement or adjustment history (only batch `PATCH`). The `dev` profile seeds demo data and a development-only account; never enable it on a shared database.
+No Product/Category deletion and no stock movement or adjustment history. Batch DELETE routes only clear optional dates. The `dev` profile seeds demo data and a development-only account; never enable it on a shared database.
 
 Known gaps (2026-11-15, history): a batch `pushDay` could not be cleared through PATCH (fixed 2026-11-16 by `DELETE …/push-day`); all pre-V25 batches start without a push day; the deprecated `expiryPushDays` column remained in the schema (dropped by V26 on 2026-11-16). The F02 ERD drawing does not show `push_day` (diagram not edited, see [schema notes](../../architecture/F03_W2_SCHEMA_V24_V25.md)).
 

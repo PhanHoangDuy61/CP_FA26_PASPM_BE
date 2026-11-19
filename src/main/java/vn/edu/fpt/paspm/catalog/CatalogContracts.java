@@ -24,16 +24,21 @@ public final class CatalogContracts {
     public record CategoryView(int id, String name, String status) {}
 
     public record ProductRequest(
-            @NotBlank @Size(max = 80) String sku,
+            @NotBlank @Size(max = 80)
+            @Schema(description = "Trimmed and uppercased before persistence; unique within the Store")
+            String sku,
             @NotBlank @Size(max = 180) String name,
             Integer categoryId,
             @NotBlank @Size(max = 40) String unit,
             @NotNull Boolean requiresExpiry,
             @NotNull @PositiveOrZero BigDecimal sellingPrice,
             @NotNull @PositiveOrZero BigDecimal costPrice,
-            @NotBlank @Schema(allowableValues = {"ACTIVE", "INACTIVE"}) String status) {}
+            @NotBlank @Schema(allowableValues = {"ACTIVE", "INACTIVE"}) String status,
+            @Schema(description = "Set true only after confirming the similar-name warning returned with 409")
+            Boolean confirmSimilarName) {}
 
     public record ProductView(
+            @Schema(accessMode = Schema.AccessMode.READ_ONLY, description = "Database-generated product ID")
             int id, String sku, String name, String unit, boolean requiresExpiry,
             CategoryView category, BigDecimal sellingPrice, BigDecimal costPrice,
             String status,
@@ -44,9 +49,9 @@ public final class CatalogContracts {
                               long totalElements, int totalPages) {}
 
     public record BatchCreateRequest(
-            @NotBlank @Size(max = 80) String batchCode,
             @NotNull Instant receivedAt,
-            @Schema(description = "Optional unless the product requires expiry tracking") LocalDate expiryDate,
+            @Schema(types = {"string", "null"}, format = "date",
+                    description = "Required when the product requires expiry tracking") LocalDate expiryDate,
             @NotNull @Positive Integer initialQuantity,
             @Schema(types = {"string", "null"}, format = "date", description = "Store Admin push day used by F03 expiry risk (W2). Must be on or before expiryDate. A batch without one only warns and is excluded from expiry risk")
             LocalDate pushDay) {}
@@ -55,11 +60,21 @@ public final class CatalogContracts {
             @PositiveOrZero Integer remainingQuantity,
             @Schema(allowableValues = {"ACTIVE", "BLOCKED"}) String status,
             @Schema(types = {"string", "null"}, format = "date", description = "Set the push day; counts toward the at-least-one-field rule. Must be on or before expiryDate")
-            LocalDate pushDay) {}
+            LocalDate pushDay,
+            @Schema(types = {"string", "null"}, format = "date",
+                    description = "Set a corrected expiry date; null/omitted means unchanged. Clear with DELETE /api/inventory-batches/{id}/expiry-date")
+            LocalDate expiryDate) {}
 
     public record BatchView(
-            int id, int productId, String batchCode, Instant receivedAt,
-            LocalDate expiryDate, int initialQuantity, int remainingQuantity,
+            @Schema(accessMode = Schema.AccessMode.READ_ONLY, description = "Database-generated batch ID")
+            int id,
+            @Schema(accessMode = Schema.AccessMode.READ_ONLY) int productId,
+            @Schema(accessMode = Schema.AccessMode.READ_ONLY,
+                    description = "Generated as BATCH-YYYYMMDD-NNN; sequence is scoped to the Product")
+            String batchCode,
+            Instant receivedAt,
+            @Schema(types = {"string", "null"}, format = "date") LocalDate expiryDate,
+            int initialQuantity, int remainingQuantity,
             String status, Instant createdAt, Instant updatedAt,
             @Schema(types = {"string", "null"}, format = "date") LocalDate pushDay) {}
 

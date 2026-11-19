@@ -47,6 +47,27 @@ public class ProductRepository {
                 .stream().findFirst().orElse(null);
     }
 
+    public boolean skuExists(int storeId, String sku, Integer excludedProductId) {
+        if (excludedProductId == null) {
+            Integer count = jdbc.queryForObject("""
+                    SELECT COUNT(*) FROM product
+                    WHERE store_id=? AND UPPER(TRIM(sku))=?
+                    """, Integer.class, storeId, sku);
+            return count != null && count > 0;
+        }
+        Integer count = jdbc.queryForObject("""
+                SELECT COUNT(*) FROM product
+                WHERE store_id=? AND UPPER(TRIM(sku))=? AND product_id<>?
+                """, Integer.class, storeId, sku, excludedProductId);
+        return count != null && count > 0;
+    }
+
+    public List<String> findOtherNames(int storeId, int excludedProductId) {
+        return jdbc.query("""
+                SELECT name FROM product WHERE store_id=? AND product_id<>?
+                """, (rs, row) -> rs.getString("name"), storeId, excludedProductId);
+    }
+
     public ProductPage search(int storeId, String search, Integer categoryId, String status,
                               int page, int pageSize, String sortColumn, String direction) {
         StringBuilder where = new StringBuilder(" WHERE p.store_id=?");
