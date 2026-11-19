@@ -7832,7 +7832,8 @@
             "type": "string",
             "maxLength": 80,
             "minLength": 1,
-            "description": "Trimmed and uppercased before persistence; unique within the Store"
+            "pattern": "^SKU-[A-Z0-9-]{11}$",
+            "description": "After trimming and uppercasing: exactly SKU- followed by 11 A-Z, 0-9 or hyphen characters"
           },
           "name": {
             "type": "string",

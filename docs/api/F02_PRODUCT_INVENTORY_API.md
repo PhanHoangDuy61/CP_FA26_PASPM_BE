@@ -10,7 +10,7 @@ Batch PATCH can set `expiryDate` in addition to remaining quantity, status and p
 
 ## SKU and batch-code formats
 
-Product create/update trims and uppercases SKU before persistence. No fixed SKU pattern is imposed; SKU uniqueness is scoped to the Store.
+Product create/update trims and uppercases SKU before persistence, then requires exactly `SKU-` followed by 11 characters from `A-Z`, `0-9`, or `-` (15 characters total). Invalid formats return 400. SKU uniqueness is scoped to the Store.
 
 Batch create no longer accepts `batchCode`; sending it is an unknown-field 400. The backend returns a generated code in the existing `BatchView.batchCode` response field: `BATCH-YYYYMMDD-NNN`, where the date is `receivedAt` in the configured Store time zone and the sequence is monotonically incremented per Product across dates, padded to at least three digits. The Product row is locked during generation so concurrent creates for the same Product receive distinct sequence values. Batch codes remain immutable after creation. This request-body change requires clients that previously sent `batchCode` to remove it; routes and response fields are unchanged.
 
@@ -43,7 +43,7 @@ The approved ERD is `docs/diagrams/PASPM_Complete_ERD_F02_Inventory_Batch_v3.dra
 
 - `CategoryRequest`: required nonblank `name:string` max150 and `status:string` in `ACTIVE|INACTIVE`.
 - `CategoryView`: `{id:int32,name:string,status:string}`.
-- `ProductRequest`: required `sku:string`, `name:string` max180, `unit:string` max40, `requiresExpiry:boolean`, `sellingPrice:number >= 0`, `costPrice:number >= 0`, `status:ACTIVE|INACTIVE`; nullable/optional `categoryId:int32` and optional `confirmSimilarName:boolean`. SKU is trimmed and uppercased before persistence; Do not send an ID, Store ID, stock or F03 score fields.
+- `ProductRequest`: required `sku:string`, `name:string` max180, `unit:string` max40, `requiresExpiry:boolean`, `sellingPrice:number >= 0`, `costPrice:number >= 0`, `status:ACTIVE|INACTIVE`; nullable/optional `categoryId:int32` and optional `confirmSimilarName:boolean`. After trimming and uppercasing, SKU must match `^SKU-[A-Z0-9-]{11}$`; do not send an ID, Store ID, stock or F03 score fields.
 - `ProductView`: `{id:int32,sku:string,name:string,unit:string,requiresExpiry:boolean,category:CategoryView|null,sellingPrice:number,costPrice:number,status:string,stockQuantity:int64}`. `id` is database-generated; `stockQuantity` is derived from all batch remaining quantities and read-only.
 - `ProductPage`: `{content:ProductView[],page:int32,pageSize:int32,totalElements:int64,totalPages:int32}`.
 - `BatchCreateRequest`: required `receivedAt:string` ISO date-time and `initialQuantity:int32 > 0`; nullable/optional `expiryDate:string` ISO date and `pushDay:string` ISO date. Do not send `batchCode` or an ID. Expiry required if Product `requiresExpiry=true`.

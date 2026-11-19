@@ -269,10 +269,11 @@ class CatalogIntegrationTest {
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.error").value("SKU already exists in this Store"));
 
-        String alternateSku = productBody("MILK-02", "Another product", categoryId, "bottle", false, 2, 1, "ACTIVE", null);
+        String invalidSku = productBody("MILK-02", "Another product", categoryId, "bottle", false, 2, 1, "ACTIVE", null);
         mvc.perform(post("/api/products").header("Authorization", "Bearer " + storeAdminToken)
-                        .contentType(MediaType.APPLICATION_JSON).content(alternateSku))
-                .andExpect(status().isCreated()).andExpect(jsonPath("$.sku").value("MILK-02"));
+                        .contentType(MediaType.APPLICATION_JSON).content(invalidSku))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value(org.hamcrest.Matchers.containsString("SKU must be 15 characters")));
 
         String similar = productBody("SKU-ABCD-000002", "Fresh Milks", categoryId, "bottle", false, 2, 1, "ACTIVE", null);
         mvc.perform(post("/api/products").header("Authorization", "Bearer " + storeAdminToken)
@@ -280,7 +281,7 @@ class CatalogIntegrationTest {
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.code").value("PRODUCT_NAME_CONFIRMATION_REQUIRED"))
                 .andExpect(jsonPath("$.confirmWith").value("confirmSimilarName=true"));
-        org.junit.jupiter.api.Assertions.assertEquals(2,
+        org.junit.jupiter.api.Assertions.assertEquals(1,
                 jdbc.queryForObject("SELECT COUNT(*) FROM product WHERE store_id=?", Integer.class, firstStoreId));
 
         String confirmed = similar.replace("\"status\":\"ACTIVE\"", "\"status\":\"ACTIVE\",\"confirmSimilarName\":true");

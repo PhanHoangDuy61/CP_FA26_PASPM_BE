@@ -25,7 +25,8 @@ public final class CatalogContracts {
 
     public record ProductRequest(
             @NotBlank @Size(max = 80)
-            @Schema(description = "Trimmed and uppercased before persistence; unique within the Store")
+            @Schema(pattern = "^SKU-[A-Z0-9-]{11}$",
+                    description = "After trimming and uppercasing: exactly SKU- followed by 11 A-Z, 0-9 or hyphen characters")
             String sku,
             @NotBlank @Size(max = 180) String name,
             Integer categoryId,

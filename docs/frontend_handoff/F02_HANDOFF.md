@@ -10,7 +10,7 @@ On the product form, present **Giá nhập (`costPrice`) before Giá bán (`sell
 
 SKU is trimmed and uppercased by the backend, unique per Store, and duplicate requests return `409` with “SKU already exists in this Store”. Similar names are warnings, not unique constraints. If POST/PUT returns `409` with `code: "PRODUCT_NAME_CONFIRMATION_REQUIRED"`, show a confirmation prompt and retry the same request with `"confirmSimilarName": true`; the rejected attempt has not written data. Similarity currently means normalized exact match or a one-character edit for names whose normalized length is at least four.
 
-SKU is trimmed and uppercased by the backend and must be nonblank; it is unique within the Store. The backend does not generate SKU values.
+SKU is trimmed and uppercased by the backend, then must match `SKU-` followed by exactly 11 `A-Z`, `0-9`, or `-` characters (15 characters total), e.g. `SKU-MILK-000001`. The backend does not generate SKU values.
 
 Batch create no longer accepts `batchCode`; it is generated in the backend and returned in `BatchView.batchCode` as `BATCH-YYYYMMDD-NNN`. The date comes from `receivedAt` in the configured Store time zone; NNN increases for each Product across dates and is padded to at least three digits. Keep `batchCode` and batch ID read-only in details. Remove `batchCode` from POST payloads; older clients that send it receive 400. Routes and response fields are unchanged.
 
@@ -66,7 +66,7 @@ export type BatchStatus = 'ACTIVE' | 'BLOCKED';
 export interface Category { id: number; name: string; status: CatalogStatus }
 export interface CategoryRequest { name: string; status: CatalogStatus }
 export interface ProductRequest {
-  sku: string; // trimmed/uppercased by backend; unique within Store
+  sku: string; // /^SKU-[A-Z0-9-]{11}$/ after trim/uppercase; unique within Store
   name: string; categoryId?: number | null; unit: string;
   requiresExpiry: boolean; sellingPrice: number; costPrice: number; status: CatalogStatus;
   confirmSimilarName?: boolean; // true only after confirming the 409 warning
@@ -96,7 +96,7 @@ export interface InventorySummary {
 export interface ApiError { error: string; code?: string; confirmWith?: string }
 ```
 
-Category name is required/nonblank/max150; category status required and active/inactive. Product SKU is required and normalized by trimming/uppercasing; name max180, unit max40; prices required and nonnegative; `requiresExpiry` required; status required active/inactive; categoryId may be omitted/null. SKU is unique within Store. A category must belong to the current Store. There is no category-name uniqueness rule in the current schema. `confirmSimilarName` is optional and should only be true on a retry after the user confirms the duplicate/near-name warning.
+Category name is required/nonblank/max150; category status required and active/inactive. Product SKU is required and, after trimming/uppercasing, must match `^SKU-[A-Z0-9-]{11}$`; name max180, unit max40; prices required and nonnegative; `requiresExpiry` required; status required active/inactive; categoryId may be omitted/null. SKU is unique within Store. A category must belong to the current Store. There is no category-name uniqueness rule in the current schema. `confirmSimilarName` is optional and should only be true on a retry after the user confirms the duplicate/near-name warning.
 
 Do not submit batchCode; it is generated from receivedAt's Store-local date and the next Product-scoped sequence, then returned read-only. receivedAt must be an ISO date-time; initialQuantity must be positive integer. If Product requires expiry, expiryDate is required. A batch starts ACTIVE with remainingQuantity=initialQuantity. Patch accepts expiryDate, remainingQuantity (integer 0..initialQuantity), status ACTIVE/BLOCKED and/or pushDay; at least one non-null field is required. Null/omitted `expiryDate` or `pushDay` is unchanged. Use DELETE `/api/inventory-batches/{id}/expiry-date` to clear expiry only for products that do not require it; use DELETE `/api/inventory-batches/{id}/push-day` to clear pushDay. `batchCode`, `receivedAt` and `initialQuantity` are immutable through PATCH.
 

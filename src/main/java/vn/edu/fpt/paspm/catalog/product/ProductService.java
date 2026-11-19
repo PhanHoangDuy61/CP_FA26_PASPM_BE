@@ -60,6 +60,7 @@ public class ProductService {
         int storeId = access.currentStoreId(jwt);
         validateRequest(storeId, request);
         String sku = normalizeSku(request.sku());
+        validateSkuFormat(sku);
         requireUniqueSku(storeId, sku, null);
         requireNameConfirmation(storeId, 0, request.name(), request.confirmSimilarName());
         try {
@@ -77,6 +78,7 @@ public class ProductService {
         requireProduct(storeId, id);
         validateRequest(storeId, request);
         String sku = normalizeSku(request.sku());
+        validateSkuFormat(sku);
         requireUniqueSku(storeId, sku, id);
         requireNameConfirmation(storeId, id, request.name(), request.confirmSimilarName());
         if (request.requiresExpiry() && products.hasExpirylessBatches(id)) {
@@ -123,6 +125,12 @@ public class ProductService {
 
     private static String normalizeSku(String sku) {
         return sku.trim().toUpperCase(Locale.ROOT);
+    }
+
+    private static void validateSkuFormat(String sku) {
+        if (!sku.matches("SKU-[A-Z0-9-]{11}")) {
+            throw new ApiException(400, "SKU must be 15 characters: SKU- followed by 11 letters, digits or hyphens");
+        }
     }
 
     private static boolean similarName(String first, String second) {
