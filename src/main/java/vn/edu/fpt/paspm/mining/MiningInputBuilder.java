@@ -78,6 +78,10 @@ public class MiningInputBuilder {
     public Dataset build(SnapshotView snapshot,List<MatrixItem> rows) {
         return lossless(parse(snapshot,rows));
     }
+    /** Test-only access to the whole-unit conversion of a frozen matrix (mode-stability measurement); not reachable from configuration. */
+    Dataset buildWholeUnitForComparison(SnapshotView snapshot,List<MatrixItem> rows) {
+        return wholeUnit(parse(snapshot,rows));
+    }
     private Parsed parse(SnapshotView snapshot,List<MatrixItem> rows) {
         if(snapshot==null)throw new ApiException(404,"Utility snapshot not found");
         if(!"READY".equals(snapshot.status()) || snapshot.roundingScale()!=6 || snapshot.configuration()==null
