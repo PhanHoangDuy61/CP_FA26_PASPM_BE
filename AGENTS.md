@@ -26,6 +26,11 @@ PASPM (FA26SE048) backend: Java 17, Spring Boot 3.5, MySQL 8.4 + Flyway, SPMF 2.
 - Scheduler enable stays HTTP 503.
 - Same-PR docs: update the API doc, OpenAPI, frontend handoff, record of changes, a DEC (for business rules), and `docs/product/*` whenever a stated fact changes.
 
+## Codex sandbox
+
+- The Codex sandbox on team machines may have **no network**. If `git fetch`/`push`, `gh` or a Maven download fails with a DNS or network error, do not retry or work around it. Finish the local work, then hand the push or PR step back to the human, or to an agent with network access.
+- Maven can run offline from the local cache: `./mvnw -o -B ...`.
+
 ## Commands
 
 ```bash

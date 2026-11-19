@@ -6,10 +6,10 @@
 | Code / course | FA26SE048 · FPT University · SWP490 capstone (Sep–Dec 2026, W1–W15) |
 | Official title | Research and Development of an Online Product Arrangement Support System through a Comparative Study of High Utility Pattern Mining Algorithms |
 | Document | Vision / BRD for humans and AI agents |
-| Version / date | 0.3.1 — 2026-11-19 (synced with `dev` @ `222e54f`; owner answers of 2026-11-19 15:51) |
+| Version / date | 0.4 — 2026-11-20 (synced with `dev` @ `636952b`) |
 | Baseline | Backend `dev` @ `530651b`; decisions up to DEC-20261117-01 |
 | Audited against code | `530651bad5b02d90bcb48ecffaf7fa5a0f6b0b7e`, see (audit report kept outside the repo, 2026-11-19) |
-| Synced with | `dev` @ `222e54f` (2026-11-19): F02 update `d22f735`, PR #20 (decisions), PR #21 (F04 Excel). Checked for these changes only, not a full re-audit |
+| Synced with | `dev` @ `636952b` (2026-11-20): F02 update `d22f735`; PR #20 (decisions); PR #21 (F04 Excel); PR #22 (zone caps, top-K baseline, equal-size simulation, DEC-20261119-06); PR #23 (SPMF whole-đồng fallback, DEC-20261119-05); PR #25 (agent kit). Checked for these changes only, not a full re-audit |
 | Companion files | [SRS.md](SRS.md) · [ARCHITECTURE_SDD.md](ARCHITECTURE_SDD.md) · [GLOSSARY.md](GLOSSARY.md) |
 
 > **Source precedence.** When sources disagree, a higher item overrides a lower one:
@@ -67,7 +67,7 @@ A team review in November 2026 found problems with the earlier weight design. It
 |---|---|---|
 | RQ1 | How can priority weighting (expiry risk and seasonality) be built into utility so that mining surfaces products the store must push? | Adopted. Replaces the old HUI-Miner vs EFIM comparison RQ. |
 | RQ2 | How can high-utility itemsets support merchandising proposals that users review, edit, activate and display on a storefront? | Adopted |
-| RQ3 | How do baseline and proposed layouts differ under documented simulation assumptions? | **Kept** (decided 2026-11-19). Answered with the F08 offline replay using equal-size comparison (B vs top-N of A) and sensitivity runs at 20 / 35 / 50 displayed products. |
+| RQ3 | How do baseline and proposed layouts differ under documented simulation assumptions? | **Kept** (decided 2026-11-19). Answered with the F08 offline replay using equal-size comparison (B vs top-N of A) and sensitivity runs at 20 / 35 / 50 displayed products. Evidence: `docs/testing/F08_LAYOUT_SIZE_SENSITIVITY_20261119.md`. On the demo data, B reached only 21 distinct products. At equal size, B had a lower hit rate than A (0.0555 vs 0.0600 at N = 21) but a higher captured utility (0.0192 vs 0.0171). Simulated, one snapshot, no confidence intervals |
 
 The HUI-Miner vs EFIM comparison RQ and its benchmark were dropped. The EFIM paper already covers that comparison, and mining is now EFIM-only (2026-11-16). Reports 1, 2 and 4 still describe the comparison and must be updated.
 
@@ -149,7 +149,7 @@ flowchart LR
 | 2026-11-16 | P2 highest active season weight wins. P3 season active by analysis date, inclusive. P4 a push day that has been reached counts the whole batch as risk | Approved as built |
 | 2026-11-16 | Legacy product score fields and columns removed (V26). The two obsolete routes deleted | Breaking API change, communicated to frontend |
 | 2026-11-16 | **EFIM-only** mining. HUI-Miner, compare mode and benchmarks removed | Research RQ changed |
-| 2026-11-17 | Lossless EFIM-aware int32 guard (no rounding of utilities), DEC-20261117-01 | A global utility total above int32 is now accepted. A request still fails with 400 when a transaction utility, a product TWU or the converted minUtil exceeds int32: the realistic 4,100-order fixture is still rejected (max product TWU 3,217,593,703) |
+| 2026-11-17 | Lossless EFIM-aware int32 guard (no rounding of utilities), DEC-20261117-01 | A global utility total above int32 is now accepted. A request still fails with 400 when a transaction utility, a product TWU or the converted minUtil exceeds int32: superseded in part by DEC-20261119-05 (whole-đồng fallback), with which the realistic 4,100-order fixture is now accepted |
 | 2026-11-17 | `priorityCoverage` = products with W > 1 on the layout ÷ products on the layout | Retail must sometimes push single priority items ("daily deal"), not only bundles. Not coded yet (the API returns `null`). Recorded as DEC-20261117-02 |
 | 2026-11-12 | A/B compares **2** layouts. F07 only opens layouts created by F08. A is read-only | DEC-20261112-01 |
 | 2026-11-01 | Scheduled mining dispatch stays disabled (503) pending tests and owner policy | Safety gate |
@@ -158,8 +158,8 @@ flowchart LR
 | 2026-11-19 | F02 rules from Duy's update (`d22f735`): SKU is trimmed, uppercased and must match `^SKU-[A-Z0-9-]{11}$` (15 characters, unique per Store). A product name that equals, or is one character away from, another product's normalized name in the Store (names of 4+ characters) returns 409 `PRODUCT_NAME_CONFIRMATION_REQUIRED` until the client retries with `confirmSimilarName: true`; batch codes `BATCH-YYYYMMDD-NNN` are generated by the backend | Owner accepted the SKU format (2026-11-19). No DEC or record of changes yet |
 | 2026-11-19 | Merging into `dev` goes **only through a PR with green CI** | DEC-20261119-01. Binding from PR #20; earlier merges (including F02 `d22f735` on 2026-11-19) were pushed directly |
 | 2026-11-19 | Layout zone capacities (`paspm.layout.*`) must be configured **before F09**: BANNER 3 blocks / 3 products, BUNDLE 4 / 16, CROSS_SELL 2 / 8, FBT 2 / 8, BASELINE 35 / 35 | Planned (prompt issued). Configurable through `application.yml` |
-| 2026-11-19 | Baseline A keeps only the **top-K** products by frequency (K = BASELINE capacity, 35; `F07_BASELINE_V2`). F08 compares B with the **top-N of A**, where N = distinct products in B | Showing every product made A's hit rate and captured utility about 100%. The layout score grows with size, so only same-size layouts are comparable. Planned |
-| 2026-11-19 | int32 option B: SPMF input is built losslessly first. **Only if** an EFIM int32 bound is exceeded, it falls back to rounding each item utility to **1 đồng** (HALF_UP), recorded as a new conversion version. Snapshots stay exact. Amends DEC-20261117-01 | Realistic VND data becomes mineable. FoodMart and small data stay bit-identical. Planned |
+| 2026-11-19 | Baseline A keeps only the **top-K** products by frequency (K = BASELINE capacity, 35; `F07_BASELINE_V2`). F08 compares B with the **top-N of A**, where N = distinct products in B | Showing every product made A's hit rate and captured utility about 100%. The layout score grows with size, so only same-size layouts are comparable. **DONE** (PR #22, DEC-20261119-06): `OFFLINE_REPLAY_V2`, additive `LayoutView.equalSizeBaselineScore` / `equalSizeProductCount` |
+| 2026-11-19 | int32 option B: SPMF input is built losslessly first. **Only if** an EFIM int32 bound is exceeded, it falls back to rounding each item utility to **1 đồng** (HALF_UP), recorded as a new conversion version. Snapshots stay exact. Amends DEC-20261117-01 | **DONE** (PR #23, DEC-20261119-05): `conversionVersion F03_WHOLE_UNIT_HALF_UP_INT32_DENSE_V1`, `conversionMode WHOLE_UNIT_HALF_UP`. The realistic fixture is accepted (max product TWU 321,751). The demo seed stays `LOSSLESS`. Forced whole-đồng gave the same 180 patterns at 0.12 %, with the top-50 identical |
 | 2026-11-19 | The A/B (2026-11-12), `priorityCoverage` (2026-11-17) and F09/F10 MVP (2026-11-17) decisions are recorded as DEC files in `docs/decisions/` | Done (PR #20) |
 
 ## 9. Constraints, assumptions and working rules
@@ -206,8 +206,8 @@ Quantitative targets are **TBD**: no response-time, throughput or availability t
 
 | Risk | Mitigation |
 |---|---|
-| Low minUtil causes output explosion or timeouts | Limits of 2,000 patterns, 4 MiB output, 60 s and 256 MiB. Choose minUtil from pilot runs. On the demo seed, the single day 2026-10-02 at `PERCENTAGE 0.25` gave 179 patterns, inside the demo target of about 100–300. The full range 2026-10-01..04 at 0.25 gave 0 patterns. A policy value for a multi-day demo is still to be chosen |
-| High-price data overflows SPMF int32 | EFIM-aware guard returns 400 with a clear reason. Realistic VND-scale data is still rejected (the 4,100-order fixture has a product TWU of 3,217,593,703); decided 2026-11-19: whole-đồng fallback at SPMF input (planned) |
+| Low minUtil causes output explosion or timeouts | Limits of 2,000 patterns, 4 MiB output, 60 s and 256 MiB. Choose minUtil from pilot runs. On the demo seed, the single day 2026-10-02 at `PERCENTAGE 0.25` gave 179 patterns, inside the demo target of about 100–300. The full range 2026-10-01..04 at 0.25 gave 0 patterns. For the multi-day demo (2026-10-01..04), `PERCENTAGE 0.12` gives 180 patterns in 385 ms (LOSSLESS) |
+| High-price data overflows SPMF int32 | EFIM-aware guard returns 400 with a clear reason. Since PR #23, the input falls back to whole-đồng rounding only on overflow. The 4,100-order fixture (lossless product TWU 3,217,593,703) is accepted. If whole-đồng still overflows, the request gets 400; coarser units need a new decision |
 | Reports 1–4 and diagrams drift from code | This document set plus the record of changes; update the reports before Review 3 (**TBD**) |
 | Demo seed (`scripts/seed/seed_demo.py`) fails on `dev` @ `222e54f`: it creates products with `FOODMART-xxxx` SKUs (now 400), near-identical names (now 409 without `confirmSimilarName`) and sends `batchCode` (now 400). Import files also reference `FOODMART-xxxx` SKUs | Owner keeps the new SKU format; fixing the seed and the FoodMart CSV/Excel SKUs is **deferred**. Existing databases keep working, but seeded products cannot be edited until their SKU is migrated |
 | Frontend uses removed APIs or fields | Breaking-change list #15–#18 in the frontend handoff |
@@ -224,7 +224,7 @@ Quantitative targets are **TBD**: no response-time, throughput or availability t
 6. Timeline: the exact dates of Review 3, handover and defence.
 7. ~~Realistic VND prices vs int32~~: decided 2026-11-19 (whole-đồng fallback). Open: what to do if whole-đồng still overflows (thousands of đồng needs a new decision).
 8. ~~Layout zone capacities~~: decided 2026-11-19 (BANNER 3 blocks / 3 products, BUNDLE 4 / 16, CROSS_SELL 2 / 8, FBT 2 / 8, BASELINE 35 / 35). Optional: sensitivity runs at 20 / 35 / 50 products for RQ3.
-9. Multi-day demo minUtil: to be re-measured once question 7 is settled.
+9. ~~Multi-day demo minUtil~~: `PERCENTAGE 0.12` gives 180 patterns on 2026-10-01..04 (measured 2026-11-19). Setting it as the demo policy is an owner action.
 
 ## 13. Sources
 
