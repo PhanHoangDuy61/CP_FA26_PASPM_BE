@@ -122,5 +122,36 @@ class FrozenEvidenceReaderTest {
         when(snapshots.countItems(3)).thenReturn(2L);
         when(snapshots.page(7,3,0,MiningInputBuilder.MAX_ROWS)).thenReturn(List.of(row(1,11),row(2,22)));conflict();
     }
+    // DEC-20261119-05: version dispatch for whole-đồng frozen inputs.
+    UtilityMatrixContracts.MatrixItem weighted(int tx,int product,String value){var v=new BigDecimal(value);return new UtilityMatrixContracts.MatrixItem(tx,product,product,1,v,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,"NONE",BigDecimal.ONE,v,v,null,null,null,null);}
+    void wholeUnitFixture(long total,String version,String mode){
+        String text="1:1073741823:1073741823\n1:1073741823:1073741823\n2:0:0\n";
+        input=new MiningInputBuilder.Dataset(text,MiningInputBuilder.sha(text),Map.of(1,11,2,22),1,total,3,version,0,"HALF_UP",mode,BigDecimal.ONE);
+        var date=snapshot.asOfDate();
+        snapshot=new UtilityMatrixContracts.SnapshotView(3,7,1,date,date,date,snapshot.configuration(),"a".repeat(64),"b".repeat(64),new BigDecimal("2147483647.000000"),6,"READY",Instant.EPOCH,List.of());
+        run=new MiningContracts.RunView(9,4,7,3,MiningEngine.Algorithm.EFIM,1,"test","COMPLETED",1,input.hash(),version,null,null,null,null,"test","test",null,0,null,null);
+        when(mining.run(7,9)).thenReturn(run);when(snapshots.find(7,3)).thenReturn(snapshot);when(snapshots.countItems(3)).thenReturn(3L);
+        when(snapshots.page(7,3,0,MiningInputBuilder.MAX_ROWS)).thenReturn(List.of(weighted(1,11,"1073741823.4"),weighted(2,11,"1073741823.4"),weighted(3,22,"0.2")));
+        when(mining.patterns(7,9,0,MiningInputBuilder.MAX_ROWS)).thenReturn(new MiningContracts.Page<>(List.of(),0,MiningInputBuilder.MAX_ROWS,0));
+        jdbc.update("DELETE FROM pattern_item");save();
+    }
+    @Test void readsWholeDongFrozenInputByItsVersionAgainstTheRoundedMatrixTotal(){
+        wholeUnitFixture(2147483646L,MiningInputBuilder.WHOLE_UNIT_VERSION,MiningInputBuilder.MODE_WHOLE_UNIT);
+        var source=reader.read(7,9);
+        assertEquals("WHOLE_UNIT_HALF_UP",source.run().conversionMode());
+        assertEquals(0,new BigDecimal("2147483647").compareTo(source.snapshot().totalWeightedUtility()),"the snapshot stays exact");
+        assertEquals(0,BigDecimal.ONE.compareTo(source.effectiveMinUtility()),"threshold 1 is 1 đồng");
+        assertEquals(3,source.evidence().transactionCount());
+    }
+    @Test void rejectsWholeDongTotalThatIsNotTheSumOfRoundedItems(){
+        wholeUnitFixture(2147483647L,MiningInputBuilder.WHOLE_UNIT_VERSION,MiningInputBuilder.MODE_WHOLE_UNIT);
+        conflict();
+    }
+    @Test void rejectsUnknownOrInconsistentConversionVersions(){
+        wholeUnitFixture(2147483646L,"F03_FUTURE_CONVERSION_V9",MiningInputBuilder.MODE_WHOLE_UNIT);
+        conflict();
+        wholeUnitFixture(2147483646L,MiningInputBuilder.WHOLE_UNIT_VERSION,null);
+        conflict();
+    }
     @Test void malformedPersistedJsonIsSanitizedConflict(){jdbc.update("UPDATE mining_request SET frozen_input=?","{}");var error=assertThrows(ApiException.class,()->reader.read(7,9));assertEquals(409,error.status());assertFalse(error.getMessage().contains("SQL"));}
 }

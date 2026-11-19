@@ -1,4 +1,4 @@
-# ROC-20261119 — Owner decisions recorded, F04 Excel on dev, agent kit
+# ROC-20261119 — Owner decisions, F04 Excel on dev, F05 whole-đồng input, F07/F08 zone caps, agent kit
 
 2026-11-19 / Asia/Ho_Chi_Minh. Docs only; delivered through a pull request into `dev` ([DEC-20261119-01](../../decisions/2026-11-19/DEC-20261119-01-dev-changes-only-through-pr.md)).
 
@@ -8,8 +8,16 @@
 
 ## Record 002 — F04 Excel import brought onto current `dev`
 
-[Record 002](02-f04-excel-import-v26.md) cherry-picks the four F04 Excel commits of 2026-10-26 onto `dev` `530651b` (branch `Khoi/feat/f04-excel-import-v26`), adapts the async CSV path to the shared file validator, and documents `POST /api/transactions/imports/excel` (OpenAPI 101 paths / 122 operations at that point). Merged into `dev` by PR #21 (`222e54f`).
+[Record 002](02-f04-excel-import-v26.md) brings the 2026-10-26 Excel import onto `dev` as branch `Khoi/feat/f04-excel-import-v26` (merged by PR #21, `222e54f`): the four original commits cherry-picked, an async-CSV adaptation, OpenAPI 101/122 with only the Excel path added, RBAC and changelog rows.
+
+## Record 003 — F05 whole-đồng fallback for the SPMF input
+
+[Record 003](03-f05-spmf-whole-dong-fallback.md) (merged into `dev` by PR #23, `69b179b`) implements DEC-20261119-05: the exact SPMF input first, whole-đồng HALF_UP only when an EFIM int32 bound overflows; additive `conversionMode`/`roundingUnit` on request and run views; F06 version dispatch. The realistic-utility fixture is now accepted; the demo seed stays lossless (0.12 % → 180 patterns).
+
+## Record 004 — F07/F08 zone capacities, top-K baseline and equal-size simulation
+
+[Record 004](04-f07-zone-caps-baseline-topk.md) (merged into `dev` by PR #22, `9b91742`) implements DEC-20261119-06: owner zone caps in `application.yml`, baseline A top-K (`F07_BASELINE_V2`, K = 35), `OFFLINE_REPLAY_V2` equal-size comparison, additive `LayoutView.equalSizeBaselineScore`/`equalSizeProductCount`, and the [layout-size sensitivity evidence](../../testing/F08_LAYOUT_SIZE_SENSITIVITY_20261119.md) (sizes 35 and 50 reach only N = 21: the approved pool has 21 distinct products).
 
 ## Record 005 — Agent kit and product documents installed
 
-[Record 005](05-agent-kit-and-product-docs.md) adds the agent-facing product documents under [`docs/product/`](../../product/README.md), the root `CLAUDE.md` and `AGENTS.md`, and the skills `paspm-context` and `paspm-backend-workflow` under `.claude/skills/` and `.agents/skills/` (identical). Docs only; Maven NOT RUN. Records 003 and 004 belong to open pull requests.
+[Record 005](05-agent-kit-and-product-docs.md) adds the agent-facing product documents under [`docs/product/`](../../product/README.md), the root `CLAUDE.md` and `AGENTS.md`, and the skills `paspm-context` and `paspm-backend-workflow` under `.claude/skills/` and `.agents/skills/` (identical). Docs only; Maven NOT RUN.

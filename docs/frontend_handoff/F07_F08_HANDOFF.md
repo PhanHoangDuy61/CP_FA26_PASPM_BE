@@ -36,3 +36,12 @@ The simulator replays historical completed, F03-eligible transactions strictly a
 ## 2026-11-15 — F03 Weight v2 and priority coverage
 
 `priorityCoverage` and `priorityCoverageDenominator` are still always `null`: the report row is inserted with `NULL,NULL` (`src/main/java/vn/edu/fpt/paspm/layout/LayoutCampaignRepository.java:344-345`) and the stored assumption reads "N/A until the F03 priority coverage formula is confirmed" (`layout/LayoutCampaignService.java:267`). The intended definition "priority item = W(i) > 1" (F03 Weight v2) is **not wired**; no F07/F08 code reads W. F07/F08 routes and bodies did not change on branch `Khoi/feat/f05-progress-f03-weight-v2`.
+
+## 2026-11-19 — zone caps, top-K baseline, equal-size comparison (all additive)
+
+- `GET /api/layouts/policy` now returns the configured caps (BANNER 3/3, BUNDLE 4/16, CROSS_SELL 2/8, FBT 2/8, BASELINE 35/35 blocks/products). Use them to limit the B editor; the server rejects over-cap placements with 400.
+- Baseline A of a new campaign holds at most 35 products (top-K by frequency). Old campaigns keep their A.
+- New `LayoutView` fields on **layout B**: `equalSizeBaselineScore` (A's score over its first N products, N = distinct products in B) and `equalSizeProductCount`. Show "difference vs A" as `B.weightedUtilityScore − B.equalSizeBaselineScore`. Both fields are `null` on layout A, whose `weightedUtilityScore` stays the full-A score.
+- New reports have `algorithmVersion: OFFLINE_REPLAY_V2`; show `assumptions.comparedProductCountN` and `assumptions.baselineProductCount` ("B: N products vs A's top N of |A|"). For `OFFLINE_REPLAY_V1` reports, A was measured in full; label them accordingly.
+
+See [F07/F08 API](../api/F07_F08_LAYOUT_CAMPAIGN_API.md) and [DEC-20261119-06](../decisions/2026-11-19/DEC-20261119-06-layout-caps-topk-baseline-equal-size.md).

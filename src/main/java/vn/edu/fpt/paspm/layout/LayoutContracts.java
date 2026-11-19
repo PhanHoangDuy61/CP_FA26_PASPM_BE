@@ -59,7 +59,11 @@ public final class LayoutContracts {
     public record LayoutView(long layoutId, long campaignId, int snapshotId, LayoutRole role,
             LayoutStatus status, long version, String name, BigDecimal weightedUtilityScore,
             boolean valid, List<String> validationErrors, List<PlacementView> placements,
-            Instant createdAt, Instant updatedAt) {}
+            Instant createdAt, Instant updatedAt,
+            @Schema(types = {"number", "null"}, description = "Layout B only (DEC-20261119-06): weighted utility score of the first N products of baseline A, N = distinct products in this B (all of A when N > |A|). Difference vs A for F07 = weightedUtilityScore - equalSizeBaselineScore. Null for layout A.")
+            BigDecimal equalSizeBaselineScore,
+            @Schema(types = {"integer", "null"}, description = "Layout B only: number of A products in that prefix, min(N, |A|). Null for layout A.")
+            Integer equalSizeProductCount) {}
 
     public record RecommendationOption(long recommendationId, int snapshotId, RecType type,
             List<Integer> productIds, BigDecimal utility, long version) {}

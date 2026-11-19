@@ -124,7 +124,9 @@ class LayoutCampaignIntegrationTest {
         get("/api/campaigns", token("END_CUSTOMER", null)).andExpect(status().isForbidden());
         get("/api/layouts/policy", merchantToken).andExpect(status().isOk())
                 .andExpect(jsonPath("$.capacityPolicy").value("UNCONFIGURED_LIMITS_ARE_UNBOUNDED"))
-                .andExpect(jsonPath("$.zones[0].maxBlocks").isEmpty());
+                .andExpect(jsonPath("$.zones[0].zone").value("BASELINE"))
+                .andExpect(jsonPath("$.zones[0].maxBlocks").value(35))
+                .andExpect(jsonPath("$.zones[0].maxProducts").value(35));
         post("/api/campaigns", adminToken,
                 "{\"name\":\"denied\",\"snapshotId\":" + snapshotId + ",\"recommendationIds\":[]}")
                 .andExpect(status().isForbidden());
@@ -399,6 +401,122 @@ class LayoutCampaignIntegrationTest {
                 Integer.class, storeId));
         assertEquals("ENDED", jdbc.queryForObject("SELECT status FROM campaign WHERE campaign_id=?",
                 String.class, currentCampaign));
+    }
+
+    // ---- DEC-20261119-06: owner zone caps, top-K baseline (F07_BASELINE_V2) and equal-size simulation (OFFLINE_REPLAY_V2).
+
+    @Test
+    void policyExposesTheOwnerZoneCapacities() throws Exception {
+        JsonNode policy = read(get("/api/layouts/policy", merchantToken).andExpect(status().isOk()));
+        var caps = new java.util.HashMap<String, List<Integer>>();
+        for (JsonNode zone : policy.path("zones")) caps.put(zone.path("zone").asText(), List.of(zone.path("maxBlocks").asInt(), zone.path("maxProducts").asInt()));
+        assertEquals(java.util.Map.of("BASELINE", List.of(35, 35), "BANNER", List.of(3, 3), "BUNDLE", List.of(4, 16),
+                "CROSS_SELL", List.of(2, 8), "FBT", List.of(2, 8)), caps);
+    }
+
+    /** Adds 37 products to one training transaction: ranking becomes p1 (2 transactions), then p0, p2, new1..new37 by id. */
+    private List<Integer> fortyProductSnapshot() throws Exception {
+        var added = new ArrayList<Integer>();
+        for (int i = 1; i <= 37; i++) {
+            jdbc.update("""
+                    INSERT INTO product(store_id,sku,name,unit,requires_expiry,selling_price,cost_price,status)
+                    VALUES (?,?,?,'each',FALSE,10,1,'ACTIVE')
+                    """, storeId, "WIDE-" + i, "Wide product " + i);
+            added.add(jdbc.queryForObject("SELECT MAX(product_id) FROM product", Integer.class));
+        }
+        String[] prices = new String[37], costs = new String[37];
+        java.util.Arrays.fill(prices, "10.00");
+        java.util.Arrays.fill(costs, "3.00");
+        transaction(trainingDay, added, prices, costs);
+        snapshotId = createSnapshot();
+        var ranked = new ArrayList<Integer>(List.of(products.get(1), products.get(0), products.get(2)));
+        ranked.addAll(added);
+        return ranked;
+    }
+
+    private List<Integer> placementProducts(JsonNode layout) {
+        return java.util.stream.StreamSupport.stream(layout.path("placements").spliterator(), false)
+                .map(item -> item.path("productId").asInt()).toList();
+    }
+
+    @Test
+    void campaignOnMoreThanThirtyFiveProductsKeepsTheTopKBaselineInFrequencyOrder() throws Exception {
+        List<Integer> ranked = fortyProductSnapshot();
+        JsonNode created = createCampaign(List.of());
+        long layoutA = created.path("layoutAId").asLong();
+        JsonNode baseline = read(get("/api/layouts/" + layoutA, merchantToken).andExpect(status().isOk()));
+        assertEquals(ranked.subList(0, 35), placementProducts(baseline));
+        assertTrue(baseline.path("valid").asBoolean());
+        JsonNode params = json.readTree(jdbc.queryForObject("SELECT baseline_params FROM storefront_layout WHERE layout_id=?", String.class, layoutA));
+        if (params.isTextual()) params = json.readTree(params.asText());
+        assertEquals("F07_BASELINE_V2", params.path("ruleVersion").asText());
+        assertEquals(35, params.path("k").asInt());
+        assertEquals(40, params.path("candidateProducts").asInt());
+        assertEquals("COUNT(DISTINCT transaction_id) DESC, product_id ASC", params.path("ordering").asText());
+    }
+
+    @Test
+    void theBaselineCapAppliesOnlyToV2BaselinesSoHistoricalV1LayoutsStayValid() throws Exception {
+        List<Integer> ranked = fortyProductSnapshot();
+        long layoutA = createCampaign(List.of()).path("layoutAId").asLong();
+        jdbc.update("""
+                INSERT INTO layout_placement(store_id,layout_id,utility_snapshot_id,recommendation_id,product_id,zone,block_no,position)
+                VALUES (?,?,?,NULL,?,'BASELINE',36,36)
+                """, storeId, layoutA, snapshotId, ranked.get(35));
+        get("/api/layouts/" + layoutA, merchantToken).andExpect(status().isOk())
+                .andExpect(jsonPath("$.valid").value(false));
+        jdbc.update("UPDATE storefront_layout SET baseline_params=? WHERE layout_id=?",
+                "{\"ruleVersion\":\"F07_BASELINE_V1\",\"ordering\":\"COUNT(DISTINCT transaction_id) DESC, product_id ASC\",\"score\":\"number of snapshot transactions containing each product\"}", layoutA);
+        get("/api/layouts/" + layoutA, merchantToken).andExpect(status().isOk())
+                .andExpect(jsonPath("$.valid").value(true));
+    }
+
+    @Test
+    void equalSizeSimulationComparesBWithTheTopNOfAAndReportsNAndTheSizeOfA() throws Exception {
+        List<Integer> ranked = fortyProductSnapshot();
+        long first = recommendation(RecType.BUNDLE, ranked.subList(22, 26), ReviewStatus.APPROVED, true);
+        long second = recommendation(RecType.BUNDLE, ranked.subList(26, 30), ReviewStatus.APPROVED, true);
+        JsonNode created = createCampaign(List.of(first, second));
+        long campaignId = created.path("campaignId").asLong();
+        long layoutB = created.path("layoutBId").asLong();
+        mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/api/layouts/{id}/ready", layoutB)
+                        .header("Authorization", bearer(merchantToken)).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"expectedVersion\":1}"))
+                .andExpect(status().isOk());
+        JsonNode viewB = read(get("/api/layouts/" + layoutB, merchantToken).andExpect(status().isOk()));
+        assertEquals(8, viewB.path("equalSizeProductCount").asInt());
+        assertDecimal(snapshotProductScore(ranked.subList(0, 8)), viewB.path("equalSizeBaselineScore").decimalValue());
+        JsonNode viewA = read(get("/api/layouts/" + created.path("layoutAId").asLong(), merchantToken).andExpect(status().isOk()));
+        assertTrue(viewA.path("equalSizeBaselineScore").isNull());
+        assertTrue(viewA.path("equalSizeProductCount").isNull());
+
+        // Evaluation: one basket holds only A's 9th product (in A, outside A's top 8), the other only A's 1st product.
+        transaction(today.minusDays(1), List.of(ranked.get(8)), new String[] {"10.00"}, new String[] {"3.00"});
+        transaction(today.minusDays(1), List.of(ranked.get(0)), new String[] {"10.00"}, new String[] {"4.00"});
+        JsonNode report = read(post("/api/campaigns/" + campaignId + "/simulations", merchantToken,
+                simulationRequest(1, 1, 1, today.minusDays(1), today)).andExpect(status().isCreated()));
+        assertEquals("OFFLINE_REPLAY_V2", report.path("algorithmVersion").asText());
+        JsonNode assumptions = report.path("assumptions");
+        assertEquals("EQUAL_SIZE_TOP_N_OF_A", assumptions.path("comparisonMode").asText());
+        assertEquals(8, assumptions.path("comparedProductCountN").asInt());
+        assertEquals(35, assumptions.path("baselineProductCount").asInt());
+        assertEquals(8, assumptions.path("baselineProductsCompared").asInt());
+        assertEquals(35, assumptions.path("baselineK").asInt());
+        assertFalse(assumptions.path("nExceedsBaseline").asBoolean());
+        JsonNode reportA = report.path("layouts").get(0);
+        assertEquals("A", reportA.path("role").asText());
+        assertEquals(2, reportA.path("hitRate").path("denominator").asInt());
+        assertEquals(1, reportA.path("hitRate").path("numerator").asInt(), "the 9th product of A is outside the equal-size prefix");
+        assertEquals(0, report.path("layouts").get(1).path("hitRate").path("numerator").asInt());
+
+        // A report stored by the V1 algorithm is read back exactly as stored.
+        long reportId = report.path("reportId").asLong();
+        String v1Assumptions = "{\"label\":\"simulated\",\"priorityCoverage\":\"N/A until the F03 priority coverage formula is confirmed.\"}";
+        jdbc.update("UPDATE comparison_report SET algorithm_version='OFFLINE_REPLAY_V1',assumptions=? WHERE report_id=?", v1Assumptions, reportId);
+        JsonNode legacy = read(get("/api/campaign-reports/" + reportId, merchantToken).andExpect(status().isOk()));
+        assertEquals("OFFLINE_REPLAY_V1", legacy.path("algorithmVersion").asText());
+        assertEquals(json.readTree(v1Assumptions), legacy.path("assumptions"));
+        assertEquals(1, legacy.path("layouts").get(0).path("hitRate").path("numerator").asInt(), "stored metrics are not recomputed");
     }
 
     private JsonNode publishKeepA() throws Exception {
