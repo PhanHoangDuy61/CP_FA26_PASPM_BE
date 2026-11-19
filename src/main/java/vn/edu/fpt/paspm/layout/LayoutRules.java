@@ -24,6 +24,33 @@ public class LayoutRules {
 
     public String zone(RecType type) { return zones.get(type); }
 
+    /** DEC-20261119-06: K for baseline A is the BASELINE product capacity; {@code null} keeps the V1 "all products" baseline. */
+    public Integer baselineK() { return properties.getMaxProductsByZone().get(BASELINE); }
+
+    /** Top-K of the frequency-ranked snapshot products, order preserved; every product when BASELINE is not configured. */
+    public List<Integer> baselineSelection(List<Integer> ranked) {
+        Integer k = baselineK();
+        return k == null || ranked.size() <= k ? List.copyOf(ranked) : List.copyOf(ranked.subList(0, k));
+    }
+
+    /** Equal-size comparison: the first N products of A in placement order, or all of A when N exceeds |A|. */
+    public static List<Integer> equalSizePrefix(List<Integer> baselineInOrder, int n) {
+        return List.copyOf(baselineInOrder.subList(0, Math.min(Math.max(n, 0), baselineInOrder.size())));
+    }
+
+    /** Assumption entries stored with an OFFLINE_REPLAY_V2 report. */
+    public static Map<String, Object> equalSizeAssumptions(int n, int baselineSize, Integer k) {
+        var result = new java.util.LinkedHashMap<String, Object>();
+        result.put("comparisonMode", "EQUAL_SIZE_TOP_N_OF_A");
+        result.put("comparisonRule", "B is compared with the first N products of A in placement order (frequency rank), N = distinct products in B's revision; all of A when N > |A|.");
+        result.put("comparedProductCountN", n);
+        result.put("baselineProductCount", baselineSize);
+        result.put("baselineProductsCompared", Math.min(n, baselineSize));
+        result.put("baselineK", k);
+        result.put("nExceedsBaseline", n > baselineSize);
+        return result;
+    }
+
     public LayoutPolicyView policy() {
         var result = new ArrayList<ZonePolicy>();
         result.add(new ZonePolicy(BASELINE, null, properties.getMaxBlocksByZone().get(BASELINE),
