@@ -8984,6 +8984,24 @@
           "createdAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "conversionMode": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "SPMF input mode (DEC-20261119-05); null only for an unknown stored version",
+            "enum": [
+              "LOSSLESS",
+              "WHOLE_UNIT_HALF_UP"
+            ]
+          },
+          "roundingUnit": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Rounding unit in đồng of the SPMF input: 1 for WHOLE_UNIT_HALF_UP, null for LOSSLESS (exact scale 6)"
           }
         }
       },
@@ -10761,6 +10779,24 @@
               "string",
               "null"
             ]
+          },
+          "conversionMode": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "SPMF input mode derived from conversionVersion (DEC-20261119-05)",
+            "enum": [
+              "LOSSLESS",
+              "WHOLE_UNIT_HALF_UP"
+            ]
+          },
+          "roundingUnit": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Rounding unit in đồng: 1 for WHOLE_UNIT_HALF_UP, null for LOSSLESS"
           }
         }
       },

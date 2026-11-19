@@ -515,6 +515,51 @@ class MiningIntegrationTest {
         getJson(path,system).andExpect(status().isForbidden());
         getJson("/api/system/mining/stores/"+store+"/requests/"+id+"/progress",system).andExpect(status().isOk());
     }
+    /** DEC-20261119-05: sub-đồng precision overflows the exact input; the request is accepted in whole-đồng mode end to end. */
+    @Test void subDongOverflowIsMinedInWholeDongModeAndExposedAdditively() throws Exception {
+        jdbc.update("INSERT INTO store(name) VALUES (?)","Whole dong "+UUID.randomUUID());int big=jdbc.queryForObject("SELECT MAX(store_id) FROM store",Integer.class);
+        String bigMerchant=token("MERCHANDISER",big);
+        var ids=new ArrayList<Integer>();
+        for(String sku:List.of("W1","W2")){
+            jdbc.update("INSERT INTO product(store_id,sku,name,unit,requires_expiry,selling_price,cost_price,status) VALUES (?,?,'Large','each',FALSE,100,0,'ACTIVE')",big,sku);
+            ids.add(jdbc.queryForObject("SELECT MAX(product_id) FROM product",Integer.class));
+        }
+        String[][] baskets={{"0","1073741823.40"},{"0","1073741823.40"},{"1","0.20"}};
+        for(var basket:baskets){
+            String key=UUID.randomUUID().toString();
+            jdbc.update("INSERT INTO sales_transaction(store_id,source_system,source_order_id,occurred_at,status,f03_eligible,total_amount,content_sha256) VALUES (?,'TEST',?,'2026-10-19 00:00:00','COMPLETED',TRUE,1,?)",big,key,"b".repeat(64));
+            int tx=jdbc.queryForObject("SELECT transaction_id FROM sales_transaction WHERE store_id=? AND source_order_id=?",Integer.class,big,key);
+            jdbc.update("INSERT INTO transaction_item(store_id,transaction_id,product_id,quantity,unit_price,unit_cost) VALUES (?,?,?,1,?,0)",big,tx,ids.get(Integer.parseInt(basket[0])),new java.math.BigDecimal(basket[1]));
+        }
+        var created=postJson("/api/utility/snapshots",bigMerchant,"{\"rangeStart\":\"2026-10-19\",\"rangeEnd\":\"2026-10-19\",\"asOfDate\":\"2026-10-19\"}").andExpect(status().isCreated()).andReturn();
+        int bigSnapshot=json.readTree(created.getResponse().getContentAsString()).path("snapshotId").asInt();
+        configure(1);
+        var accepted=json.readTree(postJson("/api/mining/requests",bigMerchant,json.writeValueAsString(Map.of("snapshotId",bigSnapshot,"requestKey",UUID.randomUUID().toString())))
+            .andExpect(status().isAccepted()).andReturn().getResponse().getContentAsString());
+        long id=accepted.path("requestId").asLong();
+        assertEquals(MiningInputBuilder.WHOLE_UNIT_VERSION,accepted.path("conversionVersion").asText());
+        assertEquals("WHOLE_UNIT_HALF_UP",accepted.path("conversionMode").asText());
+        assertEquals(1,accepted.path("roundingUnit").asInt());
+        assertEquals(0,accepted.path("utilityScale").asInt());assertEquals(1,accepted.path("divisor").asLong());
+        assertEquals(2147483646L,accepted.path("totalScaledUtility").asLong(),"rounded items: 1,073,741,823 x 2 + 0");
+        await(id);
+        var run=json.readTree(getJson("/api/mining/requests/"+id+"/runs",bigMerchant).andReturn().getResponse().getContentAsString()).get(0);
+        assertEquals("COMPLETED",run.path("status").asText());
+        assertEquals("WHOLE_UNIT_HALF_UP",run.path("conversionMode").asText());assertEquals(1,run.path("roundingUnit").asInt());
+        long runId=run.path("runId").asLong();
+        var patterns=json.readTree(getJson("/api/mining/runs/"+runId+"/patterns",bigMerchant).andReturn().getResponse().getContentAsString());
+        assertEquals(0,new java.math.BigDecimal("2147483646").compareTo(patterns.path("items").get(0).path("utility").decimalValue()),"pattern utility is whole đồng");
+        var source=frozenEvidenceReader.read(big,runId);
+        assertEquals(run.path("patternCount").asInt(),source.patterns().size());
+        // The exact request of the default Store stays lossless and shows the mode additively.
+        var exact=json.readTree(postJson("/api/mining/requests",merchant,json.writeValueAsString(Map.of("snapshotId",snapshot,"requestKey",UUID.randomUUID().toString())))
+            .andExpect(status().isAccepted()).andReturn().getResponse().getContentAsString());
+        assertEquals(MiningInputBuilder.VERSION,exact.path("conversionVersion").asText());
+        assertEquals("LOSSLESS",exact.path("conversionMode").asText());assertTrue(exact.path("roundingUnit").isNull());
+        String frozen=jdbc.queryForObject("SELECT frozen_input FROM mining_request WHERE request_id=?",String.class,exact.path("requestId").asLong());
+        assertFalse(frozen.contains("conversionMode"),"lossless frozen JSON keeps its pre-DEC-20261119-05 shape");
+        await(exact.path("requestId").asLong());
+    }
     @Test void merchantSubmissionUsesCurrentPolicyAndRejectsOverrides() throws Exception {
         String key=UUID.randomUUID().toString();
         String body=json.writeValueAsString(Map.of("snapshotId",snapshot,"requestKey",key));
