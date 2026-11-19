@@ -1,6 +1,6 @@
 # DEC-20261117-01 — Lossless EFIM-aware int32 guard; quantization not approved
 
-**Status:** OWNER DECISION — implemented and locally verified on `Khoi/feat/f05-efim-aware-int32-guard`; committed locally, not published.
+**Status:** OWNER DECISION — implemented and locally verified on `Khoi/feat/f05-efim-aware-int32-guard`; merged into `dev` by `530651b` on 2026-11-17 (was: "committed locally, not published") ([status updated 2026-11-19](../../record-of-changes/2026-11-19/01-record-owner-decisions.md)).
 **Date:** 2026-11-17 / Asia/Ho_Chi_Minh.
 
 ## Decision
