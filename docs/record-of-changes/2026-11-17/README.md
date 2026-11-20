@@ -2,6 +2,8 @@
 
 2026-11-17 / Asia/Ho_Chi_Minh. UNRELEASED, local-only.
 
+> **Status update 2026-11-19:** Records 013–015 are merged into `dev`: 013 by `705e3d7`, 014 by `ac29811`, 015 by `530651b` (all 2026-11-17). Statements below such as "local commits only", "nothing pushed" or "uncommitted" describe the state when each record was written. See [ROC-20261119-001](../2026-11-19/01-record-owner-decisions.md).
+
 ## Record 013 — F05 dense fixture, pattern cap, JPA clone and output bound
 
 [Record 013](13-f05-dense-acceptance.md) follows [Record 012](../2026-11-16/12-f05-foodmart-scale.md) without editing its historical conclusions. It adds a 4,100-order / 18,040-row / 1,559-product synthetic F04 → F03 → F05 → F06 acceptance, proves the 2,000-pattern failure behavior and F06 rejection, runs the five JPA clone cases (5/5), and adds a Linux/macOS kernel-level 4 MiB SPMF output ceiling. No configured limits were raised.

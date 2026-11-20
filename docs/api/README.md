@@ -7,7 +7,7 @@ Canonical contract locations stay stable in this directory. `CURRENT` describes 
 | F01 | [Authentication/User](F01_AUTH_USER_API.md) | Local session update: csrfToken, refresh/logout; 202/409 reconciled; uncommitted | [F01](../frontend_handoff/F01_HANDOFF.md) |
 | F02 | [Product/Inventory](F02_PRODUCT_INVENTORY_API.md) | CURRENT scoped contract + batch `pushDay`; product `expiryPushDays` **removed 2026-11-16** (400 if sent; V26); old v3 role/expiry clauses differ | [F02](../frontend_handoff/F02_HANDOFF.md) |
 | F03 | [Utility](F03_UTILITY_API.md) | CURRENT: two routes deleted 2026-11-16 (expiry-window, score PATCH); P2–P6 resolved. Weight v2 since 2026-11-15: Weight v2 section first; v1.2 section kept as legacy for pre-V25 data. Requirements are derived, pending formal approval ([F03 W2 requirements](../requirements/F03_WEIGHT_V2_REQUIREMENTS.md)) | [F03](../frontend_handoff/F03_HANDOFF.md) |
-| F04 | [Transaction](F04_TRANSACTION_API.md) | CURRENT CSV P0 contract; broader workflow acceptance separate | [F04](../frontend_handoff/F04_HANDOFF.md) |
+| F04 | [Transaction](F04_TRANSACTION_API.md) | CURRENT CSV P0 contract (sync and async) + XLS/XLSX upload under the approved Excel contract of 2026-10-26; broader workflow acceptance separate | [F04](../frontend_handoff/F04_HANDOFF.md) |
 | F05 | [Mining](F05_MINING_API.md) | Current EFIM numeric contract includes lossless per-TU/per-Product-TWU/minUtil int32 checks and an int64 global total; this change is local/unpublished | [F05](../frontend_handoff/F05_HANDOFF.md) |
 | F06 | [Recommendation](F06_RECOMMENDATION_API.md) | Current Backend v1.1 contract + W2; frozen evidence reader validates exact int64 mining totals; historical test statements retain dates | [F06](../frontend_handoff/F06_HANDOFF.md) |
 | F07/F08 | [Layout and Campaign](F07_F08_LAYOUT_CAMPAIGN_API.md) | Merged to dev at `8f94f94` (V23); `priorityCoverage` still null (priority = W > 1 not wired) | [F07/F08](../frontend_handoff/F07_F08_HANDOFF.md) |
@@ -34,3 +34,7 @@ The follow-up export has **103 paths / 125 operations**, adding DELETE `/api/inv
 ## 2026-11-17 F05 numeric contract update
 
 The current local export remains **100 paths / 121 operations**. No route was added or removed. `RequestView.totalScaledUtility` is now `integer/int64`; transaction utility, Product TWU and converted positive `minUtil` remain int32-bounded for EFIM. The export matches the captured runtime OpenAPI document. See [DEC-20261117-01](../decisions/2026-11-17/DEC-20261117-01-efim-aware-lossless-int32-guard.md) and [Record 015](../record-of-changes/2026-11-17/15-f05-efim-aware-int32-guard.md).
+
+## 2026-11-19 F04 Excel export update
+
+Branch `Khoi/feat/f04-excel-import-v26` (on `dev` `530651b`, PR to `dev`): **101 paths / 122 operations** — the 100 / 121 export plus `POST /api/transactions/imports/excel`. The path was taken from the runtime `/v3/api-docs` export (`-Dpaspm.test.export-openapi=true` on `TransactionExcelImportIntegrationTest`) and inserted into the checked-in file; a semantic comparison shows no other path, schema or server change.

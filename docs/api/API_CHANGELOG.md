@@ -6,6 +6,10 @@
 - Product updates preserve the existing SKU. Existing Product records are not rewritten. This changes the F02 request contract; update clients to display the returned SKU instead of accepting manual input.
 - No migration or route change. The current OpenAPI export and F02 examples are updated with the request/response contract.
 
+## 2026-11-19 — F04 Excel import brought onto current `dev` (branch `Khoi/feat/f04-excel-import-v26`, PR to `dev`)
+
+The Excel route of 2026-10-26 (entry at the end of this file) is cherry-picked onto `dev` `530651b` without contract change: `POST /api/transactions/imports/excel`, `STORE_ADMIN`, multipart `file`, synchronous `201 ImportSummary`; there is no async Excel route. The sync and async CSV routes keep their behavior and messages. OpenAPI: **101 paths / 122 operations** (100 / 121 plus the Excel route); no existing path or component schema changed. New runtime dependencies: Apache POI `poi-ooxml` 6.0.0 and `commons-io` 2.22.0. No migration.
+
 ## 2026-11-17 — F05 EFIM-aware lossless numeric guard (local feature branch)
 
 - Replaced the global normalized-total int32 rejection with exact EFIM-specific checks for each converted transaction utility, each Product TWU, and converted positive `minUtil`. New validation errors identify the failed value: transaction utility, `Product <id> TWU`, or minUtil. The conversion remains scale-6/GCD and lossless; no quantization was introduced.
@@ -207,3 +211,7 @@ No endpoint contract changes were made as part of this documentation export; thi
 ## 2026-10-26 — F04 CSV staging validation correction
 
 No endpoint, DTO, authorization or idempotency-key change. Invalid overlong order IDs use NULL in the staging lookup projection while raw row evidence remains exact; unrelated valid orders return the existing 201 summary contract. See [F04 improvement report](../features/F04/F04_IMPROVEMENT_REPORT.md). F04 is file-based CSV/Excel scope; external API/POS ingestion is excluded.
+
+## 2026-10-26 — F04 Excel import (stacked on CSV/V12 correction)
+
+Added `POST /api/transactions/imports/excel`, StoreAdmin multipart `file`, 201 ImportSummary. Reuses all CSV validation, history/error reads, transaction atomicity and CSV_UPLOAD idempotency; no historical label changes. Accepts one nonempty worksheet, seven ordered headers and text IDs/SKU/offset timestamp. [Approved contract and templates](../features/F04/F04_EXCEL_FORMAT_CONTRACT.md). Runtime OpenAPI now includes the actual new route. Shared-money bounds reject hostile exponent expansion before setScale while preserving valid DECIMAL(12,2) values.

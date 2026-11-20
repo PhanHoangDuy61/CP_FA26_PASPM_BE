@@ -1,7 +1,7 @@
 # ROC-20261117-015 — F05 EFIM-aware lossless int32 guard
 
 **Date/timezone:** 2026-11-17 / Asia/Ho_Chi_Minh
-**Status:** COMPLETED LOCALLY, COMMITTED, UNPUBLISHED
+**Status:** COMPLETED; MERGED into `dev` by `530651b` on 2026-11-17 (was: "COMPLETED LOCALLY, COMMITTED, UNPUBLISHED"; updated 2026-11-19, [ROC-20261119-001](../2026-11-19/01-record-owner-decisions.md))
 **Branch/base:** `Khoi/feat/f05-efim-aware-int32-guard`, based on `739a6d934ad371f7e911cdf9d4a8da04f5caa787`
 **Decision:** [DEC-20261117-01](../../decisions/2026-11-17/DEC-20261117-01-efim-aware-lossless-int32-guard.md)
 
@@ -132,7 +132,7 @@ Implementation source, tests, API contract, OpenAPI export, feature docs, Fronte
 - OpenAPI export: 100 paths / 121 operations, `RequestView.totalScaledUtility` integer/int64, semantic JSON equality with the captured runtime export.
 - The broader legacy `docs/audits/tools/validate_documentation.py` command exited 1 because its historical reorganization/preservation baseline also reports 8 frozen-byte differences, 36 Markdown content changes, and 82 protected-file differences in this already-diverged worktree. Its Markdown link subcheck itself reports zero broken internal links. The OpenAPI change is intentional; the other preservation findings are outside this task's baseline and were not modified to satisfy that checker.
 
-**COMPLETED locally; both approved commits are local and unpublished.** Commit sequence:
+**COMPLETED locally; both approved commits were local and unpublished at the time of this record.** **Update 2026-11-19:** they were pushed with the fixup `bb4262d` (`docs(api): restore OpenAPI servers URL after export`) and merged into `dev` by `530651b` on 2026-11-17 ([ROC-20261119-001](../2026-11-19/01-record-owner-decisions.md)). Commit sequence:
 
 1. `feat(f05,f06): EFIM-aware lossless int32 guard with long totals` — source/tests commit `823b4b5`.
 2. `docs(f05): record EFIM-aware guard decision and demo capacity` — this documentation commit.

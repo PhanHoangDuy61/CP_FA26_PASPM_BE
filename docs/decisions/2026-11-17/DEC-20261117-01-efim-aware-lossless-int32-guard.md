@@ -1,6 +1,6 @@
 # DEC-20261117-01 — Lossless EFIM-aware int32 guard; quantization not approved
 
-**Status:** OWNER DECISION — implemented and locally verified on `Khoi/feat/f05-efim-aware-int32-guard`; committed locally, not published.
+**Status:** OWNER DECISION — implemented and locally verified on `Khoi/feat/f05-efim-aware-int32-guard`; merged into `dev` by `530651b` on 2026-11-17 (was: "committed locally, not published") ([status updated 2026-11-19](../../record-of-changes/2026-11-19/01-record-owner-decisions.md)).
 **Date:** 2026-11-17 / Asia/Ho_Chi_Minh.
 
 ## Decision
@@ -28,3 +28,5 @@ The old global-total int32 guard was safe but unnecessarily strict for EFIM. Fix
 ## Verification reference
 
 Implementation, test evidence, exact demo metrics, OpenAPI widening, no-migration check and limitations are recorded in [ROC-20261117-015](../../record-of-changes/2026-11-17/15-f05-efim-aware-int32-guard.md) and the [F05 scalability benchmark addendum](../../testing/F05_FOODMART_SCALABILITY_BENCHMARK.md#efim-aware-exact-int32-guard--2026-11-17).
+
+> **Superseded in part by [DEC-20261119-05](../2026-11-19/DEC-20261119-05-spmf-whole-dong-fallback.md) (2026-11-19):** the SPMF input may fall back to whole-đồng HALF_UP rounding when the exact input overflows int32; snapshots stay lossless.

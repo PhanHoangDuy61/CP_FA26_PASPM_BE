@@ -35,6 +35,20 @@ class SpmfMiningEngineTest {
         assertEquals(3000000000L,recomputed);
         assertTrue(output.runtimeMillis()>0);
     }
+    /** DEC-20261119-05: actual EFIM on a whole-đồng input; product 1 TWU is exactly int32 max after rounding. */
+    @Test void actualEfimMinesTheWholeDongFallbackInputInDong() throws Exception {
+        var rows=List.of(MiningInputTest.row(1,1,"1073741823.4","1073741824.0"),MiningInputTest.row(1,2,"0.6","1073741824.0"),
+            MiningInputTest.row(2,1,"1073741823.4","1073741823.4"));
+        assertThrows(vn.edu.fpt.paspm.common.ApiException.class,()->new MiningInputBuilder().build(MiningInputTest.snapshot("2147483647.4"),rows));
+        var prepared=new MiningInputBuilder().prepare(MiningInputTest.snapshot("2147483647.4"),rows,MiningContracts.MinUtilMode.ABSOLUTE,new java.math.BigDecimal("1"));
+        assertEquals(MiningInputBuilder.MODE_WHOLE_UNIT,prepared.input().mode());
+        assertEquals("1 2:1073741824:1073741823 1\n1:1073741823:1073741823\n",prepared.input().text());
+
+        var output=engine(60000).execute(MiningEngine.Algorithm.EFIM,prepared.input(),prepared.threshold());
+
+        assertEquals(Map.of("1",2147483646,"2",1,"1,2",1073741824),output.patterns());
+        assertEquals(0,new java.math.BigDecimal("2147483646").compareTo(prepared.input().originalUtility(output.patterns().get("1"))),"SPMF utility is đồng");
+    }
     @Test void actualZeroUtilityAndEmptyResultsAreValid() throws Exception {
         var runner=engine(10000);var input=data("1 2:10:0 10\n1 2:5:0 5\n");
         for(var algo:MiningEngine.Algorithm.values()){

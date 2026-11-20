@@ -1777,6 +1777,67 @@
         }
       }
     },
+    "/api/transactions/imports/excel": {
+      "post": {
+        "tags": [
+          "transaction-import-controller"
+        ],
+        "summary": "Upload an XLSX or XLS transaction import using the shared file-import pipeline",
+        "operationId": "uploadExcel",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Excel workbook: one nonempty worksheet, approved seven-column F04 template"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportSummary"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          }
+        }
+      }
+    },
     "/api/transactions/imports/csv": {
       "post": {
         "tags": [
@@ -8016,6 +8077,21 @@
           "updatedAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "equalSizeBaselineScore": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Layout B only (DEC-20261119-06): weighted utility score of the first N products of baseline A, N = distinct products in this B (all of A when N > |A|). Difference vs A for F07 = weightedUtilityScore - equalSizeBaselineScore. Null for layout A."
+          },
+          "equalSizeProductCount": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32",
+            "description": "Layout B only: number of A products in that prefix, min(N, |A|). Null for layout A."
           }
         }
       },
@@ -8904,6 +8980,24 @@
           "createdAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "conversionMode": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "SPMF input mode (DEC-20261119-05); null only for an unknown stored version",
+            "enum": [
+              "LOSSLESS",
+              "WHOLE_UNIT_HALF_UP"
+            ]
+          },
+          "roundingUnit": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Rounding unit in đồng of the SPMF input: 1 for WHOLE_UNIT_HALF_UP, null for LOSSLESS (exact scale 6)"
           }
         }
       },
@@ -10681,6 +10775,24 @@
               "string",
               "null"
             ]
+          },
+          "conversionMode": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "SPMF input mode derived from conversionVersion (DEC-20261119-05)",
+            "enum": [
+              "LOSSLESS",
+              "WHOLE_UNIT_HALF_UP"
+            ]
+          },
+          "roundingUnit": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Rounding unit in đồng: 1 for WHOLE_UNIT_HALF_UP, null for LOSSLESS"
           }
         }
       },
