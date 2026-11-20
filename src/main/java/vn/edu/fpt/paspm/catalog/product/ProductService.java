@@ -4,7 +4,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -59,17 +58,9 @@ public class ProductService {
     public ProductView create(Jwt jwt, ProductRequest request) {
         int storeId = access.currentStoreId(jwt);
         validateRequest(storeId, request);
-        String sku = normalizeSku(request.sku());
-        validateSkuFormat(sku);
-        requireUniqueSku(storeId, sku, null);
         requireNameConfirmation(storeId, 0, request.name(), request.confirmSimilarName());
-        try {
-            return products.create(storeId, sku, request.name(), request.categoryId(), request.unit(),
-                    request.requiresExpiry(), request.sellingPrice(), request.costPrice(), request.status());
-        } catch (DataIntegrityViolationException exception) {
-            if (isSkuConstraintViolation(exception)) throw duplicateSku();
-            throw exception;
-        }
+        return products.create(storeId, request.name(), request.categoryId(), request.unit(),
+                request.requiresExpiry(), request.sellingPrice(), request.costPrice(), request.status());
     }
 
     @Transactional
@@ -77,21 +68,13 @@ public class ProductService {
         int storeId = access.currentStoreId(jwt);
         requireProduct(storeId, id);
         validateRequest(storeId, request);
-        String sku = normalizeSku(request.sku());
-        validateSkuFormat(sku);
-        requireUniqueSku(storeId, sku, id);
         requireNameConfirmation(storeId, id, request.name(), request.confirmSimilarName());
         if (request.requiresExpiry() && products.hasExpirylessBatches(id)) {
             throw new ApiException(400, "Cannot require expiry while a batch has no expiry date");
         }
-        try {
-            if (!products.update(storeId, id, sku, request.name(), request.categoryId(), request.unit(),
-                    request.requiresExpiry(), request.sellingPrice(), request.costPrice(), request.status())) {
-                throw missing();
-            }
-        } catch (DataIntegrityViolationException exception) {
-            if (isSkuConstraintViolation(exception)) throw duplicateSku();
-            throw exception;
+        if (!products.update(storeId, id, request.name(), request.categoryId(), request.unit(),
+                request.requiresExpiry(), request.sellingPrice(), request.costPrice(), request.status())) {
+            throw missing();
         }
         return requireProduct(storeId, id);
     }
@@ -116,20 +99,6 @@ public class ProductService {
                 && products.findOtherNames(storeId, excludedProductId).stream()
                         .anyMatch(existing -> similarName(name, existing))) {
             throw new ProductNameConfirmationRequiredException();
-        }
-    }
-
-    private void requireUniqueSku(int storeId, String sku, Integer excludedProductId) {
-        if (products.skuExists(storeId, sku, excludedProductId)) throw duplicateSku();
-    }
-
-    private static String normalizeSku(String sku) {
-        return sku.trim().toUpperCase(Locale.ROOT);
-    }
-
-    private static void validateSkuFormat(String sku) {
-        if (!sku.matches("SKU-[A-Z0-9-]{11}")) {
-            throw new ApiException(400, "SKU must be 15 characters: SKU- followed by 11 letters, digits or hyphens");
         }
     }
 
@@ -163,18 +132,6 @@ public class ProductService {
 
     private static String normalizeName(String name) {
         return name.strip().replaceAll("\\s+", " ").toLowerCase(Locale.ROOT);
-    }
-
-    private static boolean isSkuConstraintViolation(Throwable exception) {
-        for (Throwable cause = exception; cause != null; cause = cause.getCause()) {
-            String message = cause.getMessage();
-            if (message != null && message.toLowerCase(Locale.ROOT).contains("uq_product_store_sku")) return true;
-        }
-        return false;
-    }
-
-    private static ApiException duplicateSku() {
-        return new ApiException(409, "SKU already exists in this Store");
     }
 
     private ProductView requireProduct(int storeId, int id) {

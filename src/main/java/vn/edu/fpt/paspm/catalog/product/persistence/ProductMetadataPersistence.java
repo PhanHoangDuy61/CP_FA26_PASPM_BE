@@ -1,6 +1,8 @@
 package vn.edu.fpt.paspm.catalog.product.persistence;
 
 import java.math.BigDecimal;
+import java.util.Locale;
+import java.util.UUID;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
@@ -15,23 +17,43 @@ public class ProductMetadataPersistence {
 
     ProductMetadataPersistence(ProductJpaRepository products) { this.products = products; }
 
-    public int create(int storeId, String sku, String name, Integer categoryId, String unit,
+    public int create(int storeId, String name, Integer categoryId, String unit,
             boolean requiresExpiry, BigDecimal sellingPrice, BigDecimal costPrice, String status) {
         var product = new ProductEntity(storeId);
-        product.replaceMetadata(sku,name,categoryId,unit,requiresExpiry,sellingPrice,costPrice,status);
+        // Persist once with a private temporary value to obtain the database-generated ID.
+        product.assignSku("TMP-" + UUID.randomUUID());
+        product.replaceMetadata(name,categoryId,unit,requiresExpiry,sellingPrice,costPrice,status);
         em.persist(product);
         // JDBC readbacks do not trigger JPA auto-flush. Surface constraints inside this translated boundary.
+        em.flush();
+        String sku = generatedSku(product.id());
+        product.assignSku(sku);
         em.flush();
         return product.id();
     }
 
-    public boolean update(int storeId, int id, String sku, String name, Integer categoryId, String unit,
+    private String generatedSku(int productId) {
+        String candidate = "SKU-" + String.format(Locale.ROOT, "%011d", productId);
+        while (skuAlreadyExists(candidate)) {
+            candidate = "SKU-" + UUID.randomUUID().toString().replace("-", "")
+                    .substring(0, 11).toUpperCase(Locale.ROOT);
+        }
+        return candidate;
+    }
+
+    private boolean skuAlreadyExists(String sku) {
+        Number count = (Number) em.createNativeQuery("SELECT COUNT(*) FROM product WHERE UPPER(TRIM(sku)) = :sku")
+                .setParameter("sku", sku).getSingleResult();
+        return count.longValue() > 0;
+    }
+
+    public boolean update(int storeId, int id, String name, Integer categoryId, String unit,
             boolean requiresExpiry, BigDecimal sellingPrice, BigDecimal costPrice, String status) {
         var product = products.findByStoreIdAndProductId(storeId,id).orElse(null);
         if (product == null) return false;
         // A previous native/JDBC write in the same transaction may have made this managed instance stale.
         em.refresh(product);
-        product.replaceMetadata(sku,name,categoryId,unit,requiresExpiry,sellingPrice,costPrice,status);
+        product.replaceMetadata(name,categoryId,unit,requiresExpiry,sellingPrice,costPrice,status);
         em.flush();
         return true;
     }

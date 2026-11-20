@@ -101,9 +101,9 @@ class CatalogIntegrationTest {
                 .andExpect(status().isOk()).andExpect(jsonPath("$.status").value("INACTIVE"));
 
         String product = """
-                {"sku":"SKU-MILK-000001","name":"Fresh Milk","categoryId":%d,"unit":"bottle","requiresExpiry":true,"sellingPrice":2.50,"costPrice":1.25,"status":"ACTIVE"}
+                {"name":"Fresh Milk","categoryId":%d,"unit":"bottle","requiresExpiry":true,"sellingPrice":2.50,"costPrice":1.25,"status":"ACTIVE"}
                 """.formatted(categoryId);
-        String forgedStoreProduct = product.replace("{\"sku\":", "{\"storeId\":" + secondStoreId + ",\"sku\":");
+        String forgedStoreProduct = product.replace("{\"name\":", "{\"storeId\":" + secondStoreId + ",\"name\":");
         mvc.perform(post("/api/products")
                         .header("Authorization", "Bearer " + storeAdminToken)
                         .contentType(MediaType.APPLICATION_JSON).content(forgedStoreProduct))
@@ -112,10 +112,11 @@ class CatalogIntegrationTest {
                         .header("Authorization", "Bearer " + storeAdminToken)
                         .contentType(MediaType.APPLICATION_JSON).content(product))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.sku").value("SKU-MILK-000001"))
                 .andExpect(jsonPath("$.stockQuantity").value(0))
                 .andReturn().getResponse().getContentAsString();
         int productId = json.readTree(productResponse).get("id").asInt();
+        org.junit.jupiter.api.Assertions.assertEquals(String.format(java.util.Locale.ROOT, "SKU-%011d", productId),
+                json.readTree(productResponse).get("sku").asText());
 
         mvc.perform(get("/api/products?search=MILK&categoryId={categoryId}&status=ACTIVE&page=0&pageSize=5", categoryId)
                         .header("Authorization", "Bearer " + storeAdminToken))
@@ -192,19 +193,26 @@ class CatalogIntegrationTest {
     }
 
     @Test
-    void rejectsDuplicateSkuNegativePriceAndInvalidBatchQuantities() throws Exception {
+    void rejectsClientSuppliedSkuNegativePriceAndInvalidBatchQuantities() throws Exception {
         int categoryId = createCategory("Produce");
         String product = """
-                {"sku":"SKU-APPLE-00001","name":"Apple","categoryId":%d,"unit":"each","requiresExpiry":false,"sellingPrice":1,"costPrice":0.5,"status":"ACTIVE"}
+                {"name":"Apple","categoryId":%d,"unit":"each","requiresExpiry":false,"sellingPrice":1,"costPrice":0.5,"status":"ACTIVE"}
                 """.formatted(categoryId);
         String response = mvc.perform(post("/api/products").header("Authorization", "Bearer " + storeAdminToken)
                         .contentType(MediaType.APPLICATION_JSON).content(product))
                 .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();
         int productId = json.readTree(response).get("id").asInt();
+        org.junit.jupiter.api.Assertions.assertEquals(String.format(java.util.Locale.ROOT, "SKU-%011d", productId),
+                json.readTree(response).get("sku").asText());
 
         mvc.perform(post("/api/products").header("Authorization", "Bearer " + storeAdminToken)
                         .contentType(MediaType.APPLICATION_JSON).content(product))
-                .andExpect(status().isConflict());
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.code").value("PRODUCT_NAME_CONFIRMATION_REQUIRED"));
+        mvc.perform(post("/api/products").header("Authorization", "Bearer " + storeAdminToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(product.replace("{\"name\":", "{\"sku\":\"SKU-99999999999\",\"name\":")))
+                .andExpect(status().isBadRequest());
         mvc.perform(post("/api/products").header("Authorization", "Bearer " + storeAdminToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(product.replace("\"sellingPrice\":1", "\"sellingPrice\":-1")))
@@ -251,29 +259,24 @@ class CatalogIntegrationTest {
     }
 
     @Test
-    void productIdsAreServerGeneratedSkuIsStoreScopedAndSimilarNamesRequireConfirmation() throws Exception {
+    void productIdsAndSkusAreServerGeneratedAndSimilarNamesRequireConfirmation() throws Exception {
         int categoryId = createCategory("Catalog");
         String firstProduct = productBody(" sku-abcd-000001 ", "Fresh Milk", categoryId, "bottle", false, 2, 1, "ACTIVE", null);
         String created = mvc.perform(post("/api/products").header("Authorization", "Bearer " + storeAdminToken)
                         .contentType(MediaType.APPLICATION_JSON).content(firstProduct))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").isNumber())
-                .andExpect(jsonPath("$.sku").value("SKU-ABCD-000001"))
                 .andReturn().getResponse().getContentAsString();
         int productId = json.readTree(created).get("id").asInt();
         org.junit.jupiter.api.Assertions.assertTrue(productId > 0);
+        org.junit.jupiter.api.Assertions.assertEquals(String.format(java.util.Locale.ROOT, "SKU-%011d", productId),
+                json.readTree(created).get("sku").asText());
 
+        String attemptedSkuOverride = firstProduct.replace("{\"name\":", "{\"sku\":\"SKU-00000000001\",\"name\":");
         mvc.perform(post("/api/products").header("Authorization", "Bearer " + storeAdminToken)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(firstProduct.replace("\"sku\":\" sku-abcd-000001 \"", "\"sku\":\"SKU-ABCD-000001\"")))
-                .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.error").value("SKU already exists in this Store"));
-
-        String invalidSku = productBody("MILK-02", "Another product", categoryId, "bottle", false, 2, 1, "ACTIVE", null);
-        mvc.perform(post("/api/products").header("Authorization", "Bearer " + storeAdminToken)
-                        .contentType(MediaType.APPLICATION_JSON).content(invalidSku))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value(org.hamcrest.Matchers.containsString("SKU must be 15 characters")));
+                        .content(attemptedSkuOverride))
+                .andExpect(status().isBadRequest());
 
         String similar = productBody("SKU-ABCD-000002", "Fresh Milks", categoryId, "bottle", false, 2, 1, "ACTIVE", null);
         mvc.perform(post("/api/products").header("Authorization", "Bearer " + storeAdminToken)
@@ -300,16 +303,17 @@ class CatalogIntegrationTest {
                         .content(conflictingUpdate.replace("\"status\":\"ACTIVE\"", "\"status\":\"ACTIVE\",\"confirmSimilarName\":true")))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.name").value("Fresh Milks"));
 
-        String foreignStoreSameSku = productBody(" sku-abcd-000001 ", "Other Store Product", null,
+        String otherStoreProduct = productBody(" sku-abcd-000001 ", "Other Store Product", null,
                 "each", false, 1, 1, "ACTIVE", null);
-        mvc.perform(post("/api/products").header("Authorization", "Bearer " + otherStoreToken)
-                        .contentType(MediaType.APPLICATION_JSON).content(foreignStoreSameSku))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.sku").value("SKU-ABCD-000001"));
+        String otherStoreCreated = mvc.perform(post("/api/products").header("Authorization", "Bearer " + otherStoreToken)
+                        .contentType(MediaType.APPLICATION_JSON).content(otherStoreProduct))
+                .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();
+        org.junit.jupiter.api.Assertions.assertNotEquals(json.readTree(created).get("sku").asText(),
+                json.readTree(otherStoreCreated).get("sku").asText());
 
         mvc.perform(post("/api/products").header("Authorization", "Bearer " + storeAdminToken)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(firstProduct.replace("{\"sku\":", "{\"id\":999,\"sku\":")))
+                        .content(firstProduct.replace("{\"name\":", "{\"id\":999,\"name\":")))
                 .andExpect(status().isBadRequest());
     }
 
@@ -453,7 +457,7 @@ class CatalogIntegrationTest {
                 "SELECT category_id FROM category WHERE store_id=? AND name='Foreign category'",
                 Integer.class, secondStoreId);
         String product = """
-                {"sku":"SKU-FORGN-00001","name":"Foreign category product","categoryId":%d,"unit":"each","requiresExpiry":false,"sellingPrice":1,"costPrice":0.5,"status":"ACTIVE"}
+                {"name":"Foreign category product","categoryId":%d,"unit":"each","requiresExpiry":false,"sellingPrice":1,"costPrice":0.5,"status":"ACTIVE"}
                 """.formatted(foreignCategoryId);
 
         mvc.perform(post("/api/products").header("Authorization", "Bearer " + storeAdminToken)
@@ -477,9 +481,10 @@ class CatalogIntegrationTest {
                 .andExpect(jsonPath("$.paths['/api/inventory-batches/{id}/push-day'].delete").exists())
                 .andExpect(jsonPath("$.paths['/api/inventory-batches/{id}/expiry-date'].delete").exists())
                 .andExpect(jsonPath("$.components.schemas.ProductRequest.properties.confirmSimilarName").exists())
-                .andExpect(jsonPath("$.components.schemas.ProductRequest.properties.sku.pattern").doesNotExist())
+                .andExpect(jsonPath("$.components.schemas.ProductRequest.properties.sku").doesNotExist())
                 .andExpect(jsonPath("$.components.schemas.BatchCreateRequest.properties.batchCode").doesNotExist())
                 .andExpect(jsonPath("$.components.schemas.ProductView.properties.id.readOnly").value(true))
+                .andExpect(jsonPath("$.components.schemas.ProductView.properties.sku.readOnly").value(true))
                 .andExpect(jsonPath("$.components.schemas.BatchView.properties.batchCode.readOnly").value(true))
                 .andExpect(jsonPath("$.components.schemas.BatchPatchRequest.properties.expiryDate").exists())
                 .andReturn();
@@ -510,7 +515,7 @@ class CatalogIntegrationTest {
     void inventorySummarySeparatesExpiredBlockedAndSellableBatches() throws Exception {
         int categoryId = createCategory("Summary category");
         String productBody = """
-                {"sku":"SKU-SUMMARY-001","name":"Summary Product","categoryId":%d,"unit":"each","requiresExpiry":true,"sellingPrice":1,"costPrice":0.5,"status":"ACTIVE"}
+                {"name":"Summary Product","categoryId":%d,"unit":"each","requiresExpiry":true,"sellingPrice":1,"costPrice":0.5,"status":"ACTIVE"}
                 """.formatted(categoryId);
         String response = mvc.perform(post("/api/products").header("Authorization", "Bearer " + storeAdminToken)
                         .contentType(MediaType.APPLICATION_JSON).content(productBody))
@@ -586,18 +591,17 @@ class CatalogIntegrationTest {
         return json.readTree(response).get("id").asInt();
     }
 
-    private int createProduct(String sku, String name, boolean requiresExpiry) throws Exception {
-        String body = productBody(sku, name, null, "each", requiresExpiry, 1, 1, "ACTIVE", null);
+    private int createProduct(String ignoredLegacySku, String name, boolean requiresExpiry) throws Exception {
+        String body = productBody(ignoredLegacySku, name, null, "each", requiresExpiry, 1, 1, "ACTIVE", null);
         String response = mvc.perform(post("/api/products").header("Authorization", "Bearer " + storeAdminToken)
                         .contentType(MediaType.APPLICATION_JSON).content(body))
                 .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();
         return json.readTree(response).get("id").asInt();
     }
 
-    private String productBody(String sku, String name, Integer categoryId, String unit, boolean requiresExpiry,
+    private String productBody(String ignoredLegacySku, String name, Integer categoryId, String unit, boolean requiresExpiry,
             int sellingPrice, int costPrice, String status, Boolean confirmSimilarName) throws Exception {
         var body = new java.util.LinkedHashMap<String, Object>();
-        body.put("sku", sku);
         body.put("name", name);
         if (categoryId != null) body.put("categoryId", categoryId);
         body.put("unit", unit);

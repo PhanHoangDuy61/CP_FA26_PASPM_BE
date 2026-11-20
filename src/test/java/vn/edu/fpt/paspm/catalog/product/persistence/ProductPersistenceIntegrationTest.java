@@ -108,7 +108,7 @@ class ProductPersistenceIntegrationTest {
         int id = create("JPA-WRITER").id();
         assertEquals(inserts + 1, statistics.getEntityInsertCount());
         long updates = statistics.getEntityUpdateCount();
-        assertTrue(products.update(store,id,"JPA-WRITER","Updated",null,"unit",false,
+        assertTrue(products.update(store,id,"Updated",null,"unit",false,
                 BigDecimal.TEN,BigDecimal.ONE,"ACTIVE"));
         assertEquals(updates + 1, statistics.getEntityUpdateCount());
     }
@@ -131,7 +131,7 @@ class ProductPersistenceIntegrationTest {
     @Test void productJpaAndInventoryJdbcCommitTogetherWithReadYourWrites() throws Exception {
         int id = transaction().execute(ignored -> {
             var created = create(" COMMIT ");
-            assertEquals("COMMIT", created.sku());
+            assertEquals(String.format(java.util.Locale.ROOT, "SKU-%011d", created.id()), created.sku());
             assertEquals("Product", created.name());
             assertNull(created.category());
             var batch = batches.create(created.id(), " batch ", Instant.now(), null, 7);
@@ -169,7 +169,7 @@ class ProductPersistenceIntegrationTest {
         int batch = batches.create(id,"existing-commit",Instant.now(),null,9).id();
         transaction().executeWithoutResult(ignored -> {
             managed(id);
-            assertTrue(products.update(store,id,"EXISTING-COMMIT","Committed name",null,"unit",false,
+            assertTrue(products.update(store,id,"Committed name",null,"unit",false,
                     new BigDecimal("12.34"),new BigDecimal("2.00"),"ACTIVE"));
             batches.update(batch,4,null);
             assertEquals("Committed name",products.find(store,id).name());
@@ -183,7 +183,7 @@ class ProductPersistenceIntegrationTest {
         int batch = batches.create(id,"existing-rollback",Instant.now(),null,9).id();
         assertThrows(IllegalStateException.class,() -> transaction().executeWithoutResult(ignored -> {
             managed(id);
-            assertTrue(products.update(store,id,"EXISTING-ROLLBACK","Must roll back",null,"unit",false,
+            assertTrue(products.update(store,id,"Must roll back",null,"unit",false,
                     new BigDecimal("12.34"),new BigDecimal("2.00"),"ACTIVE"));
             batches.update(batch,4,null);
             assertEquals("Must roll back",products.find(store,id).name());
@@ -198,7 +198,7 @@ class ProductPersistenceIntegrationTest {
         batches.create(id, "scores", Instant.now(), null, 8);
         transaction().executeWithoutResult(ignored -> {
             managed(id);
-            assertTrue(products.update(store,id," SCORES "," Changed ",null," item ",false,
+            assertTrue(products.update(store,id," Changed ",null," item ",false,
                     new BigDecimal("99.99"),new BigDecimal("1.25"),"ACTIVE"));
             assertEquals("Changed", products.find(store,id).name());
         });
@@ -244,7 +244,7 @@ class ProductPersistenceIntegrationTest {
                 CompletableFuture.runAsync(() -> {
                     assertEquals(1,jdbc.update("UPDATE inventory_batch SET remaining_quantity=4 WHERE batch_id=?",batch));
                 }).orTimeout(5,TimeUnit.SECONDS).join();
-                assertTrue(products.update(store,id,"CONCURRENT-METADATA-UPDATED-"+id,"Updated",null,"unit",false,
+                assertTrue(products.update(store,id,"Updated",null,"unit",false,
                         BigDecimal.TEN,BigDecimal.ONE,"ACTIVE"));
                 assertEquals("Updated",products.find(store,id).name());
             });
@@ -263,20 +263,23 @@ class ProductPersistenceIntegrationTest {
             assertEquals("Native name", ReflectionTestUtils.getField(entity,"name"));
             jdbc.update("UPDATE product SET name='Second native name',unit='box' WHERE product_id=?",id);
             // These requested values equal the stale managed snapshot. Refresh must still restore them in SQL.
-            assertTrue(products.update(store,id,"STALE","Native name",null,"unit",false,
+            assertTrue(products.update(store,id,"Native name",null,"unit",false,
                     new BigDecimal("12.34"),new BigDecimal("2.00"),"ACTIVE"));
             assertEquals("Native name",products.find(store,id).name());
             assertEquals("unit",products.find(store,id).unit());
         });
     }
 
-    @Test void writesAreStoreScopedAndDuplicateConstraintsRemainTranslated() {
+    @Test void writesAreStoreScopedAndGeneratedSkuRemainsStable() {
         int id = create("UNIQUE").id();
+        String sku = products.find(store,id).sku();
         assertFalse(products.updateStatus(store+1,id,"INACTIVE"));
-        assertFalse(products.update(store+1,id,"UNIQUE","Foreign",null,"unit",false,
+        assertFalse(products.update(store+1,id,"Foreign",null,"unit",false,
                 BigDecimal.ONE,BigDecimal.ONE,"ACTIVE"));
         assertEquals("Product",products.find(store,id).name());
-        assertThrows(DataIntegrityViolationException.class, () -> create("UNIQUE"));
+        int secondId = create("UNIQUE").id();
+        assertNotEquals(sku,products.find(store,secondId).sku());
+        assertEquals(sku,products.find(store,id).sku());
         assertEquals("ACTIVE",products.find(store,id).status());
     }
 
@@ -287,10 +290,10 @@ class ProductPersistenceIntegrationTest {
         jdbc.update("INSERT INTO category(store_id,name,status) VALUES (?,'Foreign category','ACTIVE')",foreignStore);
         int foreignCategory = jdbc.queryForObject("SELECT category_id FROM category WHERE store_id=?",Integer.class,foreignStore);
         int before = jdbc.queryForObject("SELECT COUNT(*) FROM product WHERE store_id=?",Integer.class,store);
-        assertThrows(DataIntegrityViolationException.class,() -> products.create(store,"FOREIGN-CATEGORY",
+        assertThrows(DataIntegrityViolationException.class,() -> products.create(store,
                 "Rejected product",foreignCategory,"unit",false,BigDecimal.TEN,BigDecimal.ONE,"ACTIVE"));
         assertEquals(before,jdbc.queryForObject("SELECT COUNT(*) FROM product WHERE store_id=?",Integer.class,store));
-        assertEquals(0,jdbc.queryForObject("SELECT COUNT(*) FROM product WHERE store_id=? AND sku='FOREIGN-CATEGORY'",Integer.class,store));
+        assertEquals(before,jdbc.queryForObject("SELECT COUNT(*) FROM product WHERE store_id=?",Integer.class,store));
     }
 
     @Test void f04RequiresNewTemplateKeepsInnerJdbcCommitAfterOuterJpaRollback() {
@@ -313,8 +316,8 @@ class ProductPersistenceIntegrationTest {
                 .setParameter("store",store).setParameter("id",id).getSingleResult();
     }
 
-    private vn.edu.fpt.paspm.catalog.CatalogContracts.ProductView create(String sku) {
-        return products.create(store,sku," Product ",null," unit ",false,new BigDecimal("12.34"),
+    private vn.edu.fpt.paspm.catalog.CatalogContracts.ProductView create(String ignoredLegacySku) {
+        return products.create(store," Product ",null," unit ",false,new BigDecimal("12.34"),
                 new BigDecimal("2.00"),"ACTIVE");
     }
 

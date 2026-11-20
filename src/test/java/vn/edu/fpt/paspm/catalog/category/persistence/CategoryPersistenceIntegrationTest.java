@@ -61,7 +61,7 @@ class CategoryPersistenceIntegrationTest {
     int newStore(){jdbc.update("INSERT INTO store(name) VALUES (?)",UUID.randomUUID().toString());return jdbc.queryForObject("SELECT MAX(store_id) FROM store",Integer.class);}
     TransactionTemplate transaction(){return new TransactionTemplate(manager);}
     Class<?> categoryClass(){return emf.getMetamodel().getEntities().stream().filter(e->e.getName().equals("CategoryEntity")).findFirst().orElseThrow().getJavaType();}
-    int product(int category){return products.create(store,"CAT-"+UUID.randomUUID(),"Product",category,"each",false,BigDecimal.TEN,BigDecimal.ONE,"ACTIVE").id();}
+    int product(int category){return products.create(store,"Product",category,"each",false,BigDecimal.TEN,BigDecimal.ONE,"ACTIVE").id();}
     String token(int owner,String role){var u=users.createPendingUser("Synthetic category",UUID.randomUUID()+"@example.test",role,owner,null,null);jdbc.update("UPDATE app_user SET status='ACTIVE',email_verified_at=CURRENT_TIMESTAMP WHERE user_id=?",u.id());return auth.token(users.findById(u.id())).accessToken();}
 
     @Test void categoryMappingOwnsOnlyScalarMetadataWithoutCascade(){
@@ -186,7 +186,7 @@ class CategoryPersistenceIntegrationTest {
         assertEquals(category,products.find(store,product).category().id());assertEquals("Renamed referenced",products.find(store,product).category().name());
         assertEquals("ACTIVE",products.find(store,product).status());assertEquals(4,products.find(store,product).stockQuantity());
         int otherCategory=categories.create(foreign,"Foreign","ACTIVE").id();
-        assertThrows(DataIntegrityViolationException.class,()->products.update(store,product,"NEW-SKU","Product",otherCategory,"each",false,BigDecimal.TEN,BigDecimal.ONE,"ACTIVE"));
+        assertThrows(DataIntegrityViolationException.class,()->products.update(store,product,"Product",otherCategory,"each",false,BigDecimal.TEN,BigDecimal.ONE,"ACTIVE"));
     }
     @Test void invalidPersistenceValuesStillFailConstraints(){
         assertThrows(org.springframework.dao.DataAccessException.class,()->categories.create(store,"Bad status","ARCHIVED"));

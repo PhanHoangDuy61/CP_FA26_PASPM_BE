@@ -115,10 +115,10 @@ class JpaPilotMigrationMySqlTest {
             var sharedJdbc=context.getBean(JdbcTemplate.class);
             assertEquals("V5-MILK",products.find(1,201).sku());assertEquals("Synthetic dairy",categories.find(1,101).name());
             new TransactionTemplate(context.getBean(PlatformTransactionManager.class)).executeWithoutResult(status->{
-                assertTrue(products.update(1,201,"V5-MILK","Changed only inside rollback",101,"bottle",true,new BigDecimal("35"),new BigDecimal("20"),"ACTIVE"));
+                assertTrue(products.update(1,201,"Changed only inside rollback",101,"bottle",true,new BigDecimal("35"),new BigDecimal("20"),"ACTIVE"));
                 assertEquals("Changed only inside rollback",products.find(1,201).name());
                 assertEquals(7,sharedJdbc.queryForObject("SELECT remaining_quantity FROM inventory_batch WHERE batch_id=301",Integer.class));
-                assertTrue(products.create(1,"ROLLBACK-ONLY","Synthetic transient",101,"bottle",false,BigDecimal.TEN,BigDecimal.ONE,"ACTIVE").id()>0);
+                assertTrue(products.create(1,"Synthetic transient",101,"bottle",false,BigDecimal.TEN,BigDecimal.ONE,"ACTIVE").id()>0);
                 sharedJdbc.update("UPDATE category SET name='Rolled back JDBC category' WHERE category_id=101");
                 status.setRollbackOnly();
             });
@@ -188,7 +188,7 @@ class JpaPilotMigrationMySqlTest {
         try(var context=application(target)) {
             var products=context.getBean(ProductRepository.class);
             new TransactionTemplate(context.getBean(PlatformTransactionManager.class)).executeWithoutResult(status -> {
-                assertTrue(products.update(1,201,"V5-MILK","Metadata after recovery",101,"bottle",true,
+                assertTrue(products.update(1,201,"Metadata after recovery",101,"bottle",true,
                         new BigDecimal("35"),new BigDecimal("20"),"ACTIVE"));
                 assertTrue(products.updateStatus(1,201,"INACTIVE"));
                 assertEquals("Metadata after recovery",products.find(1,201).name());

@@ -2,7 +2,7 @@
 
 ## Current backend follow-up — 2026-11-19
 
-The current branch adds allowlisted/stable sorting for all product-list display fields; database-generated, read-only Product/Batch IDs; fixed SKU format validation and Store-scoped uniqueness; backend-generated per-Product batch codes (`BATCH-YYYYMMDD-NNN`); a confirm-and-retry warning for similar product names; and expiry-date correction/clearing for inventory batches. Batch source fields (`batchCode`, `receivedAt`, `initialQuantity`) remain immutable. No migration was needed, and this repository has no frontend UI; see the current [API contract](../../api/F02_PRODUCT_INVENTORY_API.md) and [frontend handoff](../../frontend_handoff/F02_HANDOFF.md).
+The current branch adds allowlisted/stable sorting for all product-list display fields; database-generated, read-only Product/Batch IDs; Product SKU generation from the database Product ID; backend-generated per-Product batch codes (`BATCH-YYYYMMDD-NNN`); a confirm-and-retry warning for similar product names; and expiry-date correction/clearing for inventory batches. Batch source fields (`batchCode`, `receivedAt`, `initialQuantity`) remain immutable. No migration was needed, and this repository has no frontend UI; see the current [API contract](../../api/F02_PRODUCT_INVENTORY_API.md) and [frontend handoff](../../frontend_handoff/F02_HANDOFF.md).
 
 > Historical verification record: Backend `dev` @ `11973a0` (merge of PR #11; source tree identical to `a4f1115`, whose code passed the full verification script on `45dbd80`). See the 2026-11-19 follow-up above for current changes and tests.
 
@@ -50,7 +50,7 @@ Foreign or absent records answer 404 after the role gate. Matrix: [RBAC matrix](
 Categories 5, products 5 (`GET` list with search/filter/sort/page, detail, create, full update, status), batches 6 (list/create, detail/PATCH, and clear-expiry/clear-push-day DELETE routes), inventory summary 1 — 17 operations total. Product and Category writes use JPA; catalogue reads and inventory use JDBC (hybrid persistence, see [architecture decisions](../../architecture/HYBRID_PERSISTENCE_DECISIONS.md)).
 
 ## 4. Business rules
-- SKU is trimmed/uppercased, must match `^SKU-[A-Z0-9-]{11}$`, and is unique per Store (400 for format, 409 for conflict); batch code is generated as `BATCH-YYYYMMDD-NNN` with a Product-scoped sequence. Similar product names are confirmable warnings, not unique constraints.
+- SKU is generated as `SKU-` plus the database Product ID padded to 11 digits; clients omit it from create/update requests and treat it as read-only. Batch code is generated as `BATCH-YYYYMMDD-NNN` with a Product-scoped sequence. Similar product names are confirmable warnings, not unique constraints.
 - `requiresExpiry=true` products need an expiry date on every batch; enabling it while a batch lacks one is 400.
 - `PATCH` batch: `remainingQuantity` 0..initial, status `ACTIVE|BLOCKED`, `pushDay` and/or `expiryDate`; null/omitted dates are unchanged, source receipt fields are immutable, and `pushDay` must not exceed expiry date.
 - Batch `expiryDate` can be cleared only for a product with `requiresExpiry=false`; batch `pushDay` and optional expiry are cleared by separate idempotent DELETE routes.

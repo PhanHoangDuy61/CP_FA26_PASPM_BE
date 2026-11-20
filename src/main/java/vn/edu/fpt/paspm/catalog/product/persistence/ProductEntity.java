@@ -1,7 +1,6 @@
 package vn.edu.fpt.paspm.catalog.product.persistence;
 
 import java.math.BigDecimal;
-import java.util.Locale;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -44,9 +43,8 @@ class ProductEntity {
 
     Integer id() { return productId; }
 
-    void replaceMetadata(String sku, String name, Integer categoryId, String unit, boolean requiresExpiry,
+    void replaceMetadata(String name, Integer categoryId, String unit, boolean requiresExpiry,
             BigDecimal sellingPrice, BigDecimal costPrice, String status) {
-        this.sku = sku.trim().toUpperCase(Locale.ROOT);
         this.name = name.trim();
         this.categoryId = categoryId;
         this.unit = unit.trim();
@@ -55,4 +53,6 @@ class ProductEntity {
         this.costPrice = costPrice;
         this.status = status;
     }
+
+    void assignSku(String sku) { this.sku = sku; }
 }

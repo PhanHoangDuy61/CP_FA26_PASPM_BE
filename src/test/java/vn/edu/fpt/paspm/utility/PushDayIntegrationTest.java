@@ -208,7 +208,7 @@ class PushDayIntegrationTest {
     }
     /** @param days null for the current contract; any other value adds the removed legacy field. */
     String productBody(String days) {
-        return "{\"sku\":\"SKU-MILK-000001\",\"name\":\"Milk\",\"unit\":\"bottle\",\"requiresExpiry\":true,\"sellingPrice\":100,\"costPrice\":20,\"status\":\"ACTIVE\""+(days==null?"":",\"expiryPushDays\":"+days)+"}";
+        return "{\"name\":\"Milk\",\"unit\":\"bottle\",\"requiresExpiry\":true,\"sellingPrice\":100,\"costPrice\":20,\"status\":\"ACTIVE\""+(days==null?"":",\"expiryPushDays\":"+days)+"}";
     }
     int store() {jdbc.update("INSERT INTO store(name) VALUES (?)","PushDay "+UUID.randomUUID());return jdbc.queryForObject("SELECT MAX(store_id) FROM store",Integer.class);}
     String token(String role,Integer storeId) {

@@ -1,6 +1,6 @@
 # F02 Examples
 
-All IDs and data are synthetic; actual IDs depend on the database. Examples use the implemented `INVENTORY_BATCH` contract. SKUs follow `SKU-` plus 11 allowed characters; batch create omits `batchCode` because the backend generates it per Product. Prices are illustrative numeric values; no currency code is part of the DTO. See `docs/api/F02_PRODUCT_INVENTORY_API.md` for precise validation and status rules.
+All IDs and data are synthetic; actual IDs depend on the database. Examples use the implemented `INVENTORY_BATCH` contract. The backend generates Product SKU from the database Product ID; Product request examples omit `sku`, while response examples show it. Batch create omits `batchCode` because the backend generates it per Product. Prices are illustrative numeric values; no currency code is part of the DTO. See `docs/api/F02_PRODUCT_INVENTORY_API.md` for precise validation and status rules.
 
 ## 2026-11-16 — `expiryPushDays` removed (DEC-20261116-02)
 

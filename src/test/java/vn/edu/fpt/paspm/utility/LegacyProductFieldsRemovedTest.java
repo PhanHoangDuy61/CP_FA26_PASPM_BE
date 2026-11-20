@@ -108,9 +108,7 @@ class LegacyProductFieldsRemovedTest {
         return mvc.perform(request);
     }
     static String productBody(String sku,String extra) {
-        String normalized=sku.toUpperCase(Locale.ROOT).replaceAll("[^A-Z0-9]","");
-        String validSku="SKU-"+(normalized+"00000000000").substring(0,11);
-        return "{\"sku\":\""+validSku+"\",\"name\":\"Milk\",\"unit\":\"bottle\",\"requiresExpiry\":true,\"sellingPrice\":100,\"costPrice\":20,\"status\":\"ACTIVE\""+extra+"}";
+        return "{\"name\":\"Milk\",\"unit\":\"bottle\",\"requiresExpiry\":true,\"sellingPrice\":100,\"costPrice\":20,\"status\":\"ACTIVE\""+extra+"}";
     }
     String token(String role,Integer storeId) {
         var user=users.createPendingUser("Legacy removed",UUID.randomUUID()+"@example.test",role,storeId,"unused-test-hash",null);

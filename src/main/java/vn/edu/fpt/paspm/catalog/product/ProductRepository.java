@@ -47,21 +47,6 @@ public class ProductRepository {
                 .stream().findFirst().orElse(null);
     }
 
-    public boolean skuExists(int storeId, String sku, Integer excludedProductId) {
-        if (excludedProductId == null) {
-            Integer count = jdbc.queryForObject("""
-                    SELECT COUNT(*) FROM product
-                    WHERE store_id=? AND UPPER(TRIM(sku))=?
-                    """, Integer.class, storeId, sku);
-            return count != null && count > 0;
-        }
-        Integer count = jdbc.queryForObject("""
-                SELECT COUNT(*) FROM product
-                WHERE store_id=? AND UPPER(TRIM(sku))=? AND product_id<>?
-                """, Integer.class, storeId, sku, excludedProductId);
-        return count != null && count > 0;
-    }
-
     public List<String> findOtherNames(int storeId, int excludedProductId) {
         return jdbc.query("""
                 SELECT name FROM product WHERE store_id=? AND product_id<>?
@@ -91,17 +76,17 @@ public class ProductRepository {
         return new ProductPage(content, page, pageSize, elements, pages);
     }
 
-    public ProductView create(int storeId, String sku, String name, Integer categoryId, String unit,
+    public ProductView create(int storeId, String name, Integer categoryId, String unit,
                               boolean requiresExpiry, java.math.BigDecimal sellingPrice,
                               java.math.BigDecimal costPrice, String status) {
-        int id = metadata.create(storeId,sku,name,categoryId,unit,requiresExpiry,sellingPrice,costPrice,status);
+        int id = metadata.create(storeId,name,categoryId,unit,requiresExpiry,sellingPrice,costPrice,status);
         return find(storeId,id);
     }
 
-    public boolean update(int storeId, int id, String sku, String name, Integer categoryId, String unit,
+    public boolean update(int storeId, int id, String name, Integer categoryId, String unit,
                           boolean requiresExpiry, java.math.BigDecimal sellingPrice,
                           java.math.BigDecimal costPrice, String status) {
-        return metadata.update(storeId,id,sku,name,categoryId,unit,requiresExpiry,sellingPrice,costPrice,status);
+        return metadata.update(storeId,id,name,categoryId,unit,requiresExpiry,sellingPrice,costPrice,status);
     }
 
     public boolean hasExpirylessBatches(int productId) {

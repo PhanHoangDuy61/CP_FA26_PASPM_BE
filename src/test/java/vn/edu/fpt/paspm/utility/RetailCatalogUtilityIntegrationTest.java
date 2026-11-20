@@ -70,7 +70,7 @@ class RetailCatalogUtilityIntegrationTest {
     }
 
     @Test void catalogReadDoesNotGrantProductCategoryOrInventoryWrites() throws Exception {
-        String productBody="{\"sku\":\"SKU-DENIE-00001\",\"name\":\"Denied\",\"unit\":\"bottle\",\"requiresExpiry\":true,\"sellingPrice\":100,\"costPrice\":20,\"status\":\"ACTIVE\"}";
+        String productBody="{\"name\":\"Denied\",\"unit\":\"bottle\",\"requiresExpiry\":true,\"sellingPrice\":100,\"costPrice\":20,\"status\":\"ACTIVE\"}";
         String categoryBody="{\"name\":\"Denied\",\"status\":\"ACTIVE\"}";
         for(String path:new String[]{"/api/products","/api/categories"}) {
             mvc.perform(post(path).header("Authorization","Bearer "+merchant).contentType(MediaType.APPLICATION_JSON).content(path.endsWith("products")?productBody:categoryBody))
