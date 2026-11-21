@@ -105,4 +105,4 @@ The task's context recorded the F07/F08 contract and F06/F02 source/tests alread
 
 ## 8. Delivery
 
-No commit, push, merge or deployment was performed. All work remains local and unpublished.
+At the time of this implementation handoff, no commit, push, merge or deployment had been performed. The subsequent merge to `dev` and its verification are recorded in [ROC-20261121](../2026-11-21/README.md).
