@@ -24,6 +24,16 @@ public class LayoutRules {
 
     public String zone(RecType type) { return zones.get(type); }
 
+    public void requireConfiguredPublicCapacities() {
+        for (RecType type : RecType.values()) {
+            String zone = zone(type);
+            if (properties.getMaxBlocksByZone().get(zone) == null
+                    || properties.getMaxProductsByZone().get(zone) == null) {
+                throw new ApiException(503, "Storefront layout capacities are not configured");
+            }
+        }
+    }
+
     /** DEC-20261119-06: K for baseline A is the BASELINE product capacity; {@code null} keeps the V1 "all products" baseline. */
     public Integer baselineK() { return properties.getMaxProductsByZone().get(BASELINE); }
 

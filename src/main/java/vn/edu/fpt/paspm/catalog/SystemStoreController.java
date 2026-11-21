@@ -8,8 +8,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import vn.edu.fpt.paspm.common.ApiException;
 import vn.edu.fpt.paspm.mining.MiningContracts;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
+import vn.edu.fpt.paspm.storefront.StorefrontContracts.VisibilityRequest;
+import vn.edu.fpt.paspm.storefront.StorefrontContracts.VisibilityView;
+import vn.edu.fpt.paspm.storefront.StorefrontRepository;
 
 /**
  * Decision D2 (confirmed 2026-11-02): a read-only Store picker for System Admin screens that must name a Store explicitly
@@ -21,7 +29,11 @@ import vn.edu.fpt.paspm.mining.MiningContracts;
 public class SystemStoreController {
     private static final int MAX_PAGE_SIZE = 100;
     private final JdbcTemplate jdbc;
-    public SystemStoreController(JdbcTemplate jdbc) { this.jdbc = jdbc; }
+    private final StorefrontRepository storefronts;
+    public SystemStoreController(JdbcTemplate jdbc, StorefrontRepository storefronts) {
+        this.jdbc = jdbc;
+        this.storefronts = storefronts;
+    }
     public record StoreView(int storeId, String name) {}
     @GetMapping
     @Operation(summary = "System Admin: page through all Stores (id and name only), ordered by name then storeId",
@@ -31,5 +43,13 @@ public class SystemStoreController {
         List<StoreView> items = jdbc.query("SELECT store_id,name FROM store ORDER BY name,store_id LIMIT ? OFFSET ?",
             (rs, n) -> new StoreView(rs.getInt(1), rs.getString(2)), pageSize, (long) page * pageSize);
         return new MiningContracts.Page<>(items, page, pageSize, jdbc.queryForObject("SELECT COUNT(*) FROM store", Long.class));
+    }
+
+    @PutMapping("/{storeId}/storefront-visibility")
+    @Operation(summary = "SYSTEM_ADMIN: enable or disable public visibility without changing campaign state")
+    public VisibilityView storefrontVisibility(@PathVariable @Positive int storeId,
+            @Valid @RequestBody VisibilityRequest request) {
+        var result = storefronts.setVisibility(storeId, request.storefrontEnabled());
+        return new VisibilityView(result.storeId(), result.storeSlug(), result.storefrontEnabled());
     }
 }

@@ -8,6 +8,9 @@ import java.util.*;
 import java.util.regex.*;
 import java.util.stream.*;
 import org.junit.jupiter.api.Test;
+import org.flywaydb.core.Flyway;
+import org.flywaydb.core.api.MigrationVersion;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 /** DB-free guard: Flyway versions must be unique and F05 mining migrations must sit after F04's V12. */
 class MigrationVersioningTest {
@@ -47,5 +50,35 @@ class MigrationVersioningTest {
     @Test void f04V12IsNotTakenByMining() throws IOException {
         List<String> v12 = versions().getOrDefault(12, List.of());
         assertTrue(v12.isEmpty() || v12.equals(List.of("f04_preserve_large_raw_import_rows")), "V12 belongs to F04 only, found " + v12);
+    }
+
+    @Test void f09V27UpgradesExistingStoresAndProductsSafely() {
+        String url = "jdbc:h2:mem:f09_v27_upgrade;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1;NON_KEYWORDS=USER";
+        var before = Flyway.configure().dataSource(url, "sa", "")
+                .locations("classpath:db/migration").target(MigrationVersion.fromVersion("26")).load();
+        before.migrate();
+        var dataSource = new DriverManagerDataSource(url, "sa", "");
+        var jdbc = new org.springframework.jdbc.core.JdbcTemplate(dataSource);
+        jdbc.update("INSERT INTO store(name) VALUES ('Existing Store')");
+        int store = jdbc.queryForObject("SELECT MAX(store_id) FROM store", Integer.class);
+        jdbc.update("INSERT INTO store(name) VALUES ('Existing Store')");
+        int duplicate = jdbc.queryForObject("SELECT MAX(store_id) FROM store", Integer.class);
+        jdbc.update("INSERT INTO product(store_id,sku,name,unit,requires_expiry,selling_price,cost_price,status) "
+                + "VALUES (?, 'EXISTING', 'Existing Product', 'each', FALSE, 10, 2, 'ACTIVE')", store);
+        int product = jdbc.queryForObject("SELECT MAX(product_id) FROM product WHERE store_id=?",
+                Integer.class, store);
+
+        Flyway.configure().dataSource(url, "sa", "").locations("classpath:db/migration").load().migrate();
+
+        assertEquals(vn.edu.fpt.paspm.storefront.StoreSlug.generate("Existing Store", store), jdbc.queryForObject(
+                "SELECT store_slug FROM store WHERE store_id=?", String.class, store));
+        assertEquals(vn.edu.fpt.paspm.storefront.StoreSlug.generate("Existing Store", duplicate), jdbc.queryForObject(
+                "SELECT store_slug FROM store WHERE store_id=?", String.class, duplicate));
+        assertEquals(2, jdbc.queryForObject(
+                "SELECT COUNT(DISTINCT store_slug) FROM store WHERE store_id IN (?,?)", Integer.class, store, duplicate));
+        assertFalse(jdbc.queryForObject(
+                "SELECT storefront_enabled FROM store WHERE store_id=?", Boolean.class, store));
+        assertNull(jdbc.queryForObject("SELECT image_url FROM product WHERE product_id=?", String.class, product));
+        assertNull(jdbc.queryForObject("SELECT description FROM product WHERE product_id=?", String.class, product));
     }
 }

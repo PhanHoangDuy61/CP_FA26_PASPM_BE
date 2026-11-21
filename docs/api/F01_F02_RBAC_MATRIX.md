@@ -4,7 +4,7 @@
 
 > **2026-11-15 verification (branch `Khoi/feat/f05-progress-f03-weight-v2` @ `c8c837a`).** The F02 batch, F03, F05 and season rows were re-checked against code (paths relative to `src/main/java/vn/edu/fpt/paspm/`): `security/SecurityConfig.java:93-95` (system mining → SYSTEM_ADMIN; `POST /api/mining/requests` → MERCHANDISER; benchmark `denyAll`); `mining/MiningController.java:18`, `:24`; `mining/MiningProgressController.java:22-29`; `utility/SeasonController.java:15`, `:19`, `:22`, `:34` (class-level MERCHANDISER, reads STORE_ADMIN + MERCHANDISER); `utility/UtilityConfigurationController.java:17-30`; `utility/ProductScoreController.java:11`, `:16`, `:20`; `catalog/inventory/InventoryBatchController.java:26`. Executable check: `F03F05RbacMatrixTest` (42 routes) in the final gate. Older coverage prose below stays NEEDS_REVIEW.
 
-# F01 / F02 / F03 / F05 / F06 RBAC Matrix
+# F01 / F02 / F03 / F04 / F05 / F06 / F09 RBAC Matrix
 
 Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and feature service/repository checks (updated 2026-10-23 for F06; F05 rows added 2026-11-02 and generated from the runtime OpenAPI; F04 rows added 2026-11-02 from the controller annotations and `F04_TRANSACTION_API.md`, effective rules checked by `F03F05RbacMatrixTest`). “Public” means the Spring security route is explicitly permitted; “authenticated” requires a valid active bearer token. An authenticated-but-wrong role is 403. Store-scoped foreign or absent resources are hidden as 404 after the controller role gate.
 
@@ -108,6 +108,10 @@ Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and fea
 | F06 Read recommendation policy | GET `/api/recommendations/config` | Forbidden | Allowed, own Store | Allowed, own Store | Forbidden |
 | F06 Update recommendation policy | PUT `/api/recommendations/config` | Forbidden | Allowed, own Store; expectedVersion required | Forbidden | Forbidden |
 | F06 Independent expiry push | GET `/api/recommendations/expiry-push` | Forbidden | Allowed, own Store | Allowed, own Store | Forbidden |
+| F09 public Store list | GET `/api/storefront/stores` | Public, enabled Stores only | Public | Public | Public |
+| F09 public Homepage | GET `/api/storefront/{storeSlug}/home` | Public; hidden/unknown slug → 404 | Public | Public | Public |
+| F09 public Product list/detail | GET `/api/storefront/{storeSlug}/products[/{productId}]` | Public; only ACTIVE Products in that storefront Store | Public | Public | Public |
+| F09 visibility toggle | PUT `/api/system/stores/{storeId}/storefront-visibility` | Allowed; changes visibility only | Forbidden | Forbidden | Forbidden |
 
 ## Authorization details
 
@@ -115,7 +119,9 @@ Role is global to the account; `STORE_ADMIN` and `MERCHANDISER` have a `store_id
 
 F01 `/api/users` is global System Admin administration, so it can list/read/manage accounts across Stores. F02 does **not** grant System Admin access: Product/Category GET list/detail permits Store Admin/Merchandiser, while all mutations and inventory endpoints stay StoreAdmin-only, even though the shared StoreScope helper contains a System Admin branch. Do not infer endpoint permission from helper behavior alone.
 
-F03 policy routes are explicitly System Admin-only. F03 Store settings use distinct permissions (legacy wording until 2026-11-15; now the Store Admin sets batch `pushDay` and `expiryPushDays` is ignored): Store Admin changes each Product expiryPushDays through F02 POST/PUT; the legacy Store-window endpoint is deprecated and ignored by scoring. Merchandiser changes enabled criteria, coefficients and selected lambda. Both can read the combined Store config. Product score reads permit both Store roles; score PATCH and Preview/snapshot operations remain Merchandiser-only. Current score reads return E/W without transaction history; invalid current lambda yields200 with ready=false/weightValue=null rather than clamping. All Store-bound F03 calls derive Store identity from the authenticated user; request bodies and query strings cannot select another Store. A tightened lambda policy leaves existing Store configuration unchanged and is surfaced through `lambdaValid=false`; Preview/Snapshot rejects the stale lambda with 409 until a Merchandiser updates it.
+F09 public GET routes are explicitly permitted without a JWT and resolve Store scope only by an enabled public slug. They return a separate public DTO; the SYSTEM_ADMIN visibility route is not a campaign publishing or activation API.
+
+F03 policy routes are explicitly System Admin-only. F03 Store settings use distinct permissions: Store Admin owns batch `pushDay`; Merchandiser changes enabled criteria, coefficients and selected lambda. Both can read the combined Store config. Product score reads permit both Store roles; score PATCH and Preview/snapshot operations remain Merchandiser-only. Current score reads return E/W without transaction history; invalid current lambda yields200 with ready=false/weightValue=null rather than clamping. All Store-bound F03 calls derive Store identity from the authenticated user; request bodies and query strings cannot select another Store. A tightened lambda policy leaves existing Store configuration unchanged and is surfaced through `lambdaValid=false`; Preview/Snapshot rejects the stale lambda with 409 until a Merchandiser updates it.
 
 The database identity claims one Store and no request accepts a Store selector. Repositories scope category/product/batch reads and writes through the authenticated Store. F02 cross-Store records resolve to 404. Missing token is 401; authenticated insufficient role is 403. OpenAPI contains a global bearer scheme but Springdoc does not expose these role rules per operation; this source-derived table is authoritative for frontend navigation.
 
