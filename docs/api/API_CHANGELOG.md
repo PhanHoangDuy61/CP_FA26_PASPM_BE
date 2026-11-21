@@ -1,5 +1,13 @@
 # API Changelog
 
+## 2026-11-20 — F09 Storefront MVP (local feature branch)
+
+- Added anonymous `GET /api/storefront/stores`, `GET /api/storefront/{storeSlug}/home`, public Product list and detail; Related Products remains deferred.
+- Added `PUT /api/system/stores/{storeId}/storefront-visibility` for SYSTEM_ADMIN. Existing Stores are private by default; enabling visibility does not publish or activate a campaign.
+- Added public Product `imageUrl` and `description` in the F02 request/view and a separate F09 `ProductCard` with aggregate `AVAILABLE|UNAVAILABLE` only.
+- Homepage uses the active selected F08 layout and filters current F06 recommendation eligibility; no-active-campaign fallback is `DEFAULT_CATALOG`, not baseline A. Active rendering fails closed until zone caps are configured.
+- Added Flyway V27; V1–V26 are unchanged. Static OpenAPI export is 105 paths / 126 operations, including five F09 operations; verification results and remaining environmental limits are in the feature handoff/API contract.
+
 ## 2026-11-17 — F05 EFIM-aware lossless numeric guard (local feature branch)
 
 - Replaced the global normalized-total int32 rejection with exact EFIM-specific checks for each converted transaction utility, each Product TWU, and converted positive `minUtil`. New validation errors identify the failed value: transaction utility, `Product <id> TWU`, or minUtil. The conversion remains scale-6/GCD and lossless; no quantization was introduced.

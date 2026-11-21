@@ -4,7 +4,7 @@
 
 PASPM hỗ trợ quản lý sản phẩm, tồn kho, dữ liệu giao dịch, Utility, mining HUI-Miner/EFIM và các gợi ý có bằng chứng. Code của F01–F06 có trong `dev` tại `6601f62`; đây là mô tả phạm vi source, không phải tuyên bố nghiệm thu toàn bộ hệ thống.
 
-Đọc [requirements và quy tắc thẩm quyền](requirements/README.md), [feature index](features/README.md) và [trạng thái tài liệu](DOCUMENTATION_MAP.md#classification-policy). F07–F11 chưa có feature map/đặc tả được track đầy đủ; không tự gán tên từ các work package.
+Đọc [requirements và quy tắc thẩm quyền](requirements/README.md), [feature index](features/README.md) và [trạng thái tài liệu](DOCUMENTATION_MAP.md#classification-policy). F09 có contract/handoff local; F10–F11 chưa có feature map/đặc tả được track đầy đủ.
 
 ## Getting Started
 
@@ -14,7 +14,7 @@ PASPM hỗ trợ quản lý sản phẩm, tồn kho, dữ liệu giao dịch, Ut
 
 [Hybrid JPA + JDBC](architecture/README.md) · [diagrams](diagrams/README.md) · [V7 recovery](setup/FLYWAY_MYSQL_V7_RECOVERY.md) · [V5 historical matrix compatibility](architecture/LEGACY_UTILITY_MATRIX_COMPATIBILITY.md).
 
-Product metadata và Category CRUD dùng JPA; Product catalog/inventory và analytical workloads giữ JDBC. Một transaction manager dùng chung datasource; Flyway của working tree hiện có V1–V21, bao gồm Java migration V11; V20 giữ bản đã có trên dev; V21 bổ sung CSRF binding theo quyết định reconciliation ngày2026-11-12.
+Product metadata và Category CRUD dùng JPA; Product catalog/inventory và analytical workloads giữ JDBC. Một transaction manager dùng chung datasource; Flyway của working tree hiện có V1–V27, gồm Java migrations V11 và V27; V20 giữ bản đã có trên dev, V21 bổ sung CSRF binding, V25–V26 là F03 changes và V27 adds opt-in F09 Storefront fields.
 
 ## Features
 
@@ -26,10 +26,11 @@ Product metadata và Category CRUD dùng JPA; Product catalog/inventory và anal
 | [F04](features/F04/README.md) | Transaction Import | File-based import; CSV available, Excel separately tracked; external ingestion excluded | [API](api/F04_TRANSACTION_API.md) | [Design](features/F04/reference/F04_DESIGN.md) | [History](features/F04/reference/F04_SWAGGER_TEST_REPORT.md) |
 | [F05](features/F05/README.md) | EFIM Mining | Core implemented; scheduler off (503); System Admin Store reads gated (D1); local SPMF configuration required; EFIM-aware int32 guard on local feature branch | [API](api/F05_MINING_API.md) | [Scope](features/F05/README.md#1-purpose-and-scope) | [History](testing/F05_FOODMART_SCALABILITY_BENCHMARK.md) |
 | [F06](features/F06/README.md) | Recommendation Engine | Backend v1.1 source implemented; downstream activation separate | [API](api/F06_RECOMMENDATION_API.md) | [Rules](requirements/F06_RECOMMENDATION_RULES_v1_1.md) | [History](testing/reports/F06_VERIFICATION.md) |
+| [F09](features/F09/README.md) | Storefront MVP | Local feature branch; public Store visibility is opt-in; Related Products deferred | [API](api/F09_STOREFRONT_API.md) | [Scope](features/F09/README.md) | [Tests](api/F09_STOREFRONT_API.md#verification-scope) |
 
 ## API Reference
 
-[API index](api/README.md) · [OpenAPI export](api/openapi.json) · [RBAC](api/F01_F02_RBAC_MATRIX.md). The checked-in runtime export was regenerated from the Spring Boot runtime on 2026-11-17 and contains 100 paths / 121 operations. The latest F05 branch changes `RequestView.totalScaledUtility` from int32 to int64 without changing routes; the branch is local and unpublished. Earlier operation counts and session reconciliation details remain dated evidence in the [API changelog](api/API_CHANGELOG.md). Swagger/framework routes are separate. The API Inventory package exists only on a separate local audit branch; see the index for provenance, not a broken link or an implied merge.
+[API index](api/README.md) · [OpenAPI export](api/openapi.json) · [RBAC](api/F01_F02_RBAC_MATRIX.md). The checked-in runtime export was regenerated from the Spring Boot runtime on 2026-11-20 and contains 105 paths / 126 operations. F09 is local and unpublished; V27 adds five storefront operations. Earlier operation counts and session reconciliation details remain dated evidence in the [API changelog](api/API_CHANGELOG.md). Swagger/framework routes are separate. The API Inventory package exists only on a separate local audit branch; see the index for provenance, not a broken link or an implied merge.
 
 ## Frontend Integration
 
@@ -51,7 +52,7 @@ Product metadata và Category CRUD dùng JPA; Product catalog/inventory và anal
 - F01 canonical contract/handoff now agree on 202/409 and the session lifecycle; older reference documents retain their historical wording. Some older F03/F05 handoffs still describe missing F06.
 - Latest editable ERD omits V11 archive/routing details; migrations govern physical schema.
 - CI/delivery reports contain dated pre-merge statements; current hosted status is not certified here.
-- F07–F11 feature definitions and the separate API Inventory merge remain unresolved.
+- F10–F11 feature definitions and the separate API Inventory merge remain unresolved.
 
 See [review register](requirements/README.md#documentation-review-register), [complete path map](DOCUMENTATION_MAP.md) and [reorganization validation report](audits/DOCS_REORGANIZATION_REPORT.md).
 

@@ -31,14 +31,17 @@ public final class CatalogContracts {
             @NotNull Boolean requiresExpiry,
             @NotNull @PositiveOrZero BigDecimal sellingPrice,
             @NotNull @PositiveOrZero BigDecimal costPrice,
-            @NotBlank @Schema(allowableValues = {"ACTIVE", "INACTIVE"}) String status) {}
+            @NotBlank @Schema(allowableValues = {"ACTIVE", "INACTIVE"}) String status,
+            @Size(max = 2048) String imageUrl,
+            @Size(max = 2000) String description) {}
 
     public record ProductView(
             int id, String sku, String name, String unit, boolean requiresExpiry,
             CategoryView category, BigDecimal sellingPrice, BigDecimal costPrice,
             String status,
             @Schema(accessMode = Schema.AccessMode.READ_ONLY,
-                    description = "Derived sum of inventory batch remainingQuantity values") long stockQuantity) {}
+                    description = "Derived sum of inventory batch remainingQuantity values") long stockQuantity,
+            String imageUrl, String description) {}
 
     public record ProductPage(List<ProductView> content, int page, int pageSize,
                               long totalElements, int totalPages) {}

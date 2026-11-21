@@ -36,6 +36,10 @@ class ProductEntity {
     private BigDecimal costPrice;
     @Column(nullable = false, length = 20)
     private String status;
+    @Column(name = "image_url", length = 2048)
+    private String imageUrl;
+    @Column(columnDefinition = "TEXT")
+    private String description;
 
     protected ProductEntity() {}
 
@@ -44,7 +48,7 @@ class ProductEntity {
     Integer id() { return productId; }
 
     void replaceMetadata(String sku, String name, Integer categoryId, String unit, boolean requiresExpiry,
-            BigDecimal sellingPrice, BigDecimal costPrice, String status) {
+            BigDecimal sellingPrice, BigDecimal costPrice, String status, String imageUrl, String description) {
         this.sku = sku.trim();
         this.name = name.trim();
         this.categoryId = categoryId;
@@ -53,5 +57,7 @@ class ProductEntity {
         this.sellingPrice = sellingPrice;
         this.costPrice = costPrice;
         this.status = status;
+        this.imageUrl = imageUrl == null || imageUrl.isBlank() ? null : imageUrl.trim();
+        this.description = description == null ? null : description.trim();
     }
 }

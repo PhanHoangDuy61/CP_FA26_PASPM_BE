@@ -79,7 +79,7 @@ class ProductPersistenceIntegrationTest {
         assertEquals(Set.of("ProductEntity", "CategoryEntity"), entities.stream().map(e -> e.getName()).collect(Collectors.toSet()));
         var entity = entities.stream().filter(e -> e.getName().equals("ProductEntity")).findFirst().orElseThrow();
         assertEquals(Set.of("productId", "storeId", "categoryId", "sku", "name", "unit", "requiresExpiry",
-                "sellingPrice", "costPrice", "status"),
+                "sellingPrice", "costPrice", "status", "imageUrl", "description"),
                 entity.getAttributes().stream().map(a -> a.getName()).collect(Collectors.toSet()));
         assertTrue(entity.getAttributes().stream().noneMatch(a -> a.isAssociation() || a.isCollection()));
     }

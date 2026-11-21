@@ -3,12 +3,12 @@
 > **2026-11-16 — product form:** remove the `expiryPushDays` input. The field is no longer accepted (sending it → **400**) or returned, and V26 drops the column ([breaking change 15](F03_W2_BREAKING_CHANGES.md), [DEC-20261116-02](../decisions/2026-11-16/DEC-20261116-02-p5-remove-legacy-product-fields.md)). The push day lives on the **batch form**: optional `pushDay` on create and PATCH (Store Admin only, ≤ expiryDate), cleared with `DELETE /api/inventory-batches/{id}/push-day`.
 >
 > *2026-11-15 (history):* inventory batches accept an optional `pushDay`; product `expiryPushDays` was deprecated and ignored by scoring.
+>
+> **2026-11-20 — display metadata:** Product create/update may include `imageUrl` (absolute HTTP(S), upload not supported) and `description` (≤2,000 characters). These are optional; F02 remains authenticated and continues returning its administrative cost/stock fields. For public rendering use the separate [F09 storefront handoff](F09_HANDOFF.md), never F02 `Product`.
 
-## v1.2 Product expiry priority update (2026-10-19)
+## Historical v1.2 Product expiry priority (superseded 2026-11-16)
 
-**Legacy (v1.2, deprecated 2026-11-15, removed 2026-11-16):** the existing Product POST/PUT request accepts optional `expiryPushDays: integer|null`; absent/null is stored as0, values must be >=0, and fractional/string/boolean values are rejected400. Full PUT must send the desired threshold (omitting resets it to0). Product GET/list/create/update/status responses include `expiryPushDays: integer`. Store Admin owns this field in their Store; Merchandiser and System Admin cannot modify it through F02, and cross-Store records return404. No duplicate configuration endpoint was added. `requiresExpiry=false` remains NOT_APPLICABLE in F03 even if a threshold is configured. Inventory quantities are unchanged by threshold updates.
-
-F03 uses only this Product threshold: no Store fallback. The legacy Store expiry-window endpoint is deprecated. New E is binary from the earliest-expiring ACTIVE positive-quantity batch with expiry strictly after the analysis date. Batch expiring today is not sellable in the current summary. `GET /api/utility/expiry-push-batches` provides a Store Admin/Merchandiser current push view independently of mining; see the F03 contract.
+The former Product `expiryPushDays` field and the related score-column fields were removed by V26. F02 rejects `expiryPushDays` as an unknown request field; it is no longer returned. F03 Weight v2 uses batch `pushDay`; see the current [F02 API contract](../api/F02_PRODUCT_INVENTORY_API.md) and [F03 API contract](../api/F03_UTILITY_API.md). The historical threshold behavior below no longer applies.
 
 
 For React + TypeScript. Exact DTOs and validation are in [`../api/F02_PRODUCT_INVENTORY_API.md`](../api/F02_PRODUCT_INVENTORY_API.md); synthetic payloads are in [`F02_examples/`](F02_examples). Full runtime contract: [`../api/openapi.json`](../api/openapi.json).
@@ -51,11 +51,13 @@ export interface Category { id: number; name: string; status: CatalogStatus }
 export interface CategoryRequest { name: string; status: CatalogStatus }
 export interface ProductRequest {
   sku: string; name: string; categoryId?: number | null; unit: string;
-  requiresExpiry: boolean; sellingPrice: number; costPrice: number; status: CatalogStatus; // expiryPushDays removed 2026-11-16 (400 if sent)
+  requiresExpiry: boolean; sellingPrice: number; costPrice: number; status: CatalogStatus;
+  imageUrl?: string | null; description?: string | null;
 }
 export interface Product {
-  id: number; sku: string; name: string; unit: string; requiresExpiry: boolean; // expiryPushDays removed 2026-11-16
+  id: number; sku: string; name: string; unit: string; requiresExpiry: boolean;
   category: Category | null; sellingPrice: number; costPrice: number; status: CatalogStatus; stockQuantity: number;
+  imageUrl: string | null; description: string | null;
 }
 export interface ProductPage { content: Product[]; page: number; pageSize: number; totalElements: number; totalPages: number }
 export interface InventoryBatchCreateRequest {

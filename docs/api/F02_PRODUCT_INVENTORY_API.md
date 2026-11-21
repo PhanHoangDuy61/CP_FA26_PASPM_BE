@@ -17,8 +17,8 @@ The approved ERD is `docs/diagrams/PASPM_Complete_ERD_F02_Inventory_Batch_v3.dra
 
 - `CategoryRequest`: required nonblank `name:string` max150 and `status:string` in `ACTIVE|INACTIVE`.
 - `CategoryView`: `{id:int32,name:string,status:string}`.
-- `ProductRequest`: required nonblank `sku:string` max80, `name:string` max180, `unit:string` max40, `requiresExpiry:boolean`, `sellingPrice:number >= 0`, `costPrice:number >= 0`, `status:ACTIVE|INACTIVE`; nullable/optional `categoryId:int32` and `expiryPushDays:int32 >=0` (null/omitted→0, strict integer). No stock or F03 score fields are accepted.
-- `ProductView`: `{id:int32,sku:string,name:string,unit:string,requiresExpiry:boolean,category:CategoryView|null,sellingPrice:number,costPrice:number,status:string,stockQuantity:int64,expiryPushDays:int32}`. `stockQuantity` is derived from all batch remaining quantities and read-only.
+- `ProductRequest`: required nonblank `sku:string` max80, `name:string` max180, `unit:string` max40, `requiresExpiry:boolean`, `sellingPrice:number >= 0`, `costPrice:number >= 0`, `status:ACTIVE|INACTIVE`; nullable/optional `categoryId:int32`, `imageUrl:string|null` (absolute HTTP(S), max2048), and `description:string|null` (max2000). No stock or F03 score fields are accepted.
+- `ProductView`: `{id:int32,sku:string,name:string,unit:string,requiresExpiry:boolean,category:CategoryView|null,sellingPrice:number,costPrice:number,status:string,stockQuantity:int64,imageUrl:string|null,description:string|null}`. `stockQuantity` is derived from all batch remaining quantities and read-only.
 - `ProductPage`: `{content:ProductView[],page:int32,pageSize:int32,totalElements:int64,totalPages:int32}`.
 - `BatchCreateRequest`: required `batchCode:string` nonblank max80, `receivedAt:string` ISO date-time, `initialQuantity:int32 > 0`; nullable/optional `expiryDate:string` ISO date. Expiry required if Product `requiresExpiry=true`.
 - `BatchPatchRequest`: optional `remainingQuantity:int32 >= 0`, optional `status:ACTIVE|BLOCKED`; at least one must be supplied. Remaining may not exceed initial quantity.
@@ -63,14 +63,14 @@ SKU is unique per Store (database constraint); same SKU may exist in another Sto
 
 ## F02 / F03 ownership
 
-F02 Product create/update owns `expiryPushDays` (legacy, ignored since 2026-11-15), `requiresExpiry`, SKU, category, unit, prices, and Product status. F02 batch APIs own batch expiry and quantities. `stockQuantity` is derived and cannot be edited. The F03 API owns `stock_priority_score` and `seasonal_priority_score` through `/api/utility/products/{productId}/scores`; ProductRequest does not accept these fields. F03 derives expiry priority using inventory batches and a fixed analysis date. Do not add F03 score fields to F02 Product forms/contracts.
+F02 Product create/update owns `requiresExpiry`, SKU, category, unit, prices, status, and optional display metadata (`imageUrl`, `description`). `expiryPushDays` was removed in V26; sending it is rejected as an unknown field. F02 batch APIs own batch expiry and quantities. `stockQuantity` is derived and cannot be edited. F03 policy/scoring data is not accepted by ProductRequest. Do not add F03 score fields to F02 Product forms/contracts.
 
 ## Request and response examples
 
 Synthetic JSON examples are available under [`../frontend_handoff/F02_examples/`](../frontend_handoff/F02_examples). Example Product response:
 
 ```json
-{"id":21,"sku":"MILK-01","name":"Fresh Milk","unit":"bottle","requiresExpiry":true,"category":{"id":4,"name":"Dairy","status":"ACTIVE"},"sellingPrice":2.5,"costPrice":1.25,"status":"ACTIVE","stockQuantity":12,"expiryPushDays":7}
+{"id":21,"sku":"MILK-01","name":"Fresh Milk","unit":"bottle","requiresExpiry":true,"category":{"id":4,"name":"Dairy","status":"ACTIVE"},"sellingPrice":2.5,"costPrice":1.25,"status":"ACTIVE","stockQuantity":12,"imageUrl":"https://images.example/milk.jpg","description":"Fresh milk"}
 ```
 
 Example batch response:
@@ -111,3 +111,7 @@ OpenAPI does not encode nullable response fields: `ProductView.category` can be 
 - The JPA entity no longer maps the column, and migration V26 drops `product.expiry_push_days` together with `product.stock_priority_score` and `product.seasonal_priority_score` (and their CHECK constraints). Not reversible without a backup taken before V26.
 - Use the batch `pushDay` (create, PATCH, `DELETE /api/inventory-batches/{id}/push-day`). Roles unchanged.
 - Tests: `LegacyProductFieldsRemovedTest`, `LegacyProductColumnsV26MigrationTest` (H2 + MySQL), `PushDayIntegrationTest.productExpiryPushDaysIsRejectedAndScoringUsesBatchPushDays`.
+
+## 2026-11-20 — F09 product display fields (V27)
+
+`ProductRequest` / `ProductView` add optional `imageUrl` and `description`; image URLs must be absolute HTTP(S). F02's authenticated Product view still includes its administrative `costPrice` and derived `stockQuantity`. Public clients must use F09 `ProductCard`, which excludes those fields and exposes only abstract `availability`.

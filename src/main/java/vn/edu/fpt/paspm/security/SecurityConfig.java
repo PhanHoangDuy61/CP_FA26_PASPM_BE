@@ -90,6 +90,9 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.GET,
+                                "/api/storefront/stores", "/api/storefront/*/home",
+                                "/api/storefront/*/products", "/api/storefront/*/products/*").permitAll()
                         .requestMatchers("/api/system/mining/**").hasRole("SYSTEM_ADMIN")
                         .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/mining/requests").hasRole("MERCHANDISER")
                         .requestMatchers(

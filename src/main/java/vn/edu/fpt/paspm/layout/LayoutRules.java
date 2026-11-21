@@ -24,6 +24,16 @@ public class LayoutRules {
 
     public String zone(RecType type) { return zones.get(type); }
 
+    public void requireConfiguredPublicCapacities() {
+        for (RecType type : RecType.values()) {
+            String zone = zone(type);
+            if (properties.getMaxBlocksByZone().get(zone) == null
+                    || properties.getMaxProductsByZone().get(zone) == null) {
+                throw new ApiException(503, "Storefront layout capacities are not configured");
+            }
+        }
+    }
+
     public LayoutPolicyView policy() {
         var result = new ArrayList<ZonePolicy>();
         result.add(new ZonePolicy(BASELINE, null, properties.getMaxBlocksByZone().get(BASELINE),

@@ -31,7 +31,7 @@ Code paths below are relative to `src/main/java/vn/edu/fpt/paspm/` on `c8c837a` 
 Verification: `PushDayIntegrationTest` (5 cases) inside the final gate (645 tests, 640 PASS, 5 SKIP; [record 004](../../record-of-changes/2026-11-15/04-f03-weight-v2-expiry-season.md)).
 
 ## 1. Purpose and scope
-Store-scoped product catalogue, categories and inventory batches. Stock is never stored on the product: it is derived from batch remaining quantities. The Store Admin owns each batch's `pushDay`, which F03 Weight v2 uses. Product `expiryPushDays` (the F03 v1.2 threshold) is **legacy since 2026-11-15**: accepted, stored, ignored (P5).
+Store-scoped product catalogue, categories and inventory batches. Stock is never stored on the product: it is derived from batch remaining quantities. The Store Admin owns each batch's `pushDay`, which F03 Weight v2 uses. Product `expiryPushDays` (the F03 v1.2 threshold) was removed in V26; it is not accepted or returned.
 
 ## 2. Actors and effective RBAC
 | Role | Capability |
@@ -87,3 +87,6 @@ None open. P5 (accept but ignore `expiryPushDays`) was an assumption on 2026-11-
 
 ## 2026-11-16 follow-up
 Store Admin can clear a batch push day with DELETE `/api/inventory-batches/{id}/push-day`; idempotent, returns BatchView, foreign/unknown 404. PATCH null retains the value. See the current API contract.
+
+## 2026-11-20 — F09 product display metadata
+Product create/update accepts optional `imageUrl` (absolute HTTP(S) URL; no upload) and `description` (maximum 2,000 characters); F02 views return both. F02 responses remain administrative and include `costPrice` / `stockQuantity`. The public storefront uses a separate DTO with neither field: [F09 API contract](../../api/F09_STOREFRONT_API.md).
