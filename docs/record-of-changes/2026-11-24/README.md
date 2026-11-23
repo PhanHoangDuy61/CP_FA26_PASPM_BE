@@ -1,6 +1,6 @@
 # ROC-20261124 — F01 Store management (backend)
 
-2026-11-24 / Asia/Ho_Chi_Minh. Branch `Khoi/feat/store-management` from `dev` `6d2a877`. Not committed; waiting for owner approval at Checkpoint 3.
+2026-11-24 / Asia/Ho_Chi_Minh. Branch `Khoi/feat/store-management` from `dev` `6d2a877`. Committed and pushed; PR to `dev` open, not merged (owner Checkpoint 4).
 
 ## Record 001 — Store management: profile, status, central guard, branding images
 
