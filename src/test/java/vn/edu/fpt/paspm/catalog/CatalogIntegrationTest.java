@@ -59,8 +59,8 @@ class CatalogIntegrationTest {
         jdbc.update("DELETE FROM inventory_batch");
         jdbc.update("DELETE FROM product");
         jdbc.update("DELETE FROM category");
-        firstStoreId = store("F02 Store A");
-        secondStoreId = store("F02 Store B");
+        firstStoreId = store("F02 Store A " + UUID.randomUUID());
+        secondStoreId = store("F02 Store B " + UUID.randomUUID());
         storeAdminToken = token(active("catalog-a-" + UUID.randomUUID() + "@example.test", firstStoreId));
         otherStoreToken = token(active("catalog-b-" + UUID.randomUUID() + "@example.test", secondStoreId));
     }

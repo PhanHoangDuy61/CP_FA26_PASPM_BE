@@ -12,15 +12,15 @@ Email/password and Google login, OTP self-registration/invitations/reset, passwo
 |---|---|
 | Anonymous | Credential/OTP flows; refresh has no Bearer requirement but requires refresh cookie and server-bound CSRF |
 | Any active authenticated account | Own `/me`, password change, Google link, avatar; own-session logout/logout-all additionally require family-bound CSRF |
-| SYSTEM_ADMIN | User/role management across Stores |
-| STORE_ADMIN / MERCHANDISER | Store-scoped business operations according to each feature's role gate; no user administration |
+| SYSTEM_ADMIN | User/role management across Stores; Store management (create, edit including slug, deactivate/reactivate, images; no delete — DEC-20261123-01) |
+| STORE_ADMIN / MERCHANDISER | Store-scoped business operations according to each feature's role gate; no user administration. Own Store profile: Store Admin edits address/phone and icon/banner, Merchandiser reads. A user of an INACTIVE Store gets 403 `STORE_INACTIVE` |
 | END_CUSTOMER | Own authentication/profile session; no F02/F06 access |
 
 [Endpoint RBAC matrix](../../api/F01_F02_RBAC_MATRIX.md). Wrong role is403; Store-scoped foreign/absent records are404 after authorization; invalid Bearer is401.
 
 ## 3. Implemented APIs
 
-27 operations: 17 `/api/auth/*`, 9 user operations including avatar, and GET `/api/roles`.
+27 operations: 17 `/api/auth/*`, 9 user operations including avatar, and GET `/api/roles`. Store management (2026-11-23, V27) adds 10 operations and changes the picker additively: see [F01_STORE_MANAGEMENT_API.md](../../api/F01_STORE_MANAGEMENT_API.md).
 
 | Session operation | Authentication | Result |
 |---|---|---|

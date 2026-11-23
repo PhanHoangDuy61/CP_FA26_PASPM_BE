@@ -94,6 +94,10 @@ public class AvatarService {
         }
         try {
             return storage.get(user.avatarKey());
+        } catch (java.nio.file.NoSuchFileException exception) {
+            // DEC-20261123-01: a missing media file is "not found", never a storage outage.
+            logger.warn("Avatar file is missing for user {}", userId);
+            throw new ApiException(404, "Avatar not found");
         } catch (IOException exception) {
             logger.error("Avatar storage read failed ({})", exception.getClass().getSimpleName());
             throw new ApiException(503, "Avatar storage unavailable");

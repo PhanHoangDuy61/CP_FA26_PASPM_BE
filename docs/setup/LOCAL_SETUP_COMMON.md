@@ -28,7 +28,8 @@ Compose reads `.env`; Spring Boot does **not** automatically import it. `.env` i
 | `TOKEN_TTL_SECONDS`, `OTP_TTL_SECONDS`, `OTP_COOLDOWN_SECONDS` | Access JWT defaults to 3600 seconds (valid range 60–3600); OTP defaults are 600 and 60 seconds. |
 | `REFRESH_TOKEN_ABSOLUTE_TTL_SECONDS`, `REFRESH_TOKEN_IDLE_TTL_SECONDS` | Refresh session defaults to 30 days absolute and 7 days idle; absolute range is 1 hour–90 days, idle must be at least 60 seconds and no longer than absolute. |
 | `REFRESH_COOKIE_SECURE` | Defaults to `true`; keep true in HTTPS deployments. For local plain-HTTP browser testing only, set `false` (cookie names lose the `__Host-` prefix and Secure attribute). |
-| `PROFILE_IMAGE_DIRECTORY` | Optional local avatar directory; default is `.paspm/profile-images` under the launching user's home. |
+| `PASPM_MEDIA_ROOT` | Optional root for Store icons and banners; default is `.paspm/media` under the launching user's home (DEC-20261123-01). |
+| `PROFILE_IMAGE_DIRECTORY` | Optional local avatar directory; default is `.paspm/profile-images` under the launching user's home (unchanged). The Docker image sets it to `/var/lib/paspm/media/avatars`, on the same volume as Store images. |
 | `PASPM_STORE_TIME_ZONE` | Optional Store-time-zone override; application code defaults to `Asia/Ho_Chi_Minh`. |
 | `GOOGLE_CLIENT_ID` | Optional; empty by default. |
 

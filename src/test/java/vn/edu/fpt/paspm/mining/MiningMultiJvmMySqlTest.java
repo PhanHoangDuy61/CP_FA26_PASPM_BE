@@ -202,7 +202,7 @@ class MiningMultiJvmMySqlTest {
         }
     }
     void fixture() throws Exception {
-        jdbc.update("INSERT INTO store(name) VALUES ('Multi JVM synthetic')");store=jdbc.queryForObject("SELECT MAX(store_id) FROM store",Integer.class);
+        jdbc.update("INSERT INTO store(name) VALUES (?)","Multi JVM synthetic "+UUID.randomUUID());store=jdbc.queryForObject("SELECT MAX(store_id) FROM store",Integer.class);
         var m=users.createPendingUser("Test Merchant",UUID.randomUUID()+"@example.test","MERCHANDISER",store,null,null);
         var s=users.createPendingUser("Test System",UUID.randomUUID()+"@example.test","SYSTEM_ADMIN",null,null,null);
         jdbc.update("UPDATE app_user SET status='ACTIVE',email_verified_at=CURRENT_TIMESTAMP WHERE user_id IN (?,?)",m.id(),s.id());

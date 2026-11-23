@@ -43,8 +43,8 @@ class TransactionExcelImportIntegrationTest {
     static final String TIME="2026-10-19T12:00:00+07:00";
     @BeforeEach void fixture(){
         for(String table:List.of("utility_matrix_item","utility_snapshot_storage","utility_snapshot","import_staging_row","transaction_item","sales_transaction","import_batch","api_connection","inventory_batch","product","category"))jdbc.update("DELETE FROM "+table);
-        jdbc.update("INSERT INTO store(name) VALUES ('Excel synthetic store')");store=jdbc.queryForObject("SELECT MAX(store_id) FROM store",Integer.class);
-        jdbc.update("INSERT INTO store(name) VALUES ('Excel other store')");foreignStore=jdbc.queryForObject("SELECT MAX(store_id) FROM store",Integer.class);
+        jdbc.update("INSERT INTO store(name) VALUES (?)","Excel synthetic store "+java.util.UUID.randomUUID());store=jdbc.queryForObject("SELECT MAX(store_id) FROM store",Integer.class);
+        jdbc.update("INSERT INTO store(name) VALUES (?)","Excel other store "+java.util.UUID.randomUUID());foreignStore=jdbc.queryForObject("SELECT MAX(store_id) FROM store",Integer.class);
         jdbc.update("INSERT INTO product(store_id,sku,name,unit,requires_expiry,selling_price,cost_price,status) VALUES (?,'00123','Synthetic zero-prefixed SKU','each',FALSE,10,6,'ACTIVE')",store);
         product=jdbc.queryForObject("SELECT MAX(product_id) FROM product",Integer.class);
         jdbc.update("INSERT INTO product(store_id,sku,name,unit,requires_expiry,selling_price,cost_price,status) VALUES (?,'PRIVATE','Other SKU','each',FALSE,10,6,'ACTIVE')",foreignStore);

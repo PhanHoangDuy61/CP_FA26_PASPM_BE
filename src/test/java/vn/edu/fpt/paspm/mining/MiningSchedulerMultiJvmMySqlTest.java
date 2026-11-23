@@ -100,7 +100,7 @@ class MiningSchedulerMultiJvmMySqlTest {
     ZonedDateTime recentFire() { return Instant.now().atZone(HCM).minusMinutes(2).withSecond(0).withNano(0); }
     void fixture(ZonedDateTime fire) {
         parentWorker.close();
-        jdbc.update("INSERT INTO store(name) VALUES ('Scheduler multi JVM')");
+        jdbc.update("INSERT INTO store(name) VALUES (?)", "Scheduler multi JVM " + java.util.UUID.randomUUID());
         store = jdbc.queryForObject("SELECT MAX(store_id) FROM store", Integer.class);
         var s = users.createPendingUser("Sched admin", UUID.randomUUID() + "@example.test", "SYSTEM_ADMIN", null, null, null);
         jdbc.update("UPDATE app_user SET status='ACTIVE',email_verified_at=CURRENT_TIMESTAMP WHERE user_id=?", s.id());

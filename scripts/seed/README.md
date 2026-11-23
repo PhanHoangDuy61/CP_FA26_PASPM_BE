@@ -1,6 +1,6 @@
 # Demo seed
 
-`seed_demo.py` fills an **empty** PASPM database through the public REST API (the only direct SQL is one `INSERT INTO store`, because no endpoint creates a store). `seed.sh` loads `.env.seed` and runs it. Setup steps for the staging stack are in [STAGING.md §5](../../docs/setup/STAGING.md); the variables are listed in [.env.seed.example](.env.seed.example).
+`seed_demo.py` fills an **empty** PASPM database through the public REST API (the Store is created with `POST /api/system/stores`; direct SQL is only used for the final record counts). `seed.sh` loads `.env.seed` and runs it. Setup steps for the staging stack are in [STAGING.md §5](../../docs/setup/STAGING.md); the variables are listed in [.env.seed.example](.env.seed.example).
 
 ```bash
 cp scripts/seed/.env.seed.example scripts/seed/.env.seed && chmod 600 scripts/seed/.env.seed

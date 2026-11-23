@@ -84,3 +84,44 @@ For local HTTP development set Backend `REFRESH_COOKIE_SECURE=false` and `PASPM_
 ## Reconciliation update — 2026-11-12
 
 Use the canonical dev settings REFRESH_COOKIE_SECURE and absolute/idle TTLs in the [current contract](../api/F01_AUTH_USER_API.md#session-integration-update--2026-11-11). V20 is retained; V21 binds CSRF server-side. Users with V20 refresh cookies must sign in again when refresh returns401; never retry that rejected token. Existing FE login response fields/cookie names remain compatible. Logout response text stays dev's `Logged out` / `Logged out from all sessions`; do not depend on the earlier local messages. No Frontend implementation was edited. The earlier browser evidence is historical; current runtime checks are listed in the reconciliation report.
+
+## Store management (2026-11-23)
+
+Contract: [F01_STORE_MANAGEMENT_API.md](../api/F01_STORE_MANAGEMENT_API.md). Rules: [DEC-20261123-01](../decisions/2026-11-23/DEC-20261123-01-store-management.md). Branch `Khoi/feat/store-management`.
+
+| Screen | API | Role |
+|---|---|---|
+| Stores (list, search, status filter) | `GET /api/system/stores?page&pageSize&q&status` (`status` ACTIVE by default, INACTIVE or ALL) | System Admin |
+| Create Store | `POST /api/system/stores` `{name, slug, address?, phone?}` → 201 | System Admin |
+| Store detail and edit | `GET` / `PUT /api/system/stores/{storeId}` (`expectedVersion`); detail lists `assignedUserCount` and read-only `assignedUsers` | System Admin |
+| Deactivate / reactivate (confirm dialog) | `PATCH /api/system/stores/{storeId}/status` `{expectedVersion, status}` | System Admin |
+| My Store | `GET /api/store/profile`; Store Admin edits only address and phone with `PUT /api/store/profile` `{expectedVersion, address, phone}` | Store Admin (edit), Merchandiser (read-only) |
+| Icon and banner upload, with local preview | `PUT` / `DELETE /api/stores/{storeId}/images/{icon\|banner}` (multipart part `file`); preview of an INACTIVE Store's image with `GET /api/stores/{storeId}/images/{kind}` (Bearer, returns bytes) | System Admin (any Store), Store Admin (own Store) |
+
+```ts
+export type StoreStatus = 'ACTIVE' | 'INACTIVE';
+export interface StoreView { storeId: number; name: string; slug: string; status: StoreStatus; address: string | null; phone: string | null; iconUrl: string | null; bannerUrl: string | null; version: number; createdAt: string; updatedAt: string; deactivatedAt: string | null }
+export interface AssignedUser { userId: number; name: string | null; email: string; role: string; status: string }
+export interface StoreDetailView extends StoreView { deactivatedBy: number | null; assignedUserCount: number; assignedUsers: AssignedUser[] }
+export interface CreateStoreRequest { name: string; slug: string; address?: string | null; phone?: string | null }
+export interface UpdateStoreRequest { expectedVersion: number; name: string; slug: string; address: string | null; phone: string | null }
+export interface ChangeStoreStatusRequest { expectedVersion: number; status: StoreStatus }
+export interface UpdateStoreProfileRequest { expectedVersion: number; address: string | null; phone: string | null }
+export interface ApiError { error: string; code?: string }
+```
+
+Frontend notes:
+- **INACTIVE Store users.**
+  - Any call may return **403 `{code: "STORE_INACTIVE"}`**, and so may login or refresh.
+  - Show a "your Store is inactive" screen and do not loop on refresh.
+  - Keep the session: it works again once the Store is reactivated.
+- **Images.**
+  - Check the type (PNG or JPEG) and size (icon ≤ 1 MiB, banner ≤ 5 MiB) on the client and preview the chosen file locally. The server is the authority: it returns 400 for type, content or dimensions over 4000×4000, and 413 for size.
+  - When a URL is `null`, show a placeholder.
+  - `iconUrl` and `bannerUrl` are public, cacheable `<img src>` values, but only while the Store is ACTIVE. For an INACTIVE Store's preview, fetch the authenticated route with the Bearer token and show a blob URL.
+- **Version after an image change.** Uploading or removing an icon or banner increments the Store `version`. After any image `PUT` or `DELETE`, the client **must re-fetch the Store** (`GET /api/store/profile`, or `GET /api/system/stores/{storeId}` for a System Admin) and use the new `version` as `expectedVersion` before the next `PUT /api/store/profile` or `PUT /api/system/stores/{storeId}`. Otherwise the save returns **409** `Store version conflict`. The image response's `StoreView.version` is the same value, but re-fetching keeps the form in sync.
+- **Conflicts.**
+  - On 409 `Store version conflict`, reload the Store and ask the user to retry.
+  - On 409 `Store name already exists` or `Store slug already exists`, show the error on that field.
+  - On 409 `STORE_INACTIVE` (mining, schedules, user assignment), say "reactivate the Store first".
+- **Pickers.** The existing pickers (mining, account creation) need no change: the list now returns ACTIVE Stores by default.
