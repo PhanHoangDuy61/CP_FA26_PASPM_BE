@@ -1,5 +1,55 @@
 # F02 Product and Inventory Frontend Handoff
 
+## Backend update — 2026-11-24 (expiry boundary, push-day warning, product delete) — read this first
+
+Rules: [DEC-20261124-01](../decisions/2026-11-24/DEC-20261124-01-batch-expiry-boundary-effective-status.md), [DEC-20261124-02](../decisions/2026-11-24/DEC-20261124-02-push-day-missing-warning.md), [DEC-20261124-03](../decisions/2026-11-24/DEC-20261124-03-product-soft-delete.md). Exact DTOs: [F02 API](../api/F02_PRODUCT_INVENTORY_API.md). **All response changes are additive; no request field changed.** This repository contains backend code only.
+
+### 1. Stop comparing dates in the frontend
+A batch is expired only when today (`Asia/Ho_Chi_Minh`) is **after** its expiry date, so it is still active **on** the expiry date. The backend computes everything; remove `isExpired`, `isExpiringSoon` and the date part of `batchPushState` from `features/store/f02.forms.ts` (they used `expiryDate <= today`) and read these read-only fields of every `BatchView` (list, get, create, PATCH, both DELETE-clear routes):
+
+| Field | Type | Meaning |
+|---|---|---|
+| `status` | `"ACTIVE" \| "BLOCKED"` | the **stored** status; the only one PATCH accepts. Sending `EXPIRED` or `INACTIVE` → 400 |
+| `effectiveStatus` | `"ACTIVE" \| "BLOCKED" \| "EXPIRED"` | what to display. EXPIRED when today is after `expiryDate` (wins over BLOCKED), else the stored status |
+| `daysToExpiry` | `number \| null` | `expiryDate − today` in days: **0 on the expiry date**, negative when expired, `null` without an expiry date |
+| `warnings` | `"MISSING_PUSH_DAY"[]` | always present, `[]` when nothing to warn about |
+
+- **Expiring soon** = `effectiveStatus !== "EXPIRED"` and `daysToExpiry !== null` and `0 <= daysToExpiry <= 7`.
+- An expired batch can still be edited (`expiryDate`, `remainingQuantity`, `BLOCKED`). Moving `expiryDate` into the future un-expires it; nothing is stored, so refresh from the response.
+- **Summary** (`GET /api/products/{id}/inventory-summary?expiringWithinDays=7`): buckets no longer overlap. `expiredQuantity` = expired batches of any stored status (a BLOCKED expired batch is here, not in `blockedQuantity`); `blockedQuantity` = BLOCKED and not expired; `sellableQuantity` = ACTIVE and not expired (a batch expiring today is sellable); `expiringSoonQuantity` = ACTIVE with `0 <= daysToExpiry <= expiringWithinDays`. New field `batchesMissingPushDay`.
+
+### 2. Push day: no default, warn instead
+The backend never filled a default push day (no "expiry − 7 days"), and the batch form must not either. Leave the push day empty if the user does not enter it and save normally. Show a non-blocking warning when `warnings` contains `MISSING_PUSH_DAY`: the product requires expiry, `pushDay` is empty and the batch is not expired. This replaces the local `batchPushState === 'missing'` rule; it applies whatever the stored status or remaining quantity is. `batchesMissingPushDay` in the summary gives the count for a product banner. (F03 uses narrower conditions for its snapshot; the F02 warning is only a prompt to enter a push day.)
+
+### 3. Delete a product — `DELETE /api/products/{id}`
+Store Admin only (hide the control for Merchandiser). Send Bearer, no body. There is **no restore**: do not build a restore or "deleted products" screen.
+
+| Status | Body | UI |
+|---|---|---|
+| 204 | none | remove the row, refetch the list (totals already exclude it) |
+| 401 / 403 | `{error}` | session / role |
+| 404 | `{error}` | already deleted, unknown, or another Store's product; refresh the list |
+| 409 | `{code:"PRODUCT_HAS_SELLABLE_STOCK", error, reason, sellableQuantity, campaigns:[{campaignId,status}]}` | explain with `reason`; `sellableQuantity` > 0; list `campaigns` if any |
+| 409 | `{code:"PRODUCT_IN_LIVE_CAMPAIGN", error, reason, sellableQuantity:0, campaigns:[{campaignId,status:"PUBLISHED"\|"ACTIVE"}]}` | tell the user to end the campaign first |
+
+- Sellable stock = ACTIVE, remaining > 0, not expired (a batch expiring today counts). Expired, BLOCKED and empty batches do not block.
+- Live campaign = the product is placed in layout A or B of a PUBLISHED or ACTIVE campaign. If both apply you get `PRODUCT_HAS_SELLABLE_STOCK` with `campaigns` filled.
+- A deleted product disappears from `GET /api/products` before pagination (`totalElements`, `totalPages` and pages ignore it) and every product/batch route answers 404. Its SKU is never reused.
+- Seasons: the season product list marks it `deleted: true`; a new assignment is `409 PRODUCT_DELETED`; removing the assignment still works. F04: rows of the deleted product are still imported and listed by `GET …/imports/{id}/errors` as `PROCESSED` rows with a `PRODUCT_DELETED` message (a warning).
+
+```ts
+export type BatchStatus = 'ACTIVE' | 'BLOCKED';                         // stored, writable
+export type BatchEffectiveStatus = 'ACTIVE' | 'BLOCKED' | 'EXPIRED';   // computed, read-only
+export interface InventoryBatch { /* …existing… */ effectiveStatus: BatchEffectiveStatus; daysToExpiry: number | null; warnings: 'MISSING_PUSH_DAY'[] }
+export interface InventorySummary { /* …existing… */ batchesMissingPushDay: number }
+export interface DeleteProductConflict {
+  code: 'PRODUCT_HAS_SELLABLE_STOCK' | 'PRODUCT_IN_LIVE_CAMPAIGN'; error: string; reason: string;
+  sellableQuantity: number; campaigns: { campaignId: number; status: 'PUBLISHED' | 'ACTIVE' }[];
+}
+```
+
+---
+
 ## Backend update — 2026-11-20
 
 This repository contains backend code only; no frontend UI was changed. Product and Batch IDs are generated by the database. Show IDs read-only on detail screens; never include them in create requests or expose editable ID controls on create/edit forms. Use the ID from the 201 response for detail navigation.
@@ -22,7 +72,7 @@ Batch PATCH may update `expiryDate`. Omitted or JSON `null` means **keep the exi
 
 **Legacy (v1.2, deprecated 2026-11-15, removed 2026-11-16):** the existing Product POST/PUT request accepts optional `expiryPushDays: integer|null`; absent/null is stored as0, values must be >=0, and fractional/string/boolean values are rejected400. Full PUT must send the desired threshold (omitting resets it to0). Product GET/list/create/update/status responses include `expiryPushDays: integer`. Store Admin owns this field in their Store; Merchandiser and System Admin cannot modify it through F02, and cross-Store records return404. No duplicate configuration endpoint was added. `requiresExpiry=false` remains NOT_APPLICABLE in F03 even if a threshold is configured. Inventory quantities are unchanged by threshold updates.
 
-F03 uses only this Product threshold: no Store fallback. The legacy Store expiry-window endpoint is deprecated. New E is binary from the earliest-expiring ACTIVE positive-quantity batch with expiry strictly after the analysis date. Batch expiring today is not sellable in the current summary. `GET /api/utility/expiry-push-batches` provides a Store Admin/Merchandiser current push view independently of mining; see the F03 contract.
+F03 uses only this Product threshold: no Store fallback. The legacy Store expiry-window endpoint is deprecated. New E is binary from the earliest-expiring ACTIVE positive-quantity batch with expiry strictly after the analysis date. *(Superseded 2026-11-24: a batch expiring today IS sellable.)* `GET /api/utility/expiry-push-batches` provides a Store Admin/Merchandiser current push view independently of mining; see the F03 contract.
 
 
 For React + TypeScript. Exact DTOs and validation are in [`../api/F02_PRODUCT_INVENTORY_API.md`](../api/F02_PRODUCT_INVENTORY_API.md); synthetic payloads are in [`F02_examples/`](F02_examples). Full runtime contract: [`../api/openapi.json`](../api/openapi.json).
@@ -54,7 +104,8 @@ Recommended sequence, adapted to actual routes:
 | Add Inventory Batch | POST `/api/products/{id}/batches` |
 | Edit Batch | GET/PATCH `/api/inventory-batches/{id}` |
 | Inventory Summary | GET `/api/products/{id}/inventory-summary` |
-| Delete Product/Category, stock adjustment/movement history | Not implemented; optional batch expiry and push day can be cleared with their DELETE routes |
+| Delete Product | `DELETE /api/products/{id}` (2026-11-24, Store Admin, soft delete, no restore) |
+| Delete Category, stock adjustment/movement history | Not implemented; optional batch expiry and push day can be cleared with their DELETE routes |
 
 ## Data types and form validation
 
@@ -101,7 +152,7 @@ Do not submit batchCode; it is generated from receivedAt's Store-local date and 
 
 ## Inventory display rules
 
-The summary's total includes every remaining unit, including blocked and expired batches. Blocked counts BLOCKED batches. Expired counts ACTIVE batches with expiry on or before today's date. Sellable counts ACTIVE batches that have no expiry or expire strictly after today. Expiry today is excluded under v1.2. Expiring soon counts ACTIVE batches expiring strictly after today through the inclusive lookahead date; default lookahead is 7 days. These buckets overlap only in that expiringSoon is a subset of sellable; blocked and expired are disjoint. No batches yield zeros. The current query does not filter by Product status, so show an inactive Product state separately. Time zone defaults to `Asia/Ho_Chi_Minh` and is application-configured.
+The summary's total includes every remaining unit, including blocked and expired batches. Blocked counts BLOCKED batches that are not expired. Expired counts batches with an expiry date before today, whatever their stored status. Sellable counts ACTIVE batches that have no expiry or expire today or later (2026-11-24: expiry today is sellable). Expiring soon counts ACTIVE batches expiring from today (inclusive) through the inclusive lookahead date; default lookahead is 7 days. These buckets overlap only in that expiringSoon is a subset of sellable; blocked and expired are disjoint. No batches yield zeros. The current query does not filter by Product status, so show an inactive Product state separately. Time zone defaults to `Asia/Ho_Chi_Minh` and is application-configured.
 
 ## Local sample data
 

@@ -15,6 +15,12 @@ Canonical contract locations stay stable in this directory. `CURRENT` describes 
 
 [OpenAPI export](openapi.json) (historical counts: 96 paths / 114 operations at the F07/F08 merge, 98 / 116 at F05 Checkpoint 1; current counts below). The export's server entry is the local test origin; configure the target origin in the integration environment. The session changes are uncommitted. Earlier operation counts are historical evidence, not the current export. Role prose still needs source-based interpretation; use the [RBAC matrix](F01_F02_RBAC_MATRIX.md). [RBAC matrix](F01_F02_RBAC_MATRIX.md) and [integration notes](F03_V12_F05_F06_INTEGRATION.md) have review notices. [API changelog](API_CHANGELOG.md) remains append-only history.
 
+## 2026-11-24 F02 expiry / push-day / product-delete export
+
+Branch `Khoi/feat/f02-expiry-pushday-product-delete` (base `dev` `3d51f5b`): **107 paths / 134 operations** (+1 operation: `DELETE /api/products/{id}`; no new path).
+- Changed schemas (all additive): `BatchView` (`effectiveStatus`, `daysToExpiry`, `warnings`), `InventorySummary` (`batchesMissingPushDay`), `SeasonProduct` (`deleted`). Changed descriptions: the batch routes, `PATCH /api/products/{id}/status` and the inventory summary.
+- The runtime `/v3/api-docs` was taken through `-Dpaspm.test.export-openapi=true` on `TransactionExcelImportIntegrationTest`, and only these changes were merged into the checked-in file. The runtime export still differs from the file, before this change, in `servers`, one CSV async parameter list and the `PlacementView.sku` description; those were left alone.
+
 ## 2026-11-23 Store management export
 
 Branch `Khoi/feat/store-management` (base `dev` `6d2a877`): **107 paths / 133 operations**.

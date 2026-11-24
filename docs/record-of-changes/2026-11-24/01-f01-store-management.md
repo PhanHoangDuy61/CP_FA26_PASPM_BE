@@ -9,7 +9,7 @@
 | Features | F01 (Store management, new UC34/UC35), with effects on F05 (System Admin jobs, scheduler) and every Store-scoped route (central guard) |
 | Branch / base HEAD | `Khoi/feat/store-management` / `origin/dev` `6d2a877` |
 | Execution status | COMPLETED (backend). Frontend not started (Checkpoint 3) |
-| Release status | PR_OPEN — branch pushed; PR to `dev`, not merged (waiting for the owner at Checkpoint 4) |
+| Release status | MERGED — PR #27 `Khoi/feat/store-management` merged into `dev` (merge commit `3d51f5b`). Earlier status was PR_OPEN, corrected on 2026-11-24 in ROC-20261124-002 |
 | Daily summary | [README of the day](README.md) |
 
 ## 1. Request and scope

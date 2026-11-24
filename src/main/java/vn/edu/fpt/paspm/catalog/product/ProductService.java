@@ -14,6 +14,7 @@ import vn.edu.fpt.paspm.catalog.CatalogContracts.ProductRequest;
 import vn.edu.fpt.paspm.catalog.CatalogContracts.ProductView;
 import vn.edu.fpt.paspm.catalog.category.CategoryRepository;
 import vn.edu.fpt.paspm.common.ApiException;
+import vn.edu.fpt.paspm.utility.UtilityTimeZone;
 
 @Service
 public class ProductService {
@@ -32,8 +33,11 @@ public class ProductService {
     private final CategoryRepository categories;
     private final CatalogAccess access;
 
-    public ProductService(ProductRepository products, CategoryRepository categories, CatalogAccess access) {
-        this.products = products; this.categories = categories; this.access = access;
+    private final UtilityTimeZone timeZone;
+
+    public ProductService(ProductRepository products, CategoryRepository categories, CatalogAccess access,
+                          UtilityTimeZone timeZone) {
+        this.products = products; this.categories = categories; this.access = access; this.timeZone = timeZone;
     }
 
     public ProductPage list(Jwt jwt, String search, Integer categoryId, String status,
@@ -79,10 +83,35 @@ public class ProductService {
         return requireProduct(storeId, id);
     }
 
+    /**
+     * DEC-20261124-03. Order: 404 (unknown, other Store, already deleted) then 409 (sellable stock first, campaigns always
+     * reported) then soft delete. Role is checked before this by the controller (401 -> 403 -> 404).
+     */
+    @Transactional
+    public void delete(Jwt jwt, int id) {
+        int storeId = access.currentStoreId(jwt);
+        if (!products.lockForDelete(storeId, id)) throw missing();
+        long sellable = products.sellableQuantity(id, timeZone.today());
+        var campaigns = products.liveCampaigns(storeId, id);
+        if (sellable > 0) {
+            throw new ProductDeleteBlockedException(ProductDeleteBlockedException.HAS_SELLABLE_STOCK,
+                    "The product still has " + sellable + " sellable unit(s) (ACTIVE, not expired); sell, write off or block them first"
+                            + (campaigns.isEmpty() ? "" : ", and remove it from the live campaign(s)"),
+                    sellable, campaigns);
+        }
+        if (!campaigns.isEmpty()) {
+            throw new ProductDeleteBlockedException(ProductDeleteBlockedException.IN_LIVE_CAMPAIGN,
+                    "The product is placed in " + campaigns.size() + " PUBLISHED or ACTIVE campaign layout(s); end the campaign first",
+                    0, campaigns);
+        }
+        if (!products.softDelete(storeId, id, Integer.parseInt(jwt.getSubject()))) throw missing();
+    }
+
     @Transactional
     public ProductView updateStatus(Jwt jwt, int id, String status) {
         int storeId = access.currentStoreId(jwt);
         validateStatus(status);
+        requireProduct(storeId, id); // a deleted product is 404 and can never be re-activated
         if (!products.updateStatus(storeId, id, status)) throw missing();
         return requireProduct(storeId, id);
     }

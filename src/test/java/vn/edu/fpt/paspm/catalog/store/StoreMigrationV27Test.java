@@ -41,7 +41,9 @@ class StoreMigrationV27Test {
         var latest = Flyway.configure().dataSource(url, user, password).load();
         assertTrue(latest.migrate().migrationsExecuted >= 1, "V27 must be pending after V26");
         latest.validate();
-        assertEquals(checksums, db.queryForList("SELECT version,checksum FROM flyway_schema_history WHERE success=TRUE AND (version IS NULL OR version<>'27') ORDER BY installed_rank"));
+        // V1-V26 (and the baseline row) keep their checksums; later migrations such as V28 may follow V27, so filter in Java
+        assertEquals(checksums, db.queryForList("SELECT version,checksum FROM flyway_schema_history WHERE success=TRUE ORDER BY installed_rank").stream()
+                .filter(row -> row.get("version") == null || Integer.parseInt(String.valueOf(row.get("version"))) < 27).toList());
         assertEquals(1, db.queryForObject("SELECT COUNT(*) FROM flyway_schema_history WHERE version='27' AND success=TRUE", Integer.class));
 
         // name, utility_config and mining_schedule are untouched

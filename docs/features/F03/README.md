@@ -29,7 +29,7 @@ Code paths are relative to `src/main/java/vn/edu/fpt/paspm/` on `c8c837a` (code 
 | Formula | `W = 1 + λ[α·U_expiry + β·M]`, exact, rounded half-up to 2 decimals | `utility/UtilityMath.java:31-39` |
 | Legacy formula kept | `W = 1 + λ(αS + βE + γM)` used only for pre-V25 data | `utility/UtilityMath.java:18` |
 | U_expiry | FEFO by push day then integer batch id; capacity `v × days_to_push`; push day ≤ analysis date → 0 selling days | `utility/ExpiryRiskCalculator.java:59`, `:74-75` |
-| Eligible batch | ACTIVE, remaining > 0, not expired (expiry > analysis date), has a push day | `utility/ExpiryRiskCalculator.java:41`, `:45` |
+| Eligible batch | ACTIVE, remaining > 0, not expired (analysis date is not after the expiry date; changed 2026-11-24, was `expiry > analysis date`), has a push day | `utility/ExpiryRiskCalculator.java:41`, `:45` |
 | Missing push day | Excluded, warning `MISSING_PUSH_DAY`, never blocks | `utility/ExpiryRiskCalculator.java:45`, `:84`; `utility/UtilityMatrixBuilder.java:66` (always ready) |
 | v(i) | Units in the N days ending on and including the analysis date ÷ N; N = 30 default | `utility/WeightV2Calculator.java:30`; `utility/UtilityVersionedContracts.java:17` |
 | v = 0 | U = 0, warning `SLOW_MOVING_NO_RECENT_SALES`; status remains `MISSING_PUSH_DAY` when no eligible batch exists, otherwise `SLOW_MOVING`. Both warnings coexist after the 2026-11-16 fix | `utility/ExpiryRiskCalculator.java:60` |

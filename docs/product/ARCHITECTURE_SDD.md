@@ -119,7 +119,7 @@ sequenceDiagram
 
 ### 5.1 Migrations
 
-Never edit V1–V26. New schema always goes in V27 or later.
+Never edit V1–V26. New schema always goes in V27 or later (V27 is taken by Store management, V28 by product soft delete; use V29+ next).
 
 | Version | Purpose |
 |---|---|
@@ -142,6 +142,7 @@ Never edit V1–V26. New schema always goes in V27 or later.
 | V25 *(Java)* | Weight v2: `season`, `product_season`, `utility_snapshot_season`, `utility_weight_v2_conversion`, batch `push_day`, configuration conversion |
 | V26 *(Java)* | Drops `product.expiry_push_days`, `stock_priority_score`, `seasonal_priority_score` |
 | V27 *(Java)* | `store`: `slug` (backfilled `slugify(name)-{id}`, then NOT NULL + UNIQUE, random-UUID default for raw inserts), `status`, `address`, `phone`, `icon_key`, `banner_key`, `version`, `created_at`, `updated_at`, `deactivated_at`, `deactivated_by` (FK `app_user`) — DEC-20261123-01 |
+| V28 | `product`: `deleted_at TIMESTAMP NULL`, `deleted_by INT NULL` (FK `app_user`), CHECK both-or-neither, index `(store_id, deleted_at)`. Nothing is backfilled — DEC-20261124-03 |
 
 ### 5.2 Tables
 
@@ -214,7 +215,7 @@ flowchart LR
 ### 6.3 Recommendation and eligibility (F06)
 
 - Candidates come from the frozen run evidence: support, confidence and anchor.
-- Eligibility is evaluated live on every read. It checks product status, active batches with remaining > 0, and an expiry date strictly after today for any batch that has one. A batch of a product that requires expiry but has no expiry date gives `NEEDS_RECHECK`.
+- Eligibility is evaluated live on every read. It checks product status, active batches with remaining > 0, and an expiry date on or after today for any batch that has one (a batch is expired only when today is after its expiry date; changed 2026-11-24, DEC-20261124-01). A batch of a product that requires expiry but has no expiry date gives `NEEDS_RECHECK`.
 - A fingerprint detects inventory or metadata changes.
 - Known issue: 3 queries per product (product, batches, units sold — N+1), not yet measured.
 
@@ -322,7 +323,7 @@ The file in `outputs/diagrams/` has 9 pages (the 8 listed plus the new Layout & 
 | Logical ERD | Add 14 tables: `auth_refresh_session`, `auth_refresh_token` (V20, plus `csrf_hash` in V21); `campaign`, `campaign_history`, `storefront_layout`, `storefront_layout_revision`, `layout_placement`, `comparison_report`, `comparison_report_layout`, `comparison_report_transaction` (V23); `season`, `product_season`, `utility_snapshot_season`, `utility_weight_v2_conversion` (V25). Apply the column changes listed below. Change the title from V1–V19 to V1–V26. Recount the foreign keys |
 | Conceptual ERD | Replace the planned `ComparisonReport` with the real Campaign / Layout / Revision / Placement / Report entities. Add Season and its assignments, and RefreshSession |
 | Identity & Access | Add `auth_refresh_session` and `auth_refresh_token` |
-| Catalog & Inventory | `product`: **drop** `stock_priority_score`, `seasonal_priority_score`, `expiry_push_days` (V26). `inventory_batch`: **add** `push_day DATE NULL` with CHECK `push_day ≤ expiry_date` (V25) |
+| Catalog & Inventory | `product`: **add** `deleted_at TIMESTAMP NULL`, `deleted_by INT NULL` (FK `app_user`, CHECK both-or-neither) and index `(store_id, deleted_at)` (V28, DEC-20261124-03); **drop** `stock_priority_score`, `seasonal_priority_score`, `expiry_push_days` (V26). `inventory_batch`: **add** `push_day DATE NULL` with CHECK `push_day ≤ expiry_date` (V25) |
 | Transaction Import | `import_batch` gains `idempotency_key`, `content_sha256`, `created_at`, `updated_at`, `processing_started_at`, `input_total_count`, `stage`, `lease_owner`, `lease_fence`, `lease_until`, and UNIQUE (`store_id`, `idempotency_key`). `import_staging_row` gains `result_group`, `result_kind` (V22) |
 | Utility & Snapshot | `utility_matrix_item` gains `expiry_risk`, `season_weight`, `season_id` and an FK (`snapshot_id`, `season_id`) → `utility_snapshot_season`. The old `stock_score`, `expiry_score` and `seasonal_score` stay for legacy rows (V25). Add the 4 V25 tables |
 | Mining & Scheduling | `mining_request` gains `stage`, `stage_started_at`, `current_run_id` with an FK to `mining_run` (V24). Mark `compare_algorithms`, `algorithms` and `comparison_status` as legacy: EFIM-only, no schema change |

@@ -1,5 +1,18 @@
 # F02 — Product, Category and Inventory
 
+## Current backend update — 2026-11-24 (branch `Khoi/feat/f02-expiry-pushday-product-delete`, PR to `dev` pending)
+
+Rules: [DEC-20261124-01](../../decisions/2026-11-24/DEC-20261124-01-batch-expiry-boundary-effective-status.md), [DEC-20261124-02](../../decisions/2026-11-24/DEC-20261124-02-push-day-missing-warning.md), [DEC-20261124-03](../../decisions/2026-11-24/DEC-20261124-03-product-soft-delete.md). Migration V28. Contract: [F02 API](../../api/F02_PRODUCT_INVENTORY_API.md); frontend notes: [F02 handoff](../../frontend_handoff/F02_HANDOFF.md).
+
+| Item | Behaviour | Evidence |
+|---|---|---|
+| Expiry boundary | A batch is expired only when today (`Asia/Ho_Chi_Minh`) is **after** `expiryDate`; on the expiry date it is still sellable. Computed on read, never stored | `catalog/inventory/BatchExpiryRules.java`; `BatchExpiryRulesTest` |
+| `effectiveStatus`, `daysToExpiry` | `BatchView` adds `effectiveStatus` (`ACTIVE|BLOCKED|EXPIRED`, EXPIRED wins over BLOCKED) and `daysToExpiry` (0 on the expiry date). The stored `status` stays `ACTIVE|BLOCKED` | `catalog/CatalogContracts.java` (`BatchView.derive`); `CatalogIntegrationTest` |
+| Summary buckets | expired = any stored status with `expiry < today`; blocked = BLOCKED and not expired; sellable = ACTIVE and not expired; `batchesMissingPushDay` added | `catalog/inventory/InventorySummaryRepository.java` |
+| Push day | No default and no auto-fill (the BE never had one); `warnings: ["MISSING_PUSH_DAY"]` when the product requires expiry, `pushDay` is null and the batch is not expired | `catalog/inventory/BatchExpiryRules.java` (`warnings`) |
+| F03 / F06 | Same boundary in `ExpiryRiskCalculator`, `PushDayRule`, `ProductEligibilityService`; frozen snapshots untouched; `scoringVersion` **not** bumped (PO decision; effective date and "no mixing" rule in DEC-20261124-01 §6) | `ExpiryBoundaryF03F06Test` |
+| Product soft delete | `DELETE /api/products/{id}`; 409 `PRODUCT_HAS_SELLABLE_STOCK` / `PRODUCT_IN_LIVE_CAMPAIGN`; excluded before pagination; no restore; SKU never reused | `catalog/product/ProductService.java` (`delete`); `ProductSoftDeleteIntegrationTest` |
+
 ## Current backend follow-up — 2026-11-19
 
 The current branch adds allowlisted/stable sorting for all product-list display fields; database-generated, read-only Product/Batch IDs; Product SKU generation from the database Product ID; backend-generated per-Product batch codes (`BATCH-YYYYMMDD-NNN`); a confirm-and-retry warning for similar product names; and expiry-date correction/clearing for inventory batches. Batch source fields (`batchCode`, `receivedAt`, `initialQuantity`) remain immutable. No migration was needed, and this repository has no frontend UI; see the current [API contract](../../api/F02_PRODUCT_INVENTORY_API.md) and [frontend handoff](../../frontend_handoff/F02_HANDOFF.md).
@@ -56,7 +69,7 @@ Categories 5, products 5 (`GET` list with search/filter/sort/page, detail, creat
 - Batch `expiryDate` can be cleared only for a product with `requiresExpiry=false`; batch `pushDay` and optional expiry are cleared by separate idempotent DELETE routes.
 - Batch `pushDay` (2026-11-15): optional date, ≤ `expiryDate`, Store Admin only; a batch without one only produces an F03 warning.
 - `expiryPushDays`: deprecated 2026-11-15 (P5) and **removed 2026-11-16** (DEC-20261116-02): no longer part of the product request or response; sending it → 400.
-- Sellable stock counts ACTIVE batches with remaining > 0 whose expiry is strictly after today (Store time zone); a batch expiring today is not sellable.
+- Sellable stock counts ACTIVE batches with remaining > 0 whose expiry is on or after today (Store time zone); a batch expiring today is still sellable (changed 2026-11-24, DEC-20261124-01; it was "strictly after today").
 - Products and categories are deactivated, never deleted.
 
 ## 5. Main workflows

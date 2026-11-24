@@ -50,6 +50,9 @@ public class SeasonRepository {
     public boolean productExists(int store,int product) {
         return jdbc.queryForObject("SELECT COUNT(*) FROM product WHERE store_id=? AND product_id=?",Long.class,store,product)>0;
     }
+    public boolean productDeleted(int store,int product) {
+        return jdbc.queryForObject("SELECT COUNT(*) FROM product WHERE store_id=? AND product_id=? AND deleted_at IS NOT NULL",Long.class,store,product)>0;
+    }
     public boolean assign(int store,int season,int product,int actor) {
         if(jdbc.queryForObject("SELECT COUNT(*) FROM product_season WHERE season_id=? AND product_id=?",Long.class,season,product)>0)return false;
         jdbc.update("INSERT INTO product_season(store_id,season_id,product_id,assigned_by) VALUES (?,?,?,?)",store,season,product,actor);return true;
@@ -58,8 +61,8 @@ public class SeasonRepository {
         return jdbc.update("DELETE FROM product_season WHERE store_id=? AND season_id=? AND product_id=?",store,season,product)==1;
     }
     public List<SeasonProduct> products(int store,int season,int page,int size) {
-        return jdbc.query("SELECT p.product_id,p.sku,p.name,p.status,ps.assigned_by,ps.assigned_at FROM product_season ps JOIN product p ON p.store_id=ps.store_id AND p.product_id=ps.product_id WHERE ps.store_id=? AND ps.season_id=? ORDER BY p.product_id LIMIT ? OFFSET ?",
-            (r,n)->new SeasonProduct(r.getInt(1),r.getString(2),r.getString(3),r.getString(4),r.getInt(5),r.getTimestamp(6).toInstant()),store,season,size,(long)page*size);
+        return jdbc.query("SELECT p.product_id,p.sku,p.name,p.status,ps.assigned_by,ps.assigned_at,p.deleted_at FROM product_season ps JOIN product p ON p.store_id=ps.store_id AND p.product_id=ps.product_id WHERE ps.store_id=? AND ps.season_id=? ORDER BY p.product_id LIMIT ? OFFSET ?",
+            (r,n)->new SeasonProduct(r.getInt(1),r.getString(2),r.getString(3),r.getString(4),r.getInt(5),r.getTimestamp(6).toInstant(),r.getTimestamp(7)!=null),store,season,size,(long)page*size);
     }
     public long productCount(int store,int season) {
         return jdbc.queryForObject("SELECT COUNT(*) FROM product_season WHERE store_id=? AND season_id=?",Long.class,store,season);

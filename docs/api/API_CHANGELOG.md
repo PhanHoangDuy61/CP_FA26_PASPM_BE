@@ -1,5 +1,22 @@
 # API Changelog
 
+## 2026-11-24 — F02 expiry boundary, push-day warning, product soft delete (branch `Khoi/feat/f02-expiry-pushday-product-delete`, PR to `dev` pending)
+
+Rules: [DEC-20261124-01](../decisions/2026-11-24/DEC-20261124-01-batch-expiry-boundary-effective-status.md), [DEC-20261124-02](../decisions/2026-11-24/DEC-20261124-02-push-day-missing-warning.md), [DEC-20261124-03](../decisions/2026-11-24/DEC-20261124-03-product-soft-delete.md). Contract: [F02_PRODUCT_INVENTORY_API.md](F02_PRODUCT_INVENTORY_API.md). Migration **V28**.
+
+- **Added (additive):**
+  - `DELETE /api/products/{id}` (STORE_ADMIN of the owning Store): 204; 404 unknown / foreign / already deleted; 409 `{code, error, reason, sellableQuantity, campaigns[]}` with `PRODUCT_HAS_SELLABLE_STOCK` or `PRODUCT_IN_LIVE_CAMPAIGN`.
+  - `BatchView.effectiveStatus` (`ACTIVE|BLOCKED|EXPIRED`), `BatchView.daysToExpiry` (int or null), `BatchView.warnings` (`["MISSING_PUSH_DAY"]` or `[]`); `InventorySummary.batchesMissingPushDay`; `SeasonProduct.deleted`.
+  - `409 PRODUCT_DELETED` on `PUT /api/utility/seasons/{seasonId}/products/{productId}` for a deleted product; an import warning (`PRODUCT_DELETED` in `errorDetails` of a `PROCESSED` row) in `GET /api/transactions/imports/{id}/errors`.
+- **Changed (behaviour, same shapes):**
+  - A batch is expired only when today (`Asia/Ho_Chi_Minh`) is **after** its expiry date (it was "on or before"). This moves `expiredQuantity`, `sellableQuantity` and `expiringSoonQuantity` of the inventory summary and the F03 / F06 results on the expiry date.
+  - EXPIRED wins over BLOCKED: a BLOCKED expired batch moves from `blockedQuantity` to `expiredQuantity`.
+  - `GET /api/products` and every product/batch route exclude soft-deleted products (list: before pagination; by id: 404). `PATCH /api/products/{id}/status` on a deleted product is 404.
+  - `PATCH /api/inventory-batches/{id}` still accepts only `status` `ACTIVE|BLOCKED`; `EXPIRED` and `INACTIVE` are 400.
+- **Not changed:** no request field was added, removed or renamed. The push day has no default (the backend never had one).
+- **OpenAPI:** 107 paths / 133 operations → **107 / 134**.
+- **Breaking for clients:** none in the shapes. The frontend must stop comparing dates for "expired", "expiring soon" and the missing-push-day state, and read the new fields (see [F02 handoff](../frontend_handoff/F02_HANDOFF.md)).
+
 ## 2026-11-23 — F01 Store management (branch `Khoi/feat/store-management`, PR to `dev` pending)
 
 Rules: [DEC-20261123-01](../decisions/2026-11-23/DEC-20261123-01-store-management.md). Contract: [F01_STORE_MANAGEMENT_API.md](F01_STORE_MANAGEMENT_API.md). Migration **V27**.

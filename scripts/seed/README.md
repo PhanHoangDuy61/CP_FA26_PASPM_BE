@@ -39,7 +39,7 @@ All dates are offsets from `SEED_AS_OF` (default: today in Asia/Ho_Chi_Minh). Ob
 | No push day (`MISSING_PUSH_DAY`) | 5% (`SEED_PUSH_MISSING_PCT`) | 30 |
 | Initial quantity | log-uniform between `SEED_EXPIRY_QTY_MIN_PCT` (2%) and 100% of `SEED_BATCH_QUANTITY` (1,000) | 20 – 994, mean 244 |
 
-`pushDay` is never after the expiry date (the API rejects it otherwise; the test suite checks it). Batches expiring **today** (expiry = `SEED_AS_OF`) are not sellable; they appear as `EXPIRED` in the score evidence and as `NO_SELLABLE_BATCH` (10 products). Non-perishable products keep an undated batch of `SEED_BATCH_QUANTITY`. The varied quantity is deliberate: with the same 1,000 units every batch would be at risk and U_expiry would be about 1 for all of them. Total stock is 1,142,397 units (perishable 134,397) instead of 1,559,000.
+`pushDay` is never after the expiry date (the API rejects it otherwise; the test suite checks it). Batches expiring **today** (expiry = `SEED_AS_OF`) were not sellable when this seed was written: they appeared as `EXPIRED` in the score evidence and as `NO_SELLABLE_BATCH` (10 products). Since 2026-11-24 (DEC-20261124-01) a batch is expired only after its expiry date, so those batches are eligible; the seed was not changed (its fixes are deferred). Non-perishable products keep an undated batch of `SEED_BATCH_QUANTITY`. The varied quantity is deliberate: with the same 1,000 units every batch would be at risk and U_expiry would be about 1 for all of them. Total stock is 1,142,397 units (perishable 134,397) instead of 1,559,000.
 
 ### Seasons and product groups
 

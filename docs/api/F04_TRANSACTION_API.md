@@ -153,7 +153,7 @@ Returns one Store-owned import batch as `ImportSummary`. Roles: `STORE_ADMIN`, `
 
 ### `GET /api/transactions/imports/{id}/errors`
 
-Lists rejected/conflicted staging rows for one Store-owned batch. Roles: `STORE_ADMIN`, `MERCHANDISER`. Query fields: `page` (default 0) and `pageSize` (default 100; range 1–100). Returns `Page<ImportError>`.
+Lists rejected/conflicted staging rows for one Store-owned batch, **and (2026-11-24, DEC-20261124-03) imported rows that carry a warning**. A row of a soft-deleted product is accepted and processed (history is kept) but listed here with `status: "PROCESSED"` and `errorDetails` = `[{"rowNumber":n,"field":"sku","message":"PRODUCT_DELETED: …"}]`; the batch status and counters are unchanged (no new field). Treat a `PROCESSED` row in this list as a warning, not an error. Roles: `STORE_ADMIN`, `MERCHANDISER`. Query fields: `page` (default 0) and `pageSize` (default 100; range 1–100). Returns `Page<ImportError>`.
 
 `ImportError` fields: `rowNumber` (integer), `sourceOrderId` (nullable string), `status` (string), `errorDetails` (nullable string containing serialized validation details).
 

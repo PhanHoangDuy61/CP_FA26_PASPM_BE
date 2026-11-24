@@ -480,6 +480,12 @@ class CatalogIntegrationTest {
                 .andExpect(jsonPath("$.paths['/api/inventory-batches/{id}']").exists())
                 .andExpect(jsonPath("$.paths['/api/inventory-batches/{id}/push-day'].delete").exists())
                 .andExpect(jsonPath("$.paths['/api/inventory-batches/{id}/expiry-date'].delete").exists())
+                .andExpect(jsonPath("$.paths['/api/products/{id}'].delete.responses['204']").exists())
+                .andExpect(jsonPath("$.paths['/api/products/{id}'].delete.responses['409']").exists())
+                .andExpect(jsonPath("$.components.schemas.BatchView.properties.effectiveStatus").exists())
+                .andExpect(jsonPath("$.components.schemas.BatchView.properties.daysToExpiry").exists())
+                .andExpect(jsonPath("$.components.schemas.BatchView.properties.warnings").exists())
+                .andExpect(jsonPath("$.components.schemas.InventorySummary.properties.batchesMissingPushDay").exists())
                 .andExpect(jsonPath("$.components.schemas.ProductRequest.properties.confirmSimilarName").exists())
                 .andExpect(jsonPath("$.components.schemas.ProductRequest.properties.sku").doesNotExist())
                 .andExpect(jsonPath("$.components.schemas.BatchCreateRequest.properties.batchCode").doesNotExist())
@@ -529,23 +535,31 @@ class CatalogIntegrationTest {
                 .andExpect(jsonPath("$.blockedQuantity").value(0));
 
         java.time.LocalDate today = java.time.LocalDate.now(java.time.ZoneId.of("Asia/Ho_Chi_Minh"));
-        createBatch(productId, today.minusDays(1), 3);
-        createBatch(productId, today, 4);
+        createBatch(productId, today.minusDays(1), 3);   // expired yesterday
+        createBatch(productId, today, 4);                // expires today: still sellable (R1)
         createBatch(productId, today.plusDays(5), 5);
-        int blockedBatchId = createBatch(productId, today.minusDays(3), 6);
+        int blockedExpiredBatchId = createBatch(productId, today.minusDays(3), 6);
+        mvc.perform(patch("/api/inventory-batches/{id}", blockedExpiredBatchId)
+                        .header("Authorization", "Bearer " + storeAdminToken)
+                        .contentType(MediaType.APPLICATION_JSON).content("{\"status\":\"BLOCKED\"}"))
+                .andExpect(status().isOk());
+        int blockedBatchId = createBatch(productId, today.plusDays(10), 2);
         mvc.perform(patch("/api/inventory-batches/{id}", blockedBatchId)
                         .header("Authorization", "Bearer " + storeAdminToken)
                         .contentType(MediaType.APPLICATION_JSON).content("{\"status\":\"BLOCKED\"}"))
                 .andExpect(status().isOk());
         createBatch(productId, today.plusDays(30), 7);
 
+        // DEC-20261124-01: expired = today > expiryDate; EXPIRED wins over BLOCKED; buckets never overlap.
         mvc.perform(get("/api/products/{id}/inventory-summary?expiringWithinDays=7", productId)
                         .header("Authorization", "Bearer " + storeAdminToken))
-                .andExpect(status().isOk()).andExpect(jsonPath("$.totalQuantity").value(25))
-                .andExpect(jsonPath("$.sellableQuantity").value(12))
-                .andExpect(jsonPath("$.expiredQuantity").value(7))
-                .andExpect(jsonPath("$.blockedQuantity").value(6))
-                .andExpect(jsonPath("$.expiringSoonQuantity").value(5));
+                .andExpect(status().isOk()).andExpect(jsonPath("$.totalQuantity").value(27))
+                .andExpect(jsonPath("$.sellableQuantity").value(16))
+                .andExpect(jsonPath("$.expiredQuantity").value(9))
+                .andExpect(jsonPath("$.blockedQuantity").value(2))
+                .andExpect(jsonPath("$.expiringSoonQuantity").value(9))
+                // DEC-20261124-02: no batch has a push day; the four that are not expired warn
+                .andExpect(jsonPath("$.batchesMissingPushDay").value(4));
 
         mvc.perform(get("/api/products/{id}/inventory-summary?expiringWithinDays=-1", productId)
                         .header("Authorization", "Bearer " + storeAdminToken))
@@ -553,6 +567,85 @@ class CatalogIntegrationTest {
         mvc.perform(get("/api/products/{id}/inventory-summary", productId)
                         .header("Authorization", "Bearer " + otherStoreToken))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void batchViewExposesEffectiveStatusDaysToExpiryAndMissingPushDayWarning() throws Exception {
+        java.time.LocalDate today = java.time.LocalDate.now(java.time.ZoneId.of("Asia/Ho_Chi_Minh"));
+        int tracked = createProduct("SKU-IGNORED-A", "Tracked product", true);
+        int untracked = createProduct("SKU-IGNORED-B", "Untracked product", false);
+
+        int expiresToday = createBatch(tracked, today, 4);
+        mvc.perform(get("/api/inventory-batches/{id}", expiresToday).header("Authorization", "Bearer " + storeAdminToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("ACTIVE"))
+                .andExpect(jsonPath("$.effectiveStatus").value("ACTIVE"))
+                .andExpect(jsonPath("$.daysToExpiry").value(0))
+                .andExpect(jsonPath("$.pushDay").value(org.hamcrest.Matchers.nullValue()))
+                .andExpect(jsonPath("$.warnings[0]").value("MISSING_PUSH_DAY"))
+                .andExpect(jsonPath("$.warnings.length()").value(1));
+
+        int expiredYesterday = createBatch(tracked, today.minusDays(1), 3);
+        mvc.perform(get("/api/inventory-batches/{id}", expiredYesterday).header("Authorization", "Bearer " + storeAdminToken))
+                .andExpect(jsonPath("$.status").value("ACTIVE"))
+                .andExpect(jsonPath("$.effectiveStatus").value("EXPIRED"))
+                .andExpect(jsonPath("$.daysToExpiry").value(-1))
+                .andExpect(jsonPath("$.warnings.length()").value(0));
+
+        // BLOCKED + expired is EXPIRED; BLOCKED and not expired stays BLOCKED (and still warns about the push day)
+        mvc.perform(patch("/api/inventory-batches/{id}", expiredYesterday).header("Authorization", "Bearer " + storeAdminToken)
+                        .contentType(MediaType.APPLICATION_JSON).content("{\"status\":\"BLOCKED\"}"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.status").value("BLOCKED"))
+                .andExpect(jsonPath("$.effectiveStatus").value("EXPIRED"));
+        mvc.perform(patch("/api/inventory-batches/{id}", expiresToday).header("Authorization", "Bearer " + storeAdminToken)
+                        .contentType(MediaType.APPLICATION_JSON).content("{\"status\":\"BLOCKED\"}"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.effectiveStatus").value("BLOCKED"))
+                .andExpect(jsonPath("$.warnings[0]").value("MISSING_PUSH_DAY"));
+
+        // An expired batch can still be edited; moving its expiry date forward un-expires it (nothing is stored)
+        mvc.perform(patch("/api/inventory-batches/{id}", expiredYesterday).header("Authorization", "Bearer " + storeAdminToken)
+                        .contentType(MediaType.APPLICATION_JSON).content("{\"remainingQuantity\":1}"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.remainingQuantity").value(1))
+                .andExpect(jsonPath("$.effectiveStatus").value("EXPIRED"));
+        mvc.perform(patch("/api/inventory-batches/{id}", expiredYesterday).header("Authorization", "Bearer " + storeAdminToken)
+                        .contentType(MediaType.APPLICATION_JSON).content("{\"expiryDate\":\"" + today.plusDays(3) + "\"}"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.effectiveStatus").value("BLOCKED"))
+                .andExpect(jsonPath("$.daysToExpiry").value(3));
+        // EXPIRED is derived only: it can never be written
+        mvc.perform(patch("/api/inventory-batches/{id}", expiredYesterday).header("Authorization", "Bearer " + storeAdminToken)
+                        .contentType(MediaType.APPLICATION_JSON).content("{\"status\":\"EXPIRED\"}"))
+                .andExpect(status().isBadRequest());
+        mvc.perform(patch("/api/inventory-batches/{id}", expiredYesterday).header("Authorization", "Bearer " + storeAdminToken)
+                        .contentType(MediaType.APPLICATION_JSON).content("{\"status\":\"INACTIVE\"}"))
+                .andExpect(status().isBadRequest());
+
+        // a push day silences the warning; products without expiry tracking never warn; no expiry date => daysToExpiry null
+        var withPushDay = new java.util.LinkedHashMap<String, Object>();
+        withPushDay.put("receivedAt", "2026-10-01T10:00:00Z");
+        withPushDay.put("expiryDate", today.plusDays(10).toString());
+        withPushDay.put("pushDay", today.plusDays(5).toString());
+        withPushDay.put("initialQuantity", 2);
+        mvc.perform(post("/api/products/{id}/batches", tracked).header("Authorization", "Bearer " + storeAdminToken)
+                        .contentType(MediaType.APPLICATION_JSON).content(json.writeValueAsString(withPushDay)))
+                .andExpect(status().isCreated()).andExpect(jsonPath("$.pushDay").value(today.plusDays(5).toString()))
+                .andExpect(jsonPath("$.warnings.length()").value(0));
+        int untrackedBatch = createBatch(untracked, null, 5);
+        mvc.perform(get("/api/products/{id}/batches", untracked).header("Authorization", "Bearer " + storeAdminToken))
+                .andExpect(status().isOk()).andExpect(jsonPath("$[0].id").value(untrackedBatch))
+                .andExpect(jsonPath("$[0].daysToExpiry").value(org.hamcrest.Matchers.nullValue()))
+                .andExpect(jsonPath("$[0].effectiveStatus").value("ACTIVE"))
+                .andExpect(jsonPath("$[0].warnings.length()").value(0));
+    }
+
+    @Test
+    void creatingABatchWithoutPushDayNeverAutoFillsIt() throws Exception {
+        int tracked = createProduct("SKU-IGNORED-C", "No default push day", true);
+        java.time.LocalDate expiry = java.time.LocalDate.now().plusDays(30);
+        int batchId = createBatch(tracked, expiry, 6);
+        mvc.perform(get("/api/inventory-batches/{id}", batchId).header("Authorization", "Bearer " + storeAdminToken))
+                .andExpect(jsonPath("$.pushDay").value(org.hamcrest.Matchers.nullValue()));
+        org.junit.jupiter.api.Assertions.assertNull(
+                jdbc.queryForObject("SELECT push_day FROM inventory_batch WHERE batch_id=?", java.sql.Date.class, batchId));
     }
 
     private int store(String name) {
