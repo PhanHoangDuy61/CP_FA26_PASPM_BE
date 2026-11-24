@@ -27,7 +27,17 @@ Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and fea
 | F01 Change own password | POST `/api/auth/password/change` | Authenticated own account; current password required | same | same | same |
 | F01 User list | GET `/api/users` | Allowed, global | Forbidden | Forbidden | Forbidden |
 | F01 User detail | GET `/api/users/{id}` | Allowed, global | Forbidden | Forbidden | Forbidden |
-| F01 Invite/create account | POST `/api/users` | Allowed; role/Store constraints apply | Forbidden | Forbidden | Forbidden |
+| F01 Invite/create account | POST `/api/users` | Allowed; role/Store constraints apply (409 `STORE_INACTIVE` for an INACTIVE Store) | Forbidden | Forbidden | Forbidden |
+| F01 Store list / picker | GET `/api/system/stores` | Allowed; ACTIVE by default (`status=INACTIVE\|ALL`) | Forbidden | Forbidden | Forbidden |
+| F01 Create Store | POST `/api/system/stores` | Allowed | Forbidden | Forbidden | Forbidden |
+| F01 Store detail / update | GET, PUT `/api/system/stores/{storeId}` | Allowed (any Store) | Forbidden | Forbidden | Forbidden |
+| F01 Deactivate / reactivate Store | PATCH `/api/system/stores/{storeId}/status` | Allowed | Forbidden | Forbidden | Forbidden |
+| F01 Own Store profile | GET `/api/store/profile` | Forbidden | Own Store | Own Store | Forbidden |
+| F01 Edit own Store contact | PUT `/api/store/profile` | Forbidden | Own Store (address, phone) | Forbidden | Forbidden |
+| F01 Read Store image | GET `/api/stores/{storeId}/images/{kind}` | Any Store (INACTIVE included) | Own Store; other Store 404 | Own Store; other Store 404 | Forbidden |
+| F01 Upload / remove Store image | PUT, DELETE `/api/stores/{storeId}/images/{kind}` | Any Store | Own Store; other Store 404 | Forbidden | Forbidden |
+| F01 Public Store image | GET `/api/public/stores/{storeId}/images/{fileName}` | Public (ACTIVE Store, current file only) | same | same | same |
+| All authenticated routes | — | — | 403 `STORE_INACTIVE` when the own Store is INACTIVE | same | — |
 | F01 Update account name | PUT `/api/users/{id}` | Allowed, global | Forbidden | Forbidden | Forbidden |
 | F01 Activate/deactivate | PATCH `/api/users/{id}/status` | Allowed, global; OTP cannot be bypassed | Forbidden | Forbidden | Forbidden |
 | F01 Assign role/Store | PUT `/api/users/{id}/role` | Allowed; valid role/store scope | Forbidden | Forbidden | Forbidden |

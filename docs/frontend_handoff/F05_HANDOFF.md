@@ -43,7 +43,7 @@ Mining runs asynchronously on a Java 17 backend with an external Java 25 SPMF ch
 | Screen / action | API | Role | State |
 |---|---|---|---|
 | Global policy form | `GET`/`PUT /api/system/mining/config` (send minUtil fields and `expectedVersion`; EFIM is fixed) | System Admin | Ready |
-| Store selection | `GET /api/system/stores?page=0&pageSize=100` → `{items:[{storeId,name}],page,pageSize,totalElements}` ordered by name | System Admin | Ready (D2) |
+| Store selection | `GET /api/system/stores?page=0&pageSize=100` → `{items:[{storeId,name,…}],page,pageSize,totalElements}` ordered by name; **ACTIVE Stores only by default** since DEC-20261123-01 (no client change needed) | System Admin | Ready (D2) |
 | Snapshot choice | System Admin: `GET /api/system/mining/stores/{storeId}/snapshots` (D1); or take the `snapshotId` from the Merchandiser's F03 snapshot response | System Admin | Ready |
 | Run button | `POST /api/system/mining/requests` body `{storeId,snapshotId,requestKey}` | System Admin | Ready; one EFIM run |
 | Status polling | System Admin: `GET /api/system/mining/stores/{storeId}/requests/{requestId}` (D1); Store users: `GET /api/mining/requests/{id}` | both | Ready |

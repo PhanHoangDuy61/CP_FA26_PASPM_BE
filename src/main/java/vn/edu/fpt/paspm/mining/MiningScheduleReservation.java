@@ -24,6 +24,8 @@ import static vn.edu.fpt.paspm.mining.MiningScheduleController.*;
 public class MiningScheduleReservation {
     /** Why an older missed fire time was not run. */
     public static final String SKIP_SUPERSEDED = "MISSED_SUPERSEDED_BY_LATER_OCCURRENCE";
+    /** DEC-20261123-01 §4: the Store was INACTIVE when the fire time came due; nothing was prepared or run. */
+    public static final String SKIP_STORE_INACTIVE = "STORE_INACTIVE";
     /** Operational bound per transaction; a longer backlog simply continues on the next call. It is not a maximum catch-up age. */
     static final int MAX_SKIPS_PER_TRANSACTION = 500;
     private final JdbcTemplate jdbc;private final UtilityTimeZone storeZone;private final SchedulerPrincipal principal;
@@ -45,6 +47,13 @@ public class MiningScheduleReservation {
         if(config==0)throw new ApiException(409,"Configure mining policy before scheduling");
         int actor=principal.id();
         var recurrence=new Request(d.store(),d.frequency(),d.dayOfWeek(),d.dayOfMonth(),d.time(),d.zone(),d.lookback());
+        if("INACTIVE".equals(jdbc.queryForObject("SELECT status FROM store WHERE store_id=?",String.class,d.store()))){
+            // Every due fire time is recorded as SKIPPED and the cursor moves past now; occurrences reserved earlier still run.
+            Instant fire=d.scheduled();int skipped=0;
+            while(!fire.isAfter(now)&&skipped<MAX_SKIPS_PER_TRANSACTION){insertSkipped(d,fire,config,SKIP_STORE_INACTIVE);skipped++;fire=MiningScheduleService.next(recurrence,fire);}
+            jdbc.update("UPDATE mining_schedule SET next_fire_at=? WHERE schedule_id=?",Timestamp.from(fire),d.id());
+            return new Outcome(null,skipped);
+        }
         Instant fire=d.scheduled();int skipped=0;
         while(true){
             Instant following=MiningScheduleService.next(recurrence,fire);
@@ -57,7 +66,7 @@ public class MiningScheduleReservation {
                 jdbc.update("UPDATE mining_schedule SET next_fire_at=? WHERE schedule_id=?",Timestamp.from(fire),d.id());
                 return new Outcome(null,skipped);
             }
-            insertSkipped(d,fire,config);skipped++;fire=following;
+            insertSkipped(d,fire,config,SKIP_SUPERSEDED);skipped++;fire=following;
         }
     }
     private static String requestKey(Due d,Instant fire){return UUID.nameUUIDFromBytes(("PASPM-SCHEDULE-V1|"+d.id()+"|"+fire).getBytes(StandardCharsets.UTF_8)).toString();}
@@ -69,8 +78,8 @@ public class MiningScheduleReservation {
         return jdbc.queryForObject("SELECT occurrence_id FROM mining_schedule_occurrence WHERE schedule_id=? AND scheduled_at=?",Long.class,d.id(),Timestamp.from(fire));
     }
     /** A skipped occurrence has no actor, no analysed range, no snapshot and no request: nothing was prepared or run for it. */
-    private void insertSkipped(Due d,Instant fire,long config){
+    private void insertSkipped(Due d,Instant fire,long config,String reason){
         jdbc.update("INSERT INTO mining_schedule_occurrence(schedule_id,store_id,scheduled_at,schedule_version,config_version,request_key,status,skip_reason,time_zone,compare_algorithms) VALUES(?,?,?,?,?,?,'SKIPPED',?,?,?)",
-            d.id(),d.store(),Timestamp.from(fire),d.version(),config,requestKey(d,fire),SKIP_SUPERSEDED,d.zone(),false);
+            d.id(),d.store(),Timestamp.from(fire),d.version(),config,requestKey(d,fire),reason,d.zone(),false);
     }
 }

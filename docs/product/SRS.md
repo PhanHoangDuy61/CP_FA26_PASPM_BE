@@ -34,9 +34,9 @@ This file is the map. When it disagrees with those files, they win. Fix this fil
 
 | Actor | Store-bound | Summary |
 |---|---|---|
-| System Administrator (`SYSTEM_ADMIN`) | No | Accounts and roles, λmax policy, mining configuration (minUtil), mining for a selected Store, schedules, Store list |
-| Store Admin (`STORE_ADMIN`) | Yes | Catalogue, prices and costs, batches and push days, imports, activate / end / rollback campaigns |
-| Merchandiser (`MERCHANDISER`) | Yes | λ / α / β / N, seasons, snapshots, mining for its own Store, recommendations, layouts, campaigns, simulation |
+| System Administrator (`SYSTEM_ADMIN`) | No | Accounts and roles, λmax policy, mining configuration (minUtil), mining for a selected Store, schedules, Store management (create, edit including slug, deactivate/reactivate, images; no delete) |
+| Store Admin (`STORE_ADMIN`) | Yes | Catalogue, prices and costs, batches and push days, imports, activate / end / rollback campaigns, own Store profile (address, phone, icon, banner) |
+| Merchandiser (`MERCHANDISER`) | Yes | λ / α / β / N, seasons, snapshots, mining for its own Store, recommendations, layouts, campaigns, simulation, view own Store |
 | End Customer (`END_CUSTOMER`) | No | Self-registers. F10 cart (planned); F09 viewing planned to need no login |
 | System Scheduler (`SYSTEM_SCHEDULER`) | — | Internal principal that creates scheduled snapshots and requests. It cannot log in |
 
@@ -76,7 +76,9 @@ UC03 and UC22 were removed earlier, and their numbers are not reused.
 | 30 | Validate / Preprocess Orders | (included in UC21) | F04 | DONE | — |
 | 31 | Create Frozen Utility Snapshot | Merch | F03 | DONE | Freezes W2 inputs, seasons and warnings |
 | 32 | Set Global Utility Lambda Policy | SA | F03 | DONE | **λmax only** (range [0, λmax], default 0.5) |
-| 33 | Select Store | SA | F05 | DONE | — |
+| 33 | Select Store | SA | F05 | DONE | The picker lists ACTIVE Stores by default (DEC-20261123-01) |
+| 34 | Manage Stores | SA | F01 | DONE (branch) | Create, edit (slug included), deactivate/reactivate, icon/banner; no delete (DEC-20261123-01) |
+| 35 | Manage own Store profile | Store Admin; Merch (view) | F01 | DONE (branch) | Store Admin edits address, phone, icon, banner |
 
 Missing UC numbers:
 - **Manage Seasons** is covered inside UC09.
@@ -101,6 +103,18 @@ Each line gives the behaviour an agent must preserve. Exact request and response
   - a password reset increments `token_version`.
 - FR-01.4: An account has exactly one role. Store Admin and Merchandiser have exactly one Store.
 - FR-01.5: Profile with avatar. Account states are PENDING_VERIFICATION, ACTIVE and INACTIVE.
+- FR-01.6 (DEC-20261123-01, V27): A Store has `name` (unique after trimming, ignoring case), `slug` (unique, the F09 `storeSlug`), `status` ACTIVE/INACTIVE, optional `address` and `phone`, `version`, `created_at`/`updated_at`, `deactivated_at`/`deactivated_by`, and `icon_key`/`banner_key`.
+- FR-01.7: The System Admin creates Stores, edits every field (slug included) and deactivates or reactivates them. There is no delete. The Store detail shows the assigned-user count and a read-only list of the users.
+- FR-01.8: A Store Admin views their own Store and edits address and phone. A Merchandiser views their own Store.
+- FR-01.9: Deactivation.
+  - One central guard rejects every request, login and refresh of a user of an INACTIVE Store with 403 `STORE_INACTIVE`.
+  - A System Admin cannot create new work for it (manual mining, schedule create or enable) or assign users to it (409 `STORE_INACTIVE`).
+  - The scheduler records its due fire times as SKIPPED (`STORE_INACTIVE`).
+  - In-flight work finishes and history stays readable.
+- FR-01.10: Store icon and banner.
+  - PNG or JPEG only (magic bytes plus decoding); icon ≤ 1 MiB, banner ≤ 5 MiB, ≤ 4000×4000 px.
+  - Stored under a UUID name on the shared media storage (`PASPM_MEDIA_ROOT`).
+  - The public GET serves only the current images of ACTIVE Stores.
 
 ### F02 — Catalogue & inventory (DONE)
 
@@ -263,6 +277,11 @@ BR-01 to BR-13 keep Report 3 numbering. BR-14 onward are new proposals in this d
 | BR-24 | Scheduled-mining enable returns 503 until release sign-off | New |
 | BR-25 | (F09, planned) Only the active campaign layout is public. Public DTOs never expose cost or batch data | Planned |
 | BR-26 | (F10, planned) Bundle add is atomic, with no reservation and no discount. Removing one bundle line removes the bundle | Planned |
+| BR-27 | A Store name is unique after trimming, ignoring case (service rule; no database UNIQUE yet) | New (DEC-20261123-01) |
+| BR-28 | A Store slug is unique and only a System Admin sets or changes it | New (DEC-20261123-01) |
+| BR-29 | A Store is never hard-deleted | New (DEC-20261123-01) |
+| BR-30 | Users of an INACTIVE Store are rejected (403 `STORE_INACTIVE`). No new System Admin work or user assignment for it (409). In-flight work finishes and history stays readable | New (DEC-20261123-01) |
+| BR-31 | Store images: PNG/JPEG by magic bytes, no SVG/WebP, icon ≤ 1 MiB, banner ≤ 5 MiB, ≤ 4000×4000 px, UUID file names, public only for ACTIVE Stores | New (DEC-20261123-01) |
 
 ## 5. Non-functional requirements
 
@@ -285,6 +304,7 @@ All limits are configurable unless noted.
 | Mining run | 256 MiB heap, 60 s, 4 MiB output, 64 KiB log, 2,000 patterns |
 | Recommendations | 10,000 candidates per generation or ranked scope |
 | Paging | page ≥ 0, pageSize 1–100 (the user list names it `size`) |
+| Store images | Icon 1 MiB, banner 5 MiB, at most 4000×4000 px, PNG or JPEG (DEC-20261123-01) |
 
 No response-time, throughput, availability or MTTR targets have been defined (**TBD**). Report measurements only as measurements.
 
@@ -301,6 +321,8 @@ No response-time, throughput, availability or MTTR targets have been defined (**
 - Passwords are hashed with BCrypt (strength 12). OTP codes are stored as HMAC-SHA256 hashes. Login, OTP, refresh, registration and Google sign-in are rate-limited (in memory, per instance).
 - With `paspm.refresh-cookie-secure=true` (the default), cookies are `__Host-` prefixed, Secure and SameSite=Strict. With `false`, they are unprefixed, still SameSite=Strict, and accepted only on localhost. The Origin header is checked on login, Google sign-in, refresh, logout and logout-all.
 - Jackson rejects unknown fields (`fail-on-unknown-properties: true`), so clients must not send extra fields.
+- The only anonymous business route is `GET /api/public/stores/{storeId}/images/{fileName}`. It serves only the current images of ACTIVE Stores, with `nosniff` (DEC-20261123-01). Image files are stored by relative key, never as URL or BLOB.
+- One central Store guard: users of an INACTIVE Store get 403 `STORE_INACTIVE` on every authenticated request and at login or refresh.
 - Secrets live only in environment variables. The committed `application.yml` holds `${…}` placeholders with no secret defaults.
 
 ### 5.5 Usability
@@ -328,6 +350,7 @@ MSG01–MSG18 from Report 3 remain valid, with these changes:
 | MSG15 | Unchanged. Scheduler enable still returns 503 (`Scheduled mining dispatch is not available`) |
 | *new* | `Transaction utility exceeds SPMF int32 capacity`; `Product <id> TWU exceeds SPMF int32 capacity`; `Converted minUtil exceeds SPMF int32 capacity` (all 400). Since PR #23 they are raised only after the whole-đồng fallback, and the message names the mode |
 | *new* | `UNSUPPORTED_SCORING_VERSION` (409, raised by the F03 and F06 versioned JSON readers; the body adds `"code"`) |
+| *new* | `Store is inactive` (403, `code: STORE_INACTIVE`); `Store is inactive; reactivate it first` (409, `code: STORE_INACTIVE`); `Store name already exists`, `Store slug already exists`, `Store version conflict`, `Store is already ACTIVE/INACTIVE` (409); `Only PNG or JPEG images are accepted`, `Image content is invalid`, `Image dimensions must be at most 4000×4000 pixels` (400); `The icon must be at most 1 MiB` / `The banner must be at most 5 MiB` (413) |
 | *new* | Unknown or removed field → 400 `Invalid request fields`. Removed routes → 404 / 405 |
 | *new* | `PRODUCT_NAME_CONFIRMATION_REQUIRED` (409, F02): similar product name; retry with `confirmSimilarName: true` |
 
@@ -344,6 +367,8 @@ Changes against Report 3 §3.1.2:
   - the algorithm selector in S02 Mining Setup.
 - **Add or change:**
   - Seasons (list, edit, assign products);
+  - Stores (System Admin): list with search and status filter, create, detail with assigned users (read-only), edit, deactivate/reactivate behind a confirm dialog, icon and banner upload with preview;
+  - My Store (Store Admin edits address, phone, icon, banner; Merchandiser read-only);
   - push-day field and clear action on Inventory Batches;
   - λ / α / β / N on Utility Configuration;
   - SA λmax policy;
@@ -361,7 +386,7 @@ Changes against Report 3 §3.1.2:
 
 | Feature | Use cases | API document (backend repo) | Frontend handoff |
 |---|---|---|---|
-| F01 | 01, 02 | `F01_AUTH_USER_API.md`, `F01_F02_RBAC_MATRIX.md` | `F01_HANDOFF.md` |
+| F01 | 01, 02, 34, 35 | `F01_AUTH_USER_API.md`, `F01_STORE_MANAGEMENT_API.md`, `F01_F02_RBAC_MATRIX.md` | `F01_HANDOFF.md` (Store management section) |
 | F02 | 17–20 | `F02_PRODUCT_INVENTORY_API.md` | `F02_HANDOFF.md` |
 | F03 | 09, 31, 32 | `F03_UTILITY_API.md`, `requirements/F03_WEIGHT_V2_REQUIREMENTS.md` | `F03_HANDOFF.md`, `F03_W2_BREAKING_CHANGES.md` |
 | F04 | 21, 30 | `F04_TRANSACTION_API.md` | `F04_HANDOFF.md` |
@@ -399,3 +424,4 @@ Update Report 3 using the template layout, changing content only.
    - whether `BUNDLE_VIEWED` can be logged anonymously;
    - the "daily deal" single-product block (Direction 2).
 8. F11 detailed specification (MVP scope decided 2026-11-19).
+9. Cleanup after DEC-20261123-01: drop the unused `store.mining_schedule` column; consider a database UNIQUE on the normalized Store name once the data is clean.

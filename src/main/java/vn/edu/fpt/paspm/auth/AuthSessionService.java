@@ -1,5 +1,7 @@
 package vn.edu.fpt.paspm.auth;
 
+import vn.edu.fpt.paspm.security.StoreStatusGuard;
+
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -73,6 +75,7 @@ public class AuthSessionService {
     }
 
     public Token accessToken(User user) {
+        StoreStatusGuard.requireActiveStore(user);
         return new Token(accessTokenValue(user, null), accessTtlSeconds, "Bearer", null);
     }
 
@@ -84,6 +87,7 @@ public class AuthSessionService {
                 || !Objects.equals(user.passwordHash(), requestedUser.passwordHash())) {
             throw new ApiException(401, "Invalid credentials or account unavailable");
         }
+        StoreStatusGuard.requireActiveStore(user);
 
         Instant now = Instant.now();
         cleanupExpired(now);
@@ -170,6 +174,8 @@ public class AuthSessionService {
             revokeSession(session.sessionId(), now);
             throw invalidRefresh();
         }
+        // The session is kept: once the Store is reactivated the same refresh token works again.
+        StoreStatusGuard.requireActiveStore(user);
 
         String replacement = generateRefreshToken();
         jdbc.update(

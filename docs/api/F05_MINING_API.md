@@ -118,7 +118,7 @@ This block supersedes any older text below that says a Merchandiser may submit m
 | GET | `/api/system/mining/stores/{storeId}/runs/{runId}/patterns` | nobody | **Always 403 for System Admin (D1: patterns stay closed).** Use `GET /api/mining/runs/{id}/patterns` as a Store Admin or Merchandiser of the Store |
 | POST | `/api/system/mining/requests` | SYSTEM_ADMIN | Ready; 202, idempotent per Store by `requestKey` |
 | GET | `/api/system/mining/stores/{storeId}/runs/{runId}/benchmark` | SYSTEM_ADMIN | Ready |
-| GET | `/api/system/stores` | SYSTEM_ADMIN | **Ready (D2)**; `Page<StoreView>` `{storeId,name}` ordered by name then id; `page` 0.., `pageSize` 1..100 (default 20); a page past the end is an empty `items` list |
+| GET | `/api/system/stores` | SYSTEM_ADMIN | **Ready (D2)**; `Page<StoreView>` ordered by name then id; `page` 0.., `pageSize` 1..100 (default 20); a page past the end is an empty `items` list. **2026-11-23 (DEC-20261123-01):** additive fields (`slug`, `status`, …) and **ACTIVE Stores only by default**; see [Store management](F01_STORE_MANAGEMENT_API.md). Manual requests and schedule create/enable for an INACTIVE Store return 409 `STORE_INACTIVE`; the scheduler records its due fire times as `SKIPPED` (`STORE_INACTIVE`) |
 | POST / GET | `/api/system/mining/schedules`, `/api/system/mining/schedules/{id}` | SYSTEM_ADMIN | Ready; new schedules are created **disabled**; `lookbackDays` optional (7–365; default 30 weekly / 90 monthly); `timeZone` must be the Store calendar zone `Asia/Ho_Chi_Minh` |
 | PUT | `/api/system/mining/schedules/{id}` | SYSTEM_ADMIN | Edit / disable always work. **`enabled=true`: 200 only where the instance sets `paspm.mining.schedule-dispatch-enabled=true` (default `false` → 503 `Scheduled mining dispatch is not available`, nothing written)**; also 409 if no mining policy is configured |
 | GET | `/api/system/mining/schedules/{id}/occurrences`, `.../occurrences/{occurrenceId}` | SYSTEM_ADMIN | Ready (history/read-only); statuses incl. `SKIPPED`; fields `failureMessage`, `skipReason` |
@@ -159,7 +159,7 @@ Base URL depends on the environment (local default `http://localhost:8080`). Ope
 | GET | `/api/system/mining/stores/{storeId}/requests/{requestId}/runs` | SYSTEM_ADMIN + `RUNS` | `RunView[]` | Algorithm runs (D1; default-enabled) |
 | GET | `/api/system/mining/stores/{storeId}/runs/{runId}/patterns` | nobody | `Page<PatternView>` | **Always 403 for System Admin (D1)**; Store users read patterns on `/api/mining/runs/{id}/patterns` |
 | POST, GET | `/api/system/mining/schedules`, `/{id}` | SYSTEM_ADMIN | schedule `View` | Create (always disabled) / read |
-| GET | `/api/system/stores` | SYSTEM_ADMIN | `Page<StoreView>` | Store picker (D2): `{storeId,name}` only |
+| GET | `/api/system/stores` | SYSTEM_ADMIN | `Page<StoreView>` | Store picker (D2); since DEC-20261123-01 more fields and ACTIVE Stores by default |
 | PUT | `/api/system/mining/schedules/{id}` | SYSTEM_ADMIN | schedule `View` | Edit / disable; `enabled=true` → 503 unless the instance enables scheduling (D10) |
 | GET | `/api/system/mining/schedules/{id}/occurrences`, `/{occurrenceId}` | SYSTEM_ADMIN | `Page<OccurrenceView>`, `OccurrenceView` | Read-only history |
 | GET | `/api/mining/snapshots` | MERCHANDISER, STORE_ADMIN | `Page<SnapshotView>` | READY snapshot picker (own Store) |

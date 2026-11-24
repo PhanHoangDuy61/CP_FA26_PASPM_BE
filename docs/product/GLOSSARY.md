@@ -18,7 +18,10 @@
 
 | Term | Definition |
 |---|---|
-| **Store** | One retail store, and the unit of data isolation. Every store-bound record carries `store_id`. The API takes a user's Store from the JWT, never from the request body. |
+| **Store** | One retail store, and the unit of data isolation. Every store-bound record carries `store_id`. The API takes a user's Store from the authenticated account (the JWT identifies the user; there is no Store claim), never from the request body. Profile: `name` (unique ignoring case), `slug`, `address`, `phone`, icon and banner; `status` ACTIVE/INACTIVE and `version` (DEC-20261123-01). |
+| **Store status** | `ACTIVE` or `INACTIVE`. A System Admin deactivates or reactivates a Store; it is never deleted. INACTIVE: its users get 403 `STORE_INACTIVE` (one central guard), no new System Admin work or user assignment (409), schedulers skip it, in-flight work finishes, history stays readable, public images are not served. |
+| **Store branding image** | The Store icon (≤ 1 MiB) or banner (≤ 5 MiB), PNG or JPEG, ≤ 4000×4000 px. The database keeps a relative storage key (`stores/{storeId}/{uuid}.png`), never a URL or BLOB; the API builds the URL. |
+| **MediaStorage** | Shared storage abstraction for uploaded images (`common.media`); local filesystem under `PASPM_MEDIA_ROOT` today, replaceable by object storage. Avatars use it too. |
 | **Store isolation** | Users only see their own Store's data. A record that belongs to another Store answers **404** (not 403), so its existence is not revealed. In the database, composite foreign keys `(store_id, id)` stop a record from referencing another Store's record. |
 | **SYSTEM_ADMIN** (System Administrator) | Platform-level role with no Store. Manages accounts and roles, sets **λmax**, owns the mining configuration (minUtil) and schedules, and can submit mining for a selected Store. It can read a Store's snapshots, requests and runs, but not raw patterns. |
 | **STORE_ADMIN** (Store Admin / Operations Manager) | Store role. Manages categories, products, prices, costs, inventory batches and **push days**, and imports transactions. **Activates, ends and rolls back** campaigns. |
@@ -136,7 +139,7 @@
 | Term | Definition |
 |---|---|
 | **Storefront (F09)** | Public shop pages: homepage from the active layout, product detail and bundles. Planned as anonymous read access through a separate public API. |
-| **storeSlug** | Planned public, unique key of a Store. It hides internal Store ids. |
+| **storeSlug** | The Store `slug` (V27): unique, lowercase letters, digits and hyphens, set and changed only by a System Admin. Planned as the F09 public key of a Store. |
 | **availability** | Planned per-product state such as `OUT_OF_STOCK`, recomputed when the response is built. |
 | **Bundle cart (F10)** | Planned per-customer, per-Store cart. Adding a bundle adds all its items atomically after a recheck. No stock reservation, no order or payment, and no bundle discount. |
 | **storefront_event** | Planned append-only event table (cart and bundle actions) that feeds F11. |

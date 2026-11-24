@@ -33,7 +33,9 @@ public class ApiError {
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<Map<String, String>> api(ApiException exception) {
         return ResponseEntity.status(exception.status())
-                .body(Map.of("error", exception.getMessage()));
+                .body(exception.code() == null
+                        ? Map.of("error", exception.getMessage())
+                        : Map.of("error", exception.getMessage(), "code", exception.code()));
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class, HttpMessageNotReadableException.class})
