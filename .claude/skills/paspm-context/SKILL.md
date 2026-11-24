@@ -61,6 +61,7 @@ Status labels in the docs:
 - **Secrets:** never print, commit or copy them. `application.yml` holds only `${…}` placeholders, and real values come from environment variables.
 - **Frozen JSON:** snapshots, requests, runs, recommendations, layout revisions and reports are immutable. Read stored JSON by its version tag. Never rewrite history.
 - **Scheduler:** enabling scheduled mining keeps returning **HTTP 503** until owner sign-off.
+- **SPMF (GPL v3):** it runs **only as a separate process** (`java -jar spmf.jar run EFIM …`). Never import an SPMF class, add SPMF to `pom.xml` or bundle it into the backend jar (`SpmfProcessBoundaryTest`, DEC-20261125-01, `THIRD_PARTY_NOTICES.md`).
 
 ## 4. Facts agents most often get wrong
 

@@ -24,6 +24,7 @@ PASPM (FA26SE048) backend: Java 17, Spring Boot 3.5, MySQL 8.4 + Flyway, SPMF 2.
 - Never fabricate results. Anything not executed is `NOT RUN`. Never print or commit secrets.
 - Frozen JSON and historical rows are immutable. New formats get a new version tag.
 - Scheduler enable stays HTTP 503.
+- SPMF is GPL v3 and runs **only as a separate process** (`java -jar spmf.jar run EFIM …`). Never import an SPMF class, never add SPMF to `pom.xml`, never bundle it into the backend jar (`SpmfProcessBoundaryTest`; DEC-20261125-01, `THIRD_PARTY_NOTICES.md`).
 - Same-PR docs: update the API doc, OpenAPI, frontend handoff, record of changes, a DEC (for business rules), and `docs/product/*` whenever a stated fact changes.
 
 ## Codex sandbox

@@ -25,7 +25,7 @@ Files used (all in the repository root unless noted):
 * `git`, `curl`, `python3` (3.9+, used by the seed script), `gzip`.
 * To build on the server: JDK **17** (Temurin) and Maven 3.9. Alternatively build the JAR elsewhere and copy
   `target/paspm-backend-0.1.0.jar` to the same path on the server (use `--skip-jar`).
-* The approved **SPMF 2.67a** `spmf.jar`, SHA-256 `4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a`
+* The approved **SPMF 2.67a** `spmf.jar` (GPL v3, from the GitHub Release `spmf-2.67a`), SHA-256 `4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a`
   (the build refuses any other file; see `docs/setup/F05_SPMF_RUNTIME_SETUP.md` and `.github/scripts/provision-spmf.py`).
 * Internet access to Docker Hub for `mysql:8.4`, `axllent/mailpit:v1.27.8`, `eclipse-temurin:17-jre-jammy` and
   `eclipse-temurin:25-jre-jammy`.
@@ -69,7 +69,7 @@ scripts/staging/build-image.sh "$TAG"          # add --skip-jar to reuse target/
 
 The script runs `mvn -DskipTests package` (tests are run separately by CI and `mvn verify`), copies the Linux **Java 25** JRE out of
 `eclipse-temurin:25-jre-jammy`, verifies the SPMF checksum and runs `docker build` with the two named contexts the Dockerfile
-expects (`java25`, `spmf`). The architecture is that of the build host (use `PLATFORM=linux/amd64` to force it). Then set
+expects (`java25`, `spmf`). The image is built for **linux/amd64** by default (`PLATFORM=linux/arm64` overrides it; on a host of another architecture the `RUN` steps run under emulation), the script checks the image architecture, lists `/opt/paspm/licenses` and verifies the SPMF banner inside the image (`SKIP_SMOKE=1` skips that last run). The SPMF jar comes from the Release `spmf-2.67a` ([THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md)): download it and check the SHA-256 before you build. Then set
 `PASPM_BACKEND_IMAGE=paspm-backend:$TAG` in `.env`.
 
 ## 4. Start the services
