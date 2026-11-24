@@ -23,16 +23,11 @@ The product docs live in the backend repo (`PhanHoangDuy61/CP_FA26_PASPM_BE`) un
 
 ## 2. Which source wins
 
-When sources disagree, the higher one wins:
-
-1. Owner decisions in `docs/decisions/` (DEC-yyyymmdd-nn) and merged code on `dev`.
-2. `docs/product/*` and the feature contracts in `docs/api/`.
-3. Reports 1–4 and older diagrams. They are partly outdated, and each product doc lists what they get wrong.
-
-The project principle is **"docs làm chuẩn"**:
-
-- If code breaks a recorded requirement or decision, fix the code or report the gap. Never rewrite the requirement to match the code.
-- Anything marked **TBD** is undecided. Ask the owner, Nguyễn Minh Khôi (Team Leader, acting Product Owner). Do not guess.
+- Docs record decisions as of their date. They are not automatically right over code.
+- The latest PO decision wins: a DEC file in `docs/decisions/` (DEC-yyyymmdd-nn), or an explicit answer from the PO in the session.
+- When code and docs disagree, report the difference and ask the PO, Nguyễn Minh Khôi (Team Leader, acting Product Owner). Do not fix either side on your own. After the decision, update the docs (and the code if needed) and record a DEC.
+- Reports 1–4 and older diagrams are partly outdated, and each product doc lists what they get wrong.
+- Anything marked **TBD** is undecided. Ask the PO. Do not guess.
 
 Status labels in the docs:
 

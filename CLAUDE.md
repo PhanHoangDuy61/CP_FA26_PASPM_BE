@@ -14,7 +14,11 @@ PASPM (FA26SE048) backend: Java 17, Spring Boot 3.5, MySQL 8.4 + Flyway, SPMF 2.
   - `docs/product/BRD_VISION.md`.
 - Feature contracts: `docs/api/`, `docs/frontend_handoff/`, `docs/features/`.
 - Decisions: `docs/decisions/`. Change log: `docs/record-of-changes/`.
-- Precedence: DEC files and merged code > `docs/product/*` and `docs/api/*` > Reports 1–4. **TBD** means ask the owner; do not guess.
+- Source of truth:
+  - docs record decisions as of their date; they are not automatically right over code;
+  - the latest PO decision (a DEC file, or an explicit PO answer in the session) wins;
+  - when code and docs disagree, report the difference and ask the PO; after the decision, update the docs (and code if needed) and record a DEC.
+- Reports 1–4 are partly outdated. **TBD** means ask the owner; do not guess.
 
 ## Non-negotiable rules
 
