@@ -1,12 +1,12 @@
 # F04 Transaction Data API
 
-This contract describes the current F04 file-import implementation in the Spring Boot backend. F04 requires file-based CSV/Excel imports; external transaction APIs, POS integration and webhooks are outside the approved scope. CSV is available; the Excel format contract is approved; endpoint implementation is delivered on a separate stacked branch. The runtime OpenAPI document is [`openapi.json`](openapi.json).
+This contract describes the current F04 file-import implementation in the Spring Boot backend. F04 requires file-based CSV/Excel imports; external transaction APIs, POS integration and webhooks are outside the approved scope. CSV (synchronous and asynchronous) and Excel (XLS/XLSX, synchronous only) are implemented; Excel follows the approved [format contract](../features/F04/F04_EXCEL_FORMAT_CONTRACT.md) of 2026-10-26. The runtime OpenAPI document is [`openapi.json`](openapi.json).
 
 ## Authentication and Store scope
 
 Send `Authorization: Bearer <access-token>` for every endpoint below. The Store is taken from the authenticated F01 identity; request parameters and CSV fields cannot choose a Store.
 
-| Role | Import CSV | Read imports/errors | Read transactions |
+| Role | Import CSV/Excel | Read imports/errors | Read transactions |
 |---|---|---|---|
 | `STORE_ADMIN` | Yes | Yes | Yes |
 | `MERCHANDISER` | No | Yes | Yes |
@@ -137,6 +137,12 @@ Async imports do not write uploaded files to an application-owned local temporar
 
 Flyway V22 adds async batch metadata, idempotency/lease fields and staging result markers without changing prior migration files. The background import worker starts automatically when the Spring application is ready and Flyway is enabled; no separate process or new dependency is required.
 
+### `POST /api/transactions/imports/excel`
+
+Uploads one `.xlsx` or `.xls` workbook as multipart field `file`. Role: `STORE_ADMIN`. Success: `201 Created` with the same `ImportSummary` as CSV. Only one nonempty worksheet is allowed; blank additional sheets are supported. Header row 1 uses the same exact seven ordered names. Order ID/SKU/timestamp cells must be text; timestamps require ISO8601 with explicit offset. Numeric IDs/date serials/formulas/unsupported workbook content are structural 400 errors. Structurally valid rows use the shared per-order validator and can return partial acceptance 201.
+
+CSV/Excel intentionally share `CSV_UPLOAD` identity: equal canonical order content is duplicate across both formats; different content is conflict. Historical source labels and transactions are never rewritten. [Approved format, limits and real templates](../features/F04/F04_EXCEL_FORMAT_CONTRACT.md) define the exact supported input. No external API/POS ingestion is required.
+
 ### `GET /api/transactions/imports`
 
 Lists import batches for the authenticated Store. Roles: `STORE_ADMIN`, `MERCHANDISER`. Query fields: `page` (integer, default 0, minimum 0) and `pageSize` (integer, default 20, range 1–100). Returns `Page<ImportSummary>`.
@@ -147,19 +153,19 @@ Returns one Store-owned import batch as `ImportSummary`. Roles: `STORE_ADMIN`, `
 
 ### `GET /api/transactions/imports/{id}/errors`
 
-Lists rejected/conflicted staging rows for one Store-owned batch. Roles: `STORE_ADMIN`, `MERCHANDISER`. Query fields: `page` (default 0) and `pageSize` (default 100; range 1–100). Returns `Page<ImportError>`.
+Lists rejected/conflicted staging rows for one Store-owned batch, **and (2026-11-24, DEC-20261124-03) imported rows that carry a warning**. A row of a soft-deleted product is accepted and processed (history is kept) but listed here with `status: "PROCESSED"` and `errorDetails` = `[{"rowNumber":n,"field":"sku","message":"PRODUCT_DELETED: …"}]`; the batch status and counters are unchanged (no new field). Treat a `PROCESSED` row in this list as a warning, not an error. Roles: `STORE_ADMIN`, `MERCHANDISER`. Query fields: `page` (default 0) and `pageSize` (default 100; range 1–100). Returns `Page<ImportError>`.
 
 `ImportError` fields: `rowNumber` (integer), `sourceOrderId` (nullable string), `status` (string), `errorDetails` (nullable string containing serialized validation details).
 
 ### `GET /api/transactions`
 
-Lists transactions for the authenticated Store. Roles: `STORE_ADMIN`, `MERCHANDISER`. Optional query fields: `status` (`COMPLETED`, `CANCELLED`, `REFUNDED`, `PARTIAL_REFUND`), `from` and `to` (ISO-8601 instants, inclusive), `page` (default 0), `pageSize` (default 20, range 1–100). Returns `Page<TransactionView>`.
+Lists transactions for the authenticated Store. Roles: `STORE_ADMIN`, `MERCHANDISER`. Optional query fields: `status` (`COMPLETED`, `CANCELLED`, `REFUNDED`, `PARTIAL_REFUND`), `from` and `to` (ISO-8601 instants, inclusive), `page` (default 0), `pageSize` (default 20, range 1–100). Returns `Page<TransactionView>`. List rows deliberately contain `items: []`; retrieve detail for lines.
 
 ### `GET /api/transactions/{id}`
 
 Returns one Store-owned transaction with its historical lines as `TransactionView`; roles: `STORE_ADMIN`, `MERCHANDISER`. A missing or other-Store ID returns `404`.
 
-`TransactionView` fields: `transactionId` (integer), `sourceSystem` (string), `sourceOrderId` (string), `occurredAt` (ISO-8601 UTC instant), `status` (string), `f03Eligible` (boolean), `totalAmount` (decimal), `items` (array of `TransactionLine`). Each line has `transactionItemId`, `productId`, `sku`, `productName`, `quantity`, `unitPrice`, and `unitCost`.
+`TransactionView` fields: `transactionId` (integer), `sourceSystem` (string), `sourceOrderId` (string), `occurredAt` (ISO-8601 UTC instant), `status` (string), `f03Eligible` (boolean), `totalAmount` (decimal), `items` (array of `TransactionLine`). Quantities and unit prices/costs are persisted historical facts; detail SKU/name labels are joined from the current Product. Each line has `transactionItemId`, `productId`, `sku`, `productName`, `quantity`, `unitPrice`, and `unitCost`.
 
 Example transaction detail:
 

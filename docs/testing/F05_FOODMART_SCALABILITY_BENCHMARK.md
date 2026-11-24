@@ -278,3 +278,16 @@ External evidence files and SHA-256 values are listed in [Record 015](../record-
 - Production target-server/Backend image process cleanup, memory under container limits and peak RSS remain **NOT VERIFIED**. The Linux file-limit probe does not establish deployment acceptance.
 - Hosted GitHub CI remains **NOT RUN** and still depends on the approved SPMF artifact setup.
 - Two natural-lease and one legacy-JAR multi-JVM test methods were skipped in the full verifier's explicit multi-JVM stage; this follow-up does not claim they ran.
+
+## Whole-đồng SPMF fallback — 2026-11-19
+
+[DEC-20261119-05](../decisions/2026-11-19/DEC-20261119-05-spmf-whole-dong-fallback.md); record [ROC-20261119-003](../record-of-changes/2026-11-19/03-f05-spmf-whole-dong-fallback.md). Disposable MySQL 8.4.13 container, Java 17.0.21 (Temurin) backend, SPMF 2.67a (`4aa46838…dfe6a`) on Java 25.
+
+| Run | Mode | Bounds after conversion | minUtil | Status | EFIM | Patterns | F06 |
+|---|---|---|---|---|---:|---:|---|
+| Realistic-utility fixture | WHOLE_UNIT_HALF_UP | divisor 1; max TU 2,623; max TWU 321,751; total 5,325,436 | ABSOLUTE 500 | FAILED `OUTPUT_LIMIT` | — | > 2,000 | NOT RUN |
+| Realistic-utility fixture | WHOLE_UNIT_HALF_UP | same | PERCENTAGE 1 (53,255) | COMPLETED | 291 ms | 3 | 7 recommendations |
+| Realistic-utility fixture | WHOLE_UNIT_HALF_UP | same | PERCENTAGE 0.3 (15,977) | COMPLETED | 289 ms | 3 | 7 recommendations |
+| Demo seed 2026-10-01..04 (as of 2026-10-05), total 51,951,773.2 đồng | LOSSLESS (divisor 10,000) | fits | PERCENTAGE 0.2 / 0.15 / 0.12 / 0.10 / 0.09 / 0.08 | COMPLETED | 340–389 ms | 7 / 71 / **180** / 326 / 513 / 1,147 | not run |
+
+Before this change the realistic fixture was rejected (lossless divisor 100, max Product TWU 3,217,593,703). Mode stability on the demo matrix (`MiningConversionStabilityTest`, forced whole-đồng): at 0.12 % 180/180 patterns shared, top-50 identical in order; at 0.08 % 1,147/1,147 shared, top-50 identical. The realistic fixture cannot run losslessly, so no stability comparison exists for it.

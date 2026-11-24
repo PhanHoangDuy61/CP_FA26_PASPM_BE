@@ -79,12 +79,12 @@ class JpaPilotMigrationMySqlTest {
             var http=new TestRestTemplate();
             var category=http.exchange(base+"/api/categories",HttpMethod.POST,new HttpEntity<>(Map.of("name","Synthetic dairy","status","ACTIVE"),headers),JsonNode.class);
             assertEquals(HttpStatus.CREATED,category.getStatusCode());int categoryId=category.getBody().path("id").asInt();assertTrue(categoryId>0);
-            var payload=Map.of("sku","MIGRATION-MILK","name","Synthetic milk","categoryId",categoryId,"unit","bottle","requiresExpiry",true,"sellingPrice",30,"costPrice",20,"status","ACTIVE");
+            var payload=Map.of("sku","SKU-MIGRA-00001","name","Synthetic milk","categoryId",categoryId,"unit","bottle","requiresExpiry",true,"sellingPrice",30,"costPrice",20,"status","ACTIVE");
             var created=http.exchange(base+"/api/products",HttpMethod.POST,new HttpEntity<>(payload,headers),JsonNode.class);
             assertEquals(HttpStatus.CREATED,created.getStatusCode());int product=created.getBody().path("id").asInt();
             assertEquals(HttpStatus.OK,http.exchange(base+"/api/categories/"+categoryId,HttpMethod.GET,new HttpEntity<>(headers),JsonNode.class).getStatusCode());
             var read=http.exchange(base+"/api/products/"+product,HttpMethod.GET,new HttpEntity<>(headers),JsonNode.class);
-            assertEquals(HttpStatus.OK,read.getStatusCode());assertEquals("MIGRATION-MILK",read.getBody().path("sku").asText());
+            assertEquals(HttpStatus.OK,read.getStatusCode());assertEquals("SKU-MIGRA-00001",read.getBody().path("sku").asText());
             assertEquals(categoryId,jdbc.queryForObject("SELECT category_id FROM product WHERE product_id=?",Integer.class,product));
             assertEquals(HttpStatus.UNAUTHORIZED,http.getForEntity(base+"/api/products/"+product,String.class).getStatusCode());
             assertCheckViolation(()->jdbc.update("UPDATE product SET selling_price=-1 WHERE product_id=?",product));
@@ -115,10 +115,10 @@ class JpaPilotMigrationMySqlTest {
             var sharedJdbc=context.getBean(JdbcTemplate.class);
             assertEquals("V5-MILK",products.find(1,201).sku());assertEquals("Synthetic dairy",categories.find(1,101).name());
             new TransactionTemplate(context.getBean(PlatformTransactionManager.class)).executeWithoutResult(status->{
-                assertTrue(products.update(1,201,"V5-MILK","Changed only inside rollback",101,"bottle",true,new BigDecimal("35"),new BigDecimal("20"),"ACTIVE"));
+                assertTrue(products.update(1,201,"Changed only inside rollback",101,"bottle",true,new BigDecimal("35"),new BigDecimal("20"),"ACTIVE"));
                 assertEquals("Changed only inside rollback",products.find(1,201).name());
                 assertEquals(7,sharedJdbc.queryForObject("SELECT remaining_quantity FROM inventory_batch WHERE batch_id=301",Integer.class));
-                assertTrue(products.create(1,"ROLLBACK-ONLY","Synthetic transient",101,"bottle",false,BigDecimal.TEN,BigDecimal.ONE,"ACTIVE").id()>0);
+                assertTrue(products.create(1,"Synthetic transient",101,"bottle",false,BigDecimal.TEN,BigDecimal.ONE,"ACTIVE").id()>0);
                 sharedJdbc.update("UPDATE category SET name='Rolled back JDBC category' WHERE category_id=101");
                 status.setRollbackOnly();
             });
@@ -188,7 +188,7 @@ class JpaPilotMigrationMySqlTest {
         try(var context=application(target)) {
             var products=context.getBean(ProductRepository.class);
             new TransactionTemplate(context.getBean(PlatformTransactionManager.class)).executeWithoutResult(status -> {
-                assertTrue(products.update(1,201,"V5-MILK","Metadata after recovery",101,"bottle",true,
+                assertTrue(products.update(1,201,"Metadata after recovery",101,"bottle",true,
                         new BigDecimal("35"),new BigDecimal("20"),"ACTIVE"));
                 assertTrue(products.updateStatus(1,201,"INACTIVE"));
                 assertEquals("Metadata after recovery",products.find(1,201).name());

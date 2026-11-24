@@ -47,9 +47,8 @@ class ProductEntity {
 
     Integer id() { return productId; }
 
-    void replaceMetadata(String sku, String name, Integer categoryId, String unit, boolean requiresExpiry,
+    void replaceMetadata(String name, Integer categoryId, String unit, boolean requiresExpiry,
             BigDecimal sellingPrice, BigDecimal costPrice, String status, String imageUrl, String description) {
-        this.sku = sku.trim();
         this.name = name.trim();
         this.categoryId = categoryId;
         this.unit = unit.trim();
@@ -60,4 +59,6 @@ class ProductEntity {
         this.imageUrl = imageUrl == null || imageUrl.isBlank() ? null : imageUrl.trim();
         this.description = description == null ? null : description.trim();
     }
+
+    void assignSku(String sku) { this.sku = sku; }
 }

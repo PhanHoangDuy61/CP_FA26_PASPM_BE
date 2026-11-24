@@ -38,7 +38,8 @@ import static vn.edu.fpt.paspm.layout.LayoutCampaignRepository.*;
 @Service
 public class LayoutCampaignService {
     private static final String SOURCE_NAMESPACE = "F04_DATABASE_V1";
-    private static final String SIMULATION_VERSION = "OFFLINE_REPLAY_V1";
+    private static final String SIMULATION_VERSION = "OFFLINE_REPLAY_V2";
+    static final String BASELINE_V1 = "F07_BASELINE_V1", BASELINE_V2 = "F07_BASELINE_V2";
     private static final int PAGE_MAX = 100;
 
     private final CatalogAccess access;
@@ -122,8 +123,9 @@ public class LayoutCampaignService {
         int store = access.currentStoreId(jwt);
         int actor = actorId(jwt);
         snapshots.get(jwt, request.snapshotId());
-        List<Integer> baseline = repository.baselineProducts(store, request.snapshotId());
-        if (baseline.isEmpty()) throw new ApiException(400, "A campaign requires a nonempty READY utility snapshot");
+        List<Integer> ranked = repository.baselineProducts(store, request.snapshotId());
+        if (ranked.isEmpty()) throw new ApiException(400, "A campaign requires a nonempty READY utility snapshot");
+        List<Integer> baseline = rules.baselineSelection(ranked);
         List<PlacementBlock> baselineBlocks = baselineBlocks(baseline);
         rules.requireCapacity(baselineBlocks);
         List<PlacementBlock> blocks = recommendationBlocks(jwt, request.snapshotId(), request.recommendationIds());
@@ -132,9 +134,15 @@ public class LayoutCampaignService {
         repository.lockStore(store);
         long campaignId = repository.createCampaign(store, request.snapshotId(), request.name(), actor);
         repository.history(store, campaignId, null, CampaignStatus.DRAFT, actor, null, Map.of("created", true));
-        String baselineParams = writeJson(Map.of("ruleVersion", "F07_BASELINE_V1",
-                "ordering", "COUNT(DISTINCT transaction_id) DESC, product_id ASC",
-                "score", "number of snapshot transactions containing each product"));
+        Integer k = rules.baselineK();
+        String baselineParams = k == null
+                ? writeJson(Map.of("ruleVersion", BASELINE_V1,
+                        "ordering", "COUNT(DISTINCT transaction_id) DESC, product_id ASC",
+                        "score", "number of snapshot transactions containing each product"))
+                : writeJson(Map.of("ruleVersion", BASELINE_V2,
+                        "ordering", "COUNT(DISTINCT transaction_id) DESC, product_id ASC",
+                        "score", "number of snapshot transactions containing each product",
+                        "k", k, "candidateProducts", ranked.size()));
         long layoutAId = repository.insertLayout(store, campaignId, request.snapshotId(), LayoutRole.A,
                 LayoutStatus.READY, "A Baseline", baselineParams, actor);
         long layoutBId = repository.insertLayout(store, campaignId, request.snapshotId(), LayoutRole.B,
@@ -245,8 +253,9 @@ public class LayoutCampaignService {
 
         var placementsA = repository.placements(store, layoutA.id());
         var placementsB = repository.placements(store, layoutB.id());
-        Set<Integer> productsA = productSet(placementsA);
         Set<Integer> productsB = productSet(placementsB);
+        List<Integer> orderedA = orderedProducts(placementsA);
+        Set<Integer> productsA = Set.copyOf(LayoutRules.equalSizePrefix(orderedA, productsB.size()));
         List<Set<Integer>> bundleBlocks = bundleBlocks(placementsB);
         Timestamp from = Timestamp.from(request.rangeStart().atStartOfDay(storeZone).toInstant());
         Timestamp to = Timestamp.from(request.rangeEnd().plusDays(1).atStartOfDay(storeZone).toInstant());
@@ -265,6 +274,7 @@ public class LayoutCampaignService {
         assumptions.put("zeroDenominator", "rate is null (N/A) when its denominator is zero.");
         assumptions.put("bundleConversion", "A transaction converts when it contains every product in at least one displayed recommendation block of type BUNDLE; FBT is not counted as BUNDLE.");
         assumptions.put("priorityCoverage", "N/A until the F03 priority coverage formula is confirmed.");
+        assumptions.putAll(LayoutRules.equalSizeAssumptions(productsB.size(), orderedA.size(), baselineK(layoutA)));
 
         long reportId = repository.createReport(store, campaignId, request.rangeStart(), request.rangeEnd(),
                 outcome.datasetHash(), SOURCE_NAMESPACE, outcome.evaluationCount(), SIMULATION_VERSION,
@@ -439,16 +449,35 @@ public class LayoutCampaignService {
                     row.type() == null ? null : RecType.valueOf(row.type()), row.sku(), row.productName(),
                     row.zone(), row.blockNo(), row.position(), utility, rowErrors.isEmpty(), List.copyOf(rowErrors)));
         }
-        List<PlacementBlock> capacityBlocks = capacityBlocks(layout.role(), rows);
-        errors.addAll(rules.capacityErrors(capacityBlocks));
+        // DEC-20261119-06: the BASELINE cap governs F07_BASELINE_V2 layouts; historical V1 baselines keep their stored size.
+        if (layout.role() == LayoutRole.B || baselineK(layout) != null) {
+            errors.addAll(rules.capacityErrors(capacityBlocks(layout.role(), rows)));
+        }
         BigDecimal score = BigDecimal.ZERO;
         for (Integer product : distinctProducts) {
             BigDecimal value = utilities.get(product);
             if (value != null) score = score.add(value);
         }
+        BigDecimal equalSizeScore = null;
+        Integer equalSizeCount = null;
+        if (layout.role() == LayoutRole.B) {
+            Long layoutAId = repository.campaign(layout.storeId(), layout.campaignId(), false).layoutAId();
+            if (layoutAId != null) {
+                List<Integer> prefix = LayoutRules.equalSizePrefix(
+                        orderedProducts(repository.placements(layout.storeId(), layoutAId)), distinctProducts.size());
+                BigDecimal sum = BigDecimal.ZERO;
+                for (Integer product : prefix) {
+                    BigDecimal value = utilities.get(product);
+                    if (value != null) sum = sum.add(value);
+                }
+                equalSizeScore = sum.setScale(6, RoundingMode.HALF_UP);
+                equalSizeCount = prefix.size();
+            }
+        }
         return new LayoutView(layout.id(), layout.campaignId(), layout.snapshotId(), layout.role(),
                 layout.status(), layout.version(), layout.name(), score.setScale(6, RoundingMode.HALF_UP),
-                errors.isEmpty(), List.copyOf(errors), List.copyOf(views), layout.createdAt(), layout.updatedAt());
+                errors.isEmpty(), List.copyOf(errors), List.copyOf(views), layout.createdAt(), layout.updatedAt(),
+                equalSizeScore, equalSizeCount);
     }
 
     private Map<Long, List<String>> recommendationErrors(Jwt jwt, LayoutRow layout, List<PlacementRow> rows) {
@@ -530,7 +559,7 @@ public class LayoutCampaignService {
                 .map(this::metricView).toList();
         Object assumptions;
         try {
-            assumptions = json.readValue(row.assumptions(), Object.class);
+            assumptions = json.treeToValue(storedJson(row.assumptions()), Object.class);
         } catch (JsonProcessingException e) {
             throw new IllegalStateException("Stored simulation assumptions are invalid JSON", e);
         }
@@ -621,6 +650,31 @@ public class LayoutCampaignService {
         }
         return groups.values().stream().map(rowsInBlock -> rowsInBlock.stream()
                 .map(PlacementRow::productId).collect(java.util.stream.Collectors.toUnmodifiableSet())).toList();
+    }
+
+    /** Stored JSON column value; H2 returns a JSON string literal for text written with setString, MySQL returns the object. */
+    private com.fasterxml.jackson.databind.JsonNode storedJson(String value) throws JsonProcessingException {
+        var node = json.readTree(value);
+        return node != null && node.isTextual() ? json.readTree(node.asText()) : node;
+    }
+
+    /** Distinct products in placement order (for A: frequency rank). */
+    private static List<Integer> orderedProducts(List<PlacementRow> rows) {
+        var result = new java.util.LinkedHashSet<Integer>();
+        rows.forEach(row -> result.add(row.productId()));
+        return List.copyOf(result);
+    }
+
+    /** K stored with an F07_BASELINE_V2 layout A; {@code null} for V1 baselines (no truncation) and for layout B. */
+    private Integer baselineK(LayoutRow layout) {
+        if (layout.role() != LayoutRole.A || layout.baselineParams() == null) return null;
+        try {
+            var params = storedJson(layout.baselineParams());
+            return BASELINE_V2.equals(params.path("ruleVersion").asText()) && params.path("k").canConvertToInt()
+                    ? params.path("k").asInt() : null;
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Stored baseline parameters are invalid JSON", e);
+        }
     }
 
     private static Set<Integer> productSet(List<PlacementRow> rows) {

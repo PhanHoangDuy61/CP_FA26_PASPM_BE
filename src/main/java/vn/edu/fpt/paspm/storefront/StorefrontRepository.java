@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.TreeSet;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import vn.edu.fpt.paspm.common.ApiException;
 
 @Repository
 public class StorefrontRepository {
@@ -42,39 +41,23 @@ public class StorefrontRepository {
             LEFT JOIN category c ON c.store_id=p.store_id AND c.category_id=p.category_id
             """;
 
+    /** A Store is public exactly when it is ACTIVE (DEC-20261123-01); its F09 storeSlug is store.slug (V27). */
     public List<StoreRow> publicStores() {
         return jdbc.query("""
-                SELECT store_id,store_slug,name FROM store
-                WHERE storefront_enabled=TRUE AND store_slug IS NOT NULL
-                ORDER BY name,store_slug
-                """, (rs, row) -> new StoreRow(rs.getInt("store_id"), rs.getString("store_slug"),
+                SELECT store_id,slug,name FROM store
+                WHERE status='ACTIVE'
+                ORDER BY name,slug
+                """, (rs, row) -> new StoreRow(rs.getInt("store_id"), rs.getString("slug"),
                 rs.getString("name")));
     }
 
     public StoreRow publicStore(String slug) {
         return jdbc.query("""
-                SELECT store_id,store_slug,name FROM store
-                WHERE store_slug=? AND storefront_enabled=TRUE
-                """, (rs, row) -> new StoreRow(rs.getInt("store_id"), rs.getString("store_slug"),
+                SELECT store_id,slug,name FROM store
+                WHERE slug=? AND status='ACTIVE'
+                """, (rs, row) -> new StoreRow(rs.getInt("store_id"), rs.getString("slug"),
                 rs.getString("name")), slug).stream().findFirst().orElse(null);
     }
-
-    public VisibilityViewState setVisibility(int storeId, boolean enabled) {
-        List<StoreRow> stores = jdbc.query("SELECT store_id,store_slug,name FROM store WHERE store_id=?",
-                (rs, row) -> new StoreRow(rs.getInt("store_id"), rs.getString("store_slug"),
-                        rs.getString("name")), storeId);
-        if (stores.isEmpty()) throw new ApiException(404, "Store not found");
-        StoreRow store = stores.get(0);
-        String slug = store.slug();
-        if (slug == null) {
-            slug = StoreSlug.generate(store.name(), storeId);
-            jdbc.update("UPDATE store SET store_slug=? WHERE store_id=? AND store_slug IS NULL", slug, storeId);
-        }
-        jdbc.update("UPDATE store SET storefront_enabled=? WHERE store_id=?", enabled, storeId);
-        return new VisibilityViewState(storeId, slug, enabled);
-    }
-
-    public record VisibilityViewState(int storeId, String storeSlug, boolean storefrontEnabled) {}
 
     public boolean categoryExists(int storeId, int categoryId) {
         Integer count = jdbc.queryForObject("SELECT COUNT(*) FROM category WHERE store_id=? AND category_id=?",
@@ -84,7 +67,7 @@ public class StorefrontRepository {
 
     public ProductResults products(int storeId, String search, Integer categoryId,
             String sortColumn, String direction, int page, int pageSize) {
-        StringBuilder where = new StringBuilder(" WHERE p.store_id=? AND p.status='ACTIVE'");
+        StringBuilder where = new StringBuilder(" WHERE p.store_id=? AND p.status='ACTIVE' AND p.deleted_at IS NULL");
         List<Object> parameters = new ArrayList<>();
         parameters.add(storeId);
         if (!search.isBlank()) {
@@ -106,13 +89,13 @@ public class StorefrontRepository {
     }
 
     public ProductRow activeProduct(int storeId, int productId) {
-        return jdbc.query(PRODUCT_SELECT + " WHERE p.store_id=? AND p.product_id=? AND p.status='ACTIVE'",
+        return jdbc.query(PRODUCT_SELECT + " WHERE p.store_id=? AND p.product_id=? AND p.status='ACTIVE' AND p.deleted_at IS NULL",
                 productMapper(), storeId, productId).stream().findFirst().orElse(null);
     }
 
     public List<ProductRow> activeProductsByCategory(int storeId) {
         return jdbc.query(PRODUCT_SELECT + """
-                WHERE p.store_id=? AND p.status='ACTIVE'
+                WHERE p.store_id=? AND p.status='ACTIVE' AND p.deleted_at IS NULL
                 ORDER BY c.name IS NULL,c.name,c.category_id,p.name,p.product_id
                 """, productMapper(), storeId);
     }
@@ -129,9 +112,10 @@ public class StorefrontRepository {
             args.add(storeId);
             args.addAll(chunk);
             jdbc.query("""
-                    SELECT p.product_id,p.status,p.requires_expiry,
+                    SELECT p.product_id,CASE WHEN p.deleted_at IS NULL THEN p.status ELSE 'DELETED' END AS status,
+                           p.requires_expiry,
                            COALESCE(SUM(CASE WHEN b.status='ACTIVE' AND b.remaining_quantity>0
-                               AND (b.expiry_date IS NULL OR b.expiry_date>?)
+                               AND (b.expiry_date IS NULL OR b.expiry_date>=?)
                                AND (p.requires_expiry=FALSE OR b.expiry_date IS NOT NULL)
                                THEN b.remaining_quantity ELSE 0 END),0) AS sellable_quantity,
                            CASE WHEN p.requires_expiry=TRUE THEN
@@ -141,7 +125,7 @@ public class StorefrontRepository {
                     FROM product p
                     LEFT JOIN inventory_batch b ON b.product_id=p.product_id
                     WHERE p.store_id=? AND p.product_id IN (
-                    """ + placeholders + ") GROUP BY p.product_id,p.status,p.requires_expiry",
+                    """ + placeholders + ") GROUP BY p.product_id,p.status,p.deleted_at,p.requires_expiry",
                     (org.springframework.jdbc.core.RowCallbackHandler) rs -> result.put(rs.getInt("product_id"), new AvailabilityRow(
                             "ACTIVE".equals(rs.getString("status")), rs.getLong("sellable_quantity"),
                             rs.getBoolean("missing_required_expiry"))), args.toArray());
@@ -177,7 +161,8 @@ public class StorefrontRepository {
                        r.utility_snapshot_id AS recommendation_snapshot_id,r.review_status AS recommendation_status,
                        r.policy_snapshot AS recommendation_policy,p.zone,p.block_no,p.position,
                        pr.name,pr.description,pr.image_url,pr.unit,pr.selling_price,pr.category_id,
-                       c.name AS category_name,pr.requires_expiry,pr.status AS product_status
+                       c.name AS category_name,pr.requires_expiry,
+                       CASE WHEN pr.deleted_at IS NULL THEN pr.status ELSE 'DELETED' END AS product_status
                 FROM layout_placement p
                 JOIN product pr ON pr.store_id=p.store_id AND pr.product_id=p.product_id
                 LEFT JOIN category c ON c.store_id=pr.store_id AND c.category_id=pr.category_id

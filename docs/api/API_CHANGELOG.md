@@ -1,12 +1,63 @@
 # API Changelog
 
-## 2026-11-20 — F09 Storefront MVP (local feature branch)
+## 2026-11-25 — F09 Storefront MVP merged with dev (branch `Khoi/merge/f09-storefront-be`, PR to `dev` pending)
 
-- Added anonymous `GET /api/storefront/stores`, `GET /api/storefront/{storeSlug}/home`, public Product list and detail; Related Products remains deferred.
-- Added `PUT /api/system/stores/{storeId}/storefront-visibility` for SYSTEM_ADMIN. Existing Stores are private by default; enabling visibility does not publish or activate a campaign.
-- Added public Product `imageUrl` and `description` in the F02 request/view and a separate F09 `ProductCard` with aggregate `AVAILABLE|UNAVAILABLE` only.
-- Homepage uses the active selected F08 layout and filters current F06 recommendation eligibility; no-active-campaign fallback is `DEFAULT_CATALOG`, not baseline A. Active rendering fails closed until zone caps are configured.
-- Added Flyway V27; V1–V26 are unchanged. Static OpenAPI export is 105 paths / 126 operations, including five F09 operations; verification results and remaining environmental limits are in the feature handoff/API contract.
+Rules: [DEC-20261125-01](../decisions/2026-11-25/DEC-20261125-01-f09-public-store-follows-store-status.md), DEC-20261117-03, DEC-20261123-01, DEC-20261124-01, DEC-20261124-03. Contract: [F09_STOREFRONT_API.md](F09_STOREFRONT_API.md). Migration **V29**. Original implementation: Duy Phan (`Duy/Feature/F09_Storefront`, 2026-11-21).
+
+- **Added (additive):** anonymous `GET /api/storefront/stores`, `GET /api/storefront/{storeSlug}/home`, `GET /api/storefront/{storeSlug}/products`, `GET /api/storefront/{storeSlug}/products/{productId}`; public schemas `PublicStore`, `StoreSummary`, `ProductCard`, `ProductCategory`, `StorefrontProductPage`, `CatalogCategory`, `HomePlacement`, `HomeZone`, `HomeView`.
+- **Added (additive) to F02:** optional `imageUrl` (absolute HTTP(S), max 2048) and `description` (max 2000) on `ProductRequest`; both returned on `ProductView`. PUT stays a full replacement: omitting them clears them.
+- **Rules:** a Store is public exactly when ACTIVE; `storeSlug` = `store.slug`. INACTIVE and soft-deleted products are never listed, shown or AVAILABLE. A batch is sellable on its expiry date.
+- **Not merged from the branch:** `PUT /api/system/stores/{storeId}/storefront-visibility`, `store.store_slug`, `store.storefront_enabled`.
+- **OpenAPI:** 107 paths / 134 operations → **111 / 138**.
+- **Breaking for clients:** none for staff clients. Against the unmerged F09 branch: the visibility route and its body are gone.
+
+## 2026-11-24 — F02 expiry boundary, push-day warning, product soft delete (branch `Khoi/feat/f02-expiry-pushday-product-delete`, PR to `dev` pending)
+
+Rules: [DEC-20261124-01](../decisions/2026-11-24/DEC-20261124-01-batch-expiry-boundary-effective-status.md), [DEC-20261124-02](../decisions/2026-11-24/DEC-20261124-02-push-day-missing-warning.md), [DEC-20261124-03](../decisions/2026-11-24/DEC-20261124-03-product-soft-delete.md). Contract: [F02_PRODUCT_INVENTORY_API.md](F02_PRODUCT_INVENTORY_API.md). Migration **V28**.
+
+- **Added (additive):**
+  - `DELETE /api/products/{id}` (STORE_ADMIN of the owning Store): 204; 404 unknown / foreign / already deleted; 409 `{code, error, reason, sellableQuantity, campaigns[]}` with `PRODUCT_HAS_SELLABLE_STOCK` or `PRODUCT_IN_LIVE_CAMPAIGN`.
+  - `BatchView.effectiveStatus` (`ACTIVE|BLOCKED|EXPIRED`), `BatchView.daysToExpiry` (int or null), `BatchView.warnings` (`["MISSING_PUSH_DAY"]` or `[]`); `InventorySummary.batchesMissingPushDay`; `SeasonProduct.deleted`.
+  - `409 PRODUCT_DELETED` on `PUT /api/utility/seasons/{seasonId}/products/{productId}` for a deleted product; an import warning (`PRODUCT_DELETED` in `errorDetails` of a `PROCESSED` row) in `GET /api/transactions/imports/{id}/errors`.
+- **Changed (behaviour, same shapes):**
+  - A batch is expired only when today (`Asia/Ho_Chi_Minh`) is **after** its expiry date (it was "on or before"). This moves `expiredQuantity`, `sellableQuantity` and `expiringSoonQuantity` of the inventory summary and the F03 / F06 results on the expiry date.
+  - EXPIRED wins over BLOCKED: a BLOCKED expired batch moves from `blockedQuantity` to `expiredQuantity`.
+  - `GET /api/products` and every product/batch route exclude soft-deleted products (list: before pagination; by id: 404). `PATCH /api/products/{id}/status` on a deleted product is 404.
+  - `PATCH /api/inventory-batches/{id}` still accepts only `status` `ACTIVE|BLOCKED`; `EXPIRED` and `INACTIVE` are 400.
+- **Not changed:** no request field was added, removed or renamed. The push day has no default (the backend never had one).
+- **OpenAPI:** 107 paths / 133 operations → **107 / 134**.
+- **Breaking for clients:** none in the shapes. The frontend must stop comparing dates for "expired", "expiring soon" and the missing-push-day state, and read the new fields (see [F02 handoff](../frontend_handoff/F02_HANDOFF.md)).
+
+## 2026-11-23 — F01 Store management (branch `Khoi/feat/store-management`, PR to `dev` pending)
+
+Rules: [DEC-20261123-01](../decisions/2026-11-23/DEC-20261123-01-store-management.md). Contract: [F01_STORE_MANAGEMENT_API.md](F01_STORE_MANAGEMENT_API.md). Migration **V27**.
+
+- **Added (additive):**
+  - System Admin: `POST /api/system/stores`, `GET`/`PUT /api/system/stores/{storeId}`, `PATCH /api/system/stores/{storeId}/status`.
+  - Own Store: `GET`/`PUT /api/store/profile`.
+  - Images: `GET`/`PUT`/`DELETE /api/stores/{storeId}/images/{kind}`, and the first anonymous route, `GET /api/public/stores/{storeId}/images/{fileName}`.
+  - Schemas: `StoreDetailView`, `AssignedUser`, `CreateStore`, `UpdateStore`, `ChangeStatus`, `UpdateProfile`.
+- **Changed — picker `GET /api/system/stores`:**
+  - `StoreView` gains `slug`, `status`, `address`, `phone`, `iconUrl`, `bannerUrl`, `version`, `createdAt`, `updatedAt` and `deactivatedAt`; `storeId` and `name` are unchanged.
+  - New optional parameters `q` and `status`.
+  - **Behaviour change:** without `status` it now lists **ACTIVE Stores only** (`status=INACTIVE` or `status=ALL` to see the others).
+- **Changed — INACTIVE Store:**
+  - Users of an INACTIVE Store get **403 `{"error":"Store is inactive","code":"STORE_INACTIVE"}`** on every authenticated route and on login, Google login and refresh.
+  - `POST /api/system/mining/requests`, `POST /api/system/mining/schedules`, enabling a schedule (`PUT …/schedules/{id}` with `enabled: true`), `POST /api/users` and `PUT /api/users/{id}/role` return **409 `code: STORE_INACTIVE`** for an INACTIVE Store.
+  - Schedule occurrences can now be `SKIPPED` with `skipReason: STORE_INACTIVE`.
+- **Errors:** handled errors may carry `code` next to `error`.
+- **OpenAPI:** 102 paths / 123 operations → **107 / 133**. Only the Store paths and schemas were inserted into the checked-in file. The runtime export also differs, before this change, in `servers`, one CSV async parameter, one batch description and `PlacementView`; those differences were left untouched.
+- **Breaking for clients:** none in the request shapes. Behaviour changes for the frontend: the picker default and the 403 `STORE_INACTIVE` screen. The local avatar folder is unchanged (`~/.paspm/profile-images`); in Docker both avatars and Store images are on the `paspm_media` volume. A missing avatar or Store image file now returns 404 instead of 503.
+
+## 2026-11-20 — F02 Product SKU generated by backend (working changes)
+
+- Removed `sku` from `ProductRequest`; clients must omit it from Product POST/PUT bodies. The backend generates SKU at create time as `SKU-` plus the database Product ID padded to 11 digits, and returns it in `ProductView` as read-only.
+- Product updates preserve the existing SKU. Existing Product records are not rewritten. This changes the F02 request contract; update clients to display the returned SKU instead of accepting manual input.
+- No migration or route change. The current OpenAPI export and F02 examples are updated with the request/response contract.
+
+## 2026-11-19 — F04 Excel import brought onto current `dev` (branch `Khoi/feat/f04-excel-import-v26`, PR to `dev`)
+
+The Excel route of 2026-10-26 (entry at the end of this file) is cherry-picked onto `dev` `530651b` without contract change: `POST /api/transactions/imports/excel`, `STORE_ADMIN`, multipart `file`, synchronous `201 ImportSummary`; there is no async Excel route. The sync and async CSV routes keep their behavior and messages. OpenAPI: **101 paths / 122 operations** (100 / 121 plus the Excel route); no existing path or component schema changed. New runtime dependencies: Apache POI `poi-ooxml` 6.0.0 and `commons-io` 2.22.0. No migration.
 
 ## 2026-11-17 — F05 EFIM-aware lossless numeric guard (local feature branch)
 
@@ -209,3 +260,7 @@ No endpoint contract changes were made as part of this documentation export; thi
 ## 2026-10-26 — F04 CSV staging validation correction
 
 No endpoint, DTO, authorization or idempotency-key change. Invalid overlong order IDs use NULL in the staging lookup projection while raw row evidence remains exact; unrelated valid orders return the existing 201 summary contract. See [F04 improvement report](../features/F04/F04_IMPROVEMENT_REPORT.md). F04 is file-based CSV/Excel scope; external API/POS ingestion is excluded.
+
+## 2026-10-26 — F04 Excel import (stacked on CSV/V12 correction)
+
+Added `POST /api/transactions/imports/excel`, StoreAdmin multipart `file`, 201 ImportSummary. Reuses all CSV validation, history/error reads, transaction atomicity and CSV_UPLOAD idempotency; no historical label changes. Accepts one nonempty worksheet, seven ordered headers and text IDs/SKU/offset timestamp. [Approved contract and templates](../features/F04/F04_EXCEL_FORMAT_CONTRACT.md). Runtime OpenAPI now includes the actual new route. Shared-money bounds reject hostile exponent expansion before setScale while preserving valid DECIMAL(12,2) values.

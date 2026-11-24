@@ -59,7 +59,7 @@ class WeightV2CalculationTest {
         assertEquals(0,BigDecimal.ONE.compareTo(r.score()));
     }
     @Test void expiredBlockedEmptyAndNonExpiryProductsAreNotEligible() {
-        var expired=new Batch(1,AS_OF.minusDays(3),AS_OF,10,"ACTIVE");
+        var expired=new Batch(1,AS_OF.minusDays(3),AS_OF.minusDays(1),10,"ACTIVE"); // DEC-20261124-01: expired only when the date is AFTER expiry
         var r=calculator.calculate(true,List.of(expired,new Batch(2,AS_OF.plusDays(1),null,10,"BLOCKED"),new Batch(3,AS_OF.plusDays(1),null,0,"ACTIVE")),AS_OF,30,30);
         assertEquals("NO_SELLABLE_BATCH",r.status());assertEquals(List.of("EXPIRED"),r.evidence().batches().get(0).warnings());
         var na=calculator.calculate(false,List.of(batch(1,10,1)),AS_OF,30,30);

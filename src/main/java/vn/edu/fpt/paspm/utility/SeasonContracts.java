@@ -20,6 +20,7 @@ public final class SeasonContracts {
         @Schema(description="Whether the Store-local today lies within [startDate, endDate] inclusive (rule P3)") boolean activeToday,
         int createdBy,int updatedBy,Instant createdAt,Instant updatedAt) {}
     public record SeasonPage(List<SeasonView> items,int page,int pageSize,long totalElements) {}
-    public record SeasonProduct(int productId,String sku,String name,String status,int assignedBy,Instant assignedAt) {}
+    public record SeasonProduct(int productId,String sku,String name,String status,int assignedBy,Instant assignedAt,
+        @Schema(description="True when the product was soft-deleted (DEC-20261124-03): the assignment is kept for history, can be removed, and cannot be created again") boolean deleted) {}
     public record SeasonProductPage(List<SeasonProduct> items,int page,int pageSize,long totalElements) {}
 }

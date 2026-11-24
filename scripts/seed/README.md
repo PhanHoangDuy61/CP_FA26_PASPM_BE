@@ -1,6 +1,6 @@
 # Demo seed
 
-`seed_demo.py` fills an **empty** PASPM database through the public REST API (the only direct SQL is one `INSERT INTO store`, because no endpoint creates a store). `seed.sh` loads `.env.seed` and runs it. Setup steps for the staging stack are in [STAGING.md §5](../../docs/setup/STAGING.md); the variables are listed in [.env.seed.example](.env.seed.example).
+`seed_demo.py` fills an **empty** PASPM database through the public REST API (the Store is created with `POST /api/system/stores`; direct SQL is only used for the final record counts). `seed.sh` loads `.env.seed` and runs it. Setup steps for the staging stack are in [STAGING.md §5](../../docs/setup/STAGING.md); the variables are listed in [.env.seed.example](.env.seed.example).
 
 ```bash
 cp scripts/seed/.env.seed.example scripts/seed/.env.seed && chmod 600 scripts/seed/.env.seed
@@ -39,7 +39,7 @@ All dates are offsets from `SEED_AS_OF` (default: today in Asia/Ho_Chi_Minh). Ob
 | No push day (`MISSING_PUSH_DAY`) | 5% (`SEED_PUSH_MISSING_PCT`) | 30 |
 | Initial quantity | log-uniform between `SEED_EXPIRY_QTY_MIN_PCT` (2%) and 100% of `SEED_BATCH_QUANTITY` (1,000) | 20 – 994, mean 244 |
 
-`pushDay` is never after the expiry date (the API rejects it otherwise; the test suite checks it). Batches expiring **today** (expiry = `SEED_AS_OF`) are not sellable; they appear as `EXPIRED` in the score evidence and as `NO_SELLABLE_BATCH` (10 products). Non-perishable products keep an undated batch of `SEED_BATCH_QUANTITY`. The varied quantity is deliberate: with the same 1,000 units every batch would be at risk and U_expiry would be about 1 for all of them. Total stock is 1,142,397 units (perishable 134,397) instead of 1,559,000.
+`pushDay` is never after the expiry date (the API rejects it otherwise; the test suite checks it). Batches expiring **today** (expiry = `SEED_AS_OF`) were not sellable when this seed was written: they appeared as `EXPIRED` in the score evidence and as `NO_SELLABLE_BATCH` (10 products). Since 2026-11-24 (DEC-20261124-01) a batch is expired only after its expiry date, so those batches are eligible; the seed was not changed (its fixes are deferred). Non-perishable products keep an undated batch of `SEED_BATCH_QUANTITY`. The varied quantity is deliberate: with the same 1,000 units every batch would be at risk and U_expiry would be about 1 for all of them. Total stock is 1,142,397 units (perishable 134,397) instead of 1,559,000.
 
 ### Seasons and product groups
 

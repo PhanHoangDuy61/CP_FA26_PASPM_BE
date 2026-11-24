@@ -70,7 +70,7 @@ class RetailCatalogUtilityIntegrationTest {
     }
 
     @Test void catalogReadDoesNotGrantProductCategoryOrInventoryWrites() throws Exception {
-        String productBody="{\"sku\":\"DENIED\",\"name\":\"Denied\",\"unit\":\"bottle\",\"requiresExpiry\":true,\"sellingPrice\":100,\"costPrice\":20,\"status\":\"ACTIVE\"}";
+        String productBody="{\"name\":\"Denied\",\"unit\":\"bottle\",\"requiresExpiry\":true,\"sellingPrice\":100,\"costPrice\":20,\"status\":\"ACTIVE\"}";
         String categoryBody="{\"name\":\"Denied\",\"status\":\"ACTIVE\"}";
         for(String path:new String[]{"/api/products","/api/categories"}) {
             mvc.perform(post(path).header("Authorization","Bearer "+merchant).contentType(MediaType.APPLICATION_JSON).content(path.endsWith("products")?productBody:categoryBody))
@@ -81,7 +81,7 @@ class RetailCatalogUtilityIntegrationTest {
             mvc.perform(patch(path+"/status").header("Authorization","Bearer "+merchant).contentType(MediaType.APPLICATION_JSON).content("{\"status\":\"INACTIVE\"}"))
                 .andExpect(status().isForbidden());
         }
-        mvc.perform(post("/api/products/"+product+"/batches").header("Authorization","Bearer "+merchant).contentType(MediaType.APPLICATION_JSON).content("{\"batchCode\":\"DENIED\",\"receivedAt\":\"2026-10-01T00:00:00Z\",\"expiryDate\":\"2099-01-01\",\"initialQuantity\":1}"))
+        mvc.perform(post("/api/products/"+product+"/batches").header("Authorization","Bearer "+merchant).contentType(MediaType.APPLICATION_JSON).content("{\"receivedAt\":\"2026-10-01T00:00:00Z\",\"expiryDate\":\"2099-01-01\",\"initialQuantity\":1}"))
             .andExpect(status().isForbidden());
     }
 
@@ -134,11 +134,14 @@ class RetailCatalogUtilityIntegrationTest {
 
     @Test void sharedExpiryRulesForUnsellableMissingPushDayAndNonExpiryProducts() throws Exception {
         int season=season("All",today.minusDays(1),today.plusDays(1),"0.5");assign(season,product);
-        for(String change:new String[]{"status='BLOCKED'","status='ACTIVE',remaining_quantity=0","remaining_quantity=10,push_day='"+today.minusDays(1)+"',expiry_date='"+today+"'"}) {
+        for(String change:new String[]{"status='BLOCKED'","status='ACTIVE',remaining_quantity=0","remaining_quantity=10,push_day='"+today.minusDays(2)+"',expiry_date='"+today.minusDays(1)+"'"}) {
             jdbc.update("UPDATE inventory_batch SET "+change+" WHERE product_id=?",product);
             getJson(scorePath(),merchant).andExpect(status().isOk()).andExpect(jsonPath("$.expiryStatus").value("NO_SELLABLE_BATCH"))
                 .andExpect(jsonPath("$.expiryRisk").value(0)).andExpect(jsonPath("$.weightValue").value(1.1));
         }
+        // DEC-20261124-01: a batch expiring today is still eligible (push day reached), so it is no longer NO_SELLABLE_BATCH
+        jdbc.update("UPDATE inventory_batch SET remaining_quantity=10,push_day=?,expiry_date=? WHERE product_id=?",today.minusDays(1),today,product);
+        getJson(scorePath(),merchant).andExpect(status().isOk()).andExpect(jsonPath("$.expiryStatus").value("SLOW_MOVING"));
         jdbc.update("UPDATE inventory_batch SET expiry_date=?,push_day=NULL WHERE product_id=?",today.plusDays(5),product);
         int batch=jdbc.queryForObject("SELECT batch_id FROM inventory_batch WHERE product_id=?",Integer.class,product);
         getJson(scorePath(),merchant).andExpect(jsonPath("$.expiryStatus").value("MISSING_PUSH_DAY"))

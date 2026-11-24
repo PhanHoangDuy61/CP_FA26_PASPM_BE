@@ -16,12 +16,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.web.servlet.MockMvc;
-import vn.edu.fpt.paspm.auth.AuthService;
 import vn.edu.fpt.paspm.common.ApiException;
 import vn.edu.fpt.paspm.layout.LayoutPolicyProperties;
 import vn.edu.fpt.paspm.layout.LayoutRules;
@@ -48,7 +46,6 @@ class StorefrontIntegrationTest {
     @Autowired MockMvc mvc;
     @Autowired JdbcTemplate jdbc;
     @Autowired UserRepository users;
-    @Autowired AuthService auth;
     @Autowired ObjectMapper json;
     @Autowired StorefrontRepository storefronts;
     @MockitoSpyBean JdbcTemplate jdbcSpy;
@@ -118,36 +115,60 @@ class StorefrontIntegrationTest {
     }
 
     @Test
-    void storefrontVisibilityIsSystemAdminOnlyAndDoesNotPublishCampaigns() throws Exception {
-        String name = "Visibility " + UUID.randomUUID();
-        int store = store(name, false);
-        jdbc.update("UPDATE store SET store_slug=NULL WHERE store_id=?", store);
-        String path = "/api/system/stores/" + store + "/storefront-visibility";
-        mvc.perform(put(path).contentType(MediaType.APPLICATION_JSON).content("{\"storefrontEnabled\":true}"))
-                .andExpect(status().isUnauthorized());
-        for (String role : List.of("STORE_ADMIN", "MERCHANDISER", "END_CUSTOMER")) {
-            mvc.perform(put(path).header("Authorization", bearer(token(role, role.equals("END_CUSTOMER") ? null : store)))
-                    .contentType(MediaType.APPLICATION_JSON).content("{\"storefrontEnabled\":true}"))
-                    .andExpect(status().isForbidden());
-        }
-        String admin = bearer(token("SYSTEM_ADMIN", null));
-        mvc.perform(put(path).header("Authorization", admin).contentType(MediaType.APPLICATION_JSON)
-                .content("{\"storefrontEnabled\":true}"))
-                .andExpect(status().isOk()).andExpect(jsonPath("$.storeId").value(store))
-                .andExpect(jsonPath("$.storeSlug").value(StoreSlug.generate(name, store)))
-                .andExpect(jsonPath("$.storefrontEnabled").value(true));
-        mvc.perform(put(path).header("Authorization", admin).contentType(MediaType.APPLICATION_JSON)
-                .content("{\"storefrontEnabled\":false}"))
-                .andExpect(status().isOk()).andExpect(jsonPath("$.storefrontEnabled").value(false));
-        mvc.perform(get("/api/storefront/" + StoreSlug.generate(name, store) + "/home"))
-                .andExpect(status().isNotFound());
+    void inactiveStoresAreNotPublicAndTheStoreSlugIsTheStoreManagementSlug() throws Exception {
+        int store = store("Inactive " + UUID.randomUUID(), false);
+        int product = product(store, "Hidden while inactive", false, "ACTIVE", null, null);
+        batch(product, 5, "ACTIVE", null);
+        String slug = slug(store);
         JsonNode publicStores = json.readTree(mvc.perform(get("/api/storefront/stores"))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString());
-        assertNull(findStore(publicStores, StoreSlug.generate(name, store)));
+        assertNull(findStore(publicStores, slug));
+        mvc.perform(get("/api/storefront/" + slug + "/home"))
+                .andExpect(status().isNotFound()).andExpect(jsonPath("$.error").value("Storefront not found"));
+        mvc.perform(get("/api/storefront/" + slug + "/products"))
+                .andExpect(status().isNotFound()).andExpect(jsonPath("$.error").value("Storefront not found"));
+        mvc.perform(get("/api/storefront/" + slug + "/products/" + product))
+                .andExpect(status().isNotFound()).andExpect(jsonPath("$.error").value("Storefront not found"));
+
+        // Reactivating the Store (DEC-20261123-01) is the only switch; the public slug is store.slug.
+        jdbc.update("UPDATE store SET status='ACTIVE' WHERE store_id=?", store);
+        publicStores = json.readTree(mvc.perform(get("/api/storefront/stores"))
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString());
+        assertNotNull(findStore(publicStores, slug));
+        mvc.perform(get("/api/storefront/" + slug + "/products/" + product)).andExpect(status().isOk());
         assertEquals(0, jdbc.queryForObject("SELECT COUNT(*) FROM campaign WHERE store_id=?", Integer.class, store));
-        mvc.perform(put("/api/system/stores/999999/storefront-visibility").header("Authorization", admin)
-                .contentType(MediaType.APPLICATION_JSON).content("{\"storefrontEnabled\":true}"))
-                .andExpect(status().isNotFound()).andExpect(jsonPath("$.error").value("Store not found"));
+    }
+
+    @Test
+    void softDeletedProductsAreHiddenEverywhereInThePublicStorefront() throws Exception {
+        int store = store("Soft delete " + UUID.randomUUID(), true);
+        int admin = user("STORE_ADMIN", store);
+        int kept = product(store, "Kept product", false, "ACTIVE", null, null);
+        int deleted = product(store, "Deleted product", false, "ACTIVE", null, null);
+        int deletedButActive = product(store, "Deleted but still ACTIVE row", false, "ACTIVE", null, null);
+        for (int id : List.of(kept, deleted, deletedButActive)) batch(id, 5, "ACTIVE", null);
+        // DEC-20261124-03 soft delete sets INACTIVE + deleted_at; the second row checks the deleted_at guard alone.
+        jdbc.update("UPDATE product SET status='INACTIVE',deleted_at=CURRENT_TIMESTAMP,deleted_by=? WHERE product_id=?",
+                admin, deleted);
+        jdbc.update("UPDATE product SET deleted_at=CURRENT_TIMESTAMP,deleted_by=? WHERE product_id=?",
+                admin, deletedButActive);
+        String slug = slug(store);
+
+        JsonNode page = json.readTree(mvc.perform(get("/api/storefront/" + slug + "/products"))
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString());
+        assertEquals(1, page.path("totalElements").asInt());
+        assertEquals(kept, page.path("items").get(0).path("productId").asInt());
+        for (int id : List.of(deleted, deletedButActive)) {
+            mvc.perform(get("/api/storefront/" + slug + "/products/" + id))
+                    .andExpect(status().isNotFound()).andExpect(jsonPath("$.error").value("Product not found"));
+        }
+        String home = mvc.perform(get("/api/storefront/" + slug + "/home"))
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        assertTrue(home.contains("Kept product"));
+        assertFalse(home.contains("Deleted"));
+        var availability = storefronts.availability(store, List.of(deletedButActive),
+                LocalDate.now(ZoneId.of("Asia/Ho_Chi_Minh")));
+        assertFalse(availability.get(deletedButActive).productActive());
     }
 
     @Test
@@ -163,6 +184,7 @@ class StorefrontIntegrationTest {
         int store = store("Availability " + UUID.randomUUID(), true);
         LocalDate today = LocalDate.now(ZoneId.of("Asia/Ho_Chi_Minh"));
         int validExpiry = product(store, "Valid expiry", true, "ACTIVE", null, null);
+        int expiresToday = product(store, "Expires today", true, "ACTIVE", null, null);
         int expired = product(store, "Expired", true, "ACTIVE", null, null);
         int missingExpiry = product(store, "Missing expiry", true, "ACTIVE", null, null);
         int nonExpiring = product(store, "Non-expiring", false, "ACTIVE", null, null);
@@ -170,7 +192,8 @@ class StorefrontIntegrationTest {
         int blocked = product(store, "Blocked", false, "ACTIVE", null, null);
         int inactive = product(store, "Inactive", false, "INACTIVE", null, null);
         batch(validExpiry, 5, "ACTIVE", today.plusDays(1));
-        batch(expired, 5, "ACTIVE", today);
+        batch(expiresToday, 5, "ACTIVE", today);
+        batch(expired, 5, "ACTIVE", today.minusDays(1));
         batch(missingExpiry, 5, "ACTIVE", null);
         batch(nonExpiring, 5, "ACTIVE", null);
         batch(blocked, 5, "BLOCKED", today.plusDays(1));
@@ -178,8 +201,10 @@ class StorefrontIntegrationTest {
 
         clearInvocations(jdbcSpy);
         var result = storefronts.availability(store,
-                List.of(validExpiry, expired, missingExpiry, nonExpiring, noStock, blocked, inactive), today);
+                List.of(validExpiry, expiresToday, expired, missingExpiry, nonExpiring, noStock, blocked, inactive), today);
         assertTrue(result.get(validExpiry).sellableQuantity() > 0);
+        // DEC-20261124-01: a batch is still sellable on its expiry date and expired only the day after.
+        assertTrue(result.get(expiresToday).sellableQuantity() > 0);
         assertEquals(0, result.get(expired).sellableQuantity());
         assertEquals(0, result.get(missingExpiry).sellableQuantity());
         assertTrue(result.get(missingExpiry).missingRequiredExpiry());
@@ -260,10 +285,11 @@ class StorefrontIntegrationTest {
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString());
         JsonNode paths = api.path("paths");
         for (String path : List.of("/api/storefront/stores", "/api/storefront/{storeSlug}/home",
-                "/api/storefront/{storeSlug}/products", "/api/storefront/{storeSlug}/products/{productId}",
-                "/api/system/stores/{storeId}/storefront-visibility")) {
+                "/api/storefront/{storeSlug}/products", "/api/storefront/{storeSlug}/products/{productId}")) {
             assertTrue(paths.has(path), "Missing OpenAPI path " + path);
         }
+        assertFalse(paths.has("/api/system/stores/{storeId}/storefront-visibility"),
+                "Public visibility follows Store status; there is no separate toggle");
         for (String path : List.of("/api/storefront/stores", "/api/storefront/{storeSlug}/home",
                 "/api/storefront/{storeSlug}/products", "/api/storefront/{storeSlug}/products/{productId}")) {
             JsonNode operation = paths.path(path).path("get");
@@ -282,16 +308,14 @@ class StorefrontIntegrationTest {
         assertTrue(catalogPage.path("properties").has("totalPages"));
     }
 
-    private int store(String name, boolean enabled) {
-        jdbc.update("INSERT INTO store(name) VALUES (?)", name);
-        int id = jdbc.queryForObject("SELECT MAX(store_id) FROM store", Integer.class);
-        jdbc.update("UPDATE store SET store_slug=?,storefront_enabled=? WHERE store_id=?",
-                StoreSlug.generate(name, id), enabled, id);
-        return id;
+    private int store(String name, boolean active) {
+        jdbc.update("INSERT INTO store(name,slug,status) VALUES (?,?,?)", name,
+                "f09-" + UUID.randomUUID().toString().substring(0, 13), active ? "ACTIVE" : "INACTIVE");
+        return jdbc.queryForObject("SELECT MAX(store_id) FROM store", Integer.class);
     }
 
     private String slug(int store) {
-        return jdbc.queryForObject("SELECT store_slug FROM store WHERE store_id=?", String.class, store);
+        return jdbc.queryForObject("SELECT slug FROM store WHERE store_id=?", String.class, store);
     }
 
     private int product(int store, String name, boolean requiresExpiry, String status,
@@ -318,13 +342,6 @@ class StorefrontIntegrationTest {
                 role, store, null, null);
         jdbc.update("UPDATE app_user SET status='ACTIVE',email_verified_at=CURRENT_TIMESTAMP WHERE user_id=?", user.id());
         return user.id();
-    }
-
-    private String token(String role, Integer store) {
-        var user = users.createPendingUser("F09 test", UUID.randomUUID() + "@example.test",
-                role, store, null, null);
-        jdbc.update("UPDATE app_user SET status='ACTIVE',email_verified_at=CURRENT_TIMESTAMP WHERE user_id=?", user.id());
-        return auth.token(users.findById(user.id())).accessToken();
     }
 
     private int snapshot(int store, int actor) {
@@ -409,9 +426,5 @@ class StorefrontIntegrationTest {
     private JsonNode findStore(JsonNode stores, String slug) {
         for (JsonNode store : stores) if (slug.equals(store.path("storeSlug").asText())) return store;
         return null;
-    }
-
-    private static String bearer(String token) {
-        return "Bearer " + token;
     }
 }

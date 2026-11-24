@@ -43,7 +43,7 @@ public class MiningService {
                 if(snapshots.countItems(store,request.snapshotId())>MiningInputBuilder.MAX_ROWS)throw new ApiException(400,"Snapshot matrix exceeds mining row limit");
                 var rows=snapshots.page(store,request.snapshotId(),0,MiningInputBuilder.MAX_ROWS);
                 snapshots.assertMiningOwnership(store,request.snapshotId());
-                var input=builder.build(snapshot,rows);int threshold=builder.threshold(input,request.minUtilMode(),request.minUtilValue());
+                var prepared=builder.prepare(snapshot,rows,request.minUtilMode(),request.minUtilValue());var input=prepared.input();int threshold=prepared.threshold();
                 return repository.create(store,auth.current(jwt).id(),request,hash,snapshot,input,threshold);
             });
         }catch(DuplicateKeyException e){var raced=repository.byKey(store,request.requestKey());if(raced==null)throw e;return same(raced,hash);}
@@ -63,6 +63,8 @@ public class MiningService {
         String hash=MiningInputBuilder.sha((merchant?"MERCHANT|":"ADMIN|")+snapshotId+"|false");
         var previous=repository.byKey(store,key);
         if(previous!=null)return same(previous,hash);
+        // DEC-20261123-01 §4: no new mining work for an INACTIVE Store (replaying an existing request key stays allowed).
+        vn.edu.fpt.paspm.security.StoreStatusGuard.requireActiveForNewWork(jdbc,store);
         if(snapshots.find(store,snapshotId)==null)throw new ApiException(404,"Utility snapshot not found");
         engine.requireAvailable();
         MiningRepository.Stored created;
@@ -78,13 +80,13 @@ public class MiningService {
                 if(snapshots.countItems(store,snapshotId)>MiningInputBuilder.MAX_ROWS)throw new ApiException(400,"Snapshot matrix exceeds mining row limit");
                 var rows=snapshots.page(store,snapshotId,0,MiningInputBuilder.MAX_ROWS);
                 snapshots.assertMiningOwnership(store,snapshotId);
-                var input=builder.build(snapshot,rows);
+                var prepared=builder.prepare(snapshot,rows,policy.minUtilMode(),policy.minUtilValue());var input=prepared.input();
                 if(merchant) {
                     var lambda=snapshot.configuration().config().lambda();
                     if(lambda==null||lambda.signum()<0||lambda.compareTo(lambdaPolicy.lambdaMax())>0)
                         throw new ApiException(409,"The lambda policy changed: this snapshot exceeds the current lambda maximum. Create a new snapshot within the current permitted range before submitting mining.");
                 }
-                int threshold=builder.threshold(input,policy.minUtilMode(),policy.minUtilValue());
+                int threshold=prepared.threshold();
                 var saved=repository.create(store,auth.current(jwt).id(),policy,hash,snapshot,input,threshold);
                 jdbc.update("UPDATE mining_request SET config_version=? WHERE store_id=? AND request_id=?",version,store,saved.view().requestId());
                 return saved;

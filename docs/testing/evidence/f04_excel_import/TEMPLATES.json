@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-26",
+  "formats": [
+    {
+      "path": "docs/features/F04/examples/transactions-template.xlsx",
+      "bytes": 3473,
+      "sha256": "ce11f5a2716766d36b0e84b5963afee95c77dd4c9dc2961fd925dda5f6280747",
+      "sourceOrderId": "0001",
+      "sku": "00123",
+      "identityAcrossFormats": "one transaction, second upload duplicate"
+    },
+    {
+      "path": "docs/features/F04/examples/transactions-template.xls",
+      "bytes": 4096,
+      "sha256": "49e0525b00bc2c41e4db218aa966afc7a312e41635f4989139f8adcd2b6e38fa",
+      "sourceOrderId": "0001",
+      "sku": "00123",
+      "identityAcrossFormats": "one transaction, second upload duplicate"
+    }
+  ],
+  "routeProof": "publishedTemplatesUseTheActualRouteAndSharedIdentity passed in H2 and MySQL suites during final full verification"
+}

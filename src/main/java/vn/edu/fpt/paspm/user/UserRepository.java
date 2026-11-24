@@ -22,8 +22,13 @@ import vn.edu.fpt.paspm.common.Contracts.UserView;
 
 @Repository
 public class UserRepository {
+    /** Every user read carries the Store status: the central Store guard (DEC-20261123-01 §4) relies on it. */
     private static final String SELECT =
-            "SELECT u.*,r.code FROM app_user u JOIN role r ON r.role_id=u.role_id ";
+            "SELECT u.*,r.code,s.status AS store_status FROM app_user u JOIN role r ON r.role_id=u.role_id " +
+                    "LEFT JOIN store s ON s.store_id=u.store_id ";
+    /** Row locks touch app_user (and role) only; the Store status is read separately so logins never lock the store row. */
+    private static final String SELECT_FOR_UPDATE =
+            "SELECT u.*,r.code,NULL AS store_status FROM app_user u JOIN role r ON r.role_id=u.role_id ";
 
     private final JdbcTemplate jdbc;
 
@@ -48,7 +53,8 @@ public class UserRepository {
                     : resultSet.getTimestamp("email_verified_at").toInstant(),
             resultSet.getInt("token_version"),
             resultSet.getString("verification_purpose"),
-            resultSet.getString("avatar_key")
+            resultSet.getString("avatar_key"),
+            resultSet.getString("store_status")
     );
 
     public User findById(int id) {
@@ -68,10 +74,14 @@ public class UserRepository {
     public static final String SYSTEM_PRINCIPAL_ROLE = "SYSTEM_SCHEDULER";
 
     public User lockById(int id) {
-        User user = jdbc.query(SELECT + "WHERE user_id=? FOR UPDATE", mapper, id)
+        User locked = jdbc.query(SELECT_FOR_UPDATE + "WHERE user_id=? FOR UPDATE", mapper, id)
                 .stream()
                 .findFirst()
                 .orElseThrow(() -> new ApiException(404, "User not found"));
+        User user = locked.storeId() == null ? locked : new User(locked.id(), locked.email(), locked.name(), locked.role(),
+                locked.storeId(), locked.status(), locked.passwordHash(), locked.verifiedAt(), locked.version(),
+                locked.purpose(), locked.avatarKey(), jdbc.queryForObject(
+                        "SELECT status FROM store WHERE store_id=?", String.class, locked.storeId()));
         if (SYSTEM_PRINCIPAL_ROLE.equals(user.role())) {
             throw new ApiException(404, "User not found");
         }
@@ -103,6 +113,7 @@ public class UserRepository {
             ) != 1) {
                 throw new ApiException(400, "Staff requires an existing Store");
             }
+            vn.edu.fpt.paspm.security.StoreStatusGuard.requireActiveForNewWork(jdbc, storeId);
         } else if (storeId != null) {
             throw new ApiException(400, "Global account must not have a Store");
         }

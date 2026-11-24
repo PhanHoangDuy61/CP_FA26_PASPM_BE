@@ -27,7 +27,17 @@ Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and fea
 | F01 Change own password | POST `/api/auth/password/change` | Authenticated own account; current password required | same | same | same |
 | F01 User list | GET `/api/users` | Allowed, global | Forbidden | Forbidden | Forbidden |
 | F01 User detail | GET `/api/users/{id}` | Allowed, global | Forbidden | Forbidden | Forbidden |
-| F01 Invite/create account | POST `/api/users` | Allowed; role/Store constraints apply | Forbidden | Forbidden | Forbidden |
+| F01 Invite/create account | POST `/api/users` | Allowed; role/Store constraints apply (409 `STORE_INACTIVE` for an INACTIVE Store) | Forbidden | Forbidden | Forbidden |
+| F01 Store list / picker | GET `/api/system/stores` | Allowed; ACTIVE by default (`status=INACTIVE\|ALL`) | Forbidden | Forbidden | Forbidden |
+| F01 Create Store | POST `/api/system/stores` | Allowed | Forbidden | Forbidden | Forbidden |
+| F01 Store detail / update | GET, PUT `/api/system/stores/{storeId}` | Allowed (any Store) | Forbidden | Forbidden | Forbidden |
+| F01 Deactivate / reactivate Store | PATCH `/api/system/stores/{storeId}/status` | Allowed | Forbidden | Forbidden | Forbidden |
+| F01 Own Store profile | GET `/api/store/profile` | Forbidden | Own Store | Own Store | Forbidden |
+| F01 Edit own Store contact | PUT `/api/store/profile` | Forbidden | Own Store (address, phone) | Forbidden | Forbidden |
+| F01 Read Store image | GET `/api/stores/{storeId}/images/{kind}` | Any Store (INACTIVE included) | Own Store; other Store 404 | Own Store; other Store 404 | Forbidden |
+| F01 Upload / remove Store image | PUT, DELETE `/api/stores/{storeId}/images/{kind}` | Any Store | Own Store; other Store 404 | Forbidden | Forbidden |
+| F01 Public Store image | GET `/api/public/stores/{storeId}/images/{fileName}` | Public (ACTIVE Store, current file only) | same | same | same |
+| All authenticated routes | — | — | 403 `STORE_INACTIVE` when the own Store is INACTIVE | same | — |
 | F01 Update account name | PUT `/api/users/{id}` | Allowed, global | Forbidden | Forbidden | Forbidden |
 | F01 Activate/deactivate | PATCH `/api/users/{id}/status` | Allowed, global; OTP cannot be bypassed | Forbidden | Forbidden | Forbidden |
 | F01 Assign role/Store | PUT `/api/users/{id}/role` | Allowed; valid role/store scope | Forbidden | Forbidden | Forbidden |
@@ -41,7 +51,8 @@ Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and fea
 | F02 Product detail | GET `/api/products/{id}` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign record→404 | Forbidden |
 | F02 Create product | POST `/api/products` | Forbidden | Allowed, Store inferred from token | Forbidden | Forbidden |
 | F02 Update product | PUT `/api/products/{id}` | Forbidden | Allowed, own Store; foreign→404 | Forbidden | Forbidden |
-| F02 Product status | PATCH `/api/products/{id}/status` | Forbidden | Allowed, own Store; foreign→404 | Forbidden | Forbidden |
+| F02 Product status | PATCH `/api/products/{id}/status` | Forbidden | Allowed, own Store; foreign→404; soft-deleted→404 | Forbidden | Forbidden |
+| F02 Delete product (soft, 2026-11-24, DEC-20261124-03) | DELETE `/api/products/{id}` | Forbidden | Allowed, own Store only; foreign / unknown / already deleted→404; 409 `PRODUCT_HAS_SELLABLE_STOCK` or `PRODUCT_IN_LIVE_CAMPAIGN` | Forbidden | Forbidden |
 | F02 List batches | GET `/api/products/{id}/batches` | Forbidden | Allowed, own Store; foreign→404 | Forbidden | Forbidden |
 | F02 Create batch (optional `pushDay` ≤ expiry, 2026-11-15) | POST `/api/products/{id}/batches` | Forbidden | Allowed, own Store product | Forbidden | Forbidden |
 | F02 Batch detail | GET `/api/inventory-batches/{id}` | Forbidden | Allowed, own Store; foreign→404 | Forbidden | Forbidden |
@@ -69,6 +80,7 @@ Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and fea
 | F03 Independent expiry pushes | GET `/api/utility/expiry-push-batches` | Forbidden | Allowed, own Store | Allowed, own Store | Forbidden |
 | F03 Snapshot history list | GET `/api/utility/snapshots` | NOT IMPLEMENTED | NOT IMPLEMENTED | NOT IMPLEMENTED | NOT IMPLEMENTED |
 | F04 CSV import | POST `/api/transactions/imports/csv` | Forbidden | Allowed, own Store (multipart `file`) | Forbidden | Forbidden |
+| F04 Excel import | POST `/api/transactions/imports/excel` | Forbidden | Allowed, own Store (multipart `file`, `.xlsx`/`.xls`) | Forbidden | Forbidden |
 | F04 Import list | GET `/api/transactions/imports` | Forbidden | Allowed, own Store | Allowed, own Store | Forbidden |
 | F04 Import detail | GET `/api/transactions/imports/{id}` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign→404 | Forbidden |
 | F04 Import errors | GET `/api/transactions/imports/{id}/errors` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign→404 | Forbidden |
@@ -107,10 +119,9 @@ Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and fea
 | F06 Read recommendation policy | GET `/api/recommendations/config` | Forbidden | Allowed, own Store | Allowed, own Store | Forbidden |
 | F06 Update recommendation policy | PUT `/api/recommendations/config` | Forbidden | Allowed, own Store; expectedVersion required | Forbidden | Forbidden |
 | F06 Independent expiry push | GET `/api/recommendations/expiry-push` | Forbidden | Allowed, own Store | Allowed, own Store | Forbidden |
-| F09 public Store list | GET `/api/storefront/stores` | Public, enabled Stores only | Public | Public | Public |
-| F09 public Homepage | GET `/api/storefront/{storeSlug}/home` | Public; hidden/unknown slug → 404 | Public | Public | Public |
-| F09 public Product list/detail | GET `/api/storefront/{storeSlug}/products[/{productId}]` | Public; only ACTIVE Products in that storefront Store | Public | Public | Public |
-| F09 visibility toggle | PUT `/api/system/stores/{storeId}/storefront-visibility` | Allowed; changes visibility only | Forbidden | Forbidden | Forbidden |
+| F09 public Store list | GET `/api/storefront/stores` | Public, ACTIVE Stores only | Public | Public | Public |
+| F09 public Homepage | GET `/api/storefront/{storeSlug}/home` | Public; INACTIVE/unknown slug → 404 | Public | Public | Public |
+| F09 public Product list/detail | GET `/api/storefront/{storeSlug}/products[/{productId}]` | Public; only ACTIVE, non-deleted Products of that ACTIVE Store | Public | Public | Public |
 
 ## Authorization details
 
@@ -118,7 +129,7 @@ Role is global to the account; `STORE_ADMIN` and `MERCHANDISER` have a `store_id
 
 F01 `/api/users` is global System Admin administration, so it can list/read/manage accounts across Stores. F02 does **not** grant System Admin access: Product/Category GET list/detail permits Store Admin/Merchandiser, while all mutations and inventory endpoints stay StoreAdmin-only, even though the shared StoreScope helper contains a System Admin branch. Do not infer endpoint permission from helper behavior alone.
 
-F09 public GET routes are explicitly permitted without a JWT and resolve Store scope only by an enabled public slug. They return a separate public DTO; the SYSTEM_ADMIN visibility route is not a campaign publishing or activation API.
+F09 public GET routes are explicitly permitted without a JWT (`security/SecurityConfig.java`) and resolve Store scope only by the slug of an ACTIVE Store (DEC-20261125-01). They return a separate public DTO. There is no F09 write route; Store status and slug are managed through F01 Store management.
 
 F03 policy routes are explicitly System Admin-only. F03 Store settings use distinct permissions: Store Admin owns batch `pushDay`; Merchandiser changes enabled criteria, coefficients and selected lambda. Both can read the combined Store config. Product score reads permit both Store roles; score PATCH and Preview/snapshot operations remain Merchandiser-only. Current score reads return E/W without transaction history; invalid current lambda yields200 with ready=false/weightValue=null rather than clamping. All Store-bound F03 calls derive Store identity from the authenticated user; request bodies and query strings cannot select another Store. A tightened lambda policy leaves existing Store configuration unchanged and is surfaced through `lambdaValid=false`; Preview/Snapshot rejects the stale lambda with 409 until a Merchandiser updates it.
 

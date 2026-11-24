@@ -8,7 +8,7 @@
 
 ## R2 Expiry risk U_expiry
 - R2.1 `U_expiry = Q_risk / Q_eligible`; `Q_eligible = 0 → 0` — DEC-01; `utility/ExpiryRiskCalculator.java`.
-- R2.2 Eligible batch: ACTIVE, remaining > 0, not expired at the analysis date (expiry > analysis date), has a push day — `utility/ExpiryRiskCalculator.java:41`, `:45`.
+- R2.2 Eligible batch: ACTIVE, remaining > 0, not expired at the analysis date (the analysis date is not after the expiry date; **changed 2026-11-24, DEC-20261124-01**: it was `expiry > analysis date`), has a push day — `utility/ExpiryRiskCalculator.java:41`, `:45`.
 - R2.3 FEFO order: push day ascending, then batch id as an integer — `utility/ExpiryRiskCalculator.java:59`.
 - R2.4 Each batch sells at most `v × days_to_push − units sold from earlier batches`; the rest is Q_risk — `utility/ExpiryRiskCalculator.java:74-75`.
 - R2.5 (P4, approved 2026-11-16) A push day on or before the analysis date gives zero selling days — `utility/ExpiryRiskCalculator.java:74`.

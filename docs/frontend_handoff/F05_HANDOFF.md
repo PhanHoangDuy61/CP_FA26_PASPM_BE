@@ -43,7 +43,7 @@ Mining runs asynchronously on a Java 17 backend with an external Java 25 SPMF ch
 | Screen / action | API | Role | State |
 |---|---|---|---|
 | Global policy form | `GET`/`PUT /api/system/mining/config` (send minUtil fields and `expectedVersion`; EFIM is fixed) | System Admin | Ready |
-| Store selection | `GET /api/system/stores?page=0&pageSize=100` → `{items:[{storeId,name}],page,pageSize,totalElements}` ordered by name | System Admin | Ready (D2) |
+| Store selection | `GET /api/system/stores?page=0&pageSize=100` → `{items:[{storeId,name,…}],page,pageSize,totalElements}` ordered by name; **ACTIVE Stores only by default** since DEC-20261123-01 (no client change needed) | System Admin | Ready (D2) |
 | Snapshot choice | System Admin: `GET /api/system/mining/stores/{storeId}/snapshots` (D1); or take the `snapshotId` from the Merchandiser's F03 snapshot response | System Admin | Ready |
 | Run button | `POST /api/system/mining/requests` body `{storeId,snapshotId,requestKey}` | System Admin | Ready; one EFIM run |
 | Status polling | System Admin: `GET /api/system/mining/stores/{storeId}/requests/{requestId}` (D1); Store users: `GET /api/mining/requests/{id}` | both | Ready |
@@ -111,3 +111,7 @@ Java long IDs/divisor and decimal utility values are JSON numbers. Preserve prec
 - Scheduling: implemented on the Scheduler branch (not yet on `dev`), locally verified, **not release accepted** and **off by default**: enabling a schedule returns 503 and the dispatcher does not run unless the Backend instance sets `paspm.mining.schedule-dispatch-enabled=true`. Decisions D1–D10 are confirmed ([register](../decisions/PO_DECISION_REGISTER_F05_2026-11-01.md)). Do not promise scheduled execution in production until release sign-off.
 - F06 recommendations are separate ([F06 handoff](F06_HANDOFF.md)); they combine COMPLETED raw patterns with current inventory and Merchandiser review. `E_i=1` does not guarantee appearance in a pattern.
 - Not verified: Frontend end-to-end flows, native Linux production image, remote CI.
+
+## 2026-11-19 — whole-đồng SPMF input (additive fields)
+
+`RequestView` and `RunView` gain `conversionMode` (`LOSSLESS` | `WHOLE_UNIT_HALF_UP`, nullable) and `roundingUnit` (`1` or `null`). When `conversionMode` is `WHOLE_UNIT_HALF_UP`, show "mining input rounded to 1 đồng" next to the request; `totalScaledUtility`, `minUtilSpmf` and pattern `utilitySpmf` are then whole đồng. Pattern `utility` and `effectiveMinUtility` are always đồng. Historical requests show `LOSSLESS`. A request that still overflows returns 400 whose message ends with `even after WHOLE_UNIT_HALF_UP rounding to 1 đồng`. Nothing was removed or renamed. See [F05 API](../api/F05_MINING_API.md) and [DEC-20261119-05](../decisions/2026-11-19/DEC-20261119-05-spmf-whole-dong-fallback.md).

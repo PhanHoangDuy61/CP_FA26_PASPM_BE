@@ -39,7 +39,7 @@ public class MiningScheduledRequest {
             var snapshot=snapshots.find(o.store(),o.snapshot());if(snapshot==null)throw new ApiException(404,"Utility snapshot not found");
             if(snapshots.countItems(o.store(),o.snapshot())>MiningInputBuilder.MAX_ROWS)throw new ApiException(400,"Snapshot matrix exceeds mining row limit");
             var rows=snapshots.page(o.store(),o.snapshot(),0,MiningInputBuilder.MAX_ROWS);snapshots.assertMiningOwnership(o.store(),o.snapshot());
-            var input=builder.build(snapshot,rows);int threshold=builder.threshold(input,request.minUtilMode(),request.minUtilValue());
+            var prepared=builder.prepare(snapshot,rows,request.minUtilMode(),request.minUtilValue());var input=prepared.input();int threshold=prepared.threshold();
             var saved=repository.create(o.store(),o.actor(),request,MiningInputBuilder.sha("SCHEDULE|"+occurrenceId),snapshot,input,threshold);
             jdbc.update("UPDATE mining_request SET config_version=? WHERE store_id=? AND request_id=?",o.configVersion(),o.store(),saved.view().requestId());
             jdbc.update("UPDATE mining_schedule_occurrence SET request_id=?,status='DISPATCHED',updated_at=CURRENT_TIMESTAMP WHERE occurrence_id=?",saved.view().requestId(),occurrenceId);

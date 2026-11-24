@@ -8,7 +8,7 @@
 | Features | F02 batches, F03 Weight v2 (seasons, configuration, snapshots), F05 mining input, F06 eligibility |
 | Branch / base | `Khoi/chore/seed-demo-weight-v2`, created from `origin/dev` `705e3d750a3daf416d35f19e67241435f1ab660b` after `git fetch` |
 | Execution status | COMPLETED for the scope below |
-| Release status | UNRELEASED; local commits only, no push, merge or deployment |
+| Release status | MERGED — commits `eaee68d`, `331fe91` merged into `dev` by `ac29811` on 2026-11-17, contained in `dev` `530651b`; no deployment (was: "UNRELEASED; local commits only, no push, merge or deployment"; updated 2026-11-19, [ROC-20261119-001](../2026-11-19/01-record-owner-decisions.md)) |
 | Daily summary | [2026-11-17](README.md) |
 
 ## 1. Request and scope
@@ -93,4 +93,4 @@ Environment: MySQL 8.4 container (`mysql:8.4`, host port 53307, schema `paspm_se
 
 ## 8. Delivery
 
-Two local commits on `Khoi/chore/seed-demo-weight-v2`; not pushed or merged. The disposable containers, backends, secrets file and scratch files were removed after verification.
+Two local commits on `Khoi/chore/seed-demo-weight-v2`; not pushed or merged at the time of this record. **Update 2026-11-19:** the branch was pushed and merged into `dev` by `ac29811` on 2026-11-17 ([ROC-20261119-001](../2026-11-19/01-record-owner-decisions.md)). The disposable containers, backends, secrets file and scratch files were removed after verification.

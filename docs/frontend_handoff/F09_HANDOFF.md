@@ -4,17 +4,17 @@ The public storefront is anonymous and read-only. Staff routes remain protected.
 
 ## Base URL and public access
 
-- `GET /api/storefront/stores` returns enabled Stores only, as `{storeSlug,name}`. There is no public Store id.
+- `GET /api/storefront/stores` returns ACTIVE Stores only, as `{storeSlug,name}`. `storeSlug` is the Store's `slug` from Store management (DEC-20261123-01). There is no public Store id.
 - Public paths require no bearer token: `GET /api/storefront/{storeSlug}/home`, `/products`, and `/products/{productId}`.
-- `PUT /api/system/stores/{storeId}/storefront-visibility` is SYSTEM_ADMIN-only. It toggles storefront visibility and has no campaign side effect.
-- Unknown and disabled Store slugs intentionally share a 404 response so the API does not reveal the existence of private Stores.
+- A Store is public exactly when it is ACTIVE (DEC-20261125-01). There is **no** storefront visibility endpoint: the System Admin deactivates/reactivates the Store and edits its slug through the existing Store management screens (`/api/system/stores`).
+- Unknown and INACTIVE Store slugs intentionally share a 404 response so the API does not reveal the existence of inactive Stores.
 
 ## Screen checklist
 
 ### Store selection
 
-- [ ] Load enabled Stores and navigate by `storeSlug`.
-- [ ] Show an empty state when no Store has enabled public visibility.
+- [ ] Load ACTIVE Stores and navigate by `storeSlug`.
+- [ ] Show an empty state when no Store is ACTIVE.
 - [ ] Do not depend on Store ids or expose internal Store ids in links.
 
 ### Homepage
@@ -32,7 +32,7 @@ The public storefront is anonymous and read-only. Staff routes remain protected.
 - [ ] Use `search`, `categoryId`, `page`, `pageSize`, `sortBy=name|sellingPrice`, and `sortDirection=asc|desc`.
 - [ ] Render only `AVAILABLE` / `UNAVAILABLE`; never estimate or display stock quantities.
 - [ ] Render `imageUrl` only as a URL; upload is not supported.
-- [ ] Use `productId` for detail navigation. Cross-Store and inactive Products return 404.
+- [ ] Use `productId` for detail navigation. Cross-Store, INACTIVE and soft-deleted Products return 404.
 - [ ] Do not show SKU, cost, batch/expiry data, F03 scores, utility, or review information.
 
 ### Bundles
@@ -41,12 +41,12 @@ The public storefront is anonymous and read-only. Staff routes remain protected.
 - [ ] The backend hides the entire block if its approval/current eligibility or any component fails recheck.
 - [ ] Cart, quantity selection, reservations, discounts, checkout, payment and order creation are F10/deferred.
 
-### SYSTEM_ADMIN visibility management
+### Store visibility (no separate control)
 
-- [ ] Provide a visibility toggle using `PUT /api/system/stores/{storeId}/storefront-visibility` and body `{"storefrontEnabled":true|false}`.
-- [ ] Hide this control for every role except SYSTEM_ADMIN.
-- [ ] Explain that visibility is not campaign publish/activation.
-- [ ] Confirm the returned stable `storeSlug`; never treat visibility enablement as campaign activation.
+- [ ] Do not build a storefront visibility toggle. Public visibility follows Store status; the existing Store management screen already deactivates/reactivates a Store and edits its slug.
+- [ ] If a slug changes, old links return 404; reload the Store list.
+
+> **Breaking vs the unmerged F09 branch (2026-11-21):** `PUT /api/system/stores/{storeId}/storefront-visibility`, its `{"storefrontEnabled":…}` body and the `store_visibility_not_found_error.json` example were removed during the merge into `dev`. Example slugs no longer carry a hash suffix because they are ordinary Store slugs.
 
 ## Public models
 

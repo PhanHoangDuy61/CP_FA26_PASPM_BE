@@ -32,7 +32,7 @@ class VersionedUtilityPersistenceTest {
 
     @Test void legacySnapshotMiningAndRecommendationReadsNeverRewriteFrozenJson() {
         for(String version:List.of("F03_LINEAR_V1",ExpiryScoreCalculator.SCORING_VERSION)) {
-            db.update("INSERT INTO store(name) VALUES ('Synthetic compatibility fixture')");
+            db.update("INSERT INTO store(name) VALUES (?)","Synthetic compatibility fixture "+version);
             int store=db.queryForObject("SELECT MAX(store_id) FROM store",Integer.class);
             db.update("INSERT INTO app_user(store_id,role_id,email,status) SELECT ?,role_id,?,'ACTIVE' FROM role WHERE code='MERCHANDISER'",store,UUID.randomUUID()+"@example.invalid");
             int actor=db.queryForObject("SELECT MAX(user_id) FROM app_user",Integer.class);

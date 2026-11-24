@@ -51,11 +51,13 @@ class PushDayIntegrationTest {
     }
 
     @Test void storeAdminSetsPushDayOnCreateAndPatchAndOnlyStoreAdminMayWrite() throws Exception {
-        var created=body(batchPost(admin,"{\"batchCode\":\"B1\",\"receivedAt\":\"2026-10-01T00:00:00Z\",\"expiryDate\":\"2026-12-10\",\"initialQuantity\":5,\"pushDay\":\"2026-12-08\"}").andExpect(status().isCreated()));
+        var created=body(batchPost(admin,"{\"receivedAt\":\"2026-10-01T00:00:00Z\",\"expiryDate\":\"2026-12-10\",\"initialQuantity\":5,\"pushDay\":\"2026-12-08\"}").andExpect(status().isCreated()));
+        assertEquals("BATCH-20261001-001",created.path("batchCode").asText());
         assertEquals("2026-12-08",created.path("pushDay").asText());
         int id=created.path("id").asInt();
-        batchPost(admin,"{\"batchCode\":\"B2\",\"receivedAt\":\"2026-10-01T00:00:00Z\",\"expiryDate\":\"2026-12-10\",\"initialQuantity\":5,\"pushDay\":\"2026-12-11\"}").andExpect(status().isBadRequest());
-        var none=body(batchPost(admin,"{\"batchCode\":\"B3\",\"receivedAt\":\"2026-10-01T00:00:00Z\",\"expiryDate\":\"2026-12-10\",\"initialQuantity\":5}").andExpect(status().isCreated()));
+        batchPost(admin,"{\"receivedAt\":\"2026-10-01T00:00:00Z\",\"expiryDate\":\"2026-12-10\",\"initialQuantity\":5,\"pushDay\":\"2026-12-11\"}").andExpect(status().isBadRequest());
+        var none=body(batchPost(admin,"{\"receivedAt\":\"2026-10-01T00:00:00Z\",\"expiryDate\":\"2026-12-10\",\"initialQuantity\":5}").andExpect(status().isCreated()));
+        assertEquals("BATCH-20261001-002",none.path("batchCode").asText());
         assertTrue(none.path("pushDay").isNull());
         batchPatch(admin,none.path("id").asInt(),"{\"pushDay\":\"2026-12-01\"}").andExpect(status().isOk()).andExpect(jsonPath("$.pushDay").value("2026-12-01"))
             .andExpect(jsonPath("$.remainingQuantity").value(5));
@@ -63,7 +65,7 @@ class PushDayIntegrationTest {
         batchPatch(admin,id,"{}").andExpect(status().isBadRequest());
         batchPatch(merchant,id,"{\"pushDay\":\"2026-12-01\"}").andExpect(status().isForbidden());
         batchPatch(foreign,id,"{\"pushDay\":\"2026-12-01\"}").andExpect(status().isNotFound());
-        batchPost(merchant,"{\"batchCode\":\"B4\",\"receivedAt\":\"2026-10-01T00:00:00Z\",\"expiryDate\":\"2026-12-10\",\"initialQuantity\":5,\"pushDay\":\"2026-12-01\"}").andExpect(status().isForbidden());
+        batchPost(merchant,"{\"receivedAt\":\"2026-10-01T00:00:00Z\",\"expiryDate\":\"2026-12-10\",\"initialQuantity\":5,\"pushDay\":\"2026-12-01\"}").andExpect(status().isForbidden());
         mvc.perform(get("/api/inventory-batches/{id}",id).header("Authorization","Bearer "+admin)).andExpect(status().isOk()).andExpect(jsonPath("$.pushDay").value("2026-12-08"));
         mvc.perform(get("/api/products/{id}/batches",product).header("Authorization","Bearer "+admin)).andExpect(status().isOk()).andExpect(jsonPath("$[0].pushDay").exists());
     }
@@ -85,12 +87,14 @@ class PushDayIntegrationTest {
         int passed=batch("PASSED",day.plusDays(5),day.minusDays(2),6,"ACTIVE");
         batch("LATER",day.plusDays(30),day.plusDays(9),7,"ACTIVE");
         int missing=batch("MISSING",day.plusDays(30),null,8,"ACTIVE");
-        batch("EXPIRED",day,day.minusDays(1),9,"ACTIVE");
+        batch("EXPIRED",day.minusDays(1),day.minusDays(3),9,"ACTIVE");
+        int expiresToday=batch("TODAY",day,day.minusDays(1),5,"ACTIVE"); // DEC-20261124-01: still active on its expiry date
         batch("BLOCKED",day.plusDays(9),day,9,"BLOCKED");
         var page=body(mvc.perform(get("/api/utility/expiry-push-batches").param("asOfDate",day.toString()).header("Authorization","Bearer "+merchant)).andExpect(status().isOk()));
-        assertEquals(2,page.path("totalElements").asInt());
+        assertEquals(3,page.path("totalElements").asInt());
         assertEquals(passed,page.path("items").get(0).path("batchId").asInt());assertEquals(-2,page.path("items").get(0).path("daysToPush").asInt());
-        assertEquals(due,page.path("items").get(1).path("batchId").asInt());
+        assertEquals(expiresToday,page.path("items").get(1).path("batchId").asInt());assertEquals(-1,page.path("items").get(1).path("daysToPush").asInt());
+        assertEquals(due,page.path("items").get(2).path("batchId").asInt());
         assertTrue(page.path("warnings").toString().contains("["+missing+"]"));
         mvc.perform(get("/api/utility/expiry-push-batches").param("productId",Integer.toString(product)).header("Authorization","Bearer "+foreign)).andExpect(status().isNotFound());
         mvc.perform(get("/api/utility/expiry-push-batches").header("Authorization","Bearer "+foreign)).andExpect(jsonPath("$.totalElements").value(0));
@@ -206,7 +210,7 @@ class PushDayIntegrationTest {
     }
     /** @param days null for the current contract; any other value adds the removed legacy field. */
     String productBody(String days) {
-        return "{\"sku\":\"MILK\",\"name\":\"Milk\",\"unit\":\"bottle\",\"requiresExpiry\":true,\"sellingPrice\":100,\"costPrice\":20,\"status\":\"ACTIVE\""+(days==null?"":",\"expiryPushDays\":"+days)+"}";
+        return "{\"name\":\"Milk\",\"unit\":\"bottle\",\"requiresExpiry\":true,\"sellingPrice\":100,\"costPrice\":20,\"status\":\"ACTIVE\""+(days==null?"":",\"expiryPushDays\":"+days)+"}";
     }
     int store() {jdbc.update("INSERT INTO store(name) VALUES (?)","PushDay "+UUID.randomUUID());return jdbc.queryForObject("SELECT MAX(store_id) FROM store",Integer.class);}
     String token(String role,Integer storeId) {

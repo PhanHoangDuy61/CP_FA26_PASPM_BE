@@ -1,0 +1,5 @@
+{
+  "code": "PRODUCT_NAME_CONFIRMATION_REQUIRED",
+  "error": "A similar product name exists in this Store; confirm before saving",
+  "confirmWith": "confirmSimilarName=true"
+}

@@ -52,33 +52,29 @@ class MigrationVersioningTest {
         assertTrue(v12.isEmpty() || v12.equals(List.of("f04_preserve_large_raw_import_rows")), "V12 belongs to F04 only, found " + v12);
     }
 
-    @Test void f09V27UpgradesExistingStoresAndProductsSafely() {
-        String url = "jdbc:h2:mem:f09_v27_upgrade;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1;NON_KEYWORDS=USER";
-        var before = Flyway.configure().dataSource(url, "sa", "")
-                .locations("classpath:db/migration").target(MigrationVersion.fromVersion("26")).load();
-        before.migrate();
-        var dataSource = new DriverManagerDataSource(url, "sa", "");
-        var jdbc = new org.springframework.jdbc.core.JdbcTemplate(dataSource);
-        jdbc.update("INSERT INTO store(name) VALUES ('Existing Store')");
+    @Test void f09V29FollowsStoreManagementAndSoftDeleteAndOnlyAddsProductDisplayColumns() throws IOException {
+        Map<Integer, List<String>> v = versions();
+        assertEquals(List.of("f01_store_profile_and_status"), v.get(27));
+        assertEquals(List.of("f02_product_soft_delete"), v.get(28));
+        assertEquals(List.of("f09_product_display_metadata"), v.get(29));
+
+        String url = "jdbc:h2:mem:f09_v29_upgrade;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1;NON_KEYWORDS=USER";
+        Flyway.configure().dataSource(url, "sa", "").locations("classpath:db/migration")
+                .target(MigrationVersion.fromVersion("28")).load().migrate();
+        var jdbc = new org.springframework.jdbc.core.JdbcTemplate(new DriverManagerDataSource(url, "sa", ""));
+        jdbc.update("INSERT INTO store(name,slug) VALUES ('Existing Store','existing-store')");
         int store = jdbc.queryForObject("SELECT MAX(store_id) FROM store", Integer.class);
-        jdbc.update("INSERT INTO store(name) VALUES ('Existing Store')");
-        int duplicate = jdbc.queryForObject("SELECT MAX(store_id) FROM store", Integer.class);
         jdbc.update("INSERT INTO product(store_id,sku,name,unit,requires_expiry,selling_price,cost_price,status) "
-                + "VALUES (?, 'EXISTING', 'Existing Product', 'each', FALSE, 10, 2, 'ACTIVE')", store);
-        int product = jdbc.queryForObject("SELECT MAX(product_id) FROM product WHERE store_id=?",
-                Integer.class, store);
+                + "VALUES (?, 'SKU-00000000001', 'Existing Product', 'each', FALSE, 10, 2, 'ACTIVE')", store);
+        int product = jdbc.queryForObject("SELECT MAX(product_id) FROM product WHERE store_id=?", Integer.class, store);
 
         Flyway.configure().dataSource(url, "sa", "").locations("classpath:db/migration").load().migrate();
 
-        assertEquals(vn.edu.fpt.paspm.storefront.StoreSlug.generate("Existing Store", store), jdbc.queryForObject(
-                "SELECT store_slug FROM store WHERE store_id=?", String.class, store));
-        assertEquals(vn.edu.fpt.paspm.storefront.StoreSlug.generate("Existing Store", duplicate), jdbc.queryForObject(
-                "SELECT store_slug FROM store WHERE store_id=?", String.class, duplicate));
-        assertEquals(2, jdbc.queryForObject(
-                "SELECT COUNT(DISTINCT store_slug) FROM store WHERE store_id IN (?,?)", Integer.class, store, duplicate));
-        assertFalse(jdbc.queryForObject(
-                "SELECT storefront_enabled FROM store WHERE store_id=?", Boolean.class, store));
         assertNull(jdbc.queryForObject("SELECT image_url FROM product WHERE product_id=?", String.class, product));
         assertNull(jdbc.queryForObject("SELECT description FROM product WHERE product_id=?", String.class, product));
+        assertEquals("existing-store", jdbc.queryForObject("SELECT slug FROM store WHERE store_id=?", String.class, store));
+        assertEquals(0, jdbc.queryForObject("SELECT COUNT(*) FROM information_schema.columns WHERE table_name='store' "
+                + "AND column_name IN ('store_slug','storefront_enabled')", Integer.class),
+                "F09 uses store.slug and store.status; it must not add its own slug or visibility column");
     }
 }
