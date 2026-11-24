@@ -54,7 +54,7 @@ The PO asked to bump `scoringVersion` for the new boundary **unless that blocks 
 - Stored snapshots, policies and recommendations carry the current string and are immutable. A bumped constant would make them unreadable (409) unless every reader and constructor accepted both tags and the writers knew which to emit. A Store would also mix tags between its config and its older snapshots.
 
 **What replaces the version bump (recorded here instead):**
-1. **Effective date.** The new boundary applies from the day this decision is merged into `dev` (decision date 2026-11-24). *Merge commit and date: to be written here after the merge.*
+1. **Effective date.** The new boundary is effective from the merge of PR #28 into `dev` (decision date 2026-11-24).
 2. **How to tell which rule a snapshot used.** The evidence carries `asOfDate`, and `asOfDate` before the effective date means the old rule (`EXPIRED` = expiry on or before the analysis date); on or after it means the new rule (`EXPIRED` = expiry before the analysis date). Because `asOfDate` is a request field of snapshot creation (`UtilitySnapshotService.java:21`) and not always the creation day, also compare the snapshot's creation time with the effective date: a snapshot created before the merge used the old rule whatever its `asOfDate`.
 3. **No mixing.** Experiment snapshots (F03 snapshots and the F05 runs, F06 recommendations and F07/F08 layouts built on them) **must be regenerated after the merge**. Do not compare utility, U_expiry or mining results across the effective date.
 4. Frozen data is never rewritten (BR-17); the old snapshots stay readable as history.
