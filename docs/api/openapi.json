@@ -12944,7 +12944,7 @@
             "type": "string",
             "enum": [
               "AVAILABLE",
-              "UNAVAILABLE"
+              "OUT_OF_STOCK"
             ]
           }
         }

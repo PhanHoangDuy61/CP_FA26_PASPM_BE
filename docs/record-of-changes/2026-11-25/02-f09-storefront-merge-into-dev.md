@@ -56,7 +56,7 @@ Bring the unmerged F09 Storefront branch into `dev` without undoing anything alr
 
 - Additive for staff clients: 4 anonymous GETs, 9 public schemas, 2 optional Product fields. `PUT /api/products/{id}` is a full replacement, so a client that omits `imageUrl`/`description` clears them (FE `dev` does not send them yet).
 - No change to existing routes, RBAC or Store isolation. The INACTIVE-Store guard is unchanged for authenticated users; anonymous storefront reads hide INACTIVE Stores with 404.
-- Known gap kept from the branch: FR-09.3 says `OUT_OF_STOCK`; the API returns `availability: UNAVAILABLE` (owner decision needed).
+- `ProductCard.availability` is `AVAILABLE | OUT_OF_STOCK` (PO review 2026-11-25, FR-09.3, DEC-20261125-01 addendum); the original branch's `UNAVAILABLE` is not exposed. Breaking only against the unmerged branch.
 
 ## 5. Verification executed in this session
 
@@ -66,6 +66,9 @@ Bring the unmerged F09 Storefront branch into `dev` without undoing anything alr
 | `sh mvnw -B clean verify -Dtest="$(python3 .github/scripts/test-groups.py backend)"` | same, H2 | PASS — 449 tests, 0 failures, 0 errors, 0 skipped, 66 classes, BUILD SUCCESS | local console |
 | Fresh Flyway migrate (Flyway 11.7.2, `classpath:db/migration` incl. Java migrations) | disposable `mysql:8.4` container (8.4.13), empty schema | PASS — 29 migrations applied, now at V29; `product` has `image_url`, `description`; `store` has no `store_slug`/`storefront_enabled`; 0 failed history rows | local console |
 | Runtime OpenAPI export (`-Dpaspm.test.export-openapi=true` on `TransactionExcelImportIntegrationTest`) | same | PASS — 1 test; diff inserted only | `docs/api/openapi.json` |
+| PO review — `OUT_OF_STOCK`: `sh mvnw -B test -Dtest=StorefrontIntegrationTest` before the code change | Temurin 17.0.21.1, H2 | FAIL as expected — 7 tests, 2 failures (`UNAVAILABLE` returned) | local console |
+| Same, after the change | same | PASS — 7 tests, 0 failures | local console |
+| PO review — `sh mvnw -B clean verify -Dtest="$(python3 .github/scripts/test-groups.py backend)"` | same | PASS — 449 tests, 0 failures, 0 errors, 0 skipped, BUILD SUCCESS | local console |
 | `mysql` CI group, full `integration` suite | — | NOT RUN (by request) | — |
 
 `sh mvnw` was used because `mvnw` is mode 100644 in git; the file mode was not changed.
@@ -77,7 +80,6 @@ The 2026-11-20 branch record ([ROC-20261120-002](../2026-11-20/02-f09-storefront
 ## 7. Limitations and next actions
 
 - FE: no storefront screen calls these routes yet (FE storefront is mock). FE F02 edit form should send `imageUrl`/`description` back on PUT.
-- FR-09.3 `OUT_OF_STOCK` vs `UNAVAILABLE`: owner decision.
 - `mysql` group and the integration job: NOT RUN locally; the integration job also depends on `PASPM_CI_SPMF_ARTIFACT_URL` (PR #29).
 - ERD: add `product.image_url`, `product.description` (V29) to the next ERD update.
 

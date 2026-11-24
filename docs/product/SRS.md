@@ -225,11 +225,11 @@ Each line gives the behaviour an agent must preserve. Exact request and response
   - returns `simulated:true`.
 - FR-08.4: Every operation is synchronous. No polling.
 
-### F09 — Storefront (DONE API, MVP; PARTIAL — see FR-09.3)
+### F09 — Storefront (DONE API, MVP)
 
 - FR-09.1: Public read API, separate from the staff API, keyed by `storeSlug` = `store.slug` (V27). No login needed. A Store is public exactly when it is ACTIVE; there is no separate visibility switch (DEC-20261125-01). Unknown or INACTIVE Store → 404.
 - FR-09.2: The homepage renders the zones of the **active** campaign layout in placement order. With no active campaign it falls back to the default layout. Draft and ended layouts are never shown.
-- FR-09.3: Product detail and the bundle list. Bundles are APPROVED and ready. A bundle with an invalid component is hidden. An out-of-stock product shows `OUT_OF_STOCK`. **Gap:** the API returns `availability: AVAILABLE | UNAVAILABLE`, not `OUT_OF_STOCK`; aligning the value or the requirement needs an owner decision. Soft-deleted and INACTIVE products are never public (DEC-20261124-03); a batch is sellable on its expiry date (DEC-20261124-01).
+- FR-09.3: Product detail and the bundle list. Bundles are APPROVED and ready. A bundle with an invalid component is hidden. An out-of-stock product shows `OUT_OF_STOCK`: the public `availability` is `AVAILABLE | OUT_OF_STOCK` (PO review 2026-11-25, DEC-20261125-01 addendum). Soft-deleted and INACTIVE products are never public (DEC-20261124-03); a batch is sellable on its expiry date (DEC-20261124-01).
 - FR-09.4: No admin fields (cost, batches) in public DTOs. The product gets `image_url` and `description` columns in **V29**; F02 `ProductRequest`/`ProductView` accept and return them (`imageUrl` absolute HTTP(S) only).
 
 ### F10 — Bundle cart (PLANNED, MVP draft v2)

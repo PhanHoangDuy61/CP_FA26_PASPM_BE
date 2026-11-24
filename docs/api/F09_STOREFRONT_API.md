@@ -28,10 +28,10 @@ A Store is public exactly when `store.status = ACTIVE` (DEC-20261125-01). There 
 ```text
 productId, name, description, imageUrl, unit, sellingPrice,
 category { categoryId, name } | null,
-availability: AVAILABLE | UNAVAILABLE
+availability: AVAILABLE | OUT_OF_STOCK
 ```
 
-`imageUrl` is an optional absolute HTTP(S) URL; upload is not implemented. `description` is optional (maximum 2,000 characters). Availability is a summary only; no quantity is returned. It uses Store-local today (`paspm.store-time-zone`, default `Asia/Ho_Chi_Minh`) and counts ACTIVE batches with positive remaining quantity whose expiry date is today or later: a batch is still sellable on its expiry date and expired only the day after (DEC-20261124-01). Soft-deleted Products are never AVAILABLE. Non-expiring Products may use batches without an expiry; when `requiresExpiry=true`, a missing-expiry batch contributes no sellable quantity.
+`imageUrl` is an optional absolute HTTP(S) URL; upload is not implemented. `description` is optional (maximum 2,000 characters). Availability is a summary only (FR-09.3): `AVAILABLE` when the product has sellable stock, otherwise `OUT_OF_STOCK`; no quantity is returned. It uses Store-local today (`paspm.store-time-zone`, default `Asia/Ho_Chi_Minh`) and counts ACTIVE batches with positive remaining quantity whose expiry date is today or later: a batch is still sellable on its expiry date and expired only the day after (DEC-20261124-01). Soft-deleted Products are never AVAILABLE. Non-expiring Products may use batches without an expiry; when `requiresExpiry=true`, a missing-expiry batch contributes no sellable quantity.
 
 Product list query parameters follow F02 naming: `search` (name/description), `categoryId`, `page` (default 0), `pageSize` (default 20, maximum 100), `sortBy=name|sellingPrice` (default `name`), and `sortDirection=asc|desc` (default `asc`). Only ACTIVE, non-deleted Products are returned (soft-deleted Products are excluded before pagination). The response is `StorefrontProductPage {items,page,pageSize,totalElements}`, a distinct schema from the authenticated F02 `ProductPage`.
 

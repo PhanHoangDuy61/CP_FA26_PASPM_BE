@@ -84,6 +84,10 @@ class StorefrontIntegrationTest {
         assertEquals(List.of("Alpha Product", "Public Milk", "Zulu Product"),
                 java.util.stream.StreamSupport.stream(fallbackProducts.spliterator(), false)
                         .map(item -> item.path("name").asText()).toList());
+        // FR-09.3 (PO review 2026-11-25): a product with no sellable stock is OUT_OF_STOCK, never another label.
+        assertEquals(List.of("OUT_OF_STOCK", "AVAILABLE", "OUT_OF_STOCK"),
+                java.util.stream.StreamSupport.stream(fallbackProducts.spliterator(), false)
+                        .map(item -> item.path("availability").asText()).toList());
 
         JsonNode page = json.readTree(mvc.perform(get("/api/storefront/" + slug + "/products")
                 .param("search", "Milk").param("page", "0").param("pageSize", "10"))
@@ -299,6 +303,8 @@ class StorefrontIntegrationTest {
         }
         JsonNode productSchema = api.path("components").path("schemas").path("ProductCard");
         assertTrue(productSchema.path("properties").has("availability"));
+        assertEquals("[\"AVAILABLE\",\"OUT_OF_STOCK\"]",
+                productSchema.path("properties").path("availability").path("enum").toString());
         assertFalse(productSchema.path("properties").has("costPrice"));
         assertFalse(productSchema.path("properties").has("stockQuantity"));
         JsonNode storefrontPage = api.path("components").path("schemas").path("StorefrontProductPage");

@@ -7,7 +7,8 @@ import java.util.List;
 public final class StorefrontContracts {
     private StorefrontContracts() {}
 
-    public enum Availability { AVAILABLE, UNAVAILABLE }
+    /** FR-09.3: a public product is AVAILABLE or OUT_OF_STOCK (no quantity is exposed). */
+    public enum Availability { AVAILABLE, OUT_OF_STOCK }
 
     public record PublicStore(String storeSlug, String name) {}
     public record StoreSummary(String storeSlug, String name) {}

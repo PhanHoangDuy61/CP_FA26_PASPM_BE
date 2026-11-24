@@ -6,7 +6,7 @@ Rules: [DEC-20261125-01](../decisions/2026-11-25/DEC-20261125-01-f09-public-stor
 
 - **Added (additive):** anonymous `GET /api/storefront/stores`, `GET /api/storefront/{storeSlug}/home`, `GET /api/storefront/{storeSlug}/products`, `GET /api/storefront/{storeSlug}/products/{productId}`; public schemas `PublicStore`, `StoreSummary`, `ProductCard`, `ProductCategory`, `StorefrontProductPage`, `CatalogCategory`, `HomePlacement`, `HomeZone`, `HomeView`.
 - **Added (additive) to F02:** optional `imageUrl` (absolute HTTP(S), max 2048) and `description` (max 2000) on `ProductRequest`; both returned on `ProductView`. PUT stays a full replacement: omitting them clears them.
-- **Rules:** a Store is public exactly when ACTIVE; `storeSlug` = `store.slug`. INACTIVE and soft-deleted products are never listed, shown or AVAILABLE. A batch is sellable on its expiry date.
+- **Rules:** a Store is public exactly when ACTIVE; `storeSlug` = `store.slug`. `ProductCard.availability` is `AVAILABLE | OUT_OF_STOCK` (FR-09.3; the original branch used `UNAVAILABLE`). INACTIVE and soft-deleted products are never listed, shown or AVAILABLE. A batch is sellable on its expiry date.
 - **Not merged from the branch:** `PUT /api/system/stores/{storeId}/storefront-visibility`, `store.store_slug`, `store.storefront_enabled`.
 - **OpenAPI:** 107 paths / 134 operations → **111 / 138**.
 - **Breaking for clients:** none for staff clients. Against the unmerged F09 branch: the visibility route and its body are gone.

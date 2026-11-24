@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Date | 2026-11-25 (Asia/Ho_Chi_Minh) |
-| Source | Owner answer (Nguyễn Minh Khôi, Team Leader / acting Product Owner) during the merge of `Duy/Feature/F09_Storefront` into `dev`, 2026-11-25 |
+| Source | Owner answers (Nguyễn Minh Khôi, Team Leader / acting Product Owner) during the merge of `Duy/Feature/F09_Storefront` into `dev` and the PO review of the merge branch, 2026-11-25 |
 | Status | OWNER_DECISION, implemented on branch `Khoi/merge/f09-storefront-be`; PR to `dev` pending |
 | Feature | F09 Storefront (with F01 Store management) |
 | Related | DEC-20261117-03, DEC-20261123-01, DEC-20261124-03, SRS FR-09.1, BR-25, BR-30 |
@@ -27,3 +27,7 @@ Since then `dev` gained Store management (DEC-20261123-01, V27): `store.slug` is
 - A newly created ACTIVE Store is public at once, with the fallback `DEFAULT_CATALOG` homepage until it has an ACTIVE campaign.
 - Frontend: no visibility screen. Store status and slug are managed in the existing Store management screens.
 - If the owner later wants a Store to stay ACTIVE for staff but hidden from shoppers, that needs a new DEC and a new migration (V30+).
+
+## Addendum — FR-09.3 availability value (PO review, 2026-11-25)
+
+The SRS is the standard ("docs làm chuẩn"): FR-09.3 says an out-of-stock product shows `OUT_OF_STOCK`. The original F09 branch returned `UNAVAILABLE`. Decision: the public `ProductCard.availability` is **`AVAILABLE | OUT_OF_STOCK`**; `UNAVAILABLE` is not used. Since INACTIVE and soft-deleted products are never returned publicly, every non-AVAILABLE product in a public response is one without sellable stock. Changed in code (`StorefrontContracts.Availability`), tests, OpenAPI and the F09 API/handoff on branch `Khoi/merge/f09-storefront-be`.

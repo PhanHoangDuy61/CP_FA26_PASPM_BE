@@ -30,7 +30,7 @@ The public storefront is anonymous and read-only. Staff routes remain protected.
 ### Product list and Product Detail
 
 - [ ] Use `search`, `categoryId`, `page`, `pageSize`, `sortBy=name|sellingPrice`, and `sortDirection=asc|desc`.
-- [ ] Render only `AVAILABLE` / `UNAVAILABLE`; never estimate or display stock quantities.
+- [ ] Render only `AVAILABLE` / `OUT_OF_STOCK` (show "Hết hàng" for `OUT_OF_STOCK`); never estimate or display stock quantities.
 - [ ] Render `imageUrl` only as a URL; upload is not supported.
 - [ ] Use `productId` for detail navigation. Cross-Store, INACTIVE and soft-deleted Products return 404.
 - [ ] Do not show SKU, cost, batch/expiry data, F03 scores, utility, or review information.
@@ -46,12 +46,12 @@ The public storefront is anonymous and read-only. Staff routes remain protected.
 - [ ] Do not build a storefront visibility toggle. Public visibility follows Store status; the existing Store management screen already deactivates/reactivates a Store and edits its slug.
 - [ ] If a slug changes, old links return 404; reload the Store list.
 
-> **Breaking vs the unmerged F09 branch (2026-11-21):** `PUT /api/system/stores/{storeId}/storefront-visibility`, its `{"storefrontEnabled":…}` body and the `store_visibility_not_found_error.json` example were removed during the merge into `dev`. Example slugs no longer carry a hash suffix because they are ordinary Store slugs.
+> **Breaking vs the unmerged F09 branch (2026-11-21):** `PUT /api/system/stores/{storeId}/storefront-visibility`, its `{"storefrontEnabled":…}` body and the `store_visibility_not_found_error.json` example were removed during the merge into `dev`. Example slugs no longer carry a hash suffix because they are ordinary Store slugs. `availability` value `UNAVAILABLE` is renamed to `OUT_OF_STOCK` (FR-09.3, PO review 2026-11-25).
 
 ## Public models
 
 ```ts
-export type Availability = 'AVAILABLE' | 'UNAVAILABLE';
+export type Availability = 'AVAILABLE' | 'OUT_OF_STOCK';
 export interface PublicStore { storeSlug: string; name: string }
 export interface ProductCard {
   productId: number; name: string; description: string | null; imageUrl: string | null;
