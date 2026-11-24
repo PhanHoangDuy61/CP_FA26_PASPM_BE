@@ -181,7 +181,7 @@ flowchart LR
 
 ### 9.3 Working rules for contributors and agents
 
-- `FA26_SE048.pdf` and owner decisions are the standard. Fix code to match requirements; do not rewrite requirements to justify code ("docs làm chuẩn").
+- Source of truth ([DEC-20261125-02](../decisions/2026-11-25/DEC-20261125-02-source-of-truth-latest-po-decision.md)): docs record decisions as of their date and are not automatically right over code. The latest PO decision (a DEC file, or an explicit PO answer in the session) wins. When code and docs disagree, report the difference and ask the PO; after the decision, update the docs (and code if needed) and record a DEC.
 - Never edit historical Flyway migrations V1–V26. Add a new version.
 - Never delete or repair a teammate's local database. Tests use disposable databases.
 - No commit, push, merge or deploy without an explicit instruction.
