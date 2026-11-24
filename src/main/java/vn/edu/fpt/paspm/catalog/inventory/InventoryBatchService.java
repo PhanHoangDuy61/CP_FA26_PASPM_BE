@@ -1,11 +1,9 @@
 package vn.edu.fpt.paspm.catalog.inventory;
 
-import java.time.DateTimeException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
-import java.time.ZoneId;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -17,6 +15,7 @@ import vn.edu.fpt.paspm.catalog.CatalogContracts.BatchView;
 import vn.edu.fpt.paspm.catalog.CatalogContracts.ProductView;
 import vn.edu.fpt.paspm.catalog.product.ProductRepository;
 import vn.edu.fpt.paspm.common.ApiException;
+import vn.edu.fpt.paspm.utility.UtilityTimeZone;
 
 @Service
 public class InventoryBatchService {
@@ -24,25 +23,23 @@ public class InventoryBatchService {
     private final InventoryBatchRepository batches;
     private final ProductRepository products;
     private final CatalogAccess access;
-    private final ZoneId storeTimeZone;
+    /** The one Store calendar ({@code paspm.store-time-zone}, default Asia/Ho_Chi_Minh) shared with F03/F06. */
+    private final UtilityTimeZone timeZone;
 
     public InventoryBatchService(InventoryBatchRepository batches, ProductRepository products, CatalogAccess access,
-                                 @Value("${paspm.store-time-zone:Asia/Ho_Chi_Minh}") String storeTimeZone) {
-        this.batches = batches; this.products = products; this.access = access;
-        try {
-            this.storeTimeZone = ZoneId.of(storeTimeZone);
-        } catch (DateTimeException exception) {
-            throw new IllegalArgumentException("Invalid paspm.store-time-zone", exception);
-        }
+                                 UtilityTimeZone timeZone) {
+        this.batches = batches; this.products = products; this.access = access; this.timeZone = timeZone;
     }
 
     public List<BatchView> list(Jwt jwt, int productId) {
         int storeId = access.currentStoreId(jwt);
-        requireProduct(storeId, productId);
-        return batches.findForProduct(storeId, productId);
+        ProductView product = requireProduct(storeId, productId);
+        LocalDate today = timeZone.today();
+        return batches.findForProduct(storeId, productId).stream()
+                .map(batch -> batch.derive(today, product.requiresExpiry())).toList();
     }
 
-    public BatchView get(Jwt jwt, int id) { return requireBatch(access.currentStoreId(jwt), id); }
+    public BatchView get(Jwt jwt, int id) { return present(access.currentStoreId(jwt), requireBatch(access.currentStoreId(jwt), id)); }
 
     @Transactional
     public BatchView create(Jwt jwt, int productId, BatchCreateRequest request) {
@@ -53,10 +50,10 @@ public class InventoryBatchService {
         }
         requirePushDay(request.pushDay(), request.expiryDate());
         String batchCode = batches.generateBatchCode(storeId, productId,
-                request.receivedAt().atZone(storeTimeZone).toLocalDate());
+                request.receivedAt().atZone(timeZone.zone()).toLocalDate());
         if (batchCode == null) throw new ApiException(404, "Product not found");
-        return batches.create(productId, batchCode, request.receivedAt(),
-                request.expiryDate(), request.initialQuantity(), request.pushDay());
+        return present(product, batches.create(productId, batchCode, request.receivedAt(),
+                request.expiryDate(), request.initialQuantity(), request.pushDay()));
     }
 
     @Transactional
@@ -66,6 +63,7 @@ public class InventoryBatchService {
                 && request.pushDay() == null && request.expiryDate() == null) {
             throw new ApiException(400, "At least one batch field must be provided");
         }
+        // EXPIRED is derived (effectiveStatus) and is never writable; INACTIVE does not exist for batches
         if (request.status() != null && !STATUSES.contains(request.status())) {
             throw new ApiException(400, "Invalid batch status");
         }
@@ -82,7 +80,7 @@ public class InventoryBatchService {
         }
         requirePushDay(pushDay, expiryDate);
         batches.update(id, request.remainingQuantity(), request.status(), request.pushDay(), request.expiryDate());
-        return requireBatch(storeId, id);
+        return present(product, requireBatch(storeId, id));
     }
 
     @Transactional
@@ -95,21 +93,31 @@ public class InventoryBatchService {
             throw new ApiException(400, "Cannot clear expiry date while the product requires expiry");
         }
         batches.clearExpiryDate(storeId, id);
-        return requireBatch(storeId, id);
+        return present(product, requireBatch(storeId, id));
     }
 
     @Transactional
     public BatchView clearPushDay(Jwt jwt, int id) {
         int storeId = access.currentStoreId(jwt);
-        if (batches.findForUpdate(storeId, id) == null) throw new ApiException(404, "Inventory batch not found");
+        BatchView current = batches.findForUpdate(storeId, id);
+        if (current == null) throw new ApiException(404, "Inventory batch not found");
+        ProductView product = requireProduct(storeId, current.productId());
         batches.clearPushDay(storeId, id);
-        return requireBatch(storeId, id);
+        return present(product, requireBatch(storeId, id));
     }
 
     private static void requirePushDay(java.time.LocalDate pushDay, java.time.LocalDate expiryDate) {
         if (pushDay != null && expiryDate != null && pushDay.isAfter(expiryDate)) {
             throw new ApiException(400, "pushDay must be on or before expiryDate");
         }
+    }
+
+    private BatchView present(int storeId, BatchView batch) {
+        return present(requireProduct(storeId, batch.productId()), batch);
+    }
+
+    private BatchView present(ProductView product, BatchView batch) {
+        return batch.derive(timeZone.today(), product.requiresExpiry());
     }
 
     private ProductView requireProduct(int storeId, int id) {

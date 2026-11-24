@@ -3,6 +3,7 @@ package vn.edu.fpt.paspm.recommendation;
 import java.time.Instant;
 import java.util.*;
 import org.springframework.stereotype.Service;
+import vn.edu.fpt.paspm.catalog.inventory.BatchExpiryRules;
 import vn.edu.fpt.paspm.common.ApiException;
 import vn.edu.fpt.paspm.mining.MiningInputBuilder;
 import vn.edu.fpt.paspm.utility.*;
@@ -39,7 +40,7 @@ public class ProductEligibilityService {
                 fingerprint.append('|').append(batch.batchId()).append(':').append(batch.status()).append(':').append(batch.remainingQuantity()).append(':').append(batch.expiryDate()).append(':').append(batch.pushDay());
                 if(!"ACTIVE".equals(batch.status())||batch.remainingQuantity()<=0)continue;
                 if(product.requiresExpiry()&&batch.expiryDate()==null){missing=true;continue;}
-                if(batch.expiryDate()==null||batch.expiryDate().isAfter(date))sellable+=batch.remainingQuantity();
+                if(!BatchExpiryRules.isExpired(batch.expiryDate(),date))sellable+=batch.remainingQuantity();
             }
             var score=risk.calculate(product.requiresExpiry(),"ACTIVE".equals(product.status())?batches:List.of(),date,window,products.unitsSold(store,id,from,to));
             var messages=new ArrayList<String>();EligibilityStatus status;

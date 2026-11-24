@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -75,7 +76,20 @@ public class ProductController {
         return products.update(jwt, id, request);
     }
 
-    @Operation(summary = "Activate or deactivate a product", description = "STORE_ADMIN.")
+    @Operation(summary = "Soft-delete a product of the authenticated Store",
+            description = "STORE_ADMIN of the owning Store only (another Store's, unknown or already deleted product is 404). "
+                    + "409 with {code, error, reason, sellableQuantity, campaigns}: PRODUCT_HAS_SELLABLE_STOCK while ACTIVE, non-expired batches still hold units "
+                    + "(a batch expiring today counts), PRODUCT_IN_LIVE_CAMPAIGN while a PUBLISHED or ACTIVE campaign layout (A or B) places the product; "
+                    + "the stock code wins when both apply and campaigns is always listed. On success the row is kept (history, snapshots, mining, layouts, SKU), "
+                    + "status becomes INACTIVE and the product disappears from catalogue reads before pagination. There is no restore; the SKU is never reused.")
+    @ApiResponse(responseCode = "204", description = "Soft-deleted")
+    @ApiResponse(responseCode = "409",
+            description = "{code: PRODUCT_HAS_SELLABLE_STOCK | PRODUCT_IN_LIVE_CAMPAIGN, error, reason, sellableQuantity, campaigns:[{campaignId,status}]}")
+    @DeleteMapping("/api/products/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@AuthenticationPrincipal Jwt jwt, @PathVariable int id) { products.delete(jwt, id); }
+
+    @Operation(summary = "Activate or deactivate a product", description = "STORE_ADMIN. A soft-deleted product is 404.")
     @PatchMapping("/api/products/{id}/status")
     public ProductView updateStatus(@AuthenticationPrincipal Jwt jwt, @PathVariable int id,
                                     @Valid @RequestBody StatusRequest request) {

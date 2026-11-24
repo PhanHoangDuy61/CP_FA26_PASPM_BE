@@ -61,6 +61,8 @@ public class SeasonService {
     public boolean assign(Jwt jwt,int id,int product) {
         int store=access.currentStoreId(jwt);require(store,id,true);
         if(!seasons.productExists(store,product))throw new ApiException(404,"Product not found");
+        // DEC-20261124-03: a soft-deleted product keeps its old assignments but never gets a new one
+        if(seasons.productDeleted(store,product))throw new ApiException(409,"Product is deleted and cannot be assigned to a season","PRODUCT_DELETED");
         try { return seasons.assign(store,id,product,actor(jwt)); }
         catch(DataIntegrityViolationException e) { return false; }
     }

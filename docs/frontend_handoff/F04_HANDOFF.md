@@ -51,7 +51,7 @@ Use the shared Backend error format for request-level errors. Parsed CSV validat
 - `GET /api/transactions/imports`
 - `GET /api/transactions/imports/{id}`
 - `GET /api/transactions/imports/{id}/progress`
-- `GET /api/transactions/imports/{id}/errors`
+- `GET /api/transactions/imports/{id}/errors` (also lists, since 2026-11-24, accepted rows of a soft-deleted product with `status: "PROCESSED"` and a `PRODUCT_DELETED` message in `errorDetails`; show them as warnings)
 - `GET /api/transactions`
 - `GET /api/transactions/{id}`
 

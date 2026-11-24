@@ -40,7 +40,7 @@ SYSTEM_ADMIN cannot edit Store/Product utility inputs. STORE_ADMIN may read curr
 
 - Product threshold replaces Store expiryWindowDays. The legacy Store PUT remains callable and deprecated but has no effect on scoring; remove that form from the active weight workflow.
 - New scoring version is EXPIRY_PRODUCT_EARLIEST_BATCH_BINARY_V1. E is either0/1 when valid, using the earliest future-expiry sellable batch. No quantity averaging.
-- Batch expiring today is excluded; F02 summary now uses this strict future-date boundary too. The summary's expiringSoonQuantity is still a requested lookahead statistic, not the configured Product push quantity.
+- *(Superseded 2026-11-24, DEC-20261124-01: a batch is expired only when the analysis date is after its expiry date, so a batch expiring today is no longer excluded; F02 summary uses the same rule.)* Batch expiring today was excluded; F02 summary used this strict future-date boundary too. The summary's expiringSoonQuantity is still a requested lookahead statistic, not the configured Product push quantity.
 - MatrixItem adds expiryEvidence; SnapshotView adds warnings; frozen configuration adds timeZone. Legacy responses may have null evidence/timeZone. Store config legacy expiryWindowDays can be null.
 
 ## TypeScript additions and nullability

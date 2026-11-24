@@ -11,6 +11,7 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import io.swagger.v3.oas.annotations.media.Schema;
+import vn.edu.fpt.paspm.catalog.inventory.BatchExpiryRules;
 
 public final class CatalogContracts {
     private CatalogContracts() {}
@@ -76,12 +77,50 @@ public final class CatalogContracts {
             Instant receivedAt,
             @Schema(types = {"string", "null"}, format = "date") LocalDate expiryDate,
             int initialQuantity, int remainingQuantity,
+            @Schema(allowableValues = {"ACTIVE", "BLOCKED"},
+                    description = "Stored status; writable through PATCH. Expiry is never stored: see effectiveStatus")
             String status, Instant createdAt, Instant updatedAt,
-            @Schema(types = {"string", "null"}, format = "date") LocalDate pushDay) {}
+            @Schema(types = {"string", "null"}, format = "date") LocalDate pushDay,
+            @Schema(accessMode = Schema.AccessMode.READ_ONLY, allowableValues = {"ACTIVE", "BLOCKED", "EXPIRED"},
+                    description = "Computed on read in the Store time zone (Asia/Ho_Chi_Minh): EXPIRED when today is AFTER expiryDate "
+                            + "(on the expiry date itself the batch is still active); EXPIRED wins over BLOCKED; otherwise the stored status. "
+                            + "Never writable; clients must not compare dates themselves")
+            String effectiveStatus,
+            @Schema(accessMode = Schema.AccessMode.READ_ONLY, types = {"integer", "null"},
+                    description = "expiryDate minus today in whole days: 0 on the expiry date, negative when expired, null without an expiry date. "
+                            + "'Expiring soon' = effectiveStatus is not EXPIRED and 0 <= daysToExpiry <= 7")
+            Integer daysToExpiry,
+            @Schema(accessMode = Schema.AccessMode.READ_ONLY, allowableValues = {"MISSING_PUSH_DAY"},
+                    description = "Always present (empty when there is nothing to warn about). MISSING_PUSH_DAY: the product requires expiry, "
+                            + "pushDay is empty and effectiveStatus is not EXPIRED. Saving is still allowed; the push day is never auto-filled")
+            List<String> warnings) {
+        /** Repository rows carry only stored columns; the service adds the computed fields. */
+        public BatchView(int id, int productId, String batchCode, Instant receivedAt, LocalDate expiryDate,
+                         int initialQuantity, int remainingQuantity, String status, Instant createdAt, Instant updatedAt,
+                         LocalDate pushDay) {
+            this(id, productId, batchCode, receivedAt, expiryDate, initialQuantity, remainingQuantity, status,
+                    createdAt, updatedAt, pushDay, null, null, null);
+        }
+
+        public BatchView derive(LocalDate today, boolean requiresExpiry) {
+            String effective = BatchExpiryRules.effectiveStatus(status, expiryDate, today);
+            return new BatchView(id, productId, batchCode, receivedAt, expiryDate, initialQuantity, remainingQuantity,
+                    status, createdAt, updatedAt, pushDay, effective, BatchExpiryRules.daysToExpiry(expiryDate, today),
+                    BatchExpiryRules.warnings(requiresExpiry, pushDay, effective));
+        }
+    }
 
     public record InventorySummary(
-            int productId, long totalQuantity, long sellableQuantity,
-            long expiredQuantity, long blockedQuantity,
-            @Schema(description = "Sellable quantity expiring strictly after today through the inclusive lookahead date")
-            long expiringSoonQuantity) {}
+            int productId,
+            @Schema(description = "Every remaining unit, whatever the status") long totalQuantity,
+            @Schema(description = "Stored ACTIVE and not expired (a batch expiring today is sellable); no expiry date counts as not expired")
+            long sellableQuantity,
+            @Schema(description = "Expired batches (today is after the expiry date) whatever their stored status: EXPIRED wins over BLOCKED")
+            long expiredQuantity,
+            @Schema(description = "Stored BLOCKED and not expired; never overlaps expiredQuantity")
+            long blockedQuantity,
+            @Schema(description = "Sellable quantity with 0 <= daysToExpiry <= expiringWithinDays (today through the inclusive lookahead date)")
+            long expiringSoonQuantity,
+            @Schema(description = "Batches of an expiry-tracked product with no push day that are not expired (the MISSING_PUSH_DAY warning count)")
+            long batchesMissingPushDay) {}
 }

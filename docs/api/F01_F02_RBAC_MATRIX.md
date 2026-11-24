@@ -51,7 +51,8 @@ Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and fea
 | F02 Product detail | GET `/api/products/{id}` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign record→404 | Forbidden |
 | F02 Create product | POST `/api/products` | Forbidden | Allowed, Store inferred from token | Forbidden | Forbidden |
 | F02 Update product | PUT `/api/products/{id}` | Forbidden | Allowed, own Store; foreign→404 | Forbidden | Forbidden |
-| F02 Product status | PATCH `/api/products/{id}/status` | Forbidden | Allowed, own Store; foreign→404 | Forbidden | Forbidden |
+| F02 Product status | PATCH `/api/products/{id}/status` | Forbidden | Allowed, own Store; foreign→404; soft-deleted→404 | Forbidden | Forbidden |
+| F02 Delete product (soft, 2026-11-24, DEC-20261124-03) | DELETE `/api/products/{id}` | Forbidden | Allowed, own Store only; foreign / unknown / already deleted→404; 409 `PRODUCT_HAS_SELLABLE_STOCK` or `PRODUCT_IN_LIVE_CAMPAIGN` | Forbidden | Forbidden |
 | F02 List batches | GET `/api/products/{id}/batches` | Forbidden | Allowed, own Store; foreign→404 | Forbidden | Forbidden |
 | F02 Create batch (optional `pushDay` ≤ expiry, 2026-11-15) | POST `/api/products/{id}/batches` | Forbidden | Allowed, own Store product | Forbidden | Forbidden |
 | F02 Batch detail | GET `/api/inventory-batches/{id}` | Forbidden | Allowed, own Store; foreign→404 | Forbidden | Forbidden |
