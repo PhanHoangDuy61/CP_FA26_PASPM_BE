@@ -1,5 +1,14 @@
 # API Changelog
 
+## 2026-11-25 — F07 individual Layout B products (feature branch, owner-approved)
+
+- **Breaking `PUT /api/layouts/{id}/placements`:** replaces `recommendationIds` with `placements`, each containing `productId`, `zone`, `blockNo`, `position`, and nullable `sourceRecommendationId`. Multiple placements may reference the same F06 recommendation, and `null` means manual provenance.
+- **Added:** `GET /api/layouts/products?snapshotId=...&q=...&page=...&pageSize=...` for snapshot product search, snapshot utility, current status, sellable quantity and individual eligibility.
+- **Changed behavior:** saving a Layout B revision validates and persists individual placements; removing or moving one placement leaves F06 evidence and Layout A unchanged. READY rechecks each placed product rather than invalidating a whole source recommendation.
+- **F08:** `OFFLINE_REPLAY_V3` derives BUNDLE conversion from `BUNDLE + blockNo` in the exact saved Layout B revision. Historical V1/V2 reports remain unchanged.
+- No migration: V23 already has nullable `layout_placement.recommendation_id` and placement zone/block/position columns.
+- Contract/handoff: [F07/F08 API](F07_F08_LAYOUT_CAMPAIGN_API.md), [F07/F08 handoff](../frontend_handoff/F07_F08_HANDOFF.md), [DEC-20261125-01](../decisions/2026-11-25/DEC-20261125-01-f07-product-level-layout-b.md).
+
 ## 2026-11-24 — F02 expiry boundary, push-day warning, product soft delete (branch `Khoi/feat/f02-expiry-pushday-product-delete`, PR to `dev` pending)
 
 Rules: [DEC-20261124-01](../decisions/2026-11-24/DEC-20261124-01-batch-expiry-boundary-effective-status.md), [DEC-20261124-02](../decisions/2026-11-24/DEC-20261124-02-push-day-missing-warning.md), [DEC-20261124-03](../decisions/2026-11-24/DEC-20261124-03-product-soft-delete.md). Contract: [F02_PRODUCT_INVENTORY_API.md](F02_PRODUCT_INVENTORY_API.md). Migration **V28**.

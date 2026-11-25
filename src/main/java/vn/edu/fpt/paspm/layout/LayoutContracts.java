@@ -28,7 +28,15 @@ public final class LayoutContracts {
     @Schema(additionalProperties = Schema.AdditionalPropertiesValue.FALSE)
     public record SavePlacementsRequest(
             @NotNull @Positive Long expectedVersion,
-            @NotNull @Size(max = 100) List<@NotNull @Positive Long> recommendationIds) {}
+            @NotNull List<@NotNull @Valid PlacementRequest> placements) {}
+
+    @Schema(additionalProperties = Schema.AdditionalPropertiesValue.FALSE)
+    public record PlacementRequest(
+            @NotNull @Positive @JsonDeserialize(using = StrictIntegerDeserializer.class) Integer productId,
+            @NotBlank String zone,
+            @Positive int blockNo,
+            @Positive int position,
+            @Positive Long sourceRecommendationId) {}
 
     @Schema(additionalProperties = Schema.AdditionalPropertiesValue.FALSE)
     public record TransitionRequest(@NotNull @Positive Long expectedVersion) {}
@@ -52,7 +60,9 @@ public final class LayoutContracts {
     public record LayoutSummary(long layoutId, long campaignId, int snapshotId, LayoutRole role,
             LayoutStatus status, long version, String name, Instant createdAt, Instant updatedAt) {}
 
-    public record PlacementView(Integer productId, Long recommendationId, RecType recommendationType,
+    public record PlacementView(Integer productId,
+            @Schema(deprecated = true, description = "Legacy alias of sourceRecommendationId; null means manually added")
+            Long recommendationId, Long sourceRecommendationId, RecType recommendationType,
             String sku, String productName, String zone, int blockNo, int position,
             BigDecimal snapshotWeightedUtility, boolean valid, List<String> validationErrors) {}
 
@@ -67,6 +77,10 @@ public final class LayoutContracts {
 
     public record RecommendationOption(long recommendationId, int snapshotId, RecType type,
             List<Integer> productIds, BigDecimal utility, long version) {}
+
+    public record SnapshotProductOption(int productId, String sku, String productName, String productStatus,
+            boolean deleted, long sellableQuantity, BigDecimal snapshotWeightedUtility,
+            boolean eligible, List<String> validationErrors) {}
 
     public record ZonePolicy(String zone, RecType recommendationType, Integer maxBlocks, Integer maxProducts) {}
 

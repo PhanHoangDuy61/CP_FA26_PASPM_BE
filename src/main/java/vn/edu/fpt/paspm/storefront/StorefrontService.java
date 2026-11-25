@@ -123,31 +123,29 @@ public class StorefrontService {
                 repository.recommendationProducts(store.id(), recommendationIds);
 
         var zones = new LinkedHashMap<String, List<HomePlacement>>();
-        var recommendationBlocks = new LinkedHashMap<Long, List<PlacementRow>>();
+        var layoutBlocks = new LinkedHashMap<LayoutBlockKey, List<PlacementRow>>();
         for (PlacementRow row : rows) {
-            if (row.recommendationId() == null) {
-                if (!publicProduct(row, availability.get(row.productId()))) continue;
-                zones.computeIfAbsent(row.zone(), ignored -> new ArrayList<>()).add(new HomePlacement(
-                        "BASELINE", row.blockNo(), row.position(),
-                        List.of(card(row, availability.get(row.productId())))));
-            } else {
-                recommendationBlocks.computeIfAbsent(row.recommendationId(), ignored -> new ArrayList<>()).add(row);
-            }
+            layoutBlocks.computeIfAbsent(new LayoutBlockKey(row.zone(), row.blockNo()),
+                    ignored -> new ArrayList<>()).add(row);
         }
 
-        for (Map.Entry<Long, List<PlacementRow>> entry : recommendationBlocks.entrySet()) {
+        for (Map.Entry<LayoutBlockKey, List<PlacementRow>> entry : layoutBlocks.entrySet()) {
             List<PlacementRow> block = entry.getValue();
-            RecommendationRow recommendation = recommendations.get(entry.getKey());
-            if (!validBlock(active, recommendation, block, recommendationProducts.get(entry.getKey()), availability)) {
-                continue;
+            List<ProductCard> products = new ArrayList<>();
+            for (PlacementRow row : block) {
+                RecommendationRow recommendation = row.recommendationId() == null
+                        ? null : recommendations.get(row.recommendationId());
+                List<Integer> storedProducts = row.recommendationId() == null
+                        ? null : recommendationProducts.get(row.recommendationId());
+                if (validPlacement(active, row, recommendation, storedProducts, availability)) {
+                    products.add(card(row, availability.get(row.productId())));
+                }
             }
-            PlacementRow first = block.get(0);
-            List<ProductCard> products = block.stream()
-                    .sorted(Comparator.comparingInt(PlacementRow::position)
-                            .thenComparingInt(PlacementRow::productId))
-                    .map(row -> card(row, availability.get(row.productId()))).toList();
-            zones.computeIfAbsent(first.zone(), ignored -> new ArrayList<>()).add(new HomePlacement(
-                    first.recommendationType(), first.blockNo(), first.position(), products));
+            if (!products.isEmpty()) {
+                PlacementRow first = block.get(0);
+                zones.computeIfAbsent(first.zone(), ignored -> new ArrayList<>()).add(new HomePlacement(
+                        first.zone(), first.blockNo(), first.position(), List.copyOf(products)));
+            }
         }
         List<HomeZone> result = zones.entrySet().stream()
                 .map(entry -> new HomeZone(entry.getKey(), List.copyOf(entry.getValue())))
@@ -156,27 +154,23 @@ public class StorefrontService {
                 null, result, List.of());
     }
 
-    private boolean validBlock(ActiveLayout active, RecommendationRow recommendation,
-            List<PlacementRow> block, List<Integer> storedProducts,
+    private boolean validPlacement(ActiveLayout active, PlacementRow row, RecommendationRow recommendation,
+            List<Integer> storedProducts,
             Map<Integer, AvailabilityRow> availability) {
+        AvailabilityRow value = availability.get(row.productId());
+        if (!publicProduct(row, value) || value.missingRequiredExpiry() || value.sellableQuantity() < 1) return false;
+        if (row.recommendationId() == null) return true;
         if (recommendation == null || !"APPROVED".equals(recommendation.status())
                 || recommendation.snapshotId() != active.snapshotId()
-                || !recommendation.type().equals(block.get(0).recommendationType())
-                || block.stream().anyMatch(row -> !recommendation.type().equals(row.recommendationType())
-                        || row.recommendationSnapshotId() == null
-                        || row.recommendationSnapshotId() != active.snapshotId())) {
-            return false;
-        }
-        List<Integer> placedProducts = block.stream().map(PlacementRow::productId).sorted().toList();
-        if (storedProducts == null || !storedProducts.equals(placedProducts)) return false;
+                || row.recommendationSnapshotId() == null
+                || row.recommendationSnapshotId() != active.snapshotId()
+                || storedProducts == null || !storedProducts.contains(row.productId())) return false;
         RecPolicy policy = policy(recommendation);
-        if (policy.minimumSellableQuantity() < 1) return false;
-        return block.stream().allMatch(row -> {
-            AvailabilityRow value = availability.get(row.productId());
-            return publicProduct(row, value) && !value.missingRequiredExpiry()
-                    && value.sellableQuantity() >= policy.minimumSellableQuantity();
-        });
+        return policy.minimumSellableQuantity() >= 1
+                && value.sellableQuantity() >= policy.minimumSellableQuantity();
     }
+
+    private record LayoutBlockKey(String zone, int blockNo) {}
 
     private RecPolicy policy(RecommendationRow recommendation) {
         return json.read(recommendation.policy(), RecPolicy.class);

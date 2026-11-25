@@ -222,7 +222,7 @@ flowchart LR
 ### 6.4 Layout and campaign (F07/F08)
 
 - **Baseline A** is the top-K snapshot products by transaction frequency (`F07_BASELINE_V2`, K = BASELINE capacity 35; older V1 layouts hold every product).
-- **Layout B** is built from whole APPROVED and ready blocks, within the configured zone capacities.
+- **Layout B** is built per product with optional F06 provenance, within the configured zone capacities. One source recommendation may be split across placements, and manual placement source is null. F06 evidence and Layout A are immutable.
 - **Zones** are `BASELINE`, `BUNDLE`, `CROSS_SELL`, `FBT` and `BANNER`. Capacities are configured in `application.yml` since PR #22, and environment-overridable: BANNER 3 blocks / 3 products, BUNDLE 4 / 16, CROSS_SELL 2 / 8, FBT 2 / 8, BASELINE 35 / 35.
 - **Score** = Σ weighted utility of the distinct products shown.
 - **Simulation** runs only on a DRAFT campaign. It replays later eligible transactions that are not in the snapshot, and stores the dataset hash, the transaction ids and the assumptions. Since PR #22 (`OFFLINE_REPLAY_V2`), B is compared with the top-N prefix of A, where N = products in B.
