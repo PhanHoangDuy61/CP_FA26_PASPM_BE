@@ -1,5 +1,12 @@
 # API Changelog
 
+## 2026-11-26 — PO answers for F10/F11 (PLANNED) and VND display (DEC-20261126-02)
+
+- Documentation only; no route, schema or OpenAPI change (F10/F11 are not implemented).
+- [F10](F10_BUNDLE_CART_API.md): a single-item `POST /items` or `PATCH /items/{itemId}` that would exceed 99 units per Product is refused as a whole with `409 CART_QUANTITY_LIMIT` (no clamping). Whole-bundle add still adds as much as fits per component.
+- [F11](F11_DASHBOARD_API.md): a bundle-additions window of exactly 90 days (both ends included) is accepted; 91 or more returns 400.
+- Money keeps 2 decimals in responses; UIs display VND as whole đồng rounded HALF_UP. See [DEC-20261126-02](../decisions/2026-11-26/DEC-20261126-02-vnd-display-cart-cap-dashboard-window-merch-screens.md) and [ROC-20261126-009](../record-of-changes/2026-11-26/09-blackbox-test-cases.md).
+
 ## 2026-11-25 — Stable operation IDs and F07 placement schema
 
 - `GET /api/layouts/products` explicitly uses `layoutSnapshotProducts`. See [ROC-20261125-010](../record-of-changes/2026-11-25/10-f07-openapi-annotations.md) for all 47 prior runtime IDs and replacements. Regenerated client method names can change.

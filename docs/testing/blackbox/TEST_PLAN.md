@@ -2,9 +2,9 @@
 
 | Field | Value |
 |---|---|
-| Version / date | 0.1 — 2026-11-26 (Asia/Ho_Chi_Minh) |
+| Version / date | 0.2 — 2026-11-26 (Asia/Ho_Chi_Minh); 0.2 applies the PO answers of DEC-20261126-02 |
 | Baseline | Backend `dev` @ `b94584b`; FE `dev` @ `7f298bc` (routes only, used to name screens) |
-| Deliverables | [TEST_CASES.md](TEST_CASES.md) / [TEST_CASES.csv](TEST_CASES.csv) (246 cases), [TRACEABILITY.md](TRACEABILITY.md), [PO_QUESTIONS.md](PO_QUESTIONS.md) |
+| Deliverables | [TEST_CASES.md](TEST_CASES.md) / [TEST_CASES.csv](TEST_CASES.csv) (248 cases), [TRACEABILITY.md](TRACEABILITY.md), [PO_QUESTIONS.md](PO_QUESTIONS.md) |
 | Execution status | **NOT RUN.** No case has been executed. This pack contains designs only |
 
 ## 1. Scope
@@ -24,7 +24,7 @@
 
 **In scope, PLANNED:** F10 bundle cart and F11 dashboard, written from [DEC-20261125-06](../../decisions/2026-11-25/DEC-20261125-06-f10-f11-mvp-contract.md), the [F10](../../api/F10_BUNDLE_CART_API.md) and [F11](../../api/F11_DASHBOARD_API.md) API docs. Their cases are titled `[PLANNED]` and run when the features are merged.
 
-**Out of scope:** automated unit, integration and MySQL tests (they run in CI from `.github/scripts/test-groups.py`); performance targets (none defined, SRS §5.2); scheduled dispatch with the gate on (BR-24); internal lease, fencing and crash takeover; removed features except checks that they are absent. See TRACEABILITY.md §6.
+**Out of scope:** automated unit, integration and MySQL tests (they run in CI from `.github/scripts/test-groups.py`); performance targets (none defined, SRS §5.2); scheduled dispatch with the gate on (BR-24); internal lease, fencing and crash takeover; removed features except checks that they are absent. See TRACEABILITY.md §7.
 
 ## 2. Sources and precedence
 
@@ -33,7 +33,8 @@ The latest PO decision wins ([DEC-20261125-02](https://github.com/PhanHoangDuy61
 - [SRS v0.4](../../product/SRS.md) (FR, UC, BR, NFR), [ARCHITECTURE_SDD](../../product/ARCHITECTURE_SDD.md) (state machines), [GLOSSARY](../../product/GLOSSARY.md).
 - `docs/api/*` contracts and the [RBAC matrix](../../api/F01_F02_RBAC_MATRIX.md); `docs/frontend_handoff/*`; feature READMEs.
 - DEC files up to 2026-11-25 on `dev`, including DEC-20261123-01, DEC-20261124-01/-02/-03, DEC-20261125-01/-04/-06, DEC-20261119-05/-06/-07.
-- The UML pack `PASPM_Unified_UML2_Editable.drawio` (use cases, screen flow, Store state) on branch `Khoi/docs/diagrams-update-20261126`, not yet merged.
+- The UML pack `PASPM_Unified_UML2_Editable.drawio` (use cases, screen flow, Store state), on `dev` since PR #37 (`fb48d55`).
+- [DEC-20261126-02](../../decisions/2026-11-26/DEC-20261126-02-vnd-display-cart-cap-dashboard-window-merch-screens.md): PO answers of 2026-11-26 (VND display HALF_UP, F10 single-item cap, F11 90-day window, Merchandiser screen defect).
 - Two behaviours the docs leave open were read from the code (DEC-20261125-02 allows reporting, not silently choosing): editing Layout A returns 409 `Layout A is immutable and read-only`; repeated SKU lines with a different price, cost or status are a row error.
 
 ## 3. Design techniques
@@ -41,7 +42,7 @@ The latest PO decision wins ([DEC-20261125-02](https://github.com/PhanHoangDuy61
 | Technique | Where |
 |---|---|
 | Equivalence partitioning | Valid / invalid inputs for every form and request body; strict JSON (unknown field → 400) |
-| Boundary values | Expiry date = today (T), T−1, T+1, and the local-midnight edge; push day = expiry; 99-unit cap; image 1 MiB / 5 MiB and 4000 px; password 12–72; slug 50; Store fields; N 1–365; λ = λmax; α + β = 1; W rounding at .xx5; season start/end; mining 1,600 products / 20,000 rows / 2,000 patterns; int32 and whole-đồng HALF_UP; lookback 7–365; Idempotency-Key 128; import 5 MiB / 10,000 rows; zone caps; F11 90 days; paging 1–100 |
+| Boundary values | VND display rounding (x,50 → up, x,49 → down; displayed subtotal = rounded server subtotal); expiry date = today (T), T−1, T+1, and the local-midnight edge; push day = expiry; 99-unit cap (99 accepted, 100 refused whole); image 1 MiB / 5 MiB and 4000 px; password 12–72; slug 50; Store fields; N 1–365; λ = λmax; α + β = 1; W rounding at .xx5; season start/end; mining 1,600 products / 20,000 rows / 2,000 patterns; int32 and whole-đồng HALF_UP; lookback 7–365; Idempotency-Key 128; import 5 MiB / 10,000 rows; zone caps; F11 90 days inclusive accepted / 91 refused; paging 1–100 |
 | Decision tables | Role × action per feature (RBAC); role × Store binding; `MISSING_PUSH_DAY` conditions; product delete guards × campaign status; bundle origin MINED/MANUAL; block visibility |
 | State transitions | Store ACTIVE ⇄ INACTIVE; batch ACTIVE ⇄ BLOCKED with computed EXPIRED; account states; layout draft → READY → new revision; campaign DRAFT → PUBLISHED → ACTIVE → ENDED, withdraw, rollback; recommendation review; λ validity |
 | Negative and security | 401 / 403 / 404 per role; cross-Store access returns 404; `STORE_INACTIVE` 403 and 409; version conflicts 409; token replay; CSRF; public DTO privacy |
@@ -96,6 +97,7 @@ Passwords come from the tester's local `scripts/seed/.env.seed` (git-ignored) or
 
 - ENV-1 is up, Flyway reports V30, the seed run finished without error and its record counts match `scripts/seed/README.md`.
 - SETUP-B and the DP items a case needs are prepared.
+- **Known defect KD-01 fixed and verified on FE `dev`** (see §9): a Merchandiser can open every screen the role is allowed to use (F03, F05 mining reads, F06 recommendations, F07/F08 workspace). DEC-20261126-02 §2 makes this an entry criterion.
 - The PO has answered, or explicitly deferred, the questions that affect the cases being run (PO_QUESTIONS.md).
 - For `[PLANNED]` cases: F10/F11 merged on `dev` and their contracts final.
 
@@ -114,9 +116,18 @@ Passwords come from the tester's local `scripts/seed/.env.seed` (git-ignored) or
 - A failed case means a defect: open a GitHub issue with the case ID, steps, actual vs expected result and the build. If the contract itself is unclear, raise a PO question instead of "fixing" the expected result.
 - After each cycle, add a record-of-changes entry with the counts per feature and result.
 
-## 9. Risks
+## 9. Known defects and risks
+
+**Known defects (must be fixed before the run)**
+
+| ID | Defect | Source | Blocks |
+|---|---|---|---|
+| KD-01 | FE `dev`: the Merchandiser cannot open several screens its role allows. Post-login role mapping grants F03 only and the sidebar is disabled, although the screen owner map assigns Merchandiser routes (noted on the R2-03 screen flow). The backend already allows the role | DEC-20261126-02 §2 (PO: defect, not intended) | UI steps of the Merchandiser cases in F05–F08 |
+
+**Risks**
+
 
 - The demo seed has one Store; isolation tests depend on SETUP-B (Q-16).
-- Several screens are not wired in FE `dev` for the Merchandiser (Q-03, Q-05) and F09 FE is mock (Q-08); those cases fall back to API steps.
+- If KD-01 is not fixed in time, the Merchandiser UI cases are BLOCKED (not run with API steps instead). The Merchandiser mining screen (Q-05) and the F09 FE (mock, Q-08) are separate open questions; those cases use API steps.
 - Date-dependent cases must be prepared on the day they run.
 - DP-08 datasets take time to build; F05 boundary cases may be BLOCKED until they exist.

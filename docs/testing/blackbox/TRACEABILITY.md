@@ -58,9 +58,9 @@ Coverage: 57/57 FR, 33/33 UC, 33/33 BR have at least one case.
 | FR-08.4 | All F07/F08 operations synchronous | DONE | TC-F08-001, TC-F08-003 |
 | FR-09.1 | Public API by storeSlug; ACTIVE Stores only | DONE | TC-F09-001, TC-F09-004, TC-F09-011 |
 | FR-09.2 | Home renders the ACTIVE campaign layout or the default catalogue | DONE | TC-F09-002, TC-F09-003, TC-F09-012 |
-| FR-09.3 | Product detail, availability, bundle filtering | DONE (related products deferred) | TC-F09-005, TC-F09-007, TC-F09-009 |
-| FR-09.4 | No admin fields in public DTOs; product image URL and description | DONE | TC-F02-008, TC-F02-037, TC-F09-008 |
-| FR-10.1 | END_CUSTOMER cart, 99 cap, If-Match versioning | PLANNED | TC-F10-001, TC-F10-002, TC-F10-003, TC-F10-004, TC-F10-005, TC-F10-006, TC-F10-013 |
+| FR-09.3 | Product detail, availability, bundle filtering | DONE (related products deferred) | TC-F09-005, TC-F09-007, TC-F09-009, TC-F09-013 |
+| FR-09.4 | No admin fields in public DTOs; product image URL and description | DONE | TC-F02-008, TC-F02-037, TC-F09-008, TC-F09-013 |
+| FR-10.1 | END_CUSTOMER cart, 99 cap, If-Match versioning | PLANNED | TC-F10-001, TC-F10-002, TC-F10-003, TC-F10-004, TC-F10-005, TC-F10-006, TC-F10-013, TC-F10-016 |
 | FR-10.2 | Whole-bundle add by bundleKey with per-component results | PLANNED | TC-F10-007, TC-F10-008, TC-F10-009, TC-F10-010 |
 | FR-10.3 | Lines editable/removable; no reservation, discount, checkout | PLANNED | TC-F10-006, TC-F10-012, TC-F10-014, TC-F10-015 |
 | FR-10.4 | Cart events; MINED/MANUAL origin | PLANNED | TC-F10-007, TC-F10-009, TC-F10-011, TC-F10-012, TC-F11-005 |
@@ -157,7 +157,7 @@ UC03 and UC22 were removed before Report 3 and are not reused.
 
 ## 5. Diagram FR page (UML pack) → SRS
 
-The FR page of `PASPM_Unified_UML2_Editable.drawio` (branch `Khoi/docs/diagrams-update-20261126`, not yet on `dev`) numbers requirements as `FRxx.yy`. They map to SRS IDs as follows; the test cases are those of the SRS IDs in §1.
+The FR page of `PASPM_Unified_UML2_Editable.drawio` (on `dev` since PR #37, `fb48d55`) numbers requirements as `FRxx.yy`. They map to SRS IDs as follows; the test cases are those of the SRS IDs in §1.
 
 | Diagram FR | SRS requirement(s) |
 |---|---|
@@ -204,7 +204,29 @@ The FR page of `PASPM_Unified_UML2_Editable.drawio` (branch `Khoi/docs/diagrams-
 | FR11.03 [PLANNED] Saved simulated A/B reports | FR-11.1 |
 | FR11.04 [REMOVED] Algorithm benchmark charts | — |
 
-## 6. Requirements with no black-box test, and why
+## 6. Owner decisions → test cases
+
+Decisions cited directly in a case's trace. Decisions not listed here are covered through the FR/BR they changed.
+
+| Decision | Test cases |
+|---|---|
+| DEC-20261116-03 | TC-F03-028 |
+| DEC-20261116-04 | TC-F05-003, TC-F05-025 |
+| DEC-20261117-02 | TC-F07-014 |
+| DEC-20261119-05 | TC-F05-014, TC-F05-015 |
+| DEC-20261119-06 | TC-F07-005, TC-F07-013, TC-F09-012 |
+| DEC-20261119-07 | TC-F02-003, TC-F02-005, TC-F02-006 |
+| DEC-20261123-01 | TC-F05-004 |
+| DEC-20261124-01 | TC-F02-022 |
+| DEC-20261124-02 | TC-F02-021 |
+| DEC-20261124-03 | TC-F02-031 |
+| DEC-20261125-04 | TC-F09-004, TC-F09-011 |
+| DEC-20261125-06 | TC-F10-004, TC-F10-011 |
+| DEC-20261126-02 | TC-F02-009, TC-F09-013, TC-F10-004, TC-F10-016, TC-F11-006 |
+
+[DEC-20261126-02](../../decisions/2026-11-26/DEC-20261126-02-vnd-display-cart-cap-dashboard-window-merch-screens.md) (PO answers of 2026-11-26) sets: VND displayed as whole đồng HALF_UP; F10 single-item writes above 99 refused whole with 409 `CART_QUANTITY_LIMIT`; F11 window of 90 days inclusive accepted, 91 refused; the Merchandiser screen gap on FE `dev` is a defect to fix before the run (TEST_PLAN.md §7 and §9).
+
+## 7. Requirements with no black-box test, and why
 
 | Requirement | Why there is no executable black-box case | Covered instead by |
 |---|---|---|

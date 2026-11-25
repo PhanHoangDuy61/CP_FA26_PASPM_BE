@@ -9,17 +9,17 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Feature | Cases | High | Medium | Low | functional | negative | boundary | security | state transition | decision table | UI |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | [F01 Identity, access and Store management](#f01) | 51 | 28 | 17 | 6 | 13 | 14 | 11 | 9 | 3 | 0 | 1 |
-| [F02 Catalogue and inventory](#f02) | 37 | 19 | 16 | 2 | 12 | 4 | 12 | 4 | 2 | 3 | 0 |
+| [F02 Catalogue and inventory](#f02) | 37 | 19 | 16 | 2 | 11 | 4 | 13 | 4 | 2 | 3 | 0 |
 | [F03 Utility profiling (Weight v2)](#f03) | 29 | 16 | 11 | 2 | 9 | 6 | 10 | 2 | 1 | 1 | 0 |
 | [F04 Transaction import](#f04) | 15 | 11 | 2 | 2 | 7 | 4 | 3 | 1 | 0 | 0 | 0 |
 | [F05 EFIM mining](#f05) | 26 | 14 | 8 | 4 | 6 | 9 | 7 | 4 | 0 | 0 | 0 |
 | [F06 Recommendations](#f06) | 18 | 9 | 8 | 1 | 6 | 2 | 8 | 1 | 1 | 0 | 0 |
 | [F07 Layout simulator](#f07) | 15 | 11 | 3 | 1 | 3 | 6 | 3 | 1 | 2 | 0 | 0 |
 | [F08 Campaigns and simulated A/B](#f08) | 19 | 13 | 4 | 2 | 1 | 6 | 3 | 1 | 7 | 0 | 1 |
-| [F09 Public storefront](#f09) | 12 | 8 | 2 | 2 | 3 | 2 | 2 | 3 | 1 | 1 | 0 |
-| [F10 Bundle cart (PLANNED)](#f10) | 15 | 10 | 5 | 0 | 4 | 4 | 3 | 2 | 1 | 1 | 0 |
+| [F09 Public storefront](#f09) | 13 | 8 | 3 | 2 | 3 | 2 | 3 | 3 | 1 | 1 | 0 |
+| [F10 Bundle cart (PLANNED)](#f10) | 16 | 10 | 6 | 0 | 4 | 4 | 4 | 2 | 1 | 1 | 0 |
 | [F11 Dashboard (PLANNED)](#f11) | 9 | 4 | 4 | 1 | 4 | 0 | 2 | 1 | 0 | 0 | 2 |
-| **Total** | **246** | **143** | **80** | **23** | **68** | **57** | **64** | **29** | **18** | **6** | **4** |
+| **Total** | **248** | **143** | **82** | **23** | **67** | **57** | **67** | **29** | **18** | **6** | **4** |
 
 ## F01
 
@@ -858,7 +858,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | [TC-F02-006](#tc-f02-006) | Similar-name boundaries (length 4 and one-character edit) | High | boundary |
 | [TC-F02-007](#tc-f02-007) | Renaming to a similar name also needs confirmation | Medium | functional |
 | [TC-F02-008](#tc-f02-008) | Product field boundaries | Medium | boundary |
-| [TC-F02-009](#tc-f02-009) | Set selling price and cost in VND | Medium | functional |
+| [TC-F02-009](#tc-f02-009) | VND prices: stored with 2 decimals, displayed as whole đồng HALF_UP | Medium | boundary |
 | [TC-F02-010](#tc-f02-010) | Product search, filter, sort and paging | Medium | boundary |
 | [TC-F02-011](#tc-f02-011) | Category of another Store cannot be used | Medium | security |
 | [TC-F02-012](#tc-f02-012) | Deactivate and reactivate a product | Medium | state transition |
@@ -1010,17 +1010,17 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 ### TC-F02-009
 
-**Set selling price and cost in VND**
+**VND prices: stored with 2 decimals, displayed as whole đồng HALF_UP**
 
 | Field | Value |
 |---|---|
-| Trace | UC19; FR-02.1; Common 6 |
+| Trace | UC19; FR-02.1; Common 6; DEC-20261126-02 |
 | Role | Store Admin |
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded); QA Milk 1L |
-| Test data | selling 32500, cost 21000.50 |
-| Steps | 1. Edit prices and save<br>2. View the product list and detail |
-| Expected result | Saved with 2 decimals (32500.00, 21000.50). The UI shows VND as whole đồng (see PO question on display rounding of 21000.50). |
-| Priority / type | Medium / functional |
+| Test data | selling 32500, cost 21000.50; then cost 21000.49 |
+| Steps | 1. Edit prices and save<br>2. View the product list and detail<br>3. [API] GET /api/products/{id}<br>4. Change the cost to 21000.49 and view again |
+| Expected result | API and storage keep 32500.00 and 21000.50 unchanged. The UI shows `32.500 ₫` and `21.001 ₫` (HALF_UP). After the change the API returns 21000.49 and the UI shows `21.000 ₫`. |
+| Priority / type | Medium / boundary |
 | Status | NOT RUN |
 
 ### TC-F02-010
@@ -3439,7 +3439,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 ## F09
 
-**Public storefront** — 12 cases.
+**Public storefront** — 13 cases.
 
 | ID | Title | Priority | Type |
 |---|---|---|---|
@@ -3455,6 +3455,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | [TC-F09-010](#tc-f09-010) | Sourced products need a still-approved recommendation | Medium | functional |
 | [TC-F09-011](#tc-f09-011) | No storefront write routes | Low | negative |
 | [TC-F09-012](#tc-f09-012) | Home needs configured zone caps | Low | negative |
+| [TC-F09-013](#tc-f09-013) | Storefront prices: API keeps decimals, UI shows whole đồng HALF_UP | Medium | boundary |
 
 ### TC-F09-001
 
@@ -3636,16 +3637,31 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Priority / type | Low / negative |
 | Status | NOT RUN |
 
+### TC-F09-013
+
+**Storefront prices: API keeps decimals, UI shows whole đồng HALF_UP**
+
+| Field | Value |
+|---|---|
+| Trace | FR-09.3; FR-09.4; DEC-20261126-02 |
+| Role | Guest (anonymous) |
+| Preconditions | ENV-1 (local Docker stack, demo seed loaded); Store A products with sellingPrice 15000.50 and 15000.49 |
+| Test data | slug foodmart-benchmark |
+| Steps | 1. [API] GET …/products/{id} for both products<br>2. When the storefront FE calls the real API (Q-08): open both product pages |
+| Expected result | API returns 15000.50 and 15000.49 unchanged. The storefront shows `15.001 ₫` and `15.000 ₫`. |
+| Priority / type | Medium / boundary |
+| Status | NOT RUN |
+
 ## F10
 
-**Bundle cart (PLANNED)** — 15 cases.
+**Bundle cart (PLANNED)** — 16 cases.
 
 | ID | Title | Priority | Type |
 |---|---|---|---|
 | [TC-F10-001](#tc-f10-001) | [PLANNED] Cart requires an End Customer | High | security |
 | [TC-F10-002](#tc-f10-002) | [PLANNED] Add an item with If-Match | High | functional |
 | [TC-F10-003](#tc-f10-003) | [PLANNED] If-Match header rules | High | negative |
-| [TC-F10-004](#tc-f10-004) | [PLANNED] 99-unit cap per product | High | boundary |
+| [TC-F10-004](#tc-f10-004) | [PLANNED] 99-unit cap per product: single-item writes are all-or-nothing | High | boundary |
 | [TC-F10-005](#tc-f10-005) | [PLANNED] Quantity validation | Medium | negative |
 | [TC-F10-006](#tc-f10-006) | [PLANNED] Stock is checked on add and increase only | High | boundary |
 | [TC-F10-007](#tc-f10-007) | [PLANNED] Whole bundle add, all components | High | functional |
@@ -3657,6 +3673,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | [TC-F10-013](#tc-f10-013) | [PLANNED] Cart isolation | High | security |
 | [TC-F10-014](#tc-f10-014) | [PLANNED] Hidden product line stays editable | Medium | state transition |
 | [TC-F10-015](#tc-f10-015) | [PLANNED] No reservation, discount or checkout | Medium | functional |
+| [TC-F10-016](#tc-f10-016) | [PLANNED] Cart money display rounds the server values HALF_UP | Medium | boundary |
 
 ### TC-F10-001
 
@@ -3684,7 +3701,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Preconditions | Feature PLANNED (DEC-20261125-06); run when F10 is merged. ENV-1 (local Docker stack, demo seed loaded) |
 | Test data | product P1 (32000 đ), If-Match "0", {"productId":P1,"quantity":2} |
 | Steps | 1. [API] POST …/cart/items |
-| Expected result | 200; line P1 ×2; unitPrice = current selling price; lineTotal 64000.00 and subtotal computed by the server; version 1; currency VND. |
+| Expected result | 200; line P1 ×2; unitPrice = current selling price; lineTotal 64000.00 and subtotal computed by the server; version 1; currency VND. The cart UI shows `64.000 ₫`. |
 | Priority / type | High / functional |
 | Status | NOT RUN |
 
@@ -3705,16 +3722,16 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 ### TC-F10-004
 
-**[PLANNED] 99-unit cap per product**
+**[PLANNED] 99-unit cap per product: single-item writes are all-or-nothing**
 
 | Field | Value |
 |---|---|
-| Trace | FR-10.1; DEC-20261125-06 |
+| Trace | FR-10.1; DEC-20261125-06; DEC-20261126-02 |
 | Role | End Customer |
 | Preconditions | Feature PLANNED (DEC-20261125-06); run when F10 is merged. P1 has ≥ 200 sellable units |
-| Test data | add 99; add 100; line 98 + add 1; line 98 + add 2; PATCH 99 / 100 |
-| Steps | 1. [API] Run each case on a fresh cart |
-| Expected result | 99 and 98+1 accepted. 100, 98+2 and PATCH 100 refused with 409 CART_QUANTITY_LIMIT; cart unchanged. |
+| Test data | add 99; add 100; line 98 + add 1; line 98 + add 2; PATCH 99; PATCH 100 |
+| Steps | 1. [API] Run each case on a fresh cart and GET the cart after each refusal |
+| Expected result | Add 99, 98+1 and PATCH 99: 200, line = 99. Add 100, 98+2 and PATCH 100: 409 CART_QUANTITY_LIMIT for the whole request; nothing is clamped (the line stays 0 or 98), the version does not change and no event is recorded. |
 | Priority / type | High / boundary |
 | Status | NOT RUN |
 
@@ -3883,6 +3900,21 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Priority / type | Medium / functional |
 | Status | NOT RUN |
 
+### TC-F10-016
+
+**[PLANNED] Cart money display rounds the server values HALF_UP**
+
+| Field | Value |
+|---|---|
+| Trace | FR-10.1; DEC-20261126-02 |
+| Role | End Customer |
+| Preconditions | Feature PLANNED (DEC-20261125-06); run when F10 is merged. products P5 at 10000.50 đ and P6 at 10000.50 đ |
+| Test data | add P5 ×1 and P6 ×1 |
+| Steps | 1. [API] Add both<br>2. Open the cart drawer |
+| Expected result | API: lineTotal 10000.50 each, subtotal 20001.00 (computed by the server). UI: each line `10.001 ₫` and subtotal `20.001 ₫` — the displayed subtotal is the rounded server subtotal, not the sum of rounded lines (20.002). |
+| Priority / type | Medium / boundary |
+| Status | NOT RUN |
+
 ## F11
 
 **Dashboard (PLANNED)** — 9 cases.
@@ -3894,7 +3926,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | [TC-F11-003](#tc-f11-003) | [PLANNED] Snapshot utility panel | Medium | functional |
 | [TC-F11-004](#tc-f11-004) | [PLANNED] Saved simulation panel | Medium | UI |
 | [TC-F11-005](#tc-f11-005) | [PLANNED] Bundle additions: default window and counts | High | functional |
-| [TC-F11-006](#tc-f11-006) | [PLANNED] Date range boundaries | High | boundary |
+| [TC-F11-006](#tc-f11-006) | [PLANNED] Date range boundaries (maximum 90 days inclusive) | High | boundary |
 | [TC-F11-007](#tc-f11-007) | [PLANNED] Campaign filter | Medium | functional |
 | [TC-F11-008](#tc-f11-008) | [PLANNED] Day boundary follows Asia/Ho_Chi_Minh | Medium | boundary |
 | [TC-F11-009](#tc-f11-009) | [PLANNED] One panel failing does not hide the others | Low | UI |
@@ -3976,16 +4008,16 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 ### TC-F11-006
 
-**[PLANNED] Date range boundaries**
+**[PLANNED] Date range boundaries (maximum 90 days inclusive)**
 
 | Field | Value |
 |---|---|
-| Trace | FR-11.1 |
+| Trace | FR-11.1; DEC-20261126-02 |
 | Role | Store Admin |
 | Preconditions | Feature PLANNED (DEC-20261125-06); run when F11 is merged.  |
-| Test data | 90-day range; 91-day range; only from; from after to |
-| Steps | 1. [API] Call with each range |
-| Expected result | 90 days: 200. 91 days, only one date, inverted range: 400. |
+| Test data | from 2026-09-01 to 2026-11-29 (90 days inclusive); from 2026-08-31 to 2026-11-29 (91 days); from = to (1 day); only from; from after to |
+| Steps | 1. [API] Call /api/dashboard/bundle-additions with each range |
+| Expected result | 90 days and 1 day: 200 with one row per day (90 and 1 rows). 91 days: 400. Only one date and an inverted range: 400. |
 | Priority / type | High / boundary |
 | Status | NOT RUN |
 

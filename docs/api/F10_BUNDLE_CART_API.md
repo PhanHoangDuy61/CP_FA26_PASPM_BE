@@ -17,7 +17,7 @@ The prefix is `/api/storefront/{storeSlug}/cart`. All routes require Bearer JWT 
 | DELETE `/items/{itemId}` | No body | 200 `CartView`. Removes exactly that line. |
 | DELETE cart root | No body | 200 empty `CartView`. Clears the current Store cart and retains its identity if persisted. |
 
-The MVP bundle request accepts only `bundleKey` and adds one bundle per click, requesting one unit per component. A request containing `bundleQuantity` returns 400. Customers change quantities on the ordinary cart lines after adding the bundle. Strict JSON rejects unknown fields. Individual writes use positive integer quantities, with a total limit of 99 per Product in the cart. Quantity zero uses DELETE. The server reads current price and checks sellable stock on adds and quantity increases. Removal and reduction remain available for stale lines. Money persists at scale 2 and FE displays VND as whole đồng. Subtotal and line totals are computed server-side, with no discount.
+The MVP bundle request accepts only `bundleKey` and adds one bundle per click, requesting one unit per component. A request containing `bundleQuantity` returns 400. Customers change quantities on the ordinary cart lines after adding the bundle. Strict JSON rejects unknown fields. Individual writes use positive integer quantities, with a total limit of 99 per Product in the cart. A `POST /items` or `PATCH /items/{itemId}` that would make the line exceed 99 is rejected as a whole with `409 CART_QUANTITY_LIMIT`: nothing is clamped, the cart and its version do not change and no event is recorded ([DEC-20261126-02](../decisions/2026-11-26/DEC-20261126-02-vnd-display-cart-cap-dashboard-window-merch-screens.md)). Whole-bundle add is different: each component adds as much as fits (below). Quantity zero uses DELETE. The server reads current price and checks sellable stock on adds and quantity increases. Removal and reduction remain available for stale lines. Money persists at scale 2 and is returned unchanged; FE displays VND as whole đồng rounded HALF_UP (21,000.50 → `21.001 ₫`; the displayed subtotal is the rounded server `subtotal`, not a sum of rounded lines) ([DEC-20261126-02](../decisions/2026-11-26/DEC-20261126-02-vnd-display-cart-cap-dashboard-window-merch-screens.md)). Subtotal and line totals are computed server-side, with no discount.
 
 ## Versioning
 
@@ -77,7 +77,7 @@ Illustrative partial success. Product 501 had one unit in the cart and the block
 | 400 | Invalid field, quantity or version header. |
 | 401 / 403 | Missing/invalid authentication / authenticated role cannot use F10. |
 | 404 | Absent, hidden or foreign resource; invalid public bundle key. |
-| 409 | `CART_VERSION_CONFLICT`, `BUNDLE_UNAVAILABLE`, `BUNDLE_ADD_REJECTED`, `INSUFFICIENT_SELLABLE_STOCK` or `CART_QUANTITY_LIMIT` as applicable. |
+| 409 | `CART_VERSION_CONFLICT`, `BUNDLE_UNAVAILABLE`, `BUNDLE_ADD_REJECTED`, `INSUFFICIENT_SELLABLE_STOCK` or `CART_QUANTITY_LIMIT` as applicable. `CART_QUANTITY_LIMIT` refuses the whole single-item request (line would exceed 99). |
 | 503 | Required layout capacity configuration is unavailable for bundle resolution. |
 
 Related: [F10 handoff](../frontend_handoff/F10_HANDOFF.md), [F11 Dashboard API](F11_DASHBOARD_API.md).

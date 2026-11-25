@@ -31,6 +31,7 @@ The public storefront is anonymous and read-only. Staff routes remain protected.
 
 - [ ] Use `search`, `categoryId`, `page`, `pageSize`, `sortBy=name|sellingPrice`, and `sortDirection=asc|desc`.
 - [ ] Render only `AVAILABLE` / `OUT_OF_STOCK` (show "Hết hàng" for `OUT_OF_STOCK`); never estimate or display stock quantities.
+- [ ] Display `sellingPrice` in VND as whole đồng rounded HALF_UP (`15000.50` → `15.001 ₫`, `15000.49` → `15.000 ₫`); the API value keeps 2 decimals ([DEC-20261126-02](../decisions/2026-11-26/DEC-20261126-02-vnd-display-cart-cap-dashboard-window-merch-screens.md)).
 - [ ] Render `imageUrl` only as a URL; upload is not supported.
 - [ ] Use `productId` for detail navigation. Cross-Store, INACTIVE and soft-deleted Products return 404.
 - [ ] Do not show SKU, cost, batch/expiry data, F03 scores, utility, or review information.

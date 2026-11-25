@@ -45,7 +45,7 @@ Illustrative excerpt of a single report layout row (the actual report has both A
 ## Bundle additions
 
 **Proposed** `GET /api/dashboard/bundle-additions?from=2026-11-24&to=2026-11-25&campaignId=42`.
-`from` and `to` are supplied together as inclusive Store-local dates. Omit both for the last 30 days including today. Maximum 90 days. `campaignId` is optional, must belong to the authenticated Store, and filters by the campaign captured on the event even if the campaign has since ended. The repository uses a UTC half-open boundary corresponding to the Store-local window and returns a row per day, filling missing days with zeros.
+`from` and `to` are supplied together as inclusive Store-local dates. Omit both for the last 30 days including today. The window may span at most 90 days counting both ends: exactly 90 days is accepted, 91 or more returns 400 ([DEC-20261126-02](../decisions/2026-11-26/DEC-20261126-02-vnd-display-cart-cap-dashboard-window-merch-screens.md)). `campaignId` is optional, must belong to the authenticated Store, and filters by the campaign captured on the event even if the campaign has since ended. The repository uses a UTC half-open boundary corresponding to the Store-local window and returns a row per day, filling missing days with zeros.
 
 Main KPI counts successful `BUNDLE_ADDED` events by origin. Secondary KPI sums recorded **Product units actually added**. A partial success of A ×2 and B ×1 is one action and three units; rejected or skipped components contribute zero. No event rows, customer identities, or unrelated cart operations are returned. A valid empty window has both origin counts at zero. A panel whose backend is unavailable shows an unavailable state and does not claim zero activity.
 
