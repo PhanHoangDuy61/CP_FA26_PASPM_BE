@@ -33,3 +33,7 @@
 ## Record 008 — PO answers: rename, Mermaid archived, FK edges, review
 
 [Record 008](08-po-answers-rename-archive-fk-review.md) applies the PO answers of 2026-11-26 (pack renamed, Mermaid mirrors archived, FK edges drawn) and the page-by-page review fixes. Documentation only; Maven NOT RUN.
+
+## Record 010 — AD07 / R2-08.07 / R2-07.07 as the offline replay
+
+[Record 010](10-ab-diagrams-offline-replay.md) redraws AD07 and its sequence and class pages as the synchronous offline replay (`OFFLINE_REPLAY_V4`) after DEC-20261126-03. Documentation only; Maven NOT RUN.
