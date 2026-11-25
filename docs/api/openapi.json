@@ -8027,66 +8027,6 @@
         }
       }
     },
-    "/api/system/stores/{storeId}/storefront-visibility" : {
-      "put" : {
-        "tags" : [ "system-store-controller" ],
-        "summary" : "SYSTEM_ADMIN: enable or disable public visibility without changing campaign state",
-        "operationId" : "storefrontVisibility",
-        "parameters" : [ {
-          "name" : "storeId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "exclusiveMinimum" : 0
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/VisibilityRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "*/*" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/VisibilityView"
-                }
-              }
-            }
-          },
-          "403" : {
-            "description" : "Permission denied"
-          },
-          "429" : {
-            "description" : "Rate limit exceeded"
-          },
-          "401" : {
-            "description" : "Authentication required / invalid"
-          },
-          "400" : {
-            "description" : "Invalid request / verification"
-          },
-          "503" : {
-            "description" : "Service configuration or required dependency unavailable"
-          },
-          "409" : {
-            "description" : "Conflict"
-          },
-          "404" : {
-            "description" : "Resource not found or outside the authenticated Store"
-          }
-        }
-      }
-    },
     "/api/storefront/{storeSlug}/products" : {
       "get" : {
         "tags" : [ "F09 Public Storefront" ],
@@ -8250,7 +8190,7 @@
     "/api/storefront/{storeSlug}/home" : {
       "get" : {
         "tags" : [ "F09 Public Storefront" ],
-        "summary" : "Read the public homepage for a storefront-enabled Store",
+        "summary" : "Read the public homepage of an ACTIVE Store",
         "operationId" : "home",
         "parameters" : [ {
           "name" : "storeSlug",
@@ -8299,7 +8239,7 @@
     "/api/storefront/stores" : {
       "get" : {
         "tags" : [ "F09 Public Storefront" ],
-        "summary" : "List only Stores that have enabled their public storefront",
+        "summary" : "List ACTIVE Stores (public storefront); storeSlug is the Store slug",
         "operationId" : "stores",
         "responses" : {
           "200" : {
@@ -8910,11 +8850,13 @@
           },
           "imageUrl" : {
             "type" : "string",
+            "description" : "Optional absolute HTTP(S) image URL for F09 display (no upload)",
             "maxLength" : 2048,
             "minLength" : 0
           },
           "description" : {
             "type" : "string",
+            "description" : "Optional display description for F09",
             "maxLength" : 2000,
             "minLength" : 0
           }
@@ -13030,30 +12972,6 @@
           }
         }
       },
-      "VisibilityRequest" : {
-        "type" : "object",
-        "properties" : {
-          "storefrontEnabled" : {
-            "type" : "boolean"
-          }
-        },
-        "required" : [ "storefrontEnabled" ]
-      },
-      "VisibilityView" : {
-        "type" : "object",
-        "properties" : {
-          "storeId" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "storeSlug" : {
-            "type" : "string"
-          },
-          "storefrontEnabled" : {
-            "type" : "boolean"
-          }
-        }
-      },
       "ProductCard" : {
         "type" : "object",
         "properties" : {
@@ -13081,7 +12999,7 @@
           },
           "availability" : {
             "type" : "string",
-            "enum" : [ "AVAILABLE", "UNAVAILABLE" ]
+            "enum" : [ "AVAILABLE", "OUT_OF_STOCK" ]
           }
         }
       },

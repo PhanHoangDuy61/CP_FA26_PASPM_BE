@@ -108,6 +108,7 @@ class CatalogIntegrationTest {
                         .header("Authorization", "Bearer " + storeAdminToken)
                         .contentType(MediaType.APPLICATION_JSON).content(forgedStoreProduct))
                 .andExpect(status().isBadRequest());
+        // F09 display metadata: only absolute HTTP(S) image URLs are stored.
         mvc.perform(post("/api/products")
                         .header("Authorization", "Bearer " + storeAdminToken)
                         .contentType(MediaType.APPLICATION_JSON)

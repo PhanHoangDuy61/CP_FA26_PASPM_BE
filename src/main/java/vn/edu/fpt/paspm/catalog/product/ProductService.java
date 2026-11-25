@@ -1,10 +1,10 @@
 package vn.edu.fpt.paspm.catalog.product;
 
 import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -128,19 +128,6 @@ public class ProductService {
         }
     }
 
-    private void validateImageUrl(String value) {
-        if (value == null || value.isBlank()) return;
-        try {
-            URI uri = new URI(value.trim());
-            if (!uri.isAbsolute() || uri.getHost() == null
-                    || !("http".equalsIgnoreCase(uri.getScheme()) || "https".equalsIgnoreCase(uri.getScheme()))) {
-                throw new ApiException(400, "imageUrl must be an absolute HTTP or HTTPS URL");
-            }
-        } catch (URISyntaxException exception) {
-            throw new ApiException(400, "imageUrl must be a valid HTTP or HTTPS URL");
-        }
-    }
-
     private void requireNameConfirmation(int storeId, int excludedProductId, String name, Boolean confirmed) {
         if (!Boolean.TRUE.equals(confirmed)
                 && products.findOtherNames(storeId, excludedProductId).stream()
@@ -179,6 +166,20 @@ public class ProductService {
 
     private static String normalizeName(String name) {
         return name.strip().replaceAll("\\s+", " ").toLowerCase(Locale.ROOT);
+    }
+
+    /** F09 display metadata: only an absolute HTTP(S) URL is stored; the storefront never fetches it server-side. */
+    private void validateImageUrl(String value) {
+        if (value == null || value.isBlank()) return;
+        try {
+            URI uri = new URI(value.trim());
+            if (!uri.isAbsolute() || uri.getHost() == null
+                    || !("http".equalsIgnoreCase(uri.getScheme()) || "https".equalsIgnoreCase(uri.getScheme()))) {
+                throw new ApiException(400, "imageUrl must be an absolute HTTP or HTTPS URL");
+            }
+        } catch (URISyntaxException exception) {
+            throw new ApiException(400, "imageUrl must be a valid HTTP or HTTPS URL");
+        }
     }
 
     private ProductView requireProduct(int storeId, int id) {

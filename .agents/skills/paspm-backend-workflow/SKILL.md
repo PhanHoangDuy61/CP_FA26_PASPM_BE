@@ -41,7 +41,7 @@ Load `paspm-context` first. This skill is the "how"; that skill is the "what" an
   - Never rewrite stored JSON or historical rows.
   - A new format gets a new version tag (for example `scoringVersion`, `conversionVersion`, `ruleVersion`, `algorithm_version`), and readers dispatch on it.
 - **Flyway:**
-  - The next migration is the next free version after the highest in `src/main/resources/db/migration` and `src/main/java/db/migration`. As of 2026-11-19 that is V27.
+  - The next migration is the next free version after the highest in `src/main/resources/db/migration` and `src/main/java/db/migration`. As of 2026-11-25 V30 is the highest (F09) and V31 is reserved for F10, so new work takes V32. Check every `origin/*` branch before claiming a number.
   - V1–V26 are frozen, because changing them breaks checksums on every teammate's database.
 
 ## 3. Test-first, and register the test with CI

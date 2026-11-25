@@ -26,14 +26,14 @@ public class StorefrontController {
     }
 
     @GetMapping("/api/storefront/stores")
-    @Operation(summary = "List only Stores that have enabled their public storefront", security = {})
+    @Operation(summary = "List ACTIVE Stores (public storefront); storeSlug is the Store slug", security = {})
     @SecurityRequirements
     public List<PublicStore> stores() {
         return storefront.stores();
     }
 
     @GetMapping("/api/storefront/{storeSlug}/home")
-    @Operation(summary = "Read the public homepage for a storefront-enabled Store", security = {})
+    @Operation(summary = "Read the public homepage of an ACTIVE Store", security = {})
     @SecurityRequirements
     public HomeView home(@PathVariable String storeSlug) {
         return storefront.home(storeSlug);

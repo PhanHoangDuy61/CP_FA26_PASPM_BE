@@ -1,19 +1,17 @@
 package vn.edu.fpt.paspm.storefront;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
 
 public final class StorefrontContracts {
     private StorefrontContracts() {}
 
-    public enum Availability { AVAILABLE, UNAVAILABLE }
+    /** FR-09.3: a public product is AVAILABLE or OUT_OF_STOCK (no quantity is exposed). */
+    public enum Availability { AVAILABLE, OUT_OF_STOCK }
 
     public record PublicStore(String storeSlug, String name) {}
     public record StoreSummary(String storeSlug, String name) {}
-    public record VisibilityRequest(@NotNull Boolean storefrontEnabled) {}
-    public record VisibilityView(int storeId, String storeSlug, boolean storefrontEnabled) {}
     public record ProductCategory(Integer categoryId, String name) {}
     public record ProductCard(int productId, String name, String description, String imageUrl,
             String unit, BigDecimal sellingPrice, ProductCategory category, Availability availability) {}

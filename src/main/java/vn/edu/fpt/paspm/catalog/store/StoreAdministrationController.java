@@ -16,9 +16,6 @@ import vn.edu.fpt.paspm.catalog.store.StoreContracts.StoreDetailView;
 import vn.edu.fpt.paspm.catalog.store.StoreContracts.StoreView;
 import vn.edu.fpt.paspm.catalog.store.StoreContracts.UpdateStore;
 import vn.edu.fpt.paspm.mining.MiningContracts;
-import vn.edu.fpt.paspm.storefront.StorefrontContracts.VisibilityRequest;
-import vn.edu.fpt.paspm.storefront.StorefrontContracts.VisibilityView;
-import vn.edu.fpt.paspm.storefront.StorefrontRepository;
 
 /**
  * UC34 Manage Stores (DEC-20261123-01 §2). The list route is the D2 Store picker (2026-11-02), extended additively: more
@@ -30,11 +27,9 @@ import vn.edu.fpt.paspm.storefront.StorefrontRepository;
 @PreAuthorize("hasRole('SYSTEM_ADMIN')")
 public class StoreAdministrationController {
     private final StoreService stores;
-    private final StorefrontRepository storefronts;
 
-    public StoreAdministrationController(StoreService stores, StorefrontRepository storefronts) {
+    public StoreAdministrationController(StoreService stores) {
         this.stores = stores;
-        this.storefronts = storefronts;
     }
 
     @GetMapping
@@ -46,14 +41,6 @@ public class StoreAdministrationController {
                                                      @RequestParam(required = false) String q,
                                                      @RequestParam(required = false) String status) {
         return stores.list(q, status, page, pageSize);
-    }
-
-    @PutMapping("/{storeId}/storefront-visibility")
-    @Operation(summary = "SYSTEM_ADMIN: enable or disable public visibility without changing campaign state")
-    public VisibilityView storefrontVisibility(@PathVariable @Positive int storeId,
-                                                @Valid @RequestBody VisibilityRequest request) {
-        var result = storefronts.setVisibility(storeId, request.storefrontEnabled());
-        return new VisibilityView(result.storeId(), result.storeSlug(), result.storefrontEnabled());
     }
 
     @PostMapping

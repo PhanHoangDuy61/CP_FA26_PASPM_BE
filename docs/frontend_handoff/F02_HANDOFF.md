@@ -119,6 +119,8 @@ export interface ProductRequest {
   requiresExpiry: boolean; sellingPrice: number; costPrice: number; status: CatalogStatus;
   imageUrl?: string | null; description?: string | null;
   confirmSimilarName?: boolean; // true only after confirming the 409 warning
+  imageUrl?: string | null;     // F09 display, absolute http(s) URL (V29)
+  description?: string | null;  // F09 display, max 2000 (V29)
 }
 export interface Product {
   readonly id: number; readonly sku: string; name: string; unit: string; requiresExpiry: boolean;
@@ -172,3 +174,7 @@ There is no CORS setup in the Backend source. Use same-origin local proxy or dep
 
 ## 2026-11-16 — Optional clear-push-day action
 New non-breaking route: `DELETE /api/inventory-batches/{id}/push-day` (Store Admin). Send Bearer, no body; 200 returns `InventoryBatch` with nullable `pushDay`. Update local batch state from the response, then refresh scores/preview. Already-null succeeds. 404 covers unknown and foreign Store records; 403 wrong role. PATCH null/omitted keeps the old push day. Add `pushDay?: string | null` to create/PATCH types and nullable `pushDay` to the response type.
+
+## 2026-11-25 — F09 display metadata (additive)
+
+Product create/update may include `imageUrl` (absolute HTTP(S); upload not supported; anything else is 400) and `description` (≤ 2,000 characters). Both are optional. Because PUT replaces the whole product, an edit form must send back the current `imageUrl` and `description` (from the last `Product` read) or they are cleared. For public rendering use the [F09 storefront handoff](F09_HANDOFF.md), never F02 `Product`.

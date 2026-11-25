@@ -184,14 +184,14 @@ public class StorefrontService {
         return new ProductCard(product.id(), product.name(), product.description(), product.imageUrl(),
                 product.unit(), product.sellingPrice(), category(product.categoryId(), product.categoryName()),
                 availability != null && availability.productActive() && availability.sellableQuantity() > 0
-                        ? Availability.AVAILABLE : Availability.UNAVAILABLE);
+                        ? Availability.AVAILABLE : Availability.OUT_OF_STOCK);
     }
 
     private ProductCard card(PlacementRow product, AvailabilityRow availability) {
         return new ProductCard(product.productId(), product.name(), product.description(), product.imageUrl(),
                 product.unit(), product.sellingPrice(), category(product.categoryId(), product.categoryName()),
                 availability != null && availability.productActive() && availability.sellableQuantity() > 0
-                        ? Availability.AVAILABLE : Availability.UNAVAILABLE);
+                        ? Availability.AVAILABLE : Availability.OUT_OF_STOCK);
     }
 
     private ProductCategory category(Integer id, String name) {

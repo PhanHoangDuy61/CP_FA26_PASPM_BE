@@ -19,7 +19,7 @@ public class ProductMetadataPersistence {
 
     public int create(int storeId, String name, Integer categoryId, String unit,
             boolean requiresExpiry, BigDecimal sellingPrice, BigDecimal costPrice, String status) {
-        return create(storeId,name,categoryId,unit,requiresExpiry,sellingPrice,costPrice,status,null,null);
+        return create(storeId, name, categoryId, unit, requiresExpiry, sellingPrice, costPrice, status, null, null);
     }
 
     public int create(int storeId, String name, Integer categoryId, String unit,
@@ -55,7 +55,7 @@ public class ProductMetadataPersistence {
 
     public boolean update(int storeId, int id, String name, Integer categoryId, String unit,
             boolean requiresExpiry, BigDecimal sellingPrice, BigDecimal costPrice, String status) {
-        return update(storeId,id,name,categoryId,unit,requiresExpiry,sellingPrice,costPrice,status,null,null);
+        return update(storeId, id, name, categoryId, unit, requiresExpiry, sellingPrice, costPrice, status, null, null);
     }
 
     public boolean update(int storeId, int id, String name, Integer categoryId, String unit,
