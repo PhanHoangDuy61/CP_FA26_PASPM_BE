@@ -44,7 +44,7 @@ PASPM is **one web application**: a React single-page app and a single Spring Bo
 | # | Component | Responsibility | Status |
 |---|---|---|---|
 | 1 | React + TypeScript SPA | Role-guarded routes and API clients. Sends the Bearer token, and the CSRF header on refresh | DONE for F01–F06 (API clients on FE `dev` @ `86d677d`); F07/F08 in progress (mock screens only, on the local branch `feature/f07-f11-mock`) |
-| 2 | REST controllers | HTTP endpoints for each domain. Swagger at `/swagger` | DONE (123 operations at `222e54f`) |
+| 2 | REST controllers | HTTP endpoints for each domain. Swagger at `/swagger` | DONE (139 operations / 112 paths, `docs/api/openapi.json` runtime export at `cded4ab`) |
 | 3 | Spring Security | JWT resource server, role checks, Store scope from the token, rate limits, refresh/CSRF session service | DONE |
 | 4 | Application services | Validation, Store scoping, transaction boundaries, optimistic versions | DONE |
 | 5 | Weight v2 calculator | `ExpiryRiskCalculator` (FEFO by push day), `WeightV2Calculator` (sales rate v, seasons M), `UtilityMath` (W, rounding) | DONE |
@@ -121,7 +121,7 @@ sequenceDiagram
 
 ### 5.1 Migrations
 
-Never edit V1–V26. New schema always goes in V27 or later (V27 is taken by Store management, V28 by product soft delete, V29 by the old F09 merge on `dev`, V30 by the F09 cleanup, V31 reserved for F10; use V32+ next).
+Never edit V1–V26. New migrations start at **V32** (V27 is taken by Store management, V28 by product soft delete, V29 by the old F09 merge on `dev`, V30 by the F09 cleanup, V31 reserved for F10).
 
 | Version | Purpose |
 |---|---|
