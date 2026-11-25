@@ -1563,7 +1563,7 @@
         <mxCell id="e11" edge="1" parent="1" source="run" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;" target="save" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="e12" edge="1" parent="1" source="success" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;" target="error" value="[any failed]">
+        <mxCell id="e12" edge="1" parent="1" source="success" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;" target="error" value="[failed]">
           <mxGeometry relative="1" as="geometry">
             <mxPoint as="offset" x="0" y="-16" />
           </mxGeometry>
@@ -1576,7 +1576,7 @@
             <mxPoint x="58" y="3" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="e15" edge="1" parent="1" source="success" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;" target="view" value="[all complete]">
+        <mxCell id="e15" edge="1" parent="1" source="success" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;" target="view" value="[completed]">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="876" y="1214" />
@@ -1594,7 +1594,7 @@
         <mxCell id="s" parent="1" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;strokeColor=#000000;fillColor=#000000;" value="" vertex="1">
           <mxGeometry height="24" width="24" x="312" y="200" as="geometry" />
         </mxCell>
-        <mxCell id="config" parent="1" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" value="Choose Store + READY utility snapshot&lt;br&gt;Policy supplies minUtil (algorithm: EFIM); UUID requestKey" vertex="1">
+        <mxCell id="config" parent="1" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" value="Choose Store + READY snapshot&lt;br&gt;Policy minUtil (EFIM); UUID requestKey" vertex="1">
           <mxGeometry height="80" width="300" x="174" y="254" as="geometry" />
         </mxCell>
         <mxCell id="mode" parent="1" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rhombus;fillColor=#FFFFFF;strokeColor=#245B83;strokeWidth=1.6;fontSize=16;fontColor=#223247;spacing=8;" value="Submission mode?" vertex="1">
@@ -1618,13 +1618,13 @@
         <mxCell id="badend-dot" parent="1" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;strokeColor=#000000;fillColor=#000000;" value="" vertex="1">
           <mxGeometry height="16" width="16" x="316" y="836" as="geometry" />
         </mxCell>
-        <mxCell id="run" parent="1" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#EDF5FB;strokeColor=#245B83;strokeWidth=1.8;fontSize=17;fontColor=#223247;spacing=8;" value="202 (manual): persist request + run(s)&lt;br&gt;Worker claims queued job asynchronously" vertex="1">
+        <mxCell id="run" parent="1" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#EDF5FB;strokeColor=#245B83;strokeWidth=1.8;fontSize=17;fontColor=#223247;spacing=8;" value="202 (manual): persist request + EFIM run&lt;br&gt;Worker claims queued job asynchronously" vertex="1">
           <mxGeometry height="80" width="300" x="726" y="834" as="geometry" />
         </mxCell>
-        <mxCell id="success" parent="1" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rhombus;fillColor=#FFFFFF;strokeColor=#245B83;strokeWidth=1.6;fontSize=16;fontColor=#223247;spacing=8;" value="All selected runs&lt;br&gt;COMPLETED?" vertex="1">
+        <mxCell id="success" parent="1" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rhombus;fillColor=#FFFFFF;strokeColor=#245B83;strokeWidth=1.6;fontSize=16;fontColor=#223247;spacing=8;" value="Run COMPLETED?" vertex="1">
           <mxGeometry height="108" width="248" x="752.0" y="1053" as="geometry" />
         </mxCell>
-        <mxCell id="error" parent="1" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" value="Inspect FAILED / TIMED_OUT runs&lt;br&gt;COMPLETED sibling remains accessible" vertex="1">
+        <mxCell id="error" parent="1" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" value="Inspect the FAILED / TIMED_OUT run" vertex="1">
           <mxGeometry height="80" width="300" x="174" y="1067" as="geometry" />
         </mxCell>
         <mxCell id="failend" parent="1" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;fillColor=#FFFFFF;strokeWidth=1.5;strokeColor=#000000;" value="" vertex="1">
@@ -3708,11 +3708,11 @@
         <mxCell id="CMP__per" value="persistence&#xa;«JDBC»" style="shape=folder;tabWidth=34;tabHeight=8;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontFamily=Arial;fontSize=11;fontStyle=0;verticalAlign=middle;align=center;spacingTop=6;" vertex="1" parent="1">
           <mxGeometry x="1200" y="590" width="380" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="DSH" value="" style="shape=folder;tabWidth=200;tabHeight=20;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.4;fontFamily=Arial;fontSize=14;fontStyle=1;verticalAlign=top;align=center;" vertex="1" parent="1">
+        <mxCell id="DSH" value="" style="shape=folder;tabWidth=250;tabHeight=20;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.4;fontFamily=Arial;fontSize=14;fontStyle=1;verticalAlign=top;align=center;" vertex="1" parent="1">
           <mxGeometry x="1710" y="490" width="400" height="150" as="geometry" />
         </mxCell>
         <mxCell id="DSH__name" value="Performance Dashboard «planned»" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=13;fontStyle=1;align=left;verticalAlign=middle;spacing=2;strokeColor=none;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="1714" y="491" width="192" height="18" as="geometry" />
+          <mxGeometry x="1714" y="491" width="240" height="18" as="geometry" />
         </mxCell>
         <mxCell id="DSH__api" value="api" style="shape=folder;tabWidth=34;tabHeight=8;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontFamily=Arial;fontSize=11;fontStyle=0;verticalAlign=middle;align=center;spacingTop=6;" vertex="1" parent="1">
           <mxGeometry x="1720" y="540" width="120" height="40" as="geometry" />
@@ -4427,7 +4427,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="r2-05-edge-label-0" value="request and runs persisted" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;spacing=2;align=center;" vertex="1" parent="r2-05-edge-0" semanticKind="edge-label" ownerEdge="r2-05-edge-0">
+        <mxCell id="r2-05-edge-label-0" value="request and run persisted" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;spacing=2;align=center;" vertex="1" parent="r2-05-edge-0" semanticKind="edge-label" ownerEdge="r2-05-edge-0">
           <mxGeometry x="259.441" y="129.0" width="197.453" height="30.0" as="geometry" />
         </mxCell>
         <mxCell id="r2-05-edge-1" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;strokeColor=#28253d;endArrow=open;endFill=0;exitX=0.173;exitY=1.0;exitPerimeter=0;entryX=0.5;entryY=0.0;entryPerimeter=0;" edge="1" parent="1" semanticKind="transition" semanticSource="PENDING" semanticTarget="RUNNING" semanticLabel="worker claims request" mermaidEdgeId="edge1" source="r2-05-node-PENDING" target="r2-05-node-RUNNING">
@@ -5644,7 +5644,7 @@
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="r2-09-message-label-26" value="26. getHomepage(storeId)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-09-message-26" semanticKind="message-label" ownerEdge="r2-09-message-26">
+        <mxCell id="r2-09-message-label-26" value="26. getHomepage(storeSlug)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-09-message-26" semanticKind="message-label" ownerEdge="r2-09-message-26">
           <mxGeometry x="1265" y="3297.5" width="3030" height="28" as="geometry" />
         </mxCell>
         <mxCell id="r2-09-s-anchor-s-S1" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="UI">
@@ -5775,7 +5775,7 @@
         <mxCell id="r2-09c-page-k-CampaignService" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«control»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;CampaignService&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;&amp;nbsp;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ publish(jwt : Jwt, campaignId : long, expectedVersion : long)&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;: CampaignView&lt;br/&gt;+ activate(jwt : Jwt, campaignId : long, expectedVersion : long)&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;: CampaignView&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
           <mxGeometry x="2810" y="410" width="440" height="150" as="geometry" />
         </mxCell>
-        <mxCell id="r2-09c-page-k-StorefrontService" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«control»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;StorefrontService&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;&amp;nbsp;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ applyLayout(storeId : int, layoutId : long) : void&lt;br/&gt;+ getHomepage(storeId : int) : HomepageView&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
+        <mxCell id="r2-09c-page-k-StorefrontService" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«control»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;StorefrontService&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;&amp;nbsp;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ applyLayout(storeId : int, layoutId : long) : void&lt;br/&gt;+ getHomepage(storeSlug : String) : HomepageView&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
           <mxGeometry x="2260" y="100" width="370" height="120" as="geometry" />
         </mxCell>
         <mxCell id="r2-09c-page-k-ImportSummary" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«entity»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;ImportSummary&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ importBatchId : int&lt;br/&gt;+ status : ImportBatchStatus&lt;br/&gt;+ filename : String&lt;br/&gt;+ acceptedOrderCount : int&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
@@ -7573,7 +7573,7 @@
         <mxCell id="r2-11c-page-k-MiningScheduleService" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«control»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;MiningScheduleService&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;- jdbc : JdbcTemplate&lt;br/&gt;- principal : SchedulerPrincipal&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ update(jwt : Jwt, id : long, u : Update) : View&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
           <mxGeometry x="1850" y="100" width="350" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="r2-11c-page-k-MiningService" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«control»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;MiningService&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;- repository : MiningRepository&lt;br/&gt;- builder : MiningInputBuilder&lt;br/&gt;- engine : MiningEngine&lt;br/&gt;- worker : MiningWorker&lt;br/&gt;- snapshots : UtilitySnapshotRepository&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ createAdministrative(jwt : Jwt, store : int, snapshotId : int,&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;key : UUID, compare : boolean) : RequestView&lt;br/&gt;+ requestForStore(store : int, id : long) : RequestView&lt;br/&gt;+ runsForStore(store : int, request : long) : List&amp;lt;RunView&amp;gt;&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
+        <mxCell id="r2-11c-page-k-MiningService" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«control»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;MiningService&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;- repository : MiningRepository&lt;br/&gt;- builder : MiningInputBuilder&lt;br/&gt;- engine : MiningEngine&lt;br/&gt;- worker : MiningWorker&lt;br/&gt;- snapshots : UtilitySnapshotRepository&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ createAdministrative(jwt : Jwt, store : int, snapshotId : int,&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;key : UUID) : RequestView&lt;br/&gt;+ requestForStore(store : int, id : long) : RequestView&lt;br/&gt;+ runsForStore(store : int, request : long) : List&amp;lt;RunView&amp;gt;&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
           <mxGeometry x="630" y="390" width="440" height="210" as="geometry" />
         </mxCell>
         <mxCell id="r2-11c-page-k-MiningOccurrenceDispatcher" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«control»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;MiningOccurrenceDispatcher&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;- reservation : MiningScheduleReservation&lt;br/&gt;- leases : MiningOccurrenceLease&lt;br/&gt;- processor : MiningOccurrenceProcessor&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ start() : void&lt;br/&gt;~ poll() : void&lt;br/&gt;~ reconcile() : void&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
@@ -7984,7 +7984,7 @@
         <mxCell id="r2-11c-page-t46" value="1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
           <mxGeometry x="1995" y="1493" width="14" height="14" as="geometry" />
         </mxCell>
-        <mxCell id="r2-11c-page-t47" value="runs 1..2" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
+        <mxCell id="r2-11c-page-t47" value="runs 1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
           <mxGeometry x="2065" y="1653" width="65" height="14" as="geometry" />
         </mxCell>
         <mxCell id="r2-11c-page-t48" value="«use»" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
