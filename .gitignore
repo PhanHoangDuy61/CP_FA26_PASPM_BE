@@ -6,3 +6,13 @@ target/
 .env.seed
 .env.staging
 backups/
+
+# Demo seed output: mapping.csv and import-ready CSV copies (generated per database)
+scripts/seed/out/
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# Local Compose override (per developer; never commit)
+compose.override.yml

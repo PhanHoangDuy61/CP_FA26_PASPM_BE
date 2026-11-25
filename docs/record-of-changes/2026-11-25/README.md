@@ -1,6 +1,6 @@
-# ROC-20261125 — F07 product-level Layout B editor; SPMF (GPL v3) CI/CD
+# ROC-20261125 — F07 Layout B editor, Maven Wrapper, demo seed / SKU mapping and priority coverage; SPMF (GPL v3) CI/CD
 
-Owner-approved per-product Layout B editing across backend and frontend.
+2026-11-25 / Asia/Ho_Chi_Minh. Records of this day are delivered through pull requests into `dev` ([DEC-20261119-01](../../decisions/2026-11-19/DEC-20261119-01-dev-changes-only-through-pr.md)). Other records of this day (003 source-of-truth rule, 005 F09 Storefront, SPMF CI artifact) live on their own branches until merged.
 
 ## Record 001 — F07/F08 product placements
 
@@ -18,6 +18,10 @@ Release status: **UNRELEASED**, feature branch only. No push.
 ## Record 002 — Executable Maven Wrapper
 
 [Record 002](02-mvnw-executable.md) records the Git mode fix, setup guide updates and local wrapper verification.
+
+## Record 004 — Demo seed, FoodMart mapping and JpaPilotMigrationMySqlTest
+
+[Record 004](04-sku-foodmart-seed.md) records [DEC-20261119-07](../../decisions/2026-11-19/DEC-20261119-07-server-generated-product-sku.md) (server-generated SKU), fixes the demo seed (products by name, `mapping.csv`, import-ready CSV copies, no `batchCode`, new push-day mix) and `JpaPilotMigrationMySqlTest`, and registers that test in the `mysql` group. Seed: two runs on a fresh MySQL 8.4, 0 rejected orders, second run idempotent. Backend group 441 PASS, mysql group 105 PASS on Java 17.
 
 ## Record 006 — Frozen snapshot priority coverage
 
