@@ -11,6 +11,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import vn.edu.fpt.paspm.catalog.product.ProductDeleteBlockedException;
 import vn.edu.fpt.paspm.catalog.product.ProductNameConfirmationRequiredException;
 
 @RestControllerAdvice
@@ -30,10 +31,22 @@ public class ApiError {
                 "confirmWith", "confirmSimilarName=true"));
     }
 
+    @ExceptionHandler(ProductDeleteBlockedException.class)
+    public ResponseEntity<Map<String, Object>> productDeleteBlocked(ProductDeleteBlockedException exception) {
+        return ResponseEntity.status(exception.status()).body(Map.of(
+                "code", exception.code(),
+                "error", exception.getMessage(),
+                "reason", exception.reason(),
+                "sellableQuantity", exception.sellableQuantity(),
+                "campaigns", exception.campaigns()));
+    }
+
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<Map<String, String>> api(ApiException exception) {
         return ResponseEntity.status(exception.status())
-                .body(Map.of("error", exception.getMessage()));
+                .body(exception.code() == null
+                        ? Map.of("error", exception.getMessage())
+                        : Map.of("error", exception.getMessage(), "code", exception.code()));
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class, HttpMessageNotReadableException.class})

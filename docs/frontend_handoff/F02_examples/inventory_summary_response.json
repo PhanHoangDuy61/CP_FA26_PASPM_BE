@@ -4,5 +4,6 @@
   "sellableQuantity": 12,
   "expiredQuantity": 0,
   "blockedQuantity": 0,
-  "expiringSoonQuantity": 12
+  "expiringSoonQuantity": 12,
+  "batchesMissingPushDay": 1
 }

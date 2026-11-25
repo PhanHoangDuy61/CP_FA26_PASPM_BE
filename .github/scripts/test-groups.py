@@ -17,12 +17,16 @@ GROUPS = {
                 "ScheduledMiningZoneGuardTest", "SystemStoreListHttpTest", "MiningScheduleCatchUpTest", "MiningScheduleChangeSemanticsTest",
                 "SchedulerPrincipalHttpTest", "ScheduledMiningActivationGateTest", "MiningScheduleReservationTest",
                 "MiningOccurrenceLeaseTest", "MiningOccurrenceReconciliationTest",
-                "PushDayIntegrationTest", "WeightV2CalculationTest", "VersionedUtilityJsonTest", "VersionedUtilityPersistenceTest", "WeightRulesV12MigrationTest"],
+                "PushDayIntegrationTest", "WeightV2CalculationTest", "VersionedUtilityJsonTest", "VersionedUtilityPersistenceTest", "WeightRulesV12MigrationTest",
+                "StoreMigrationV27Test", "StoreInactiveGuardHttpTest", "StoreAdministrationHttpTest", "StoreProfileHttpTest",
+                "StoreImageHttpTest", "LocalMediaStorageTest", "MediaFileMissingHttpTest",
+                "BatchExpiryRulesTest", "ExpiryBoundaryF03F06Test", "ProductSoftDeleteIntegrationTest", "ProductSoftDeleteV28MigrationTest"],
     "mysql": ["SessionMySqlIntegrationTest", "SessionV21MigrationMySqlTest", "FlywayRecoveryTest", "LegacyRecoveryMySqlTest", "LegacyRecoverySchemaTest",
               "RecommendationMigrationTest", "TransactionImportMySqlIntegrationTest",
               "TransactionImportCorrectnessMySqlIntegrationTest", "TransactionRawEvidenceMigrationMySqlTest",
               "TransactionExcelImportMySqlIntegrationTest",
-              "RetailCatalogUtilityMySqlIntegrationTest", "MiningMigrationMySqlTest"],
+              "RetailCatalogUtilityMySqlIntegrationTest", "MiningMigrationMySqlTest", "StoreMigrationV27MySqlTest",
+              "ProductSoftDeleteV28MySqlTest"],
 }
 
 if __name__ == "__main__":

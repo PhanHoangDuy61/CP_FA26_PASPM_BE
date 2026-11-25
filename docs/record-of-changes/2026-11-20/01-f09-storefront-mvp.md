@@ -50,7 +50,7 @@ F02 contract/handoff, F09 API/OpenAPI/RBAC, examples, frontend checklists, featu
 
 | Path | Change | Reason |
 |---|---|---|
-| `src/main/java/db/migration/V27__f09_storefront.java` | Added | Store/Product schema and safe slug backfill |
+| `src/main/java/db/migration/V29__f09_storefront.java (renumbered from V27 during F01/F02 integration)` | Added | Store/Product schema and safe slug backfill |
 | `src/main/java/vn/edu/fpt/paspm/storefront/` | Added | Slug, public contracts, repository, service, controller |
 | `src/main/java/vn/edu/fpt/paspm/catalog/CatalogContracts.java` | Modified | F02 Product display fields |
 | `src/main/java/vn/edu/fpt/paspm/catalog/SystemStoreController.java` | Modified | SYSTEM_ADMIN visibility API |

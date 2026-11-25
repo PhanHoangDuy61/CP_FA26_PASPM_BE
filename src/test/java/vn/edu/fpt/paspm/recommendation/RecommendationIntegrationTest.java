@@ -195,10 +195,11 @@ class RecommendationIntegrationTest {
         jdbc.update("UPDATE product SET status='ACTIVE',requires_expiry=TRUE WHERE product_id=?",product);
         getJson("/api/recommendations/"+id,merchant).andExpect(jsonPath("$.currentEligibility.status").value("NEEDS_RECHECK"));
         postJson("/api/recommendations/"+id+"/approve",merchant,"{\"expectedVersion\":1,\"reason\":\"Missing metadata\"}").andExpect(status().isConflict());
-        for(LocalDate expiry:List.of(day.minusDays(1),day)) {
-            jdbc.update("UPDATE inventory_batch SET expiry_date=? WHERE product_id=?",expiry,product);
-            getJson("/api/recommendations/"+id,merchant).andExpect(jsonPath("$.currentEligibility.status").value("INELIGIBLE"));
-        }
+        // DEC-20261124-01: expired only when the date is AFTER the expiry date; on the expiry date the batch is still sellable
+        jdbc.update("UPDATE inventory_batch SET expiry_date=? WHERE product_id=?",day.minusDays(1),product);
+        getJson("/api/recommendations/"+id,merchant).andExpect(jsonPath("$.currentEligibility.status").value("INELIGIBLE"));
+        jdbc.update("UPDATE inventory_batch SET expiry_date=? WHERE product_id=?",day,product);
+        getJson("/api/recommendations/"+id,merchant).andExpect(jsonPath("$.currentEligibility.status").value("ELIGIBLE"));
         jdbc.update("UPDATE inventory_batch SET expiry_date=?,status='BLOCKED' WHERE product_id=?",day.plusDays(5),product);
         getJson("/api/recommendations/"+id,merchant).andExpect(jsonPath("$.currentEligibility.status").value("INELIGIBLE"));
         jdbc.update("UPDATE inventory_batch SET status='ACTIVE' WHERE product_id=?",product);

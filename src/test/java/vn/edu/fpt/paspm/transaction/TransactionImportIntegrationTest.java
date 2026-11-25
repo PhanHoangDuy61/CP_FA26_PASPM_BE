@@ -129,6 +129,30 @@ class TransactionImportIntegrationTest {
     }
 
     @Test
+    void aSoftDeletedProductStillResolvesItsSkuButEveryRowOfItGetsAnImportWarning() throws Exception {
+        // DEC-20261124-03: history is kept, so the import is accepted; the row carries a PRODUCT_DELETED warning
+        int actor = jdbc.queryForObject("SELECT MIN(user_id) FROM app_user WHERE store_id=?", Integer.class, storeId);
+        jdbc.update("UPDATE product SET deleted_at=CURRENT_TIMESTAMP,deleted_by=?,status='INACTIVE' WHERE store_id=? AND sku='COFFEE'", actor, storeId);
+        String csv = """
+                source_order_id,occurred_at,sku,quantity,unit_price,unit_cost,status
+                mixed-order,2026-10-19T12:00:00+07:00,MILK,2,10.00,6.00,COMPLETED
+                mixed-order,2026-10-19T12:00:00+07:00,COFFEE,1,4.00,2.00,COMPLETED
+                """;
+        String response = upload(adminToken, csv).andExpect(status().isCreated())
+                .andExpect(jsonPath("$.status").value("COMPLETED"))
+                .andExpect(jsonPath("$.validCount").value(2)).andExpect(jsonPath("$.rejectedCount").value(0))
+                .andReturn().getResponse().getContentAsString();
+        int batchId = json.readTree(response).get("importBatchId").asInt();
+        assertEquals(1, jdbc.queryForObject("SELECT COUNT(*) FROM sales_transaction WHERE store_id=?", Integer.class, storeId));
+        assertEquals(2, jdbc.queryForObject("SELECT COUNT(*) FROM transaction_item", Integer.class));
+        mvc.perform(get("/api/transactions/imports/{id}/errors", batchId).header("Authorization", "Bearer " + merchandiserToken))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.totalElements").value(1))
+                .andExpect(jsonPath("$.content[0].rowNumber").value(3))
+                .andExpect(jsonPath("$.content[0].status").value("PROCESSED"))
+                .andExpect(jsonPath("$.content[0].errorDetails").value(org.hamcrest.Matchers.containsString("PRODUCT_DELETED")));
+    }
+
+    @Test
     void duplicateFileIsIdempotentAndConflictingOrderDoesNotOverwriteHistory() throws Exception {
         upload(adminToken, CSV).andExpect(status().isCreated()).andExpect(jsonPath("$.acceptedOrderCount").value(2));
         upload(adminToken, CSV).andExpect(status().isCreated())

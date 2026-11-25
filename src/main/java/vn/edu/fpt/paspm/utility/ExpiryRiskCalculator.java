@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import org.springframework.stereotype.Component;
+import vn.edu.fpt.paspm.catalog.inventory.BatchExpiryRules;
 import vn.edu.fpt.paspm.utility.UtilityVersionedContracts.FefoEvidence;
 import vn.edu.fpt.paspm.utility.UtilityVersionedContracts.RiskBatch;
 
@@ -38,7 +39,7 @@ public class ExpiryRiskCalculator {
         var ordered=new ArrayList<>(batches);ordered.sort(Comparator.comparingInt(Batch::batchId));
         for(var batch:ordered) {
             if(!"ACTIVE".equals(batch.status())||batch.remainingQuantity()<=0)continue;
-            if(batch.expiryDate()!=null&&!batch.expiryDate().isAfter(asOfDate)) {
+            if(BatchExpiryRules.isExpired(batch.expiryDate(),asOfDate)) {
                 listed.add(new RiskBatch(batch.batchId(),batch.pushDay(),batch.expiryDate(),batch.remainingQuantity(),days(asOfDate,batch.pushDay()),null,null,false,List.of(EXPIRED)));
                 continue;
             }

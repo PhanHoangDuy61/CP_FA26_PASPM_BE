@@ -6,7 +6,7 @@
 
 `W(i) = 1 + λ·[α·U_expiry(i) + β·M(i)]`, computed exactly and rounded **half-up to 2 decimals** before it is applied (Q9, experiment assumption A1). `1 ≤ W ≤ round(1 + λ, 2)`. `WeightedUtility = BaseUtility × W(i)`, scale 6 HALF_UP as before.
 
-- **U_expiry(i) = Q_risk / Q_eligible** by FEFO simulation (experiment assumption A4). Eligible batches: `ACTIVE`, `remaining > 0`, `expiry_date` null or after the analysis date, and a push day. Order: push day ascending, then `batch_id` as an integer. Each batch can sell at most `v(i) × days_to_push − units already sold from earlier batches`; the rest is Q_risk. Q_eligible = 0 → U_expiry = 0. A push day on or before the analysis date gives 0 selling days, so the whole remaining batch is at risk (P4).
+- **U_expiry(i) = Q_risk / Q_eligible** by FEFO simulation (experiment assumption A4). Eligible batches: `ACTIVE`, `remaining > 0`, `expiry_date` null or **on or after** the analysis date (*2026-11-24, DEC-20261124-01: a batch is expired only when the date is after its expiry date; before that it was "after the analysis date"*), and a push day. Order: push day ascending, then `batch_id` as an integer. Each batch can sell at most `v(i) × days_to_push − units already sold from earlier batches`; the rest is Q_risk. Q_eligible = 0 → U_expiry = 0. A push day on or before the analysis date gives 0 selling days, so the whole remaining batch is at risk (P4).
 - **v(i)** = units of `COMPLETED`, `f03_eligible` transactions dated within the **N days ending on and including** the analysis date (Store time zone), divided by N. N = `salesWindowDays`, default 30 (Q6).
 - **v(i) = 0** → U_expiry = 0, status `SLOW_MOVING`, warning `SLOW_MOVING_NO_RECENT_SALES` (Q7).
 - **Batch without a push day** → excluded from Q_risk and Q_eligible, warning `MISSING_PUSH_DAY`; never blocks a snapshot (Q1).
@@ -35,8 +35,8 @@
 | POST | `/api/utility/seasons` | MERCHANDISER | `SeasonRequest {name, startDate, endDate, weight}` → `SeasonView` 201 | duplicate name (case-insensitive) 409; startDate > endDate 400; weight outside [0,1] 400; `expectedVersion` must be absent |
 | PUT | `/api/utility/seasons/{seasonId}` | MERCHANDISER | `SeasonRequest + expectedVersion` → `SeasonView` | version mismatch 409; duplicate name 409 |
 | DELETE | `/api/utility/seasons/{seasonId}` | MERCHANDISER | → 204 | 409 while any product is assigned (Q8) |
-| GET | `/api/utility/seasons/{seasonId}/products` | STORE_ADMIN, MERCHANDISER | `page, pageSize` → `SeasonProductPage` | |
-| PUT | `/api/utility/seasons/{seasonId}/products/{productId}` | MERCHANDISER | → 201 created / 200 already assigned | product of another Store → 404 |
+| GET | `/api/utility/seasons/{seasonId}/products` | STORE_ADMIN, MERCHANDISER | `page, pageSize` → `SeasonProductPage` | each `SeasonProduct` has `deleted: boolean` (2026-11-24): a soft-deleted product keeps its assignment and is labelled `deleted: true` |
+| PUT | `/api/utility/seasons/{seasonId}/products/{productId}` | MERCHANDISER | → 201 created / 200 already assigned | product of another Store → 404; a soft-deleted product → **409 `PRODUCT_DELETED`** (2026-11-24) |
 | DELETE | `/api/utility/seasons/{seasonId}/products/{productId}` | MERCHANDISER | → 204 | not assigned → 404 |
 
 SYSTEM_ADMIN and END_CUSTOMER cannot use Store-bound F03 routes (403). Foreign seasons, products and snapshots → 404.

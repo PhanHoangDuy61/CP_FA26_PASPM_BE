@@ -7,7 +7,7 @@ import org.flywaydb.core.api.migration.BaseJavaMigration;
 import org.flywaydb.core.api.migration.Context;
 import vn.edu.fpt.paspm.storefront.StoreSlug;
 
-public class V27__f09_storefront extends BaseJavaMigration {
+public class V29__f09_storefront extends BaseJavaMigration {
     @Override
     public void migrate(Context context) throws Exception {
         try (Statement statement = context.getConnection().createStatement()) {

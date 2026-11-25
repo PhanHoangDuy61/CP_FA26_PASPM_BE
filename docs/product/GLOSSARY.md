@@ -18,7 +18,10 @@
 
 | Term | Definition |
 |---|---|
-| **Store** | One retail store, and the unit of data isolation. Every store-bound record carries `store_id`. The API takes a user's Store from the JWT, never from the request body. |
+| **Store** | One retail store, and the unit of data isolation. Every store-bound record carries `store_id`. The API takes a user's Store from the authenticated account (the JWT identifies the user; there is no Store claim), never from the request body. Profile: `name` (unique ignoring case), `slug`, `address`, `phone`, icon and banner; `status` ACTIVE/INACTIVE and `version` (DEC-20261123-01). |
+| **Store status** | `ACTIVE` or `INACTIVE`. A System Admin deactivates or reactivates a Store; it is never deleted. INACTIVE: its users get 403 `STORE_INACTIVE` (one central guard), no new System Admin work or user assignment (409), schedulers skip it, in-flight work finishes, history stays readable, public images are not served. |
+| **Store branding image** | The Store icon (≤ 1 MiB) or banner (≤ 5 MiB), PNG or JPEG, ≤ 4000×4000 px. The database keeps a relative storage key (`stores/{storeId}/{uuid}.png`), never a URL or BLOB; the API builds the URL. |
+| **MediaStorage** | Shared storage abstraction for uploaded images (`common.media`); local filesystem under `PASPM_MEDIA_ROOT` today, replaceable by object storage. Avatars use it too. |
 | **Store isolation** | Users only see their own Store's data. A record that belongs to another Store answers **404** (not 403), so its existence is not revealed. In the database, composite foreign keys `(store_id, id)` stop a record from referencing another Store's record. |
 | **SYSTEM_ADMIN** (System Administrator) | Platform-level role with no Store. Manages accounts and roles, sets **λmax**, owns the mining configuration (minUtil) and schedules, and can submit mining for a selected Store. It can read a Store's snapshots, requests and runs, but not raw patterns. |
 | **STORE_ADMIN** (Store Admin / Operations Manager) | Store role. Manages categories, products, prices, costs, inventory batches and **push days**, and imports transactions. **Activates, ends and rolls back** campaigns. |
@@ -32,12 +35,14 @@
 
 | Term | Definition |
 |---|---|
-| **Product** | A sellable item of a Store, with SKU (trimmed, uppercased, format `^SKU-[A-Z0-9-]{11}$`, unique per Store), name, unit, category, selling price, cost price, status and whether it requires an expiry date. Since V26 it no longer stores stock, priority scores or `expiryPushDays`. |
+| **Product** | A sellable item of a Store, with SKU (trimmed, uppercased, format `^SKU-[A-Z0-9-]{11}$`, unique per Store), name, unit, category, selling price, cost price, status and whether it requires an expiry date. Since V26 it no longer stores stock, priority scores or `expiryPushDays`. Since V28 it can be **soft-deleted** (`deleted_at`, `deleted_by`, status INACTIVE): the row, SKU and history stay, and catalogue queries exclude it. |
+| **Soft delete (product)** | `DELETE /api/products/{id}` by the Store Admin of the owning Store. 409 `PRODUCT_HAS_SELLABLE_STOCK` or `PRODUCT_IN_LIVE_CAMPAIGN` while the product still has sellable stock or sits in a PUBLISHED / ACTIVE campaign layout. No restore; the SKU is never reused. |
 | **Category** | A product group within a Store, either ACTIVE or INACTIVE. |
-| **Inventory batch** | One received lot of a product, with a backend-generated code `BATCH-YYYYMMDD-NNN`, quantity, remaining quantity, expiry date, **push day** and status (ACTIVE / BLOCKED). |
+| **Inventory batch** | One received lot of a product, with a backend-generated code `BATCH-YYYYMMDD-NNN`, quantity, remaining quantity, expiry date, **push day** and stored status (ACTIVE / BLOCKED). The API adds the computed `effectiveStatus`, `daysToExpiry` and `warnings`. |
+| **Expired batch / `effectiveStatus`** | A batch is expired only when today (`Asia/Ho_Chi_Minh`) is **after** its expiry date, so it is still active on the expiry date. Never stored: `effectiveStatus` is `ACTIVE`, `BLOCKED` or `EXPIRED` (EXPIRED wins over BLOCKED), and `daysToExpiry` is 0 on the expiry date. "Expiring soon" = not EXPIRED and `0 ≤ daysToExpiry ≤ 7`. |
 | **Similar-name confirmation** | F02 check: a product name equal to, or one character away from, another product's normalized name in the Store (4+ characters) returns 409 `PRODUCT_NAME_CONFIRMATION_REQUIRED`; the client retries with `confirmSimilarName: true`. Names are not unique. |
-| **Sellable stock** | Stock is never stored on the product. It is the sum of remaining quantity over ACTIVE batches with remaining > 0 whose expiry date, if they have one, is strictly after today in Store-local time, so a batch that expires today is not sellable. For a product that requires expiry, a batch with no expiry date is not counted, and F06 reports `NEEDS_RECHECK`. |
-| **Push day** (`push_day`) | The date by which the Store Admin wants a batch sold. It must be on or before the expiry date. It drives U_expiry. If it is missing, the result is a `MISSING_PUSH_DAY` warning, the batch is excluded, and nothing is backfilled. It can be cleared with `DELETE /api/inventory-batches/{id}/push-day`. |
+| **Sellable stock** | Stock is never stored on the product. It is the sum of remaining quantity over ACTIVE batches with remaining > 0 whose expiry date, if they have one, is **on or after** today in Store-local time, so a batch that expires today is still sellable (changed 2026-11-24, DEC-20261124-01; it was "strictly after today"). For a product that requires expiry, a batch with no expiry date is not counted, and F06 reports `NEEDS_RECHECK`. |
+| **Push day** (`push_day`) | The date by which the Store Admin wants a batch sold. It must be on or before the expiry date. It drives U_expiry. If it is missing, the result is a `MISSING_PUSH_DAY` warning, the batch is excluded from U_expiry, and nothing is backfilled (there is no default such as `expiry − 7`). The batch API also returns the `MISSING_PUSH_DAY` warning for expiry-tracked, non-expired batches whatever their stored status. It can be cleared with `DELETE /api/inventory-batches/{id}/push-day`. |
 | **FEFO** | First-Expired-First-Out ordering. In Weight v2 it orders by push day ascending, then batch id. |
 | **Sales transaction** | An imported order with a source order id, time, status and content hash. Its lines are **transaction items** (product, quantity, unit price, unit cost). |
 | **Eligible transaction (F03-eligible)** | A `COMPLETED` order where every line has unit price ≥ unit cost. Only these feed utility profiling and offline simulation. |
@@ -136,7 +141,7 @@
 | Term | Definition |
 |---|---|
 | **Storefront (F09)** | Public shop pages: homepage from the active layout, product detail and bundles. Planned as anonymous read access through a separate public API. |
-| **storeSlug** | Planned public, unique key of a Store. It hides internal Store ids. |
+| **storeSlug** | The Store `slug` (V27): unique, lowercase letters, digits and hyphens, set and changed only by a System Admin. Planned as the F09 public key of a Store. |
 | **availability** | Planned per-product state such as `OUT_OF_STOCK`, recomputed when the response is built. |
 | **Bundle cart (F10)** | Planned per-customer, per-Store cart. Adding a bundle adds all its items atomically after a recheck. No stock reservation, no order or payment, and no bundle discount. |
 | **storefront_event** | Planned append-only event table (cart and bundle actions) that feeds F11. |

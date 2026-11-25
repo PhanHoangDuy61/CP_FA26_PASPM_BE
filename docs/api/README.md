@@ -5,6 +5,7 @@ Canonical contract locations stay stable in this directory. `CURRENT` describes 
 | Feature | Contract | Status / caveat | Handoff |
 |---|---|---|---|
 | F01 | [Authentication/User](F01_AUTH_USER_API.md) | Local session update: csrfToken, refresh/logout; 202/409 reconciled; uncommitted | [F01](../frontend_handoff/F01_HANDOFF.md) |
+| F01 | [Store management](F01_STORE_MANAGEMENT_API.md) | 2026-11-23 (DEC-20261123-01, V27): Store administration, own Store profile, icon/banner, public image GET, INACTIVE guard; branch `Khoi/feat/store-management` | [F01](../frontend_handoff/F01_HANDOFF.md#store-management-2026-11-23) |
 | F02 | [Product/Inventory](F02_PRODUCT_INVENTORY_API.md) | CURRENT scoped contract + batch `pushDay`; product `expiryPushDays` **removed 2026-11-16** (400 if sent; V26); old v3 role/expiry clauses differ | [F02](../frontend_handoff/F02_HANDOFF.md) |
 | F03 | [Utility](F03_UTILITY_API.md) | CURRENT: two routes deleted 2026-11-16 (expiry-window, score PATCH); P2–P6 resolved. Weight v2 since 2026-11-15: Weight v2 section first; v1.2 section kept as legacy for pre-V25 data. Requirements are derived, pending formal approval ([F03 W2 requirements](../requirements/F03_WEIGHT_V2_REQUIREMENTS.md)) | [F03](../frontend_handoff/F03_HANDOFF.md) |
 | F04 | [Transaction](F04_TRANSACTION_API.md) | CURRENT CSV P0 contract (sync and async) + XLS/XLSX upload under the approved Excel contract of 2026-10-26; broader workflow acceptance separate | [F04](../frontend_handoff/F04_HANDOFF.md) |
@@ -14,6 +15,18 @@ Canonical contract locations stay stable in this directory. `CURRENT` describes 
 | F09 | [Public Storefront](F09_STOREFRONT_API.md) | MVP public projection; public Store visibility is opt-in; active homepage needs configured layout caps | [F09](../frontend_handoff/F09_HANDOFF.md) |
 
 [OpenAPI export](openapi.json) (historical counts: 96 paths / 114 operations at the F07/F08 merge, 98 / 116 at F05 Checkpoint 1; current counts below). The export's server entry is the local test origin; configure the target origin in the integration environment. The session changes are uncommitted. Earlier operation counts are historical evidence, not the current export. Role prose still needs source-based interpretation; use the [RBAC matrix](F01_F02_RBAC_MATRIX.md). [RBAC matrix](F01_F02_RBAC_MATRIX.md) and [integration notes](F03_V12_F05_F06_INTEGRATION.md) have review notices. [API changelog](API_CHANGELOG.md) remains append-only history.
+
+## 2026-11-24 F02 expiry / push-day / product-delete export
+
+Branch `Khoi/feat/f02-expiry-pushday-product-delete` (base `dev` `3d51f5b`): **107 paths / 134 operations** (+1 operation: `DELETE /api/products/{id}`; no new path).
+- Changed schemas (all additive): `BatchView` (`effectiveStatus`, `daysToExpiry`, `warnings`), `InventorySummary` (`batchesMissingPushDay`), `SeasonProduct` (`deleted`). Changed descriptions: the batch routes, `PATCH /api/products/{id}/status` and the inventory summary.
+- The runtime `/v3/api-docs` was taken through `-Dpaspm.test.export-openapi=true` on `TransactionExcelImportIntegrationTest`, and only these changes were merged into the checked-in file. The runtime export still differs from the file, before this change, in `servers`, one CSV async parameter list and the `PlacementView.sku` description; those were left alone.
+
+## 2026-11-23 Store management export
+
+Branch `Khoi/feat/store-management` (base `dev` `6d2a877`): **107 paths / 133 operations**.
+- That is the 102 / 123 file on `dev` plus 5 Store paths and 10 operations ([F01_STORE_MANAGEMENT_API.md](F01_STORE_MANAGEMENT_API.md)), and the changed picker `GET /api/system/stores`.
+- The runtime `/v3/api-docs` was taken through `-Dpaspm.test.export-openapi=true` on `TransactionExcelImportIntegrationTest`, and only the Store paths and schemas were inserted. The rest of the file is byte-identical.
 
 ## API Inventory provenance
 

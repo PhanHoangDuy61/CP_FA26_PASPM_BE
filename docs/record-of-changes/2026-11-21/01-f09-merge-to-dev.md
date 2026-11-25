@@ -23,7 +23,7 @@ Integrated F09 into the current local `dev`, which contained 30 commits beyond t
 | `git diff --cached --check` before merge commit | PASS |
 | MySQL migration, hosted CI, browser/UI | NOT RUN |
 
-The test run does not verify the V27 migration on MySQL. F09 also retains its documented 503 response for an active public layout until the required recommendation-zone capacities are configured.
+The test run does not verify the V29 migration (renumbered from V27 during F01/F02 integration) on MySQL. F09 also retains its documented 503 response for an active public layout until the required recommendation-zone capacities are configured.
 
 ## Git state
 

@@ -253,8 +253,19 @@ public class TransactionImportRepository {
                         transaction_item_id=?,result_group=?,result_kind=?,processed_at=? WHERE import_batch_id=? AND `row_number`=?
                     """, productId, transactionId, itemIds.get(productId), group, resultKind,
                     Timestamp.from(Instant.now()), batchId, rowNumber);
+            // DEC-20261124-03: a soft-deleted product still resolves its SKU (history is kept); its rows get a warning
+            // that GET /api/transactions/imports/{id}/errors lists next to the rejected rows.
+            jdbc.update("""
+                    UPDATE import_staging_row r SET error_details=? WHERE r.import_batch_id=? AND r.`row_number`=?
+                      AND EXISTS (SELECT 1 FROM product p WHERE p.store_id=r.store_id AND p.product_id=r.product_id
+                                  AND p.deleted_at IS NOT NULL)
+                    """, writeJson(List.of(new ValidationError(rowNumber, "sku", PRODUCT_DELETED_WARNING))), batchId, rowNumber);
         }
     }
+
+    /** Warning stored in the staging row's error_details (JSON array of {rowNumber, field, message}) for deleted products. */
+    public static final String PRODUCT_DELETED_WARNING =
+            "PRODUCT_DELETED: the product was deleted after it was sold; the row is imported to keep history";
 
     public void finishBatch(int batchId, int validRows, int rejectedRows, int totalOrders, int acceptedOrders,
             int rejectedOrders, int duplicateOrders, int conflictOrders) {

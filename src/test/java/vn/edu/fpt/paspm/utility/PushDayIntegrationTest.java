@@ -87,12 +87,14 @@ class PushDayIntegrationTest {
         int passed=batch("PASSED",day.plusDays(5),day.minusDays(2),6,"ACTIVE");
         batch("LATER",day.plusDays(30),day.plusDays(9),7,"ACTIVE");
         int missing=batch("MISSING",day.plusDays(30),null,8,"ACTIVE");
-        batch("EXPIRED",day,day.minusDays(1),9,"ACTIVE");
+        batch("EXPIRED",day.minusDays(1),day.minusDays(3),9,"ACTIVE");
+        int expiresToday=batch("TODAY",day,day.minusDays(1),5,"ACTIVE"); // DEC-20261124-01: still active on its expiry date
         batch("BLOCKED",day.plusDays(9),day,9,"BLOCKED");
         var page=body(mvc.perform(get("/api/utility/expiry-push-batches").param("asOfDate",day.toString()).header("Authorization","Bearer "+merchant)).andExpect(status().isOk()));
-        assertEquals(2,page.path("totalElements").asInt());
+        assertEquals(3,page.path("totalElements").asInt());
         assertEquals(passed,page.path("items").get(0).path("batchId").asInt());assertEquals(-2,page.path("items").get(0).path("daysToPush").asInt());
-        assertEquals(due,page.path("items").get(1).path("batchId").asInt());
+        assertEquals(expiresToday,page.path("items").get(1).path("batchId").asInt());assertEquals(-1,page.path("items").get(1).path("daysToPush").asInt());
+        assertEquals(due,page.path("items").get(2).path("batchId").asInt());
         assertTrue(page.path("warnings").toString().contains("["+missing+"]"));
         mvc.perform(get("/api/utility/expiry-push-batches").param("productId",Integer.toString(product)).header("Authorization","Bearer "+foreign)).andExpect(status().isNotFound());
         mvc.perform(get("/api/utility/expiry-push-batches").header("Authorization","Bearer "+foreign)).andExpect(jsonPath("$.totalElements").value(0));

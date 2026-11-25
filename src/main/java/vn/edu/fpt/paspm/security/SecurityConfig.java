@@ -28,6 +28,8 @@ import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 
 import vn.edu.fpt.paspm.user.User;
@@ -68,8 +70,9 @@ public class SecurityConfig {
     public SecurityFilterChain chain(HttpSecurity http, UserRepository userRepository, org.springframework.jdbc.core.JdbcTemplate db) throws Exception {
         var converter = new JwtAuthenticationConverter();
         converter.setJwtGrantedAuthoritiesConverter(jwt -> {
+            User user;
             try {
-                User user = userRepository.findById(Integer.parseInt(jwt.getSubject()));
+                user = userRepository.findById(Integer.parseInt(jwt.getSubject()));
                 Number version = jwt.getClaim("ver");
                 if (!user.active() || version == null || version.intValue() != user.version()) {
                     throw new IllegalArgumentException();
@@ -79,11 +82,26 @@ public class SecurityConfig {
                         "SELECT COUNT(*) = 1 FROM auth_refresh_session WHERE session_id=? AND user_id=? AND token_version=? " +
                         "AND revoked_at IS NULL AND absolute_expires_at>CURRENT_TIMESTAMP AND idle_expires_at>CURRENT_TIMESTAMP",
                         Boolean.class, sid, user.id(), user.version()))) throw new IllegalArgumentException();
-                return List.of(new SimpleGrantedAuthority("ROLE_" + user.role()));
             } catch (Exception e) {
                 throw new OAuth2AuthenticationException("invalid_token");
             }
+            // DEC-20261123-01 §4 central Store guard: the user row loaded above carries the Store status.
+            if (user.storeInactive()) {
+                throw new StoreInactiveAuthenticationException();
+            }
+            return List.of(new SimpleGrantedAuthority("ROLE_" + user.role()));
         });
+        var bearerEntryPoint = new BearerTokenAuthenticationEntryPoint();
+        AuthenticationEntryPoint entryPoint = (request, response, exception) -> {
+            if (exception instanceof StoreInactiveAuthenticationException) {
+                response.setStatus(403);
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write("{\"error\":\"" + StoreStatusGuard.MESSAGE + "\",\"code\":\"" + StoreStatusGuard.CODE + "\"}");
+            } else {
+                bearerEntryPoint.commence(request, response, exception);
+            }
+        };
 
         return http
                 .csrf(c -> c.disable())
@@ -93,6 +111,8 @@ public class SecurityConfig {
                         .requestMatchers(org.springframework.http.HttpMethod.GET,
                                 "/api/storefront/stores", "/api/storefront/*/home",
                                 "/api/storefront/*/products", "/api/storefront/*/products/*").permitAll()
+                        // DEC-20261123-01 §5: current branding images of ACTIVE Stores (GET only).
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/public/stores/*/images/*").permitAll()
                         .requestMatchers("/api/system/mining/**").hasRole("SYSTEM_ADMIN")
                         .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/mining/requests").hasRole("MERCHANDISER")
                         .requestMatchers(
@@ -107,7 +127,7 @@ public class SecurityConfig {
                                 "/api/auth/google"
                         ).permitAll()
                         .anyRequest().authenticated())
-                .oauth2ResourceServer(o -> o.jwt(j -> j.jwtAuthenticationConverter(converter)))
+                .oauth2ResourceServer(o -> o.authenticationEntryPoint(entryPoint).jwt(j -> j.jwtAuthenticationConverter(converter)))
                 .build();
     }
 

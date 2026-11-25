@@ -70,6 +70,8 @@ The product docs give the details; these are the traps.
   - The Store comes from the JWT, never from a request field.
   - Another Store's resource returns **404**, not 403.
   - Roles: `SYSTEM_ADMIN` (no Store), `STORE_ADMIN`, `MERCHANDISER`, `END_CUSTOMER` (no Store), and `SYSTEM_SCHEDULER` (internal, cannot log in).
+  - **Store status** (DEC-20261123-01, V27): a Store is `ACTIVE` or `INACTIVE` and is never deleted. Users of an INACTIVE Store get **403 `STORE_INACTIVE`** from one central guard (JWT converter, login, refresh); do not add per-service checks. System Admin new work and user assignment for an INACTIVE Store return **409 `STORE_INACTIVE`**. The picker `GET /api/system/stores` lists ACTIVE Stores by default.
+  - Store names are unique after trimming, ignoring case (service rule, no DB UNIQUE). `slug` is unique and System-Admin-only. Store images: PNG/JPEG on `MediaStorage` under `PASPM_MEDIA_ROOT`; the DB keeps relative keys, never URLs.
 - **Strict JSON:** the backend rejects unknown or removed request fields with 400 `Invalid request fields`. Never send extra fields.
 - **Weight v2:** `W = 1 + λ(α·U_expiry + β·M)`.
   - α + β = 1, and λ ∈ [0, λmax]. The System Admin sets only λmax.

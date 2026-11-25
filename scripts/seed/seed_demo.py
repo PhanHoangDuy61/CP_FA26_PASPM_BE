@@ -11,8 +11,8 @@ Creates through the public REST API, so the business rules apply:
     and its batches carry expiry dates and push days; four seasons assigned to product groups (Merchandiser);
     the Store weight configuration alpha/beta/lambda/N (Merchandiser). The plan itself is in weight_v2_plan.py.
 
-The ONLY direct SQL is `INSERT INTO store`: the backend has no endpoint that creates a store
-(GET /api/system/stores is read-only). The statement is sent through SEED_SQL_COMMAND.
+The Store is created through POST /api/system/stores (DEC-20261123-01). Direct SQL is used only for the final
+record counts, sent through SEED_SQL_COMMAND.
 
 Safe to run twice: every step first looks for the record and skips it when present; an already
 imported CSV file (same file name, COMPLETED / COMPLETED_WITH_ERRORS) is not uploaded again.
@@ -58,6 +58,7 @@ SYSADMIN_EMAIL = env("SEED_SYSADMIN_EMAIL", required=True)
 SYSADMIN_PASSWORD = env("SEED_SYSADMIN_PASSWORD", required=True)
 ACCOUNT_PASSWORD = env("SEED_ACCOUNT_PASSWORD", required=True)
 STORE_NAME = env("SEED_STORE_NAME", "FoodMart Benchmark")
+STORE_SLUG = env("SEED_STORE_SLUG", "foodmart-benchmark")
 CATEGORY_NAME = env("SEED_CATEGORY_NAME", "FoodMart Imported Items")
 BATCH_CODE = env("SEED_BATCH_CODE", "SEED-INITIAL")
 BATCH_QTY = int(env("SEED_BATCH_QUANTITY", "1000"))
@@ -197,21 +198,23 @@ def request_otp(email, purpose):
 # ---------------------------------------------------------------- steps
 def ensure_store(admin_token):
     def find():
-        page = api("GET", "/api/system/stores?page=0&pageSize=100", admin_token)
-        return [s for s in page["items"] if s["name"] == STORE_NAME]
+        query = urllib.parse.urlencode({"page": 0, "pageSize": 100, "status": "ALL", "q": STORE_NAME})
+        page = api("GET", f"/api/system/stores?{query}", admin_token)
+        return [s for s in page["items"] if s["name"].strip().lower() == STORE_NAME.strip().lower()]
 
     found = find()
     if not found:
-        sql(f"INSERT INTO store(name) SELECT '{STORE_NAME}' FROM DUAL "
-            f"WHERE NOT EXISTS (SELECT 1 FROM store WHERE name='{STORE_NAME}');")
+        api("POST", "/api/system/stores", admin_token, {"name": STORE_NAME, "slug": STORE_SLUG})
         found = find()
-        summary["store"] = "created (direct SQL: no store endpoint exists)"
+        summary["store"] = "created (POST /api/system/stores)"
     else:
         summary["store"] = "already present"
     if not found:
         sys.exit("ERROR: store was not created")
     if len(found) > 1:
         sys.exit(f"ERROR: several stores are named '{STORE_NAME}'; refusing to guess")
+    if found[0].get("status", "ACTIVE") != "ACTIVE":
+        sys.exit(f"ERROR: store '{STORE_NAME}' is INACTIVE; reactivate it first (PATCH /api/system/stores/{{id}}/status)")
     return found[0]["storeId"]
 
 

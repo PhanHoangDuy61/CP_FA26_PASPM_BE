@@ -108,7 +108,8 @@ class LegacyProductColumnsV26MigrationTest {
     private void fresh(String url,String user,String password) {
         var flyway=Flyway.configure().dataSource(url,user,password).load();
         flyway.migrate();flyway.validate();
-        assertEquals("26",flyway.info().current().getVersion().getVersion());
+        // V26 is applied on a fresh database; later migrations (V27+) may follow it.
+        assertTrue(java.util.Arrays.stream(flyway.info().applied()).anyMatch(m->m.getVersion()!=null&&"26".equals(m.getVersion().getVersion())&&m.getState().isApplied()),"V26 applied");
         assertEquals(DROPPED,missing(url,user,password));
     }
     /** Which of the three legacy columns are absent from product. */

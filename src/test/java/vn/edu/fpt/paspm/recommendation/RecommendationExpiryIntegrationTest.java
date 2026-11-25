@@ -45,10 +45,12 @@ class RecommendationExpiryIntegrationTest {
     @Test void thresholdsAndCalendarBoundariesFilterCurrentSellableBatches() throws Exception {
         for(int t:new int[]{0,3,7}) {
             int p=product(t,true,"ACTIVE");
-            batch(p,-1,5,"ACTIVE",0);batch(p,0,5,"ACTIVE",0);batch(p,1,0,"ACTIVE",0);batch(p,1,5,"BLOCKED",0);
-            if(t>0)batch(p,t,5,"ACTIVE",0);batch(p,t+1,5,"ACTIVE",0);
-            var result=read(merchant,p);assertEquals(t==0?0:1,result.path("totalElements").asInt());
-            if(t>0){var item=result.path("items").get(0);assertEquals(0,item.path("daysToPush").asInt());assertTrue(item.path("pushRequired").asBoolean());assertEquals(day.plusDays(t).minusDays(t).toString(),item.path("pushDay").asText());}
+            batch(p,-1,5,"ACTIVE",0);int expiresToday=batch(p,0,5,"ACTIVE",0);batch(p,1,0,"ACTIVE",0);batch(p,1,5,"BLOCKED",0);
+            int expiresInT=t>0?batch(p,t,5,"ACTIVE",0):-1;batch(p,t+1,5,"ACTIVE",0);
+            // DEC-20261124-01: the batch expiring today is still active (its push day is already reached); only yesterday's expired
+            var result=read(merchant,p);assertEquals(t==0?1:2,result.path("totalElements").asInt());
+            var first=result.path("items").get(0);assertEquals(expiresToday,first.path("batchId").asInt());assertEquals(-t,first.path("daysToPush").asInt());assertTrue(first.path("pushRequired").asBoolean());
+            if(t>0){var item=result.path("items").get(1);assertEquals(expiresInT,item.path("batchId").asInt());assertEquals(0,item.path("daysToPush").asInt());assertTrue(item.path("pushRequired").asBoolean());assertEquals(day.plusDays(t).minusDays(t).toString(),item.path("pushDay").asText());}
         }
         int non=product(7,false,"ACTIVE"),inactive=product(7,true,"INACTIVE");batch(non,1,3,"ACTIVE",0);batch(inactive,1,3,"ACTIVE",0);
         assertEquals(0,read(merchant,non).path("totalElements").asInt());assertEquals(0,read(merchant,inactive).path("totalElements").asInt());

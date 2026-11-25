@@ -63,6 +63,8 @@ public class MiningService {
         String hash=MiningInputBuilder.sha((merchant?"MERCHANT|":"ADMIN|")+snapshotId+"|false");
         var previous=repository.byKey(store,key);
         if(previous!=null)return same(previous,hash);
+        // DEC-20261123-01 §4: no new mining work for an INACTIVE Store (replaying an existing request key stays allowed).
+        vn.edu.fpt.paspm.security.StoreStatusGuard.requireActiveForNewWork(jdbc,store);
         if(snapshots.find(store,snapshotId)==null)throw new ApiException(404,"Utility snapshot not found");
         engine.requireAvailable();
         MiningRepository.Stored created;

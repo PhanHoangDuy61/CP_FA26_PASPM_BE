@@ -150,7 +150,7 @@ Skipped reasons: `PATTERN_REQUIRES_AT_LEAST_TWO_PRODUCTS`, `BUNDLE_EXCEEDS_MAX_S
 
 ## Live inventory and expiry
 
-Generation captures generationEligibility. GET list/detail rechecks currentEligibility using the candidate's captured minimum quantity policy. Product must be ACTIVE. Only ACTIVE batches with remainingQuantity >0 count; expiry-required batches need metadata and expiryDate **strictly after** the current Store-local date. Expiry today is unsellable. Non-expiry Products can use undated active batches. A missing required expiry on any active positive batch gives NEEDS_RECHECK even if another batch supplies stock; missing/inactive/insufficient Products can make the aggregate INELIGIBLE.
+Generation captures generationEligibility. GET list/detail rechecks currentEligibility using the candidate's captured minimum quantity policy. Product must be ACTIVE. Only ACTIVE batches with remainingQuantity >0 count; expiry-required batches need metadata and an expiryDate **on or after** the current Store-local date. Expiry today is sellable (changed 2026-11-24, DEC-20261124-01; it was unsellable). Non-expiry Products can use undated active batches. A missing required expiry on any active positive batch gives NEEDS_RECHECK even if another batch supplies stock; missing/inactive/insufficient Products can make the aggregate INELIGIBLE.
 
 `inventoryChanged` compares fingerprints (date, captured minimum quantity and Product/batch metadata); it does not mean stock alone changed and can become true on a date rollover. `checkedAt`, `asOfDate`, and `timeZone` describe the live check. Display old and current checks separately. Historical utility/evidence remain frozen.
 

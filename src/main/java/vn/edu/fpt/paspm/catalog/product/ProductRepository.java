@@ -43,20 +43,22 @@ public class ProductRepository {
         this.metadata = metadata;
     }
 
+    /** Soft-deleted products (DEC-20261124-03) are not part of the catalogue: every catalogue read filters them here. */
     public ProductView find(int storeId, int productId) {
-        return jdbc.query(SELECT_PRODUCT + " WHERE p.store_id=? AND p.product_id=?", mapper, storeId, productId)
+        return jdbc.query(SELECT_PRODUCT + " WHERE p.store_id=? AND p.product_id=? AND p.deleted_at IS NULL", mapper, storeId, productId)
                 .stream().findFirst().orElse(null);
     }
 
     public List<String> findOtherNames(int storeId, int excludedProductId) {
         return jdbc.query("""
-                SELECT name FROM product WHERE store_id=? AND product_id<>?
+                SELECT name FROM product WHERE store_id=? AND product_id<>? AND deleted_at IS NULL
                 """, (rs, row) -> rs.getString("name"), storeId, excludedProductId);
     }
 
     public ProductPage search(int storeId, String search, Integer categoryId, String status,
                               int page, int pageSize, String sortColumn, String direction) {
-        StringBuilder where = new StringBuilder(" WHERE p.store_id=?");
+        // deleted products are excluded in the WHERE shared by the COUNT and the LIMIT/OFFSET query, i.e. before pagination
+        StringBuilder where = new StringBuilder(" WHERE p.store_id=? AND p.deleted_at IS NULL");
         List<Object> parameters = new ArrayList<>();
         parameters.add(storeId);
         if (!search.isBlank()) {
@@ -110,5 +112,44 @@ public class ProductRepository {
 
     public boolean updateStatus(int storeId, int id, String status) {
         return metadata.updateStatus(storeId,id,status);
+    }
+
+    /** Locks the live product row, then its batches, so a concurrent receive/edit cannot slip past the delete checks. */
+    public boolean lockForDelete(int storeId, int productId) {
+        boolean live = !jdbc.query("SELECT product_id FROM product WHERE store_id=? AND product_id=? AND deleted_at IS NULL FOR UPDATE",
+                (rs, row) -> rs.getInt(1), storeId, productId).isEmpty();
+        if (live) jdbc.query("SELECT batch_id FROM inventory_batch WHERE product_id=? FOR UPDATE", (rs, row) -> rs.getInt(1), productId);
+        return live;
+    }
+
+    /** Sellable = stored ACTIVE, remaining &gt; 0 and not expired (a batch expiring today still counts). */
+    public long sellableQuantity(int productId, java.time.LocalDate today) {
+        Long quantity = jdbc.queryForObject("""
+                SELECT COALESCE(SUM(remaining_quantity), 0) FROM inventory_batch
+                WHERE product_id=? AND status='ACTIVE' AND remaining_quantity > 0
+                  AND (expiry_date IS NULL OR expiry_date >= ?)
+                """, Long.class, productId, today);
+        return quantity == null ? 0 : quantity;
+    }
+
+    /** PUBLISHED or ACTIVE campaigns that hold the product in any placement of layout A or B. */
+    public List<ProductDeleteBlockedException.LiveCampaign> liveCampaigns(int storeId, int productId) {
+        return jdbc.query("""
+                SELECT DISTINCT c.campaign_id, c.status
+                FROM layout_placement p
+                JOIN storefront_layout l ON l.store_id=p.store_id AND l.layout_id=p.layout_id
+                JOIN campaign c ON c.store_id=l.store_id AND c.campaign_id=l.campaign_id
+                WHERE p.store_id=? AND p.product_id=? AND c.status IN ('PUBLISHED','ACTIVE')
+                ORDER BY c.campaign_id
+                """, (rs, row) -> new ProductDeleteBlockedException.LiveCampaign(rs.getLong("campaign_id"), rs.getString("status")),
+                storeId, productId);
+    }
+
+    /** The row stays. status=INACTIVE in the same statement keeps F03/F06/F07 treating it as not sellable. */
+    public boolean softDelete(int storeId, int productId, int actorUserId) {
+        return jdbc.update("""
+                UPDATE product SET deleted_at=CURRENT_TIMESTAMP, deleted_by=?, status='INACTIVE'
+                WHERE store_id=? AND product_id=? AND deleted_at IS NULL
+                """, actorUserId, storeId, productId) == 1;
     }
 }

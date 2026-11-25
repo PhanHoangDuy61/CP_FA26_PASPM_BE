@@ -1,0 +1,7 @@
+{
+  "code": "PRODUCT_HAS_SELLABLE_STOCK",
+  "error": "Product cannot be deleted",
+  "reason": "The product still has 12 sellable unit(s) (ACTIVE, not expired); sell, write off or block them first",
+  "sellableQuantity": 12,
+  "campaigns": []
+}
