@@ -1,4 +1,4 @@
-<mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1" pages="41">
+<mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1" pages="42">
   <diagram id="polished-fr" name="FR">
     <mxGraphModel dx="2025" dy="1205" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="0" fold="1" page="1" pageScale="1" pageWidth="1816" pageHeight="1640" background="#FFFFFF" math="0" shadow="0">
       <root>
@@ -94,10 +94,10 @@
         <mxCell id="FR03-function-1" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=17;fontStyle=0;align=left;verticalAlign=middle;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0;text=;fillColor=none;strokeColor=none;" value="FR03.01  Configure the Utility formula" vertex="1">
           <mxGeometry height="32" width="492" x="1246" y="338" as="geometry" />
         </mxCell>
-        <mxCell id="FR03-function-2" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=17;fontStyle=0;align=left;verticalAlign=middle;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0;text=;fillColor=none;strokeColor=none;" value="FR03.02  Configure priority weights" vertex="1">
+        <mxCell id="FR03-function-2" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=17;fontStyle=0;align=left;verticalAlign=middle;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0;text=;fillColor=none;strokeColor=none;" value="FR03.02 Configure α, β, λ (λ ≤ λmax) and seasons" vertex="1">
           <mxGeometry height="32" width="492" x="1246" y="372" as="geometry" />
         </mxCell>
-        <mxCell id="FR03-function-3" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=17;fontStyle=0;align=left;verticalAlign=middle;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0;text=;fillColor=none;strokeColor=none;" value="FR03.03  Calculate weighted product Utility" vertex="1">
+        <mxCell id="FR03-function-3" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=17;fontStyle=0;align=left;verticalAlign=middle;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0;text=;fillColor=none;strokeColor=none;" value="FR03.03 Calculate weighted product Utility (Weight v2)" vertex="1">
           <mxGeometry height="32" width="492" x="1246" y="406" as="geometry" />
         </mxCell>
         <mxCell id="FR03-function-4" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=17;fontStyle=0;align=left;verticalAlign=middle;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0;text=;fillColor=none;strokeColor=none;" value="FR03.04  Create a frozen Utility Snapshot / matrix" vertex="1">
@@ -148,7 +148,7 @@
         <mxCell id="FR05-panel" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=18;fontStyle=0;align=left;verticalAlign=middle;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.5;" value="" vertex="1">
           <mxGeometry height="312" width="528" x="644" y="600" as="geometry" />
         </mxCell>
-        <mxCell id="FR05-header" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=19;fontStyle=1;align=left;verticalAlign=middle;spacing=0;spacingLeft=18;spacingRight=18;spacingTop=0;spacingBottom=0;text=;fillColor=none;strokeColor=none;" value="FR05  Mining Configuration&#xa;&amp; Benchmark Hub" vertex="1">
+        <mxCell id="FR05-header" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=19;fontStyle=1;align=left;verticalAlign=middle;spacing=0;spacingLeft=18;spacingRight=18;spacingTop=0;spacingBottom=0;text=;fillColor=none;strokeColor=none;" value="FR05 Mining Configuration" vertex="1">
           <mxGeometry height="70" width="528" x="644" y="600" as="geometry" />
         </mxCell>
         <mxCell id="FR05-rule" edge="1" parent="1" style="endArrow=none;startArrow=none;strokeColor=#000000;strokeWidth=1.5;">
@@ -157,13 +157,13 @@
             <mxPoint x="1172" y="670" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="FR05-function-1" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=17;fontStyle=0;align=left;verticalAlign=middle;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0;text=;fillColor=none;strokeColor=none;" value="FR05.01  System Admin sets minUtil / algorithm (global policy)" vertex="1">
+        <mxCell id="FR05-function-1" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=17;fontStyle=0;align=left;verticalAlign=middle;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0;text=;fillColor=none;strokeColor=none;" value="FR05.01 System Admin sets minUtil (global policy)" vertex="1">
           <mxGeometry height="32" width="492" x="662" y="683" as="geometry" />
         </mxCell>
-        <mxCell id="FR05-function-2" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=17;fontStyle=0;align=left;verticalAlign=middle;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0;text=;fillColor=none;strokeColor=none;" value="FR05.02  Select HUI-Miner and/or EFIM" vertex="1">
+        <mxCell id="FR05-function-2" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=17;fontStyle=0;align=left;verticalAlign=middle;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0;text=;fillColor=none;strokeColor=none;" value="FR05.02 Mine with EFIM only (fixed algorithm)" vertex="1">
           <mxGeometry height="32" width="492" x="662" y="717" as="geometry" />
         </mxCell>
-        <mxCell id="FR05-function-3" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=17;fontStyle=0;align=left;verticalAlign=middle;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0;text=;fillColor=none;strokeColor=none;" value="FR05.03  Run async mining and inspect HUIs" vertex="1">
+        <mxCell id="FR05-function-3" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=17;fontStyle=0;align=left;verticalAlign=middle;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0;text=;fillColor=none;strokeColor=none;" value="FR05.03 Run async mining and inspect patterns" vertex="1">
           <mxGeometry height="32" width="492" x="662" y="751" as="geometry" />
         </mxCell>
         <mxCell id="FR05-function-4" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=17;fontStyle=0;align=left;verticalAlign=middle;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0;text=;fillColor=none;strokeColor=none;" value="FR05.04  [GATED · off by default] Schedule periodic mining" vertex="1">
@@ -172,7 +172,7 @@
         <mxCell id="FR05-function-5" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=17;fontStyle=0;align=left;verticalAlign=middle;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0;text=;fillColor=none;strokeColor=none;" value="FR05.05  Monitor mining request / run status" vertex="1">
           <mxGeometry height="32" width="492" x="662" y="819" as="geometry" />
         </mxCell>
-        <mxCell id="FR05-function-6" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=17;fontStyle=0;align=left;verticalAlign=middle;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0;text=;fillColor=none;strokeColor=none;" value="FR05.06  Benchmark runtime / sampled heap / patterns" vertex="1">
+        <mxCell id="FR05-function-6" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=17;fontStyle=0;align=left;verticalAlign=middle;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0;text=;fillColor=none;strokeColor=none;" value="FR05.06 [REMOVED] Algorithm benchmark" vertex="1">
           <mxGeometry height="32" width="492" x="662" y="853" as="geometry" />
         </mxCell>
         <mxCell id="fr-link-FR05" edge="1" parent="1" source="fr-platform" style="edgeStyle=none;rounded=0;html=0;endArrow=none;startArrow=none;strokeColor=#000000;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="FR05-header">
@@ -358,7 +358,7 @@
         <mxCell id="FR11-function-3" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=17;fontStyle=0;align=left;verticalAlign=middle;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0;text=;fillColor=none;strokeColor=none;" value="FR11.03  View A/B testing reports" vertex="1">
           <mxGeometry height="32" width="492" x="662" y="1441" as="geometry" />
         </mxCell>
-        <mxCell id="FR11-function-4" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=17;fontStyle=0;align=left;verticalAlign=middle;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0;text=;fillColor=none;strokeColor=none;" value="FR11.04  View algorithm benchmark charts" vertex="1">
+        <mxCell id="FR11-function-4" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=17;fontStyle=0;align=left;verticalAlign=middle;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0;text=;fillColor=none;strokeColor=none;" value="FR11.04 [REMOVED] Algorithm benchmark charts" vertex="1">
           <mxGeometry height="32" width="492" x="662" y="1475" as="geometry" />
         </mxCell>
         <mxCell id="fr-link-FR11" edge="1" parent="1" source="fr-platform" style="edgeStyle=none;rounded=0;html=0;endArrow=none;startArrow=none;strokeColor=#000000;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="FR11-header">
@@ -574,7 +574,7 @@
             <mxPoint x="693.7992932868494" y="907" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="ctx-A3-OUT" edge="1" parent="1" source="KZI4lCkP4nK2TfgBxqMt-3" style="edgeStyle=none;rounded=0;html=0;startArrow=none;endArrow=block;endFill=1;endSize=9;strokeColor=#111111;strokeWidth=1.7;fontFamily=Arial;fontSize=16;fontColor=#111111;align=center;verticalAlign=middle;exitX=0.14789916217083487;exitY=0.855;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.6875;entryDx=0;entryDy=0;entryPerimeter=0;labelBackgroundColor=#FFFFFF;spacing=2;" target="KZI4lCkP4nK2TfgBxqMt-7" value="A3 OUT.  Policy version, request id,&#xa;benchmarks, schedule status">
+        <mxCell id="ctx-A3-OUT" edge="1" parent="1" source="KZI4lCkP4nK2TfgBxqMt-3" style="edgeStyle=none;rounded=0;html=0;startArrow=none;endArrow=block;endFill=1;endSize=9;strokeColor=#111111;strokeWidth=1.7;fontFamily=Arial;fontSize=16;fontColor=#111111;align=center;verticalAlign=middle;exitX=0.14789916217083487;exitY=0.855;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.6875;entryDx=0;entryDy=0;entryPerimeter=0;labelBackgroundColor=#FFFFFF;spacing=2;" target="KZI4lCkP4nK2TfgBxqMt-7" value="A3 OUT. Policy version, request id, run status, schedule status">
           <mxGeometry relative="1" as="geometry">
             <mxPoint y="-24" as="offset" x="0" />
             <mxPoint x="737.8991621708349" y="957" as="sourcePoint" />
@@ -646,10 +646,10 @@
         <mxCell id="UC02" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontSize=18;fontStyle=0;fontColor=#000000;align=center;verticalAlign=middle;spacing=0;shadow=0;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;rounded=0;shape=ellipse;" value="UC02 Manage Roles &amp;&#xa;Permissions" vertex="1">
           <mxGeometry height="94" width="370" x="1050" y="335" as="geometry" />
         </mxCell>
-        <mxCell id="UC04" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontSize=18;fontStyle=0;fontColor=#000000;align=center;verticalAlign=middle;spacing=0;shadow=0;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;rounded=0;shape=ellipse;" value="UC04 Set Mining Threshold&#xa;/ Select Algorithms" vertex="1">
+        <mxCell id="UC04" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontSize=18;fontStyle=0;fontColor=#000000;align=center;verticalAlign=middle;spacing=0;shadow=0;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;rounded=0;shape=ellipse;" value="UC04 Set Mining Threshold (minUtil policy)" vertex="1">
           <mxGeometry height="94" width="370" x="1050" y="455" as="geometry" />
         </mxCell>
-        <mxCell id="UC05" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontSize=18;fontStyle=0;fontColor=#000000;align=center;verticalAlign=middle;spacing=0;shadow=0;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;rounded=0;shape=ellipse;" value="UC05 Submit Async HUI-Miner&#xa;/ EFIM Mining" vertex="1">
+        <mxCell id="UC05" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontSize=18;fontStyle=0;fontColor=#000000;align=center;verticalAlign=middle;spacing=0;shadow=0;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;rounded=0;shape=ellipse;" value="UC05 Submit Async EFIM Mining" vertex="1">
           <mxGeometry height="94" width="370" x="535" y="575" as="geometry" />
         </mxCell>
         <mxCell id="UC06" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontSize=17;fontStyle=0;fontColor=#000000;align=center;verticalAlign=middle;spacing=0;shadow=0;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;rounded=0;shape=ellipse;" value="UC06 [GATED · off by default]&#xa;Schedule Mining Jobs /&#xa;Review Occurrence History" vertex="1">
@@ -658,10 +658,10 @@
         <mxCell id="UC07" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontSize=18;fontStyle=0;fontColor=#000000;align=center;verticalAlign=middle;spacing=0;shadow=0;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;rounded=0;shape=ellipse;" value="UC07 View Mining Request / Run Status&#xa;(System Admin: no raw patterns)" vertex="1">
           <mxGeometry height="94" width="370" x="535" y="695" as="geometry" />
         </mxCell>
-        <mxCell id="UC08" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontSize=18;fontStyle=0;fontColor=#000000;align=center;verticalAlign=middle;spacing=0;shadow=0;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;rounded=0;shape=ellipse;" value="UC08 View HUI-Miner / EFIM&#xa;Benchmark Results" vertex="1">
+        <mxCell id="UC08" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontSize=18;fontStyle=0;fontColor=#000000;align=center;verticalAlign=middle;spacing=0;shadow=0;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;rounded=0;shape=ellipse;" value="UC08 [REMOVED] View Algorithm Benchmark Results" vertex="1">
           <mxGeometry height="94" width="370" x="1050" y="695" as="geometry" />
         </mxCell>
-        <mxCell id="UC09" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontSize=18;fontStyle=0;fontColor=#000000;align=center;verticalAlign=middle;spacing=0;shadow=0;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;rounded=0;shape=ellipse;" value="UC09 Configure Utility Formula &amp;&#xa;Priority Weights" vertex="1">
+        <mxCell id="UC09" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontSize=18;fontStyle=0;fontColor=#000000;align=center;verticalAlign=middle;spacing=0;shadow=0;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;rounded=0;shape=ellipse;" value="UC09 Configure Utility Weights (α, β, λ) &amp; Seasons" vertex="1">
           <mxGeometry height="94" width="370" x="1600" y="335" as="geometry" />
         </mxCell>
         <mxCell id="UC10" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontSize=18;fontStyle=0;fontColor=#000000;align=center;verticalAlign=middle;spacing=0;shadow=0;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;rounded=0;shape=ellipse;" value="UC10 Generate Bundle / Cross-sell&#xa;/ Banner Candidates" vertex="1">
@@ -1249,7 +1249,7 @@
         <mxCell id="dataend-dot" parent="1" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;strokeColor=#000000;fillColor=#000000;" value="" vertex="1">
           <mxGeometry height="16" width="16" x="316" y="491" as="geometry" />
         </mxCell>
-        <mxCell id="mine" parent="1" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#EDF5FB;strokeColor=#245B83;strokeWidth=1.8;fontSize=17;fontColor=#223247;spacing=8;" value="AD03 · System Admin requests mining&lt;br&gt;HUI-Miner / EFIM with policy minUtil" vertex="1">
+        <mxCell id="mine" parent="1" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#EDF5FB;strokeColor=#245B83;strokeWidth=1.8;fontSize=17;fontColor=#223247;spacing=8;" value="AD03 · System Admin requests EFIM mining with policy minUtil" vertex="1">
           <mxGeometry height="80" width="300" x="726" y="764" as="geometry" />
         </mxCell>
         <mxCell id="mineok" parent="1" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rhombus;fillColor=#FFFFFF;strokeColor=#245B83;strokeWidth=1.6;fontSize=16;fontColor=#223247;spacing=8;" value="Completed valid mining&lt;br&gt;run available?" vertex="1">
@@ -1594,7 +1594,7 @@
         <mxCell id="s" parent="1" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;strokeColor=#000000;fillColor=#000000;" value="" vertex="1">
           <mxGeometry height="24" width="24" x="312" y="200" as="geometry" />
         </mxCell>
-        <mxCell id="config" parent="1" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" value="Choose Store + READY utility snapshot&lt;br&gt;Policy supplies algorithm + minUtil; UUID requestKey" vertex="1">
+        <mxCell id="config" parent="1" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" value="Choose Store + READY utility snapshot&lt;br&gt;Policy supplies minUtil (algorithm: EFIM); UUID requestKey" vertex="1">
           <mxGeometry height="80" width="300" x="174" y="254" as="geometry" />
         </mxCell>
         <mxCell id="mode" parent="1" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rhombus;fillColor=#FFFFFF;strokeColor=#245B83;strokeWidth=1.6;fontSize=16;fontColor=#223247;spacing=8;" value="Submission mode?" vertex="1">
@@ -1636,7 +1636,7 @@
         <mxCell id="save" parent="1" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#EDF5FB;strokeColor=#245B83;strokeWidth=1.8;fontSize=17;fontColor=#223247;spacing=8;" value="Execute child JVM; validate output&lt;br&gt;Atomically persist successful patterns" vertex="1">
           <mxGeometry height="80" width="300" x="726" y="944" as="geometry" />
         </mxCell>
-        <mxCell id="view" parent="1" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" value="Read run(s), patterns, benchmark&lt;br&gt;Comparison MATCH / FAILED / BLOCKED" vertex="1">
+        <mxCell id="view" parent="1" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" value="Read the run and its patterns (Store users); System Admin: status only" vertex="1">
           <mxGeometry height="80" width="300" x="174" y="1249" as="geometry" />
         </mxCell>
         <mxCell id="e" parent="1" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;fillColor=#FFFFFF;strokeWidth=1.5;strokeColor=#000000;" value="" vertex="1">
@@ -1703,108 +1703,16 @@
       </root>
     </mxGraphModel>
   </diagram>
-  <diagram id="paspm-unified-ad04" name="AD04 - Algorithm Benchmarking">
-    <mxGraphModel dx="1200" dy="1440" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1440" math="0" shadow="0" background="#FFFFFF">
+  <diagram id="paspm-unified-ad04" name="AD04 - Algorithm Benchmarking [REMOVED]">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="420" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="lane0" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=0;fillColor=#FFFFFF;strokeColor=#D5DEE6;strokeWidth=1;" vertex="1" parent="1">
-          <mxGeometry x="48.0" y="130" width="552.0" height="1030" as="geometry" />
+        <mxCell id="title" value="Algorithm benchmarking [REMOVED]" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=30;fontColor=#223247;fontStyle=1;spacing=0;" vertex="1" parent="1">
+          <mxGeometry x="48" y="54" width="1000" height="44" as="geometry" />
         </mxCell>
-        <mxCell id="lane0head" value="SYSTEM ADMIN / BENCHMARK VIEWER" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=0;fillColor=#EAF0F5;strokeColor=#D5DEE6;fontSize=15;fontStyle=1;fontColor=#223247;" vertex="1" parent="1">
-          <mxGeometry x="48.0" y="130" width="552.0" height="48" as="geometry" />
-        </mxCell>
-        <mxCell id="lane1" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=0;fillColor=#FAFCFD;strokeColor=#D5DEE6;strokeWidth=1;" vertex="1" parent="1">
-          <mxGeometry x="600.0" y="130" width="552.0" height="1030" as="geometry" />
-        </mxCell>
-        <mxCell id="lane1head" value="PASPM / BENCHMARK" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=0;fillColor=#EAF0F5;strokeColor=#D5DEE6;fontSize=15;fontStyle=1;fontColor=#223247;" vertex="1" parent="1">
-          <mxGeometry x="600.0" y="130" width="552.0" height="48" as="geometry" />
-        </mxCell>
-        <mxCell id="e1" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="s" target="setup">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e2" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="setup" target="prepare">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="324.0" y="349" />
-              <mxPoint x="876.0" y="349" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="e3" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="prepare" target="hui">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e4" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="hui" target="efim">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e5" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="efim" target="success">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e6" value="[no]" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;" edge="1" parent="1" source="success" target="error">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint as="offset" x="0" y="-16" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="e7" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="error" target="fail">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="e8" value="[yes]" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;" edge="1" parent="1" source="success" target="compare">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="48" y="0" as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="e9" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="compare" target="view">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="876.0" y="934" />
-              <mxPoint x="324.0" y="934" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="e10" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="view" target="e">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="title" value="Algorithm benchmarking" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=30;fontColor=#223247;fontStyle=1;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="48" y="54" width="1104" height="44" as="geometry" />
-        </mxCell>
-        <mxCell id="s" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;strokeColor=#000000;fillColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="312.0" y="200" width="24" height="24" as="geometry" />
-        </mxCell>
-        <mxCell id="setup" value="Choose Store + frozen utility snapshot&lt;br&gt;Run HUI-Miner + EFIM with policy minUtil" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
-          <mxGeometry x="174.0" y="254" width="300" height="80" as="geometry" />
-        </mxCell>
-        <mxCell id="prepare" value="Freeze identical mapping / input&lt;br&gt;and effective minUtil for both runs" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
-          <mxGeometry x="726.0" y="364" width="300" height="80" as="geometry" />
-        </mxCell>
-        <mxCell id="hui" value="Run HUI-Miner; measure wall time,&lt;br&gt;sampled Java heap MiB &amp; patterns" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
-          <mxGeometry x="726.0" y="474" width="300" height="80" as="geometry" />
-        </mxCell>
-        <mxCell id="efim" value="Run EFIM; measure wall time,&lt;br&gt;sampled Java heap MiB &amp; patterns" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
-          <mxGeometry x="726.0" y="584" width="300" height="80" as="geometry" />
-        </mxCell>
-        <mxCell id="success" value="Both runs&lt;br&gt;COMPLETED?" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rhombus;fillColor=#FFFFFF;strokeColor=#245B83;strokeWidth=1.6;fontSize=16;fontColor=#223247;spacing=8;" vertex="1" parent="1">
-          <mxGeometry x="752.0" y="688" width="248" height="108" as="geometry" />
-        </mxCell>
-        <mxCell id="error" value="Show BLOCKED &amp;amp; run evidence&lt;br&gt;Keep successful sibling run visible" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
-          <mxGeometry x="174.0" y="702" width="300" height="80" as="geometry" />
-        </mxCell>
-        <mxCell id="fail" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;fillColor=#FFFFFF;strokeWidth=1.5;strokeColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="310.0" y="825" width="28" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="fail-dot" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;strokeColor=#000000;fillColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="316.0" y="831" width="16" height="16" as="geometry" />
-        </mxCell>
-        <mxCell id="compare" value="Compare exact pattern sets + utilities&lt;br&gt;MATCH/FAILED; show metrics separately" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#EDF5FB;strokeColor=#245B83;strokeWidth=1.8;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
-          <mxGeometry x="726.0" y="834" width="300" height="80" as="geometry" />
-        </mxCell>
-        <mxCell id="view" value="Read both run benchmarks incl. comparisonStatus" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
-          <mxGeometry x="174.0" y="954" width="300" height="80" as="geometry" />
-        </mxCell>
-        <mxCell id="e" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;fillColor=#FFFFFF;strokeWidth=1.5;strokeColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="310.0" y="1080" width="28" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="e-dot" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;strokeColor=#000000;fillColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="316.0" y="1086" width="16" height="16" as="geometry" />
+        <mxCell id="removed" value="REMOVED on 2026-11-16 (DEC-20261116-04). Mining is EFIM-only: every new request, manual or scheduled, creates exactly one EFIM run. HUI-Miner, compare mode and the benchmark endpoints (GET /api/mining/runs/{id}/benchmark and the System Admin equivalent) no longer exist, and compareAlgorithms is rejected with 400. Historical HUI-Miner runs, comparison statuses and metrics stay readable unchanged. The page keeps its number so that the numbering of the other pages does not change." style="shape=note;size=14;html=1;whiteSpace=wrap;fontFamily=Helvetica;align=left;verticalAlign=top;spacing=12;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=18;fontColor=#223247;" vertex="1" parent="1">
+          <mxGeometry x="48" y="140" width="1000" height="220" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
@@ -2736,6 +2644,116 @@
       </root>
     </mxGraphModel>
   </diagram>
+  <diagram id="paspm-unified-ad11" name="AD11 - Utility Weight v2 &amp; Snapshot">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1370" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Utility Weight v2 and the frozen snapshot" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=30;fontColor=#223247;fontStyle=1;spacing=0;" vertex="1" parent="1">
+          <mxGeometry x="48" y="54" width="1104" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="lane0" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=0;fillColor=#FFFFFF;strokeColor=#D5DEE6;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="48" y="130" width="552" height="1180" as="geometry" />
+        </mxCell>
+        <mxCell id="lane0head" value="MERCHANDISER" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=0;fillColor=#EAF0F5;strokeColor=#D5DEE6;fontSize=15;fontStyle=1;fontColor=#223247;" vertex="1" parent="1">
+          <mxGeometry x="48" y="130" width="552" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="lane1" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=0;fillColor=#FAFCFE;strokeColor=#D5DEE6;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="600" y="130" width="552" height="1180" as="geometry" />
+        </mxCell>
+        <mxCell id="lane1head" value="PASPM / UTILITY SERVICE" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=0;fillColor=#EAF0F5;strokeColor=#D5DEE6;fontSize=15;fontStyle=1;fontColor=#223247;" vertex="1" parent="1">
+          <mxGeometry x="600" y="130" width="552" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="s0" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;strokeColor=#000000;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="312" y="200" width="24" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="cfg" value="Set α and β (α + β = 1) and λ; manage seasons and their products" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="174" y="254" width="300" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="lam" value="λ ≤ λmax?" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rhombus;fillColor=#FFFFFF;strokeColor=#245B83;strokeWidth=1.6;fontSize=16;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="726" y="364" width="300" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="r409" value="409: lambdaValid = false; ask the System Admin to raise λmax (new snapshots are refused)" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="174" y="384" width="300" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="ex" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;fillColor=#FFFFFF;strokeWidth=1.5;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="310" y="530" width="28" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="ex-dot" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;strokeColor=#000000;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="316" y="536" width="16" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="calc" value="Per product: U_expiry by FEFO over batch push days with sales rate v of the last N days; M = highest active season weight (start and end dates included)" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="726" y="540" width="300" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="warn" value="Record warnings: MISSING_PUSH_DAY (no push day), SLOW_MOVING (v = 0)" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="726" y="720" width="300" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="wf" value="W = 1 + λ(α·U_expiry + β·M), rounded to 2 decimals HALF_UP; WeightedUtility = Base × W (scale 6)" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="726" y="850" width="300" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="rev" value="Review the preview: a priority score, not revenue or profit" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="174" y="865" width="300" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="mk" value="Create the snapshot for the date range" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="174" y="1000" width="300" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="frz" value="Freeze inputs, seasons and warnings in an immutable snapshot (scoringVersion)" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="726" y="1100" width="300" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="rdy" value="Show the READY snapshot; frozen data is never recomputed" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="174" y="1110" width="300" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="ed" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;fillColor=#FFFFFF;strokeWidth=1.5;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="310" y="1240" width="28" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="ed-dot" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;strokeColor=#000000;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="316" y="1246" width="16" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="a1" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="s0" target="cfg">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="a2" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="cfg" target="lam">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="324" y="349" /><mxPoint x="876" y="349" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="a3" value="[no]" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="lam" target="r409">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="0" y="-14" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="a4" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="r409" target="ex">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="a5" value="[yes]" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="lam" target="calc">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="24" y="0" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="a6" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="calc" target="warn">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="a7" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="warn" target="wf">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="a8" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="wf" target="rev">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="a9" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="rev" target="mk">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="a10" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="mk" target="frz">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="324" y="1090" /><mxPoint x="876" y="1090" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="a11" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="frz" target="rdy">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="a12" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="rdy" target="ed">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="nver" value="Frozen JSON is read by scoringVersion: old versions stay readable and unknown versions are rejected. Seasons: a season with products cannot be deleted (409); a soft-deleted product keeps its assignment." style="shape=note;size=14;html=1;whiteSpace=wrap;fontFamily=Helvetica;align=left;verticalAlign=top;spacing=8;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=15;fontColor=#223247;" vertex="1" parent="1">
+          <mxGeometry x="60" y="560" width="420" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="nver-link" value="" style="edgeStyle=none;html=1;endArrow=none;dashed=1;dashPattern=4 4;strokeColor=#8092A3;strokeWidth=1.2;" edge="1" parent="1" source="nver" target="calc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
   <diagram id="r2-01-page" name="R2-03 — Screen Flow">
     <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3084.898" pageHeight="1820.0" math="0" shadow="0">
       <root>
@@ -2786,7 +2804,7 @@
         <mxCell id="r2-01-node-a7" value="S07 Failure &amp;amp; Retry · /admin/failure" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fontSize=14;fillColor=#ffffff;strokeColor=#28253d;strokeWidth=1.3;spacing=6;rounded=0;" vertex="1" parent="1" semanticKind="square" mermaidId="a7">
           <mxGeometry x="250.0" y="1664.0" width="152.0" height="87.0" as="geometry" />
         </mxCell>
-        <mxCell id="r2-01-node-a6" value="S06 Benchmark · /admin/benchmark" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fontSize=14;fillColor=#ffffff;strokeColor=#28253d;strokeWidth=1.3;spacing=6;rounded=0;" vertex="1" parent="1" semanticKind="square" mermaidId="a6">
+        <mxCell id="r2-01-node-a6" value="S06 Benchmark · /admin/benchmark [REMOVED]" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fontSize=14;fillColor=#ffffff;strokeColor=#28253d;strokeWidth=1.3;spacing=6;rounded=0;" vertex="1" parent="1" semanticKind="square" mermaidId="a6">
           <mxGeometry x="346.0" y="1410.0" width="165.281" height="66.0" as="geometry" />
         </mxCell>
         <mxCell id="r2-01-node-users" value="Users &amp;amp; Roles · /admin/users" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fontSize=14;fillColor=#ffffff;strokeColor=#28253d;strokeWidth=1.3;spacing=6;rounded=0;" vertex="1" parent="1" semanticKind="square" mermaidId="users">
@@ -3257,7 +3275,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="r2-01-node-rbac" value="Role gap: SCREEN_OWNER_MAP assigns Merchandiser routes, but ROLE_PERMISSIONS and post-login role mapping grant F03 only, and its sidebar is disabled. BE mining submission, config, benchmark, Store picker and Store snapshot/request/run reads are System Admin only (System Admin never reads raw patterns); Merchandiser/Store Admin read own-Store results and patterns and use F06." style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fontSize=14;fillColor=#fff4cc;strokeColor=#9a6700;strokeWidth=1.3;spacing=6;rounded=0;" vertex="1" parent="1">
+        <mxCell id="r2-01-node-rbac" value="Role gap: SCREEN_OWNER_MAP assigns Merchandiser routes, but ROLE_PERMISSIONS and post-login role mapping grant F03 only, and its sidebar is disabled. BE mining submission, config, Store picker and Store snapshot/request/run reads are System Admin only (System Admin never reads raw patterns); Merchandiser/Store Admin read own-Store results and patterns and use F06." style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fontSize=14;fillColor=#fff4cc;strokeColor=#9a6700;strokeWidth=1.3;spacing=6;rounded=0;" vertex="1" parent="1">
           <mxGeometry x="2554.14" y="467" width="205.594" height="318" as="geometry" />
         </mxCell>
               <mxCell id="r2-01-node-stores" value="Stores · /admin/stores" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fontSize=14;fillColor=#ffffff;strokeColor=#28253d;strokeWidth=1.3;spacing=6;rounded=0;" vertex="1" parent="1"><mxGeometry x="560.0" y="1410.0" width="152.0" height="66.0" as="geometry" /></mxCell>
@@ -3311,7 +3329,7 @@
         <mxCell id="r2-02-node-mysql" value="«database»&lt;br&gt;MySQL 8.4&lt;br&gt;Flyway V1–V19&lt;br&gt;(V18: SKIPPED status · V19: scheduler principal)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fontSize=14;fillColor=#ffffff;strokeColor=#28253d;strokeWidth=1.3;spacing=6;shape=cylinder3;size=12;" vertex="1" parent="1" semanticKind="cylinder" mermaidId="mysql">
           <mxGeometry x="462" y="1920" width="190" height="130" as="geometry" />
         </mxCell>
-        <mxCell id="r2-02-node-utility" value="«component»&lt;br&gt;Utility calculation&lt;br&gt;S/M product priorities, E from sellable batch expiry" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fontSize=14;fillColor=#ffffff;strokeColor=#28253d;strokeWidth=1.3;spacing=6;rounded=0;" vertex="1" parent="1" semanticKind="square" mermaidId="utility">
+        <mxCell id="r2-02-node-utility" value="«component» Utility calculation (Weight v2) W = 1 + λ(α·U_expiry + β·M); U_expiry from batch push days (FEFO), M from seasons" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fontSize=14;fillColor=#ffffff;strokeColor=#28253d;strokeWidth=1.3;spacing=6;rounded=0;" vertex="1" parent="1" semanticKind="square" mermaidId="utility">
           <mxGeometry x="386.594" y="1554.0" width="152.0" height="150.0" as="geometry" />
         </mxCell>
         <mxCell id="r2-02-node-source" value="TransactionSource&lt;br&gt;eligible sales transactions" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fontSize=14;fillColor=#ffffff;strokeColor=#28253d;strokeWidth=1.3;spacing=6;rounded=0;" vertex="1" parent="1" semanticKind="square" mermaidId="source">
@@ -3326,7 +3344,7 @@
         <mxCell id="r2-02-node-worker" value="«component»&lt;br&gt;Mining worker&lt;br&gt;DB polling · lease + fencing · run/pattern persistence" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fontSize=14;fillColor=#ffffff;strokeColor=#28253d;strokeWidth=1.3;spacing=6;rounded=0;" vertex="1" parent="1" semanticKind="square" mermaidId="worker">
           <mxGeometry x="968.094" y="1744.0" width="152.0" height="108.0" as="geometry" />
         </mxCell>
-        <mxCell id="r2-02-node-child" value="«process» Isolated SPMF Java 25+ child&lt;br&gt;HUI-Miner / EFIM" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fontSize=14;fillColor=#ffffff;strokeColor=#28253d;strokeWidth=1.3;spacing=6;rounded=0;" vertex="1" parent="1" semanticKind="square" mermaidId="child">
+        <mxCell id="r2-02-node-child" value="«process» SPMF Java 25 child process (EFIM only)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fontSize=14;fillColor=#ffffff;strokeColor=#28253d;strokeWidth=1.3;spacing=6;rounded=0;" vertex="1" parent="1" semanticKind="square" mermaidId="child">
           <mxGeometry x="979.094" y="1932.0" width="152.0" height="108.0" as="geometry" />
         </mxCell>
         <mxCell id="r2-02-node-rec" value="«component»&lt;br&gt;Recommendation rules&lt;br&gt;frozen evidence + live product eligibility" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fontSize=14;fillColor=#ffffff;strokeColor=#28253d;strokeWidth=1.3;spacing=6;rounded=0;" vertex="1" parent="1" semanticKind="square" mermaidId="rec">
@@ -3719,9 +3737,6 @@
         </mxCell>
         <mxCell id="MIN__wrk" value="execution&#xa;worker" style="shape=folder;tabWidth=34;tabHeight=8;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontFamily=Arial;fontSize=11;fontStyle=0;verticalAlign=middle;align=center;spacingTop=6;" vertex="1" parent="1">
           <mxGeometry x="360" y="820" width="90" height="40" as="geometry" />
-        </mxCell>
-        <mxCell id="MIN__cmp" value="result&#xa;comparison" style="shape=folder;tabWidth=34;tabHeight=8;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontFamily=Arial;fontSize=11;fontStyle=0;verticalAlign=middle;align=center;spacingTop=6;" vertex="1" parent="1">
-          <mxGeometry x="460" y="820" width="80" height="40" as="geometry" />
         </mxCell>
         <mxCell id="MIN__per" value="persistence&#xa;«JDBC»" style="shape=folder;tabWidth=34;tabHeight=8;tabPosition=left;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontFamily=Arial;fontSize=11;fontStyle=0;verticalAlign=middle;align=center;spacingTop=6;" vertex="1" parent="1">
           <mxGeometry x="160" y="870" width="380" height="40" as="geometry" />
@@ -4446,7 +4461,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="r2-05-edge-label-3" value="[all selected runs COMPLETED and comparison is not FAILED]" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;spacing=2;align=center;" vertex="1" parent="r2-05-edge-3" semanticKind="edge-label" ownerEdge="r2-05-edge-3">
+        <mxCell id="r2-05-edge-label-3" value="[the run COMPLETED]" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;spacing=2;align=center;" vertex="1" parent="r2-05-edge-3" semanticKind="edge-label" ownerEdge="r2-05-edge-3">
           <mxGeometry x="54.0" y="385.0" width="208.0" height="78.0" as="geometry" />
         </mxCell>
         <mxCell id="r2-05-edge-4" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;strokeColor=#28253d;endArrow=open;endFill=0;exitX=0.77;exitY=1.0;exitPerimeter=0;entryX=0.205;entryY=-0.0;entryPerimeter=0;" edge="1" parent="1" semanticKind="transition" semanticSource="RUNNING" semanticTarget="FAILED" semanticLabel="a run FAILED / TIMED_OUT, or comparison FAILED" mermaidEdgeId="edge4" source="r2-05-node-RUNNING" target="r2-05-node-FAILED">
@@ -4458,7 +4473,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="r2-05-edge-label-4" value="a run FAILED / TIMED_OUT, or comparison FAILED" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;spacing=2;align=center;" vertex="1" parent="r2-05-edge-4" semanticKind="edge-label" ownerEdge="r2-05-edge-4">
+        <mxCell id="r2-05-edge-label-4" value="the run FAILED / TIMED_OUT" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;spacing=2;align=center;" vertex="1" parent="r2-05-edge-4" semanticKind="edge-label" ownerEdge="r2-05-edge-4">
           <mxGeometry x="274.0" y="397.0" width="208.0" height="54.0" as="geometry" />
         </mxCell>
         <mxCell id="r2-05-edge-5" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;strokeColor=#28253d;endArrow=open;endFill=0;exitX=0.5;exitY=1.0;exitPerimeter=0;entryX=0.007;entryY=0.358;entryPerimeter=0;" edge="1" parent="1" semanticKind="transition" semanticSource="COMPLETED" semanticTarget="root_end" semanticLabel="" mermaidEdgeId="edge5" source="r2-05-node-COMPLETED" target="r2-05-node-root_end">
@@ -5354,7 +5369,7 @@
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="r2-09-message-label-9" value="9. submitMiningRequest(storeId, snapshotId, requestKey, compareAlgorithms)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-09-message-9" semanticKind="message-label" ownerEdge="r2-09-message-9">
+        <mxCell id="r2-09-message-label-9" value="9. submitMiningRequest(storeId, snapshotId, requestKey)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-09-message-9" semanticKind="message-label" ownerEdge="r2-09-message-9">
           <mxGeometry x="585" y="1130" width="990" height="28" as="geometry" />
         </mxCell>
         <mxCell id="r2-09-anchor-s-15" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="UI">
@@ -5370,7 +5385,7 @@
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="r2-09-message-label-10" value="10. createAdministrative(jwt, store, snapshotId, key, compare)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-09-message-10" semanticKind="message-label" ownerEdge="r2-09-message-10">
+        <mxCell id="r2-09-message-label-10" value="10. createAdministrative(jwt, store, snapshotId, key)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-09-message-10" semanticKind="message-label" ownerEdge="r2-09-message-10">
           <mxGeometry x="1605" y="1268" width="990" height="28" as="geometry" />
         </mxCell>
         <mxCell id="r2-09-anchor-s-16" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Mine">
@@ -5733,7 +5748,7 @@
         <mxCell id="r2-09c-page-k-Customer" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«actor»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;Customer&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;- customerId : long&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
           <mxGeometry x="1810" y="100" width="180" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="r2-09c-page-k-PaspmUi" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«boundary»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;PaspmUi&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;&amp;nbsp;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ startTransactionPreparation() : void&lt;br/&gt;+ createSnapshot(range : RangeRequest) : void&lt;br/&gt;+ submitMiningRequest(storeId : int, snapshotId : int,&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;requestKey : UUID, compareAlgorithms : boolean) : void&lt;br/&gt;+ generateRecommendations(runId : long) : void&lt;br/&gt;+ notifyAwaitingActivation(campaignId : long) : void&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
+        <mxCell id="r2-09c-page-k-PaspmUi" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«boundary»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;PaspmUi&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt; &lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ startTransactionPreparation() : void&lt;br/&gt;+ createSnapshot(range : RangeRequest) : void&lt;br/&gt;+ submitMiningRequest(storeId : int, snapshotId : int,&lt;br/&gt;      requestKey : UUID) : void&lt;br/&gt;+ generateRecommendations(runId : long) : void&lt;br/&gt;+ notifyAwaitingActivation(campaignId : long) : void&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
           <mxGeometry x="1140" y="100" width="420" height="180" as="geometry" />
         </mxCell>
         <mxCell id="r2-09c-page-k-TransactionImportService" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«control»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;TransactionImportService&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;&amp;nbsp;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ importCsv(jwt : Jwt, file : MultipartFile) : ImportSummary&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
@@ -5742,7 +5757,7 @@
         <mxCell id="r2-09c-page-k-UtilitySnapshotService" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«control»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;UtilitySnapshotService&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;&amp;nbsp;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ create(jwt : Jwt, request : RangeRequest) : SnapshotView&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
           <mxGeometry x="1150" y="700" width="400" height="100" as="geometry" />
         </mxCell>
-        <mxCell id="r2-09c-page-k-MiningService" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«control»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;MiningService&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;&amp;nbsp;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ createAdministrative(jwt : Jwt, store : int, snapshotId : int,&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;key : UUID, compare : boolean) : RequestView&lt;br/&gt;+ requestForStore(store : int, id : long) : RequestView&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
+        <mxCell id="r2-09c-page-k-MiningService" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«control»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;MiningService&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt; &lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ createAdministrative(jwt : Jwt, store : int, snapshotId : int,&lt;br/&gt;      key : UUID) : RequestView&lt;br/&gt;+ requestForStore(store : int, id : long) : RequestView&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
           <mxGeometry x="1130" y="410" width="440" height="130" as="geometry" />
         </mxCell>
         <mxCell id="r2-09c-page-k-MiningScheduleService" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«control»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;MiningScheduleService&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;&amp;nbsp;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ update(jwt : Jwt, id : long, u : Update) : View&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
@@ -7056,7 +7071,7 @@
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="r2-11-message-label-1" value="1. submitRequest(storeId, snapshotId, requestKey, compareAlgorithms)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-11-message-1" semanticKind="message-label" ownerEdge="r2-11-message-1">
+        <mxCell id="r2-11-message-label-1" value="1. submitRequest(storeId, snapshotId, requestKey)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-11-message-1" semanticKind="message-label" ownerEdge="r2-11-message-1">
           <mxGeometry x="245.0" y="210" width="310.0" height="48" as="geometry" />
         </mxCell>
         <mxCell id="r2-11-anchor-s-4" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="UI">
@@ -7072,7 +7087,7 @@
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="r2-11-message-label-2" value="2. createAdministrative(jwt, store, snapshotId, key, compare)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-11-message-2" semanticKind="message-label" ownerEdge="r2-11-message-2">
+        <mxCell id="r2-11-message-label-2" value="2. createAdministrative(jwt, store, snapshotId, key)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-11-message-2" semanticKind="message-label" ownerEdge="r2-11-message-2">
           <mxGeometry x="585.0" y="1162.5" width="650.0" height="28" as="geometry" />
         </mxCell>
         <mxCell id="r2-11-anchor-s-5" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Config">
@@ -7546,7 +7561,7 @@
         <mxCell id="r2-11c-page-k-User" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«actor»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;User&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;- id : int&lt;br/&gt;- role : String&lt;br/&gt;- storeId : Integer&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
           <mxGeometry x="760" y="100" width="180" height="110" as="geometry" />
         </mxCell>
-        <mxCell id="r2-11c-page-k-MiningSetupScreen" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«boundary»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;MiningSetupScreen&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;&amp;nbsp;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ submitRequest(storeId : int, snapshotId : int, requestKey :&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;UUID, compareAlgorithms : boolean) : void&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
+        <mxCell id="r2-11c-page-k-MiningSetupScreen" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«boundary»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;MiningSetupScreen&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt; &lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ submitRequest(storeId : int, snapshotId : int, requestKey :&lt;br/&gt;      UUID) : void&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
           <mxGeometry x="60" y="100" width="420" height="120" as="geometry" />
         </mxCell>
         <mxCell id="r2-11c-page-k-MiningSystemController" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«boundary»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;MiningSystemController&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;- mining : MiningService&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ create(jwt : Jwt, request : ManualRequest) : RequestView&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
@@ -7615,10 +7630,10 @@
         <mxCell id="r2-11c-page-k-OccurrenceStatus" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«enumeration»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;OccurrenceStatus&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;PENDING&lt;br/&gt;PROCESSING&lt;br/&gt;DISPATCHED&lt;br/&gt;COMPLETED&lt;br/&gt;FAILED&lt;br/&gt;SKIPPED&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
           <mxGeometry x="2880" y="100" width="180" height="160" as="geometry" />
         </mxCell>
-        <mxCell id="r2-11c-page-k-ComparisonStatus" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«enumeration»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;ComparisonStatus&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;NOT_REQUESTED&lt;br/&gt;PENDING&lt;br/&gt;MATCH&lt;br/&gt;FAILED&lt;br/&gt;BLOCKED&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
+        <mxCell id="r2-11c-page-k-ComparisonStatus" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«enumeration»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;ComparisonStatus (legacy)&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;NOT_REQUESTED&lt;br/&gt;PENDING&lt;br/&gt;MATCH&lt;br/&gt;FAILED&lt;br/&gt;BLOCKED&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
           <mxGeometry x="2460" y="1300" width="180" height="140" as="geometry" />
         </mxCell>
-        <mxCell id="r2-11c-page-k-Algorithm" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«enumeration»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;Algorithm&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;HUI_MINER&lt;br/&gt;EFIM&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
+        <mxCell id="r2-11c-page-k-Algorithm" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«enumeration»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;Algorithm&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;HUI_MINER (legacy runs)&lt;br/&gt;EFIM&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
           <mxGeometry x="1350" y="1670" width="180" height="90" as="geometry" />
         </mxCell>
         <mxCell id="r2-11c-page-e0" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;dashed=1;dashPattern=6 4;exitX=0.0000;exitY=0.5455;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.0000;entryY=0.5000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-11c-page-k-User" target="r2-11c-page-k-MiningSetupScreen">
@@ -7975,878 +7990,30 @@
       </root>
     </mxGraphModel>
   </diagram>
-  <diagram id="r2-12-page" name="R2-08.04 — Sequence AD04">
-    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2500.0" pageHeight="3151.0" math="0" shadow="0">
+  <diagram id="r2-12-page" name="R2-08.04 — Sequence AD04 [REMOVED]">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="420" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="r2-12-title" value="R2-08.04 — Sequence AD04" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="40.0" y="18" width="2420.0" height="32.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-frame-4" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;rounded=0;fillColor=none;strokeColor=#757575;strokeWidth=1.4;" vertex="1" parent="1" semanticKind="combined-fragment" operator="alt" sourceLine="14">
-          <mxGeometry x="45.0" y="566" width="2410.0" height="2020" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-operator-4" value="alt" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=#F3F3F3;strokeColor=#757575;fontSize=15;align=left;spacingLeft=10;" vertex="1" parent="1" semanticKind="operator">
-          <mxGeometry x="45.0" y="566" width="72.0" height="28.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-guard-4" value="[Invalid input or dependencies]" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;align=left;fontSize=15;" vertex="1" parent="1" semanticKind="guard" sourceLine="14">
-          <mxGeometry x="137.0" y="573" width="2290.0" height="36.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-frame-18" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;rounded=0;fillColor=none;strokeColor=#757575;strokeWidth=1.4;" vertex="1" parent="1" semanticKind="combined-fragment" operator="alt" sourceLine="28">
-          <mxGeometry x="61.0" y="1722" width="2378.0" height="408" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-operator-18" value="alt" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=#F3F3F3;strokeColor=#757575;fontSize=15;align=left;spacingLeft=10;" vertex="1" parent="1" semanticKind="operator">
-          <mxGeometry x="61.0" y="1722" width="72.0" height="28.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-guard-18" value="[Both runs succeed]" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;align=left;fontSize=15;" vertex="1" parent="1" semanticKind="guard" sourceLine="28">
-          <mxGeometry x="153.0" y="1729" width="2258.0" height="36.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-frame-30" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;rounded=0;fillColor=none;strokeColor=#757575;strokeWidth=1.4;" vertex="1" parent="1" semanticKind="combined-fragment" operator="opt" sourceLine="40">
-          <mxGeometry x="45.0" y="2612" width="2410.0" height="252" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-operator-30" value="opt" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=#F3F3F3;strokeColor=#757575;fontSize=15;align=left;spacingLeft=10;" vertex="1" parent="1" semanticKind="operator">
-          <mxGeometry x="45.0" y="2612" width="72.0" height="28.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-guard-30" value="[Additional minUtil setting]" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;align=left;fontSize=15;" vertex="1" parent="1" semanticKind="guard" sourceLine="40">
-          <mxGeometry x="137.0" y="2619" width="2290.0" height="36.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-divider-7" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;endArrow=none;dashed=1;strokeColor=#757575;" edge="1" parent="1" semanticKind="operand-divider">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="45.0" y="798" as="sourcePoint" />
-            <mxPoint x="2455.0" y="798" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-operand-7" value="[Request admitted]" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;align=left;fontSize=15;" vertex="1" parent="1" semanticKind="operand-guard" sourceLine="17">
-          <mxGeometry x="137.0" y="807" width="2290.0" height="32.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-divider-21" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;endArrow=none;dashed=1;strokeColor=#757575;" edge="1" parent="1" semanticKind="operand-divider">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="61.0" y="1976" as="sourcePoint" />
-            <mxPoint x="2439.0" y="1976" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-operand-21" value="[A run fails]" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;align=left;fontSize=15;" vertex="1" parent="1" semanticKind="operand-guard" sourceLine="31">
-          <mxGeometry x="153.0" y="1985" width="2258.0" height="32.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-participant-Admin" value="systemAdmin : User" style="shape=umlActor;html=1;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;fillColor=#FDF4FF;strokeColor=#E879F9;fontFamily=Arial;fontSize=16;whiteSpace=wrap;labelWidth=210;" vertex="1" parent="1" semanticKind="actor" participantId="Admin">
-          <mxGeometry x="212.0" y="76" width="36" height="62" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-lifeline-Admin" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;endArrow=none;dashed=1;dashPattern=5 5;strokeColor=#777777;" edge="1" parent="1" semanticKind="lifeline" participantId="Admin">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="230.0" y="178" as="sourcePoint" />
-            <mxPoint x="230.0" y="2916" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-footer-Admin" value="systemAdmin : User" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#FDF4FF;strokeColor=#E879F9;spacing=8;" vertex="1" parent="1" semanticKind="participant-footer" participantId="Admin">
-          <mxGeometry x="125.0" y="2928" width="210.0" height="80.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-participant-UI" value="benchmarkScreen : BenchmarkScreen" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#F0FDFA;strokeColor=#2DD4BF;spacing=10;" vertex="1" parent="1" semanticKind="participant" participantId="UI">
-          <mxGeometry x="465.0" y="76" width="210.0" height="90.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-lifeline-UI" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;endArrow=none;dashed=1;dashPattern=5 5;strokeColor=#777777;" edge="1" parent="1" semanticKind="lifeline" participantId="UI">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="570.0" y="178" as="sourcePoint" />
-            <mxPoint x="570.0" y="2916" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-footer-UI" value="benchmarkScreen : BenchmarkScreen" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#F0FDFA;strokeColor=#2DD4BF;spacing=8;" vertex="1" parent="1" semanticKind="participant-footer" participantId="UI">
-          <mxGeometry x="465.0" y="2928" width="210.0" height="80.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-participant-Bench" value="mining : MiningService" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#FFF7ED;strokeColor=#FB923C;spacing=10;" vertex="1" parent="1" semanticKind="participant" participantId="Bench">
-          <mxGeometry x="805.0" y="76" width="210.0" height="90.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-lifeline-Bench" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;endArrow=none;dashed=1;dashPattern=5 5;strokeColor=#777777;" edge="1" parent="1" semanticKind="lifeline" participantId="Bench">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="910.0" y="178" as="sourcePoint" />
-            <mxPoint x="910.0" y="2916" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-footer-Bench" value="mining : MiningService" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#FFF7ED;strokeColor=#FB923C;spacing=8;" vertex="1" parent="1" semanticKind="participant-footer" participantId="Bench">
-          <mxGeometry x="805.0" y="2928" width="210.0" height="80.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-participant-Data" value="snapshots : UtilitySnapshotRepository" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#ECFEFF;strokeColor=#22D3EE;spacing=10;" vertex="1" parent="1" semanticKind="participant" participantId="Data">
-          <mxGeometry x="1145.0" y="76" width="210.0" height="90.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-lifeline-Data" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;endArrow=none;dashed=1;dashPattern=5 5;strokeColor=#777777;" edge="1" parent="1" semanticKind="lifeline" participantId="Data">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1250.0" y="178" as="sourcePoint" />
-            <mxPoint x="1250.0" y="2916" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-footer-Data" value="snapshots : UtilitySnapshotRepository" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#ECFEFF;strokeColor=#22D3EE;spacing=8;" vertex="1" parent="1" semanticKind="participant-footer" participantId="Data">
-          <mxGeometry x="1145.0" y="2928" width="210.0" height="80.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-participant-HUI" value="hui : SpmfMiningEngine" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#F0FDF4;strokeColor=#4ADE80;spacing=10;" vertex="1" parent="1" semanticKind="participant" participantId="HUI">
-          <mxGeometry x="1485.0" y="76" width="210.0" height="90.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-lifeline-HUI" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;endArrow=none;dashed=1;dashPattern=5 5;strokeColor=#777777;" edge="1" parent="1" semanticKind="lifeline" participantId="HUI">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1590.0" y="178" as="sourcePoint" />
-            <mxPoint x="1590.0" y="2916" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-footer-HUI" value="hui : SpmfMiningEngine" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#F0FDF4;strokeColor=#4ADE80;spacing=8;" vertex="1" parent="1" semanticKind="participant-footer" participantId="HUI">
-          <mxGeometry x="1485.0" y="2928" width="210.0" height="80.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-participant-EFIM" value="efim : SpmfMiningEngine" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#F5F3FF;strokeColor=#A78BFA;spacing=10;" vertex="1" parent="1" semanticKind="participant" participantId="EFIM">
-          <mxGeometry x="1825.0" y="76" width="210.0" height="90.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-lifeline-EFIM" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;endArrow=none;dashed=1;dashPattern=5 5;strokeColor=#777777;" edge="1" parent="1" semanticKind="lifeline" participantId="EFIM">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1930.0" y="178" as="sourcePoint" />
-            <mxPoint x="1930.0" y="2916" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-footer-EFIM" value="efim : SpmfMiningEngine" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#F5F3FF;strokeColor=#A78BFA;spacing=8;" vertex="1" parent="1" semanticKind="participant-footer" participantId="EFIM">
-          <mxGeometry x="1825.0" y="2928" width="210.0" height="80.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-participant-Report" value="repository : MiningRepository" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#FDF4FF;strokeColor=#E879F9;spacing=10;" vertex="1" parent="1" semanticKind="participant" participantId="Report">
-          <mxGeometry x="2165.0" y="76" width="210.0" height="90.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-lifeline-Report" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;endArrow=none;dashed=1;dashPattern=5 5;strokeColor=#777777;" edge="1" parent="1" semanticKind="lifeline" participantId="Report">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="2270.0" y="178" as="sourcePoint" />
-            <mxPoint x="2270.0" y="2916" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-footer-Report" value="repository : MiningRepository" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#FDF4FF;strokeColor=#E879F9;spacing=8;" vertex="1" parent="1" semanticKind="participant-footer" participantId="Report">
-          <mxGeometry x="2165.0" y="2928" width="210.0" height="80.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-s-0" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Admin">
-          <mxGeometry x="229.5" y="265.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-t-0" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="UI">
-          <mxGeometry x="569.5" y="265.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-message-1" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="Admin" semanticTarget="UI" semanticArrow="-&gt;&gt;" semanticLabel="requestBenchmark(storeId, snapshotId, requestKey)" sequenceNumber="1" sourceLine="10" source="r2-12-anchor-s-0" target="r2-12-anchor-t-0">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="230.0" y="266" as="sourcePoint" />
-            <mxPoint x="570.0" y="266" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-message-label-1" value="1. requestBenchmark(storeId, snapshotId, requestKey)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-12-message-1" semanticKind="message-label" ownerEdge="r2-12-message-1">
-          <mxGeometry x="245.0" y="210" width="310.0" height="48" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-s-1" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="UI">
-          <mxGeometry x="569.5" y="359.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-t-1" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Bench">
-          <mxGeometry x="909.5" y="359.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-message-2" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="UI" semanticTarget="Bench" semanticArrow="-&gt;&gt;" semanticLabel="createAdministrative(jwt, store, snapshotId, key, compare)" sequenceNumber="2" sourceLine="11" source="r2-12-anchor-s-1" target="r2-12-anchor-t-1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="570.0" y="360" as="sourcePoint" />
-            <mxPoint x="910.0" y="360" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-message-label-2" value="2. createAdministrative(jwt, store, snapshotId, key, compare)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-12-message-2" semanticKind="message-label" ownerEdge="r2-12-message-2">
-          <mxGeometry x="585.0" y="304" width="310.0" height="48" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-s-2" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Bench">
-          <mxGeometry x="909.5" y="453.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-t-2" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Data">
-          <mxGeometry x="1249.5" y="453.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-message-3" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="Bench" semanticTarget="Data" semanticArrow="-&gt;&gt;" semanticLabel="find(store, id), assertMiningOwnership(store, id)" sequenceNumber="3" sourceLine="12" source="r2-12-anchor-s-2" target="r2-12-anchor-t-2">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="910.0" y="454" as="sourcePoint" />
-            <mxPoint x="1250.0" y="454" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-message-label-3" value="3. find(store, id), assertMiningOwnership(store, id)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-12-message-3" semanticKind="message-label" ownerEdge="r2-12-message-3">
-          <mxGeometry x="925.0" y="398" width="310.0" height="48" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-s-3" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Data">
-          <mxGeometry x="1249.5" y="527.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-t-3" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Bench">
-          <mxGeometry x="909.5" y="527.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-message-4" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=open;endFill=0;dashed=1;dashPattern=5 4;" edge="1" parent="1" semanticKind="message" semanticSource="Data" semanticTarget="Bench" semanticArrow="--&gt;&gt;" semanticLabel="SnapshotView" sequenceNumber="4" sourceLine="13" source="r2-12-anchor-s-3" target="r2-12-anchor-t-3">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1250.0" y="528" as="sourcePoint" />
-            <mxPoint x="910.0" y="528" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-message-label-4" value="4. SnapshotView" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-12-message-4" semanticKind="message-label" ownerEdge="r2-12-message-4">
-          <mxGeometry x="925.0" y="492" width="310.0" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-s-5" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Bench">
-          <mxGeometry x="909.5" y="685.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-t-5" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="UI">
-          <mxGeometry x="569.5" y="685.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-message-5" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=open;endFill=0;dashed=1;dashPattern=5 4;" edge="1" parent="1" semanticKind="message" semanticSource="Bench" semanticTarget="UI" semanticArrow="--&gt;&gt;" semanticLabel="ApiException(status, message)" sequenceNumber="5" sourceLine="15" source="r2-12-anchor-s-5" target="r2-12-anchor-t-5">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="910.0" y="686" as="sourcePoint" />
-            <mxPoint x="570.0" y="686" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-message-label-5" value="5. ApiException(status, message)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-12-message-5" semanticKind="message-label" ownerEdge="r2-12-message-5">
-          <mxGeometry x="585.0" y="650" width="310.0" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-s-6" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="UI">
-          <mxGeometry x="569.5" y="759.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-t-6" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Admin">
-          <mxGeometry x="229.5" y="759.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-message-6" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=open;endFill=0;dashed=1;dashPattern=5 4;" edge="1" parent="1" semanticKind="message" semanticSource="UI" semanticTarget="Admin" semanticArrow="--&gt;&gt;" semanticLabel="ApiError.api(exception)" sequenceNumber="6" sourceLine="16" source="r2-12-anchor-s-6" target="r2-12-anchor-t-6">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="570.0" y="760" as="sourcePoint" />
-            <mxPoint x="230.0" y="760" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-message-label-6" value="6. ApiError.api(exception)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-12-message-6" semanticKind="message-label" ownerEdge="r2-12-message-6">
-          <mxGeometry x="245.0" y="724" width="310.0" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-s-8" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Bench">
-          <mxGeometry x="909.5" y="893.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-t-8" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Report">
-          <mxGeometry x="2269.5" y="893.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-message-7" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="Bench" semanticTarget="Report" semanticArrow="-&gt;&gt;" semanticLabel="create(store, actor, request, payloadHash, snapshot, input, threshold)" sequenceNumber="7" sourceLine="18" source="r2-12-anchor-s-8" target="r2-12-anchor-t-8">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="910.0" y="894" as="sourcePoint" />
-            <mxPoint x="2270.0" y="894" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-message-label-7" value="7. create(store, actor, request, payloadHash, snapshot, input, threshold)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-12-message-7" semanticKind="message-label" ownerEdge="r2-12-message-7">
-          <mxGeometry x="925.0" y="858" width="1330.0" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-s-9" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Bench">
-          <mxGeometry x="909.5" y="987.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-t-9" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Bench">
-          <mxGeometry x="909.5" y="1015.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-message-8" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=open;endFill=0;" edge="1" parent="1" semanticKind="message" semanticSource="Bench" semanticTarget="Bench" semanticArrow="-)" semanticLabel="enqueue(store, id)" sequenceNumber="8" sourceLine="19" source="r2-12-anchor-s-9" target="r2-12-anchor-t-9">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="910.0" y="988" as="sourcePoint" />
-            <mxPoint x="910.0" y="1016" as="targetPoint" />
-            <Array as="points">
-              <mxPoint x="975.0" y="988" />
-              <mxPoint x="975.0" y="1016" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-message-label-8" value="8. enqueue(store, id)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=left;spacing=2;" vertex="1" parent="r2-12-message-8" semanticKind="message-label" ownerEdge="r2-12-message-8">
-          <mxGeometry x="928.0" y="932" width="265.0" height="48.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-s-10" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Bench">
-          <mxGeometry x="909.5" y="1103.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-t-10" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="UI">
-          <mxGeometry x="569.5" y="1103.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-message-9" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=open;endFill=0;dashed=1;dashPattern=5 4;" edge="1" parent="1" semanticKind="message" semanticSource="Bench" semanticTarget="UI" semanticArrow="--&gt;&gt;" semanticLabel="RequestView" sequenceNumber="9" sourceLine="20" source="r2-12-anchor-s-10" target="r2-12-anchor-t-10">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="910.0" y="1104" as="sourcePoint" />
-            <mxPoint x="570.0" y="1104" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-message-label-9" value="9. RequestView" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-12-message-9" semanticKind="message-label" ownerEdge="r2-12-message-9">
-          <mxGeometry x="585.0" y="1068" width="310.0" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-s-11" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Bench">
-          <mxGeometry x="909.5" y="1217.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-t-11" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Bench">
-          <mxGeometry x="909.5" y="1245.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-message-10" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="Bench" semanticTarget="Bench" semanticArrow="-&gt;&gt;" semanticLabel="execute(store, id)" sequenceNumber="10" sourceLine="21" source="r2-12-anchor-s-11" target="r2-12-anchor-t-11">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="910.0" y="1218" as="sourcePoint" />
-            <mxPoint x="910.0" y="1246" as="targetPoint" />
-            <Array as="points">
-              <mxPoint x="975.0" y="1218" />
-              <mxPoint x="975.0" y="1246" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-message-label-10" value="10. execute(store, id)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=left;spacing=2;" vertex="1" parent="r2-12-message-10" semanticKind="message-label" ownerEdge="r2-12-message-10">
-          <mxGeometry x="928.0" y="1142" width="265.0" height="68.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-s-12" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Bench">
-          <mxGeometry x="909.5" y="1313.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-t-12" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="HUI">
-          <mxGeometry x="1589.5" y="1313.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-message-11" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="Bench" semanticTarget="HUI" semanticArrow="-&gt;&gt;" semanticLabel="execute(algorithm, input, minUtility, identity)" sequenceNumber="11" sourceLine="22" source="r2-12-anchor-s-12" target="r2-12-anchor-t-12">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="910.0" y="1314" as="sourcePoint" />
-            <mxPoint x="1590.0" y="1314" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-message-label-11" value="11. execute(algorithm, input, minUtility, identity)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-12-message-11" semanticKind="message-label" ownerEdge="r2-12-message-11">
-          <mxGeometry x="925.0" y="1278" width="650.0" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-s-13" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="HUI">
-          <mxGeometry x="1589.5" y="1387.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-t-13" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Bench">
-          <mxGeometry x="909.5" y="1387.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-message-12" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=open;endFill=0;dashed=1;dashPattern=5 4;" edge="1" parent="1" semanticKind="message" semanticSource="HUI" semanticTarget="Bench" semanticArrow="--&gt;&gt;" semanticLabel="Output" sequenceNumber="12" sourceLine="23" source="r2-12-anchor-s-13" target="r2-12-anchor-t-13">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1590.0" y="1388" as="sourcePoint" />
-            <mxPoint x="910.0" y="1388" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-message-label-12" value="12. Output" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-12-message-12" semanticKind="message-label" ownerEdge="r2-12-message-12">
-          <mxGeometry x="925.0" y="1352" width="650.0" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-s-14" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Bench">
-          <mxGeometry x="909.5" y="1461.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-t-14" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Report">
-          <mxGeometry x="2269.5" y="1461.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-message-13" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="Bench" semanticTarget="Report" semanticArrow="-&gt;&gt;" semanticLabel="complete(c, run, input, output)" sequenceNumber="13" sourceLine="24" source="r2-12-anchor-s-14" target="r2-12-anchor-t-14">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="910.0" y="1462" as="sourcePoint" />
-            <mxPoint x="2270.0" y="1462" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-message-label-13" value="13. complete(c, run, input, output)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-12-message-13" semanticKind="message-label" ownerEdge="r2-12-message-13">
-          <mxGeometry x="925.0" y="1426" width="1330.0" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-s-15" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Bench">
-          <mxGeometry x="909.5" y="1535.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-t-15" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="EFIM">
-          <mxGeometry x="1929.5" y="1535.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-message-14" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="Bench" semanticTarget="EFIM" semanticArrow="-&gt;&gt;" semanticLabel="execute(algorithm, input, minUtility, identity)" sequenceNumber="14" sourceLine="25" source="r2-12-anchor-s-15" target="r2-12-anchor-t-15">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="910.0" y="1536" as="sourcePoint" />
-            <mxPoint x="1930.0" y="1536" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-message-label-14" value="14. execute(algorithm, input, minUtility, identity)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-12-message-14" semanticKind="message-label" ownerEdge="r2-12-message-14">
-          <mxGeometry x="925.0" y="1500" width="990.0" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-s-16" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="EFIM">
-          <mxGeometry x="1929.5" y="1609.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-t-16" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Bench">
-          <mxGeometry x="909.5" y="1609.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-message-15" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=open;endFill=0;dashed=1;dashPattern=5 4;" edge="1" parent="1" semanticKind="message" semanticSource="EFIM" semanticTarget="Bench" semanticArrow="--&gt;&gt;" semanticLabel="Output" sequenceNumber="15" sourceLine="26" source="r2-12-anchor-s-16" target="r2-12-anchor-t-16">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1930.0" y="1610" as="sourcePoint" />
-            <mxPoint x="910.0" y="1610" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-message-label-15" value="15. Output" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-12-message-15" semanticKind="message-label" ownerEdge="r2-12-message-15">
-          <mxGeometry x="925.0" y="1574" width="990.0" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-s-17" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Bench">
-          <mxGeometry x="909.5" y="1683.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-t-17" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Report">
-          <mxGeometry x="2269.5" y="1683.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-message-16" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="Bench" semanticTarget="Report" semanticArrow="-&gt;&gt;" semanticLabel="complete(c, run, input, output)" sequenceNumber="16" sourceLine="27" source="r2-12-anchor-s-17" target="r2-12-anchor-t-17">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="910.0" y="1684" as="sourcePoint" />
-            <mxPoint x="2270.0" y="1684" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-message-label-16" value="16. complete(c, run, input, output)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-12-message-16" semanticKind="message-label" ownerEdge="r2-12-message-16">
-          <mxGeometry x="925.0" y="1648" width="1330.0" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-s-19" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Bench">
-          <mxGeometry x="909.5" y="1841.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-t-19" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Bench">
-          <mxGeometry x="909.5" y="1869.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-message-17" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="Bench" semanticTarget="Bench" semanticArrow="-&gt;&gt;" semanticLabel="canonical(store, run)" sequenceNumber="17" sourceLine="29" source="r2-12-anchor-s-19" target="r2-12-anchor-t-19">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="910.0" y="1842" as="sourcePoint" />
-            <mxPoint x="910.0" y="1870" as="targetPoint" />
-            <Array as="points">
-              <mxPoint x="975.0" y="1842" />
-              <mxPoint x="975.0" y="1870" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-message-label-17" value="17. canonical(store, run)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=left;spacing=2;" vertex="1" parent="r2-12-message-17" semanticKind="message-label" ownerEdge="r2-12-message-17">
-          <mxGeometry x="928.0" y="1786" width="265.0" height="48.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-s-20" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Bench">
-          <mxGeometry x="909.5" y="1937.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-t-20" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Report">
-          <mxGeometry x="2269.5" y="1937.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-message-18" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="Bench" semanticTarget="Report" semanticArrow="-&gt;&gt;" semanticLabel="terminal(c, result, comparison)" sequenceNumber="18" sourceLine="30" source="r2-12-anchor-s-20" target="r2-12-anchor-t-20">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="910.0" y="1938" as="sourcePoint" />
-            <mxPoint x="2270.0" y="1938" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-message-label-18" value="18. terminal(c, result, comparison)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-12-message-18" semanticKind="message-label" ownerEdge="r2-12-message-18">
-          <mxGeometry x="925.0" y="1902" width="1330.0" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-s-22" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Bench">
-          <mxGeometry x="909.5" y="2071.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-t-22" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Report">
-          <mxGeometry x="2269.5" y="2071.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-message-19" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="Bench" semanticTarget="Report" semanticArrow="-&gt;&gt;" semanticLabel="terminal(c, result, comparison)" sequenceNumber="19" sourceLine="32" source="r2-12-anchor-s-22" target="r2-12-anchor-t-22">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="910.0" y="2072" as="sourcePoint" />
-            <mxPoint x="2270.0" y="2072" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-message-label-19" value="19. terminal(c, result, comparison)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-12-message-19" semanticKind="message-label" ownerEdge="r2-12-message-19">
-          <mxGeometry x="925.0" y="2036" width="1330.0" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-s-24" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="UI">
-          <mxGeometry x="569.5" y="2211.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-t-24" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Bench">
-          <mxGeometry x="909.5" y="2211.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-message-20" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="UI" semanticTarget="Bench" semanticArrow="-&gt;&gt;" semanticLabel="benchmarkForStore(store, id)" sequenceNumber="20" sourceLine="34" source="r2-12-anchor-s-24" target="r2-12-anchor-t-24">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="570.0" y="2212" as="sourcePoint" />
-            <mxPoint x="910.0" y="2212" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-message-label-20" value="20. benchmarkForStore(store, id)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-12-message-20" semanticKind="message-label" ownerEdge="r2-12-message-20">
-          <mxGeometry x="585.0" y="2176" width="310.0" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-s-25" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Bench">
-          <mxGeometry x="909.5" y="2285.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-t-25" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Report">
-          <mxGeometry x="2269.5" y="2285.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-message-21" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="Bench" semanticTarget="Report" semanticArrow="-&gt;&gt;" semanticLabel="run(store, id), find(store, requestId)" sequenceNumber="21" sourceLine="35" source="r2-12-anchor-s-25" target="r2-12-anchor-t-25">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="910.0" y="2286" as="sourcePoint" />
-            <mxPoint x="2270.0" y="2286" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-message-label-21" value="21. run(store, id), find(store, requestId)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-12-message-21" semanticKind="message-label" ownerEdge="r2-12-message-21">
-          <mxGeometry x="925.0" y="2250" width="1330.0" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-s-26" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Report">
-          <mxGeometry x="2269.5" y="2359.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-t-26" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Bench">
-          <mxGeometry x="909.5" y="2359.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-message-22" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=open;endFill=0;dashed=1;dashPattern=5 4;" edge="1" parent="1" semanticKind="message" semanticSource="Report" semanticTarget="Bench" semanticArrow="--&gt;&gt;" semanticLabel="RunView, Stored" sequenceNumber="22" sourceLine="36" source="r2-12-anchor-s-26" target="r2-12-anchor-t-26">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="2270.0" y="2360" as="sourcePoint" />
-            <mxPoint x="910.0" y="2360" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-message-label-22" value="22. RunView, Stored" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-12-message-22" semanticKind="message-label" ownerEdge="r2-12-message-22">
-          <mxGeometry x="925.0" y="2324" width="1330.0" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-s-27" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Bench">
-          <mxGeometry x="909.5" y="2433.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-t-27" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="UI">
-          <mxGeometry x="569.5" y="2433.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-message-23" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=open;endFill=0;dashed=1;dashPattern=5 4;" edge="1" parent="1" semanticKind="message" semanticSource="Bench" semanticTarget="UI" semanticArrow="--&gt;&gt;" semanticLabel="BenchmarkView" sequenceNumber="23" sourceLine="37" source="r2-12-anchor-s-27" target="r2-12-anchor-t-27">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="910.0" y="2434" as="sourcePoint" />
-            <mxPoint x="570.0" y="2434" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-message-label-23" value="23. BenchmarkView" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-12-message-23" semanticKind="message-label" ownerEdge="r2-12-message-23">
-          <mxGeometry x="585.0" y="2398" width="310.0" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-s-28" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="UI">
-          <mxGeometry x="569.5" y="2527.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-t-28" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Admin">
-          <mxGeometry x="229.5" y="2527.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-message-24" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=open;endFill=0;dashed=1;dashPattern=5 4;" edge="1" parent="1" semanticKind="message" semanticSource="UI" semanticTarget="Admin" semanticArrow="--&gt;&gt;" semanticLabel="BenchmarkView" sequenceNumber="24" sourceLine="38" source="r2-12-anchor-s-28" target="r2-12-anchor-t-28">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="570.0" y="2528" as="sourcePoint" />
-            <mxPoint x="230.0" y="2528" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-message-label-24" value="24. BenchmarkView" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-12-message-24" semanticKind="message-label" ownerEdge="r2-12-message-24">
-          <mxGeometry x="245.0" y="2492" width="310.0" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-s-31" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Admin">
-          <mxGeometry x="229.5" y="2711.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-t-31" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="UI">
-          <mxGeometry x="569.5" y="2711.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-message-25" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="Admin" semanticTarget="UI" semanticArrow="-&gt;&gt;" semanticLabel="requestBenchmark(storeId, snapshotId, requestKey)" sequenceNumber="25" sourceLine="41" source="r2-12-anchor-s-31" target="r2-12-anchor-t-31">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="230.0" y="2712" as="sourcePoint" />
-            <mxPoint x="570.0" y="2712" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-message-label-25" value="25. requestBenchmark(storeId, snapshotId, requestKey)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-12-message-25" semanticKind="message-label" ownerEdge="r2-12-message-25">
-          <mxGeometry x="245.0" y="2656" width="310.0" height="48" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-s-32" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="UI">
-          <mxGeometry x="569.5" y="2805.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-anchor-t-32" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Bench">
-          <mxGeometry x="909.5" y="2805.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12-message-26" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="UI" semanticTarget="Bench" semanticArrow="-&gt;&gt;" semanticLabel="createAdministrative(jwt, store, snapshotId, key, compare)" sequenceNumber="26" sourceLine="42" source="r2-12-anchor-s-32" target="r2-12-anchor-t-32">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="570.0" y="2806" as="sourcePoint" />
-            <mxPoint x="910.0" y="2806" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12-message-label-26" value="26. createAdministrative(jwt, store, snapshotId, key, compare)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-12-message-26" semanticKind="message-label" ownerEdge="r2-12-message-26">
-          <mxGeometry x="585.0" y="2750" width="310.0" height="48" as="geometry" />
+        <mxCell id="title" value="R2-08.04 — Sequence AD04 [REMOVED]" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=30;fontColor=#223247;fontStyle=1;spacing=0;" vertex="1" parent="1">
+          <mxGeometry x="48" y="54" width="1000" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="removed" value="REMOVED on 2026-11-16 (DEC-20261116-04). Mining is EFIM-only: every new request, manual or scheduled, creates exactly one EFIM run. HUI-Miner, compare mode and the benchmark endpoints (GET /api/mining/runs/{id}/benchmark and the System Admin equivalent) no longer exist, and compareAlgorithms is rejected with 400. Historical HUI-Miner runs, comparison statuses and metrics stay readable unchanged. The page keeps its number so that the numbering of the other pages does not change." style="shape=note;size=14;html=1;whiteSpace=wrap;fontFamily=Helvetica;align=left;verticalAlign=top;spacing=12;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=18;fontColor=#223247;" vertex="1" parent="1">
+          <mxGeometry x="48" y="140" width="1000" height="220" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
-  <diagram id="r2-12c-page" name="R2-07.04 — Class Diagram Sequence AD04">
-    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2600" pageHeight="1330" math="0" shadow="0">
+  <diagram id="r2-12c-page" name="R2-07.04 — Class Diagram Sequence AD04 [REMOVED]">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="420" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="title" value="Class Diagram — Algorithm Benchmarking (Sequence AD04)" style="text;html=1;whiteSpace=wrap;fontFamily=Arial;fontSize=20;fontStyle=1;align=left;verticalAlign=middle;" vertex="1" parent="1">
-          <mxGeometry x="40" y="24" width="1400" height="40" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-k-User" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«actor»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;User&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;- id : int&lt;br/&gt;- role : String&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
-          <mxGeometry x="1860" y="100" width="180" height="90" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-k-BenchmarkScreen" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«boundary»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;BenchmarkScreen&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;&amp;nbsp;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ requestBenchmark(storeId : int, snapshotId : int, requestKey :&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;UUID) : void&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
-          <mxGeometry x="1230" y="100" width="440" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-k-MiningSystemController" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«boundary»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;MiningSystemController&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;- mining : MiningService&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ create(jwt : Jwt, request : ManualRequest) : RequestView&lt;br/&gt;+ benchmark(jwt : Jwt, storeId : int, runId : long) :&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;BenchmarkView&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
-          <mxGeometry x="660" y="100" width="400" height="130" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-k-MiningService" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«control»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;MiningService&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;- repository : MiningRepository&lt;br/&gt;- builder : MiningInputBuilder&lt;br/&gt;- engine : MiningEngine&lt;br/&gt;- worker : MiningWorker&lt;br/&gt;- snapshots : UtilitySnapshotRepository&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ createAdministrative(jwt : Jwt, store : int, snapshotId : int,&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;key : UUID, compare : boolean) : RequestView&lt;br/&gt;+ benchmarkForStore(store : int, id : long) : BenchmarkView&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
-          <mxGeometry x="640" y="360" width="440" height="200" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-k-MiningWorker" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«control»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;MiningWorker&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;- repository : MiningRepository&lt;br/&gt;- engine : MiningEngine&lt;br/&gt;- leases : MiningDispatchLease&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;~ enqueue(store : int, id : long) : void&lt;br/&gt;~ execute(store : int, id : long) : void&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
-          <mxGeometry x="710" y="710" width="290" height="150" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-k-UtilitySnapshotRepository" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«repository»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;UtilitySnapshotRepository&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;- jdbc : JdbcTemplate&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ find(store : int, id : int) : SnapshotView&lt;br/&gt;+ assertMiningOwnership(store : int, id : int) : void&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
-          <mxGeometry x="90" y="360" width="370" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-k-MiningEngine" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«interface»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;MiningEngine&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;&amp;nbsp;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;~ execute(algorithm : Algorithm, input : Dataset, minUtility :&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;int, identity : ExecutionIdentity) : Output&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
-          <mxGeometry x="60" y="1050" width="430" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-k-SpmfMiningEngine" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«control»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;SpmfMiningEngine&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;- runtime : SpmfRuntime&lt;br/&gt;- timeoutMillis : long&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ execute(algorithm : Algorithm, input : Dataset, minUtility :&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;int, context : ExecutionIdentity) : Output&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
-          <mxGeometry x="60" y="710" width="430" height="130" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-k-MiningRepository" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«repository»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;MiningRepository&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;- jdbc : JdbcTemplate&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;~ create(store : int, actor : int, request : CreateRequest,&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;payloadHash : String, snapshot : SnapshotView, input :&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Dataset, threshold : int) : Stored&lt;br/&gt;~ find(store : int, id : long) : Stored&lt;br/&gt;+ run(store : int, id : long) : RunView&lt;br/&gt;~ complete(c : Claim, run : long, input : Dataset, output :&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Output) : void&lt;br/&gt;~ canonical(store : int, run : long) : Map&amp;lt;String, Integer&amp;gt;&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
-          <mxGeometry x="1240" y="710" width="420" height="210" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-k-MiningDispatchLease" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«repository»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;MiningDispatchLease&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;- jdbc : JdbcTemplate&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ terminal(c : Claim, result : String, comparison : String) :&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;void&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
-          <mxGeometry x="650" y="1050" width="420" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-k-BenchmarkView" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«entity»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;BenchmarkView&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ run : RunView&lt;br/&gt;+ snapshotHash : String&lt;br/&gt;+ transactionCount : int&lt;br/&gt;+ distinctItems : int&lt;br/&gt;+ inputBytes : int&lt;br/&gt;+ divisor : long&lt;br/&gt;+ utilityScale : int&lt;br/&gt;+ effectiveMinUtility : BigDecimal&lt;br/&gt;+ comparisonStatus : ComparisonStatus&lt;br/&gt;+ repetitionPolicy : String&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
-          <mxGeometry x="1310" y="360" width="270" height="220" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-k-RunView" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«entity»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;RunView&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ runId : long&lt;br/&gt;+ requestId : long&lt;br/&gt;+ algorithm : Algorithm&lt;br/&gt;+ status : MiningRunStatus&lt;br/&gt;+ runtimeMillis : Long&lt;br/&gt;+ memoryMiB : Double&lt;br/&gt;+ patternCount : Integer&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
-          <mxGeometry x="2240" y="710" width="200" height="170" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-k-RequestView" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«entity»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;RequestView&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ requestId : long&lt;br/&gt;+ snapshotId : int&lt;br/&gt;+ requestKey : UUID&lt;br/&gt;+ algorithms : List&amp;lt;Algorithm&amp;gt;&lt;br/&gt;+ status : MiningRequestStatus&lt;br/&gt;+ comparisonStatus : ComparisonStatus&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
-          <mxGeometry x="1820" y="710" width="270" height="160" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-k-MiningRunStatus" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«enumeration»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;MiningRunStatus&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;PENDING&lt;br/&gt;RUNNING&lt;br/&gt;COMPLETED&lt;br/&gt;FAILED&lt;br/&gt;TIMED_OUT&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
-          <mxGeometry x="2250" y="360" width="180" height="140" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-k-MiningRequestStatus" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«enumeration»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;MiningRequestStatus&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;PENDING&lt;br/&gt;RUNNING&lt;br/&gt;COMPLETED&lt;br/&gt;FAILED&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
-          <mxGeometry x="1860" y="1050" width="180" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-k-ComparisonStatus" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«enumeration»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;ComparisonStatus&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;NOT_REQUESTED&lt;br/&gt;PENDING&lt;br/&gt;MATCH&lt;br/&gt;FAILED&lt;br/&gt;BLOCKED&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
-          <mxGeometry x="1860" y="360" width="180" height="140" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-k-Algorithm" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«enumeration»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;Algorithm&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;HUI_MINER&lt;br/&gt;EFIM&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
-          <mxGeometry x="2250" y="1050" width="180" height="90" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-e0" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;dashed=1;dashPattern=6 4;exitX=0.0000;exitY=0.4444;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.0000;entryY=0.5000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-12c-page-k-User" target="r2-12c-page-k-BenchmarkScreen">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="1680" y="140" />
-              <mxPoint x="1680" y="160" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12c-page-e1" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;dashed=1;dashPattern=6 4;exitX=0.0000;exitY=0.5000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.0000;entryY=0.4615;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-12c-page-k-BenchmarkScreen" target="r2-12c-page-k-MiningSystemController">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12c-page-e2" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-12c-page-k-MiningSystemController" target="r2-12c-page-k-MiningService">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12c-page-e3" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.4828;entryY=0.0000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-12c-page-k-MiningService" target="r2-12c-page-k-MiningWorker">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="860" y="700" />
-              <mxPoint x="850" y="700" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12c-page-e4" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;exitX=0.0000;exitY=0.5000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.0000;entryY=0.5000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-12c-page-k-MiningService" target="r2-12c-page-k-UtilitySnapshotRepository">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="480" y="460" />
-              <mxPoint x="480" y="420" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12c-page-e5" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;exitX=0.7273;exitY=1.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-12c-page-k-MiningService" target="r2-12c-page-k-MiningRepository">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="960" y="690" />
-              <mxPoint x="1450" y="690" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12c-page-e6" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;exitX=0.2727;exitY=1.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.7209;entryY=0.0000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-12c-page-k-MiningService" target="r2-12c-page-k-MiningEngine">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="760" y="690" />
-              <mxPoint x="510" y="690" />
-              <mxPoint x="510" y="1010" />
-              <mxPoint x="370" y="1010" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12c-page-e7" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;exitX=0.3448;exitY=1.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5116;entryY=0.0000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-12c-page-k-MiningWorker" target="r2-12c-page-k-MiningEngine">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="810" y="1030" />
-              <mxPoint x="290" y="1030" />
-              <mxPoint x="290" y="1040" />
-              <mxPoint x="280" y="1040" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12c-page-e8" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;exitX=1.0000;exitY=0.5333;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.0000;entryY=0.4762;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-12c-page-k-MiningWorker" target="r2-12c-page-k-MiningRepository">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="1230" y="790" />
-              <mxPoint x="1230" y="810" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12c-page-e9" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;exitX=0.6552;exitY=1.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-12c-page-k-MiningWorker" target="r2-12c-page-k-MiningDispatchLease">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="900" y="1030" />
-              <mxPoint x="860" y="1030" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12c-page-e10" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=block;endFill=0;endSize=12;startArrow=none;dashed=1;dashPattern=6 4;exitX=0.5116;exitY=1.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.2791;entryY=0.0000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-12c-page-k-SpmfMiningEngine" target="r2-12c-page-k-MiningEngine">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="280" y="1030" />
-              <mxPoint x="180" y="1030" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12c-page-e11" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;dashed=1;dashPattern=6 4;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-12c-page-k-MiningService" target="r2-12c-page-k-BenchmarkView">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="1300" y="460" />
-              <mxPoint x="1300" y="470" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12c-page-e12" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=none;startArrow=diamondThin;startFill=1;startSize=14;exitX=0.5185;exitY=1.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.3500;entryY=0.0000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-12c-page-k-BenchmarkView" target="r2-12c-page-k-RunView">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="1450" y="680" />
-              <mxPoint x="2310" y="680" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12c-page-e13" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=none;startArrow=diamondThin;startFill=1;startSize=14;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.0000;entryY=0.4706;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-12c-page-k-RequestView" target="r2-12c-page-k-RunView">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12c-page-e14" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;exitX=0.6500;exitY=0.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5000;entryY=1.0000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-12c-page-k-RunView" target="r2-12c-page-k-MiningRunStatus">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="2370" y="520" />
-              <mxPoint x="2340" y="520" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12c-page-e15" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;exitX=0.5185;exitY=1.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-12c-page-k-RequestView" target="r2-12c-page-k-MiningRequestStatus">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="1960" y="1040" />
-              <mxPoint x="1950" y="1040" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12c-page-e16" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-12c-page-k-BenchmarkView" target="r2-12c-page-k-ComparisonStatus">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="1840" y="470" />
-              <mxPoint x="1840" y="430" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12c-page-e17" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-12c-page-k-RunView" target="r2-12c-page-k-Algorithm">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12c-page-e18" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;dashed=1;dashPattern=6 4;exitX=1.0000;exitY=0.4762;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-12c-page-k-MiningRepository" target="r2-12c-page-k-RequestView">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="1810" y="810" />
-              <mxPoint x="1810" y="790" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-12c-page-t1" value="«use»" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="1750" y="124" width="40" height="14" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-t2" value="«use»" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="1125" y="144" width="40" height="14" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-t3" value="1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="865" y="233" width="14" height="14" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-t4" value="mining 1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="865" y="343" width="59" height="14" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-t5" value="1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="865" y="563" width="14" height="14" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-t6" value="worker 1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="786" y="693" width="59" height="14" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-t7" value="1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="622" y="444" width="14" height="14" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-t8" value="snapshots 1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="464" y="404" width="78" height="14" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-t9" value="1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="965" y="563" width="14" height="14" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-t10" value="repository 1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="1455" y="693" width="84" height="14" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-t11" value="1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="765" y="563" width="14" height="14" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-t12" value="engine 1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="375" y="1033" width="59" height="14" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-t13" value="1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="815" y="863" width="14" height="14" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-t14" value="engine 1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="216" y="1033" width="59" height="14" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-t15" value="1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="1004" y="774" width="14" height="14" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-t16" value="repository 1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="1152" y="813" width="84" height="14" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-t17" value="1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="905" y="863" width="14" height="14" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-t18" value="leases 1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="865" y="1033" width="59" height="14" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-t19" value="«use»" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="1170" y="444" width="40" height="14" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-t20" value="1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="1455" y="583" width="14" height="14" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-t21" value="run 1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="2315" y="693" width="40" height="14" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-t22" value="1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="2094" y="774" width="14" height="14" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-t23" value="runs 1..2" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="2171" y="774" width="65" height="14" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-t24" value="*" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="2375" y="693" width="14" height="14" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-t25" value="status 1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="2345" y="503" width="59" height="14" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-t26" value="*" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="1965" y="873" width="14" height="14" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-t27" value="status 1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="1886" y="1033" width="59" height="14" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-t28" value="*" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="1584" y="454" width="14" height="14" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-t29" value="comparisonStatus 1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="1733" y="414" width="123" height="14" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-t30" value="*" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="2345" y="883" width="14" height="14" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-t31" value="algorithm 1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="2345" y="1033" width="78" height="14" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-12c-page-t32" value="«use»" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="1715" y="794" width="40" height="14" as="geometry" />
+        <mxCell id="title" value="R2-07.04 — Class Diagram Sequence AD04 [REMOVED]" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=30;fontColor=#223247;fontStyle=1;spacing=0;" vertex="1" parent="1">
+          <mxGeometry x="48" y="54" width="1000" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="removed" value="REMOVED on 2026-11-16 (DEC-20261116-04). Mining is EFIM-only: every new request, manual or scheduled, creates exactly one EFIM run. HUI-Miner, compare mode and the benchmark endpoints (GET /api/mining/runs/{id}/benchmark and the System Admin equivalent) no longer exist, and compareAlgorithms is rejected with 400. Historical HUI-Miner runs, comparison statuses and metrics stay readable unchanged. The page keeps its number so that the numbering of the other pages does not change." style="shape=note;size=14;html=1;whiteSpace=wrap;fontFamily=Helvetica;align=left;verticalAlign=top;spacing=12;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=18;fontColor=#223247;" vertex="1" parent="1">
+          <mxGeometry x="48" y="140" width="1000" height="220" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

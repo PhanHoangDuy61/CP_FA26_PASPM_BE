@@ -17,3 +17,7 @@
 ## Record 004 — F09 Storefront (V29 + V30) in the diagrams
 
 [Record 004](04-f09-storefront-v29-v30.md) draws the public Storefront of F09 ([DEC-20261125-04](../../decisions/2026-11-25/DEC-20261125-04-f09-public-store-follows-store-status.md)): slug-based access, `ProductCard` with availability, and the V29 product columns (V30 drops the old Store columns). Documentation only; Maven NOT RUN.
+
+## Record 005 — EFIM-only mining and Weight v2
+
+[Record 005](05-efim-only-and-weight-v2.md) removes HUI-Miner, compare mode and the benchmark from the UML pack ([DEC-20261116-04](../../decisions/2026-11-16/DEC-20261116-04-f05-efim-only-mining.md)) and adds the Weight v2 activity page AD11. Documentation only; Maven NOT RUN.
