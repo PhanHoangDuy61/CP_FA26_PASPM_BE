@@ -398,7 +398,7 @@ These are current documents, not part of the original path map above.
 | `docs/frontend_handoff/OPTION_B_BACKEND_API_HANDOFF.md` | F03/F05 Core integration handoff and per-flow readiness |
 | `docs/reports/F03_F05_API_AUDIT_MATRIX_2026-11-02.md`, `F03_F05_CORE_RELEASE_READINESS_2026-11-02.md` | F03/F05 operation audit and Core release evidence |
 | `docs/reports/UML27_DIAGRAM_QA_2026-11-02.md` | Page-by-page audit of the 27-page Draw.io pack |
-| `docs/diagrams/PASPM_Unified_27_Diagrams_UML2_Editable.drawio` | Editable 27-page UML 2.0 source |
+| `docs/diagrams/PASPM_Unified_UML2_Editable.drawio` | Editable 27-page UML 2.0 source |
 | `docs/superpowers/plans/*` | Working plans for the F03/F05 integration |
 
 ## Files added on branch `Khoi/feat/f05-progress-f03-weight-v2` (2026-11-15)
