@@ -17,7 +17,7 @@ The prefix is `/api/storefront/{storeSlug}/cart`. All routes require Bearer JWT 
 | DELETE `/items/{itemId}` | No body | 200 `CartView`. Removes exactly that line. |
 | DELETE cart root | No body | 200 empty `CartView`. Clears the current Store cart and retains its identity if persisted. |
 
-Strict JSON rejects unknown fields. Individual writes use positive integer quantities, with a total limit of 99 per Product in the cart. Quantity zero uses DELETE. The server reads current price and checks sellable stock on adds and quantity increases. Removal and reduction remain available for stale lines. Money persists at scale 2 and FE displays VND as whole đồng. Subtotal and line totals are computed server-side, with no discount.
+The MVP bundle request accepts only `bundleKey` and adds one bundle per click, requesting one unit per component. A request containing `bundleQuantity` returns 400. Customers change quantities on the ordinary cart lines after adding the bundle. Strict JSON rejects unknown fields. Individual writes use positive integer quantities, with a total limit of 99 per Product in the cart. Quantity zero uses DELETE. The server reads current price and checks sellable stock on adds and quantity increases. Removal and reduction remain available for stale lines. Money persists at scale 2 and FE displays VND as whole đồng. Subtotal and line totals are computed server-side, with no discount.
 
 ## Versioning
 
@@ -27,11 +27,9 @@ Send a strong, quoted cart version on **every POST/PATCH/DELETE**, for example `
 
 - The planned additive F09 `HomePlacement.bundleKey` is an opaque string on every `BUNDLE` block in the selected Layout B of an ACTIVE campaign, and absent or null on other projections. The key identifies Store, campaign, layout revision and block. The server revalidates all of them and reads the authoritative component IDs. Clients cannot send Product overrides or infer keys. A stale same-Store key needs a fresh F09 home response.
 - A block may be added regardless of whether it matches a recommendation. F09 keeps the block visible when a component is out of stock and continues to suppress the private metadata of hidden Products. Classify its origin using the entire block before stock filtering. Exactly one complete matching BUNDLE recommendation from the same Store and snapshot that is APPROVED and readyForConsumption yields `MINED`. Zero or multiple matches yield `MANUAL`. A source ID attached to a placement is insufficient evidence by itself.
-- Skip out-of-stock components; report their IDs in `skippedProductIds`. Persist changes to the remaining ordinary lines and the single `BUNDLE_ADDED` event in the same transaction. The event stores the origin, Store, campaign, layout/revision, block, UTC time and the **sum of actual Product units added**. Partial success counts as one action. Transaction failure rolls back lines and event together.
-- When an authenticated, scoped, current block yields no eligible additions, commit a `BUNDLE_ADD_REJECTED` event with origin and zero units without changing the cart/version, then return 409. Invalid requests, failed authorization, stale cart versions and foreign resources produce no business event. For a stale block key return `BUNDLE_UNAVAILABLE`; it is not an evaluation of current block stock. The F11 metric excludes every rejection.
+- For each component, compute `added = min(requested, sellableStock, remainingRoom)`. Given the current line quantity (0 if absent), `sellableStock = max(0, current sellable Product units - current line quantity)` is the stock available for this increment and `remainingRoom = 99 - current line quantity`. A component no longer eligible for sale has zero sellable stock. Return `components`, an array of `{productId:int32, requested:int32, added:int32}` with one result per component, including on all-zero rejection. `added = 0` means skipped. Any `added > 0` is merged into its regular cart line. Persist these changes and one `BUNDLE_ADDED` event in the same transaction. The event stores the origin, Store, campaign, layout/revision, block, UTC time and the **sum of actual Product units added**. Partial success counts as one action. Transaction failure rolls back lines and event together.
+- When an authenticated, scoped, current block yields `added = 0` for every component, commit a `BUNDLE_ADD_REJECTED` event with origin and zero units without changing the cart/version, then return 409. Invalid requests, failed authorization, stale cart versions and foreign resources produce no business event. For a stale block key return `BUNDLE_UNAVAILABLE`; it is not an evaluation of current block stock. The F11 metric excludes every rejection.
 - Each successful cart mutation that changes persisted state records exactly one event. Other proposed event types are `ITEM_ADDED`, `ITEM_QUANTITY_CHANGED`, `ITEM_REMOVED`, `CART_CLEARED`. Event data is append-only. A no-op creates no event. Separate rejected requests can create separate rejection records.
-
-**Draft quantity details for PO review:** the default action requests one unit per component. Optional `bundleQuantity` beyond one is proposed in the plan, not required for the MVP FE. For a component with positive but insufficient stock for the requested increment, or where the increment would exceed 99, the proposed rule skips that entire component and reports its ID. The public contract should finalize these details before clients rely on them.
 
 ## Response examples
 
@@ -54,14 +52,24 @@ Illustrative partial success. Product 501 had one unit in the cart and the block
     ],
     "subtotal": 64000.00
   },
-  "skippedProductIds": [502]
+  "components": [
+    {"productId":501,"requested":1,"added":1},
+    {"productId":502,"requested":1,"added":0}
+  ]
 }
 ```
 
 `CartView` is the same object under `cart` for all other endpoints. IDs and version are signed int64 except Product IDs (int32). A line's state is `AVAILABLE`, `OUT_OF_STOCK` or `NO_LONGER_AVAILABLE`. A previously added hidden Product keeps its editable/removable line identity, with public metadata and money fields null when unavailable. Subtotal is null if any line cannot be priced. No internal inventory quantities, cost, batch data or recommendation evidence is exposed.
 
 ```json
-{"error":"No bundle component can be added","code":"BUNDLE_ADD_REJECTED","skippedProductIds":[501,502]}
+{
+  "error": "No bundle component can be added",
+  "code": "BUNDLE_ADD_REJECTED",
+  "components": [
+    {"productId":501,"requested":1,"added":0},
+    {"productId":502,"requested":1,"added":0}
+  ]
+}
 ```
 
 | HTTP | Code / behavior |

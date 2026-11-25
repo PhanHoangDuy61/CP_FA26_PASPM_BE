@@ -13,4 +13,8 @@
 
 F09 V29 remains unchanged. The F09 integration ref `f85f48f` has V30, and F10 is planned for V31. Priority coverage is on dev as of PR #32. No migration, source, test, or runtime OpenAPI change belongs to this documentation branch. Existing API shapes remain in effect until implementation.
 
-Local checks cover the documentation diff, new links and JSON examples. Backend/FE tests, MySQL and hosted CI are NOT RUN for this docs-only change. Next implementation decisions are the draft component quantity edge rules in F10.
+Local checks cover the documentation diff, new links and JSON examples. Backend/FE tests, MySQL and hosted CI are NOT RUN for this docs-only change.
+
+## Product Owner follow-up
+
+The owner approved a single bundle per click with a key-only request. The cart merges up to the minimum of requested quantity, sellable stock available for the increment and remaining capacity under the per-Product cap. The response reports `{productId, requested, added}` for every component. An all-zero outcome returns 409 and records `BUNDLE_ADD_REJECTED`. Customers edit quantities after the add. Updated DEC-20261125-06, the planned F10 contract and handoff, the corresponding SRS references and the workspace plan v2.

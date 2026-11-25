@@ -235,7 +235,7 @@ Each line gives the behaviour an agent must preserve. Exact request and response
 ### F10 — Bundle cart (PLANNED)
 
 - FR-10.1: END_CUSTOMER login, one persistent cart per customer/Store, a 99-unit cap per Product, current price and stock checked on adds/increases. All mutations require `If-Match`. Stale version returns `409 CART_VERSION_CONFLICT`.
-- FR-10.2: Each BUNDLE block on the active selected Layout B supports a whole-bundle action by opaque `bundleKey`. Add the available components as ordinary Product lines and report skipped IDs. If none can be added, return 409 and record rejection.
+- FR-10.2: Each BUNDLE block on the active selected Layout B supports a whole-bundle action by opaque `bundleKey`. One click requests one bundle. Add up to the requested quantity, sellable stock available for the increment and remaining capacity under 99 per Product. Report requested and added quantities for every component. If no component can be added, return 409 and record rejection.
 - FR-10.3: Each line is independently editable and removable. No reservation, discount, checkout, order or payment.
 - FR-10.4: Record one event per successful mutation that changes the cart. Record unsuccessful adds when a resolved bundle has no eligible component. Bundle events classify the full block as MINED or MANUAL and store actual units added.
 
@@ -425,5 +425,5 @@ Update Report 3 using the template layout, changing content only.
    - maximum quantity is 99 per Product per cart (DEC-20261125-06);
    - anonymous `BUNDLE_VIEWED` is outside the MVP;
    - the "daily deal" single-product block (Direction 2) is outside the MVP.
-8. F10 component quantity edge rules remain draft. F11 scope and planned contract are recorded in DEC-20261125-06.
+8. F10 component quantities and the single-bundle action, plus F11 scope and planned contract, are recorded in DEC-20261125-06.
 9. Cleanup after DEC-20261123-01: drop the unused `store.mining_schedule` column; consider a database UNIQUE on the normalized Store name once the data is clean.
