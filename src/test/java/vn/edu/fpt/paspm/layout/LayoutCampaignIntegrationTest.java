@@ -54,6 +54,7 @@ class LayoutCampaignIntegrationTest {
     @Autowired UserRepository users;
     @Autowired AuthService auth;
     @Autowired ObjectMapper json;
+    @Autowired LayoutPolicyProperties layoutPolicy;
     @MockitoBean RecommendationService recommendations;
 
     int storeId;
@@ -266,7 +267,7 @@ class LayoutCampaignIntegrationTest {
                 merchantToken, simulationRequest(1, 1, 3, today.plusDays(1), today.plusDays(2)))
                 .andExpect(status().isCreated()));
         assertEquals(3, report.path("layouts").get(1).path("layoutVersion").asLong());
-        assertEquals("OFFLINE_REPLAY_V3", report.path("algorithmVersion").asText());
+        assertEquals("OFFLINE_REPLAY_V4", report.path("algorithmVersion").asText());
         assertEquals(3, jdbc.queryForObject("""
                 SELECT layout_version FROM comparison_report_layout
                 WHERE report_id=? AND role='B'
@@ -345,6 +346,12 @@ class LayoutCampaignIntegrationTest {
         }
         assertTrue(paths.path("/api/campaigns").path("post").path("responses").has("201"));
         assertTrue(openApi.path("components").path("schemas").has("CampaignReportView"));
+        JsonNode schemas = openApi.path("components").path("schemas");
+        for (String schema : List.of("LayoutView", "ReportLayoutView")) {
+            JsonNode fields = schemas.path(schema).path("properties");
+            assertTrue(fields.path("priorityCoverage").path("type").toString().contains("null"));
+            assertTrue(fields.has("priorityCoverageDenominator"));
+        }
         JsonNode saveRequest = openApi.path("components").path("schemas").path("SavePlacementsRequest");
         assertTrue(saveRequest.path("properties").has("placements"));
         assertFalse(saveRequest.path("properties").has("recommendationIds"));
@@ -405,7 +412,8 @@ class LayoutCampaignIntegrationTest {
         assertDecimal(new BigDecimal("0.500000"), reportB.path("bundleConversion").path("rate").decimalValue());
         assertTrue(report.path("assumptions").path("bundleConversion").asText().contains("saved B layout revision"));
         assertDecimal(new BigDecimal("0.714286"), reportB.path("capturedUtility").path("rate").decimalValue());
-        assertTrue(reportB.path("priorityCoverage").isNull());
+        assertDecimal(BigDecimal.ZERO, reportB.path("priorityCoverage").decimalValue());
+        assertEquals(2, reportB.path("priorityCoverageDenominator").asInt());
         assertEquals(evaluationIds, jdbc.query("""
                 SELECT transaction_id FROM comparison_report_transaction
                 WHERE report_id=? ORDER BY transaction_id
@@ -527,7 +535,7 @@ class LayoutCampaignIntegrationTest {
                 String.class, currentCampaign));
     }
 
-    // ---- DEC-20261119-06: owner zone caps, top-K baseline and equal-size simulation; F08 saved-block semantics are OFFLINE_REPLAY_V3.
+    // ---- DEC-20261119-06: owner zone caps, top-K baseline and equal-size simulation; F08 saved-block semantics started in OFFLINE_REPLAY_V3.
 
     @Test
     void policyExposesTheOwnerZoneCapacities() throws Exception {
@@ -600,8 +608,66 @@ class LayoutCampaignIntegrationTest {
     }
 
     @Test
+    void priorityCoverageUsesFrozenWeightsAndHandlesEmptyLayoutsAndAnOversizedB() throws Exception {
+        // The second product occurs in multiple matrix rows, but counts only once in a layout.
+        setSnapshotWeight(products.get(1), "1.01");
+        Integer oldCapacity = layoutPolicy.getMaxProductsByZone().put("BASELINE", 1);
+        try {
+            long bundle = recommendation(RecType.BUNDLE, List.of(products.get(0), products.get(1)),
+                    ReviewStatus.APPROVED, true);
+            JsonNode created = createCampaign(List.of());
+            long layoutA = created.path("layoutAId").asLong();
+            long layoutB = created.path("layoutBId").asLong();
+            var empty = read(get("/api/layouts/" + layoutB + "/preview", merchantToken).andExpect(status().isOk()));
+            assertTrue(empty.path("priorityCoverage").isNull());
+            assertEquals(0, empty.path("priorityCoverageDenominator").asInt(-1));
+            var a = read(get("/api/layouts/" + layoutA, merchantToken).andExpect(status().isOk()));
+            assertCoverage(a, "1", 1);
+            var b = read(put("/api/layouts/" + layoutB + "/placements", merchantToken, placements(1, bundle))
+                    .andExpect(status().isOk()));
+            assertCoverage(b, "0.5", 2);
+            post("/api/layouts/" + layoutB + "/ready", merchantToken, "{\"expectedVersion\":2}")
+                    .andExpect(status().isOk());
+            var report = read(post("/api/campaigns/" + created.path("campaignId").asLong() + "/simulations",
+                    merchantToken, simulationRequest(1, 1, 2, today.plusDays(2), today.plusDays(3)))
+                    .andExpect(status().isCreated()));
+            assertEquals(0, report.path("evaluationCount").asInt());
+            assertTrue(report.path("assumptions").path("nExceedsBaseline").asBoolean());
+            assertCoverage(report.path("layouts").get(0), "1", 1);
+            assertCoverage(report.path("layouts").get(1), "0.5", 2);
+            // Simulate inconsistent historical fixture data and verify the saved report stays frozen.
+            jdbc.update("""
+                    UPDATE utility_matrix_item SET weight_value=1
+                    WHERE snapshot_id=? AND product_id=? AND transaction_id=(SELECT MIN(transaction_id) FROM utility_matrix_item WHERE snapshot_id=? AND product_id=?)
+                    """, snapshotId, products.get(1), snapshotId, products.get(1));
+            var unavailable = read(get("/api/layouts/" + layoutB, merchantToken).andExpect(status().isOk()));
+            assertTrue(unavailable.path("priorityCoverage").isNull());
+            assertEquals(2, unavailable.path("priorityCoverageDenominator").asInt(-1));
+            var savedReport = read(get("/api/campaign-reports/" + report.path("reportId").asLong(), merchantToken)
+                    .andExpect(status().isOk()));
+            assertCoverage(savedReport.path("layouts").get(1), "0.5", 2);
+        } finally {
+            if (oldCapacity == null) layoutPolicy.getMaxProductsByZone().remove("BASELINE");
+            else layoutPolicy.getMaxProductsByZone().put("BASELINE", oldCapacity);
+        }
+    }
+
+    private void setSnapshotWeight(int productId, String weight) {
+        jdbc.update("UPDATE utility_matrix_item SET weight_value=? WHERE snapshot_id=? AND product_id=?",
+                new BigDecimal(weight), snapshotId, productId);
+    }
+
+    private void assertCoverage(JsonNode layout, String expected, int count) {
+        assertTrue(layout.path("priorityCoverage").isNumber());
+        assertDecimal(new BigDecimal(expected), layout.path("priorityCoverage").decimalValue());
+        assertEquals(count, layout.path("priorityCoverageDenominator").asInt(-1));
+    }
+
+    @Test
     void equalSizeSimulationComparesBWithTheTopNOfAAndReportsNAndTheSizeOfA() throws Exception {
         List<Integer> ranked = fortyProductSnapshot();
+        setSnapshotWeight(ranked.get(0), "1.01");
+        setSnapshotWeight(ranked.get(8), "1.02");
         long first = recommendation(RecType.BUNDLE, ranked.subList(22, 26), ReviewStatus.APPROVED, true);
         long second = recommendation(RecType.BUNDLE, ranked.subList(26, 30), ReviewStatus.APPROVED, true);
         JsonNode created = createCampaign(List.of(first, second));
@@ -617,13 +683,15 @@ class LayoutCampaignIntegrationTest {
         JsonNode viewA = read(get("/api/layouts/" + created.path("layoutAId").asLong(), merchantToken).andExpect(status().isOk()));
         assertTrue(viewA.path("equalSizeBaselineScore").isNull());
         assertTrue(viewA.path("equalSizeProductCount").isNull());
+        assertCoverage(viewA, "0.057143", 35);
+        assertCoverage(viewB, "0", 8);
 
         // Evaluation: one basket holds only A's 9th product (in A, outside A's top 8), the other only A's 1st product.
         transaction(today.minusDays(1), List.of(ranked.get(8)), new String[] {"10.00"}, new String[] {"3.00"});
         transaction(today.minusDays(1), List.of(ranked.get(0)), new String[] {"10.00"}, new String[] {"4.00"});
         JsonNode report = read(post("/api/campaigns/" + campaignId + "/simulations", merchantToken,
                 simulationRequest(1, 1, 1, today.minusDays(1), today)).andExpect(status().isCreated()));
-        assertEquals("OFFLINE_REPLAY_V3", report.path("algorithmVersion").asText());
+        assertEquals("OFFLINE_REPLAY_V4", report.path("algorithmVersion").asText());
         JsonNode assumptions = report.path("assumptions");
         assertEquals("EQUAL_SIZE_TOP_N_OF_A", assumptions.path("comparisonMode").asText());
         assertEquals(8, assumptions.path("comparedProductCountN").asInt());
@@ -633,6 +701,11 @@ class LayoutCampaignIntegrationTest {
         assertFalse(assumptions.path("nExceedsBaseline").asBoolean());
         JsonNode reportA = report.path("layouts").get(0);
         assertEquals("A", reportA.path("role").asText());
+        assertCoverage(reportA, "0.125", 8);
+        assertCoverage(report.path("layouts").get(1), "0", 8);
+        JsonNode stored = read(get("/api/campaign-reports/" + report.path("reportId").asLong(), merchantToken)
+                .andExpect(status().isOk()));
+        assertCoverage(stored.path("layouts").get(0), "0.125", 8);
         assertEquals(2, reportA.path("hitRate").path("denominator").asInt());
         assertEquals(1, reportA.path("hitRate").path("numerator").asInt(), "the 9th product of A is outside the equal-size prefix");
         assertEquals(0, report.path("layouts").get(1).path("hitRate").path("numerator").asInt());
@@ -641,9 +714,12 @@ class LayoutCampaignIntegrationTest {
         long reportId = report.path("reportId").asLong();
         String v1Assumptions = "{\"label\":\"simulated\",\"priorityCoverage\":\"N/A until the F03 priority coverage formula is confirmed.\"}";
         jdbc.update("UPDATE comparison_report SET algorithm_version='OFFLINE_REPLAY_V1',assumptions=? WHERE report_id=?", v1Assumptions, reportId);
+        jdbc.update("UPDATE comparison_report_layout SET priority_coverage=NULL,priority_coverage_denominator=NULL WHERE report_id=?", reportId);
         JsonNode legacy = read(get("/api/campaign-reports/" + reportId, merchantToken).andExpect(status().isOk()));
         assertEquals("OFFLINE_REPLAY_V1", legacy.path("algorithmVersion").asText());
         assertEquals(json.readTree(v1Assumptions), legacy.path("assumptions"));
+        assertTrue(legacy.path("layouts").get(0).path("priorityCoverage").isNull());
+        assertTrue(legacy.path("layouts").get(0).path("priorityCoverageDenominator").isNull());
         assertEquals(1, legacy.path("layouts").get(0).path("hitRate").path("numerator").asInt(), "stored metrics are not recomputed");
     }
 

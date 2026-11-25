@@ -132,7 +132,7 @@
 | **hitRate** | Evaluation transactions with ≥ 1 displayed product ÷ evaluation transactions. |
 | **bundleConversion** | Evaluation transactions that contain every product of ≥ 1 saved `BUNDLE + blockNo` block in Layout B ÷ evaluation transactions. F06 provenance does not define the bundle. |
 | **capturedUtility** | Base utility of purchased lines whose product is displayed ÷ base utility of all lines. |
-| **priorityCoverage** | Agreed formula: priority products (W > 1) on the layout ÷ products on the layout, with W taken from the layout's frozen snapshot. **It is not wired yet and the API currently returns `null`.** |
+| **priorityCoverage** | Agreed formula: priority products (W > 1) on the layout ÷ products on the layout, with W taken from the layout's frozen snapshot. Layout views measure the full layout. New offline reports measure the products compared on each side. |
 | **Active layout projection** | `GET /api/storefront/active-layout` returns the layout of the active campaign, or `defaultLayout:true`. It is JWT-scoped for staff and is not the public storefront API. |
 | **Rollback** | Store Admin action that restores the previously active campaign, or the default layout. |
 

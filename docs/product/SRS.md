@@ -60,7 +60,7 @@ UC03 and UC22 were removed earlier, and their numbers are not reused.
 | 13 | Create A/B Layout Variants | Merch | F07/F08 | DONE (API) | A is generated (frequency baseline, read-only). B is built at campaign creation |
 | 14 | Prepare / Publish Campaign | Merch | F08 | DONE (API) | Also covers *withdraw* |
 | 15 | Run A/B Simulation | Merch | F08 | DONE (API) | **Offline replay** of transactions dated after the snapshot. Synthetic traffic is not modelled |
-| 16 | Compare Simulated Results | Merch | F08 | PARTIAL | Metrics are hitRate, bundleConversion and capturedUtility. **`priorityCoverage` is null.** CTR and estimated revenue from Report 3 are not implemented |
+| 16 | Compare Simulated Results | Merch | F08 | PARTIAL | Metrics are hitRate, bundleConversion, capturedUtility and priorityCoverage (implemented on the feature branch). CTR and estimated revenue from Report 3 are not implemented |
 | 17 | Manage Products | Store Admin | F02 | DONE | Legacy score fields removed. SKU format and similar-name confirmation (2026-11-19) |
 | 18 | Manage Categories | Store Admin | F02 | DONE | — |
 | 19 | Manage Selling Prices / Costs | Store Admin | F02 | DONE | — |
@@ -211,7 +211,7 @@ Each line gives the behaviour an agent must preserve. Exact request and response
 - FR-07.2: Layout B is built per product, with an optional source F06 recommendation. A sourced placement remains in the same Store/snapshot and must belong to an APPROVED source recommendation; eligibility is checked per placed product. A manual placement uses `sourceRecommendationId:null` and is eligible only if active, snapshot-present and sellable. A product appears at most once. Zone capacities come from configuration (`paspm.layout.*`). Configured in `application.yml` since PR #22, and overridable through `PASPM_LAYOUT_MAX_BLOCKS_<ZONE>` / `PASPM_LAYOUT_MAX_PRODUCTS_<ZONE>`: BANNER 3 blocks / 3 products, BUNDLE 4 / 16, CROSS_SELL 2 / 8, FBT 2 / 8, BASELINE 35 / 35.
 - FR-07.3: Each edit is a new revision. A block that becomes invalid is shown with errors and blocks READY, publish and activate.
 - FR-07.4: The utility score is the sum of snapshot weighted utility over distinct displayed products. Preview returns validation and score.
-- FR-07.5: Priority coverage is products with W > 1 on the layout ÷ products on the layout. **Not implemented**: the response returns null.
+- FR-07.5: Priority coverage is products with W > 1 on the layout ÷ products on the layout. The layout view uses the full layout, and the simulation uses the actual products compared on each side.
 
 ### F08 — Campaign & simulated A/B (DONE API)
 
@@ -275,7 +275,7 @@ BR-01 to BR-13 keep Report 3 numbering. BR-14 onward are new proposals in this d
 | BR-20 | Layout B placements are edited per product with optional F06 provenance. A product appears once. Removing or moving a placement does not alter F06 evidence or Layout A | Changed by DEC-20261125-01 |
 | BR-21 | At most one ACTIVE campaign per Store | New |
 | BR-22 | Layout utility score is a snapshot priority score, not revenue or profit | New |
-| BR-23 | A priority product is one with W > 1 in the layout's snapshot | New (decided, not coded) |
+| BR-23 | A priority product is one with W > 1 in the layout's snapshot | Implemented on the feature branch |
 | BR-24 | Scheduled-mining enable returns 503 until release sign-off | New |
 | BR-25 | (F09, planned) Only the active campaign layout is public. Public DTOs never expose cost or batch data | Planned |
 | BR-26 | (F10, planned) Bundle add is atomic, with no reservation and no discount. Removing one bundle line removes the bundle | Planned |
@@ -416,7 +416,7 @@ Update Report 3 using the template layout, changing content only.
 
 ## 11. Open items
 
-1. `priorityCoverage` (Direction 1) is not implemented.
+1. Historical simulation reports retain their stored priority coverage fields.
 2. N+1 queries in F06 `ProductEligibilityService` (3 queries per product: product, batches, units sold) have not been measured.
 3. Frontend still calls removed APIs and fields (breaking changes #15–#18). This is still true on FE `dev` @ `86d677d` (for example `expiryPushDays`, `compareAlgorithms`, `HUI_MINER`, `/benchmark`). `origin/feature/fe-v26-integration` removes part of it and is not merged.
 4. Demo minUtil: on the demo seed, the single day 2026-10-02 at `PERCENTAGE 0.25` gave 179 patterns (inside the 100–300 target). The full range 2026-10-01..04 at 0.25 gave 0 patterns. For the full range 2026-10-01..04, `PERCENTAGE 0.12` gives 180 patterns (EFIM 385 ms, `LOSSLESS`), measured 2026-11-19 (DEC-20261119-05). The demo still has to set it as policy.
