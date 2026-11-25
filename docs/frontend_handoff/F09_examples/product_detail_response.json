@@ -1,0 +1,13 @@
+{
+  "productId": 210,
+  "name": "Oat drink",
+  "description": "Unsweetened oat drink",
+  "imageUrl": "https://images.example/oat-drink.jpg",
+  "unit": "carton",
+  "sellingPrice": 2.5,
+  "category": {
+    "categoryId": 7,
+    "name": "Drinks"
+  },
+  "availability": "AVAILABLE"
+}

@@ -1,5 +1,183 @@
 # API Changelog
 
+## 2026-11-26 — F10 Part 2 whole-bundle add
+
+- Added `POST /api/storefront/{storeSlug}/cart/bundles` for END_CUSTOMER. It uses the cart version and adds one bundle per request. The result reports the actual increment per Product.
+- F09 home adds the opaque `HomePlacement.bundleKey` for BUNDLE blocks on active selected Layout B. Blocks remain visible when components are out of stock. Other F09 routes are unchanged.
+- OpenAPI grows from 115 paths / 144 operations to 116 paths / 145 operations. The new operation ID is `addStorefrontCartBundle`. Uses existing V31 tables. F11 remains PLANNED.
+
+## 2026-11-26 — F10 Part 1 ordinary cart
+
+- Added five END_CUSTOMER operations under `/api/storefront/{storeSlug}/cart`. Every mutation uses a quoted `If-Match` version and records one item event for each actual change.
+- V31 creates `shopping_cart`, `shopping_cart_item` and `storefront_event`. The branch export grows from 112 paths / 139 operations to 115 paths / 144 operations.
+- Whole-bundle add and F11 remain planned. See the [F10 contract](F10_BUNDLE_CART_API.md).
+
+## 2026-11-25 — Stable operation IDs and F07 placement schema
+
+- `GET /api/layouts/products` explicitly uses `layoutSnapshotProducts`. See [ROC-20261125-010](../record-of-changes/2026-11-25/10-f07-openapi-annotations.md) for all 47 prior runtime IDs and replacements. Regenerated client method names can change.
+- The F07 request schema now declares the four editable zones, positive required placement coordinates and nullable provenance. The response schema declares nullable provenance and its legacy alias.
+- OpenAPI remains at **112 paths / 139 operations**. HTTP routes, validation and responses are unchanged.
+
+## 2026-11-25 — OpenAPI synchronization on dev `cded4ab`
+
+- Documentation only. The committed and runtime exports both contain **112 paths / 139 operations**.
+- Synchronized the generated test server URL, the required CSV async `Idempotency-Key` header schema (`minLength: 1`), F07 placement schemas and summaries, and snapshot product search response metadata. Its generated operation ID is now `products_2` in the file. This can rename a generated client method.
+- The [F07/F08 contract](F07_F08_LAYOUT_CAMPAIGN_API.md) explains validation and nullable provenance that the generated schema does not capture. See [ROC-20261125-009](../record-of-changes/2026-11-25/09-openapi-status-sync.md).
+
+## 2026-11-25 — F09 Storefront MVP merged with dev (branch `Khoi/merge/f09-storefront-be`, PR to `dev` pending; replaces the old F09 merge `68d6f0b`)
+
+Rules: [DEC-20261125-04](../decisions/2026-11-25/DEC-20261125-04-f09-public-store-follows-store-status.md), DEC-20261117-03, DEC-20261123-01, DEC-20261124-01, DEC-20261124-03. Contract: [F09_STOREFRONT_API.md](F09_STOREFRONT_API.md). Migrations: **V29** `f09_storefront` from the old F09 merge on `dev` (`68d6f0b`) is kept unchanged; new **V30** drops `store.store_slug` and `store.storefront_enabled`. Original implementation: Duy Phan (`Duy/Feature/F09_Storefront`, 2026-11-21).
+
+- **Added (additive):** anonymous `GET /api/storefront/stores`, `GET /api/storefront/{storeSlug}/home`, `GET /api/storefront/{storeSlug}/products`, `GET /api/storefront/{storeSlug}/products/{productId}`; public schemas `PublicStore`, `StoreSummary`, `ProductCard`, `ProductCategory`, `StorefrontProductPage`, `CatalogCategory`, `HomePlacement`, `HomeZone`, `HomeView`.
+- **Added (additive) to F02:** optional `imageUrl` (absolute HTTP(S), max 2048) and `description` (max 2000) on `ProductRequest`; both returned on `ProductView`. PUT stays a full replacement: omitting them clears them.
+- **Rules:** a Store is public exactly when ACTIVE; `storeSlug` = `store.slug`. `ProductCard.availability` is `AVAILABLE | OUT_OF_STOCK` (FR-09.3; the original branch used `UNAVAILABLE`). INACTIVE and soft-deleted products are never listed, shown or AVAILABLE. A batch is sellable on its expiry date.
+- **Removed (was on `dev` since the direct merge `68d6f0b`):** `PUT /api/system/stores/{storeId}/storefront-visibility` and its `VisibilityRequest`/`VisibilityView` schemas; `store.store_slug` and `store.storefront_enabled` (dropped by V30). Public `availability` `UNAVAILABLE` is replaced by `OUT_OF_STOCK`.
+- **OpenAPI:** `dev` 113 paths / 140 operations → **112 / 139** (visibility route removed; F07 paths from `dev` unchanged).
+- **Breaking for clients:** against current `dev`, the System Admin visibility route is gone, public Stores follow `store.status` instead of the toggle, `storeSlug` is `store.slug`, and `availability` is `AVAILABLE | OUT_OF_STOCK`. No staff route other than the visibility route changes.
+
+## 2026-11-25 — F07/F08 snapshot priority coverage
+
+- Added coverage and its denominator to LayoutView for A and B. New OFFLINE_REPLAY_V4 reports populate the existing fields from frozen W > 1 and the actual products compared on each side. Historical reports remain as stored. The runtime export confirms the same 113 paths and 140 operations.
+
+## 2026-11-25 — F07 individual Layout B products (feature branch, owner-approved)
+
+- **Breaking `PUT /api/layouts/{id}/placements`:** replaces `recommendationIds` with `placements`, each containing `productId`, `zone`, `blockNo`, `position`, and nullable `sourceRecommendationId`. Multiple placements may reference the same F06 recommendation, and `null` means manual provenance.
+- **Added:** `GET /api/layouts/products?snapshotId=...&q=...&page=...&pageSize=...` for snapshot product search, snapshot utility, current status, sellable quantity and individual eligibility.
+- **Changed behavior:** saving a Layout B revision validates and persists individual placements; removing or moving one placement leaves F06 evidence and Layout A unchanged. READY rechecks each placed product rather than invalidating a whole source recommendation.
+- **F08:** `OFFLINE_REPLAY_V3` derives BUNDLE conversion from `BUNDLE + blockNo` in the exact saved Layout B revision. Historical V1/V2 reports remain unchanged.
+- No migration: V23 already has nullable `layout_placement.recommendation_id` and placement zone/block/position columns.
+- Contract/handoff: [F07/F08 API](F07_F08_LAYOUT_CAMPAIGN_API.md), [F07/F08 handoff](../frontend_handoff/F07_F08_HANDOFF.md), [DEC-20261125-01](../decisions/2026-11-25/DEC-20261125-01-f07-product-level-layout-b.md).
+
+## 2026-11-24 — F02 expiry boundary, push-day warning, product soft delete (branch `Khoi/feat/f02-expiry-pushday-product-delete`, PR to `dev` pending)
+
+Rules: [DEC-20261124-01](../decisions/2026-11-24/DEC-20261124-01-batch-expiry-boundary-effective-status.md), [DEC-20261124-02](../decisions/2026-11-24/DEC-20261124-02-push-day-missing-warning.md), [DEC-20261124-03](../decisions/2026-11-24/DEC-20261124-03-product-soft-delete.md). Contract: [F02_PRODUCT_INVENTORY_API.md](F02_PRODUCT_INVENTORY_API.md). Migration **V28**.
+
+- **Added (additive):**
+  - `DELETE /api/products/{id}` (STORE_ADMIN of the owning Store): 204; 404 unknown / foreign / already deleted; 409 `{code, error, reason, sellableQuantity, campaigns[]}` with `PRODUCT_HAS_SELLABLE_STOCK` or `PRODUCT_IN_LIVE_CAMPAIGN`.
+  - `BatchView.effectiveStatus` (`ACTIVE|BLOCKED|EXPIRED`), `BatchView.daysToExpiry` (int or null), `BatchView.warnings` (`["MISSING_PUSH_DAY"]` or `[]`); `InventorySummary.batchesMissingPushDay`; `SeasonProduct.deleted`.
+  - `409 PRODUCT_DELETED` on `PUT /api/utility/seasons/{seasonId}/products/{productId}` for a deleted product; an import warning (`PRODUCT_DELETED` in `errorDetails` of a `PROCESSED` row) in `GET /api/transactions/imports/{id}/errors`.
+- **Changed (behaviour, same shapes):**
+  - A batch is expired only when today (`Asia/Ho_Chi_Minh`) is **after** its expiry date (it was "on or before"). This moves `expiredQuantity`, `sellableQuantity` and `expiringSoonQuantity` of the inventory summary and the F03 / F06 results on the expiry date.
+  - EXPIRED wins over BLOCKED: a BLOCKED expired batch moves from `blockedQuantity` to `expiredQuantity`.
+  - `GET /api/products` and every product/batch route exclude soft-deleted products (list: before pagination; by id: 404). `PATCH /api/products/{id}/status` on a deleted product is 404.
+  - `PATCH /api/inventory-batches/{id}` still accepts only `status` `ACTIVE|BLOCKED`; `EXPIRED` and `INACTIVE` are 400.
+- **Not changed:** no request field was added, removed or renamed. The push day has no default (the backend never had one).
+- **OpenAPI:** 107 paths / 133 operations → **107 / 134**.
+- **Breaking for clients:** none in the shapes. The frontend must stop comparing dates for "expired", "expiring soon" and the missing-push-day state, and read the new fields (see [F02 handoff](../frontend_handoff/F02_HANDOFF.md)).
+
+## 2026-11-23 — F01 Store management (branch `Khoi/feat/store-management`, PR to `dev` pending)
+
+Rules: [DEC-20261123-01](../decisions/2026-11-23/DEC-20261123-01-store-management.md). Contract: [F01_STORE_MANAGEMENT_API.md](F01_STORE_MANAGEMENT_API.md). Migration **V27**.
+
+- **Added (additive):**
+  - System Admin: `POST /api/system/stores`, `GET`/`PUT /api/system/stores/{storeId}`, `PATCH /api/system/stores/{storeId}/status`.
+  - Own Store: `GET`/`PUT /api/store/profile`.
+  - Images: `GET`/`PUT`/`DELETE /api/stores/{storeId}/images/{kind}`, and the first anonymous route, `GET /api/public/stores/{storeId}/images/{fileName}`.
+  - Schemas: `StoreDetailView`, `AssignedUser`, `CreateStore`, `UpdateStore`, `ChangeStatus`, `UpdateProfile`.
+- **Changed — picker `GET /api/system/stores`:**
+  - `StoreView` gains `slug`, `status`, `address`, `phone`, `iconUrl`, `bannerUrl`, `version`, `createdAt`, `updatedAt` and `deactivatedAt`; `storeId` and `name` are unchanged.
+  - New optional parameters `q` and `status`.
+  - **Behaviour change:** without `status` it now lists **ACTIVE Stores only** (`status=INACTIVE` or `status=ALL` to see the others).
+- **Changed — INACTIVE Store:**
+  - Users of an INACTIVE Store get **403 `{"error":"Store is inactive","code":"STORE_INACTIVE"}`** on every authenticated route and on login, Google login and refresh.
+  - `POST /api/system/mining/requests`, `POST /api/system/mining/schedules`, enabling a schedule (`PUT …/schedules/{id}` with `enabled: true`), `POST /api/users` and `PUT /api/users/{id}/role` return **409 `code: STORE_INACTIVE`** for an INACTIVE Store.
+  - Schedule occurrences can now be `SKIPPED` with `skipReason: STORE_INACTIVE`.
+- **Errors:** handled errors may carry `code` next to `error`.
+- **OpenAPI:** 102 paths / 123 operations → **107 / 133**. Only the Store paths and schemas were inserted into the checked-in file. The runtime export also differs, before this change, in `servers`, one CSV async parameter, one batch description and `PlacementView`; those differences were left untouched.
+- **Breaking for clients:** none in the request shapes. Behaviour changes for the frontend: the picker default and the 403 `STORE_INACTIVE` screen. The local avatar folder is unchanged (`~/.paspm/profile-images`); in Docker both avatars and Store images are on the `paspm_media` volume. A missing avatar or Store image file now returns 404 instead of 503.
+
+## 2026-11-20 — F02 Product SKU generated by backend (working changes)
+
+- Removed `sku` from `ProductRequest`; clients must omit it from Product POST/PUT bodies. The backend generates SKU at create time as `SKU-` plus the database Product ID padded to 11 digits, and returns it in `ProductView` as read-only.
+- Product updates preserve the existing SKU. Existing Product records are not rewritten. This changes the F02 request contract; update clients to display the returned SKU instead of accepting manual input.
+- No migration or route change. The current OpenAPI export and F02 examples are updated with the request/response contract.
+
+## 2026-11-20 — F09 public storefront MVP
+
+- Added anonymous read-only Store selection, Homepage, Product list and Product detail APIs under /api/storefront.
+- Added a SYSTEM_ADMIN visibility toggle. Existing Stores remain private unless enabled; visibility does not publish or activate a campaign.
+- Added Product imageUrl and description display fields, a distinct public ProductCard response and Store-local availability summary. Public DTOs omit cost, stock quantities, batch data, recommendation evidence and utility.
+- Added migration V29 to assign stable Store slugs and add Store visibility and Product display metadata columns. It was renumbered from V27 during integration because F01 uses V27 and F02 uses V28. See [F09 contract](F09_STOREFRONT_API.md) and [handoff](../frontend_handoff/F09_HANDOFF.md).
+- The combined checked-in OpenAPI now contains 112 paths and 139 operations, including the F01/F02 additions and F09 routes.
+## 2026-11-19 — F04 Excel import brought onto current `dev` (branch `Khoi/feat/f04-excel-import-v26`, PR to `dev`)
+
+The Excel route of 2026-10-26 (entry at the end of this file) is cherry-picked onto `dev` `530651b` without contract change: `POST /api/transactions/imports/excel`, `STORE_ADMIN`, multipart `file`, synchronous `201 ImportSummary`; there is no async Excel route. The sync and async CSV routes keep their behavior and messages. OpenAPI: **101 paths / 122 operations** (100 / 121 plus the Excel route); no existing path or component schema changed. New runtime dependencies: Apache POI `poi-ooxml` 6.0.0 and `commons-io` 2.22.0. No migration.
+
+## 2026-11-17 — F05 EFIM-aware lossless numeric guard (local feature branch)
+
+- Replaced the global normalized-total int32 rejection with exact EFIM-specific checks for each converted transaction utility, each Product TWU, and converted positive `minUtil`. New validation errors identify the failed value: transaction utility, `Product <id> TWU`, or minUtil. The conversion remains scale-6/GCD and lossless; no quantization was introduced.
+- `RequestView.totalScaledUtility` widens from OpenAPI `integer/int32` to `integer/int64`; percentage threshold calculation and F06 frozen-evidence validation also use signed-64-bit totals. JSON property names and conversion version are unchanged. Existing int-sized frozen JSON remains compatible and byte-identical; no database column stores this total, so no migration or historical rewrite was needed.
+- OpenAPI remains 100 paths / 121 operations; this is a response-type widening, not a route change. Frontend impact: handle the JSON number as potentially larger than int32; under the current 20,000-row × int32-per-transaction bound, the theoretical total remains below JavaScript's `2^53` safe integer limit. See [F05 API](F05_MINING_API.md#lossless-efim-numeric-bounds--2026-11-17), [handoff](../frontend_handoff/F05_HANDOFF.md), [decision](../decisions/2026-11-17/DEC-20261117-01-efim-aware-lossless-int32-guard.md), and [Record 015](../record-of-changes/2026-11-17/15-f05-efim-aware-int32-guard.md).
+
+## 2026-11-16 — Legacy product fields and two obsolete F03 routes removed (branch, not merged)
+
+- **Removed fields (DEC-20261116-02):** `expiryPushDays` from `ProductRequest`/`ProductView`; `stockPriorityScore`/`seasonalPriorityScore` from every live path. Sending one → **400** (`fail-on-unknown-properties` stays on). Migration **V26** drops `product.expiry_push_days`, `product.stock_priority_score`, `product.seasonal_priority_score`; back up first — not reversible without the backup.
+- **Deleted routes (DEC-20261116-03):** `PUT /api/utility/config/expiry-window` (now 404) and `PATCH /api/utility/products/{productId}/scores` (now 405; the GET stays). Replacements: batch `pushDay` (create, PATCH, `DELETE /api/inventory-batches/{id}/push-day`) and season assignment.
+- **`expiryWindowDays`:** not in `GET/PUT /api/utility/config` (`config` is `WeightV2`); a PUT body containing it → 400. It stays only in the frozen legacy snapshot configuration (`WeightConfig` reader). Breaking change 18.
+- **Approved (DEC-20261116-01):** P2, P3, P4 as built; no behaviour change.
+- Frozen JSON unchanged and still readable (legacy reader records keep the old names). W2 scoring and the F06 fingerprint for new recommendations unchanged.
+- OpenAPI: 101 paths / 123 operations → 100 / 121. Frontend list: [breaking changes 15–18](../frontend_handoff/F03_W2_BREAKING_CHANGES.md). Record: [ROC-20261116-010](../record-of-changes/2026-11-16/10-remove-legacy-product-fields-and-routes.md).
+
+## 2026-11-16 — F05 EFIM-only mining and benchmark removal
+
+- New manual and scheduled mining requests create exactly one EFIM run. The System Admin minUtil configuration no longer accepts an algorithm; existing configuration history is retained and reads report effective EFIM.
+- `compareAlgorithms` is removed from new manual and schedule request bodies. Existing comparison metadata and results remain readable; historical schedule flags are ignored for future occurrences.
+- Removed both mining benchmark routes. Per-run runtime and memory telemetry remains available through `RunView`; it is not a benchmark endpoint.
+- OpenAPI now distinguishes mining configuration request/response schemas from schedule schemas; the config response advertises only EFIM, while comparison metadata is documented only on historical schedule/occurrence responses.
+- No migration or historical data rewrite. See the [current F05 contract](F05_MINING_API.md#current-contract--2026-11-16).
+
+## 2026-11-16 — F05 FoodMart-scale input bound
+
+- Raised the distinct-Product limit for new mining requests from 256 to 1,600 after bounded EFIM measurements on the 1,559-Product FoodMart reference input. The 20,000-row bound and 4 MiB output, 64 KiB log, 256 MiB child heap, 60-second timeout and 2,000-pattern protections remain.
+- Inputs above the bound still return HTTP 400 before enqueueing; the validation text now names 1,600. The F06 frozen-evidence reader shares the bound. No request/response schema or OpenAPI shape changed; no migration or historical input rewrite.
+- Standalone EFIM completed at `minUtil=10,000`; a lower-threshold attempt reached OUTPUT_LIMIT. A synthetic 1,559-Product persisted F03 → F05 → F06 acceptance passed on disposable MySQL; authentic FoodMart F03 snapshot acceptance remains NOT RUN because source order grouping and approved inventory expiry/push-day/season evidence are unavailable. See [benchmark report](../testing/F05_FOODMART_SCALABILITY_BENCHMARK.md).
+
+## 2026-11-15 — F03 Weight v2 (`W2_EXPIRY_SEASON_V1`) and F05 mining progress (branch, not merged)
+
+- **F05 (V24):** `GET /api/mining/requests/{id}/progress` (Store Admin, Merchandiser, own Store) and `GET /api/system/mining/stores/{storeId}/requests/{requestId}/progress` (System Admin, `REQUESTS` read gate, audited). Merchandiser may submit `POST /api/mining/requests` for its own Store using the System Admin mining configuration (P1). Details in [F05 API](F05_MINING_API.md).
+- **F03 (V25):** new formula `W = 1 + λ[α·U_expiry + β·M]`, rounded half-up to 2 decimals; FEFO expiry risk from batch push days and sales rate v(i) over N days; seasons with weights. Same paths, new bodies (P6). Policy `{lambdaMax}`; config `{alpha, beta, lambda, salesWindowDays}`; Store expiry window and product score PATCH → 410; 8 new season operations; product scores, matrix rows, expiry-push items and snapshot configuration have new shapes. Full list: [F03 W2 breaking changes](../frontend_handoff/F03_W2_BREAKING_CHANGES.md); contract: [F03 API](F03_UTILITY_API.md).
+- **F02:** optional `pushDay` on batch create/PATCH/view; `expiryPushDays` deprecated and ignored (P5).
+- **F06:** `EligibilityV2` (no `expiryPushDays`), push-day expiry alerts, one-time `inventoryChanged = true` for pre-W2 recommendations, ended-season warning in `explanation`, no automatic re-run.
+- **Data:** V25 converts live Store configs and the λ policy with the owner rule of 2026-11-15 (evidence table `utility_weight_v2_conversion`); frozen JSON is never rewritten and is read by version-aware readers. Schema: [V24/V25 notes](../architecture/F03_W2_SCHEMA_V24_V25.md).
+- OpenAPI regenerated from Springdoc ([openapi.json](openapi.json)); legacy stored shapes (`Evidence`, `FrozenConfiguration`, `RecEligibility`) are registered explicitly so every `oneOf` reference resolves.
+
+## 2026-11-12 — F07 Layout Simulator and F08 Campaign/A-B workflow
+
+- Added 20 Store-scoped operations for layout/policy/recommendation reads, layout preview/edit/READY, campaign create/read/decision/synchronous offline simulation, immutable report reads, publish/withdraw/activate/end/rollback, and the active-layout projection for F09.
+- Added Flyway V23 for campaign, A/B layouts, immutable layout revisions, placements, report/layout-version pins, evaluation transaction membership, and lifecycle history. A is deterministic/read-only; B edits use expectedVersion; active-campaign changes serialize on the Store row.
+- Simulation replays completed F03-eligible transactions outside the snapshot training IDs, stores the evaluation IDs/hash/assumptions/runner/timestamp and exact evaluated layout versions, and returns simulated metrics. Priority coverage is null pending an approved F03 formula; no progress percent or async simulation API was added.
+- Publish alone does not affect the storefront. Activation changes the active-layout projection; end returns to default; rollback restores prior active history or default. Withdrawal clears the previous decision/selection.
+- OpenAPI refreshed from Springdoc: 96 paths, 114 operations. Verification: `LayoutCampaignIntegrationTest` 8/8 passed in H2; MySQL deployment compatibility remains unverified.
+- See [F07/F08 API](F07_F08_LAYOUT_CAMPAIGN_API.md), [frontend handoff](../frontend_handoff/F07_F08_HANDOFF.md), and [schema notes](../architecture/F07_F08_LAYOUT_CAMPAIGN_SCHEMA.md).
+- Research alignment: baseline A now ranks by distinct snapshot transaction frequency (descending, product ID ascending on ties); simulation requests require `rangeStart` strictly after snapshot `rangeEnd` to preserve the temporal holdout.
+
+## 2026-11-12 — F04 durable asynchronous CSV import and processing visibility
+
+- Added `POST /api/transactions/imports/csv/async` (Store Admin, `202 Accepted`) with required store-scoped idempotency key and database-staged rows; existing synchronous `POST /api/transactions/imports/csv` remains unchanged.
+- Added `GET /api/transactions/imports/{id}/progress` for store-scoped status, stage, measured row counts/percentage, timestamps, statistics and error summary.
+- Added Flyway V22 for async lifecycle/idempotency metadata, worker lease fencing and persistent row outcomes. The worker starts with the app, resumes queued/expired-lease batches, and keeps DB raw-row evidence (no local file temp storage).
+- Documented F05 request/run status polling. F03 preview/snapshot and F06 recommendation generation remain synchronous; no fabricated percentage or new job API was added.
+- See [F04 API contract](F04_TRANSACTION_API.md) and [frontend handoff](../frontend_handoff/F04_HANDOFF.md).
+
+## 2026-11-12 — Reconcile F01 sessions with dev 42b8a9c
+
+- Preserved published V20 and AuthSessionService, its absolute/idle TTLs, bounded cleanup and existing logout response payloads. Removed the competing local session service/controller.
+- Added V21 nullable BINARY(32) csrf_hash to auth_refresh_token. Existing V20 tokens are preserved but require sign-in again when refreshed; no historical binding is fabricated.
+- Added refresh token/CSRF binding, same-family CSRF validation for logout, Origin/duplicate-cookie checks and JWT sid revocation/absolute/idle expiry validation.
+- Invalid refresh 401 clears cookies; 403 does not rotate or clear valid cookies. Login/google/refresh explicitly public in OpenAPI; no new route added beyond dev's existing three session routes.
+- Canonical settings stay TOKEN_TTL_SECONDS=3600, REFRESH_TOKEN_ABSOLUTE_TTL_SECONDS=2592000, REFRESH_TOKEN_IDLE_TTL_SECONDS=604800, REFRESH_COOKIE_SECURE=true. PASPM_SESSION_ALLOWED_ORIGINS is additive. Earlier local PASPM_SESSION_COOKIE_SECURE/REFRESH_TTL settings are not supported by the reconciled implementation.
+- Evidence/status: [reconciliation report](../testing/reports/F01_SESSION_RECONCILIATION_2026-11-12.md).
+
+
+## 2026-11-11 — F01 browser session compatibility (uncommitted working tree)
+
+- Email/Google HTTP login now returns `csrfToken` and sets refresh + CSRF cookies.
+- Added POST `/api/auth/refresh`, `/api/auth/logout`, `/api/auth/logout-all` with rotation/reuse detection, explicit CSRF/Origin checks, and persisted revocation.
+- Added V20 auth session/hash tables; V1–V19 unchanged. Session access JWTs carry `sid`; version-based account invalidation remains active.
+- Secure cookies default on; loopback HTTP development needs the explicit local setting. Existing Frontend implementation unchanged.
+- Actual verification and limitations: [F01 session report](../testing/reports/F01_SESSION_VERIFICATION.md).
+
+
 ## 2026-11-02 — F05 Scheduler branch (`Khoi/feat/f05-scheduled-mining-option-b-completion`, not on `dev`)
 
 - **Added** `GET /api/system/stores` (SYSTEM_ADMIN, `Page<StoreView{storeId,name}>`, decision D2). OpenAPI 88 → 89 operations.
@@ -126,3 +304,7 @@ No endpoint contract changes were made as part of this documentation export; thi
 ## 2026-10-26 — F04 CSV staging validation correction
 
 No endpoint, DTO, authorization or idempotency-key change. Invalid overlong order IDs use NULL in the staging lookup projection while raw row evidence remains exact; unrelated valid orders return the existing 201 summary contract. See [F04 improvement report](../features/F04/F04_IMPROVEMENT_REPORT.md). F04 is file-based CSV/Excel scope; external API/POS ingestion is excluded.
+
+## 2026-10-26 — F04 Excel import (stacked on CSV/V12 correction)
+
+Added `POST /api/transactions/imports/excel`, StoreAdmin multipart `file`, 201 ImportSummary. Reuses all CSV validation, history/error reads, transaction atomicity and CSV_UPLOAD idempotency; no historical label changes. Accepts one nonempty worksheet, seven ordered headers and text IDs/SKU/offset timestamp. [Approved contract and templates](../features/F04/F04_EXCEL_FORMAT_CONTRACT.md). Runtime OpenAPI now includes the actual new route. Shared-money bounds reject hostile exponent expansion before setScale while preserving valid DECIMAL(12,2) values.

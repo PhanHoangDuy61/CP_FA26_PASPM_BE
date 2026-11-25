@@ -22,7 +22,7 @@
 
 - Use the user's approved MVP timezone `Asia/Ho_Chi_Minh` as the default `paspm.store-time-zone`; deployments may override the property until Store records gain a timezone field.
 - Expiry dates are inclusive through the current local calendar date. A batch expires at the start of the next local date.
-- `totalQuantity` includes all remaining units. `BLOCKED` units count only toward `blockedQuantity`, even when their expiry date is past. Active expired units count toward `expiredQuantity`. Active non-expired units count toward `sellableQuantity`.
+- `totalQuantity` includes all remaining units. ~~`BLOCKED` units count only toward `blockedQuantity`, even when their expiry date is past.~~ **Superseded 2026-11-24 (DEC-20261124-01): EXPIRED wins over BLOCKED.** Expired units (today is after the expiry date) count toward `expiredQuantity` whatever their stored status; `blockedQuantity` counts only BLOCKED units that are not expired. ACTIVE non-expired units count toward `sellableQuantity`.
 - `expiringSoonQuantity` follows F02-08 issue wording: it is a subset of sellable quantity with expiry date from today through today plus `expiringWithinDays`, inclusive (default 7).
 - These buckets do not double-count. Empty batches return zero for every quantity.
 

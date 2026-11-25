@@ -100,12 +100,12 @@ class MiningScheduledActivationE2EMySqlTest {
     }
     void policy(Actor admin) {
         long head = jdbc.queryForObject("SELECT config_version FROM mining_config_head WHERE config_id=1", Long.class);
-        if (head == 0) ok(HttpMethod.PUT, "/api/system/mining/config", admin, "{\"algorithm\":\"HUI_MINER\",\"minUtilMode\":\"ABSOLUTE\",\"minUtilValue\":30,\"expectedVersion\":0}", HttpStatus.OK);
+        if (head == 0) ok(HttpMethod.PUT, "/api/system/mining/config", admin, "{\"minUtilMode\":\"ABSOLUTE\",\"minUtilValue\":30,\"expectedVersion\":0}", HttpStatus.OK);
     }
     /** The latest occurrence time of the recurrence that is already in the past, truncated to the minute. */
     ZonedDateTime recentFire() { return Instant.now().atZone(HCM).minusMinutes(2).withSecond(0).withNano(0); }
     String body(int store, String recurrence, ZonedDateTime fire, int lookback) {
-        return "{\"storeId\":" + store + "," + recurrence + ",\"localTime\":\"" + fire.toLocalTime() + "\",\"timeZone\":\"Asia/Ho_Chi_Minh\",\"lookbackDays\":" + lookback + ",\"compareAlgorithms\":true}";
+        return "{\"storeId\":" + store + "," + recurrence + ",\"localTime\":\"" + fire.toLocalTime() + "\",\"timeZone\":\"Asia/Ho_Chi_Minh\",\"lookbackDays\":" + lookback + "}";
     }
     long createSchedule(Actor admin, String schedule) { return ok(HttpMethod.POST, "/api/system/mining/schedules", admin, schedule, HttpStatus.CREATED).path("scheduleId").asLong(); }
     JsonNode activate(Actor admin, long id, String schedule, long version) {
@@ -126,7 +126,7 @@ class MiningScheduledActivationE2EMySqlTest {
     }
     int principal() { return jdbc.queryForObject("SELECT u.user_id FROM app_user u JOIN role r ON r.role_id=u.role_id WHERE r.code='SYSTEM_SCHEDULER'", Integer.class); }
 
-    @Test void weeklyScheduleActivatedOverHttpRunsFreshSnapshotAndBothAlgorithmsAsTheSchedulerPrincipal() throws Exception {
+    @Test void weeklyScheduleActivatedOverHttpRunsFreshSnapshotAndEfimAsTheSchedulerPrincipal() throws Exception {
         var fire = recentFire();
         int store = store("E2E weekly", true, fire);
         var editor = login("SYSTEM_ADMIN", null);
@@ -193,10 +193,10 @@ class MiningScheduledActivationE2EMySqlTest {
         assertTrue(snaps.path("items").findValues("snapshotId").stream().anyMatch(n -> n.asInt() == snapshot));
         var req = ok(HttpMethod.GET, base + "/requests/" + request, reader, null, HttpStatus.OK);
         assertEquals("COMPLETED", req.path("status").asText());
-        assertEquals("MATCH", req.path("comparisonStatus").asText());
+        assertEquals("NOT_REQUESTED", req.path("comparisonStatus").asText(), "new requests run EFIM only");
         assertEquals(principal(), req.path("requestedBy").asInt());
         var runs = ok(HttpMethod.GET, base + "/requests/" + request + "/runs", reader, null, HttpStatus.OK);
-        assertEquals(2, runs.size());
+        assertEquals(1, runs.size(), "one EFIM run");
         long runId = 0;
         for (var run : runs) { assertEquals("COMPLETED", run.path("status").asText()); assertEquals(8, run.path("patternCount").asInt()); runId = run.path("runId").asLong(); }
         assertEquals(HttpStatus.FORBIDDEN, call(HttpMethod.GET, base + "/runs/" + runId + "/patterns", reader, null).getStatusCode());
@@ -249,7 +249,7 @@ class MiningScheduledActivationE2EMySqlTest {
         assertEquals(fires.get(fires.size() - 3), Instant.parse(items.get(2).path("scheduledAt").asText()));
         assertEquals(1, jdbc.queryForObject("SELECT COUNT(*) FROM mining_request WHERE store_id=?", Integer.class, store), "skipped fires create no request");
         assertEquals(1, jdbc.queryForObject("SELECT COUNT(*) FROM utility_snapshot WHERE store_id=?", Integer.class, store), "skipped fires create no snapshot");
-        assertEquals(2, jdbc.queryForObject("SELECT COUNT(*) FROM mining_run WHERE store_id=?", Integer.class, store));
+        assertEquals(1, jdbc.queryForObject("SELECT COUNT(*) FROM mining_run WHERE store_id=?", Integer.class, store), "one EFIM run");
         assertEquals(MiningScheduleTime.nextMonthly(fire.toInstant(), HCM, fire.getDayOfMonth(), fire.toLocalTime()),
             Instant.parse(ok(HttpMethod.GET, "/api/system/mining/schedules/" + id, admin, null, HttpStatus.OK).path("nextFireAt").asText()));
     }

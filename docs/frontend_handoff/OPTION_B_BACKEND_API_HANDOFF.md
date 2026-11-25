@@ -1,5 +1,9 @@
 # PASPM Backend API Handoff for Frontend — F03 Utility, F05 Mining (Option B baseline)
 
+> **Partly superseded 2026-11-15 (branch `Khoi/feat/f05-progress-f03-weight-v2`).** The F03 bodies in §4 (`enableStock`, `gamma`, `lambdaMin`, product score PATCH) are the legacy v1.2 contract; current bodies are in [F03 W2 breaking changes](F03_W2_BREAKING_CHANGES.md). `POST /api/mining/requests` is no longer always 403: the Merchandiser submits for its own Store (`src/main/java/vn/edu/fpt/paspm/security/SecurityConfig.java:94`). Kept as the dated Option B baseline.
+>
+> **2026-11-16:** `PATCH /api/utility/products/{productId}/scores` and `PUT /api/utility/config/expiry-window` are **deleted** (405 and 404), and product `expiryPushDays` is removed (400 if sent) — [DEC-20261116-03](../decisions/2026-11-16/DEC-20261116-03-p6-delete-obsolete-routes.md), [DEC-20261116-02](../decisions/2026-11-16/DEC-20261116-02-p5-remove-legacy-product-fields.md). The §4 examples that use them are history only.
+
 Status: **two layers.** (1) **On `dev`** (PR #11, `11973a0`; code verified 2026-11-02 on `45dbd80`; sections 11.3–11.4): CORE_API_VERIFIED · FRONTEND_INTEGRATION_READY for the verified surface. (2) **On the Scheduler branch `Khoi/feat/f05-scheduled-mining-option-b-completion` (2026-11-02, not pushed, not on `dev`)**: business decisions D1–D10 are confirmed and implemented (section 11.6): System Admin reads of Store snapshots/requests/runs (patterns stay closed), `GET /api/system/stores`, lookback 7–365, `SKIPPED` history, scheduler machine principal, and **gated** schedule activation. Where this document describes `dev`, text marked *(dev)* applies; text marked *(Scheduler branch)* applies once that branch is merged. Schedule activation stays **503 unless the Backend instance sets `paspm.mining.schedule-dispatch-enabled=true`**, and the branch is locally verified but **not release accepted** (no GitHub CI run, no native-Linux run, no release sign-off). `docs/api/openapi.json` on the branch is the runtime export (89 operations). No endpoint or field below is invented; every one was read from the controllers, records and `SecurityConfig` and cross-checked against the runtime OpenAPI.
 
 | Status | Meaning here |
@@ -11,6 +15,7 @@ Status: **two layers.** (1) **On `dev`** (PR #11, `11973a0`; code verified 2026-
 ## 1. Base URL and authentication
 - Base URL: configure per environment (`VITE_API_BASE_URL` or equivalent); local default `http://localhost:8080`. Swagger UI `/swagger-ui/index.html`, OpenAPI `/v3/api-docs`.
 - Login: `POST /api/auth/login` body `{"email","password"}` → `{"accessToken","expiresIn","tokenType"}`. Send `Authorization: Bearer <accessToken>` on every other call. `GET /api/auth/me` returns the current account. The Store is taken from the token, never from the URL, except the System Admin routes below that take `storeId` explicitly.
+- F01 session refresh: Login and Google login also set an HttpOnly refresh cookie and return `csrfToken`; responses use `Cache-Control: no-store`, and `expiresIn` is the access-token lifetime in seconds. Call `POST /api/auth/refresh` with the CSRF cookie value in `X-CSRF-Token`; `POST /api/auth/logout` revokes only the current session.
 - Pagination: `?page=0&pageSize=20`; response `{items,page,pageSize,totalElements}`.
 
 ## 2. Errors
@@ -37,7 +42,7 @@ Status: **two layers.** (1) **On `dev`** (PR #11, `11973a0`; code verified 2026-
 | `/api/system/mining/schedules` (POST, GET, GET/PUT `{id}`, GET `{id}/occurrences`, GET `{id}/occurrences/{occurrenceId}`) | yes | no | no |
 | `/api/recommendations/*` (F06) | see F06 handoff | config PUT | generate/approve/reject |
 
-**Never call (always 403 for every role; shown as `deprecated` in OpenAPI):** `POST /api/mining/requests` and `GET /api/mining/runs/{id}/benchmark`.
+**Never call (always 403 for every role; shown as `deprecated` in OpenAPI):** `GET /api/mining/runs/{id}/benchmark`. *(Superseded 2026-11-15: `POST /api/mining/requests` was listed here; it now accepts Merchandiser own-Store submissions.)*
 
 ## 4. F03 Utility and Snapshot workflow (Merchandiser)
 1. `GET /api/utility/config` → `{config:{enableStock,enableExpiry,enableSeason,alpha,beta,gamma,lambda,version,scoringVersion,...},lambdaPolicy:{lambdaMin,lambdaMax,version},lambdaValid}`.

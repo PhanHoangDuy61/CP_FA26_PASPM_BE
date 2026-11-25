@@ -1,0 +1,41 @@
+{
+  "attempt": "Focused after parser/money fixes, prior to disposable MySQL restart",
+  "summary": {
+    "tests": 100,
+    "failures": 0,
+    "errors": 24,
+    "skipped": 0,
+    "passed": 76
+  },
+  "cause": "MySQL24testerrors:connection refused because temporary disposable server process ended between work turns. H2/parser/money assertions passed. No source DB fallback.",
+  "suites": [
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.TransactionExcelImportIntegrationTest",
+      "tests": 24,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.TransactionExcelImportMySqlIntegrationTest",
+      "tests": 24,
+      "failures": 0,
+      "errors": 24,
+      "skipped": 0
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.importing.TransactionExcelParserTest",
+      "tests": 41,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "vn.edu.fpt.paspm.transaction.importing.TransactionMoneyBoundsTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ]
+}

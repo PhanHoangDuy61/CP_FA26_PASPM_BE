@@ -1,5 +1,6 @@
 package vn.edu.fpt.paspm.auth;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -118,6 +119,40 @@ class GoogleRegistrationTest {
                 null,
                 "SELF_REGISTER"
         );
+    }
+
+    @Test
+    void googleLoginIssuesTheSameAccessAndRefreshCredentialContract() {
+        User user = new User(
+                7,
+                EMAIL,
+                "Existing User",
+                "END_CUSTOMER",
+                null,
+                "ACTIVE",
+                null,
+                Instant.now(),
+                3,
+                null,
+                null
+        );
+        var credentials = new AuthCredentials(
+                new vn.edu.fpt.paspm.common.Contracts.Token(
+                        "synthetic-access-token",
+                        3600,
+                        "Bearer",
+                        "synthetic-csrf-token"),
+                "synthetic-refresh-token",
+                Instant.now().plusSeconds(30 * 24 * 60 * 60));
+        when(decoder.decode(TOKEN)).thenReturn(identityToken(true));
+        when(identities.findGoogleUserId(SUBJECT)).thenReturn(Optional.of(user.id()));
+        when(users.findById(user.id())).thenReturn(user);
+        when(auth.issueCredentials(user)).thenReturn(credentials);
+
+        assertEquals(credentials, service.login(TOKEN, "127.0.0.1"));
+
+        verify(auth).issueCredentials(user);
+        verify(limits).hit("google:127.0.0.1", 20, 900);
     }
 
     private Jwt identityToken(boolean emailVerified) {

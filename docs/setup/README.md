@@ -4,7 +4,7 @@
 |---|---|---|
 | [Windows local setup](LOCAL_SETUP_WINDOWS.md) | NOT VERIFIED ON TARGET OS | PowerShell first-time setup |
 | [macOS local setup](LOCAL_SETUP_MACOS.md) | PARTIAL / clean install NOT VERIFIED | zsh first-time setup |
-| [Common setup](LOCAL_SETUP_COMMON.md) | Source-aligned / walkthrough pending | Variables, versions, API workflow |
+| [Common setup](LOCAL_SETUP_COMMON.md) | Source-aligned; F01 local session execution evidence available, full clean setup still pending | Variables, Java versions, API workflow and IntelliJ cookie/Origin settings |
 | [Troubleshooting](LOCAL_SETUP_TROUBLESHOOTING.md) | Source-aligned / target OS pending | Safe diagnostics |
 | [Local development](LOCAL_DEVELOPMENT.md) | CURRENT navigation | Existing launch scripts/environment and safe setup reading order |
 | [SPMF runtime](F05_SPMF_RUNTIME_SETUP.md) | CURRENT runtime reference | Exact approved binary hash and Java 17/Java 25 separation |

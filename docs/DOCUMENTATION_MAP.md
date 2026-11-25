@@ -13,6 +13,8 @@ This map covers every 349 originally tracked docs file at dev 6601f62, plus the 
 
 The [machine-readable map](audits/evidence/docs_reorganization/PATH_MAP.json) supplies per-file purpose/type/status reason, current reference, inbound/outbound links, hashes and conflict IDs. Machine-readable/frozen payloads retain original bytes. Old paths inside manifests identify their recorded execution; use this map without rewriting those records.
 
+Added after this map (2026-11-19): [product documents](product/README.md), agent-facing summaries; not classified here.
+
 ## Old to new paths
 
 | Original path | Final path | Feature/domain | Type | Classification | Current reference / limitation | Inbound / outbound | Notes |
@@ -193,12 +195,12 @@ The [machine-readable map](audits/evidence/docs_reorganization/PATH_MAP.json) su
 | docs/frontend_handoff/F03_examples/current_product_scores_e0_response.json | docs/frontend_handoff/F03_examples/current_product_scores_e0_response.json | F03 | captured response/evidence | HISTORICAL | docs/features/F03/README.md (navigation; not substitute business approval) | 0/0 | Canonical/tool/evidence domain path retained |
 | docs/frontend_handoff/F03_examples/current_product_scores_e1_response.json | docs/frontend_handoff/F03_examples/current_product_scores_e1_response.json | F03 | captured response/evidence | HISTORICAL | docs/features/F03/README.md (navigation; not substitute business approval) | 0/0 | Canonical/tool/evidence domain path retained |
 | docs/frontend_handoff/F03_examples/current_product_scores_stale_lambda_response.json | docs/frontend_handoff/F03_examples/current_product_scores_stale_lambda_response.json | F03 | captured response/evidence | HISTORICAL | docs/features/F03/README.md (navigation; not substitute business approval) | 0/0 | Canonical/tool/evidence domain path retained |
-| docs/frontend_handoff/F03_examples/expiry_window_update_request.json | docs/frontend_handoff/F03_examples/expiry_window_update_request.json | F03 | request example | CURRENT | docs/features/F03/README.md (navigation; not substitute business approval) | 0/0 | Canonical/tool/evidence domain path retained |
+| docs/frontend_handoff/F03_examples/expiry_window_update_request.json | docs/frontend_handoff/F03_examples/expiry_window_update_request.json | F03 | request example | HISTORICAL — route deleted 2026-11-16 (DEC-20261116-03) | docs/features/F03/README.md (navigation; not substitute business approval) | 0/0 | Canonical/tool/evidence domain path retained |
 | docs/frontend_handoff/F03_examples/lambda_policy_response.json | docs/frontend_handoff/F03_examples/lambda_policy_response.json | F03 | captured response/evidence | HISTORICAL | docs/features/F03/README.md (navigation; not substitute business approval) | 0/0 | Canonical/tool/evidence domain path retained |
 | docs/frontend_handoff/F03_examples/lambda_policy_update_request.json | docs/frontend_handoff/F03_examples/lambda_policy_update_request.json | F03 | request example | CURRENT | docs/features/F03/README.md (navigation; not substitute business approval) | 0/0 | Canonical/tool/evidence domain path retained |
 | docs/frontend_handoff/F03_examples/product_scores_response.json | docs/frontend_handoff/F03_examples/product_scores_response.json | F03 | captured response/evidence | HISTORICAL | docs/features/F03/README.md (navigation; not substitute business approval) | 0/0 | Canonical/tool/evidence domain path retained |
-| docs/frontend_handoff/F03_examples/seasonal_priority_update_request.json | docs/frontend_handoff/F03_examples/seasonal_priority_update_request.json | F03 | request example | CURRENT | docs/features/F03/README.md (navigation; not substitute business approval) | 0/0 | Canonical/tool/evidence domain path retained |
-| docs/frontend_handoff/F03_examples/stock_priority_update_request.json | docs/frontend_handoff/F03_examples/stock_priority_update_request.json | F03 | request example | CURRENT | docs/features/F03/README.md (navigation; not substitute business approval) | 0/0 | Canonical/tool/evidence domain path retained |
+| docs/frontend_handoff/F03_examples/seasonal_priority_update_request.json | docs/frontend_handoff/F03_examples/seasonal_priority_update_request.json | F03 | request example | HISTORICAL — route deleted 2026-11-16 (DEC-20261116-03) | docs/features/F03/README.md (navigation; not substitute business approval) | 0/0 | Canonical/tool/evidence domain path retained |
+| docs/frontend_handoff/F03_examples/stock_priority_update_request.json | docs/frontend_handoff/F03_examples/stock_priority_update_request.json | F03 | request example | HISTORICAL — route deleted 2026-11-16 (DEC-20261116-03) | docs/features/F03/README.md (navigation; not substitute business approval) | 0/0 | Canonical/tool/evidence domain path retained |
 | docs/frontend_handoff/F03_examples/utility_config_response.json | docs/frontend_handoff/F03_examples/utility_config_response.json | F03 | captured response/evidence | HISTORICAL | docs/features/F03/README.md (navigation; not substitute business approval) | 0/0 | Canonical/tool/evidence domain path retained |
 | docs/frontend_handoff/F03_examples/utility_config_update_request.json | docs/frontend_handoff/F03_examples/utility_config_update_request.json | F03 | request example | CURRENT | docs/features/F03/README.md (navigation; not substitute business approval) | 0/0 | Canonical/tool/evidence domain path retained |
 | docs/frontend_handoff/F03_examples/utility_matrix_response.json | docs/frontend_handoff/F03_examples/utility_matrix_response.json | F03 | captured response/evidence | HISTORICAL | docs/features/F03/README.md (navigation; not substitute business approval) | 0/0 | Canonical/tool/evidence domain path retained |
@@ -396,5 +398,35 @@ These are current documents, not part of the original path map above.
 | `docs/frontend_handoff/OPTION_B_BACKEND_API_HANDOFF.md` | F03/F05 Core integration handoff and per-flow readiness |
 | `docs/reports/F03_F05_API_AUDIT_MATRIX_2026-11-02.md`, `F03_F05_CORE_RELEASE_READINESS_2026-11-02.md` | F03/F05 operation audit and Core release evidence |
 | `docs/reports/UML27_DIAGRAM_QA_2026-11-02.md` | Page-by-page audit of the 27-page Draw.io pack |
-| `docs/diagrams/PASPM_Unified_27_Diagrams_UML2_Editable.drawio` | Editable 27-page UML 2.0 source |
+| `docs/diagrams/PASPM_Unified_UML2_Editable.drawio` | Editable 27-page UML 2.0 source |
 | `docs/superpowers/plans/*` | Working plans for the F03/F05 integration |
+
+## Files added on branch `Khoi/feat/f05-progress-f03-weight-v2` (2026-11-15)
+
+Current documents, not part of the original path map.
+
+| File | Purpose |
+|---|---|
+| `docs/architecture/F03_W2_SCHEMA_V24_V25.md` | V24/V25 schema and ERD notes, stored-JSON versions, diagram pages to redraw |
+| `docs/frontend_handoff/F03_W2_BREAKING_CHANGES.md` | 14 breaking request/response changes with screens; F05 progress polling |
+| `docs/requirements/F03_WEIGHT_V2_REQUIREMENTS.md` | F03 Weight v2 requirements — derived from owner decisions 2026-11-15, pending formal approval |
+| `docs/decisions/OWNER_DECISIONS_F03_F05_2026-11-15.md`, `docs/decisions/2026-11-15/DEC-20261115-01…11-*.md` | Owner decisions of 2026-11-15 and assumptions P2–P6 |
+| `docs/record-of-changes/2026-11-15/04-f03-weight-v2-expiry-season.md`, `05-docs-sync-f03-w2-f05-progress.md`, `F03_W2_FULL_OPTIN_COUNTS.json`, `F03_W2_SYNTHETIC_JPA_COUNTS.json` | Checkpoint 2 and docs-sync records with gate evidence |
+
+## F03/F05 merge preparation — 2026-11-16
+
+[Merge plan](release/F03_F05_MERGE_PLAN.md) — proposed ordered gates/deploy/rollback plan, not merge approval. [Record 007](record-of-changes/2026-11-16/07-cleanup-and-merge-plan.md) contains the executed fetch, migration and evidence checks; historical runtime counts come from record 006.
+
+## P2–P6 owner decisions, legacy product fields and routes removed — 2026-11-16
+
+| File | Purpose |
+|---|---|
+| [`decisions/2026-11-16/DEC-20261116-01-p2-p4-approved.md`](decisions/2026-11-16/DEC-20261116-01-p2-p4-approved.md) | P2, P3, P4 approved as built |
+| [`decisions/2026-11-16/DEC-20261116-02-p5-remove-legacy-product-fields.md`](decisions/2026-11-16/DEC-20261116-02-p5-remove-legacy-product-fields.md) | P5 changed: product `expiryPushDays` and the two score fields removed; V26 |
+| [`decisions/2026-11-16/DEC-20261116-03-p6-delete-obsolete-routes.md`](decisions/2026-11-16/DEC-20261116-03-p6-delete-obsolete-routes.md) | P6 changed: expiry-window PUT and score PATCH deleted |
+| [`decisions/2026-11-16/DEC-20261116-04-f05-efim-only-mining.md`](decisions/2026-11-16/DEC-20261116-04-f05-efim-only-mining.md) | F05 EFIM-only (`cd90e58`); where `COMPARING` can still occur |
+| [`release/F03_V26_RELEASE_NOTE.md`](release/F03_V26_RELEASE_NOTE.md) | V26 deploy note: backup first; not reversible without the backup |
+| [`record-of-changes/2026-11-16/10-remove-legacy-product-fields-and-routes.md`](record-of-changes/2026-11-16/10-remove-legacy-product-fields-and-routes.md) | ROC-20261116-010: implementation, gate counts, team actions |
+| External evidence: `outputs/evidence/2026-11-16/p5-p6/P5_P6_GATE_COUNTS.json` in the project folder (not in Git) | Baseline and final gate counts with exit codes |
+
+Updated in place: `frontend_handoff/F03_W2_BREAKING_CHANGES.md` (rows 15–18), `F02_HANDOFF.md`, `F03_HANDOFF.md`, `api/F02_PRODUCT_INVENTORY_API.md`, `api/F03_UTILITY_API.md`, `api/F06_RECOMMENDATION_API.md`, `api/F01_F02_RBAC_MATRIX.md`, `api/README.md`, `api/API_CHANGELOG.md`, `api/openapi.json`, `requirements/F03_WEIGHT_V2_REQUIREMENTS.md`, `architecture/F03_W2_SCHEMA_V24_V25.md`, F02/F03 READMEs.

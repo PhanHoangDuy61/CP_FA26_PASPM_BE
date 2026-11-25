@@ -1,29 +1,27 @@
 package vn.edu.fpt.paspm.user;
 
 import java.io.IOException;
-import java.nio.file.AtomicMoveNotSupportedException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.util.UUID;
-import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import vn.edu.fpt.paspm.common.media.LocalMediaStorage;
+
+/**
+ * Avatars on the shared {@link LocalMediaStorage} implementation (DEC-20261123-01 §5). Keys stay bare {@code UUID.png|jpg}
+ * names directly in {@code paspm.avatar.directory} ({@code PROFILE_IMAGE_DIRECTORY}, default unchanged:
+ * {@code ~/.paspm/profile-images}), so stored {@code app_user.avatar_key} values and existing files keep working.
+ */
 @Component
 public class LocalAvatarObjectStorage implements AvatarObjectStorage {
-    private static final Pattern OBJECT_KEY = Pattern.compile(
-            "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\\.(jpg|png)"
-    );
-
-    private final Path directory;
+    private final LocalMediaStorage storage;
 
     public LocalAvatarObjectStorage(@Value("${paspm.avatar.directory}") String directory) {
         String configuredDirectory = directory.isBlank()
                 ? Path.of(System.getProperty("user.home"), ".paspm", "profile-images").toString()
                 : directory;
-        this.directory = Path.of(configuredDirectory).toAbsolutePath().normalize();
+        this.storage = new LocalMediaStorage(configuredDirectory);
     }
 
     @Override
@@ -31,49 +29,17 @@ public class LocalAvatarObjectStorage implements AvatarObjectStorage {
         if (!".jpg".equals(extension) && !".png".equals(extension)) {
             throw new IllegalArgumentException("Unsupported avatar image extension");
         }
-
-        Files.createDirectories(directory);
-        String objectKey = UUID.randomUUID() + extension;
-        Path target = resolve(objectKey);
-        Path temporary = Files.createTempFile(directory, ".avatar-", ".tmp");
-        boolean moved = false;
-        try {
-            Files.write(temporary, content);
-            try {
-                Files.move(temporary, target, StandardCopyOption.ATOMIC_MOVE);
-            } catch (AtomicMoveNotSupportedException exception) {
-                Files.move(temporary, target);
-            }
-            moved = true;
-            return objectKey;
-        } finally {
-            if (!moved) {
-                Files.deleteIfExists(temporary);
-            }
-        }
+        return storage.put("", content, extension);
     }
 
     @Override
     public StoredAvatar get(String objectKey) throws IOException {
-        return new StoredAvatar(
-                Files.readAllBytes(resolve(objectKey)),
-                objectKey.endsWith(".png") ? "image/png" : "image/jpeg"
-        );
+        var stored = storage.get("", objectKey);
+        return new StoredAvatar(stored.content(), stored.contentType());
     }
 
     @Override
     public void delete(String objectKey) throws IOException {
-        Files.deleteIfExists(resolve(objectKey));
-    }
-
-    private Path resolve(String objectKey) throws IOException {
-        if (!OBJECT_KEY.matcher(objectKey).matches()) {
-            throw new IOException("Invalid avatar object key");
-        }
-        Path object = directory.resolve(objectKey).normalize();
-        if (!object.getParent().equals(directory)) {
-            throw new IOException("Invalid avatar object path");
-        }
-        return object;
+        storage.delete("", objectKey);
     }
 }

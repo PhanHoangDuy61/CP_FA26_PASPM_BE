@@ -10,6 +10,8 @@ Authenticate with F01 `POST /api/auth/login` (`email`, `password`), use returned
 
 There are **eight operations total**: seven in RecommendationController and one independent expiry operation. All success responses below are HTTP 200 JSON. STORE_ADMIN and MERCHANDISER can read; only MERCHANDISER can generate/review; only STORE_ADMIN can update configuration. SYSTEM_ADMIN and END_CUSTOMER have no F06 access. Missing/invalid bearer: 401; forbidden role: 403. Own-Store lookup hides foreign records with 404.
 
+`POST /api/recommendations/generate` is synchronous. Treat its HTTP 200 `RecGenerationResult` as completion (including a valid zero-candidate result); request errors end loading as errors. F06 has no job ID, status polling endpoint, or progress percentage.
+
 | Method/path | Input | Response | Mutation role |
 |---|---|---|---|
 | POST `/api/recommendations/generate` | RecGenerateRequest | RecGenerationResult | MERCHANDISER |
@@ -70,6 +72,8 @@ interface RecTransactionEvidence {
   supportRatio: Decimal | null; anchorSupportCount: Int32 | null;
   confidence: Decimal | null; status: string;
 }
+// Legacy shape (stored before 2026-11-15). Current/new eligibility uses ProductEligibilityV2 without expiryPushDays
+// (src/main/java/vn/edu/fpt/paspm/recommendation/RecommendationVersionedContracts.java:14); see the 2026-11-15 section below.
 interface RecProductEligibility {
   productId: Int32; productStatus: string; sellableQuantity: Int64;
   status: EligibilityStatus; expiryPriorityScore: Decimal | null;
@@ -115,6 +119,8 @@ interface RecPage {
   items: RecView[]; page: Int32; pageSize: Int32; totalElements: Int64;
   ordering: string;
 }
+// Legacy shape (until 2026-11-15). Current: { productId, batchId, pushDay, expiryDate, daysToPush, remainingQuantity,
+// pushRequired, checkedAt, warnings } (src/main/java/vn/edu/fpt/paspm/recommendation/RecommendationExpiryService.java:23).
 interface RecExpiryBatch {
   productId: Int32; batchId: Int32; expiryDate: ISODate;
   daysRemaining: Int64; remainingQuantity: Int64; expiryPushDays: Int32;
@@ -144,11 +150,11 @@ Skipped reasons: `PATTERN_REQUIRES_AT_LEAST_TWO_PRODUCTS`, `BUNDLE_EXCEEDS_MAX_S
 
 ## Live inventory and expiry
 
-Generation captures generationEligibility. GET list/detail rechecks currentEligibility using the candidate's captured minimum quantity policy. Product must be ACTIVE. Only ACTIVE batches with remainingQuantity >0 count; expiry-required batches need metadata and expiryDate **strictly after** the current Store-local date. Expiry today is unsellable. Non-expiry Products can use undated active batches. A missing required expiry on any active positive batch gives NEEDS_RECHECK even if another batch supplies stock; missing/inactive/insufficient Products can make the aggregate INELIGIBLE.
+Generation captures generationEligibility. GET list/detail rechecks currentEligibility using the candidate's captured minimum quantity policy. Product must be ACTIVE. Only ACTIVE batches with remainingQuantity >0 count; expiry-required batches need metadata and an expiryDate **on or after** the current Store-local date. Expiry today is sellable (changed 2026-11-24, DEC-20261124-01; it was unsellable). Non-expiry Products can use undated active batches. A missing required expiry on any active positive batch gives NEEDS_RECHECK even if another batch supplies stock; missing/inactive/insufficient Products can make the aggregate INELIGIBLE.
 
 `inventoryChanged` compares fingerprints (date, captured minimum quantity and Product/batch metadata); it does not mean stock alone changed and can become true on a date rollover. `checkedAt`, `asOfDate`, and `timeZone` describe the live check. Display old and current checks separately. Historical utility/evidence remain frozen.
 
-Independent expiry-push needs no snapshot or mining run. Product `expiryPushDays` T defaults to 0 with no Store fallback; T=0 disables push. Only expiry-required active Products and active positive, dated, still-sellable batches qualify; `0 < daysRemaining <= T`. Order: expiryDate, productId, batchId ascending. Page warnings can flag missing metadata even when no push row appears. An expiry alert neither guarantees mining pattern inclusion nor approves a recommendation.
+**Legacy rule (superseded 2026-11-15 by batch push days, see below):** Independent expiry-push needs no snapshot or mining run. Product `expiryPushDays` T defaults to 0 with no Store fallback; T=0 disables push. Only expiry-required active Products and active positive, dated, still-sellable batches qualify; `0 < daysRemaining <= T`. Order: expiryDate, productId, batchId ascending. Page warnings can flag missing metadata even when no push row appears. An expiry alert neither guarantees mining pattern inclusion nor approves a recommendation.
 
 ## Review, concurrency and downstream safety
 
@@ -167,3 +173,19 @@ On 409, reload detail/configuration and show the new state; do not blindly retry
 The source is an individual own-Store run with status COMPLETED and valid frozen evidence. Current F06 does not independently veto that run based on the enclosing request's comparisonStatus or status: MATCH and NOT_REQUESTED are accepted; a completed valid run remains accepted when comparisonStatus=FAILED. Failed/incomplete individual runs and inconsistent hashes/mapping still return 409; foreign runs return 404. This characterizes existing behavior without changing v1.1 policy. Whether to add a future overall-comparison veto is **PRODUCT_OWNER_REVIEW_REQUIRED**; see [hardening review and executed cases](../features/F06/F06_HARDENING_REPORT.md).
 
 List relation hydration now uses bounded Store-scoped batches; response fields, ranking/pagination, live checks and permissions are unchanged. See [measured performance](../testing/F04_F06_PERFORMANCE_REPORT.md).
+
+## 2026-11-15 — F03 Weight v2 knock-on (Q5)
+
+- **Eligibility JSON:** new recommendations store `EligibilityV2 {scoringVersion: "W2_EXPIRY_SEASON_V1", status, products[], checkedAt, asOfDate, timeZone, warnings, fingerprint}`. Product entries drop `expiryPushDays`; `expiryPriorityScore` is the current U_expiry (FEFO over batch push days, sales window N from the Store config). `generationEligibility` and review `eligibilityCheck` are `RecEligibility` (old rows, byte-identical) or `EligibilityV2`; `currentEligibility` is always `EligibilityV2`. Sellability rules are unchanged. A batch without a push day adds a product warning.
+- **Fingerprint:** covers W2 version, date, minimum quantity, product status/requiresExpiry and each batch (id, status, remaining, expiry, push day); no `expiryPushDays`. Because the format changed, every recommendation created before W2 reports `inventoryChanged = true` once; this is accepted and nothing is rewritten.
+- **Expiry push** (`GET /api/recommendations/expiry-push`): a sellable, unexpired batch is due when its push day is on or before the Store-local today. Items: `productId, batchId, pushDay, expiryDate, daysToPush, remainingQuantity, pushRequired, checkedAt, warnings`; ordered by pushDay, productId, batchId. Missing push days appear in `warnings` only.
+- **Ended season:** when a season frozen in the recommendation's snapshot (`utility_snapshot_season`) has `end_date` before today, `explanation` gains a line naming the season and asking to regenerate from a new snapshot if needed. F06 never re-runs mining or generation automatically.
+
+## 2026-11-16 — Structured ended-season state (additive)
+Every recommendation view (list/detail/review responses) adds `seasonEnded: boolean` and `endedSeasons: {seasonId: integer, name: string, endDate: string(date)}[]`. Empty list/false when no frozen season has `end_date < current Store date`; end date today is not ended. Data comes from Store-scoped snapshot season copies, ordered by seasonId. Existing explanation text stays. No stored eligibility or snapshot is rewritten, and nothing automatically reruns mining/generation.
+
+## 2026-11-16 — no F06 contract change from V26 (DEC-20261116-02)
+
+- F06 routes, the eligibility rules and the fingerprint for new recommendations are unchanged (`EligibilityV2` never contained `expiryPushDays`; the W2 fingerprint never read the product columns).
+- Stored v1 eligibility (`RecEligibility` / `RecProductEligibility`, created before W2) still contains `expiryPushDays`; the legacy reader record keeps that field, so old recommendations, review history and stored F06 evidence read back byte-identical after V26 (`LegacyProductColumnsV26MigrationTest`).
+- Live eligibility reads product facts through `UtilityProductRepository.Product (id, requiresExpiry, status)`, which no longer selects the dropped columns.

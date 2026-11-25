@@ -1,6 +1,6 @@
 # SPMF 2.67a — owner approval and artifact hosting package
 
-Prepared 2026-10-25, Asia/Ho_Chi_Minh. **NEEDS_OWNER_APPROVAL**. No Release/tag/artifact was created, published or uploaded. No URL is approved/configured by this package. Use only the existing binary; do not rebuild or substitute a later release.
+Prepared 2026-10-25, Asia/Ho_Chi_Minh. **APPROVED 2026-11-25** by the Product Owner ([DEC-20261125-03](../decisions/2026-11-25/DEC-20261125-03-spmf-gpl-distribution-and-process-boundary.md)): public Release `spmf-2.67a` of this repository (Option A) with the GPL text and the source. The owner creates the Release and sets the Actions variable; the final URL is `https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/releases/download/spmf-2.67a/spmf.jar`. Final asset list: `spmf.jar`, `LICENSE-GPL-3.0.txt`, `SOURCE.md`, `spmf-2.67a-src.zip` (the tag is `spmf-2.67a`, not the label proposed below). Historical text of the 2026-10-25 package follows. No Release/tag/artifact was created, published or uploaded. No URL is approved/configured by this package. Use only the existing binary; do not rebuild or substitute a later release.
 
 ## Verified artifact identity and remaining source evidence
 

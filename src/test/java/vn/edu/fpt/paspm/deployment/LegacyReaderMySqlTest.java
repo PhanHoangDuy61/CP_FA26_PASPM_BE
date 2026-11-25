@@ -30,7 +30,7 @@ class LegacyReaderMySqlTest {
   var before=fingerprints(target,false);
   LegacyRecoveryMySqlTest.latest(target,new LegacyRecoveryCallback(false,null,null,null,null)).migrate();
   assertEquals(before,fingerprints(target,true));
-  var json=new UtilitySettingsRepository(jdbc,JsonMapper.builder().findAndAddModules().build());
+  var json=new UtilitySettingsRepository(jdbc,JsonMapper.builder().findAndAddModules().addModule(vn.edu.fpt.paspm.utility.UtilityJsonVersions.module()).build());
   var repository=new UtilitySnapshotRepository(jdbc,json);
   for(int store:List.of(1,2)) {
    assertEquals(0,repository.countItems(store,store));
@@ -57,7 +57,7 @@ class LegacyReaderMySqlTest {
   jdbc.update("INSERT INTO product(product_id,store_id,sku,name,unit,selling_price,cost_price) VALUES(3,1,'A2','A2','each',5,1)");
   jdbc.update("INSERT INTO utility_matrix_item(matrix_item_id,snapshot_id,transaction_id,product_id,quantity,base_utility,expiry_status,weight_value,weighted_utility) VALUES(3,1,7,3,1,4,'NOT_APPLICABLE',1,4),(4,1,8,1,1,2,'NOT_APPLICABLE',1,2)");
   jdbc.update("UPDATE utility_snapshot SET total_weighted_utility=8 WHERE snapshot_id=1");
-  var json=new UtilitySettingsRepository(jdbc,JsonMapper.builder().findAndAddModules().build());
+  var json=new UtilitySettingsRepository(jdbc,JsonMapper.builder().findAndAddModules().addModule(vn.edu.fpt.paspm.utility.UtilityJsonVersions.module()).build());
   var date=LocalDate.of(2020,1,1);
   var config=new UtilityMatrixContracts.FrozenConfiguration(UtilityContracts.WeightConfig.defaults(),null,null,date,"DEV_FIXTURE",6,"HALF_UP","PRODUCT_ID_V1","Asia/Ho_Chi_Minh");
   jdbc.update("UPDATE utility_snapshot SET config_snapshot=?",json.write(config));
@@ -102,7 +102,7 @@ class LegacyReaderMySqlTest {
    org.mockito.Mockito.when(auth.current(jwt)).thenReturn(new vn.edu.fpt.paspm.user.User(store,"test@example.test","Test","MERCHANDISER",store,"ACTIVE",null,Instant.EPOCH,1,null,null));
    var miningRepository=new MiningRepository(jdbc,json,new vn.edu.fpt.paspm.mining.MiningDispatchLease(jdbc,new org.springframework.jdbc.datasource.DataSourceTransactionManager(jdbc.getDataSource())));
    var miningService=new MiningService(miningRepository,builder,engine,org.mockito.Mockito.mock(MiningWorker.class),repository,access,auth,jdbc,new org.springframework.jdbc.datasource.DataSourceTransactionManager(jdbc.getDataSource()));
-   var captured=miningService.create(jwt,new MiningContracts.CreateRequest(UUID.randomUUID(),store,List.of(MiningEngine.Algorithm.HUI_MINER,MiningEngine.Algorithm.EFIM),MiningContracts.MinUtilMode.ABSOLUTE,BigDecimal.ONE));
+   var captured=miningService.create(jwt,new MiningContracts.CreateRequest(UUID.randomUUID(),store,List.of(MiningEngine.Algorithm.EFIM),MiningContracts.MinUtilMode.ABSOLUTE,BigDecimal.ONE));
    assertEquals(before.get(store),json.read(jdbc.queryForObject("SELECT frozen_input FROM mining_request WHERE request_id=?",String.class,captured.requestId()),MiningInputBuilder.Dataset.class));
    jdbc.update("UPDATE mining_run SET status='COMPLETED',itemset_count=0 WHERE request_id=?",captured.requestId());
    var reader=new vn.edu.fpt.paspm.recommendation.FrozenEvidenceReader(jdbc,miningRepository,repository,json);
@@ -119,7 +119,7 @@ class LegacyReaderMySqlTest {
    var properties=new Properties();try(var stream=Files.newInputStream(Path.of(runtimeCredentials))){properties.load(stream);}
    var runtimeJdbc=new JdbcTemplate(new DriverManagerDataSource(target.url(),properties.getProperty("username"),properties.getProperty("password")));
    assertTrue(runtimeJdbc.queryForList("SHOW GRANTS",String.class).stream().noneMatch(grant->grant.toUpperCase(Locale.ROOT).contains("SUPER")));
-   var runtimeRepository=new UtilitySnapshotRepository(runtimeJdbc,new UtilitySettingsRepository(runtimeJdbc,JsonMapper.builder().findAndAddModules().build()));
+   var runtimeRepository=new UtilitySnapshotRepository(runtimeJdbc,new UtilitySettingsRepository(runtimeJdbc,JsonMapper.builder().findAndAddModules().addModule(vn.edu.fpt.paspm.utility.UtilityJsonVersions.module()).build()));
    assertEquals(3,runtimeRepository.countItems(1,1));assertEquals(3,runtimeRepository.page(1,1,0,10).size());
    assertThrows(org.springframework.dao.DataAccessException.class,()->runtimeJdbc.update("UPDATE utility_matrix_item_legacy_v5 SET quantity=2 WHERE matrix_item_id=1"));
   }
@@ -129,20 +129,26 @@ class LegacyReaderMySqlTest {
   assertEquals(409,assertThrows(ApiException.class,()->repository.page(1,1,0,1)).status());
   evidence.put("fixtureLegacyRows",4);evidence.put("stores",2);evidence.put("engineExecutions",8);evidence.put("threshold",1);
   evidence.put("verificationPhase","all-reader-assertions-passed");
-  String evidencePath=System.getProperty("paspm.test.legacy-reader-evidence");if(evidencePath!=null)Files.writeString(Path.of(evidencePath),JsonMapper.builder().findAndAddModules().build().writerWithDefaultPrettyPrinter().writeValueAsString(evidence));
+  String evidencePath=System.getProperty("paspm.test.legacy-reader-evidence");if(evidencePath!=null)Files.writeString(Path.of(evidencePath),JsonMapper.builder().findAndAddModules().addModule(vn.edu.fpt.paspm.utility.UtilityJsonVersions.module()).build().writerWithDefaultPrettyPrinter().writeValueAsString(evidence));
  }
  static UtilityMatrixContracts.MatrixItem row(int tx,int product,int utility,int total) {
-  return new UtilityMatrixContracts.MatrixItem(tx,product,product,1,BigDecimal.valueOf(utility),null,null,null,"NOT_APPLICABLE",BigDecimal.ONE,BigDecimal.valueOf(utility),BigDecimal.valueOf(total),null);
+  return new UtilityMatrixContracts.MatrixItem(tx,product,product,1,BigDecimal.valueOf(utility),null,null,null,"NOT_APPLICABLE",BigDecimal.ONE,BigDecimal.valueOf(utility),BigDecimal.valueOf(total),null,null,null,null);
  }
+ static final List<String> V26_DROPPED=List.of("expiry_push_days","stock_priority_score","seasonal_priority_score");
  final Map<String,String> canonicalColumns=new TreeMap<>();
  Map<String,String> fingerprints(MySqlTestDatabase db,boolean archived)throws Exception {
   var result=new TreeMap<String,String>();
   try(var c=LegacyRecoveryMySqlTest.connect(db)) {
    for(String table:List.of("store","product","category","inventory_batch")) {
     if(!canonicalColumns.containsKey(table))try(var statement=c.createStatement();var rows=statement.executeQuery("SELECT * FROM "+table+" WHERE 1=0")) {
-     var columns=new ArrayList<String>();for(int i=1;i<=rows.getMetaData().getColumnCount();i++)columns.add(rows.getMetaData().getColumnName(i));canonicalColumns.put(table,String.join(",",columns));
+     // V25 (W2) rewrites the live store.utility_config by owner decision 2026-11-15, and V26 drops the three legacy
+     // product columns by owner decision 2026-11-16 (DEC-20261116-02); every other column must stay identical.
+     var columns=new ArrayList<String>();for(int i=1;i<=rows.getMetaData().getColumnCount();i++){String name=rows.getMetaData().getColumnName(i);if(!(table.equals("store")&&name.equalsIgnoreCase("utility_config"))&&!(table.equals("product")&&V26_DROPPED.contains(name.toLowerCase(java.util.Locale.ROOT))))columns.add(name);}canonicalColumns.put(table,String.join(",",columns));
     }
     result.put(table,LegacyDataset.hash(c,"SELECT "+canonicalColumns.get(table)+" FROM "+table+" ORDER BY 1"));
+   }
+   if(archived)try(var statement=c.createStatement();var rows=statement.executeQuery("SELECT * FROM product WHERE 1=0")) {
+    for(int i=1;i<=rows.getMetaData().getColumnCount();i++)assertFalse(V26_DROPPED.contains(rows.getMetaData().getColumnName(i).toLowerCase(java.util.Locale.ROOT)),"V26 drops "+rows.getMetaData().getColumnName(i));
    }
    result.put("utility_snapshot",LegacyDataset.hash(c,"SELECT "+LegacyDataset.SNAPSHOT_COLUMNS+" FROM utility_snapshot ORDER BY snapshot_id"));
    result.put("utility_matrix_item",LegacyDataset.hash(c,"SELECT "+LegacyDataset.MATRIX_COLUMNS+" FROM "+(archived?"utility_matrix_item_legacy_v5":"utility_matrix_item")+" ORDER BY matrix_item_id"));

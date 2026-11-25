@@ -73,16 +73,18 @@ class MiningAdminConfigurationTest {
         jdbc.update("INSERT INTO store(name) VALUES (?)", "Config " + UUID.randomUUID());
         int store=jdbc.queryForObject("SELECT MAX(store_id) FROM store",Integer.class);
         String system=token("SYSTEM_ADMIN",null), merchant=token("MERCHANDISER",store), admin=token("STORE_ADMIN",store), customer=token("END_CUSTOMER",null);
-        String body="{\"algorithm\":\"EFIM\",\"minUtilMode\":\"PERCENTAGE\",\"minUtilValue\":5,\"expectedVersion\":0}";
+        String body="{\"minUtilMode\":\"PERCENTAGE\",\"minUtilValue\":5,\"expectedVersion\":0}";
         mvc.perform(get("/api/system/mining/config")).andExpect(status().isUnauthorized());
         mvc.perform(put("/api/system/mining/config").header("Authorization","Bearer "+merchant).contentType(MediaType.APPLICATION_JSON).content("{}" )).andExpect(status().isForbidden());
         for(String denied:new String[]{merchant,admin,customer}) {
             mvc.perform(get("/api/system/mining/config").header("Authorization","Bearer "+denied)).andExpect(status().isForbidden());
             mvc.perform(put("/api/system/mining/config").header("Authorization","Bearer "+denied).contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isForbidden());
         }
-        mvc.perform(get("/api/system/mining/config").header("Authorization","Bearer "+system)).andExpect(status().isOk()).andExpect(jsonPath("$.version").value(0));
+        mvc.perform(get("/api/system/mining/config").header("Authorization","Bearer "+system)).andExpect(status().isOk()).andExpect(jsonPath("$.version").value(0)).andExpect(jsonPath("$.algorithm").value("EFIM"));
         mvc.perform(put("/api/system/mining/config").header("Authorization","Bearer "+system).contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isOk()).andExpect(jsonPath("$.version").value(1)).andExpect(jsonPath("$.algorithm").value("EFIM"));
         mvc.perform(put("/api/system/mining/config").header("Authorization","Bearer "+system).contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isConflict());
+        mvc.perform(put("/api/system/mining/config").header("Authorization","Bearer "+system).contentType(MediaType.APPLICATION_JSON).content(body.replace("\"expectedVersion\":0","\"expectedVersion\":1").replace("\"minUtilValue\":5","\"minUtilValue\":6").replace("{","{\"algorithm\":\"HUI_MINER\","))).andExpect(status().isBadRequest());
+        org.junit.jupiter.api.Assertions.assertEquals("EFIM",jdbc.queryForObject("SELECT algorithm FROM mining_config_version WHERE config_version=1",String.class));
         mvc.perform(put("/api/system/mining/config").header("Authorization","Bearer "+system).contentType(MediaType.APPLICATION_JSON).content(body.replace("\"expectedVersion\":0","\"expectedVersion\":1").replace("\"minUtilValue\":5","\"minUtilValue\":101"))).andExpect(status().isBadRequest());
     }
 }

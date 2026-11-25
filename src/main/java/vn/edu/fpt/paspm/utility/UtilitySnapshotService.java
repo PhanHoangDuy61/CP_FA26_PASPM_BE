@@ -15,15 +15,10 @@ public class UtilitySnapshotService {
     private final UtilitySettingsRepository settings;
     private final UtilityMatrixBuilder builder;
     private final UtilitySnapshotRepository snapshots;
-    private final UtilityTimeZone timeZone;
-    public UtilitySnapshotService(CatalogAccess access,UtilitySettingsRepository settings,UtilityMatrixBuilder builder,UtilitySnapshotRepository snapshots,UtilityTimeZone timeZone) { this.access=access;this.settings=settings;this.builder=builder;this.snapshots=snapshots;this.timeZone=timeZone; }
+    private final UtilityFreezer freezer;
+    public UtilitySnapshotService(CatalogAccess access,UtilitySettingsRepository settings,UtilityMatrixBuilder builder,UtilitySnapshotRepository snapshots,UtilityFreezer freezer) { this.access=access;this.settings=settings;this.builder=builder;this.snapshots=snapshots;this.freezer=freezer; }
     // Lock the policy before the Store config in every writer to serialize policy changes with snapshot capture.
-    private FrozenConfiguration freeze(int store,RangeRequest range) {
-        var policy=settings.policy(true);
-        var config=settings.config(store,true);
-        UtilityConfigurationService.requireLambda(config.lambda(),policy,409);
-        return new FrozenConfiguration(config,policy,new EffectiveCoefficients(config.effectiveAlpha(),config.effectiveBeta(),config.effectiveGamma()),range.asOfDate(),builder.sourceType(),UtilityMath.SCALE,"HALF_UP","PRODUCT_ID_V1",timeZone.id());
-    }
+    private UtilityVersionedContracts.FrozenV2 freeze(int store,RangeRequest range) { return freezer.freeze(store,range.asOfDate(),builder.sourceType()); }
     @Transactional(isolation=Isolation.REPEATABLE_READ)
     public MatrixPage preview(Jwt jwt,PreviewRequest request) {
         int page=request.page()==null?0:request.page(),size=request.pageSize()==null?20:request.pageSize();
@@ -39,9 +34,9 @@ public class UtilitySnapshotService {
         int store=access.currentStoreId(jwt);
         var frozen=freeze(store,request);
         var matrix=builder.build(store,request,frozen);
-        if(!matrix.ready())throw new ApiException(400,"Snapshot requires complete enabled scores and expiry metadata: "+String.join("; ",matrix.warnings()));
         if(matrix.items().isEmpty())throw new ApiException(400,"No eligible transaction items in the selected range");
         int id=snapshots.create(store,Integer.parseInt(jwt.getSubject()),request,frozen,matrix);
+        snapshots.saveSeasons(id,store,frozen.seasons());
         snapshots.saveItems(id,matrix.items());
         return require(store,id);
     }

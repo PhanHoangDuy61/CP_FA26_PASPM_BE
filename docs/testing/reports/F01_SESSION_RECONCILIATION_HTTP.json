@@ -1,0 +1,97 @@
+{
+  "date": "2026-11-12",
+  "timezone": "Asia/Ho_Chi_Minh",
+  "method": "Actual Java17 HTTP server against disposable MySQL; urllib client, not Swagger UI/browser",
+  "port": 18092,
+  "openApiOperations": 92,
+  "cases": [
+    {
+      "case": "No Bearer",
+      "method": "GET",
+      "endpoint": "/api/auth/me",
+      "expected": 401,
+      "actual": 401,
+      "result": "PASS"
+    },
+    {
+      "case": "Login",
+      "method": "POST",
+      "endpoint": "/api/auth/login",
+      "expected": 200,
+      "actual": 200,
+      "result": "PASS"
+    },
+    {
+      "case": "Read authenticated account",
+      "method": "GET",
+      "endpoint": "/api/auth/me",
+      "expected": 200,
+      "actual": 200,
+      "result": "PASS"
+    },
+    {
+      "case": "Missing CSRF",
+      "method": "POST",
+      "endpoint": "/api/auth/refresh",
+      "expected": 403,
+      "actual": 403,
+      "result": "PASS"
+    },
+    {
+      "case": "Hostile Origin",
+      "method": "POST",
+      "endpoint": "/api/auth/refresh",
+      "expected": 403,
+      "actual": 403,
+      "result": "PASS"
+    },
+    {
+      "case": "Forged equal cookie and header",
+      "method": "POST",
+      "endpoint": "/api/auth/refresh",
+      "expected": 403,
+      "actual": 403,
+      "result": "PASS"
+    },
+    {
+      "case": "Rotate",
+      "method": "POST",
+      "endpoint": "/api/auth/refresh",
+      "expected": 200,
+      "actual": 200,
+      "result": "PASS"
+    },
+    {
+      "case": "Read after rotation",
+      "method": "GET",
+      "endpoint": "/api/auth/me",
+      "expected": 200,
+      "actual": 200,
+      "result": "PASS"
+    },
+    {
+      "case": "Logout without raw refresh cookie",
+      "method": "POST",
+      "endpoint": "/api/auth/logout",
+      "expected": 200,
+      "actual": 200,
+      "result": "PASS"
+    },
+    {
+      "case": "Revoked access rejected",
+      "method": "GET",
+      "endpoint": "/api/auth/me",
+      "expected": 401,
+      "actual": 401,
+      "result": "PASS"
+    },
+    {
+      "case": "Relogin",
+      "method": "POST",
+      "endpoint": "/api/auth/login",
+      "expected": 200,
+      "actual": 200,
+      "result": "PASS"
+    }
+  ]
+}

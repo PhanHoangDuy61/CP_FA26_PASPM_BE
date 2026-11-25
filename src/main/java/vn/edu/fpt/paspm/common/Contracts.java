@@ -80,6 +80,6 @@ public final class Contracts {
             String avatarUrl) {
     }
 
-    public record Token(String accessToken, long expiresIn, String tokenType) {
+    public record Token(String accessToken, long expiresIn, String tokenType, String csrfToken) {
     }
 }

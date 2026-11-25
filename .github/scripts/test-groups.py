@@ -3,11 +3,12 @@ from pathlib import Path
 import sys
 
 GROUPS = {
-    "backend": ["AuthIntegrationTest", "GoogleRegistrationTest", "CatalogDevSeederTest", "CatalogIntegrationTest",
+    "backend": ["AuthIntegrationTest", "GoogleRegistrationTest", "SessionHttpIntegrationTest", "SessionOriginGuardTest", "SessionV21MigrationTest", "CatalogDevSeederTest", "CatalogIntegrationTest", "StorefrontIntegrationTest",
                 "LegacyPreflightTest", "MiningInputTest", "FrozenEvidenceReaderTest", "RecommendationRulesTest",
                 "TransactionEvidenceTest", "DatabaseTransactionSourceTest", "TransactionImportIntegrationTest",
                 "TransactionImportSchemaTest", "TransactionCsvParserTest", "TransactionOrderValidatorTest",
                 "TransactionImportCorrectnessIntegrationTest", "TransactionOrderIdentifierTest",
+                "TransactionExcelParserTest", "TransactionExcelImportIntegrationTest", "TransactionMoneyBoundsTest",
                 "ExpiryBinaryRulesTest", "RetailCatalogUtilityIntegrationTest", "UtilityCalculationTest",
                 "UtilityFixtureTest", "UtilityIntegrationTest", "UtilitySnapshotRoutingTest", "MigrationVersioningTest", "MiningOccurrenceDispatcherFlagTest",
                 "F03F05RbacMatrixTest", "ScheduledMiningDisabledByDefaultTest", "SystemStoreReadPolicyTest",
@@ -16,11 +17,18 @@ GROUPS = {
                 "ScheduledMiningZoneGuardTest", "SystemStoreListHttpTest", "MiningScheduleCatchUpTest", "MiningScheduleChangeSemanticsTest",
                 "SchedulerPrincipalHttpTest", "ScheduledMiningActivationGateTest", "MiningScheduleReservationTest",
                 "MiningOccurrenceLeaseTest", "MiningOccurrenceReconciliationTest",
-                "WeightRulesV12IntegrationTest", "WeightRulesV12MigrationTest"],
-    "mysql": ["FlywayRecoveryTest", "LegacyRecoveryMySqlTest", "LegacyRecoverySchemaTest",
+                "PushDayIntegrationTest", "WeightV2CalculationTest", "VersionedUtilityJsonTest", "VersionedUtilityPersistenceTest", "WeightRulesV12MigrationTest",
+                "StoreMigrationV27Test", "StoreInactiveGuardHttpTest", "StoreAdministrationHttpTest", "StoreProfileHttpTest",
+                "StoreImageHttpTest", "LocalMediaStorageTest", "MediaFileMissingHttpTest",
+                "LayoutCampaignIntegrationTest", "CartIntegrationTest",
+                "BatchExpiryRulesTest", "ExpiryBoundaryF03F06Test", "ProductSoftDeleteIntegrationTest", "ProductSoftDeleteV28MigrationTest",
+                "StorefrontIntegrationTest", "SpmfProcessBoundaryTest", "SpmfThirdPartyNoticesTest"],
+    "mysql": ["SessionMySqlIntegrationTest", "SessionV21MigrationMySqlTest", "FlywayRecoveryTest", "LegacyRecoveryMySqlTest", "LegacyRecoverySchemaTest",
               "RecommendationMigrationTest", "TransactionImportMySqlIntegrationTest",
               "TransactionImportCorrectnessMySqlIntegrationTest", "TransactionRawEvidenceMigrationMySqlTest",
-              "RetailCatalogUtilityMySqlIntegrationTest", "MiningMigrationMySqlTest"],
+              "TransactionExcelImportMySqlIntegrationTest",
+              "RetailCatalogUtilityMySqlIntegrationTest", "MiningMigrationMySqlTest", "StoreMigrationV27MySqlTest",
+              "ProductSoftDeleteV28MySqlTest", "JpaPilotMigrationMySqlTest"],
 }
 
 if __name__ == "__main__":

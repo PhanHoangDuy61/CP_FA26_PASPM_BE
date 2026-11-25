@@ -43,7 +43,7 @@ class RecommendationHardeningIntegrationTest {
     @MockitoBean FrozenEvidenceReader reader; @MockitoBean RecommendationRules rules;
     @MockitoSpyBean RecommendationRepository repository;
     int store,other,actor,product,snapshot; long request,run,pattern; String merchant,admin,foreign,customer,system;
-    RecPolicy policy; RecEligibility eligible; FrozenEvidenceReader.Source source;
+    RecPolicy policy; RecommendationVersionedContracts.EligibilityV2 eligible; FrozenEvidenceReader.Source source;
 
     @BeforeEach void setup() throws Exception {
         store=store();other=store(); merchant=token("MERCHANDISER",store);admin=token("STORE_ADMIN",store);
@@ -62,7 +62,7 @@ class RecommendationHardeningIntegrationTest {
         pattern=jdbc.queryForObject("SELECT pattern_id FROM high_utility_pattern WHERE store_id=?",Long.class,store);
         jdbc.update("INSERT INTO pattern_item(pattern_id,store_id,product_id,algorithm_item_id) VALUES (?,?,?,1)",pattern,store,product);
         policy=new RecPolicy(1,4,2,new BigDecimal("0.05"),new BigDecimal("0.5"),1,RecommendationPolicyService.RULE_VERSION);
-        eligible=new RecEligibility(EligibilityStatus.ELIGIBLE,List.of(),Instant.EPOCH,LocalDate.now(),"Asia/Ho_Chi_Minh",List.of(),"e".repeat(64));
+        eligible=new RecommendationVersionedContracts.EligibilityV2("W2_EXPIRY_SEASON_V1",EligibilityStatus.ELIGIBLE,List.of(),Instant.EPOCH,LocalDate.now(),"Asia/Ho_Chi_Minh",List.of(),"e".repeat(64));
         var runView=new MiningContracts.RunView(run,request,store,snapshot,MiningEngine.Algorithm.HUI_MINER,1,"SPMF_2.67a","COMPLETED",1,"d".repeat(64),MiningInputBuilder.VERSION,null,null,null,null,"synthetic","synthetic",null,1,null,null);
         var snapshotView=new SnapshotView(snapshot,store,actor,LocalDate.now(),LocalDate.now(),LocalDate.now(),null,"a".repeat(64),"b".repeat(64),BigDecimal.ONE,6,"READY",Instant.EPOCH,List.of());
         source=new FrozenEvidenceReader.Source(runView,snapshotView,"ABSOLUTE",BigDecimal.ONE,BigDecimal.ONE,"d".repeat(64),List.of(new FrozenEvidenceReader.SourcePattern(pattern,List.of(product),BigDecimal.ONE,1,1)),new TransactionEvidence(List.of(Set.of(product))));

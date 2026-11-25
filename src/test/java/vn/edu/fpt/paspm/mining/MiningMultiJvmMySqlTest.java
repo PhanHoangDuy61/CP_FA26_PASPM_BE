@@ -202,7 +202,7 @@ class MiningMultiJvmMySqlTest {
         }
     }
     void fixture() throws Exception {
-        jdbc.update("INSERT INTO store(name) VALUES ('Multi JVM synthetic')");store=jdbc.queryForObject("SELECT MAX(store_id) FROM store",Integer.class);
+        jdbc.update("INSERT INTO store(name) VALUES (?)","Multi JVM synthetic "+UUID.randomUUID());store=jdbc.queryForObject("SELECT MAX(store_id) FROM store",Integer.class);
         var m=users.createPendingUser("Test Merchant",UUID.randomUUID()+"@example.test","MERCHANDISER",store,null,null);
         var s=users.createPendingUser("Test System",UUID.randomUUID()+"@example.test","SYSTEM_ADMIN",null,null,null);
         jdbc.update("UPDATE app_user SET status='ACTIVE',email_verified_at=CURRENT_TIMESTAMP WHERE user_id IN (?,?)",m.id(),s.id());
@@ -217,7 +217,7 @@ class MiningMultiJvmMySqlTest {
         }
         var snap=parentHttp.exchange("/api/utility/snapshots",HttpMethod.POST,new HttpEntity<>("{\"rangeStart\":\"2026-10-19\",\"rangeEnd\":\"2026-10-19\",\"asOfDate\":\"2026-10-19\"}",merchant),JsonNode.class);
         assertEquals(HttpStatus.CREATED,snap.getStatusCode());snapshot=snap.getBody().path("snapshotId").asInt();
-        var policy=parentHttp.exchange("/api/system/mining/config",HttpMethod.PUT,new HttpEntity<>("{\"algorithm\":\"HUI_MINER\",\"minUtilMode\":\"ABSOLUTE\",\"minUtilValue\":30,\"expectedVersion\":0}",admin),JsonNode.class);assertEquals(HttpStatus.OK,policy.getStatusCode());
+        var policy=parentHttp.exchange("/api/system/mining/config",HttpMethod.PUT,new HttpEntity<>("{\"minUtilMode\":\"ABSOLUTE\",\"minUtilValue\":30,\"expectedVersion\":0}",admin),JsonNode.class);assertEquals(HttpStatus.OK,policy.getStatusCode());
     }
     HttpHeaders headers(String token){var h=new HttpHeaders();h.setBearerAuth(token);h.setContentType(MediaType.APPLICATION_JSON);return h;}
     Node start(Path dir)throws Exception{
@@ -231,7 +231,7 @@ class MiningMultiJvmMySqlTest {
     String url(Node n){return "http://127.0.0.1:"+n.port;}
     long submit(Node n)throws Exception{return submit(n,UUID.randomUUID());}
     long submit(Node n,UUID key)throws Exception{
-        String body=json.writeValueAsString(Map.of("requestKey",key,"storeId",store,"snapshotId",snapshot,"compareAlgorithms",false));
+        String body=json.writeValueAsString(Map.of("requestKey",key,"storeId",store,"snapshotId",snapshot));
         var result=http.exchange(url(n)+"/api/system/mining/requests",HttpMethod.POST,new HttpEntity<>(body,admin),JsonNode.class);
         assertEquals(HttpStatus.ACCEPTED,result.getStatusCode());return result.getBody().path("requestId").asLong();
     }
@@ -241,16 +241,7 @@ class MiningMultiJvmMySqlTest {
     interface Condition {boolean check()throws Exception;}
     void waitFor(Condition condition,int millis,String what)throws Exception{long end=System.nanoTime()+TimeUnit.MILLISECONDS.toNanos(millis);while(System.nanoTime()<end){if(condition.check())return;Thread.sleep(20);}fail("Timed out: "+what);}
     void signal(Node n,String signal)throws Exception{assertEquals(0,new ProcessBuilder("kill","-"+signal,Long.toString(n.process.pid())).start().waitFor());}
-    ProcessHandle awaitSpmfChild(Node n)throws Exception{
-        long end=System.nanoTime()+TimeUnit.SECONDS.toNanos(15);
-        var pattern=java.util.regex.Pattern.compile("SPMF_PROCESS_STARTED [^\\n]*pid=([0-9]+)");
-        while(System.nanoTime()<end){
-            var match=pattern.matcher(Files.readString(n.log));long pid=-1;while(match.find())pid=Long.parseLong(match.group(1));
-            if(pid>0){var child=ProcessHandle.of(pid);if(child.isPresent()&&child.get().parent().map(p->p.pid()==n.process.pid()).orElse(false)&&child.get().info().arguments().map(args->Arrays.asList(args).contains("HUI-Miner")&&!Arrays.asList(args).contains("-c")).orElse(false))return child.get();}
-            Thread.sleep(1);
-        }
-        throw new AssertionError("actual SPMF child not observed in process log and ancestry");
-    }
+    ProcessHandle awaitSpmfChild(Node n)throws Exception{return SpmfChildProcessSupport.await(n.process,n.log,java.time.Duration.ofSeconds(15));}
     boolean executing(ProcessHandle p){if(!p.isAlive())return false;Path stat=Path.of("/proc",Long.toString(p.pid()),"stat");try{if(Files.exists(stat)&&Files.readString(stat).matches("(?s)^\\d+ \\(.*\\) Z .*"))return false;}catch(Exception ignored){}return true;}
     void saveEvidence()throws Exception{String destination=System.getenv("PASPM_MULTIJVM_EVIDENCE_FILE");if(destination!=null){Path p=Path.of(destination);Files.createDirectories(p.getParent());Files.write(p,evidence,java.nio.file.StandardOpenOption.CREATE,java.nio.file.StandardOpenOption.APPEND);}}
 }

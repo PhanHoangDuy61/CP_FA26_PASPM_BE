@@ -1,0 +1,19 @@
+stateDiagram-v2
+  [*] --> DRAFT : create campaign with A/B
+  DRAFT --> DRAFT : edit B / READY / simulate / record decision
+  DRAFT --> PUBLISHED : publish [decision exists, selected layout is READY and valid]
+  PUBLISHED --> DRAFT : withdraw
+  PUBLISHED --> ACTIVE : Store Admin activate [recheck eligibility]
+  ACTIVE --> ENDED : Store Admin end
+  ACTIVE --> ENDED : Store Admin rollback [no previous active campaign]
+  ACTIVE --> ENDED : Store Admin rollback [previous campaign restored]
+  ENDED --> ACTIVE : rollback restores previously active campaign
+  note right of DRAFT
+    B is editable only here.
+    Simulation is optional and synchronous.
+    Each edit creates an immutable layout revision.
+  end note
+  note right of ACTIVE
+    At most one ACTIVE campaign per Store.
+    Store-row locking serializes activation and rollback.
+  end note

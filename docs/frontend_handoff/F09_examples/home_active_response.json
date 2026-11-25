@@ -1,0 +1,50 @@
+{
+  "store": {
+    "storeSlug": "green-market",
+    "name": "Green Market"
+  },
+  "campaignName": "Summer display",
+  "fallbackType": null,
+  "zones": [
+    {
+      "name": "BUNDLE",
+      "placements": [
+        {
+          "type": "BUNDLE",
+          "blockNo": 1,
+          "startPosition": 1,
+          "bundleKey": "example-only-opaque-key",
+          "products": [
+            {
+              "productId": 210,
+              "name": "Oat drink",
+              "description": "Unsweetened oat drink",
+              "imageUrl": "https://images.example/oat-drink.jpg",
+              "unit": "carton",
+              "sellingPrice": 2.5,
+              "category": {
+                "categoryId": 7,
+                "name": "Drinks"
+              },
+              "availability": "AVAILABLE"
+            },
+            {
+              "productId": 218,
+              "name": "Granola",
+              "description": null,
+              "imageUrl": null,
+              "unit": "bag",
+              "sellingPrice": 4.25,
+              "category": {
+                "categoryId": 9,
+                "name": "Breakfast"
+              },
+              "availability": "AVAILABLE"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "catalog": []
+}

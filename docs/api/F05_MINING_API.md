@@ -1,8 +1,102 @@
+# Current contract — 2026-11-16
+
+<a id="current-contract-2026-11-16"></a>
+
+This section supersedes every older contract below where it conflicts. The current backend creates **EFIM-only** mining requests and has no benchmark or algorithm-comparison operation.
+
+## Lossless EFIM numeric bounds — 2026-11-17
+
+For new requests, F05 preserves the existing scale-6/GCD conversion and applies signed-int32 checks to the values EFIM 2.67a actually accumulates: each serialized transaction utility, each Product's transaction-weighted utility (TWU), and the converted positive `minUtil`. A violation returns HTTP 400 with one of: `Transaction utility exceeds SPMF int32 capacity`, `Product <productId> TWU exceeds SPMF int32 capacity`, or `Converted minUtil exceeds SPMF int32 capacity`. Product TWU is accumulated with checked signed-64-bit arithmetic before comparison. A dataset is no longer rejected only because its global normalized total exceeds int32.
+
+`RequestView.totalScaledUtility` is now a nonnegative signed 64-bit integer (`integer/int64` in OpenAPI). Percentage `minUtil` derivation and F06 frozen-evidence total validation use exact signed-64-bit totals. The database stores this total inside the existing frozen JSON input, not in an int32 total column; no Flyway migration or stored-data rewrite was required. The JSON property name and conversion version remain unchanged: old int-sized values deserialize as long and serialize identically, while new large totals are validated exactly. See [DEC-20261117-01](../decisions/2026-11-17/DEC-20261117-01-efim-aware-lossless-int32-guard.md) and [Record 015](../record-of-changes/2026-11-17/15-f05-efim-aware-int32-guard.md).
+
+## Whole-đồng fallback for the SPMF input — 2026-11-19
+
+[DEC-20261119-05](../decisions/2026-11-19/DEC-20261119-05-spmf-whole-dong-fallback.md) amends the bounds above. A new request first builds the exact input above (`conversionVersion: F03_SCALE6_GCD_INT32_DENSE_V1`, `conversionMode: LOSSLESS`); its text, hash, divisor and threshold are unchanged. **Only** if that input fails one of the three EFIM int32 bounds is a whole-unit input built instead:
+
+1. Each frozen item weighted utility is rounded to **1 đồng**, `HALF_UP` (`setScale(0, HALF_UP)`). An item that rounds to 0 stays in its transaction with utility 0.
+2. Transaction utility = the sum of that transaction's rounded items; Product TWU and the total are recomputed from these values only.
+3. `ABSOLUTE` minUtil = `ceil(minUtilValue)`; `PERCENTAGE` = `ceil(minUtilValue × roundedTotal / 100)`.
+4. The int32 guard is applied again. A second failure returns HTTP 400 with the bound and the mode, e.g. `Product <productId> TWU exceeds SPMF int32 capacity even after WHOLE_UNIT_HALF_UP rounding to 1 đồng` (also for transaction utility and converted minUtil). There is no further escalation (for example to thousands of đồng); that needs a new owner decision.
+
+The frozen F03 snapshot is never rounded. A whole-unit request stores `conversionVersion: F03_WHOLE_UNIT_HALF_UP_INT32_DENSE_V1`, `utilityScale: 0`, `divisor: 1`, `conversionMode: WHOLE_UNIT_HALF_UP` and `roundingUnit: 1` in its frozen input; `totalScaledUtility`, `minUtilSpmf`, pattern `utilitySpmf` and `effectiveMinUtility` are then whole đồng, and pattern `utility` is đồng in both modes. Lossless frozen JSON keeps its previous fields. F06 reads frozen inputs by `conversionVersion`; any other version is rejected (409).
+
+**Additive response fields** on `RequestView` and `RunView`: `conversionMode` (`LOSSLESS` | `WHOLE_UNIT_HALF_UP`; `null` only for an unknown stored version) and `roundingUnit` (`1` for whole-unit, `null` for lossless). Historical requests report `LOSSLESS`. No field was removed or renamed; no route changed (100 paths / 121 operations).
+
+| Operation | Current behavior |
+|---|---|
+| `PUT /api/system/mining/config` | Accepts `minUtilMode`, `minUtilValue`, `expectedVersion`; algorithm is fixed to EFIM. `algorithm` is an unknown field (400). GET reports effective `algorithm: EFIM`, including before the first minUtil configuration. |
+| `POST /api/mining/requests` | MERCHANDISER only, own Store, body `{requestKey,snapshotId}`; the new request has one EFIM run. |
+| `POST /api/system/mining/requests` | SYSTEM_ADMIN only, body `{storeId,snapshotId,requestKey}`; `compareAlgorithms` is not accepted. The new request has one EFIM run and `comparisonStatus: NOT_REQUESTED`. |
+| Schedule create/update | Request body has no `compareAlgorithms`; sending it is a 400. New schedule and occurrence writes store comparison disabled. Existing stored compare flags remain readable as legacy metadata but never affect future runs. |
+| Benchmark routes | Neither `/api/mining/runs/{id}/benchmark` nor `/api/system/mining/stores/{storeId}/runs/{runId}/benchmark` is mapped; requests return 404. |
+| Historical reads | Existing requests, HUI-Miner runs, comparison statuses, metrics and patterns remain readable. HUI-Miner execution support remains for already-created legacy work; no new API or scheduled submission selects it. `RunView` runtime/memory fields remain per-run execution telemetry, not a benchmark endpoint. |
+
+Unknown request fields are rejected. No schema migration or historical data rewrite is required. Existing `mining_config_version.algorithm`, `mining_request.algorithms`, run rows and schedule/occurrence comparison metadata are retained for history and legacy dispatch.
+
+---
+
+# Historical F05 API documentation
+
+> The dated contract, verification notes and examples below describe earlier implementations. They are retained as history; use the **Current contract — 2026-11-16** section above and the committed runtime OpenAPI export for current API behavior.
+
+# F05 update — 2026-11-15 (uncommitted feature branch)
+
+This section supersedes earlier System-Admin-only submission statements below. F03 Weight v2 is **not implemented** at Checkpoint 1; legacy F03 calculation/configuration remains unchanged.
+
+| Method | Route | Roles | Result |
+|---|---|---|---|
+| POST | `/api/mining/requests` | MERCHANDISER, own Store | 202; current System Admin algorithm/minUtil policy |
+| GET | `/api/mining/requests/{id}/progress` | MERCHANDISER, STORE_ADMIN, own Store | 200 scalar `ProgressView` |
+| GET | `/api/system/mining/stores/{storeId}/requests/{requestId}/progress` | SYSTEM_ADMIN | 200; REQUESTS policy group; audited |
+
+### Merchandiser submission
+Bearer authentication required. JSON body: `{"requestKey":"f1065250-798b-4487-b86a-e3bfe868f9aa","snapshotId":123}`.
+Both fields required; requestKey is a UUID, snapshotId is a positive integer. Store comes from the authenticated user's scope. Do not send storeId, algorithms, compareAlgorithms, minUtilMode or minUtilValue: unknown fields return 400. Response is the existing `RequestView`, with requestedBy identifying the Merchandiser and algorithms/minUtil captured from the current policy. The policy version is persisted on the request.
+
+The current lambda policy is locked while capturing a **new** Merchandiser request. A snapshot lambda outside `[0, current lambdaMax]` returns 409: `{"error":"The lambda policy changed: this snapshot exceeds the current lambda maximum. Create a new snapshot within the current permitted range before submitting mining."}`. Its frozen JSON is never rewritten. A matching retry of an already committed requestKey returns the original request even if the policy subsequently changes; it does not create new work. A different payload under that key returns 409. The administrative route and its compareAlgorithms option remain unchanged and are not subject to the new Merchandiser-only lambda check.
+
+Other responses: 401 unauthenticated; 403 unauthorized role (including Store Admin); 404 foreign/absent snapshot; 400 non-READY or numerically invalid snapshot; 409 unconfigured mining policy/key conflict; 503 unavailable SPMF. Queue rejection does not reject a durable request: it remains pending for database redispatch. No new public benchmark or System Admin raw-pattern access.
+
+> **Superseded 2026-11-16 ([DEC-20261116-04](../decisions/2026-11-16/DEC-20261116-04-f05-efim-only-mining.md)).** New requests are EFIM-only. In the progress contract below, `algorithm = HUI_MINER`, the `COMPARING` stage and a `comparisonStatus` other than `NOT_REQUESTED` occur only on historical requests, or on a legacy two-run request reclaimed after the upgrade (`mining/MiningWorker.java:84`). The sample shows a historical HUI-Miner run.
+
+### ProgressView fields and semantics
+| Field | Type | Meaning |
+|---|---|---|
+| requestId, storeId | integer | Scoped request identity |
+| status | string | Unchanged PENDING/RUNNING/COMPLETED/FAILED |
+| stage | string | LEGACY, QUEUED, RUNNING, SAVING, COMPARING, COMPLETED, FAILED |
+| stageStartedAt | ISO instant or null | Database timestamp of current stage; null for untouched legacy rows |
+| currentRunId | integer or null | Current algorithm run; null in queued/comparison/terminal stages |
+| algorithm | string or null | HUI_MINER or EFIM for the current run |
+| attemptNo | integer | Request lease_fence; 0 before first claim, increases on recovery |
+| completedSteps, totalSteps | integer | Derived at read time from run statuses/current stage |
+| percent | integer | Floor(100 * completedSteps / totalSteps); 0 when no run rows |
+| elapsedMs | integer or null | Database now minus current stage start, bounded at zero; not total request duration |
+| timeoutMs | integer or null | Configured engine timeout only during RUNNING |
+| comparisonStatus | string | Existing NOT_REQUESTED/PENDING/MATCH/FAILED/BLOCKED |
+
+Example during first algorithm saving in a two-algorithm request:
+```json
+{"requestId":42,"storeId":3,"status":"RUNNING","stage":"SAVING","stageStartedAt":"2026-11-15T03:00:00Z","currentRunId":81,"algorithm":"HUI_MINER","attemptNo":1,"completedSteps":1,"totalSteps":5,"percent":20,"elapsedMs":12,"timeoutMs":null,"comparisonStatus":"PENDING"}
+```
+
+Each completed run contributes two steps. SAVING contributes one step for the active RUNNING run. Two algorithms add one comparison step; it counts only for MATCH or FAILED (comparison actually completed), not BLOCKED. Failed/timed-out algorithm runs contribute zero. Consequently FAILED may be below 100%, while a completed comparison mismatch may be 100% with FAILED status. Percent describes completed work, **not** success or an ETA, and may decrease on retry. Terminal elapsedMs is time since the terminal transition, not algorithm runtime. Legacy run statuses can still provide counts but stage/timing are not reconstructed.
+
+Stage writes are fenced: claim atomically sets QUEUED; claimed algorithm RUNNING; separately committed SAVING before pattern persistence; COMPARING only for two algorithms; terminal status/stage written atomically. The read uses one scalar SQL query and does not deserialize any frozen input/configuration JSON. Foreign or absent requests return 404; the System Admin REQUESTS gate is checked before lookup and emits the existing audit format.
+
+Scheduler configuration was not changed: keep schedule-dispatch-enabled unset/false; activation returns 503. No snapshot, historical request payload or stored recommendation JSON is rewritten.
+
+---
+## Prior contract and historical evidence
+
 > **Status 2026-11-02 — merged into `dev` by PR #11 (`11973a0`).** The contract below is the current `dev` contract; the Core code was verified by `scripts/verify-option-b-macos.sh --run` (23/23 stages, see the [audit matrix](../reports/F03_F05_API_AUDIT_MATRIX_2026-11-02.md)). **Update 2026-11-02 (Scheduler branch, not yet on `dev`):** business decisions D1–D10 are confirmed and implemented (Flyway V18–V19, `GET /api/system/stores`, System Admin reads of snapshots/requests/runs, `SKIPPED` history, scheduler machine principal, lookback 7–365). Schedule activation still answers **503** unless an instance explicitly sets `paspm.mining.schedule-dispatch-enabled=true`; release sign-off is pending. `POST /api/mining/requests` and `GET /api/mining/runs/{id}/benchmark` are forbidden for every role. Sections that still describe the retired Merchandiser submit flow are labelled *legacy*.
 
 <!-- docs-reorganization:notice -->
 > **NEEDS_REVIEW — documentation review 2026-10-26.** Useful endpoint contracts coexist with dated deployment/verification summaries; source availability is separate from historical failure evidence. See [current navigation](../features/F05/README.md). Original results and business-rule text below are retained; this notice is not a new execution or approval.
 <!-- /docs-reorganization:notice -->
+
+> **Superseded 2026-11-16 ([DEC-20261116-04](../decisions/2026-11-16/DEC-20261116-04-f05-efim-only-mining.md)).** Everything from here on describes HUI-Miner + EFIM requests, `compareAlgorithms`, algorithm selection and the benchmark routes. These are history only; the current contract is at the top of this file.
 
 # F05 Mining API Contract
 
@@ -24,7 +118,7 @@ This block supersedes any older text below that says a Merchandiser may submit m
 | GET | `/api/system/mining/stores/{storeId}/runs/{runId}/patterns` | nobody | **Always 403 for System Admin (D1: patterns stay closed).** Use `GET /api/mining/runs/{id}/patterns` as a Store Admin or Merchandiser of the Store |
 | POST | `/api/system/mining/requests` | SYSTEM_ADMIN | Ready; 202, idempotent per Store by `requestKey` |
 | GET | `/api/system/mining/stores/{storeId}/runs/{runId}/benchmark` | SYSTEM_ADMIN | Ready |
-| GET | `/api/system/stores` | SYSTEM_ADMIN | **Ready (D2)**; `Page<StoreView>` `{storeId,name}` ordered by name then id; `page` 0.., `pageSize` 1..100 (default 20); a page past the end is an empty `items` list |
+| GET | `/api/system/stores` | SYSTEM_ADMIN | **Ready (D2)**; `Page<StoreView>` ordered by name then id; `page` 0.., `pageSize` 1..100 (default 20); a page past the end is an empty `items` list. **2026-11-23 (DEC-20261123-01):** additive fields (`slug`, `status`, …) and **ACTIVE Stores only by default**; see [Store management](F01_STORE_MANAGEMENT_API.md). Manual requests and schedule create/enable for an INACTIVE Store return 409 `STORE_INACTIVE`; the scheduler records its due fire times as `SKIPPED` (`STORE_INACTIVE`) |
 | POST / GET | `/api/system/mining/schedules`, `/api/system/mining/schedules/{id}` | SYSTEM_ADMIN | Ready; new schedules are created **disabled**; `lookbackDays` optional (7–365; default 30 weekly / 90 monthly); `timeZone` must be the Store calendar zone `Asia/Ho_Chi_Minh` |
 | PUT | `/api/system/mining/schedules/{id}` | SYSTEM_ADMIN | Edit / disable always work. **`enabled=true`: 200 only where the instance sets `paspm.mining.schedule-dispatch-enabled=true` (default `false` → 503 `Scheduled mining dispatch is not available`, nothing written)**; also 409 if no mining policy is configured |
 | GET | `/api/system/mining/schedules/{id}/occurrences`, `.../occurrences/{occurrenceId}` | SYSTEM_ADMIN | Ready (history/read-only); statuses incl. `SKIPPED`; fields `failureMessage`, `skipReason` |
@@ -65,7 +159,7 @@ Base URL depends on the environment (local default `http://localhost:8080`). Ope
 | GET | `/api/system/mining/stores/{storeId}/requests/{requestId}/runs` | SYSTEM_ADMIN + `RUNS` | `RunView[]` | Algorithm runs (D1; default-enabled) |
 | GET | `/api/system/mining/stores/{storeId}/runs/{runId}/patterns` | nobody | `Page<PatternView>` | **Always 403 for System Admin (D1)**; Store users read patterns on `/api/mining/runs/{id}/patterns` |
 | POST, GET | `/api/system/mining/schedules`, `/{id}` | SYSTEM_ADMIN | schedule `View` | Create (always disabled) / read |
-| GET | `/api/system/stores` | SYSTEM_ADMIN | `Page<StoreView>` | Store picker (D2): `{storeId,name}` only |
+| GET | `/api/system/stores` | SYSTEM_ADMIN | `Page<StoreView>` | Store picker (D2); since DEC-20261123-01 more fields and ACTIVE Stores by default |
 | PUT | `/api/system/mining/schedules/{id}` | SYSTEM_ADMIN | schedule `View` | Edit / disable; `enabled=true` → 503 unless the instance enables scheduling (D10) |
 | GET | `/api/system/mining/schedules/{id}/occurrences`, `/{occurrenceId}` | SYSTEM_ADMIN | `Page<OccurrenceView>`, `OccurrenceView` | Read-only history |
 | GET | `/api/mining/snapshots` | MERCHANDISER, STORE_ADMIN | `Page<SnapshotView>` | READY snapshot picker (own Store) |
@@ -148,8 +242,8 @@ GET path `id` is a signed int64 request/run identifier. Missing/foreign/nonexist
 1. Read only existing stored weighted utilities, transaction IDs and Product mapping in a repeatable-read transaction. Freeze input/mapping and snapshot metadata into MINING_REQUEST before enqueueing. A running worker never reloads current Product/configuration or F03 matrix.
 2. Require stored values exact at scale6; F03 already applied HALF_UP. Reject unsupported finer precision, negative/null values or signed64 overflow; do not silently truncate or recalculate values.
 3. Find GCD of all scale6 integers, using divisor1 for an all-zero dataset. Divide exactly by GCD. Dense SPMF IDs are assigned to sorted real Product IDs; transactions and IDs are sorted.
-4. Recompute transaction utility solely by summing these normalized item utilities. Dataset total must fit signed int32 because verified HUI-Miner/EFIM implementations use int32 TWU/utility arrays and threshold APIs.
-5. PERCENTAGE: `ceil(minUtilValue * totalScaledUtility / 100)`. ABSOLUTE: `ceil(minUtilValue * 10^6 / divisor)`. Require positive int32. Record minUtilSpmf and `effectiveMinUtility = minUtilSpmf * divisor / 10^6`.
+4. Recompute transaction utility solely by summing these normalized item utilities. Require each transaction utility and each Product TWU to fit signed int32, matching EFIM's input and per-item accumulation bounds. The global normalized total is signed int64 and may exceed int32.
+5. PERCENTAGE: `ceil(minUtilValue * totalScaledUtility / 100)` using checked signed-64-bit arithmetic. ABSOLUTE: `ceil(minUtilValue * 10^6 / divisor)`. Require positive signed int32 `minUtilSpmf`; overflow returns `Converted minUtil exceeds SPMF int32 capacity`. Record `effectiveMinUtility = minUtilSpmf * divisor / 10^6`.
 6. Both algorithms receive exactly the same text bytes/hash, dense mapping and threshold. Pattern utilities return in original units using the same exact divisor; no new rounding is introduced.
 
 Zero-valued items were actually verified with both algorithms. Positive absolute thresholds on all-zero datasets can complete with no patterns. Percentage on total0 is rejected. A threshold above the maximum possible utility is valid and may yield an empty result. Suggested 0.2/0.5/1 percent presets are not business restrictions.
@@ -178,6 +272,8 @@ Run startedAt is null before claim. completedAt is null until terminal. Runtime,
 
 ### RequestView
 
+F05 is asynchronous and status-driven: `PENDING` means queued; request terminal states are `COMPLETED` and `FAILED`, while `TIMED_OUT` is a run-level terminal state. Store users poll `GET /api/mining/requests/{id}` and its `/runs` route; System Admins poll the corresponding `/api/system/mining/stores/{storeId}/requests/{requestId}` and `/runs` routes. Poll at about 1–2 second intervals while nonterminal, then stop once the request is `COMPLETED` or `FAILED` and every run is `COMPLETED`, `FAILED`, or `TIMED_OUT`. Requests and runs are persisted for later reads after navigation or restart. Mining does not expose a measured intermediate item/transaction count, so no percentage is returned.
+
 | Field | Type | Notes |
 |---|---|---|
 | requestId | integer (int64) | See state/business rules above |
@@ -198,12 +294,14 @@ Run startedAt is null before claim. completedAt is null until terminal. Runtime,
 | utilityScale | integer (int32) | See state/business rules above |
 | roundingMode | string | See state/business rules above |
 | divisor | integer (int64) | See state/business rules above |
-| totalScaledUtility | integer (int32) | See state/business rules above |
+| totalScaledUtility | integer (int64) | Nonnegative global normalized total; may exceed signed int32 |
 | transactionCount | integer (int32) | See state/business rules above |
 | distinctItems | integer (int32) | See state/business rules above |
 | inputBytes | integer (int32) | See state/business rules above |
 | snapshot | SnapshotView | See state/business rules above |
 | createdAt | string (date-time) | See state/business rules above |
+| conversionMode | string, nullable | `LOSSLESS` or `WHOLE_UNIT_HALF_UP` (2026-11-19, additive) |
+| roundingUnit | number, nullable | `1` (đồng) for `WHOLE_UNIT_HALF_UP`, `null` for `LOSSLESS` (2026-11-19, additive) |
 
 ### RunView
 
@@ -226,10 +324,12 @@ Run startedAt is null before claim. completedAt is null until terminal. Runtime,
 | memoryMiB | number/null (double) | Nullable |
 | memoryMethod | string | See state/business rules above |
 | runtimeMethod | string | See state/business rules above |
-| environment | string/null | Nullable |
+| environment | string/null | Nullable; successful SPMF runs include `outputBytes=<actual output file size>` as an additional diagnostic segment. This is metadata within the existing string, not a new response field. |
 | patternCount | integer/null (int32) | Nullable |
 | failureCode | string/null | Nullable |
 | failureMessage | string/null | Nullable |
+| conversionMode | string, nullable | Derived from `conversionVersion`: `LOSSLESS` or `WHOLE_UNIT_HALF_UP` (2026-11-19, additive) |
+| roundingUnit | number, nullable | `1` for `WHOLE_UNIT_HALF_UP`, `null` for `LOSSLESS` (2026-11-19, additive) |
 
 ### PatternView
 
@@ -491,7 +591,9 @@ The external JAR is not bundled in Git/backend artifact. Verified SPMF Main vers
 | paspm.mining.heap-mib | 256; 32..2048 |
 | paspm.mining.max-patterns | 2000; 1..10000 |
 
-Hard limits: 20,000 snapshot rows, 256 Products, 4MiB algorithm output, 64KiB process log. Numeric overflow rejected before enqueueing. Child commands use ProcessBuilder fixed arguments, never shell concatenation; temp files are cleaned on completion/failure/interruption. No temporary paths are exposed through APIs. Configure database connection/session timestamps consistently, normally UTC (`forceConnectionTimeZoneToSession=true` was used in isolated MySQL QA).
+Hard limits: **20,000 snapshot rows, 1,600 distinct Products, 4 MiB algorithm output, 64 KiB process log**. The prior 256-Product maximum was an application validation, not an EFIM limit; it was raised after a bounded 1,559-Product EFIM benchmark. A snapshot above the product limit is rejected before enqueueing with HTTP 400, `{"error":"Snapshot exceeds 1600 distinct products"}`. A matrix above the row limit is rejected with HTTP 400, `{"error":"Snapshot matrix exceeds mining row limit"}`. These bounds apply to new requests; saved historical requests and their frozen input are unchanged. F06's `FrozenEvidenceReader` uses the same item/row constants when validating a completed run. Numeric overflow rejected before enqueueing. Child commands use ProcessBuilder fixed arguments, never shell concatenation; temp files are cleaned on completion/failure/interruption. No temporary paths are exposed through APIs. Configure database connection/session timestamps consistently, normally UTC (`forceConnectionTimeZoneToSession=true` was used in isolated MySQL QA).
+
+Update 2026-11-17: on Linux and macOS, the SPMF child receives a kernel file-size ceiling of 4 MiB; at the cap the result is failed as `OUTPUT_LIMIT` before any nonzero child exit is classified as generic SPMF failure. A Linux-container probe and a real EFIM output test both stopped at exactly 4,194,304 bytes (0-byte overshoot). The application poll remains as a secondary check; non-POSIX fallback behavior is still polling-based. The separate 64 KiB process-log bound remains polled. A 4,100-order / 18,040-row / 1,559-product **synthetic** F04 → F03 → F05 → F06 lifecycle passed with 3 EFIM patterns; it is not an authentic FoodMart snapshot. Authentic-data and production/hosted-CI limitations remain. See [the benchmark report](../testing/F05_FOODMART_SCALABILITY_BENCHMARK.md) and [Record 013](../record-of-changes/2026-11-17/13-f05-dense-acceptance.md).
 
 The 2026-10-20 P0 correction quotes row_number in V7 and F04 SQL. Fresh MySQL8.4 V1–V9 and F04/F05 regression tests now pass. Existing applied V7 history needs controlled checksum reconciliation; see [V7 recovery](../setup/FLYWAY_MYSQL_V7_RECOVERY.md). No automatic repair or baselining occurs.
 

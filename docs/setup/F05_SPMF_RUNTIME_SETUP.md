@@ -9,11 +9,12 @@ The backend targets Java 17. The approved SPMF binary runs as a separate Java 25
 - Backend: JDK 17, Maven compatible with the existing pom.xml, MySQL 8.4.
 - SPMF child: JDK/JRE 25+ from a trusted publisher, separately installed/provisioned by the operator.
 - Linux container F05 additionally requires `python3` with its standard-library `ctypes` and permission to use `prctl(PR_SET_PDEATHSIG)`. The launcher fails closed if it cannot establish supervision; it does not use shell interpolation. This mechanism is still undergoing end-to-end Linux verification. macOS/Windows use the existing local-development path and do not obtain this Linux kernel guarantee.
-- SPMF: approved 2.67a JAR, class major 69. Obtain the exact approved artifact manually from the [official distribution](https://www.philippe-fournier-viger.com/spmf/download.php) or an approved internal artifact store.
+- SPMF: approved 2.67a JAR, class major 69. Obtain the exact approved artifact from the Release `spmf-2.67a` (the official download page now serves a newer version, so do not use it) or an approved internal artifact store.
 - SHA-256: 4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a.
 - The official download page may move to a newer release. A different checksum is NOT accepted; stop and request artifact approval instead of changing the pin.
 - Local provenance: the workspace README records an official SPMF download, and the inspected binary reports 2.67a. No signed upstream checksum/chain of custody has been independently authenticated. The project pin fixes the reviewed binary identity.
-- [SPMF license/developer guidance](https://www.philippe-fournier-viger.com/spmf/developers.php): upstream GPLv3 obligations apply. This change does not redistribute the binary or install it automatically.
+- [SPMF license/developer guidance](https://www.philippe-fournier-viger.com/spmf/developers.php): SPMF is **GPL v3**. Since 2026-11-25 ([DEC-20261125-03](../decisions/2026-11-25/DEC-20261125-03-spmf-gpl-distribution-and-process-boundary.md)) the approved 2.67a jar is redistributed in the GitHub Release `spmf-2.67a` of this repository together with the GPL text, `SOURCE.md` and the corresponding source (`spmf-2.67a-src.zip`), and the Docker image carries the license in `/opt/paspm/licenses/`. See [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md).
+- **Process-boundary rule:** SPMF runs only as a separate process (`java -jar spmf.jar run EFIM …`). Backend code must never import an SPMF class, never declare SPMF in `pom.xml` and never bundle it; `SpmfProcessBoundaryTest` enforces it.
 
 Provision the JAR in an operator-managed directory outside Git, for example /opt/paspm/runtime/spmf-2.67a.jar or C:\paspm\runtime\spmf-2.67a.jar. On a developer machine use a chosen absolute directory. The service account needs read access, but should not be allowed to replace trusted runtime artifacts. The backend temp directory must permit create/write/delete.
 
@@ -76,7 +77,7 @@ Expected versions: backend reports 17; child reports 25 or later; checksum exact
 ## Build, migration and startup
 
 1. Start MySQL 8.4 and provide an empty dedicated development schema plus the existing DB_URL, DB_USER, DB_PASSWORD and F01 secrets through your normal external configuration.
-2. For a fresh database, backend startup applies the current repository migrations in order (V1–V17 on `dev`; F05 mining migrations are V13–V17; V12 is F04 `f04_preserve_large_raw_import_rows`) and validates them automatically. For an existing database, first follow [V7 recovery](FLYWAY_MYSQL_V7_RECOVERY.md); old V7 checksums must not be silently repaired.
+2. For a fresh database, backend startup applies the current source-tree migrations in order through **V26** (after the P5/P6 merge) and validates them automatically. F05 mining migrations are V9, V13–V19 and V24 (mining progress); V12 is F04 raw-evidence capacity, V20–V21 are F01 browser-session changes, V22 is F04 async import, V23 is the F07/F08 layout/campaign migration V25 (Java) is F03 Weight v2, and V26 (Java) drops the three legacy product scoring columns (`src/main/java/db/migration/V26__f03_drop_legacy_product_scoring_columns.java`). The deployed migration head depends on the release branch; V26 is not assumed deployed. For an existing database, first follow [V7 recovery](FLYWAY_MYSQL_V7_RECOVERY.md); old V7 checksums must not be silently repaired.
 3. Build with Maven under JAVA_HOME=JDK17. Tests requiring SPMF must receive the external test paths below.
 4. Start the packaged backend explicitly with JDK 17:
 
