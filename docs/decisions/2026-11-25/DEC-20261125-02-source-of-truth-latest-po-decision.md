@@ -7,7 +7,7 @@
 | Status | OWNER_DECISION, implemented on branch `Khoi/docs/source-of-truth-rule`; PR to `dev` pending |
 | Scope | Process rule for every contributor and coding agent, both repositories |
 | Replaces | The "docs làm chuẩn" (docs-first) precedence in `AGENTS.md`, `CLAUDE.md`, the `paspm-context` skill (both copies) and `docs/product/BRD_VISION.md` §9.3 |
-| Number | `-02` because `DEC-20261125-01` (F09 public Store) is used on branch `Khoi/merge/f09-storefront-be` |
+| Number | `-02` because `DEC-20261125-01` is used on `dev` by the F07 product-level Layout B decision. (Corrected 2026-11-26 per DEC-20261126-03: this line said the F09 public-Store decision, which is DEC-20261125-04.) |
 
 ## Context
 The agent instructions said that docs are the standard ("docs làm chuẩn"): when code breaks a recorded requirement, fix the code and never rewrite the requirement. They also ranked DEC files and merged code above `docs/product/*` and `docs/api/*`. In practice docs are written at a point in time and fall behind code and later decisions (for example the 2026-11-20 server-generated SKU and the F09 merge findings), so "the doc wins" could push agents to undo correct, newer behaviour.
