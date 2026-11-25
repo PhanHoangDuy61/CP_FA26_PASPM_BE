@@ -25,3 +25,7 @@
 ## Record 006 — F07/F08 per-product Layout B and priority coverage
 
 [Record 006](06-f07-f08-per-product-layout.md) draws the product-level Layout B of F07/F08 ([DEC-20261125-01](../../decisions/2026-11-25/DEC-20261125-01-f07-product-level-layout-b.md)): AD06, its sequence and class pages and three ERD notes. Documentation only; Maven NOT RUN.
+
+## Record 007 — F10/F11 planned contracts and SPMF boundary
+
+[Record 007](07-f10-f11-planned-and-spmf-boundary.md) marks F10/F11 as planned ([DEC-20261125-06](../../decisions/2026-11-25/DEC-20261125-06-f10-f11-mvp-contract.md)) and draws the SPMF process boundary ([DEC-20261125-03](../../decisions/2026-11-25/DEC-20261125-03-spmf-gpl-distribution-and-process-boundary.md)). Documentation only; Maven NOT RUN.
