@@ -256,6 +256,7 @@ public class AuthController {
     }
 
     @Operation(
+            operationId = "activateAccount",
             summary = "Kích hoạt tài khoản được mời",
             description = "Dành cho nhân viên được quản trị viên mời: nhập email, OTP và mật khẩu mới để kích hoạt.",
             security = {})

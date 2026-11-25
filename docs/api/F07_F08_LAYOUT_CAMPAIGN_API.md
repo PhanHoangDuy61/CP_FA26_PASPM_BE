@@ -60,7 +60,7 @@ Replace all placements in B with individual product placements and provenance us
 }
 ```
 
-Supply positive `blockNo` and `position` for every row. Omitting either gives the primitive field its default zero, which fails validation. Use `BANNER`, `BUNDLE`, `CROSS_SELL` or `FBT` for B; the service validates zone names. The optional `sourceRecommendationId` accepts null. The response's legacy `recommendationId` alias can also be null. Springdoc on `dev` at `cded4ab` does not express all of these constraints. See [ROC-20261125-009](../record-of-changes/2026-11-25/09-openapi-status-sync.md).
+Each B placement requires positive `blockNo` and `position`. The allowed zones are `BANNER`, `BUNDLE`, `CROSS_SELL` and `FBT`. OpenAPI now declares those constraints and nullable `sourceRecommendationId` on the request and response. The legacy response alias `recommendationId` is also nullable. The snapshot product search operation ID is `layoutSnapshotProducts`.
 
 `PUT /api/layouts/{id}/placements` is the only B placement write. A product can appear once, but the same source recommendation ID may be used by multiple placements. Removing or moving one product updates only F07 placement/revision data and does not change F06 evidence or Layout A.
 

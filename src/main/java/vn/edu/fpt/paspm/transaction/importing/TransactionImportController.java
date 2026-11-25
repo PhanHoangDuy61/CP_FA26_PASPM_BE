@@ -71,7 +71,7 @@ public class TransactionImportController {
         return imports.importExcel(jwt, file);
     }
 
-    @Operation(summary = "List transaction imports for the authenticated Store")
+    @Operation(operationId = "listTransactionImports", summary = "List transaction imports for the authenticated Store")
     @GetMapping("/api/transactions/imports")
     @PreAuthorize("hasAnyRole('STORE_ADMIN','MERCHANDISER')")
     public Page<ImportSummary> list(@AuthenticationPrincipal Jwt jwt,
@@ -82,7 +82,7 @@ public class TransactionImportController {
         return new Page<>(repository.listBatches(storeId, page, pageSize), page, pageSize, repository.countBatches(storeId));
     }
 
-    @Operation(summary = "Get one transaction import owned by the authenticated Store")
+    @Operation(operationId = "getTransactionImport", summary = "Get one transaction import owned by the authenticated Store")
     @GetMapping("/api/transactions/imports/{id}")
     @PreAuthorize("hasAnyRole('STORE_ADMIN','MERCHANDISER')")
     public ImportSummary get(@AuthenticationPrincipal Jwt jwt, @PathVariable int id) {
