@@ -97,7 +97,7 @@ No snapshot list/update/delete endpoint; no trigger enforcing immutability again
 Owner decisions Q1–Q10 and the conversion rule are recorded in the [decision register](../../decisions/OWNER_DECISIONS_F03_F05_2026-11-15.md). None open. The 2026-11-15 assumptions were resolved on 2026-11-16: P2, P3, P4 approved; P5 changed to removal (V26); P6 changed for two routes now deleted ([DEC-20261116-01..03](../../decisions/2026-11-16/)). Report text changes listed in the record of changes.
 
 ## 12. Related diagrams
-[Diagram index](../../diagrams/README.md) and the editable [27-page Draw.io pack](../../diagrams/PASPM_Unified_27_Diagrams_UML2_Editable.drawio) (QA: [UML27 report](../../reports/UML27_DIAGRAM_QA_2026-11-02.md)); relevant pages: Use Case UC09 and UC31, AD01 (F03 snapshot step), State R2-06.02 (Utility Snapshot), Context (M1, A2 flows), System Architecture.
+[Diagram index](../../diagrams/README.md) and the editable [27-page Draw.io pack](../../diagrams/PASPM_Unified_UML2_Editable.drawio) (QA: [UML27 report](../../reports/UML27_DIAGRAM_QA_2026-11-02.md)); relevant pages: Use Case UC09 and UC31, AD01 (F03 snapshot step), State R2-06.02 (Utility Snapshot), Context (M1, A2 flows), System Architecture.
 
 ## 13. Historical references
 [Original v4 backlog](reference_v4/PASPM_F03_Three_Weights_v4_API_Swagger_Backlog.md), [issues](reference_v4/PASPM_F03_Three_Weights_v4_GitHub_Issues/README.md), [original F03→F05 handoff](reference_v4/F03_F05_HANDOFF.md) (stale downstream text), [legacy matrix compatibility](../../architecture/LEGACY_UTILITY_MATRIX_COMPATIBILITY.md).

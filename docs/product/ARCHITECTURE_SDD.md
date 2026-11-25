@@ -270,18 +270,12 @@ flowchart LR
 
 ## 9. Diagrams: inventory as of 2026-11-04 and the changes they need
 
-Two Draw.io files make up the baseline, the Report 4 / Review 2 state:
+Two Draw.io files make up the baseline (DEC-20261126-01):
 
-- **`PASPM_Unified_27_Diagrams_UML2_Editable.drawio`**. Two versions exist:
-  - **27 pages** (the 27 core diagrams): the copy committed on backend `dev` at `docs/diagrams/` (last changed 2026-11-02) and the copy in `outputs/diagrams/`;
-  - **36 pages** (the 27 core diagrams, R2-05 Package Diagram and 8 class diagrams R2-07.01–08): only as an uncommitted working copy in `outputs/diagram-final-clean-wt/docs/diagrams/` (modified 2026-11-05).
-  - **Baseline (decided 2026-11-19): the 36-page version.** It is updated to V26 first and then committed to `docs/diagrams/`, replacing the 27-page copy. The R2-05 and R2-07.x rows below apply to it.
-- **`PASPM_ERD_V1_V19_clean.drawio`** (`docs/`, 2026-11-04), with 8 pages:
-  - Logical ERD, 31 tables;
-  - Conceptual ERD;
-  - 6 area diagrams.
+- **`PASPM_Unified_UML2_Editable.drawio`**: the **36-page** pack committed at `docs/diagrams/` (27 core diagrams, R2-05 Package Diagram and 8 class diagrams R2-07.01–08). The old 27-page copy was replaced, and the file was renamed from `PASPM_Unified_27_Diagrams_UML2_Editable.drawio` on 2026-11-26. The Store management pages (AD09, R2-06.07, R2-08.09, R2-07.09) and the pages AD10 and AD11 extend it to 42 pages.
+- **`PASPM_ERD_V1_V30.drawio`** (`docs/diagrams/`, named after its last Flyway version), with 9 pages: Logical ERD, Conceptual ERD and 7 area diagrams. It replaces the V1–V19 file, which was never committed.
 
-Both describe V1–V19. The tables below come from scanning their labels against code on `dev` @ `530651b`.
+The tables below were written against the V1–V19 state and `dev` @ `530651b`; the diagram records of 2026-11-26 list which rows each phase closed.
 
 **Rule:** keep the diagram IDs, layout and UML 2 notation, and edit only what changed. Pages describing features that are still planned stay labelled *planned*.
 
@@ -318,7 +312,7 @@ Both describe V1–V19. The tables below come from scanning their labels against
 | R2-08.07 / R2-07.07 Seq & Class AD07 | Rewrite | `MetricType {UTILITY, CTR, CONVERSION, ESTIMATED_REVENUE}` becomes `OfflineLayoutSimulation` with hitRate, bundleConversion, capturedUtility and priorityCoverage. Report tables: `comparison_report`, `_layout`, `_transaction` |
 | R2-08.08 / R2-07.08 Seq & Class AD08 | Keep (planned) | Align `CartService.addBundle` with the F10 plan (If-Match, partial adds, `storefront_event`) |
 
-### 9.2 ERD (V1–V19 → V26) — done 2026-11-19 in `PASPM_ERD_V1_V26.drawio`, pending review
+### 9.2 ERD (V1–V19 → V26) — done 2026-11-19; committed 2026-11-26 as `PASPM_ERD_V1_V26.drawio` and extended to V30 in `PASPM_ERD_V1_V30.drawio` (DEC-20261126-01)
 
 The file in `outputs/diagrams/` has 9 pages (the 8 listed plus the new Layout & Campaign page). Its Logical ERD draws 45 tables and 100 relationship edges, matching §5.2 and §10.
 

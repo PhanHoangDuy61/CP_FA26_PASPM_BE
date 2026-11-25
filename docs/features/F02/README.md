@@ -100,7 +100,7 @@ Known gaps (2026-11-15, history): a batch `pushDay` could not be cleared through
 None open. P5 (accept but ignore `expiryPushDays`) was an assumption on 2026-11-15 and was **changed on 2026-11-16 to full removal** ([DEC-20261116-02](../../decisions/2026-11-16/DEC-20261116-02-p5-remove-legacy-product-fields.md)); Q1 (push day per batch) is an owner decision of 2026-11-15. See [decision register](../../decisions/OWNER_DECISIONS_F03_F05_2026-11-15.md).
 
 ## 12. Related diagrams
-[Diagram index](../../diagrams/README.md) and the editable [27-page Draw.io pack](../../diagrams/PASPM_Unified_27_Diagrams_UML2_Editable.drawio) (QA: [UML27 report](../../reports/UML27_DIAGRAM_QA_2026-11-02.md)); relevant pages: Use Case UC17–UC20, AD01; the F02 ERD is `docs/diagrams/PASPM_Complete_ERD_F02_Inventory_Batch_v3.drawio` (preserved unchanged).
+[Diagram index](../../diagrams/README.md) and the editable [27-page Draw.io pack](../../diagrams/PASPM_Unified_UML2_Editable.drawio) (QA: [UML27 report](../../reports/UML27_DIAGRAM_QA_2026-11-02.md)); relevant pages: Use Case UC17–UC20, AD01; the F02 ERD is `docs/diagrams/PASPM_Complete_ERD_F02_Inventory_Batch_v3.drawio` (preserved unchanged).
 
 ## 13. Historical references
 [Original v3 backlog](reference_v3/PASPM_F02_Inventory_Batch_API_Swagger_Backlog_v3.md), [issues](reference_v3/F02_GitHub_Issues/README.md), [Product JPA report](../../architecture/PRODUCT_JPA_INTEGRATION_REPORT.md), [Category JPA report](../../architecture/CATEGORY_JPA_IMPLEMENTATION_REPORT.md). Old all-StoreAdmin and expiry-today clauses are superseded.

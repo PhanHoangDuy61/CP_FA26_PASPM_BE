@@ -9,13 +9,13 @@ was committed, pushed, merged or tagged.
 
 | Item | Result |
 |---|---|
-| Initial `git status` | Branch `Khoi/feat/f03-f05-admin-mining` (a4f1115); deleted `docs/diagrams/PASPM_Complete_ERD_F02_Inventory_Batch_v3.drawio`; untracked `PASPM_Unified_27_Diagrams_UML2_Editable.drawio`, `..._old.drawio`, `.$...drawio.bkp`, `.$...drawio.dtmp`, `.DS_Store` files — as expected |
+| Initial `git status` | Branch `Khoi/feat/f03-f05-admin-mining` (a4f1115); deleted `docs/diagrams/PASPM_Complete_ERD_F02_Inventory_Batch_v3.drawio`; untracked `PASPM_Unified_UML2_Editable.drawio`, `..._old.drawio`, `.$...drawio.bkp`, `.$...drawio.dtmp`, `.DS_Store` files — as expected |
 | Preservation | `outputs/preservation-2026-11-04/`: `BE_git_diff.patch`, `BE_status_porcelain.txt` and the four untracked files; copies verified byte-identical (SHA-256 `644dcabe…07217bad` Editable, `cc957281…c2e0f500` old and `.bkp`, `e224c822…ed3fbc52` `.dtmp`) |
 | `git fetch origin --prune --tags` | OK. **No tags exist** locally or on origin |
 | `git switch dev` | OK; local `dev` was at `c06d43e` (PR #6, 26 Oct), 56 commits behind; local changes carried over |
-| `git pull --ff-only origin dev` | First attempt refused: untracked `PASPM_Unified_27_Diagrams_UML2_Editable.drawio` would be overwritten by the tracked file of the same name. After approval the intermediate file was **moved** (not deleted) to `outputs/preservation-2026-11-04/BE/moved-before-pull/docs/diagrams/` (SHA-256 re-verified), then the fast-forward succeeded |
+| `git pull --ff-only origin dev` | First attempt refused: untracked `PASPM_Unified_UML2_Editable.drawio` would be overwritten by the tracked file of the same name. After approval the intermediate file was **moved** (not deleted) to `outputs/preservation-2026-11-04/BE/moved-before-pull/docs/diagrams/` (SHA-256 re-verified), then the fast-forward succeeded |
 | HEAD now | `5b30eb17f51263ca3461c607622cb3c3e09f3982`, same as the baseline `5b30eb1`; `git log 5b30eb1..HEAD` is **empty** |
-| `git status` after | `## dev...origin/dev`; the F02 ERD deletion is still uncommitted; `_old.drawio`, `.bkp`, `.dtmp` and `.DS_Store` untouched. The final diagram file `outputs/diagram-final-clean-wt/.../PASPM_Unified_27_Diagrams_UML2_Editable.drawio` (SHA-256 `833e3d09…c5722`) and its worktree were not touched; no worktree was pruned or removed |
+| `git status` after | `## dev...origin/dev`; the F02 ERD deletion is still uncommitted; `_old.drawio`, `.bkp`, `.dtmp` and `.DS_Store` untouched. The final diagram file `outputs/diagram-final-clean-wt/.../PASPM_Unified_UML2_Editable.drawio` (SHA-256 `833e3d09…c5722`) and its worktree were not touched; no worktree was pruned or removed |
 | Worktree | `outputs/review2-wt`, new branch `Khoi/docs/review-2-setup` at `5b30eb1` |
 
 **CI history (`gh run list`)**: **NOT VERIFIED** — `gh` is not installed (not installed on request). The repository's own documentation
@@ -109,7 +109,7 @@ structure with different wording or notes.
 | F8 | Seed data vs the 256-product mining limit (table rows 7–8) | `MiningInputBuilder.java:52` |
 | F9 | Plain `mvn verify` without SPMF arguments fails 41 tests; tests default to `../spmf_run/spmf.jar`, which only resolves when the checkout sits directly under the project folder | Maven log |
 | F10 | The workflow job title still says "Flyway V1-V11" | `backend-verification.yml:45` |
-| F11 | The committed `docs/diagrams/PASPM_Unified_27_Diagrams_UML2_Editable.drawio` on `dev` is the old 27-page version; the final 36-page file exists only in the uncommitted worktree `outputs/diagram-final-clean-wt` | file hashes in section 1 |
+| F11 | The committed `docs/diagrams/PASPM_Unified_UML2_Editable.drawio` on `dev` is the old 27-page version; the final 36-page file exists only in the uncommitted worktree `outputs/diagram-final-clean-wt` | file hashes in section 1 |
 | F12 | In the final UML file only the Screen Flow page contains a feature code, in real route paths (`/f03/utility`, `/f03/expiry-window`, …). That page is not part of the Mermaid pack | page `R2-03 — Screen Flow` |
 | F13 | The conceptual ERD page draws six entities (Layout, Placement, Campaign, ComparisonReport, Cart, CartItem) that have no table in the schema; `conceptual-erd.mmd` repeats them because the transcription must not drop anything. SRS 3.1.5 says these are not yet in the schema | conceptual page vs `information_schema` |
 
