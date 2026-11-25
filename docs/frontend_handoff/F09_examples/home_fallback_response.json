@@ -1,0 +1,30 @@
+{
+  "store": {
+    "storeSlug": "green-market-5a6b0bd24f9c12ab",
+    "name": "Green Market"
+  },
+  "campaignName": null,
+  "fallbackType": "DEFAULT_CATALOG",
+  "zones": [],
+  "catalog": [
+    {
+      "categoryId": 7,
+      "name": "Drinks",
+      "products": [
+        {
+          "productId": 210,
+          "name": "Oat drink",
+          "description": "Unsweetened oat drink",
+          "imageUrl": "https://images.example/oat-drink.jpg",
+          "unit": "carton",
+          "sellingPrice": 2.5,
+          "category": {
+            "categoryId": 7,
+            "name": "Drinks"
+          },
+          "availability": "AVAILABLE"
+        }
+      ]
+    }
+  ]
+}

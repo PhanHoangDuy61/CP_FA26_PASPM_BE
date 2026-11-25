@@ -57,7 +57,7 @@ PASPM is **one web application**: a React single-page app and a single Spring Bo
 | 11 | Schedule dispatcher | Turns due occurrences into a snapshot plus a request (SYSTEM_SCHEDULER principal). Enable returns **503** | PARTIAL |
 | 12 | SPMF child process | Runs EFIM with heap, time, output and log limits. Output limit is enforced by the kernel on Linux and macOS, by polling on Windows | DONE |
 | 13 | Recommendation rules | BUNDLE / CROSS_SELL / FBT / BANNER from frozen evidence, live eligibility and fingerprint | DONE |
-| 14 | Layout & campaign | Baseline A, layout B revisions, zone policy, utility score, campaign lifecycle, offline replay simulation, active-layout projection | DONE (API); `priorityCoverage` null |
+| 14 | Layout & campaign | Baseline A, layout B revisions, zone policy, utility score, campaign lifecycle, offline replay simulation, active-layout projection | DONE (API); frozen priority coverage implemented on the feature branch |
 | 15 | Persistence | Hybrid: JPA for products and categories, JDBC (`JdbcTemplate`) for everything else | DONE |
 | 16 | Deployment / legacy recovery | Flyway callback and recovery of legacy utility-matrix data | DONE |
 | 17 | Storefront public API | Anonymous read by `storeSlug` | **PLANNED** (F09) |
@@ -222,12 +222,12 @@ flowchart LR
 ### 6.4 Layout and campaign (F07/F08)
 
 - **Baseline A** is the top-K snapshot products by transaction frequency (`F07_BASELINE_V2`, K = BASELINE capacity 35; older V1 layouts hold every product).
-- **Layout B** is built from whole APPROVED and ready blocks, within the configured zone capacities.
+- **Layout B** is built per product with optional F06 provenance, within the configured zone capacities. One source recommendation may be split across placements, and manual placement source is null. F06 evidence and Layout A are immutable.
 - **Zones** are `BASELINE`, `BUNDLE`, `CROSS_SELL`, `FBT` and `BANNER`. Capacities are configured in `application.yml` since PR #22, and environment-overridable: BANNER 3 blocks / 3 products, BUNDLE 4 / 16, CROSS_SELL 2 / 8, FBT 2 / 8, BASELINE 35 / 35.
 - **Score** = Σ weighted utility of the distinct products shown.
 - **Simulation** runs only on a DRAFT campaign. It replays later eligible transactions that are not in the snapshot, and stores the dataset hash, the transaction ids and the assumptions. Since PR #22 (`OFFLINE_REPLAY_V2`), B is compared with the top-N prefix of A, where N = products in B.
 - **Activation** locks the Store row, rechecks validity, ends the previously active campaign and records history.
-- **Planned extension:** `priorityCoverage` = |products with W > 1 on the layout| ÷ |products on the layout|, with W read from `utility_matrix_item` of the campaign snapshot. Fill `priority_coverage` and `priority_coverage_denominator` in `comparison_report_layout` instead of NULL. Today the code still writes `NULL,NULL`, and the stored assumption still reads "N/A until the F03 priority coverage formula is confirmed".
+- **Priority coverage (OFFLINE_REPLAY_V4):** distinct displayed products with W > 1 divided by the distinct products displayed. The service reads W from the frozen campaign snapshot and saves the rate and denominator in `comparison_report_layout`. Layout views use their complete placement list, and reports use the actual A prefix and full B. Historical reports are read as stored.
 
 ### 6.5 Storefront and cart (F09/F10 — PLANNED)
 
@@ -294,7 +294,7 @@ Both describe V1–V19. The tables below come from scanning their labels against
 | **AD04 Algorithm Benchmarking** | **Remove** | Benchmark removed 2026-11-16. Retire the page, or mark it historical |
 | AD05 Recommendation | Minor | Add the `seasonEnded` / expiry-alert warnings from push day |
 | AD06 Layout & Campaign | Update | Match the implemented flow: A generated read-only; B from whole blocks; READY; decide; publish / withdraw; activate / end / rollback |
-| AD07 A/B Testing | Rewrite | Offline replay of later transactions, not synthetic CTR/conversion. Metrics: hitRate, bundleConversion, capturedUtility, priorityCoverage (null) |
+| AD07 A/B Testing | Rewrite | Offline replay of later transactions, not synthetic CTR/conversion. Metrics: hitRate, bundleConversion, capturedUtility, priorityCoverage |
 | AD08 Customer Shopping | Keep (planned) | Align with the F09/F10 MVP decisions: anonymous browse, END_CUSTOMER cart, atomic bundle add, no reservation |
 | R2-03 Screen Flow | Update | Remove S06 Benchmark, Expiry Window and Product Scores. Add Seasons, push day, mining progress, λmax policy, F07/F08 screens |
 | R2-04 System Architecture | Update | Utility box: "S/M priorities, E from batch expiry" becomes "U_expiry from batch push days + season M". SPMF box becomes EFIM. Add async import worker and Layout & Campaign. Frontend box: "Bearer token in local storage" becomes access token plus refresh cookie / CSRF. Rename "storefront checkout" (checkout is out of scope) |

@@ -101,18 +101,25 @@ class CatalogIntegrationTest {
                 .andExpect(status().isOk()).andExpect(jsonPath("$.status").value("INACTIVE"));
 
         String product = """
-                {"name":"Fresh Milk","categoryId":%d,"unit":"bottle","requiresExpiry":true,"sellingPrice":2.50,"costPrice":1.25,"status":"ACTIVE"}
+                {"name":"Fresh Milk","categoryId":%d,"unit":"bottle","requiresExpiry":true,"sellingPrice":2.50,"costPrice":1.25,"status":"ACTIVE","imageUrl":"https://images.example/milk.jpg","description":"Fresh milk"}
                 """.formatted(categoryId);
         String forgedStoreProduct = product.replace("{\"name\":", "{\"storeId\":" + secondStoreId + ",\"name\":");
         mvc.perform(post("/api/products")
                         .header("Authorization", "Bearer " + storeAdminToken)
                         .contentType(MediaType.APPLICATION_JSON).content(forgedStoreProduct))
                 .andExpect(status().isBadRequest());
+        mvc.perform(post("/api/products")
+                        .header("Authorization", "Bearer " + storeAdminToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(product.replace("https://images.example/milk.jpg", "javascript:alert(1)")))
+                .andExpect(status().isBadRequest());
         String productResponse = mvc.perform(post("/api/products")
                         .header("Authorization", "Bearer " + storeAdminToken)
                         .contentType(MediaType.APPLICATION_JSON).content(product))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.stockQuantity").value(0))
+                .andExpect(jsonPath("$.imageUrl").value("https://images.example/milk.jpg"))
+                .andExpect(jsonPath("$.description").value("Fresh milk"))
                 .andReturn().getResponse().getContentAsString();
         int productId = json.readTree(productResponse).get("id").asInt();
         org.junit.jupiter.api.Assertions.assertEquals(String.format(java.util.Locale.ROOT, "SKU-%011d", productId),
@@ -125,7 +132,9 @@ class CatalogIntegrationTest {
         mvc.perform(put("/api/products/{id}", productId).header("Authorization", "Bearer " + storeAdminToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(product.replace("Fresh Milk", "Fresh Milk Updated")))
-                .andExpect(status().isOk()).andExpect(jsonPath("$.name").value("Fresh Milk Updated"));
+                .andExpect(status().isOk()).andExpect(jsonPath("$.name").value("Fresh Milk Updated"))
+                .andExpect(jsonPath("$.imageUrl").value("https://images.example/milk.jpg"))
+                .andExpect(jsonPath("$.description").value("Fresh milk"));
         mvc.perform(patch("/api/products/{id}/status", productId).header("Authorization", "Bearer " + storeAdminToken)
                         .contentType(MediaType.APPLICATION_JSON).content("{\"status\":\"INACTIVE\"}"))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.status").value("INACTIVE"));

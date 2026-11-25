@@ -26,7 +26,7 @@
    "$JAVA_HOME/bin/java" -version
    "$JAVA_HOME/bin/javac" -version
    "$PASPM_MINING_JAVA_EXECUTABLE" -version
-   sh ./mvnw -version
+   ./mvnw -version
    ```
 
    If `java_home` cannot find a JDK, install/register it and retry. Verify architecture with `uname -m`; do not copy `/opt/homebrew` paths from a different Mac.
@@ -73,8 +73,8 @@
 7. Build and start (startup runs Flyway automatically):
 
    ```zsh
-   sh ./mvnw clean verify -Dpaspm.test.spmf-jar="$PASPM_MINING_SPMF_JAR" -Dpaspm.test.spmf-java="$PASPM_MINING_JAVA_EXECUTABLE"
-   sh ./mvnw spring-boot:run
+   ./mvnw clean verify -Dpaspm.test.spmf-jar="$PASPM_MINING_SPMF_JAR" -Dpaspm.test.spmf-java="$PASPM_MINING_JAVA_EXECUTABLE"
+   ./mvnw spring-boot:run
    ```
 
    If SPMF is missing, the full mining tests cannot be claimed as passed; configure it first. Watch logs for Flyway and startup failures. From another terminal, verify migrations using your local password when prompted:

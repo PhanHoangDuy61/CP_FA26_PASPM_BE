@@ -32,6 +32,8 @@ public final class CatalogContracts {
             @NotNull @PositiveOrZero BigDecimal sellingPrice,
             @NotNull @PositiveOrZero BigDecimal costPrice,
             @NotBlank @Schema(allowableValues = {"ACTIVE", "INACTIVE"}) String status,
+            @Size(max = 2048) String imageUrl,
+            @Size(max = 2000) String description,
             @Schema(description = "Set true only after confirming the similar-name warning returned with 409")
             Boolean confirmSimilarName) {}
 
@@ -45,7 +47,8 @@ public final class CatalogContracts {
             CategoryView category, BigDecimal sellingPrice, BigDecimal costPrice,
             String status,
             @Schema(accessMode = Schema.AccessMode.READ_ONLY,
-                    description = "Derived sum of inventory batch remainingQuantity values") long stockQuantity) {}
+                    description = "Derived sum of inventory batch remainingQuantity values") long stockQuantity,
+            String imageUrl, String description) {}
 
     public record ProductPage(List<ProductView> content, int page, int pageSize,
                               long totalElements, int totalPages) {}
