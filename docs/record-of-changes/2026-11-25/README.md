@@ -2,7 +2,7 @@
 
 2026-11-25 / Asia/Ho_Chi_Minh. Records of this day are delivered through pull requests into `dev` ([DEC-20261119-01](../../decisions/2026-11-19/DEC-20261119-01-dev-changes-only-through-pr.md)).
 
-Numbers for this day are fixed across branches: 001 F07 product-level Layout B editor, 002 Maven Wrapper, 003 source-of-truth rule, 004 demo seed / SKU mapping, 005 F09 Storefront merge, 006 priority coverage, 007 SPMF CI artifact, 008 F10/F11 planned contracts, 009 OpenAPI and feature status sync. 003 and 007 live on their own branches until merged.
+Numbers for this day are fixed across branches: 001 F07 product-level Layout B editor, 002 Maven Wrapper, 003 source-of-truth rule, 004 demo seed / SKU mapping, 005 F09 Storefront merge, 006 priority coverage, 007 SPMF CI artifact, 008 F10/F11 planned contracts, 009 OpenAPI and feature status sync, 010 F07 OpenAPI annotations. 003 and 007 live on their own branches until merged.
 
 ## Record 001 — F07/F08 product placements
 
@@ -40,3 +40,7 @@ Release status: **UNRELEASED**, feature branch only. No push.
 ## Record 009 — OpenAPI and feature status sync
 
 [Record 009](09-openapi-status-sync.md) captures the runtime comparison on dev and the F07 schema question.
+
+## Record 010 — F07 OpenAPI annotations
+
+[Record 010](10-f07-openapi-annotations.md) lists explicit operation IDs and verifies the placement schema metadata.

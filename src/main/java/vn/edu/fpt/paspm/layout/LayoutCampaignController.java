@@ -34,7 +34,7 @@ public class LayoutCampaignController {
     }
 
     @GetMapping("/api/layouts/policy")
-    @Operation(summary = "Read the shared layout zones and configured capacities used by F07 and F09")
+    @Operation(operationId = "getLayoutPolicy", summary = "Read the shared layout zones and configured capacities used by F07 and F09")
     public LayoutPolicyView policy() {
         return service.policy();
     }
@@ -49,7 +49,7 @@ public class LayoutCampaignController {
     }
 
     @GetMapping("/api/layouts/products")
-    @Operation(summary = "Search products in a Store snapshot with snapshot utility and current placement eligibility")
+    @Operation(operationId = "layoutSnapshotProducts", summary = "Search products in a Store snapshot with snapshot utility and current placement eligibility")
     public Page<SnapshotProductOption> products(@AuthenticationPrincipal Jwt jwt,
             @RequestParam @Positive int snapshotId,
             @RequestParam(defaultValue = "") String q,
@@ -65,7 +65,7 @@ public class LayoutCampaignController {
     }
 
     @GetMapping("/api/layouts/{id}/preview")
-    @Operation(summary = "Preview placements, current recommendation validity, and snapshot utility")
+    @Operation(operationId = "previewLayout", summary = "Preview placements, current recommendation validity, and snapshot utility")
     public LayoutView preview(@AuthenticationPrincipal Jwt jwt, @PathVariable @Positive long id) {
         return service.preview(jwt, id);
     }

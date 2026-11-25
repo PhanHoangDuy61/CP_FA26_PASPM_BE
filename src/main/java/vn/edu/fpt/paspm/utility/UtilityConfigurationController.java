@@ -17,13 +17,13 @@ public class UtilityConfigurationController {
     @Operation(summary="Read the versioned system lambda policy",description="W2_EXPIRY_SEASON_V1: only lambdaMax; the lower bound is fixed at 0.")
     public LambdaV2 policy() { return service.policy(); }
     @PutMapping("/api/system/utility/lambda-policy") @PreAuthorize("hasRole('SYSTEM_ADMIN')")
-    @Operation(summary="Change lambdaMax without rewriting Store settings or snapshots",description="Body {lambdaMax}. lambdaMin is no longer accepted (400 as an unknown field).")
+    @Operation(operationId="updateLambdaPolicy", summary="Change lambdaMax without rewriting Store settings or snapshots",description="Body {lambdaMax}. lambdaMin is no longer accepted (400 as an unknown field).")
     public LambdaV2 policy(@AuthenticationPrincipal Jwt jwt,@Valid @RequestBody PolicyUpdate request) { return service.updatePolicy(jwt,request); }
     @GetMapping("/api/utility/config") @PreAuthorize("hasAnyRole('STORE_ADMIN','MERCHANDISER')")
     @Operation(summary="Read Store Weight v2 settings (alpha, beta, lambda, salesWindowDays) and the permitted lambda range")
     public ConfigView config(@AuthenticationPrincipal Jwt jwt) { return service.config(jwt); }
     @PutMapping("/api/utility/config") @PreAuthorize("hasRole('MERCHANDISER')")
-    @Operation(summary="Merchandiser sets alpha (expiry) + beta (season) = 1, lambda in [0, lambdaMax] and the sales window N",
+    @Operation(operationId="updateUtilityConfig", summary="Merchandiser sets alpha (expiry) + beta (season) = 1, lambda in [0, lambdaMax] and the sales window N",
         description="400 when alpha + beta != 1 or lambda is outside [0, lambdaMax]. Removed fields (enableStock/enableExpiry/enableSeason/gamma) are rejected as unknown.")
     public ConfigView config(@AuthenticationPrincipal Jwt jwt,@Valid @RequestBody WeightUpdate request) { return service.weights(jwt,request); }
 }

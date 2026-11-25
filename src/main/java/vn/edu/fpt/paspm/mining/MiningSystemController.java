@@ -32,6 +32,7 @@ public class MiningSystemController {
     public record ManualRequest(@NotNull @Positive @JsonDeserialize(using=StrictIntegerDeserializer.class) Integer storeId,
         @NotNull @Positive @JsonDeserialize(using=StrictIntegerDeserializer.class) Integer snapshotId,@NotNull UUID requestKey) {}
     @PostMapping("/requests") @ResponseStatus(HttpStatus.ACCEPTED)
+    @Operation(operationId = "createSystemMiningRequest")
     public MiningContracts.RequestView create(@AuthenticationPrincipal Jwt jwt,@Valid @RequestBody ManualRequest request) {
         return mining.createAdministrative(jwt,request.storeId(),request.snapshotId(),request.requestKey());
     }
@@ -40,7 +41,7 @@ public class MiningSystemController {
         read(jwt,SystemStoreReadPolicy.Route.SNAPSHOTS,storeId);
         return mining.snapshotsForStore(storeId,page,pageSize);
     }
-    @GetMapping("/stores/{storeId}/requests") @Operation(summary="System Admin: list a Store's mining requests, newest first, including scheduled ones (decision D1)")
+    @GetMapping("/stores/{storeId}/requests") @Operation(operationId="listSystemStoreMiningRequests", summary="System Admin: list a Store's mining requests, newest first, including scheduled ones (decision D1)")
     public MiningContracts.Page<MiningContracts.RequestView> requests(@AuthenticationPrincipal Jwt jwt,@PathVariable @Positive int storeId,@RequestParam(defaultValue="0") int page,@RequestParam(defaultValue="20") int pageSize) {
         read(jwt,SystemStoreReadPolicy.Route.REQUESTS,storeId);
         return mining.requestsForStore(storeId,page,pageSize);

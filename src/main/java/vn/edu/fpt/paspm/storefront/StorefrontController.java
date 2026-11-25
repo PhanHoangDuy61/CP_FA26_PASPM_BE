@@ -40,7 +40,7 @@ public class StorefrontController {
     }
 
     @GetMapping("/api/storefront/{storeSlug}/products")
-    @Operation(summary = "Search and page through ACTIVE public products", security = {})
+    @Operation(operationId = "listStorefrontProducts", summary = "Search and page through ACTIVE public products", security = {})
     @SecurityRequirements
     public StorefrontProductPage products(@PathVariable String storeSlug,
             @RequestParam(defaultValue = "") String search,

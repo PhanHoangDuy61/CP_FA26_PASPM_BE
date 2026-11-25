@@ -1,5 +1,7 @@
 # F07/F08 React / TypeScript integration handoff
 
+**OpenAPI client generation:** snapshot Product search uses the explicit ID `layoutSnapshotProducts`. The other renamed generated methods are listed in [ROC-20261125-010](../record-of-changes/2026-11-25/10-f07-openapi-annotations.md). F07 placement validation and response payloads are unchanged.
+
 This handoff is for frontend integration with the current backend contract; it does not implement the UI. See the [F07/F08 API contract](../api/F07_F08_LAYOUT_CAMPAIGN_API.md) for all operations, fields, metrics, and lifecycle rules. Authenticate through the existing F01 flow and send the bearer token. The backend derives Store scope from the token; never send a Store ID.
 
 ## Roles and workflow

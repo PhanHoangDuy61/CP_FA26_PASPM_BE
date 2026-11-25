@@ -1,5 +1,11 @@
 # API Changelog
 
+## 2026-11-25 — Stable operation IDs and F07 placement schema
+
+- `GET /api/layouts/products` explicitly uses `layoutSnapshotProducts`. See [ROC-20261125-010](../record-of-changes/2026-11-25/10-f07-openapi-annotations.md) for all 47 prior runtime IDs and replacements. Regenerated client method names can change.
+- The F07 request schema now declares the four editable zones, positive required placement coordinates and nullable provenance. The response schema declares nullable provenance and its legacy alias.
+- OpenAPI remains at **112 paths / 139 operations**. HTTP routes, validation and responses are unchanged.
+
 ## 2026-11-25 — OpenAPI synchronization on dev `cded4ab`
 
 - Documentation only. The committed and runtime exports both contain **112 paths / 139 operations**.
