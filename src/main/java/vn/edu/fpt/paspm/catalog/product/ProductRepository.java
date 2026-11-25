@@ -95,7 +95,7 @@ public class ProductRepository {
     public boolean update(int storeId, int id, String name, Integer categoryId, String unit,
                           boolean requiresExpiry, java.math.BigDecimal sellingPrice,
                           java.math.BigDecimal costPrice, String status) {
-        return update(storeId,id,name,categoryId,unit,requiresExpiry,sellingPrice,costPrice,status,null,null);
+        return update(storeId, id, name, categoryId, unit, requiresExpiry, sellingPrice, costPrice, status, null, null);
     }
 
     public boolean update(int storeId, int id, String name, Integer categoryId, String unit,

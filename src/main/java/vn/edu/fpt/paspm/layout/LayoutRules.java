@@ -42,6 +42,7 @@ public class LayoutRules {
         return capacityErrors(blocks);
     }
 
+    /** F09 renders an active layout only when every zone has a configured cap (DEC-20261119-03). */
     public void requireConfiguredPublicCapacities() {
         for (RecType type : RecType.values()) {
             String zone = zone(type);

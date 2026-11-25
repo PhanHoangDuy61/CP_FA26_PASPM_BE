@@ -12,9 +12,15 @@ Canonical contract locations stay stable in this directory. `CURRENT` describes 
 | F05 | [Mining](F05_MINING_API.md) | Current EFIM numeric contract includes lossless per-TU/per-Product-TWU/minUtil int32 checks and an int64 global total; this change is local/unpublished | [F05](../frontend_handoff/F05_HANDOFF.md) |
 | F06 | [Recommendation](F06_RECOMMENDATION_API.md) | Current Backend v1.1 contract + W2; frozen evidence reader validates exact int64 mining totals; historical test statements retain dates | [F06](../frontend_handoff/F06_HANDOFF.md) |
 | F07/F08 | [Layout and Campaign](F07_F08_LAYOUT_CAMPAIGN_API.md) | Layout detail and offline reports expose frozen-snapshot priority coverage on this feature branch | [F07/F08](../frontend_handoff/F07_F08_HANDOFF.md) |
-| F09 | [Public Storefront](F09_STOREFRONT_API.md) | MVP public projection; public Store visibility is opt-in; active homepage needs configured layout caps | [F09](../frontend_handoff/F09_HANDOFF.md) |
+| F09 | [Public Storefront](F09_STOREFRONT_API.md) | MVP public projection; ACTIVE Stores only, by `store.slug`; active homepage needs configured layout caps | [F09](../frontend_handoff/F09_HANDOFF.md) |
 
 [OpenAPI export](openapi.json) (historical counts: 96 paths / 114 operations at the F07/F08 merge, 98 / 116 at F05 Checkpoint 1; current counts below). The export's server entry is the local test origin; configure the target origin in the integration environment. The session changes are uncommitted. Earlier operation counts are historical evidence, not the current export. Role prose still needs source-based interpretation; use the [RBAC matrix](F01_F02_RBAC_MATRIX.md). [RBAC matrix](F01_F02_RBAC_MATRIX.md) and [integration notes](F03_V12_F05_F06_INTEGRATION.md) have review notices. [API changelog](API_CHANGELOG.md) remains append-only history.
+
+## 2026-11-25 F09 Storefront merge export
+
+Branch `Khoi/merge/f09-storefront-be` (F09 branch `Duy/Feature/F09_Storefront` + `dev` `516183d`): **112 paths / 139 operations**. Against `dev` (113 / 140, which already had the old F09 merge `68d6f0b`): −1 path, −1 operation (`PUT /api/system/stores/{storeId}/storefront-visibility`). The four anonymous F09 GETs `/api/storefront/stores`, `/{storeSlug}/home`, `/{storeSlug}/products`, `/{storeSlug}/products/{productId}` stay.
+- Removed schemas: `VisibilityRequest`, `VisibilityView`. Changed: `ProductCard.availability` enum `AVAILABLE | UNAVAILABLE` → `AVAILABLE | OUT_OF_STOCK`; the `/stores` and `/home` summaries; descriptions on `ProductRequest.imageUrl`/`description` (DEC-20261125-04).
+- The runtime `/v3/api-docs` was taken through `-Dpaspm.test.export-openapi=true` on `TransactionExcelImportIntegrationTest`, and only these F09 changes were applied; the rest of the file is byte-identical to `dev`. Pre-existing runtime-vs-file differences on `dev` were left as they are: `servers`, the `Idempotency-Key` `minLength` of `/api/transactions/imports/csv/async`, and F07 items (`PlacementRequest` zone enum/required list and `sourceRecommendationId` type, `PlacementView` descriptions and `recommendationId`, `SavePlacementsRequest.placements.minItems`, the `/api/layouts/products` operationId and responses, the `/placements` and `/ready` summaries).
 
 ## 2026-11-24 F02 expiry / push-day / product-delete export
 
@@ -40,9 +46,9 @@ Current F01 reconciliation (2026-11-12): preserves published dev V20/AuthSession
 
 **Branch `Khoi/feat/f05-progress-f03-weight-v2` @ `c8c837a` (historical): 102 paths, 124 operations** (F01 27, F02 15, F03 20, F04 8, F05 26, F06 8, F07/F08 20), regenerated through the MockMvc export hook of `RecommendationIntegrationTest`; adds the 8 F03 season operations. Every one of the 124 operations is named in a contract in this folder; the only documented route absent from the export is `GET /api/utility/snapshots`, listed as NOT IMPLEMENTED. This is not an interactive Swagger UI execution.
 
-## 2026-11-20 F09 local feature-branch export
+## 2026-11-20 F09 feature-branch export (historical)
 
-The checked-in export is **105 paths / 126 operations**, including five F09 operations. It was captured from Springdoc through the MockMvc OpenAPI export hook and parsed as JSON. F09 route presence and public Product schema fields are also asserted by `StorefrontIntegrationTest`; this is not a live Swagger UI or deployment check.
+The unmerged branch `Duy/Feature/F09_Storefront` exported 105 paths / 126 operations on its older base, including five F09 operations (four public GETs and the SYSTEM_ADMIN visibility PUT, removed in the merge below).
 
 ## 2026-11-16 export update
 The follow-up export has **103 paths / 125 operations**, adding DELETE `/api/inventory-batches/{id}/push-day` to the 102/124 baseline. Recommendation views include `seasonEnded` and `endedSeasons`; all local schema references resolve.

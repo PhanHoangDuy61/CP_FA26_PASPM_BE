@@ -60,7 +60,7 @@ PASPM is **one web application**: a React single-page app and a single Spring Bo
 | 14 | Layout & campaign | Baseline A, layout B revisions, zone policy, utility score, campaign lifecycle, offline replay simulation, active-layout projection | DONE (API); frozen priority coverage implemented on the feature branch |
 | 15 | Persistence | Hybrid: JPA for products and categories, JDBC (`JdbcTemplate`) for everything else | DONE |
 | 16 | Deployment / legacy recovery | Flyway callback and recovery of legacy utility-matrix data | DONE |
-| 17 | Storefront public API | Anonymous read by `storeSlug` | **PLANNED** (F09) |
+| 17 | Storefront public API | Anonymous read by `storeSlug` (= `store.slug`), ACTIVE Stores only, non-deleted ACTIVE products | DONE (API, MVP; DEC-20261125-04) |
 | 18 | Cart service plus `storefront_event` | Customer cart, atomic bundle add, event log | **PLANNED** (F10) |
 | 19 | Dashboard | Aggregates for F11: snapshot weighted utility, `comparison_report` results, `storefront_event` bundle counts | **PLANNED**, MVP scope decided 2026-11-19 |
 
@@ -81,7 +81,8 @@ Root package: `vn.edu.fpt.paspm`. Java migrations live in `db.migration`.
 | `security` | Shared | 5 | JWT, RBAC, rate limits, the central Store status guard (`StoreStatusGuard`) |
 | `common` | Shared | 7 | Errors, shared contracts, transaction manager. `common.media`: `MediaStorage` / `LocalMediaStorage` (Store images, avatars) |
 | `deployment` | Ops | 5 | Flyway callback, legacy recovery |
-| *(planned)* `storefront`, `cart`, `dashboard` | F09–F11 | — | **PLANNED.** F09 reuses the layout and recommendation projections through a separate public controller |
+| `storefront` | F09 | `StorefrontController`, `StorefrontService`, `StorefrontRepository` | DONE (MVP). Separate public controller; reads the active selected layout and rechecks recommendation blocks |
+| *(planned)* `cart`, `dashboard` | F10–F11 | — | **PLANNED** |
 
 Dependency rules:
 - Downstream modules read upstream data through **frozen artifacts**: F05 reads the snapshot, F06 reads the run and its patterns, F07/F08 read the recommendations and snapshot. They never read live mutable data for historical results.
@@ -119,7 +120,7 @@ sequenceDiagram
 
 ### 5.1 Migrations
 
-Never edit V1–V26. New schema always goes in V27 or later (V27 is taken by Store management, V28 by product soft delete; use V29+ next).
+Never edit V1–V26. New schema always goes in V27 or later (V27 is taken by Store management, V28 by product soft delete, V29 by the old F09 merge on `dev`, V30 by the F09 cleanup, V31 reserved for F10; use V32+ next).
 
 | Version | Purpose |
 |---|---|
@@ -143,6 +144,8 @@ Never edit V1–V26. New schema always goes in V27 or later (V27 is taken by Sto
 | V26 *(Java)* | Drops `product.expiry_push_days`, `stock_priority_score`, `seasonal_priority_score` |
 | V27 *(Java)* | `store`: `slug` (backfilled `slugify(name)-{id}`, then NOT NULL + UNIQUE, random-UUID default for raw inserts), `status`, `address`, `phone`, `icon_key`, `banner_key`, `version`, `created_at`, `updated_at`, `deactivated_at`, `deactivated_by` (FK `app_user`) — DEC-20261123-01 |
 | V28 | `product`: `deleted_at TIMESTAMP NULL`, `deleted_by INT NULL` (FK `app_user`), CHECK both-or-neither, index `(store_id, deleted_at)`. Nothing is backfilled — DEC-20261124-03 |
+| V29 *(Java)* | Old F09 merge on `dev` (`68d6f0b`), kept unchanged: `store.store_slug` (backfilled, unique `uq_store_store_slug`), `store.storefront_enabled BOOLEAN NOT NULL DEFAULT FALSE`, `product.image_url VARCHAR(2048) NULL`, `product.description TEXT NULL` |
+| V30 | Drops `uq_store_store_slug`, `store.store_slug` and `store.storefront_enabled`. F09 uses `store.slug` and `store.status`; `product.image_url`/`description` stay — DEC-20261125-04 (addendum "Migrations") |
 
 ### 5.2 Tables
 
@@ -157,7 +160,7 @@ There are **45 tables**: 31 from V1–V19, plus 2 (V20), 8 (V23) and 4 (V25), wi
 | Mining | `mining_config_head`, `mining_config_version`, `mining_request`, `mining_run`, `high_utility_pattern`, `pattern_item`, `mining_schedule`, `mining_schedule_occurrence` |
 | Recommendation | `recommendation_rule_config`, `recommendation`, `recommendation_item`, `recommendation_source`, `recommendation_review_history` |
 | Layout & campaign | `campaign`, `campaign_history`, `storefront_layout`, `storefront_layout_revision`, `layout_placement`, `comparison_report`, `comparison_report_layout`, `comparison_report_transaction` |
-| *(PLANNED F09/F10)* | Product `image_url` and `description`, cart tables, `storefront_event`. Names are not final (`store.slug` exists since V27) |
+| *(PLANNED F10)* | Cart tables, `storefront_event`. Names are not final |
 
 ### 5.3 Data invariants
 
@@ -229,9 +232,9 @@ flowchart LR
 - **Activation** locks the Store row, rechecks validity, ends the previously active campaign and records history.
 - **Priority coverage (OFFLINE_REPLAY_V4):** distinct displayed products with W > 1 divided by the distinct products displayed. The service reads W from the frozen campaign snapshot and saves the rate and denominator in `comparison_report_layout`. Layout views use their complete placement list, and reports use the actual A prefix and full B. Historical reports are read as stored.
 
-### 6.5 Storefront and cart (F09/F10 — PLANNED)
+### 6.5 Storefront (F09 — DONE, MVP) and cart (F10 — PLANNED)
 
-- A new public read controller resolves `storeSlug` to the Store's active-layout projection. It falls back to the default layout when no campaign is active.
+- `StorefrontController` (anonymous GETs, permitted in `SecurityConfig`) resolves `storeSlug` = `store.slug` of an ACTIVE Store to the active campaign's selected READY layout. With no ACTIVE campaign it returns `DEFAULT_CATALOG` (ACTIVE, non-deleted products by category), not baseline A.
 - Public DTOs carry no cost or batch data. `availability` is computed with aggregate queries.
 - The cart is per customer and per Store. It carries a version and supports idempotent adds.
 - Adding a bundle is one transaction: recheck → insert lines → write a `storefront_event` row.
