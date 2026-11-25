@@ -12,10 +12,7 @@
 | Synced with | `dev` @ `636952b` (2026-11-20): F02 update `d22f735`; PR #20 (decisions); PR #21 (F04 Excel); PR #22 (zone caps, top-K baseline, equal-size simulation, DEC-20261119-06); PR #23 (SPMF whole-đồng fallback, DEC-20261119-05); PR #25 (agent kit). Checked for these changes only, not a full re-audit |
 | Companion files | [SRS.md](SRS.md) · [ARCHITECTURE_SDD.md](ARCHITECTURE_SDD.md) · [GLOSSARY.md](GLOSSARY.md) |
 
-> **Source precedence.** When sources disagree, a higher item overrides a lower one:
-> 1. Owner decisions in `docs/decisions/` and the merged code on `dev`.
-> 2. `FA26_SE048.pdf`, the supervisor-approved brief.
-> 3. Reports 1–4, which are partly outdated. Items they get wrong are listed in §10.
+> **Source of truth** ([DEC-20261125-02](../decisions/2026-11-25/DEC-20261125-02-source-of-truth-latest-po-decision.md)). The latest PO decision wins: a DEC file in `docs/decisions/`, or an explicit PO answer in the session (recorded as a DEC). The merged code on `dev`, these documents and `FA26_SE048.pdf` (the supervisor-approved brief) are evidence; none of them wins automatically. When they disagree, report the difference and ask the PO; after the decision, update the docs (and the code if needed) and record a DEC. Reports 1–4 are partly outdated; items they get wrong are listed in §10.
 >
 > Anything marked **TBD** has not been decided. Ask the owner; do not guess.
 
