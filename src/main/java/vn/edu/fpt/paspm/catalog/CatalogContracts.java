@@ -32,10 +32,12 @@ public final class CatalogContracts {
             @NotNull @PositiveOrZero BigDecimal sellingPrice,
             @NotNull @PositiveOrZero BigDecimal costPrice,
             @NotBlank @Schema(allowableValues = {"ACTIVE", "INACTIVE"}) String status,
-            @Size(max = 2048) String imageUrl,
-            @Size(max = 2000) String description,
             @Schema(description = "Set true only after confirming the similar-name warning returned with 409")
-            Boolean confirmSimilarName) {}
+            Boolean confirmSimilarName,
+            @Size(max = 2048) @Schema(description = "Optional absolute HTTP(S) image URL for F09 display (no upload)")
+            String imageUrl,
+            @Size(max = 2000) @Schema(description = "Optional display description for F09")
+            String description) {}
 
     public record ProductView(
             @Schema(accessMode = Schema.AccessMode.READ_ONLY, description = "Database-generated product ID")

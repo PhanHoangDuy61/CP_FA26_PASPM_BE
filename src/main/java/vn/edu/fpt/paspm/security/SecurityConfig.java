@@ -108,11 +108,12 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        // DEC-20261123-01 §5: current branding images of ACTIVE Stores (GET only).
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/public/stores/*/images/*").permitAll()
+                        // F09 public storefront (anonymous, read-only; only ACTIVE Stores are resolved by slug)
                         .requestMatchers(org.springframework.http.HttpMethod.GET,
                                 "/api/storefront/stores", "/api/storefront/*/home",
                                 "/api/storefront/*/products", "/api/storefront/*/products/*").permitAll()
-                        // DEC-20261123-01 §5: current branding images of ACTIVE Stores (GET only).
-                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/public/stores/*/images/*").permitAll()
                         .requestMatchers("/api/system/mining/**").hasRole("SYSTEM_ADMIN")
                         .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/mining/requests").hasRole("MERCHANDISER")
                         .requestMatchers(

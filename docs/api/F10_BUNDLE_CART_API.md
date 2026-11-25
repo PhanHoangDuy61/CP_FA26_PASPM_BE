@@ -1,6 +1,6 @@
 # F10 — Bundle Cart API
 
-**Status: PLANNED.** Illustrative request and response JSON. Decision: [DEC-20261125-06](../decisions/2026-11-25/DEC-20261125-06-f10-f11-mvp-contract.md). The F09 baseline is branch `origin/Khoi/merge/f09-storefront-be`. F10 targets V31 after F09 V30.
+**Status: PLANNED.** Illustrative request and response JSON. Decision: [DEC-20261125-06](../decisions/2026-11-25/DEC-20261125-06-f10-f11-mvp-contract.md). The F09 baseline is [the storefront contract on dev](F09_STOREFRONT_API.md) and its [StorefrontService](../../src/main/java/vn/edu/fpt/paspm/storefront/StorefrontService.java), merged in PR #33. Dev keeps V29 and applies F09 V30. F10 targets V31. Migrations after V31 start at V32.
 
 ## Access and Store isolation
 

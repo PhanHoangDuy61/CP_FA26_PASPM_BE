@@ -4,17 +4,17 @@ The public storefront is anonymous and read-only. Staff routes remain protected.
 
 ## Base URL and public access
 
-- `GET /api/storefront/stores` returns enabled Stores only, as `{storeSlug,name}`. There is no public Store id.
+- `GET /api/storefront/stores` returns ACTIVE Stores only, as `{storeSlug,name}`. `storeSlug` is the Store's `slug` from Store management (DEC-20261123-01). There is no public Store id.
 - Public paths require no bearer token: `GET /api/storefront/{storeSlug}/home`, `/products`, and `/products/{productId}`.
-- `PUT /api/system/stores/{storeId}/storefront-visibility` is SYSTEM_ADMIN-only. It toggles storefront visibility and has no campaign side effect.
-- Unknown and disabled Store slugs intentionally share a 404 response so the API does not reveal the existence of private Stores.
+- A Store is public exactly when it is ACTIVE (DEC-20261125-04). There is **no** storefront visibility endpoint: the System Admin deactivates/reactivates the Store and edits its slug through the existing Store management screens (`/api/system/stores`).
+- Unknown and INACTIVE Store slugs intentionally share a 404 response so the API does not reveal the existence of inactive Stores.
 
 ## Screen checklist
 
 ### Store selection
 
-- [ ] Load enabled Stores and navigate by `storeSlug`.
-- [ ] Show an empty state when no Store has enabled public visibility.
+- [ ] Load ACTIVE Stores and navigate by `storeSlug`.
+- [ ] Show an empty state when no Store is ACTIVE.
 - [ ] Do not depend on Store ids or expose internal Store ids in links.
 
 ### Homepage
@@ -24,34 +24,34 @@ The public storefront is anonymous and read-only. Staff routes remain protected.
 - [ ] Render baseline A as `BASELINE`; do not label it as fallback.
 - [ ] When `fallbackType=DEFAULT_CATALOG`, render category groups and their name-then-productId sorted products.
 - [ ] Render `BUNDLE`, `CROSS_SELL`, `FBT`, `BANNER` and `BASELINE` placement types.
-- [ ] Treat omitted recommendation blocks as no longer eligible; do not infer why from private F06 evidence.
+- [ ] Treat omitted products or blocks as no longer eligible; do not infer why from private F06 evidence.
 - [ ] If an active layout returns `503` because capacities are unconfigured, show a generic unavailable state and retry later. Do not show the internal configuration error to shoppers.
 
 ### Product list and Product Detail
 
 - [ ] Use `search`, `categoryId`, `page`, `pageSize`, `sortBy=name|sellingPrice`, and `sortDirection=asc|desc`.
-- [ ] Render only `AVAILABLE` / `UNAVAILABLE`; never estimate or display stock quantities.
+- [ ] Render only `AVAILABLE` / `OUT_OF_STOCK` (show "Hết hàng" for `OUT_OF_STOCK`); never estimate or display stock quantities.
 - [ ] Render `imageUrl` only as a URL; upload is not supported.
-- [ ] Use `productId` for detail navigation. Cross-Store and inactive Products return 404.
+- [ ] Use `productId` for detail navigation. Cross-Store, INACTIVE and soft-deleted Products return 404.
 - [ ] Do not show SKU, cost, batch/expiry data, F03 scores, utility, or review information.
 
 ### Bundles
 
-- [ ] Treat each `BUNDLE`/`FBT` recommendation placement as a grouped list of public Products.
-- [ ] The backend hides the entire block if its approval/current eligibility or any component fails recheck.
+- [ ] Treat each placement (one zone + block) as a grouped list of public Products; `type` is the zone name.
+- [ ] The backend checks each placed product on its own (F07 product-level Layout B) and drops a block only when none of its products pass.
 - [ ] Cart, quantity selection, reservations, discounts, checkout, payment and order creation are F10/deferred.
 
-### SYSTEM_ADMIN visibility management
+### Store visibility (no separate control)
 
-- [ ] Provide a visibility toggle using `PUT /api/system/stores/{storeId}/storefront-visibility` and body `{"storefrontEnabled":true|false}`.
-- [ ] Hide this control for every role except SYSTEM_ADMIN.
-- [ ] Explain that visibility is not campaign publish/activation.
-- [ ] Confirm the returned stable `storeSlug`; never treat visibility enablement as campaign activation.
+- [ ] Do not build a storefront visibility toggle. Public visibility follows Store status; the existing Store management screen already deactivates/reactivates a Store and edits its slug.
+- [ ] If a slug changes, old links return 404; reload the Store list.
+
+> **Breaking vs current `dev` (old F09 merge `68d6f0b`, 2026-11-21):** `PUT /api/system/stores/{storeId}/storefront-visibility`, its `{"storefrontEnabled":…}` body and the `store_visibility_not_found_error.json` example are removed; V30 drops `store.store_slug` and `store.storefront_enabled`. Example slugs no longer carry a hash suffix because they are ordinary Store slugs. `availability` value `UNAVAILABLE` is renamed to `OUT_OF_STOCK` (FR-09.3, PO review 2026-11-25).
 
 ## Public models
 
 ```ts
-export type Availability = 'AVAILABLE' | 'UNAVAILABLE';
+export type Availability = 'AVAILABLE' | 'OUT_OF_STOCK';
 export interface PublicStore { storeSlug: string; name: string }
 export interface ProductCard {
   productId: number; name: string; description: string | null; imageUrl: string | null;
@@ -63,7 +63,7 @@ export interface StorefrontProductPage {
   items: ProductCard[]; page: number; pageSize: number; totalElements: number;
 }
 export interface HomePlacement {
-  type: 'BASELINE' | 'BUNDLE' | 'CROSS_SELL' | 'FBT' | 'BANNER';
+  type: 'BUNDLE' | 'CROSS_SELL' | 'FBT' | 'BANNER'; // the zone name
   blockNo: number; startPosition: number; products: ProductCard[];
 }
 export interface HomeZone { name: string; placements: HomePlacement[] }

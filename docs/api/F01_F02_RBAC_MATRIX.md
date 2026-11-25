@@ -119,10 +119,9 @@ Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and fea
 | F06 Read recommendation policy | GET `/api/recommendations/config` | Forbidden | Allowed, own Store | Allowed, own Store | Forbidden |
 | F06 Update recommendation policy | PUT `/api/recommendations/config` | Forbidden | Allowed, own Store; expectedVersion required | Forbidden | Forbidden |
 | F06 Independent expiry push | GET `/api/recommendations/expiry-push` | Forbidden | Allowed, own Store | Allowed, own Store | Forbidden |
-| F09 public Store list | GET `/api/storefront/stores` | Public, enabled Stores only | Public | Public | Public |
-| F09 public Homepage | GET `/api/storefront/{storeSlug}/home` | Public; hidden/unknown slug → 404 | Public | Public | Public |
-| F09 public Product list/detail | GET `/api/storefront/{storeSlug}/products[/{productId}]` | Public; only ACTIVE Products in that storefront Store | Public | Public | Public |
-| F09 visibility toggle | PUT `/api/system/stores/{storeId}/storefront-visibility` | Allowed; changes visibility only | Forbidden | Forbidden | Forbidden |
+| F09 public Store list | GET `/api/storefront/stores` | Public, ACTIVE Stores only | Public | Public | Public |
+| F09 public Homepage | GET `/api/storefront/{storeSlug}/home` | Public; INACTIVE/unknown slug → 404 | Public | Public | Public |
+| F09 public Product list/detail | GET `/api/storefront/{storeSlug}/products[/{productId}]` | Public; only ACTIVE, non-deleted Products of that ACTIVE Store | Public | Public | Public |
 
 ## Authorization details
 
@@ -130,7 +129,7 @@ Role is global to the account; `STORE_ADMIN` and `MERCHANDISER` have a `store_id
 
 F01 `/api/users` is global System Admin administration, so it can list/read/manage accounts across Stores. F02 does **not** grant System Admin access: Product/Category GET list/detail permits Store Admin/Merchandiser, while all mutations and inventory endpoints stay StoreAdmin-only, even though the shared StoreScope helper contains a System Admin branch. Do not infer endpoint permission from helper behavior alone.
 
-F09 public GET routes are explicitly permitted without a JWT and resolve Store scope only by an enabled public slug. They return a separate public DTO; the SYSTEM_ADMIN visibility route is not a campaign publishing or activation API.
+F09 public GET routes are explicitly permitted without a JWT (`security/SecurityConfig.java`) and resolve Store scope only by the slug of an ACTIVE Store (DEC-20261125-04). They return a separate public DTO. There is no F09 write route; Store status and slug are managed through F01 Store management.
 
 F03 policy routes are explicitly System Admin-only. F03 Store settings use distinct permissions: Store Admin owns batch `pushDay`; Merchandiser changes enabled criteria, coefficients and selected lambda. Both can read the combined Store config. Product score reads permit both Store roles; score PATCH and Preview/snapshot operations remain Merchandiser-only. Current score reads return E/W without transaction history; invalid current lambda yields200 with ready=false/weightValue=null rather than clamping. All Store-bound F03 calls derive Store identity from the authenticated user; request bodies and query strings cannot select another Store. A tightened lambda policy leaves existing Store configuration unchanged and is surfaced through `lambdaValid=false`; Preview/Snapshot rejects the stale lambda with 409 until a Merchandiser updates it.
 

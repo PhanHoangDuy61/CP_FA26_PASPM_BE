@@ -7,6 +7,12 @@ import java.text.Normalizer;
 import java.util.HexFormat;
 import java.util.Locale;
 
+/**
+ * Slug generator used <b>only</b> by the frozen Flyway migration {@code V29__f09_storefront} (old F09 merge on dev).
+ * Runtime storefront lookup uses {@code store.slug} from V27 (DEC-20261123-01, DEC-20261125-04); the
+ * {@code store.store_slug} column this fills is dropped by V30. Do not change the algorithm: V29 must behave the same
+ * on every fresh database.
+ */
 public final class StoreSlug {
     private StoreSlug() {}
 

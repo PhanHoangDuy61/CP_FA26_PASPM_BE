@@ -69,9 +69,9 @@ UC03 and UC22 were removed earlier, and their numbers are not reused.
 | 23 | Activate Approved Campaign | Store Admin | F08 | DONE (API) | Also **end** and **rollback** |
 | 24 | View Retail Performance Dashboard | Store Admin, Merch | F11 | PLANNED | MVP scope decided 2026-11-19 (see FR-11.1) |
 | 25 | View A/B Reports | Store Admin, Merch | F08/F11 | DONE (API read) | Reports are immutable |
-| 26 | View Merchandising Homepage | End Customer / guest | F09 | PLANNED | MVP: anonymous, by `storeSlug` |
-| 27 | View Product Details / Related | End Customer / guest | F09 | PLANNED | Related products come after the MVP |
-| 28 | View Recommended Bundles | End Customer / guest | F09 | PLANNED | Only APPROVED and ready bundles |
+| 26 | View Merchandising Homepage | End Customer / guest | F09 | DONE (API, MVP) | Anonymous, by `storeSlug` = `store.slug`; ACTIVE Stores only (DEC-20261125-04). Frontend still mock |
+| 27 | View Product Details / Related | End Customer / guest | F09 | PARTIAL (API) | Product list and detail done; related products come after the MVP |
+| 28 | View Recommended Bundles | End Customer / guest | F09 | DONE (API, MVP) | Bundles are rendered as homepage placements; only APPROVED blocks whose components are all still sellable |
 | 29 | Add Whole Bundle to Cart | End Customer | F10 | PLANNED | Login required. Skips unavailable components. No reservation |
 | 30 | Validate / Preprocess Orders | (included in UC21) | F04 | DONE | — |
 | 31 | Create Frozen Utility Snapshot | Merch | F03 | DONE | Freezes W2 inputs, seasons and warnings |
@@ -225,12 +225,12 @@ Each line gives the behaviour an agent must preserve. Exact request and response
   - returns `simulated:true`.
 - FR-08.4: Every operation is synchronous. No polling.
 
-### F09 — Storefront (PLANNED, MVP draft v2)
+### F09 — Storefront (DONE API, MVP)
 
-- FR-09.1: Public read API, separate from the staff API, keyed by `storeSlug`. No login needed.
+- FR-09.1: Public read API, separate from the staff API, keyed by `storeSlug` = `store.slug` (V27). No login needed. A Store is public exactly when it is ACTIVE; there is no separate visibility switch (DEC-20261125-04). Unknown or INACTIVE Store → 404.
 - FR-09.2: The homepage renders the zones of the **active** campaign layout in placement order. With no active campaign it falls back to the default layout. Draft and ended layouts are never shown.
-- FR-09.3: Product detail and the bundle list. Bundles are APPROVED and ready. A bundle with an invalid component is hidden. An out-of-stock product shows `OUT_OF_STOCK`.
-- FR-09.4: No admin fields (cost, batches) in public DTOs. The product gets `image_url` and `description` columns through a new migration.
+- FR-09.3: Product detail and the bundle list. Bundles are APPROVED and ready. A bundle with an invalid component is hidden. An out-of-stock product shows `OUT_OF_STOCK`: the public `availability` is `AVAILABLE | OUT_OF_STOCK` (PO review 2026-11-25, DEC-20261125-04 addendum). Soft-deleted and INACTIVE products are never public (DEC-20261124-03); a batch is sellable on its expiry date (DEC-20261124-01).
+- FR-09.4: No admin fields (cost, batches) in public DTOs. The product gets `image_url` and `description` columns in **V29** (V30 drops the Store columns V29 also added); F02 `ProductRequest`/`ProductView` accept and return them (`imageUrl` absolute HTTP(S) only).
 
 ### F10 — Bundle cart (PLANNED)
 
@@ -275,7 +275,7 @@ BR-01 to BR-13 keep Report 3 numbering. BR-14 onward are new proposals in this d
 | BR-22 | Layout utility score is a snapshot priority score, not revenue or profit | New |
 | BR-23 | A priority product is one with W > 1 in the layout's snapshot | Implemented on the feature branch |
 | BR-24 | Scheduled-mining enable returns 503 until release sign-off | New |
-| BR-25 | (F09, planned) Only the active campaign layout is public. Public DTOs never expose cost or batch data | Planned |
+| BR-25 | (F09) Only the active campaign layout of an ACTIVE Store is public. Public DTOs never expose cost or batch data | Valid (DEC-20261125-04) |
 | BR-26 | (F10, planned) Bundle add merges currently eligible Product lines. Each line is independently editable and removable. No reservation or discount | DEC-20261125-06, PLANNED |
 | BR-27 | A Store name is unique after trimming, ignoring case (service rule; no database UNIQUE yet) | New (DEC-20261123-01) |
 | BR-28 | A Store slug is unique and only a System Admin sets or changes it | New (DEC-20261123-01) |
@@ -290,10 +290,10 @@ BR-01 to BR-13 keep Report 3 numbering. BR-14 onward are new proposals in this d
 ### 5.1 External interfaces
 
 - **Web SPA:** React and TypeScript, desktop and mobile widths from 320 to 1440 px.
-- **REST/JSON API:** Bearer JWT plus refresh cookie and CSRF. Errors are returned as `{"error":"…"}`. **123 operations / 102 paths** at `222e54f`, with F09–F11 not yet included. Swagger is at `/swagger`.
+- **REST/JSON API:** Bearer JWT plus refresh cookie and CSRF. Errors are returned as `{"error":"…"}`. **139 operations / 112 paths** with F09 (branch `Khoi/merge/f09-storefront-be`; `dev` had 140 / 113 with the old F09 visibility route); F10–F11 not yet included. Swagger is at `/swagger`.
 - **Identity and email:** Google Identity for sign-in, SMTP for OTP (Mailpit in development).
 - **Mining runtime:** SPMF 2.67a on Java 25, pinned by SHA-256.
-- **Database:** MySQL 8.4 with Flyway **V1–V26**. H2 is used for some automated tests.
+- **Database:** MySQL 8.4 with Flyway **V1–V30** (V27 Store management, V28 product soft delete, V29 F09 storefront from the old `dev` merge, V30 drops its unused Store columns; V31 reserved for F10). H2 is used for some automated tests.
 
 ### 5.2 Limits
 
@@ -395,7 +395,8 @@ Changes against Report 3 §3.1.2:
 | F05 | 04–07, 33 | `F05_MINING_API.md` | `F05_HANDOFF.md` |
 | F06 | 10, 11 | `F06_RECOMMENDATION_API.md` | `F06_HANDOFF.md` |
 | F07/F08 | 12–16, 23, 25 | `F07_F08_LAYOUT_CAMPAIGN_API.md` | `F07_F08_HANDOFF.md` |
-| F09/F10 | 26–29 | plan drafts `F09_STOREFRONT_PLAN_API_SCREENS.md`, `F10_BUNDLE_CART_PLAN_API_SCREENS.md` | — |
+| F09 | 26–28 | `F09_STOREFRONT_API.md` | `F09_HANDOFF.md` |
+| F10 | 29 | plan draft `F10_BUNDLE_CART_PLAN_API_SCREENS.md` (outside the repo) | — |
 | F11 | 24 | — | — |
 
 ## 10. Report 3 items superseded

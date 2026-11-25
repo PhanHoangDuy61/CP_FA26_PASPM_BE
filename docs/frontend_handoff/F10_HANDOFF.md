@@ -1,6 +1,6 @@
 # F10 — Bundle Cart frontend handoff
 
-**Status: PLANNED.** Use fixtures during FE development until the [F10 API](../api/F10_BUNDLE_CART_API.md) is available. Use the F09 runtime contract from its integration branch. Public browsing can precede login. When a guest tries to add or view the cart, send them to F01 login and return to the same Store. Fetch server state before asking them to submit again.
+**Status: PLANNED.** Use fixtures during FE development until the [F10 API](../api/F10_BUNDLE_CART_API.md) is available. Use the [F09 API](../api/F09_STOREFRONT_API.md) and [F09 handoff](F09_HANDOFF.md) on dev (PR #33). The public Store is ACTIVE and addressed by `store.slug`. Product availability is `AVAILABLE | OUT_OF_STOCK`. The F10 bundle key is a planned extension to F09 home. Public browsing can precede login. When a guest tries to add or view the cart, send them to F01 login and return to the same Store. Fetch server state before asking them to submit again.
 
 ## Draft TypeScript types
 

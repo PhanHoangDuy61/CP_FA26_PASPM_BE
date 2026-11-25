@@ -1,5 +1,16 @@
 # API Changelog
 
+## 2026-11-25 — F09 Storefront MVP merged with dev (branch `Khoi/merge/f09-storefront-be`, PR to `dev` pending; replaces the old F09 merge `68d6f0b`)
+
+Rules: [DEC-20261125-04](../decisions/2026-11-25/DEC-20261125-04-f09-public-store-follows-store-status.md), DEC-20261117-03, DEC-20261123-01, DEC-20261124-01, DEC-20261124-03. Contract: [F09_STOREFRONT_API.md](F09_STOREFRONT_API.md). Migrations: **V29** `f09_storefront` from the old F09 merge on `dev` (`68d6f0b`) is kept unchanged; new **V30** drops `store.store_slug` and `store.storefront_enabled`. Original implementation: Duy Phan (`Duy/Feature/F09_Storefront`, 2026-11-21).
+
+- **Added (additive):** anonymous `GET /api/storefront/stores`, `GET /api/storefront/{storeSlug}/home`, `GET /api/storefront/{storeSlug}/products`, `GET /api/storefront/{storeSlug}/products/{productId}`; public schemas `PublicStore`, `StoreSummary`, `ProductCard`, `ProductCategory`, `StorefrontProductPage`, `CatalogCategory`, `HomePlacement`, `HomeZone`, `HomeView`.
+- **Added (additive) to F02:** optional `imageUrl` (absolute HTTP(S), max 2048) and `description` (max 2000) on `ProductRequest`; both returned on `ProductView`. PUT stays a full replacement: omitting them clears them.
+- **Rules:** a Store is public exactly when ACTIVE; `storeSlug` = `store.slug`. `ProductCard.availability` is `AVAILABLE | OUT_OF_STOCK` (FR-09.3; the original branch used `UNAVAILABLE`). INACTIVE and soft-deleted products are never listed, shown or AVAILABLE. A batch is sellable on its expiry date.
+- **Removed (was on `dev` since the direct merge `68d6f0b`):** `PUT /api/system/stores/{storeId}/storefront-visibility` and its `VisibilityRequest`/`VisibilityView` schemas; `store.store_slug` and `store.storefront_enabled` (dropped by V30). Public `availability` `UNAVAILABLE` is replaced by `OUT_OF_STOCK`.
+- **OpenAPI:** `dev` 113 paths / 140 operations → **112 / 139** (visibility route removed; F07 paths from `dev` unchanged).
+- **Breaking for clients:** against current `dev`, the System Admin visibility route is gone, public Stores follow `store.status` instead of the toggle, `storeSlug` is `store.slug`, and `availability` is `AVAILABLE | OUT_OF_STOCK`. No staff route other than the visibility route changes.
+
 ## 2026-11-25 — F07/F08 snapshot priority coverage
 
 - Added coverage and its denominator to LayoutView for A and B. New OFFLINE_REPLAY_V4 reports populate the existing fields from frozen W > 1 and the actual products compared on each side. Historical reports remain as stored. The runtime export confirms the same 113 paths and 140 operations.
