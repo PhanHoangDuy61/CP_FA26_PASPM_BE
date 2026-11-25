@@ -29,3 +29,7 @@
 ## Record 007 — F10/F11 planned contracts and SPMF boundary
 
 [Record 007](07-f10-f11-planned-and-spmf-boundary.md) marks F10/F11 as planned ([DEC-20261125-06](../../decisions/2026-11-25/DEC-20261125-06-f10-f11-mvp-contract.md)) and draws the SPMF process boundary ([DEC-20261125-03](../../decisions/2026-11-25/DEC-20261125-03-spmf-gpl-distribution-and-process-boundary.md)). Documentation only; Maven NOT RUN.
+
+## Record 008 — PO answers: rename, Mermaid archived, FK edges, review
+
+[Record 008](08-po-answers-rename-archive-fk-review.md) applies the PO answers of 2026-11-26 (pack renamed, Mermaid mirrors archived, FK edges drawn) and the page-by-page review fixes. Documentation only; Maven NOT RUN.
