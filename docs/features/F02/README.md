@@ -1,6 +1,6 @@
 # F02 — Product, Category and Inventory
 
-## Current backend update — 2026-11-24 (branch `Khoi/feat/f02-expiry-pushday-product-delete`, PR to `dev` pending)
+## Current backend update — 2026-11-24 (on `dev`, PR #28 / `82b0ced`)
 
 Rules: [DEC-20261124-01](../../decisions/2026-11-24/DEC-20261124-01-batch-expiry-boundary-effective-status.md), [DEC-20261124-02](../../decisions/2026-11-24/DEC-20261124-02-push-day-missing-warning.md), [DEC-20261124-03](../../decisions/2026-11-24/DEC-20261124-03-product-soft-delete.md). Migration V28. Contract: [F02 API](../../api/F02_PRODUCT_INVENTORY_API.md); frontend notes: [F02 handoff](../../frontend_handoff/F02_HANDOFF.md).
 
@@ -15,9 +15,9 @@ Rules: [DEC-20261124-01](../../decisions/2026-11-24/DEC-20261124-01-batch-expiry
 
 ## Current backend follow-up — 2026-11-19
 
-The current branch adds allowlisted/stable sorting for all product-list display fields; database-generated, read-only Product/Batch IDs; Product SKU generation from the database Product ID; backend-generated per-Product batch codes (`BATCH-YYYYMMDD-NNN`); a confirm-and-retry warning for similar product names; and expiry-date correction/clearing for inventory batches. Batch source fields (`batchCode`, `receivedAt`, `initialQuantity`) remain immutable. No migration was needed, and this repository has no frontend UI; see the current [API contract](../../api/F02_PRODUCT_INVENTORY_API.md) and [frontend handoff](../../frontend_handoff/F02_HANDOFF.md).
+On `dev`, `d22f735` added allowlisted/stable sorting for all product-list display fields; database-generated, read-only Product/Batch IDs; Product SKU generation from the database Product ID; backend-generated per-Product batch codes (`BATCH-YYYYMMDD-NNN`); a confirm-and-retry warning for similar product names; and expiry-date correction/clearing for inventory batches. Batch source fields (`batchCode`, `receivedAt`, `initialQuantity`) remain immutable. No migration was needed, and this repository has no frontend UI; see the current [API contract](../../api/F02_PRODUCT_INVENTORY_API.md) and [frontend handoff](../../frontend_handoff/F02_HANDOFF.md).
 
-F09 adds optional Product display metadata in V27: `imageUrl` (absolute HTTP(S), max 2,048 characters) and `description` (max 2,000). F02 returns both fields; image upload is not supported. SKU remains backend-generated and read-only.
+F09 adds optional Product display metadata in V29 (F09, PR #33 / `0ef5a55`): `imageUrl` (absolute HTTP(S), max 2,048 characters) and `description` (max 2,000). F02 returns both fields; image upload is not supported. SKU remains backend-generated and read-only.
 
 > Historical verification record: Backend `dev` @ `11973a0` (merge of PR #11; source tree identical to `a4f1115`, whose code passed the full verification script on `45dbd80`). See the 2026-11-19 follow-up above for current changes and tests.
 
@@ -61,8 +61,8 @@ Store-scoped product catalogue, categories and inventory batches. Stock is never
 
 Foreign or absent records answer 404 after the role gate. Matrix: [RBAC matrix](../../api/F01_F02_RBAC_MATRIX.md).
 
-## 3. Implemented functionality (17 operations)
-Categories 5, products 5 (`GET` list with search/filter/sort/page, detail, create, full update, status), batches 6 (list/create, detail/PATCH, and clear-expiry/clear-push-day DELETE routes), inventory summary 1 — 17 operations total. Product and Category writes use JPA; catalogue reads and inventory use JDBC (hybrid persistence, see [architecture decisions](../../architecture/HYBRID_PERSISTENCE_DECISIONS.md)).
+## 3. Implemented functionality (18 operations)
+Categories 5, products 6 (`GET` list with search/filter/sort/page, detail, create, full update, status, soft delete), batches 6 (list/create, detail/PATCH, and clear-expiry/clear-push-day DELETE routes), inventory summary 1 — 18 operations total. Product and Category writes use JPA; catalogue reads and inventory use JDBC (hybrid persistence, see [architecture decisions](../../architecture/HYBRID_PERSISTENCE_DECISIONS.md)).
 
 ## 4. Business rules
 - SKU is generated as `SKU-` plus the database Product ID padded to 11 digits; clients omit it from create/update requests and treat it as read-only. Batch code is generated as `BATCH-YYYYMMDD-NNN` with a Product-scoped sequence. Similar product names are confirmable warnings, not unique constraints.

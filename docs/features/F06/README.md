@@ -2,7 +2,7 @@
 
 > Last verified Backend: `dev` @ `11973a0` (merge of PR #11; source tree identical to `a4f1115`, whose code passed the full verification script on `45dbd80`). This documentation task ran no new tests.
 
-## Current status — branch `Khoi/feat/f05-progress-f03-weight-v2` (2026-11-15, not merged)
+## Current status on dev — Weight v2 via PRs #18/#19 (`49cb0b8`, `3e438f8`)
 
 Code paths are relative to `src/main/java/vn/edu/fpt/paspm/` on `c8c837a` (code identical to `e38b55f`).
 

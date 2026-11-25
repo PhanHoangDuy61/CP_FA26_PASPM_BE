@@ -1,6 +1,6 @@
 # F01 — Authentication, User Management and Sessions
 
-Current reconciliation: 2026-11-12, based on `dev` `42b8a9c`, preserving its V20 and AuthSessionService. The earlier standalone local session implementation is historical. Current execution status is in the [reconciliation report](../../testing/reports/F01_SESSION_RECONCILIATION_2026-11-12.md); this page does not assert hosted CI or production acceptance.
+On `dev`: session reconciliation merged at `7304e29`, keeping V20/AuthSessionService from `42b8a9c`. Store management (V27) merged in PR #27 (`3d51f5b`). The earlier standalone local session implementation is historical. Current execution status is in the [reconciliation report](../../testing/reports/F01_SESSION_RECONCILIATION_2026-11-12.md); this page does not assert hosted CI or production acceptance.
 
 ## 1. Purpose and scope
 
@@ -20,7 +20,7 @@ Email/password and Google login, OTP self-registration/invitations/reset, passwo
 
 ## 3. Implemented APIs
 
-27 operations: 17 `/api/auth/*`, 9 user operations including avatar, and GET `/api/roles`. Store management (2026-11-23, V27) adds 10 operations and changes the picker additively: see [F01_STORE_MANAGEMENT_API.md](../../api/F01_STORE_MANAGEMENT_API.md).
+38 operations: 17 authentication, 9 user/profile operations (including avatars), GET `/api/roles`, and 11 Store operations (10 added with V27 plus the existing Store picker): see [F01_STORE_MANAGEMENT_API.md](../../api/F01_STORE_MANAGEMENT_API.md).
 
 | Session operation | Authentication | Result |
 |---|---|---|

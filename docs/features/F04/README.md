@@ -14,8 +14,8 @@ File-based import of historical sales into Store-scoped transactions that feed F
 
 The Store comes from the account; a file or request can never choose a Store. Foreign import or transaction ids answer 404. The RBAC matrix gained the six F04 rows in this synchronisation: [RBAC matrix](../../api/F01_F02_RBAC_MATRIX.md).
 
-## 3. Implemented functionality (8 operations)
-`POST /api/transactions/imports/csv` (legacy synchronous, multipart `file`, 201), `POST /api/transactions/imports/csv/async` (multipart `file` + required `Idempotency-Key`, 202), `GET /api/transactions/imports/{id}/progress`, `GET /api/transactions/imports`, `GET /api/transactions/imports/{id}`, `GET /api/transactions/imports/{id}/errors`, `GET /api/transactions`, `GET /api/transactions/{id}`. **Excel upload is not on `dev`**.
+## 3. Implemented functionality (9 operations)
+`POST /api/transactions/imports/csv` (legacy synchronous, multipart `file`, 201), `POST /api/transactions/imports/csv/async` (multipart `file` + required `Idempotency-Key`, 202), `GET /api/transactions/imports/{id}/progress`, `GET /api/transactions/imports`, `GET /api/transactions/imports/{id}`, `GET /api/transactions/imports/{id}/errors`, `GET /api/transactions`, `GET /api/transactions/{id}`. `POST /api/transactions/imports/excel` (synchronous multipart, XLS/XLSX, 201) merged in PR #21 (`222e54f`); async CSV merged at `28a6b27`.
 
 ## 4. Business rules
 - Header exactly `source_order_id,occurred_at,sku,quantity,unit_price,unit_cost,status`; UTF-8; `occurred_at` ISO-8601 with an explicit UTC offset.
@@ -48,7 +48,7 @@ F01 session reconciliation (2026-11-12, dev V20 retained + additive V21): browse
 No Excel endpoint on `dev`; no external ingestion by design; upload is limited to one file per call and 10,000 rows by default; rejected rows are inspectable but not repairable through the API. A processing failure is terminal; a deliberate client retry uses a new idempotency key, while a worker/process interruption is recovered after lease expiry.
 
 ## 11. Pending decisions
-Excel endpoint delivery and merge (tracked on its own branch). No Product Owner decision is pending for CSV.
+External APIs and POS integration remain outside scope.
 
 ## 12. Related diagrams
 [Diagram index](../../diagrams/README.md) and the editable [27-page Draw.io pack](../../diagrams/PASPM_Unified_27_Diagrams_UML2_Editable.drawio) (QA: [UML27 report](../../reports/UML27_DIAGRAM_QA_2026-11-02.md)); relevant pages: Use Case UC21 (includes UC30), AD02 transaction processing, State R2-06.01 (Import Batch) and R2-06.06 (Staging Row), Sequence AD02, Context (S2 flows).

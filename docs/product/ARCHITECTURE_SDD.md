@@ -57,7 +57,7 @@ PASPM is **one web application**: a React single-page app and a single Spring Bo
 | 11 | Schedule dispatcher | Turns due occurrences into a snapshot plus a request (SYSTEM_SCHEDULER principal). Enable returns **503** | PARTIAL |
 | 12 | SPMF child process | Runs EFIM with heap, time, output and log limits. Output limit is enforced by the kernel on Linux and macOS, by polling on Windows | DONE |
 | 13 | Recommendation rules | BUNDLE / CROSS_SELL / FBT / BANNER from frozen evidence, live eligibility and fingerprint | DONE |
-| 14 | Layout & campaign | Baseline A, layout B revisions, zone policy, utility score, campaign lifecycle, offline replay simulation, active-layout projection | DONE (API); frozen priority coverage implemented on the feature branch |
+| 14 | Layout & campaign | Baseline A, layout B revisions, zone policy, utility score, campaign lifecycle, offline replay simulation, active-layout projection | DONE (API); frozen priority coverage merged in PR #32 (`516183d`) |
 | 15 | Persistence | Hybrid: JPA for products and categories, JDBC (`JdbcTemplate`) for everything else | DONE |
 | 16 | Deployment / legacy recovery | Flyway callback and recovery of legacy utility-matrix data | DONE |
 | 17 | Storefront public API | Anonymous read by `storeSlug` (= `store.slug`), ACTIVE Stores only, non-deleted ACTIVE products | DONE (API, MVP; DEC-20261125-04) |
