@@ -26,7 +26,7 @@ GROUPS = {
               "TransactionImportCorrectnessMySqlIntegrationTest", "TransactionRawEvidenceMigrationMySqlTest",
               "TransactionExcelImportMySqlIntegrationTest",
               "RetailCatalogUtilityMySqlIntegrationTest", "MiningMigrationMySqlTest", "StoreMigrationV27MySqlTest",
-              "ProductSoftDeleteV28MySqlTest"],
+              "ProductSoftDeleteV28MySqlTest", "JpaPilotMigrationMySqlTest"],
 }
 
 if __name__ == "__main__":
