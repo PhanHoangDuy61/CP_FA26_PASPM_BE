@@ -22,7 +22,7 @@ GROUPS = {
                 "StoreImageHttpTest", "LocalMediaStorageTest", "MediaFileMissingHttpTest",
                 "LayoutCampaignIntegrationTest",
                 "BatchExpiryRulesTest", "ExpiryBoundaryF03F06Test", "ProductSoftDeleteIntegrationTest", "ProductSoftDeleteV28MigrationTest",
-                "StorefrontIntegrationTest"],
+                "StorefrontIntegrationTest", "SpmfProcessBoundaryTest", "SpmfThirdPartyNoticesTest"],
     "mysql": ["SessionMySqlIntegrationTest", "SessionV21MigrationMySqlTest", "FlywayRecoveryTest", "LegacyRecoveryMySqlTest", "LegacyRecoverySchemaTest",
               "RecommendationMigrationTest", "TransactionImportMySqlIntegrationTest",
               "TransactionImportCorrectnessMySqlIntegrationTest", "TransactionRawEvidenceMigrationMySqlTest",

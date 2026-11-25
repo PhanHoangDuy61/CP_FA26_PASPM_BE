@@ -241,16 +241,7 @@ class MiningMultiJvmMySqlTest {
     interface Condition {boolean check()throws Exception;}
     void waitFor(Condition condition,int millis,String what)throws Exception{long end=System.nanoTime()+TimeUnit.MILLISECONDS.toNanos(millis);while(System.nanoTime()<end){if(condition.check())return;Thread.sleep(20);}fail("Timed out: "+what);}
     void signal(Node n,String signal)throws Exception{assertEquals(0,new ProcessBuilder("kill","-"+signal,Long.toString(n.process.pid())).start().waitFor());}
-    ProcessHandle awaitSpmfChild(Node n)throws Exception{
-        long end=System.nanoTime()+TimeUnit.SECONDS.toNanos(15);
-        var pattern=java.util.regex.Pattern.compile("SPMF_PROCESS_STARTED [^\\n]*pid=([0-9]+)");
-        while(System.nanoTime()<end){
-            var match=pattern.matcher(Files.readString(n.log));long pid=-1;while(match.find())pid=Long.parseLong(match.group(1));
-            if(pid>0){var child=ProcessHandle.of(pid);if(child.isPresent()&&child.get().parent().map(p->p.pid()==n.process.pid()).orElse(false)&&child.get().info().arguments().map(args->Arrays.asList(args).contains("EFIM")).orElse(false))return child.get();}
-            Thread.sleep(1);
-        }
-        throw new AssertionError("actual SPMF child not observed in process log and ancestry");
-    }
+    ProcessHandle awaitSpmfChild(Node n)throws Exception{return SpmfChildProcessSupport.await(n.process,n.log,java.time.Duration.ofSeconds(15));}
     boolean executing(ProcessHandle p){if(!p.isAlive())return false;Path stat=Path.of("/proc",Long.toString(p.pid()),"stat");try{if(Files.exists(stat)&&Files.readString(stat).matches("(?s)^\\d+ \\(.*\\) Z .*"))return false;}catch(Exception ignored){}return true;}
     void saveEvidence()throws Exception{String destination=System.getenv("PASPM_MULTIJVM_EVIDENCE_FILE");if(destination!=null){Path p=Path.of(destination);Files.createDirectories(p.getParent());Files.write(p,evidence,java.nio.file.StandardOpenOption.CREATE,java.nio.file.StandardOpenOption.APPEND);}}
 }

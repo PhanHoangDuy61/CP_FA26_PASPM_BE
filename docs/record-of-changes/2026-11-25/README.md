@@ -1,4 +1,4 @@
-# ROC-20261125 — F07 Layout B editor, Maven Wrapper, demo seed / SKU mapping, F09 Storefront merge, priority coverage and F10/F11 contracts
+# ROC-20261125 — F07 Layout B editor, Maven Wrapper, demo seed / SKU mapping, F09 Storefront merge, priority coverage, F10/F11 contracts and SPMF (GPL v3) CI/CD
 
 2026-11-25 / Asia/Ho_Chi_Minh. Records of this day are delivered through pull requests into `dev` ([DEC-20261119-01](../../decisions/2026-11-19/DEC-20261119-01-dev-changes-only-through-pr.md)).
 
@@ -32,6 +32,18 @@ Release status: **UNRELEASED**, feature branch only. No push.
 ## Record 006 — Frozen snapshot priority coverage
 
 [Record 006](06-f07-f08-priority-coverage.md) records the F07/F08 implementation of DEC-20261117-02 and the approved empty-layout and oversized-B behavior.
+
+## Record 007 — SPMF notices, license in the Docker image, amd64 build, process-boundary guard
+
+[Record 007](07-spmf-gpl-ci-artifact.md) implements [DEC-20261125-03](../../decisions/2026-11-25/DEC-20261125-03-spmf-gpl-distribution-and-process-boundary.md):
+- `THIRD_PARTY_NOTICES.md` and `third_party/spmf/` (GPL v3 text, `SOURCE.md`); the Docker image copies them next to the jar and labels the image;
+- `scripts/staging/build-image.sh` builds `linux/amd64` by default; the build was run on an arm64 Mac without an emulation failure;
+- `SpmfProcessBoundaryTest` and `SpmfThirdPartyNoticesTest`; the rule "SPMF only as a separate process" in `CLAUDE.md`, `AGENTS.md` and both `paspm-context` skills;
+- no API, schema or runtime change.
+
+Backend group: 449 tests, 0 failures. The owner created the Release `spmf-2.67a` (verified from the public API) and set `PASPM_CI_SPMF_ARTIFACT_URL`; still to do: Release immutability (API shows `immutable: false`) and a re-run of the `integration` job.
+
+Record 007 also carries the CI skipped-test policy ([DEC-20261125-05](../../decisions/2026-11-25/DEC-20261125-05-ci-skipped-test-allowlist.md), section 10 of the record).
 
 ## Record 008 — F10/F11 planned MVP contracts
 

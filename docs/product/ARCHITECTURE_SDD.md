@@ -260,7 +260,7 @@ flowchart LR
 | Item | Declaration |
 |---|---|
 | Backend | Java 17 (Temurin), Spring Boot 3.5.7 (Web, Security, OAuth2 Resource Server, JDBC, Data JPA, Mail, Validation), Flyway, springdoc-openapi 2.8.14, Commons CSV 1.14.1 |
-| Mining | SPMF 2.67a, archive SHA-256 `4aa46838…dfe6a`, run on a Java 25 runtime |
+| Mining | SPMF 2.67a (GPL v3), archive SHA-256 `4aa46838…dfe6a`, run on a Java 25 runtime as a **separate process** only; redistributed through the GitHub Release `spmf-2.67a` with its license and source; the Docker image (linux/amd64) carries them in `/opt/paspm/licenses/` (DEC-20261125-03, `THIRD_PARTY_NOTICES.md`) |
 | Frontend | React 19, Vite 8, TypeScript 7, Tailwind CSS 4 (from `package.json` on FE `dev` @ `86d677d`). Branches: FE-FA26 `dev`; `feature/f07-f11-mock` exists only as a local branch (not on `origin`); `origin/feature/fe-v26-integration` (2026-11-19) removes part of the legacy API usage |
 | Database | MySQL 8.4 (local install or Docker Compose). H2 is used in some tests (test scope in `pom.xml`) |
 | CI | GitHub Actions workflow "Backend verification", with jobs "SPMF downloader security", "Java 17 Backend foundation", "MySQL 8.4 / Flyway V1-V11 / F04 transactions", "Full F01-F06 / Flyway / SPMF HUI-Miner-EFIM" (job names not yet updated for EFIM-only) and "Required Backend verification". The `integration` job reads the repository **variable** (not a secret) `PASPM_CI_SPMF_ARTIFACT_URL`. It was recorded as **missing** on 2026-11-16 (ROC-20261116-012); its current value is UNVERIFIED |

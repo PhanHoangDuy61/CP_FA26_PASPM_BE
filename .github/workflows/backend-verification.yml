@@ -165,9 +165,9 @@ jobs:
             -Dlogging.level.root=ERROR
       - name: Validate provisioning safeguards
         run: python3 -m unittest discover -s .github/scripts/tests -p 'test_*.py' -v
-      - name: Publish sanitized counts and reject skipped tests
+      - name: Publish sanitized counts; reject any skip outside .github/scripts/allowed-skips.txt
         if: always()
-        run: python3 .github/scripts/test-summary.py
+        run: python3 .github/scripts/test-summary.py --allowed-skips .github/scripts/allowed-skips.txt --profile pr
   required-verification:
     name: Required Backend verification
     if: always()
