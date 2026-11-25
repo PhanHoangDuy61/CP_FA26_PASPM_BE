@@ -72,7 +72,7 @@ UC03 and UC22 were removed earlier, and their numbers are not reused.
 | 26 | View Merchandising Homepage | End Customer / guest | F09 | DONE (API, MVP) | Anonymous, by `storeSlug` = `store.slug`; ACTIVE Stores only (DEC-20261125-04). Frontend still mock |
 | 27 | View Product Details / Related | End Customer / guest | F09 | PARTIAL (API) | Product list and detail done; related products come after the MVP |
 | 28 | View Recommended Bundles | End Customer / guest | F09 | DONE (API, MVP) | Bundles are rendered as homepage placements; only APPROVED blocks whose components are all still sellable |
-| 29 | Add Whole Bundle to Cart | End Customer | F10 | PLANNED | Login required. Atomic. No reservation |
+| 29 | Add Whole Bundle to Cart | End Customer | F10 | PLANNED | Login required. Skips unavailable components. No reservation |
 | 30 | Validate / Preprocess Orders | (included in UC21) | F04 | DONE | — |
 | 31 | Create Frozen Utility Snapshot | Merch | F03 | DONE | Freezes W2 inputs, seasons and warnings |
 | 32 | Set Global Utility Lambda Policy | SA | F03 | DONE | **λmax only** (range [0, λmax], default 0.5) |
@@ -232,20 +232,18 @@ Each line gives the behaviour an agent must preserve. Exact request and response
 - FR-09.3: Product detail and the bundle list. Bundles are APPROVED and ready. A bundle with an invalid component is hidden. An out-of-stock product shows `OUT_OF_STOCK`: the public `availability` is `AVAILABLE | OUT_OF_STOCK` (PO review 2026-11-25, DEC-20261125-04 addendum). Soft-deleted and INACTIVE products are never public (DEC-20261124-03); a batch is sellable on its expiry date (DEC-20261124-01).
 - FR-09.4: No admin fields (cost, batches) in public DTOs. The product gets `image_url` and `description` columns in **V29** (V30 drops the Store columns V29 also added); F02 `ProductRequest`/`ProductView` accept and return them (`imageUrl` absolute HTTP(S) only).
 
-### F10 — Bundle cart (PLANNED, MVP draft v2)
+### F10 — Bundle cart (PLANNED)
 
-- FR-10.1: Cart:
-  - `END_CUSTOMER` login is required;
-  - one open cart per customer per Store;
-  - optimistic cart version and idempotent adds.
-- FR-10.2: Adding a whole bundle is atomic after rechecking the bundle and each item. No stock reservation, order, payment or discount.
-- FR-10.3: Removing a bundle line removes the whole bundle group.
-- FR-10.4: Each successful cart operation writes exactly one row to `storefront_event`, in the same transaction. Rejected bundle adds are also logged.
+- FR-10.1: END_CUSTOMER login, one persistent cart per customer/Store, a 99-unit cap per Product, current price and stock checked on adds/increases. All mutations require `If-Match`. Stale version returns `409 CART_VERSION_CONFLICT`.
+- FR-10.2: Each BUNDLE block on the active selected Layout B supports a whole-bundle action by opaque `bundleKey`. One click requests one bundle. Add up to the requested quantity, sellable stock available for the increment and remaining capacity under 99 per Product. Report requested and added quantities for every component. If no component can be added, return 409 and record rejection.
+- FR-10.3: Each line is independently editable and removable. No reservation, discount, checkout, order or payment.
+- FR-10.4: Record one event per successful mutation that changes the cart. Record unsuccessful adds when a resolved bundle has no eligible component. Bundle events classify the full block as MINED or MANUAL and store actual units added.
 
-### F11 — Dashboard (PLANNED, MVP scope decided 2026-11-19)
+### F11 — Dashboard (PLANNED)
 
-- FR-11.1: F11 MVP (decided 2026-11-19): for `STORE_ADMIN` and `MERCHANDISER` of the Store, built only from data that already exists — total weighted utility per utility snapshot, A/B simulation results from `comparison_report` (labelled simulated), and bundle add-to-cart counts from `storefront_event` (after F10). No benchmark charts. Detailed spec and screens are still to write.
-- Benchmark charts were dropped together with HUI-Miner.
+- FR-11.1: `/store/dashboard` is shared by `STORE_ADMIN` and `MERCHANDISER` in their own Store. Three independent panels show frozen snapshot utility, stored simulated F08 reports (including priorityCoverage), and successful bundle additions by origin plus total Product units added. Date range defaults to 30 Store-local days, maximum 90, with optional campaign filter. Benchmark charts are out of scope.
+
+See [DEC-20261125-06](../decisions/2026-11-25/DEC-20261125-06-f10-f11-mvp-contract.md), [F10 API](../api/F10_BUNDLE_CART_API.md) and [F11 API](../api/F11_DASHBOARD_API.md).
 
 ## 4. Business rules
 
@@ -278,7 +276,7 @@ BR-01 to BR-13 keep Report 3 numbering. BR-14 onward are new proposals in this d
 | BR-23 | A priority product is one with W > 1 in the layout's snapshot | Implemented on the feature branch |
 | BR-24 | Scheduled-mining enable returns 503 until release sign-off | New |
 | BR-25 | (F09) Only the active campaign layout of an ACTIVE Store is public. Public DTOs never expose cost or batch data | Valid (DEC-20261125-04) |
-| BR-26 | (F10, planned) Bundle add is atomic, with no reservation and no discount. Removing one bundle line removes the bundle | Planned |
+| BR-26 | (F10, planned) Bundle add merges currently eligible Product lines. Each line is independently editable and removable. No reservation or discount | DEC-20261125-06, PLANNED |
 | BR-27 | A Store name is unique after trimming, ignoring case (service rule; no database UNIQUE yet) | New (DEC-20261123-01) |
 | BR-28 | A Store slug is unique and only a System Admin sets or changes it | New (DEC-20261123-01) |
 | BR-29 | A Store is never hard-deleted | New (DEC-20261123-01) |
@@ -423,10 +421,10 @@ Update Report 3 using the template layout, changing content only.
 4. Demo minUtil: on the demo seed, the single day 2026-10-02 at `PERCENTAGE 0.25` gave 179 patterns (inside the 100–300 target). The full range 2026-10-01..04 at 0.25 gave 0 patterns. For the full range 2026-10-01..04, `PERCENTAGE 0.12` gives 180 patterns (EFIM 385 ms, `LOSSLESS`), measured 2026-11-19 (DEC-20261119-05). The demo still has to set it as policy.
 5. ~~Demo seed broken by the 2026-11-19 F02 rules~~: fixed on branch `Khoi/fix/sku-foodmart-seed` (DEC-20261119-07, ROC-20261125-004): the seed creates products by name, writes `mapping.csv` and imports CSV copies with server SKUs. Was: demo seed is broken on `dev` @ `222e54f` by the 2026-11-19 F02 rules (SKU format, similar-name 409, `batchCode` no longer accepted); the FoodMart import files still use `FOODMART-xxxx` SKUs. Fix deferred by the owner.
 6. ~~The F02 rules of 2026-11-19 have no DEC~~: recorded as [DEC-20261119-07](../decisions/2026-11-19/DEC-20261119-07-server-generated-product-sku.md) (server-generated SKU).
-7. Open F09/F10 questions:
+7. F09/F10 scope notes:
    - ~~currency~~: VND, whole đồng (decided 2026-11-19);
-   - maximum quantity (99 proposed);
-   - whether `BUNDLE_VIEWED` can be logged anonymously;
-   - the "daily deal" single-product block (Direction 2).
-8. F11 detailed specification (MVP scope decided 2026-11-19).
+   - maximum quantity is 99 per Product per cart (DEC-20261125-06);
+   - anonymous `BUNDLE_VIEWED` is outside the MVP;
+   - the "daily deal" single-product block (Direction 2) is outside the MVP.
+8. F10 component quantities and the single-bundle action, plus F11 scope and planned contract, are recorded in DEC-20261125-06.
 9. Cleanup after DEC-20261123-01: drop the unused `store.mining_schedule` column; consider a database UNIQUE on the normalized Store name once the data is clean.

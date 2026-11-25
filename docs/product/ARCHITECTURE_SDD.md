@@ -61,7 +61,7 @@ PASPM is **one web application**: a React single-page app and a single Spring Bo
 | 15 | Persistence | Hybrid: JPA for products and categories, JDBC (`JdbcTemplate`) for everything else | DONE |
 | 16 | Deployment / legacy recovery | Flyway callback and recovery of legacy utility-matrix data | DONE |
 | 17 | Storefront public API | Anonymous read by `storeSlug` (= `store.slug`), ACTIVE Stores only, non-deleted ACTIVE products | DONE (API, MVP; DEC-20261125-04) |
-| 18 | Cart service plus `storefront_event` | Customer cart, atomic bundle add, event log | **PLANNED** (F10) |
+| 18 | Cart service plus `storefront_event` | Customer cart, component-level bundle add, event log | **PLANNED** (F10) |
 | 19 | Dashboard | Aggregates for F11: snapshot weighted utility, `comparison_report` results, `storefront_event` bundle counts | **PLANNED**, MVP scope decided 2026-11-19 |
 
 ## 3. Module (package) map
@@ -236,8 +236,9 @@ flowchart LR
 
 - `StorefrontController` (anonymous GETs, permitted in `SecurityConfig`) resolves `storeSlug` = `store.slug` of an ACTIVE Store to the active campaign's selected READY layout. With no ACTIVE campaign it returns `DEFAULT_CATALOG` (ACTIVE, non-deleted products by category), not baseline A.
 - Public DTOs carry no cost or batch data. `availability` is computed with aggregate queries.
-- The cart is per customer and per Store. It carries a version and supports idempotent adds.
-- Adding a bundle is one transaction: recheck → insert lines → write a `storefront_event` row.
+- The cart is per customer and per Store. Every mutation checks the optimistic version from If-Match.
+- Whole-bundle add resolves the F09 key against active Layout B, checks each component, merges eligible Product lines, advances cart version and records one successful event in a transaction. An all-skipped request records rejection without a cart change.
+- Planned V31 creates `shopping_cart`, `shopping_cart_item` and `storefront_event`. F11 reads snapshot, comparison report and bundle event aggregates without a separate schema. Migrations after V31 start at V32. See [DEC-20261125-06](../decisions/2026-11-25/DEC-20261125-06-f10-f11-mvp-contract.md).
 
 ## 7. Cross-cutting concerns
 
@@ -298,7 +299,7 @@ Both describe V1–V19. The tables below come from scanning their labels against
 | AD05 Recommendation | Minor | Add the `seasonEnded` / expiry-alert warnings from push day |
 | AD06 Layout & Campaign | Update | Match the implemented flow: A generated read-only; B from whole blocks; READY; decide; publish / withdraw; activate / end / rollback |
 | AD07 A/B Testing | Rewrite | Offline replay of later transactions, not synthetic CTR/conversion. Metrics: hitRate, bundleConversion, capturedUtility, priorityCoverage |
-| AD08 Customer Shopping | Keep (planned) | Align with the F09/F10 MVP decisions: anonymous browse, END_CUSTOMER cart, atomic bundle add, no reservation |
+| AD08 Customer Shopping | Keep (planned) | Align with the F09/F10 MVP decisions: anonymous browse, END_CUSTOMER cart, component-level bundle add, no reservation |
 | R2-03 Screen Flow | Update | Remove S06 Benchmark, Expiry Window and Product Scores. Add Seasons, push day, mining progress, λmax policy, F07/F08 screens |
 | R2-04 System Architecture | Update | Utility box: "S/M priorities, E from batch expiry" becomes "U_expiry from batch push days + season M". SPMF box becomes EFIM. Add async import worker and Layout & Campaign. Frontend box: "Bearer token in local storage" becomes access token plus refresh cookie / CSRF. Rename "storefront checkout" (checkout is out of scope) |
 | R2-05 Package Diagram | Update | Mining: remove "result comparison", add "progress". Layout and Campaign & A/B Testing are now implemented in the single `layout` Java package. Storefront, Cart and Dashboard stay planned |
@@ -315,7 +316,7 @@ Both describe V1–V19. The tables below come from scanning their labels against
 | R2-08.05 / R2-07.05 Seq & Class AD05 | Minor | `ProductEligibilityService` now uses EligibilityV2 (push day, no `expiryPushDays`) |
 | R2-08.06 / R2-07.06 Seq & Class AD06 | Rewrite | The designed `SimulationService` / `ComparisonReport(baselineLayoutId, candidateLayoutId, decision)` becomes the real `LayoutCampaignController` / `LayoutCampaignService` / `LayoutCampaignRepository` / `LayoutRules` and the campaign lifecycle |
 | R2-08.07 / R2-07.07 Seq & Class AD07 | Rewrite | `MetricType {UTILITY, CTR, CONVERSION, ESTIMATED_REVENUE}` becomes `OfflineLayoutSimulation` with hitRate, bundleConversion, capturedUtility and priorityCoverage. Report tables: `comparison_report`, `_layout`, `_transaction` |
-| R2-08.08 / R2-07.08 Seq & Class AD08 | Keep (planned) | Align `CartService.addBundle` with the F10 plan (version, idempotency, `storefront_event`) |
+| R2-08.08 / R2-07.08 Seq & Class AD08 | Keep (planned) | Align `CartService.addBundle` with the F10 plan (If-Match, partial adds, `storefront_event`) |
 
 ### 9.2 ERD (V1–V19 → V26) — done 2026-11-19 in `PASPM_ERD_V1_V26.drawio`, pending review
 

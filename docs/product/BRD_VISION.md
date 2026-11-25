@@ -107,8 +107,8 @@ Workflow ownership (Review 2):
 | F07 | Layout Simulator: baseline A, editable B, zones, utility score, preview | Backend API implemented. `priorityCoverage` implemented on the feature branch. Frontend in progress (mock screens on the local branch `feature/f07-f11-mock`, not pushed) |
 | F08 | Campaign & A/B (simulated): campaign lifecycle, offline replay report | Backend API implemented. Frontend in progress |
 | F09 | Storefront: homepage, product detail, bundles | **Backend MVP** (Duy Phan, branch `Duy/Feature/F09_Storefront`, 2026-11-21) merged with `dev` through `Khoi/merge/f09-storefront-be` (V29; public = Store ACTIVE, DEC-20261125-04). Related products and the frontend storefront are still open |
-| F10 | Bundle Cart: whole-bundle add-to-cart | **Planned.** MVP plan draft v2 (2026-11-17) |
-| F11 | Analytics Dashboard: utility, bundle revenue, A/B charts | **Planned.** F11 MVP (decided 2026-11-19): for `STORE_ADMIN` and `MERCHANDISER` of the Store, built only from data that already exists — total weighted utility per utility snapshot, A/B simulation results from `comparison_report` (labelled simulated), and bundle add-to-cart counts from `storefront_event` (after F10). No benchmark charts |
+| F10 | Bundle Cart | **PLANNED.** Whole-bundle action adds eligible components to ordinary Product lines, with current price, stock validation and If-Match (DEC-20261125-06). |
+| F11 | Retail Performance Dashboard | **PLANNED.** Same-Store dashboard for STORE_ADMIN and MERCHANDISER with frozen snapshot utility, saved simulated A/B including priority coverage, and bundle add counts by origin plus actual units added (DEC-20261125-06). |
 
 ### 6.2 Out of scope
 
@@ -214,13 +214,13 @@ Quantitative targets are **TBD**: no response-time, throughput or availability t
 | Reports 1–4 and diagrams drift from code | This document set plus the record of changes; update the reports before Review 3 (**TBD**) |
 | The FoodMart dataset uses its own product codes (`FOODMART-xxxx`) while the backend generates SKUs (DEC-20261119-07) | The demo seed creates each product as `FoodMart Item NNNN`, reads back the server SKU, writes `mapping.csv` and imports CSV copies whose `sku` column holds the server SKUs; the original files are unchanged (ROC-20261125-004). Databases seeded before 2026-11-20 keep their `FOODMART-xxxx` SKUs with no migration; their products can be edited normally because updates never touch the SKU |
 | Frontend uses removed APIs or fields | Breaking-change list #15–#18 in the frontend handoff |
-| F09–F11 are not fully specified | MVP plans for F09/F10; F11 MVP scope decided 2026-11-19, detailed spec still to write |
+| F09–F11 are not fully specified | MVP plans for F09/F10; planned F10/F11 contracts recorded in DEC-20261125-06 |
 | CI repository variable `PASPM_CI_SPMF_ARTIFACT_URL` missing (recorded 2026-11-16; current value UNVERIFIED) | Repo admin to configure it |
 
 ## 12. Open questions (ask the owner)
 
 1. ~~RQ3 and G4~~: kept (2026-11-19).
-2. ~~F11 scope~~: MVP decided (2026-11-19, see §6.1). Open: detailed spec and screens.
+2. F11 scope and planned contract are recorded in DEC-20261125-06. Implementation is pending.
 3. ~~Currency~~: VND, whole đồng (2026-11-19).
 4. ~~F04 Excel import~~: merged on 2026-11-19 (PR #21).
 5. ~~Sign-off~~: the Team Leader (Nguyễn Minh Khôi) acts as Product Owner and signs off owner decisions; the supervisor reviews them at Review 3 (2026-11-19). Enabling the scheduler still needs that sign-off after its acceptance tests.

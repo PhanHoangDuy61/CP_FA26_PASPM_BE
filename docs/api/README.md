@@ -13,6 +13,8 @@ Canonical contract locations stay stable in this directory. `CURRENT` describes 
 | F06 | [Recommendation](F06_RECOMMENDATION_API.md) | Current Backend v1.1 contract + W2; frozen evidence reader validates exact int64 mining totals; historical test statements retain dates | [F06](../frontend_handoff/F06_HANDOFF.md) |
 | F07/F08 | [Layout and Campaign](F07_F08_LAYOUT_CAMPAIGN_API.md) | Layout detail and offline reports expose frozen-snapshot priority coverage on this feature branch | [F07/F08](../frontend_handoff/F07_F08_HANDOFF.md) |
 | F09 | [Public Storefront](F09_STOREFRONT_API.md) | MVP public projection; ACTIVE Stores only, by `store.slug`; active homepage needs configured layout caps | [F09](../frontend_handoff/F09_HANDOFF.md) |
+| F10 | [Bundle Cart](F10_BUNDLE_CART_API.md) | PLANNED, V31 after F09 V30 | [F10](../frontend_handoff/F10_HANDOFF.md) |
+| F11 | [Dashboard](F11_DASHBOARD_API.md) | PLANNED, read-only | [F11](../frontend_handoff/F11_HANDOFF.md) |
 
 [OpenAPI export](openapi.json) (historical counts: 96 paths / 114 operations at the F07/F08 merge, 98 / 116 at F05 Checkpoint 1; current counts below). The export's server entry is the local test origin; configure the target origin in the integration environment. The session changes are uncommitted. Earlier operation counts are historical evidence, not the current export. Role prose still needs source-based interpretation; use the [RBAC matrix](F01_F02_RBAC_MATRIX.md). [RBAC matrix](F01_F02_RBAC_MATRIX.md) and [integration notes](F03_V12_F05_F06_INTEGRATION.md) have review notices. [API changelog](API_CHANGELOG.md) remains append-only history.
 
@@ -38,7 +40,7 @@ Branch `Khoi/feat/store-management` (base `dev` `6d2a877`): **107 paths / 133 op
 
 `API_INVENTORY_BY_FEATURE.md`, `.csv` and `API_FEATURE_GAP_REPORT.md` are absent from current dev. They exist only in local branch `Khoi/docs/backend-api-inventory-audit` at `39a4918`; no remote publication or merge is assumed. This reorganization does not cherry-pick/copy them. They are not presented as live links until a separately reviewed integration supplies them.
 
-F10–F11 contracts are not defined here. F07/F08 routes are documented in the linked contract. The documented unavailable F03 `GET /api/utility/snapshots` is not an implemented route; F05 `GET /api/mining/snapshots` is a distinct selector. Framework Swagger/OpenAPI paths are not business APIs.
+F10/F11 contracts above are PLANNED and are not included in the runtime OpenAPI export. F07/F08 routes are documented in the linked contract. The documented unavailable F03 `GET /api/utility/snapshots` is not an implemented route; F05 `GET /api/mining/snapshots` is a distinct selector. Framework Swagger/OpenAPI paths are not business APIs.
 
 Current F01 reconciliation (2026-11-12): preserves published dev V20/AuthSessionService and adds V21 binding; [current evidence](../testing/reports/F01_SESSION_RECONCILIATION_2026-11-12.md). Earlier local-variant details are dated history; no source database repair/deployment was performed.
 

@@ -1,8 +1,8 @@
-# ROC-20261125 — F07 Layout B editor, Maven Wrapper, demo seed / SKU mapping, F09 Storefront merge, priority coverage
+# ROC-20261125 — F07 Layout B editor, Maven Wrapper, demo seed / SKU mapping, F09 Storefront merge, priority coverage and F10/F11 contracts
 
 2026-11-25 / Asia/Ho_Chi_Minh. Records of this day are delivered through pull requests into `dev` ([DEC-20261119-01](../../decisions/2026-11-19/DEC-20261119-01-dev-changes-only-through-pr.md)).
 
-Numbers for this day are fixed across branches: 001 F07 product-level Layout B editor, 002 Maven Wrapper, 003 source-of-truth rule, 004 demo seed / SKU mapping, 005 F09 Storefront merge, 006 priority coverage. 003 and the SPMF CI artifact record live on their own branches until merged.
+Numbers for this day are fixed across branches: 001 F07 product-level Layout B editor, 002 Maven Wrapper, 003 source-of-truth rule, 004 demo seed / SKU mapping, 005 F09 Storefront merge, 006 priority coverage, 007 SPMF CI artifact, 008 F10/F11 planned contracts. 003 and 007 live on their own branches until merged.
 
 ## Record 001 — F07/F08 product placements
 
@@ -32,3 +32,7 @@ Release status: **UNRELEASED**, feature branch only. No push.
 ## Record 006 — Frozen snapshot priority coverage
 
 [Record 006](06-f07-f08-priority-coverage.md) records the F07/F08 implementation of DEC-20261117-02 and the approved empty-layout and oversized-B behavior.
+
+## Record 008 — F10/F11 planned MVP contracts
+
+[Record 008](08-f10-f11-mvp-contract.md) records the approved F10/F11 design, planned APIs and frontend handoffs.
