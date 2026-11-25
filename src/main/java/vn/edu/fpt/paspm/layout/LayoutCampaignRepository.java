@@ -53,7 +53,8 @@ public class LayoutCampaignRepository {
 
     public record ReportLayoutRow(long layoutId, long layoutVersion, LayoutRole role,
             int hitCount, int hitDenominator, int bundleCount, int bundleDenominator,
-            BigDecimal utilityNumerator, BigDecimal utilityDenominator) {}
+            BigDecimal utilityNumerator, BigDecimal utilityDenominator,
+            BigDecimal priorityCoverage, Integer priorityCoverageDenominator) {}
 
     private static final RowMapper<CampaignRow> CAMPAIGN = (rs, row) -> campaign(rs);
     private static final RowMapper<LayoutRow> LAYOUT = (rs, row) -> layout(rs);
@@ -298,6 +299,24 @@ public class LayoutCampaignRepository {
         return map;
     }
 
+    public Map<Integer, Boolean> snapshotPriorityByProduct(int storeId, int snapshotId) {
+        var priority = new LinkedHashMap<Integer, Boolean>();
+        jdbc.query("""
+                SELECT m.product_id, MIN(m.weight_value) AS lowest_weight, MAX(m.weight_value) AS highest_weight
+                FROM utility_matrix_item m
+                JOIN utility_snapshot s ON s.snapshot_id=m.snapshot_id
+                WHERE s.store_id=? AND m.snapshot_id=?
+                GROUP BY m.product_id
+                """, (org.springframework.jdbc.core.RowCallbackHandler) rs -> {
+            BigDecimal lowest = rs.getBigDecimal("lowest_weight");
+            BigDecimal highest = rs.getBigDecimal("highest_weight");
+            if (lowest.compareTo(highest) == 0) {
+                priority.put(rs.getInt("product_id"), lowest.compareTo(BigDecimal.ONE) > 0);
+            }
+        }, storeId, snapshotId);
+        return priority;
+    }
+
     public void updateLayoutState(int storeId, long layoutId, LayoutStatus status) {
         jdbc.update("UPDATE storefront_layout SET status=?,updated_at=CURRENT_TIMESTAMP WHERE store_id=? AND layout_id=?",
                 status.name(), storeId, layoutId);
@@ -415,14 +434,15 @@ public class LayoutCampaignRepository {
 
     public void insertReportLayout(long reportId, int storeId, long layoutId, long layoutVersion,
             LayoutRole role, int hitCount, int hitDenominator, int bundleCount, int bundleDenominator,
-            BigDecimal utilityNumerator, BigDecimal utilityDenominator) {
+            BigDecimal utilityNumerator, BigDecimal utilityDenominator,
+            BigDecimal priorityCoverage, int priorityCoverageDenominator) {
         jdbc.update("""
                 INSERT INTO comparison_report_layout(report_id,store_id,layout_id,layout_version,role,
                     hit_count,hit_denominator,bundle_conversion_count,bundle_conversion_denominator,
                     captured_utility,captured_utility_denominator,priority_coverage,priority_coverage_denominator)
-                VALUES (?,?,?,?,?,?,?,?,?,?,?,NULL,NULL)
+                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
                 """, reportId, storeId, layoutId, layoutVersion, role.name(), hitCount, hitDenominator,
-                bundleCount, bundleDenominator, utilityNumerator, utilityDenominator);
+                bundleCount, bundleDenominator, utilityNumerator, utilityDenominator, priorityCoverage, priorityCoverageDenominator);
     }
 
     public void insertReportTransactions(long reportId, int storeId, List<Integer> transactionIds) {
@@ -443,12 +463,13 @@ public class LayoutCampaignRepository {
         return jdbc.query("""
                 SELECT layout_id,layout_version,role,hit_count,hit_denominator,
                     bundle_conversion_count,bundle_conversion_denominator,
-                    captured_utility,captured_utility_denominator
+                    captured_utility,captured_utility_denominator,priority_coverage,priority_coverage_denominator
                 FROM comparison_report_layout WHERE store_id=? AND report_id=? ORDER BY role
                 """, (rs, row) -> new ReportLayoutRow(rs.getLong("layout_id"), rs.getLong("layout_version"),
                 LayoutRole.valueOf(rs.getString("role")), rs.getInt("hit_count"), rs.getInt("hit_denominator"),
                 rs.getInt("bundle_conversion_count"), rs.getInt("bundle_conversion_denominator"),
-                rs.getBigDecimal("captured_utility"), rs.getBigDecimal("captured_utility_denominator")),
+                rs.getBigDecimal("captured_utility"), rs.getBigDecimal("captured_utility_denominator"),
+                rs.getBigDecimal("priority_coverage"), rs.getObject("priority_coverage_denominator", Integer.class)),
                 storeId, reportId);
     }
 

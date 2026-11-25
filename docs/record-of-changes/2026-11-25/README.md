@@ -18,3 +18,7 @@ Release status: **UNRELEASED**, feature branch only. No push.
 ## Record 002 — Executable Maven Wrapper
 
 [Record 002](02-mvnw-executable.md) records the Git mode fix, setup guide updates and local wrapper verification.
+
+## Record 006 — Frozen snapshot priority coverage
+
+[Record 006](06-f07-f08-priority-coverage.md) records the F07/F08 implementation of DEC-20261117-02 and the approved empty-layout and oversized-B behavior.

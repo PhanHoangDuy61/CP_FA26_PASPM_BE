@@ -1,5 +1,9 @@
 # API Changelog
 
+## 2026-11-25 — F07/F08 snapshot priority coverage
+
+- Added coverage and its denominator to LayoutView for A and B. New OFFLINE_REPLAY_V4 reports populate the existing fields from frozen W > 1 and the actual products compared on each side. Historical reports remain as stored. The runtime export confirms the same 113 paths and 140 operations.
+
 ## 2026-11-25 — F07 individual Layout B products (feature branch, owner-approved)
 
 - **Breaking `PUT /api/layouts/{id}/placements`:** replaces `recommendationIds` with `placements`, each containing `productId`, `zone`, `blockNo`, `position`, and nullable `sourceRecommendationId`. Multiple placements may reference the same F06 recommendation, and `null` means manual provenance.
