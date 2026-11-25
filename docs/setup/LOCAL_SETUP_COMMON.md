@@ -35,25 +35,13 @@ Compose reads `.env`; Spring Boot does **not** automatically import it. `.env` i
 
 Current worker capacity is one active request and eight queued per instance; polling is one second, lease 30 seconds, heartbeat five seconds. These values are currently constants, not supported environment settings. Linux Docker process supervision is under verification; Windows/macOS development does not have the Linux parent-death guarantee. Scheduler activation is deliberately **503**, not a setup error. Successful startup does not certify scheduler or process-recovery acceptance.
 
-## MySQL must run with `--log-bin-trust-function-creators=1`
+## MySQL runs with `--log-bin-trust-function-creators=1`
 
-Migration V11 creates triggers. The application user `paspm` has no `SUPER` privilege and MySQL 8.4 enables binary logging, so without this server option Flyway stops at V11 with `You do not have the SUPER privilege and binary logging is enabled` (Error 1419) and the Backend does not start. `compose.yml` does **not** set it (only `compose.staging.yml` does, and that file cannot be used alone: it needs `compose.backend.yml`). Set it for your local database in one of two ways.
+Migration V11 creates triggers. The application user `paspm` has no `SUPER` privilege and MySQL 8.4 enables binary logging, so MySQL must run with this server option; without it Flyway stops at V11 with `You do not have the SUPER privilege and binary logging is enabled` (Error 1419) and the Backend does not start.
 
-**Compose (recommended).** Create `compose.override.yml` next to `compose.yml`; Docker Compose loads it automatically, so the start command of the macOS and Windows guides stays unchanged. Do not commit this file.
+**With Compose, nothing to do:** the option is already in the `mysql` service of `compose.yml` (`command: ["--log-bin-trust-function-creators=1"]`). If you started MySQL from an older `compose.yml`, run `docker compose up -d mysql mailpit` again: Compose recreates the container with the option, and your named volume `paspm_mysql` and its data are kept. Check it with `docker compose exec mysql mysql -uroot -p -e "SELECT @@log_bin_trust_function_creators"` (enter `MYSQL_ROOT_PASSWORD`; the value must be `1`).
 
-```yaml
-services:
-  mysql:
-    command: ["--log-bin-trust-function-creators=1"]
-```
-
-```text
-docker compose up -d mysql mailpit
-```
-
-Compose recreates the `mysql` container because its command changed; the named volume `paspm_mysql` and your data are kept. Check it with `docker compose exec mysql mysql -uroot -p -e "SELECT @@log_bin_trust_function_creators"` (enter `MYSQL_ROOT_PASSWORD`; the value must be `1`).
-
-**Plain `docker run` (a disposable database, without Compose).** Replace the two passwords with local-only values.
+**Without Compose (plain `docker run`, a disposable database).** Pass the option after the image name. Replace the two passwords with local-only values.
 
 macOS / Linux (bash, zsh):
 

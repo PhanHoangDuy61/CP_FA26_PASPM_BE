@@ -13,3 +13,6 @@ scripts/seed/out/
 # Python bytecode
 __pycache__/
 *.pyc
+
+# Local Compose override (per developer; never commit)
+compose.override.yml

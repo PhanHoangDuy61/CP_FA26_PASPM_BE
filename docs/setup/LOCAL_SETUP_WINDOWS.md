@@ -42,7 +42,7 @@
    docker compose ps
    ```
 
-   **Before `docker compose up`, make MySQL run with `--log-bin-trust-function-creators=1`** (migration V11 creates triggers; without it Flyway fails with Error 1419). Create `compose.override.yml` as described in [common setup](LOCAL_SETUP_COMMON.md#mysql-must-run-with---log-bin-trust-function-creators1).
+   `compose.yml` already starts MySQL with `--log-bin-trust-function-creators=1` (migration V11 creates triggers; see [common setup](LOCAL_SETUP_COMMON.md#mysql-runs-with---log-bin-trust-function-creators1)). If your MySQL container was created from an older `compose.yml`, `docker compose up -d mysql mailpit` recreates it with the option and keeps your data.
 
    Set nonempty local-only `DB_PASSWORD` and `MYSQL_ROOT_PASSWORD` before starting Compose. Never commit or share `.env`. Compose uses database and user `paspm`, port `127.0.0.1:3306`, and a persistent local volume.
 

@@ -31,15 +31,16 @@ Fix the consequences of server-generated SKUs (`24b9b01`) so the demo seed and t
 - `scripts/seed/weight_v2_plan.py`: push days ~60% set (expiry − 3…21 days), ~15% already reached, ~25% missing; no `expiry − 7` rule; ~3% of perishable batches expire today or expired yesterday. Tests updated.
 - `.github/scripts/test-groups.py`: `JpaPilotMigrationMySqlTest` added to the `mysql` group.
 
-### Repository hygiene
-- `scripts/seed/__pycache__/weight_v2_plan.cpython-314.pyc` removed from git (`git rm --cached`); `.gitignore` now ignores `__pycache__/` and `*.pyc`.
+### Compose and repository hygiene
+- `compose.yml`, service `mysql`: `command: ["--log-bin-trust-function-creators=1"]` (it had no command before). Existing volumes and data are unaffected (verified, below).
+- `scripts/seed/__pycache__/weight_v2_plan.cpython-314.pyc` removed from git (`git rm --cached`); `.gitignore` now ignores `__pycache__/`, `*.pyc` and `compose.override.yml`.
 
 ### Documentation
-- Local setup: MySQL must run with `--log-bin-trust-function-creators=1` (V11 creates triggers; Error 1419 otherwise). New section in `docs/setup/LOCAL_SETUP_COMMON.md` with the `compose.override.yml` snippet and `docker run` snippets for macOS/Linux and Windows, pointers in `LOCAL_SETUP_MACOS.md`, `LOCAL_SETUP_WINDOWS.md`, a row in `LOCAL_SETUP_TROUBLESHOOTING.md`, and a note in `README.md`.
+- Local setup: `compose.yml` already starts MySQL with `--log-bin-trust-function-creators=1` (V11 creates triggers; Error 1419 otherwise). `LOCAL_SETUP_COMMON.md` has a section with the check query and plain `docker run` snippets (macOS/Linux and PowerShell) for people who do not use Compose; pointers in `LOCAL_SETUP_MACOS.md`, `LOCAL_SETUP_WINDOWS.md`, a row in `LOCAL_SETUP_TROUBLESHOOTING.md`, a note in `README.md`; `STAGING.md` notes the finding is resolved.
 - `SRS.md` FR-02.1 and §11 items 5–6, `GLOSSARY.md` (Product), `BRD_VISION.md` §8 (`:158`) and §11 (`:214`), both `paspm-context` skill copies, `scripts/seed/README.md` (also the DEC-20261124-01 note), `scripts/seed/.env.seed.example`.
 
 ### Database, Security
-N/A. No migration, no API change.
+N/A. No migration, no API change. `compose.yml` changes how local MySQL starts (one server option; data and volume untouched).
 
 ## 3. Files changed
 
@@ -50,8 +51,9 @@ N/A. No migration, no API change.
 | `scripts/seed/README.md`, `.env.seed.example`, `.gitignore` | Modified | Output location, variables, observed data |
 | `src/test/.../JpaPilotMigrationMySqlTest.java`, `.github/scripts/test-groups.py` | Modified | Test fix and CI registration |
 | `docs/decisions/2026-11-19/DEC-20261119-07-server-generated-product-sku.md` | Added | Decision record |
-| `.gitignore`, `scripts/seed/__pycache__/*.pyc` | Modified / Deleted from index | Stop tracking bytecode |
-| `README.md`, `docs/setup/LOCAL_SETUP_{COMMON,MACOS,WINDOWS,TROUBLESHOOTING}.md` | Modified | MySQL trigger option for local setup |
+| `.gitignore`, `scripts/seed/__pycache__/*.pyc` | Modified / Deleted from index | Stop tracking bytecode; ignore `compose.override.yml` |
+| `compose.yml` | Modified | `mysql` command carries `--log-bin-trust-function-creators=1` |
+| `README.md`, `docs/setup/LOCAL_SETUP_{COMMON,MACOS,WINDOWS,TROUBLESHOOTING}.md`, `docs/setup/STAGING.md` | Modified | MySQL trigger option documented |
 | `docs/product/{SRS,GLOSSARY,BRD_VISION}.md`, `.claude`/`.agents/skills/paspm-context/SKILL.md` | Modified | Server-generated SKU |
 | `docs/record-of-changes/2026-11-25/04-sku-foodmart-seed.md`, `README.md`, `../README.md` | Added / Modified | This record |
 
@@ -73,8 +75,9 @@ No API, schema or business-rule change in code. The SKU rule in the product docs
 | Seed run 2 (idempotency) | same | PASS (2 s): nothing created, imports skipped; SHA-256 fingerprint of products, batches, seasons, assignments, imports, transactions, users, Store, category identical; `mapping.csv` identical | console |
 | `sh mvnw -B clean verify -Dtest="$(python3 .github/scripts/test-groups.py backend)"` | Temurin 17.0.21.1, H2 | PASS — 441 tests, 0 failures, 0 errors, 0 skipped (65 classes) | local console |
 | `sh mvnw -B clean verify -Dtest="$(python3 .github/scripts/test-groups.py mysql)" -Dpaspm.test.mysql=true` | Temurin 17.0.21.1, disposable `mysql:8.4` 8.4.13, host MySQL 8.4 client | PASS — 105 tests, 0 failures, 0 errors, 0 skipped (15 classes) | local console |
-| `docker compose config` with a temporary `compose.override.yml` (removed afterwards) | local Docker Compose | PASS — the `mysql` service gets `--log-bin-trust-function-creators=1` and the guides' `docker compose up -d mysql mailpit` is unchanged | local console |
-| `docker compose -f compose.yml -f compose.staging.yml config` | local Docker Compose | FAILS: `service "backend" has neither an image nor a build context` (the staging file needs `compose.backend.yml`), hence the override file in the docs | local console |
+| `docker compose config` on the changed `compose.yml`; and with `compose.yml` + `compose.backend.yml` + `compose.staging.yml` (dummy variables) | local Docker Compose | PASS — `mysql` gets `--log-bin-trust-function-creators=1` once; the staging merge shows no duplicate | local console |
+| Throwaway Compose project `paspmflagtest` (port 33109, own volume), started first from the old `compose.yml`, then from the new one on the same volume | Docker, `mysql:8.4` 8.4.13 | PASS — old: `SELECT @@log_bin_trust_function_creators` = 0; new: = 1; same volume `paspmflagtest_paspm_mysql`; the row inserted before (42) still present. Project, volume and network removed afterwards | local console |
+| `docker compose -f compose.yml -f compose.staging.yml config` (before the change) | local Docker Compose | FAILED: `service "backend" has neither an image nor a build context` (the staging file needs `compose.backend.yml`) | local console |
 | `docker run … mysql:8.4 --log-bin-trust-function-creators=1` | MySQL 8.4.13 | Used for the seed run and the mysql group; V1→V28 migrated as user `paspm`. Without the flag V11 failed with Error 1419 | local console |
 | Full `integration` suite | — | NOT RUN | — |
 
@@ -87,8 +90,7 @@ Record 014 (2026-11-17) for the earlier seed design and demo minUtil results; no
 ## 7. Limitations and next actions
 
 - A teammate who already created a local database that failed at V11 may have a half-applied migration; the docs point to the disposable-database reset and say to ask otherwise. That recovery was not tested here.
-- `compose.override.yml` is not git-ignored; the docs say not to commit it.
-- `compose.yml` alone still needs `--log-bin-trust-function-creators=1` for V11 (known, see `docs/setup/STAGING.md`).
+- `compose.override.yml` is git-ignored as a safety net; no instruction uses it any more. The shared flag lives in `compose.yml` (PO decision 2026-11-25); `compose.staging.yml` keeps the same value, which is harmless.
 - The demo minUtil figures in the seed README were measured on 2026-11-17 data and not re-measured with the new push-day mix (pattern counts do not depend on push days, utilities may).
 - `docs/record-of-changes/2026-11-25/README.md` is also created on other open branches (records 001–003); expect an add/add conflict, resolved by listing all records.
 
