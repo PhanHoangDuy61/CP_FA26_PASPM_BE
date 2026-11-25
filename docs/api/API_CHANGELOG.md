@@ -2,7 +2,7 @@
 
 ## 2026-11-25 — F09 Storefront MVP merged with dev (branch `Khoi/merge/f09-storefront-be`, PR to `dev` pending)
 
-Rules: [DEC-20261125-01](../decisions/2026-11-25/DEC-20261125-01-f09-public-store-follows-store-status.md), DEC-20261117-03, DEC-20261123-01, DEC-20261124-01, DEC-20261124-03. Contract: [F09_STOREFRONT_API.md](F09_STOREFRONT_API.md). Migration **V29**. Original implementation: Duy Phan (`Duy/Feature/F09_Storefront`, 2026-11-21).
+Rules: [DEC-20261125-04](../decisions/2026-11-25/DEC-20261125-04-f09-public-store-follows-store-status.md), DEC-20261117-03, DEC-20261123-01, DEC-20261124-01, DEC-20261124-03. Contract: [F09_STOREFRONT_API.md](F09_STOREFRONT_API.md). Migration **V29**. Original implementation: Duy Phan (`Duy/Feature/F09_Storefront`, 2026-11-21).
 
 - **Added (additive):** anonymous `GET /api/storefront/stores`, `GET /api/storefront/{storeSlug}/home`, `GET /api/storefront/{storeSlug}/products`, `GET /api/storefront/{storeSlug}/products/{productId}`; public schemas `PublicStore`, `StoreSummary`, `ProductCard`, `ProductCategory`, `StorefrontProductPage`, `CatalogCategory`, `HomePlacement`, `HomeZone`, `HomeView`.
 - **Added (additive) to F02:** optional `imageUrl` (absolute HTTP(S), max 2048) and `description` (max 2000) on `ProductRequest`; both returned on `ProductView`. PUT stays a full replacement: omitting them clears them.

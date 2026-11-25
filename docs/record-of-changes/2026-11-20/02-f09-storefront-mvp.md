@@ -12,7 +12,7 @@
 | Release status | UNRELEASED |
 | Daily summary | [README](README.md) |
 
-> **Superseded in part (2026-11-25).** Renumbered from `01-…` to `02-…` when merged with `dev` (number 01 was taken by the product-docs record). The merge ([ROC-20261125-002](../2026-11-25/02-f09-storefront-merge-into-dev.md), [DEC-20261125-01](../../decisions/2026-11-25/DEC-20261125-01-f09-public-store-follows-store-status.md)) renumbered V27 → V29 and removed `store_slug`, `storefront_enabled` and the visibility endpoint. The text below is kept as written on 2026-11-20.
+> **Superseded in part (2026-11-25).** Renumbered from `01-…` to `02-…` when merged with `dev` (number 01 was taken by the product-docs record). The merge ([ROC-20261125-005](../2026-11-25/05-f09-storefront-merge-into-dev.md), [DEC-20261125-04](../../decisions/2026-11-25/DEC-20261125-04-f09-public-store-follows-store-status.md)) renumbered V27 → V29 and removed `store_slug`, `storefront_enabled` and the visibility endpoint. The text below is kept as written on 2026-11-20.
 
 ## 1. Request and scope
 

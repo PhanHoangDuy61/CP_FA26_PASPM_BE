@@ -69,7 +69,7 @@ UC03 and UC22 were removed earlier, and their numbers are not reused.
 | 23 | Activate Approved Campaign | Store Admin | F08 | DONE (API) | Also **end** and **rollback** |
 | 24 | View Retail Performance Dashboard | Store Admin, Merch | F11 | PLANNED | MVP scope decided 2026-11-19 (see FR-11.1) |
 | 25 | View A/B Reports | Store Admin, Merch | F08/F11 | DONE (API read) | Reports are immutable |
-| 26 | View Merchandising Homepage | End Customer / guest | F09 | DONE (API, MVP) | Anonymous, by `storeSlug` = `store.slug`; ACTIVE Stores only (DEC-20261125-01). Frontend still mock |
+| 26 | View Merchandising Homepage | End Customer / guest | F09 | DONE (API, MVP) | Anonymous, by `storeSlug` = `store.slug`; ACTIVE Stores only (DEC-20261125-04). Frontend still mock |
 | 27 | View Product Details / Related | End Customer / guest | F09 | PARTIAL (API) | Product list and detail done; related products come after the MVP |
 | 28 | View Recommended Bundles | End Customer / guest | F09 | DONE (API, MVP) | Bundles are rendered as homepage placements; only APPROVED blocks whose components are all still sellable |
 | 29 | Add Whole Bundle to Cart | End Customer | F10 | PLANNED | Login required. Atomic. No reservation |
@@ -227,9 +227,9 @@ Each line gives the behaviour an agent must preserve. Exact request and response
 
 ### F09 — Storefront (DONE API, MVP)
 
-- FR-09.1: Public read API, separate from the staff API, keyed by `storeSlug` = `store.slug` (V27). No login needed. A Store is public exactly when it is ACTIVE; there is no separate visibility switch (DEC-20261125-01). Unknown or INACTIVE Store → 404.
+- FR-09.1: Public read API, separate from the staff API, keyed by `storeSlug` = `store.slug` (V27). No login needed. A Store is public exactly when it is ACTIVE; there is no separate visibility switch (DEC-20261125-04). Unknown or INACTIVE Store → 404.
 - FR-09.2: The homepage renders the zones of the **active** campaign layout in placement order. With no active campaign it falls back to the default layout. Draft and ended layouts are never shown.
-- FR-09.3: Product detail and the bundle list. Bundles are APPROVED and ready. A bundle with an invalid component is hidden. An out-of-stock product shows `OUT_OF_STOCK`: the public `availability` is `AVAILABLE | OUT_OF_STOCK` (PO review 2026-11-25, DEC-20261125-01 addendum). Soft-deleted and INACTIVE products are never public (DEC-20261124-03); a batch is sellable on its expiry date (DEC-20261124-01).
+- FR-09.3: Product detail and the bundle list. Bundles are APPROVED and ready. A bundle with an invalid component is hidden. An out-of-stock product shows `OUT_OF_STOCK`: the public `availability` is `AVAILABLE | OUT_OF_STOCK` (PO review 2026-11-25, DEC-20261125-04 addendum). Soft-deleted and INACTIVE products are never public (DEC-20261124-03); a batch is sellable on its expiry date (DEC-20261124-01).
 - FR-09.4: No admin fields (cost, batches) in public DTOs. The product gets `image_url` and `description` columns in **V29**; F02 `ProductRequest`/`ProductView` accept and return them (`imageUrl` absolute HTTP(S) only).
 
 ### F10 — Bundle cart (PLANNED, MVP draft v2)
@@ -277,7 +277,7 @@ BR-01 to BR-13 keep Report 3 numbering. BR-14 onward are new proposals in this d
 | BR-22 | Layout utility score is a snapshot priority score, not revenue or profit | New |
 | BR-23 | A priority product is one with W > 1 in the layout's snapshot | New (decided, not coded) |
 | BR-24 | Scheduled-mining enable returns 503 until release sign-off | New |
-| BR-25 | (F09) Only the active campaign layout of an ACTIVE Store is public. Public DTOs never expose cost or batch data | Valid (DEC-20261125-01) |
+| BR-25 | (F09) Only the active campaign layout of an ACTIVE Store is public. Public DTOs never expose cost or batch data | Valid (DEC-20261125-04) |
 | BR-26 | (F10, planned) Bundle add is atomic, with no reservation and no discount. Removing one bundle line removes the bundle | Planned |
 | BR-27 | A Store name is unique after trimming, ignoring case (service rule; no database UNIQUE yet) | New (DEC-20261123-01) |
 | BR-28 | A Store slug is unique and only a System Admin sets or changes it | New (DEC-20261123-01) |

@@ -17,7 +17,7 @@ Unknown and INACTIVE Stores both return `404 {"error":"Storefront not found"}`. 
 
 The public `storeSlug` is the Store's existing `slug` from F01 Store management (V27, DEC-20261123-01): unique (`uk_store_slug`), set and changed only by the System Admin through the Store API. F09 adds no slug column of its own.
 
-A Store is public exactly when `store.status = ACTIVE` (DEC-20261125-01). There is no separate storefront visibility flag or endpoint: deactivating a Store hides its storefront immediately, reactivating it shows it again. Neither action publishes, activates or ends a campaign.
+A Store is public exactly when `store.status = ACTIVE` (DEC-20261125-04). There is no separate storefront visibility flag or endpoint: deactivating a Store hides its storefront immediately, reactivating it shows it again. Neither action publishes, activates or ends a campaign.
 
 > **Merge note (2026-11-25).** The original F09 branch (`Duy/Feature/F09_Storefront`, 2026-11-21) added `store.store_slug`, `store.storefront_enabled` and `PUT /api/system/stores/{storeId}/storefront-visibility` in a migration numbered V27. That number was already used by Store management on `dev`, so the merge renumbers the migration to **V29**, keeps only the product display columns, and drops the slug/visibility columns and the endpoint in favour of `store.slug` and `store.status`.
 

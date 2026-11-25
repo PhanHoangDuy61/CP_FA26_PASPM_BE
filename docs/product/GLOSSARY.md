@@ -140,7 +140,7 @@
 
 | Term | Definition |
 |---|---|
-| **Storefront (F09)** | Public shop pages: homepage from the active layout, product detail and bundles. Anonymous read access through a separate public API (`/api/storefront/**`), for ACTIVE Stores only (DEC-20261125-01). |
+| **Storefront (F09)** | Public shop pages: homepage from the active layout, product detail and bundles. Anonymous read access through a separate public API (`/api/storefront/**`), for ACTIVE Stores only (DEC-20261125-04). |
 | **storeSlug** | The Store `slug` (V27): unique, lowercase letters, digits and hyphens, set and changed only by a System Admin. The F09 public key of a Store. |
 | **availability** | Planned per-product state such as `OUT_OF_STOCK`, recomputed when the response is built. |
 | **Bundle cart (F10)** | Planned per-customer, per-Store cart. Adding a bundle adds all its items atomically after a recheck. No stock reservation, no order or payment, and no bundle discount. |

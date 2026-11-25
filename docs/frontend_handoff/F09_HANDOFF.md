@@ -6,7 +6,7 @@ The public storefront is anonymous and read-only. Staff routes remain protected.
 
 - `GET /api/storefront/stores` returns ACTIVE Stores only, as `{storeSlug,name}`. `storeSlug` is the Store's `slug` from Store management (DEC-20261123-01). There is no public Store id.
 - Public paths require no bearer token: `GET /api/storefront/{storeSlug}/home`, `/products`, and `/products/{productId}`.
-- A Store is public exactly when it is ACTIVE (DEC-20261125-01). There is **no** storefront visibility endpoint: the System Admin deactivates/reactivates the Store and edits its slug through the existing Store management screens (`/api/system/stores`).
+- A Store is public exactly when it is ACTIVE (DEC-20261125-04). There is **no** storefront visibility endpoint: the System Admin deactivates/reactivates the Store and edits its slug through the existing Store management screens (`/api/system/stores`).
 - Unknown and INACTIVE Store slugs intentionally share a 404 response so the API does not reveal the existence of inactive Stores.
 
 ## Screen checklist

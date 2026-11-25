@@ -1,8 +1,8 @@
-# ROC-20261125-002 — F09 Storefront MVP merged with dev
+# ROC-20261125-005 — F09 Storefront MVP merged with dev
 
 | Field | Value |
 |---|---|
-| Record ID | ROC-20261125-002 |
+| Record ID | ROC-20261125-005 |
 | Date / timezone | 2026-11-25 / Asia/Ho_Chi_Minh |
 | Agent | Claude Code (Claude Opus 5.5), requested by Nguyễn Minh Khôi |
 | Type | Implementation / Database / Documentation |
@@ -14,7 +14,7 @@
 
 ## 1. Request and scope
 
-Bring the unmerged F09 Storefront branch into `dev` without undoing anything already on `dev` (Store management V27, F02 V28: `effectiveStatus`, `daysToExpiry`, warnings, product soft delete, server-generated SKU). Owner rules for the merge: renumber the F09 migration to the next free version, drop the branch's own `store_slug` and use `store.slug`, exclude soft-deleted and INACTIVE products and INACTIVE Stores. Owner answer during the merge: a Store is public exactly when ACTIVE, no separate visibility toggle ([DEC-20261125-01](../../decisions/2026-11-25/DEC-20261125-01-f09-public-store-follows-store-status.md)).
+Bring the unmerged F09 Storefront branch into `dev` without undoing anything already on `dev` (Store management V27, F02 V28: `effectiveStatus`, `daysToExpiry`, warnings, product soft delete, server-generated SKU). Owner rules for the merge: renumber the F09 migration to the next free version, drop the branch's own `store_slug` and use `store.slug`, exclude soft-deleted and INACTIVE products and INACTIVE Stores. Owner answer during the merge: a Store is public exactly when ACTIVE, no separate visibility toggle ([DEC-20261125-04](../../decisions/2026-11-25/DEC-20261125-04-f09-public-store-follows-store-status.md)).
 
 ## 2. Change details
 
@@ -22,7 +22,7 @@ Bring the unmerged F09 Storefront branch into `dev` without undoing anything alr
 - Duy's F09 public API (`storefront/*`): `GET /api/storefront/stores`, `/{storeSlug}/home`, `/{storeSlug}/products`, `/{storeSlug}/products/{productId}` and `StorefrontIntegrationTest` (now in the CI `backend` group).
 - F02 `ProductRequest` / `ProductView`: optional `imageUrl` (absolute HTTP(S)) and `description`, re-applied on top of `dev`'s server-generated SKU code.
 - `LayoutRules.requireConfiguredPublicCapacities()` (503 when a zone cap is missing).
-- [DEC-20261125-01](../../decisions/2026-11-25/DEC-20261125-01-f09-public-store-follows-store-status.md).
+- [DEC-20261125-04](../../decisions/2026-11-25/DEC-20261125-04-f09-public-store-follows-store-status.md).
 
 ### Changed
 - Public Store lookup: `store.slug` and `store.status='ACTIVE'` instead of `store_slug` / `storefront_enabled`.
@@ -44,7 +44,7 @@ Bring the unmerged F09 Storefront branch into `dev` without undoing anything alr
 |---|---|---|
 | `catalog/CatalogContracts.java` | Branch added `imageUrl`/`description` on the old `ProductRequest` (with client `sku`) | Took `dev` (no `sku`, `confirmSimilarName`) and re-added the two fields |
 | `catalog/product/ProductRepository.java`, `ProductService.java`, `persistence/ProductEntity.java`, `persistence/ProductMetadataPersistence.java` | Branch threaded image/description through the old SKU-taking signatures | Took `dev` (generated SKU, soft delete, similar-name check) and re-added the image/description overloads and `validateImageUrl` |
-| `catalog/SystemStoreController.java` | Modified on branch, deleted on `dev` | Kept the deletion; the visibility endpoint is dropped (DEC-20261125-01) |
+| `catalog/SystemStoreController.java` | Modified on branch, deleted on `dev` | Kept the deletion; the visibility endpoint is dropped (DEC-20261125-04) |
 | `layout/LayoutRules.java`, `security/SecurityConfig.java` | Both sides changed nearby lines | Took `dev`, re-added the capacity guard and the anonymous F09 GET matchers |
 | `CatalogIntegrationTest.java` | Old SKU-based body | Took `dev`, re-added the imageUrl/description assertions and the `javascript:` URL rejection |
 | `docs/api/openapi.json` | Branch export on an old base | Took `dev`, inserted only the F09 paths/schemas and the two Product properties from the runtime export |
@@ -56,7 +56,7 @@ Bring the unmerged F09 Storefront branch into `dev` without undoing anything alr
 
 - Additive for staff clients: 4 anonymous GETs, 9 public schemas, 2 optional Product fields. `PUT /api/products/{id}` is a full replacement, so a client that omits `imageUrl`/`description` clears them (FE `dev` does not send them yet).
 - No change to existing routes, RBAC or Store isolation. The INACTIVE-Store guard is unchanged for authenticated users; anonymous storefront reads hide INACTIVE Stores with 404.
-- `ProductCard.availability` is `AVAILABLE | OUT_OF_STOCK` (PO review 2026-11-25, FR-09.3, DEC-20261125-01 addendum); the original branch's `UNAVAILABLE` is not exposed. Breaking only against the unmerged branch.
+- `ProductCard.availability` is `AVAILABLE | OUT_OF_STOCK` (PO review 2026-11-25, FR-09.3, DEC-20261125-04 addendum); the original branch's `UNAVAILABLE` is not exposed. Breaking only against the unmerged branch.
 
 ## 5. Verification executed in this session
 

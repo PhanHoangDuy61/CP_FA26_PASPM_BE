@@ -1,4 +1,4 @@
-# DEC-20261125-01 — F09: a Store is public exactly when it is ACTIVE
+# DEC-20261125-04 — F09: a Store is public exactly when it is ACTIVE
 
 | Field | Value |
 |---|---|

@@ -20,7 +20,7 @@ Canonical contract locations stay stable in this directory. `CURRENT` describes 
 
 Branch `Khoi/merge/f09-storefront-be` (F09 branch `Duy/Feature/F09_Storefront` + `dev` `82b0ced`): **111 paths / 138 operations** (+4 paths, +4 operations: the anonymous F09 GETs `/api/storefront/stores`, `/{storeSlug}/home`, `/{storeSlug}/products`, `/{storeSlug}/products/{productId}`).
 - Added schemas: `PublicStore`, `StoreSummary`, `ProductCard`, `ProductCategory`, `StorefrontProductPage`, `CatalogCategory`, `HomePlacement`, `HomeZone`, `HomeView`. Changed (additive): `ProductRequest` and `ProductView` gain `imageUrl` and `description`.
-- The branch's `PUT /api/system/stores/{storeId}/storefront-visibility` is **not** part of the merge (DEC-20261125-01).
+- The branch's `PUT /api/system/stores/{storeId}/storefront-visibility` is **not** part of the merge (DEC-20261125-04).
 - The runtime `/v3/api-docs` was taken through `-Dpaspm.test.export-openapi=true` on `TransactionExcelImportIntegrationTest`, and only these F09 paths and schema changes were inserted; the rest of the file is byte-identical to `dev`. Pre-existing runtime-vs-file differences (`PlacementView.sku` description, `/api/transactions/imports/csv/async`) were left as they are.
 
 ## 2026-11-24 F02 expiry / push-day / product-delete export

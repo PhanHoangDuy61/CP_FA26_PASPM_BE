@@ -51,6 +51,7 @@ Status labels in the docs:
   - Work on a new branch `<member>/<type>/<topic>`.
   - No direct push to `dev`. No force-push.
   - Commit, push or merge only when the human asked for it.
+  - **DEC and ROC numbers:** before creating a `DEC-yyyymmdd-nn` or `ROC-yyyymmdd-nnn` number, check `origin/dev` and every open remote branch (`git fetch origin`, then `git ls-tree -r --name-only origin/<branch> docs/decisions docs/record-of-changes`) for the same day. If two branches still collide at merge time, the later branch renumbers (file name, ID, README and index rows, every reference).
 - **Database**
   - Never edit Flyway migrations V1–V26. Schema changes go in a new version.
   - Never delete, reset or "repair" a teammate's local database. Tests use disposable databases or containers.

@@ -60,7 +60,7 @@ PASPM is **one web application**: a React single-page app and a single Spring Bo
 | 14 | Layout & campaign | Baseline A, layout B revisions, zone policy, utility score, campaign lifecycle, offline replay simulation, active-layout projection | DONE (API); `priorityCoverage` null |
 | 15 | Persistence | Hybrid: JPA for products and categories, JDBC (`JdbcTemplate`) for everything else | DONE |
 | 16 | Deployment / legacy recovery | Flyway callback and recovery of legacy utility-matrix data | DONE |
-| 17 | Storefront public API | Anonymous read by `storeSlug` (= `store.slug`), ACTIVE Stores only, non-deleted ACTIVE products | DONE (API, MVP; DEC-20261125-01) |
+| 17 | Storefront public API | Anonymous read by `storeSlug` (= `store.slug`), ACTIVE Stores only, non-deleted ACTIVE products | DONE (API, MVP; DEC-20261125-04) |
 | 18 | Cart service plus `storefront_event` | Customer cart, atomic bundle add, event log | **PLANNED** (F10) |
 | 19 | Dashboard | Aggregates for F11: snapshot weighted utility, `comparison_report` results, `storefront_event` bundle counts | **PLANNED**, MVP scope decided 2026-11-19 |
 
@@ -144,7 +144,7 @@ Never edit V1–V26. New schema always goes in V27 or later (V27 is taken by Sto
 | V26 *(Java)* | Drops `product.expiry_push_days`, `stock_priority_score`, `seasonal_priority_score` |
 | V27 *(Java)* | `store`: `slug` (backfilled `slugify(name)-{id}`, then NOT NULL + UNIQUE, random-UUID default for raw inserts), `status`, `address`, `phone`, `icon_key`, `banner_key`, `version`, `created_at`, `updated_at`, `deactivated_at`, `deactivated_by` (FK `app_user`) — DEC-20261123-01 |
 | V28 | `product`: `deleted_at TIMESTAMP NULL`, `deleted_by INT NULL` (FK `app_user`), CHECK both-or-neither, index `(store_id, deleted_at)`. Nothing is backfilled — DEC-20261124-03 |
-| V29 | `product`: `image_url VARCHAR(2048) NULL`, `description TEXT NULL` (F09 display metadata). No Store column: F09 uses `store.slug` and `store.status` — DEC-20261125-01 |
+| V29 | `product`: `image_url VARCHAR(2048) NULL`, `description TEXT NULL` (F09 display metadata). No Store column: F09 uses `store.slug` and `store.status` — DEC-20261125-04 |
 
 ### 5.2 Tables
 
