@@ -3,7 +3,7 @@ from pathlib import Path
 import sys
 
 GROUPS = {
-    "backend": ["AuthIntegrationTest", "GoogleRegistrationTest", "SessionHttpIntegrationTest", "SessionOriginGuardTest", "SessionV21MigrationTest", "CatalogDevSeederTest", "CatalogIntegrationTest",
+    "backend": ["AuthIntegrationTest", "GoogleRegistrationTest", "SessionHttpIntegrationTest", "SessionOriginGuardTest", "SessionV21MigrationTest", "CatalogDevSeederTest", "CatalogIntegrationTest", "StorefrontIntegrationTest",
                 "LegacyPreflightTest", "MiningInputTest", "FrozenEvidenceReaderTest", "RecommendationRulesTest",
                 "TransactionEvidenceTest", "DatabaseTransactionSourceTest", "TransactionImportIntegrationTest",
                 "TransactionImportSchemaTest", "TransactionCsvParserTest", "TransactionOrderValidatorTest",
@@ -20,13 +20,15 @@ GROUPS = {
                 "PushDayIntegrationTest", "WeightV2CalculationTest", "VersionedUtilityJsonTest", "VersionedUtilityPersistenceTest", "WeightRulesV12MigrationTest",
                 "StoreMigrationV27Test", "StoreInactiveGuardHttpTest", "StoreAdministrationHttpTest", "StoreProfileHttpTest",
                 "StoreImageHttpTest", "LocalMediaStorageTest", "MediaFileMissingHttpTest",
-                "BatchExpiryRulesTest", "ExpiryBoundaryF03F06Test", "ProductSoftDeleteIntegrationTest", "ProductSoftDeleteV28MigrationTest"],
+                "LayoutCampaignIntegrationTest",
+                "BatchExpiryRulesTest", "ExpiryBoundaryF03F06Test", "ProductSoftDeleteIntegrationTest", "ProductSoftDeleteV28MigrationTest",
+                "StorefrontIntegrationTest", "SpmfProcessBoundaryTest", "SpmfThirdPartyNoticesTest"],
     "mysql": ["SessionMySqlIntegrationTest", "SessionV21MigrationMySqlTest", "FlywayRecoveryTest", "LegacyRecoveryMySqlTest", "LegacyRecoverySchemaTest",
               "RecommendationMigrationTest", "TransactionImportMySqlIntegrationTest",
               "TransactionImportCorrectnessMySqlIntegrationTest", "TransactionRawEvidenceMigrationMySqlTest",
               "TransactionExcelImportMySqlIntegrationTest",
               "RetailCatalogUtilityMySqlIntegrationTest", "MiningMigrationMySqlTest", "StoreMigrationV27MySqlTest",
-              "ProductSoftDeleteV28MySqlTest"],
+              "ProductSoftDeleteV28MySqlTest", "JpaPilotMigrationMySqlTest"],
 }
 
 if __name__ == "__main__":

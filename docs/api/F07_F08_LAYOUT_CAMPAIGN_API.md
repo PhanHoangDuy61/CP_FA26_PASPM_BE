@@ -47,14 +47,24 @@ Create a campaign with an immutable baseline A and recommendations for editable 
 }
 ```
 
-Replace all placements in B using whole recommendation blocks and the version returned by the last layout response:
+Replace all placements in B with individual product placements and provenance using the version returned by the last layout response. `sourceRecommendationId` is nullable for manually added products:
 
 ```json
 {
   "expectedVersion": 2,
-  "recommendationIds": [401, 405]
+  "placements": [
+    {"productId": 1001, "zone": "BUNDLE", "blockNo": 1, "position": 1, "sourceRecommendationId": 401},
+    {"productId": 1002, "zone": "BUNDLE", "blockNo": 1, "position": 2, "sourceRecommendationId": 401},
+    {"productId": 1003, "zone": "CROSS_SELL", "blockNo": 1, "position": 1, "sourceRecommendationId": null}
+  ]
 }
 ```
+
+Each B placement requires positive `blockNo` and `position`. The allowed zones are `BANNER`, `BUNDLE`, `CROSS_SELL` and `FBT`. OpenAPI now declares those constraints and nullable `sourceRecommendationId` on the request and response. The legacy response alias `recommendationId` is also nullable. The snapshot product search operation ID is `layoutSnapshotProducts`.
+
+`PUT /api/layouts/{id}/placements` is the only B placement write. A product can appear once, but the same source recommendation ID may be used by multiple placements. Removing or moving one product updates only F07 placement/revision data and does not change F06 evidence or Layout A.
+
+`GET /api/layouts/products?snapshotId=...&q=...&page=0&pageSize=20` returns paginated snapshot products for the editor. Results include current product status, sellable quantity, snapshot weighted utility, deleted/eligible flags and per-product validation errors.
 
 Move B to READY after editing:
 
@@ -100,14 +110,14 @@ A B placement that exceeds a cap is rejected with 400 (`<ZONE> exceeds configure
 
 **Baseline A (`F07_BASELINE_V2`)**: a new campaign's A keeps only the top-K snapshot products in the existing frequency order, `K` = BASELINE `maxProducts`; `baseline_params` stores `ruleVersion`, `k` and `candidateProducts`. Campaign creation therefore succeeds for snapshots with more than 35 products. Without a BASELINE cap the V1 behaviour (all products, `F07_BASELINE_V1`) is kept. Existing A layouts are not changed; the BASELINE cap is validated only for V2 baselines.
 
-**Equal-size simulation (`OFFLINE_REPLAY_V2`)**: B is compared with the first N products of A in placement order, N = distinct products in B's revision; when N > |A| all of A is used and `nExceedsBaseline` is `true`. The report's `assumptions` add `comparisonMode: EQUAL_SIZE_TOP_N_OF_A`, `comparisonRule`, `comparedProductCountN`, `baselineProductCount` (|A|), `baselineProductsCompared` (min(N, |A|)), `baselineK` and `nExceedsBaseline`. The A row of the report is A's layout and version, with metrics over that prefix. Reports with `algorithmVersion: OFFLINE_REPLAY_V1` are returned exactly as stored (A measured in full).
+**Equal-size simulation (`OFFLINE_REPLAY_V2` and later)**: B is compared with the first N products of A in placement order, N = distinct products in B's revision; when N > |A| all of A is used and `nExceedsBaseline` is `true`. The report's `assumptions` add `comparisonMode: EQUAL_SIZE_TOP_N_OF_A`, `comparisonRule`, `comparedProductCountN`, `baselineProductCount` (|A|), `baselineProductsCompared` (min(N, |A|)), `baselineK` and `nExceedsBaseline`. The A row of the report is A's layout and version, with metrics over that prefix. Reports with `algorithmVersion: OFFLINE_REPLAY_V1` are returned exactly as stored (A measured in full).
 
 **Additive `LayoutView` fields** (layout B only, `null` for A): `equalSizeBaselineScore` — weighted utility score of A's first N products; `equalSizeProductCount` — min(N, |A|). For the F07 "difference vs A" use `weightedUtilityScore(B) − equalSizeBaselineScore(B)`; A's `weightedUtilityScore` remains the full-A score. No field was removed or renamed; no route changed.
 
 ## Layout rules and utility
 
 - Baseline A is generated deterministically from the campaign snapshot by the number of distinct snapshot transactions containing each product, descending; ties are ordered by `product_id` ascending. A is read-only. This is the frequency baseline defined for the F08 comparison, not a weighted-utility ranking.
-- B placements contain complete recommendation blocks. A recommendation must be in the same Store and snapshot, `reviewStatus=APPROVED`, and `readyForConsumption=true` at use time. F07 adds no extra `comparisonStatus` gate beyond the published F06 policy.
+- B placements contain individual products. A sourced placement's recommendation must be in the same Store and snapshot and `reviewStatus=APPROVED`; the placed product must belong to that recommendation. The aggregate F06 `readyForConsumption` flag is not used to invalidate every placement in that recommendation; at save/READY, each placed product is evaluated independently for eligibility. Manual placements use `sourceRecommendationId:null`, must be in the snapshot and active, and must have at least 1 sellable unit.
 - A product may appear only once in a layout. A block that later loses eligibility remains visible and is marked invalid; preview exposes validation errors and READY/publish/activate are blocked until corrected. Eligibility is rechecked at these actions.
 - Zone names map to recommendation types. Capacities are shared policy, exposed by `GET /api/layouts/policy`, and configured with `paspm.layout.max-blocks-by-zone` / `paspm.layout.max-products-by-zone`. An absent cap is unbounded; this implementation invents no default capacity.
 - A layout utility score is the sum of `utility_matrix_item.weighted_utility` for distinct displayed products in the same snapshot. Itemset/recommendation utility is not added. The label is “Weighted utility (snapshot)”; it is not revenue or actual profit.
@@ -120,12 +130,13 @@ The evaluation set contains completed, F03-eligible F04 transaction IDs in the r
 The response has `simulated:true`. It describes historical replay fit, not a real-user A/B test, causal lift, revenue forecast, or actual profit.
 
 - **Hit rate:** transactions with at least one displayed product / evaluation transactions.
-- **Bundle conversion:** transactions containing every product in at least one displayed BUNDLE block / evaluation transactions. FBT is not counted as BUNDLE.
+- **Bundle conversion (`OFFLINE_REPLAY_V3` and later):** transactions containing every product in at least one saved `BUNDLE` block, grouped by `blockNo` in the exact Layout B revision, / evaluation transactions. F06 source-recommendation provenance does not define simulation blocks. FBT is not counted as BUNDLE. Historical V1/V2 reports remain as stored.
 - **Captured utility:** numerator is F03 `UtilityMath.base` for purchased item lines whose product is displayed; denominator is F03 base utility for all item lines in the evaluation set. Base utility is `(unit_price - unit_cost) * quantity`, rounded HALF_UP to six decimals.
-- **Priority coverage:** `null` until the F03 formula is confirmed.
-- A zero denominator yields `rate:null` (N/A). Empty evaluation sets are stored as valid reports with all denominator-based rates null.
+- **Priority coverage (`OFFLINE_REPLAY_V4`):** distinct displayed products whose frozen F03 snapshot weight W > 1, divided by distinct displayed products on that side, rounded HALF_UP to six decimals. Read only `utility_matrix_item.weight_value` in the same Store and campaign snapshot. For reports, A uses the same top-N prefix as replay and B uses all its products. When N > |A|, use all of A, set `nExceedsBaseline=true` and divide each side by its own actual count.
+- **LayoutView:** additive `priorityCoverage` (number in [0,1] or null) and `priorityCoverageDenominator` (integer). Each reads the full layout, so full A can differ from report A. An empty draft returns `null` and `0`. If a displayed product's frozen W is missing or inconsistent across its rows, the rate is null and the actual count remains visible.
+- Zero evaluation denominators yield `rate:null` for the replay metrics. Layout coverage is independent of evaluation transactions. Historical V1–V3 reports keep both coverage fields as stored (null/null).
 
-Example response shape (IDs and values illustrative):
+Example report excerpt (Layout A row, illustrative IDs and values):
 
 ```json
 {
@@ -139,8 +150,13 @@ Example response shape (IDs and values illustrative):
   "datasetHash": "<64 lowercase hex characters>",
   "evaluationCount": 120,
   "simulated": true,
-  "algorithmVersion": "OFFLINE_REPLAY_V1",
-  "assumptions": {},
+  "algorithmVersion": "OFFLINE_REPLAY_V4",
+  "assumptions": {
+    "comparedProductCountN": 8,
+    "baselineProductCount": 35,
+    "baselineProductsCompared": 8,
+    "nExceedsBaseline": false
+  },
   "layouts": [
     {
       "layoutId": 91,
@@ -149,8 +165,8 @@ Example response shape (IDs and values illustrative):
       "hitRate": {"numerator": 84, "denominator": 120, "rate": 0.7},
       "bundleConversion": {"numerator": 0, "denominator": 120, "rate": 0},
       "capturedUtility": {"numerator": 840, "denominator": 1200, "rate": 0.7},
-      "priorityCoverage": null,
-      "priorityCoverageDenominator": null
+      "priorityCoverage": 0.25,
+      "priorityCoverageDenominator": 8
     }
   ],
   "createdAt": "2026-01-31T12:00:00Z"
@@ -172,7 +188,3 @@ Only a DRAFT campaign can be edited, simulated, and decided. Simulation is optio
 ## Loading and polling
 
 F07 preview, F08 simulation, and all lifecycle mutations are synchronous. Keep the corresponding action in a loading state until its HTTP response; success ends loading and renders that response, while an error ends loading and follows the shared `{"error":"..."}` contract. There is no polling interval, job ID, or percentage progress for these operations.
-
-## 2026-11-15 — F03 Weight v2 and priority coverage
-
-`priorityCoverage` and `priorityCoverageDenominator` are still always `null`: the report row is inserted with `NULL,NULL` (`src/main/java/vn/edu/fpt/paspm/layout/LayoutCampaignRepository.java:344-345`) and the stored assumption reads "N/A until the F03 priority coverage formula is confirmed" (`layout/LayoutCampaignService.java:267`). The intended definition "priority item = W(i) > 1" (F03 Weight v2) is **not wired**; no F07/F08 code reads W. F07/F08 routes and bodies did not change on branch `Khoi/feat/f05-progress-f03-weight-v2`.

@@ -35,7 +35,7 @@ MySQL image8.4 and Java major17/25 follow the approved version family; they are 
 
 ## Publish the approved SPMF artifact safely
 
-No approved CI artifact URL exists yet. The workflow deliberately fails its artifact prerequisite instead of downloading an upstream latest release, substituting a JAR or skipping mining tests.
+*(2026-11-25, DEC-20261125-03: the approved URL is the Release asset `https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/releases/download/spmf-2.67a/spmf.jar`; the repository is public, so no token is needed. The owner creates the Release and sets `PASPM_CI_SPMF_ARTIFACT_URL`; until then the steps below still describe the blocked state.)* No approved CI artifact URL existed when this was written. The workflow deliberately fails its artifact prerequisite instead of downloading an upstream latest release, substituting a JAR or skipping mining tests.
 
 1. Team Lead/artifact owner selects the exact `spmf.jar` already used in PASPM tests, outside Git. Verify SHA-256 `4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a` and run Java25+ `java -Djava.awt.headless=true -jar /approved/path/spmf.jar version`; require `-- SPMF version 2.67a --`.
 2. Record provenance and approve redistribution/access according to the existing [SPMF setup/license guidance](F05_SPMF_RUNTIME_SETUP.md). The local pin establishes reviewed binary identity; it is not an independently authenticated upstream signature.

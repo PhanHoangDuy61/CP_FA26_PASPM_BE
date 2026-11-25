@@ -33,7 +33,11 @@ public final class CatalogContracts {
             @NotNull @PositiveOrZero BigDecimal costPrice,
             @NotBlank @Schema(allowableValues = {"ACTIVE", "INACTIVE"}) String status,
             @Schema(description = "Set true only after confirming the similar-name warning returned with 409")
-            Boolean confirmSimilarName) {}
+            Boolean confirmSimilarName,
+            @Size(max = 2048) @Schema(description = "Optional absolute HTTP(S) image URL for F09 display (no upload)")
+            String imageUrl,
+            @Size(max = 2000) @Schema(description = "Optional display description for F09")
+            String description) {}
 
     public record ProductView(
             @Schema(accessMode = Schema.AccessMode.READ_ONLY, description = "Database-generated product ID")
@@ -45,7 +49,8 @@ public final class CatalogContracts {
             CategoryView category, BigDecimal sellingPrice, BigDecimal costPrice,
             String status,
             @Schema(accessMode = Schema.AccessMode.READ_ONLY,
-                    description = "Derived sum of inventory batch remainingQuantity values") long stockQuantity) {}
+                    description = "Derived sum of inventory batch remainingQuantity values") long stockQuantity,
+            String imageUrl, String description) {}
 
     public record ProductPage(List<ProductView> content, int page, int pageSize,
                               long totalElements, int totalPages) {}

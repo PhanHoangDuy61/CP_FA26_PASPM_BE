@@ -11,6 +11,9 @@ Use the actual Backend contract together with its feature handoff. Role checks a
 | F05 | [F05](F05_HANDOFF.md) | [API](../api/F05_MINING_API.md) | System Admin runs mining, Store users read; start with [OPTION_B_BACKEND_API_HANDOFF.md](OPTION_B_BACKEND_API_HANDOFF.md); System Admin reads snapshots/requests/runs (not patterns) and picks Stores via `GET /api/system/stores` *(Scheduler branch)*; scheduler activation is 503 unless the Backend enables it |
 | F06 | [F06](F06_HANDOFF.md) | [API](../api/F06_RECOMMENDATION_API.md) | Candidate review is separate from downstream activation |
 | F07/F08 | [F07/F08](F07_F08_HANDOFF.md) | [API](../api/F07_F08_LAYOUT_CAMPAIGN_API.md) | Layout B editing, offline simulated replay, campaign lifecycle; V23 pending deployment |
+| F09 | [F09](F09_HANDOFF.md) | [API](../api/F09_STOREFRONT_API.md) | Public Store selection, Homepage, Product detail and eligible bundle placements; Related Products deferred |
+| F10 | [F10](F10_HANDOFF.md) | [API](../api/F10_BUNDLE_CART_API.md) | PLANNED, bundle add and customer cart |
+| F11 | [F11](F11_HANDOFF.md) | [API](../api/F11_DASHBOARD_API.md) | PLANNED, three staff dashboard panels |
 
 Existing `F01_examples`–`F03_examples`, `F05_examples` and `F06_examples` remain in place; the current F01 login example includes the session csrfToken field; other feature examples retain their existing contents. F04 sample remains linked from its handoff. See [missing F03 sources](../requirements/README.md#f03-v12-source-gap) and the [review register](../requirements/README.md#documentation-review-register). This task does not implement Frontend integration or rerun UI tests.
 

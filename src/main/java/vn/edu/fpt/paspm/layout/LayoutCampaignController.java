@@ -34,7 +34,7 @@ public class LayoutCampaignController {
     }
 
     @GetMapping("/api/layouts/policy")
-    @Operation(summary = "Read the shared layout zones and configured capacities used by F07 and F09")
+    @Operation(operationId = "getLayoutPolicy", summary = "Read the shared layout zones and configured capacities used by F07 and F09")
     public LayoutPolicyView policy() {
         return service.policy();
     }
@@ -48,6 +48,16 @@ public class LayoutCampaignController {
         return service.recommendationOptions(jwt, snapshotId, page, pageSize);
     }
 
+    @GetMapping("/api/layouts/products")
+    @Operation(operationId = "layoutSnapshotProducts", summary = "Search products in a Store snapshot with snapshot utility and current placement eligibility")
+    public Page<SnapshotProductOption> products(@AuthenticationPrincipal Jwt jwt,
+            @RequestParam @Positive int snapshotId,
+            @RequestParam(defaultValue = "") String q,
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int pageSize) {
+        return service.snapshotProducts(jwt, snapshotId, q, page, pageSize);
+    }
+
     @GetMapping("/api/layouts/{id}")
     @Operation(summary = "Read an own-Store layout and its current snapshot utility score")
     public LayoutView layout(@AuthenticationPrincipal Jwt jwt, @PathVariable @Positive long id) {
@@ -55,14 +65,14 @@ public class LayoutCampaignController {
     }
 
     @GetMapping("/api/layouts/{id}/preview")
-    @Operation(summary = "Preview placements, current recommendation validity, and snapshot utility")
+    @Operation(operationId = "previewLayout", summary = "Preview placements, current recommendation validity, and snapshot utility")
     public LayoutView preview(@AuthenticationPrincipal Jwt jwt, @PathVariable @Positive long id) {
         return service.preview(jwt, id);
     }
 
     @PutMapping("/api/layouts/{id}/placements")
     @PreAuthorize("hasRole('MERCHANDISER')")
-    @Operation(summary = "Replace B placements as whole recommendation blocks using expectedVersion")
+    @Operation(summary = "Replace Layout B product placements and provenance using expectedVersion")
     public LayoutView placements(@AuthenticationPrincipal Jwt jwt, @PathVariable @Positive long id,
             @Valid @RequestBody SavePlacementsRequest request) {
         return service.savePlacements(jwt, id, request);
@@ -70,7 +80,7 @@ public class LayoutCampaignController {
 
     @PostMapping("/api/layouts/{id}/ready")
     @PreAuthorize("hasRole('MERCHANDISER')")
-    @Operation(summary = "Recheck recommendation eligibility and move layout B to READY")
+    @Operation(summary = "Recheck product and source recommendation eligibility before moving B to READY")
     public LayoutView ready(@AuthenticationPrincipal Jwt jwt, @PathVariable @Positive long id,
             @Valid @RequestBody TransitionRequest request) {
         return service.readyLayout(jwt, id, request);

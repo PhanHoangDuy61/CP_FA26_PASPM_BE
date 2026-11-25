@@ -1,0 +1,28 @@
+# Skipped tests that the Backend verification may report (DEC-20261125-05).
+# Format, one test per line:  target | flag | profiles | runtime | reason
+#   target   Class#method (exactly as in the Surefire XML; parameterised names include their suffix)
+#   flag     the opt-in that is NOT enabled when the test is skipped
+#   profiles pr = the `integration` job of backend-verification.yml; full = the manual backend-full-verification.yml
+#   runtime  what the test needs when it is enabled
+# test-summary.py fails on any skipped test that is not listed here for the selected profile, on failures, errors and zero tests.
+# Verified 2026-11-25: a full run with the `integration` job flags on Linux amd64 reports exactly these 12 skips (882 tests).
+
+# Needs the synthetic PASPM-scale FoodMart fixture, real SPMF and MySQL. ~minutes; the manual workflow enables it.
+FoodMartScaleSyntheticE2EMySqlIntegrationTest#syntheticScaleSnapshotIsImportedMinedPersistedAndConsumedByF06 | paspm.test.foodmart-e2e=true | pr | Linux, Java 17 + Java 25, SPMF 2.67a, MySQL 8.4 | long synthetic lifecycle; run by the manual full workflow
+FoodMartScaleSyntheticE2EMySqlIntegrationTest#syntheticFoodMartDenseFixtureFlowsThroughF04F03F05AndF06 | paspm.test.foodmart-e2e=true | pr | Linux, Java 17 + Java 25, SPMF 2.67a, MySQL 8.4 | long dense synthetic lifecycle; run by the manual full workflow
+FoodMartScaleSyntheticE2EMySqlIntegrationTest#realisticUtilityDenseFixtureIsMinedInWholeDongModeThroughF06 | paspm.test.foodmart-e2e=true | pr | Linux, Java 17 + Java 25, SPMF 2.67a, MySQL 8.4 | long realistic-utility synthetic lifecycle; run by the manual full workflow
+
+# Wait for the real 300 s lease expiry (about 14 minutes together). The manual workflow enables them.
+MiningSchedulerMultiJvmMySqlTest#crashPoint3_killedWhilePreparingTheSnapshotRecoversAfterTheLeaseExpiresNaturally | paspm.test.natural-lease=true | pr | Linux, Java 17 + Java 25, MySQL 8.4, multijvm | natural lease expiry takes about 5 minutes
+MiningSchedulerMultiJvmMySqlTest#staleOwnerThatWakesUpAfterItsLeaseExpiredNaturallyCannotCommitAndTheNewOwnerProducesTheOnlyResult | paspm.test.natural-lease=true | pr | Linux, Java 17 + Java 25, MySQL 8.4, multijvm | natural lease expiry takes about 6 minutes
+
+# Need a jar of the OLD backend. The manual workflow builds it when the input legacy_ref is given.
+MiningSchedulerUpgradeCompatibilityMySqlTest#characterizeTheOldBackendRunningOnTheNewSchema | paspm.test.legacy-jar=<old backend jar> | pr,full | Linux, Java 17, MySQL 8.4 | needs a jar built from an older commit (workflow input legacy_ref)
+
+# Need private data that CI does not have; they stay skipped in every profile and must be run by a person.
+MiningConversionStabilityTest#exactAndWholeDongInputsShareTheirTopPatterns | paspm.test.stability-matrix=<frozen TSV> | pr,full | Java 17 + Java 25, SPMF | needs a frozen utility matrix (private data); DEC-20261119-05 measurement
+PilotCloneApiIntegrationTest#productRoundtripDefaultsAndDatabaseMetadataMatch | paspm.test.jpa-clone=true | pr,full | Java 17, MySQL 8.4 clone | needs an authorized disposable CLONE of a real database (clone.properties, PASPM_JPA_PILOT_MUTATIONS_ALLOWED)
+PilotCloneApiIntegrationTest#skuCannotBeSuppliedAndValidationKeepsExistingErrorContract | paspm.test.jpa-clone=true | pr,full | Java 17, MySQL 8.4 clone | needs an authorized disposable CLONE of a real database
+PilotCloneApiIntegrationTest#metadataAndStatusPreserveBatchInventory | paspm.test.jpa-clone=true | pr,full | Java 17, MySQL 8.4 clone | needs an authorized disposable CLONE of a real database
+PilotCloneApiIntegrationTest#foreignStoreAndRolesCannotModifyProduct | paspm.test.jpa-clone=true | pr,full | Java 17, MySQL 8.4 clone | needs an authorized disposable CLONE of a real database
+PilotCloneApiIntegrationTest#simulatedFoodStoreKeepsExactInventoryFixtureAfterJpaMetadataWrites | paspm.test.jpa-clone=true | pr,full | Java 17, MySQL 8.4 clone | needs an authorized disposable CLONE of a real database

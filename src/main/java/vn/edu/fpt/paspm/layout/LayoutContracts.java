@@ -28,7 +28,17 @@ public final class LayoutContracts {
     @Schema(additionalProperties = Schema.AdditionalPropertiesValue.FALSE)
     public record SavePlacementsRequest(
             @NotNull @Positive Long expectedVersion,
-            @NotNull @Size(max = 100) List<@NotNull @Positive Long> recommendationIds) {}
+            @NotNull List<@NotNull @Valid PlacementRequest> placements) {}
+
+    @Schema(additionalProperties = Schema.AdditionalPropertiesValue.FALSE)
+    public record PlacementRequest(
+            @NotNull @Positive @JsonDeserialize(using = StrictIntegerDeserializer.class) Integer productId,
+            @Schema(allowableValues = {"BANNER", "BUNDLE", "CROSS_SELL", "FBT"})
+            @NotBlank String zone,
+            @Schema(requiredMode = Schema.RequiredMode.REQUIRED, minimum = "1") @Positive int blockNo,
+            @Schema(requiredMode = Schema.RequiredMode.REQUIRED, minimum = "1") @Positive int position,
+            @Schema(types = {"integer", "null"}, description = "F06 source recommendation; null means manually added")
+            @Positive Long sourceRecommendationId) {}
 
     @Schema(additionalProperties = Schema.AdditionalPropertiesValue.FALSE)
     public record TransitionRequest(@NotNull @Positive Long expectedVersion) {}
@@ -52,7 +62,12 @@ public final class LayoutContracts {
     public record LayoutSummary(long layoutId, long campaignId, int snapshotId, LayoutRole role,
             LayoutStatus status, long version, String name, Instant createdAt, Instant updatedAt) {}
 
-    public record PlacementView(Integer productId, Long recommendationId, RecType recommendationType,
+    public record PlacementView(Integer productId,
+            @Schema(types = {"integer", "null"}, deprecated = true,
+                    description = "Legacy alias of sourceRecommendationId; null means manually added")
+            Long recommendationId,
+            @Schema(types = {"integer", "null"}, description = "F06 source recommendation; null means manually added")
+            Long sourceRecommendationId, RecType recommendationType,
             String sku, String productName, String zone, int blockNo, int position,
             BigDecimal snapshotWeightedUtility, boolean valid, List<String> validationErrors) {}
 
@@ -63,10 +78,18 @@ public final class LayoutContracts {
             @Schema(types = {"number", "null"}, description = "Layout B only (DEC-20261119-06): weighted utility score of the first N products of baseline A, N = distinct products in this B (all of A when N > |A|). Difference vs A for F07 = weightedUtilityScore - equalSizeBaselineScore. Null for layout A.")
             BigDecimal equalSizeBaselineScore,
             @Schema(types = {"integer", "null"}, description = "Layout B only: number of A products in that prefix, min(N, |A|). Null for layout A.")
-            Integer equalSizeProductCount) {}
+            Integer equalSizeProductCount,
+            @Schema(types = {"number", "null"}, description = "Share of distinct displayed products with frozen snapshot W > 1, rounded to six decimals. Null for an empty layout or unavailable frozen weight.")
+            BigDecimal priorityCoverage,
+            @Schema(description = "Number of distinct displayed products, including zero for an empty layout")
+            int priorityCoverageDenominator) {}
 
     public record RecommendationOption(long recommendationId, int snapshotId, RecType type,
             List<Integer> productIds, BigDecimal utility, long version) {}
+
+    public record SnapshotProductOption(int productId, String sku, String productName, String productStatus,
+            boolean deleted, long sellableQuantity, BigDecimal snapshotWeightedUtility,
+            boolean eligible, List<String> validationErrors) {}
 
     public record ZonePolicy(String zone, RecType recommendationType, Integer maxBlocks, Integer maxProducts) {}
 
@@ -89,7 +112,10 @@ public final class LayoutContracts {
 
     public record ReportLayoutView(long layoutId, long layoutVersion, LayoutRole role,
             MetricView hitRate, MetricView bundleConversion, UtilityMetricView capturedUtility,
-            BigDecimal priorityCoverage, Integer priorityCoverageDenominator) {}
+            @Schema(types = {"number", "null"}, description = "Distinct priority products divided by actual displayed product count on this comparison side. Uses frozen W > 1. Null when unavailable or on historical reports without the metric.")
+            BigDecimal priorityCoverage,
+            @Schema(types = {"integer", "null"}, description = "Actual distinct displayed product count on this comparison side. Null on historical reports without the metric.")
+            Integer priorityCoverageDenominator) {}
 
     public record CampaignReportView(long reportId, long campaignId, int snapshotId, int createdBy,
             LocalDate rangeStart, LocalDate rangeEnd, String sourceNamespace, String datasetHash,

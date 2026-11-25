@@ -57,11 +57,11 @@ PASPM is **one web application**: a React single-page app and a single Spring Bo
 | 11 | Schedule dispatcher | Turns due occurrences into a snapshot plus a request (SYSTEM_SCHEDULER principal). Enable returns **503** | PARTIAL |
 | 12 | SPMF child process | Runs EFIM with heap, time, output and log limits. Output limit is enforced by the kernel on Linux and macOS, by polling on Windows | DONE |
 | 13 | Recommendation rules | BUNDLE / CROSS_SELL / FBT / BANNER from frozen evidence, live eligibility and fingerprint | DONE |
-| 14 | Layout & campaign | Baseline A, layout B revisions, zone policy, utility score, campaign lifecycle, offline replay simulation, active-layout projection | DONE (API); `priorityCoverage` null |
+| 14 | Layout & campaign | Baseline A, layout B revisions, zone policy, utility score, campaign lifecycle, offline replay simulation, active-layout projection | DONE (API); frozen priority coverage merged in PR #32 (`516183d`) |
 | 15 | Persistence | Hybrid: JPA for products and categories, JDBC (`JdbcTemplate`) for everything else | DONE |
 | 16 | Deployment / legacy recovery | Flyway callback and recovery of legacy utility-matrix data | DONE |
-| 17 | Storefront public API | Anonymous read by `storeSlug` | **PLANNED** (F09) |
-| 18 | Cart service plus `storefront_event` | Customer cart, atomic bundle add, event log | **PLANNED** (F10) |
+| 17 | Storefront public API | Anonymous read by `storeSlug` (= `store.slug`), ACTIVE Stores only, non-deleted ACTIVE products | DONE (API, MVP; DEC-20261125-04) |
+| 18 | Cart service plus `storefront_event` | Customer cart, component-level bundle add, event log | **PLANNED** (F10) |
 | 19 | Dashboard | Aggregates for F11: snapshot weighted utility, `comparison_report` results, `storefront_event` bundle counts | **PLANNED**, MVP scope decided 2026-11-19 |
 
 ## 3. Module (package) map
@@ -81,7 +81,8 @@ Root package: `vn.edu.fpt.paspm`. Java migrations live in `db.migration`.
 | `security` | Shared | 5 | JWT, RBAC, rate limits, the central Store status guard (`StoreStatusGuard`) |
 | `common` | Shared | 7 | Errors, shared contracts, transaction manager. `common.media`: `MediaStorage` / `LocalMediaStorage` (Store images, avatars) |
 | `deployment` | Ops | 5 | Flyway callback, legacy recovery |
-| *(planned)* `storefront`, `cart`, `dashboard` | F09–F11 | — | **PLANNED.** F09 reuses the layout and recommendation projections through a separate public controller |
+| `storefront` | F09 | `StorefrontController`, `StorefrontService`, `StorefrontRepository` | DONE (MVP). Separate public controller; reads the active selected layout and rechecks recommendation blocks |
+| *(planned)* `cart`, `dashboard` | F10–F11 | — | **PLANNED** |
 
 Dependency rules:
 - Downstream modules read upstream data through **frozen artifacts**: F05 reads the snapshot, F06 reads the run and its patterns, F07/F08 read the recommendations and snapshot. They never read live mutable data for historical results.
@@ -119,7 +120,7 @@ sequenceDiagram
 
 ### 5.1 Migrations
 
-Never edit V1–V26. New schema always goes in V27 or later (V27 is taken by Store management, V28 by product soft delete; use V29+ next).
+Never edit V1–V26. New schema always goes in V27 or later (V27 is taken by Store management, V28 by product soft delete, V29 by the old F09 merge on `dev`, V30 by the F09 cleanup, V31 reserved for F10; use V32+ next).
 
 | Version | Purpose |
 |---|---|
@@ -143,6 +144,8 @@ Never edit V1–V26. New schema always goes in V27 or later (V27 is taken by Sto
 | V26 *(Java)* | Drops `product.expiry_push_days`, `stock_priority_score`, `seasonal_priority_score` |
 | V27 *(Java)* | `store`: `slug` (backfilled `slugify(name)-{id}`, then NOT NULL + UNIQUE, random-UUID default for raw inserts), `status`, `address`, `phone`, `icon_key`, `banner_key`, `version`, `created_at`, `updated_at`, `deactivated_at`, `deactivated_by` (FK `app_user`) — DEC-20261123-01 |
 | V28 | `product`: `deleted_at TIMESTAMP NULL`, `deleted_by INT NULL` (FK `app_user`), CHECK both-or-neither, index `(store_id, deleted_at)`. Nothing is backfilled — DEC-20261124-03 |
+| V29 *(Java)* | Old F09 merge on `dev` (`68d6f0b`), kept unchanged: `store.store_slug` (backfilled, unique `uq_store_store_slug`), `store.storefront_enabled BOOLEAN NOT NULL DEFAULT FALSE`, `product.image_url VARCHAR(2048) NULL`, `product.description TEXT NULL` |
+| V30 | Drops `uq_store_store_slug`, `store.store_slug` and `store.storefront_enabled`. F09 uses `store.slug` and `store.status`; `product.image_url`/`description` stay — DEC-20261125-04 (addendum "Migrations") |
 
 ### 5.2 Tables
 
@@ -157,7 +160,7 @@ There are **45 tables**: 31 from V1–V19, plus 2 (V20), 8 (V23) and 4 (V25), wi
 | Mining | `mining_config_head`, `mining_config_version`, `mining_request`, `mining_run`, `high_utility_pattern`, `pattern_item`, `mining_schedule`, `mining_schedule_occurrence` |
 | Recommendation | `recommendation_rule_config`, `recommendation`, `recommendation_item`, `recommendation_source`, `recommendation_review_history` |
 | Layout & campaign | `campaign`, `campaign_history`, `storefront_layout`, `storefront_layout_revision`, `layout_placement`, `comparison_report`, `comparison_report_layout`, `comparison_report_transaction` |
-| *(PLANNED F09/F10)* | Product `image_url` and `description`, cart tables, `storefront_event`. Names are not final (`store.slug` exists since V27) |
+| *(PLANNED F10)* | Cart tables, `storefront_event`. Names are not final |
 
 ### 5.3 Data invariants
 
@@ -222,19 +225,20 @@ flowchart LR
 ### 6.4 Layout and campaign (F07/F08)
 
 - **Baseline A** is the top-K snapshot products by transaction frequency (`F07_BASELINE_V2`, K = BASELINE capacity 35; older V1 layouts hold every product).
-- **Layout B** is built from whole APPROVED and ready blocks, within the configured zone capacities.
+- **Layout B** is built per product with optional F06 provenance, within the configured zone capacities. One source recommendation may be split across placements, and manual placement source is null. F06 evidence and Layout A are immutable.
 - **Zones** are `BASELINE`, `BUNDLE`, `CROSS_SELL`, `FBT` and `BANNER`. Capacities are configured in `application.yml` since PR #22, and environment-overridable: BANNER 3 blocks / 3 products, BUNDLE 4 / 16, CROSS_SELL 2 / 8, FBT 2 / 8, BASELINE 35 / 35.
 - **Score** = Σ weighted utility of the distinct products shown.
 - **Simulation** runs only on a DRAFT campaign. It replays later eligible transactions that are not in the snapshot, and stores the dataset hash, the transaction ids and the assumptions. Since PR #22 (`OFFLINE_REPLAY_V2`), B is compared with the top-N prefix of A, where N = products in B.
 - **Activation** locks the Store row, rechecks validity, ends the previously active campaign and records history.
-- **Planned extension:** `priorityCoverage` = |products with W > 1 on the layout| ÷ |products on the layout|, with W read from `utility_matrix_item` of the campaign snapshot. Fill `priority_coverage` and `priority_coverage_denominator` in `comparison_report_layout` instead of NULL. Today the code still writes `NULL,NULL`, and the stored assumption still reads "N/A until the F03 priority coverage formula is confirmed".
+- **Priority coverage (OFFLINE_REPLAY_V4):** distinct displayed products with W > 1 divided by the distinct products displayed. The service reads W from the frozen campaign snapshot and saves the rate and denominator in `comparison_report_layout`. Layout views use their complete placement list, and reports use the actual A prefix and full B. Historical reports are read as stored.
 
-### 6.5 Storefront and cart (F09/F10 — PLANNED)
+### 6.5 Storefront (F09 — DONE, MVP) and cart (F10 — PLANNED)
 
-- A new public read controller resolves `storeSlug` to the Store's active-layout projection. It falls back to the default layout when no campaign is active.
+- `StorefrontController` (anonymous GETs, permitted in `SecurityConfig`) resolves `storeSlug` = `store.slug` of an ACTIVE Store to the active campaign's selected READY layout. With no ACTIVE campaign it returns `DEFAULT_CATALOG` (ACTIVE, non-deleted products by category), not baseline A.
 - Public DTOs carry no cost or batch data. `availability` is computed with aggregate queries.
-- The cart is per customer and per Store. It carries a version and supports idempotent adds.
-- Adding a bundle is one transaction: recheck → insert lines → write a `storefront_event` row.
+- The cart is per customer and per Store. Every mutation checks the optimistic version from If-Match.
+- Whole-bundle add resolves the F09 key against active Layout B, checks each component, merges eligible Product lines, advances cart version and records one successful event in a transaction. An all-skipped request records rejection without a cart change.
+- Planned V31 creates `shopping_cart`, `shopping_cart_item` and `storefront_event`. F11 reads snapshot, comparison report and bundle event aggregates without a separate schema. Migrations after V31 start at V32. See [DEC-20261125-06](../decisions/2026-11-25/DEC-20261125-06-f10-f11-mvp-contract.md).
 
 ## 7. Cross-cutting concerns
 
@@ -256,7 +260,7 @@ flowchart LR
 | Item | Declaration |
 |---|---|
 | Backend | Java 17 (Temurin), Spring Boot 3.5.7 (Web, Security, OAuth2 Resource Server, JDBC, Data JPA, Mail, Validation), Flyway, springdoc-openapi 2.8.14, Commons CSV 1.14.1 |
-| Mining | SPMF 2.67a, archive SHA-256 `4aa46838…dfe6a`, run on a Java 25 runtime |
+| Mining | SPMF 2.67a (GPL v3), archive SHA-256 `4aa46838…dfe6a`, run on a Java 25 runtime as a **separate process** only; redistributed through the GitHub Release `spmf-2.67a` with its license and source; the Docker image (linux/amd64) carries them in `/opt/paspm/licenses/` (DEC-20261125-03, `THIRD_PARTY_NOTICES.md`) |
 | Frontend | React 19, Vite 8, TypeScript 7, Tailwind CSS 4 (from `package.json` on FE `dev` @ `86d677d`). Branches: FE-FA26 `dev`; `feature/f07-f11-mock` exists only as a local branch (not on `origin`); `origin/feature/fe-v26-integration` (2026-11-19) removes part of the legacy API usage |
 | Database | MySQL 8.4 (local install or Docker Compose). H2 is used in some tests (test scope in `pom.xml`) |
 | CI | GitHub Actions workflow "Backend verification", with jobs "SPMF downloader security", "Java 17 Backend foundation", "MySQL 8.4 / Flyway V1-V11 / F04 transactions", "Full F01-F06 / Flyway / SPMF HUI-Miner-EFIM" (job names not yet updated for EFIM-only) and "Required Backend verification". The `integration` job reads the repository **variable** (not a secret) `PASPM_CI_SPMF_ARTIFACT_URL`. It was recorded as **missing** on 2026-11-16 (ROC-20261116-012); its current value is UNVERIFIED |
@@ -294,8 +298,8 @@ Both describe V1–V19. The tables below come from scanning their labels against
 | **AD04 Algorithm Benchmarking** | **Remove** | Benchmark removed 2026-11-16. Retire the page, or mark it historical |
 | AD05 Recommendation | Minor | Add the `seasonEnded` / expiry-alert warnings from push day |
 | AD06 Layout & Campaign | Update | Match the implemented flow: A generated read-only; B from whole blocks; READY; decide; publish / withdraw; activate / end / rollback |
-| AD07 A/B Testing | Rewrite | Offline replay of later transactions, not synthetic CTR/conversion. Metrics: hitRate, bundleConversion, capturedUtility, priorityCoverage (null) |
-| AD08 Customer Shopping | Keep (planned) | Align with the F09/F10 MVP decisions: anonymous browse, END_CUSTOMER cart, atomic bundle add, no reservation |
+| AD07 A/B Testing | Rewrite | Offline replay of later transactions, not synthetic CTR/conversion. Metrics: hitRate, bundleConversion, capturedUtility, priorityCoverage |
+| AD08 Customer Shopping | Keep (planned) | Align with the F09/F10 MVP decisions: anonymous browse, END_CUSTOMER cart, component-level bundle add, no reservation |
 | R2-03 Screen Flow | Update | Remove S06 Benchmark, Expiry Window and Product Scores. Add Seasons, push day, mining progress, λmax policy, F07/F08 screens |
 | R2-04 System Architecture | Update | Utility box: "S/M priorities, E from batch expiry" becomes "U_expiry from batch push days + season M". SPMF box becomes EFIM. Add async import worker and Layout & Campaign. Frontend box: "Bearer token in local storage" becomes access token plus refresh cookie / CSRF. Rename "storefront checkout" (checkout is out of scope) |
 | R2-05 Package Diagram | Update | Mining: remove "result comparison", add "progress". Layout and Campaign & A/B Testing are now implemented in the single `layout` Java package. Storefront, Cart and Dashboard stay planned |
@@ -312,7 +316,7 @@ Both describe V1–V19. The tables below come from scanning their labels against
 | R2-08.05 / R2-07.05 Seq & Class AD05 | Minor | `ProductEligibilityService` now uses EligibilityV2 (push day, no `expiryPushDays`) |
 | R2-08.06 / R2-07.06 Seq & Class AD06 | Rewrite | The designed `SimulationService` / `ComparisonReport(baselineLayoutId, candidateLayoutId, decision)` becomes the real `LayoutCampaignController` / `LayoutCampaignService` / `LayoutCampaignRepository` / `LayoutRules` and the campaign lifecycle |
 | R2-08.07 / R2-07.07 Seq & Class AD07 | Rewrite | `MetricType {UTILITY, CTR, CONVERSION, ESTIMATED_REVENUE}` becomes `OfflineLayoutSimulation` with hitRate, bundleConversion, capturedUtility and priorityCoverage. Report tables: `comparison_report`, `_layout`, `_transaction` |
-| R2-08.08 / R2-07.08 Seq & Class AD08 | Keep (planned) | Align `CartService.addBundle` with the F10 plan (version, idempotency, `storefront_event`) |
+| R2-08.08 / R2-07.08 Seq & Class AD08 | Keep (planned) | Align `CartService.addBundle` with the F10 plan (If-Match, partial adds, `storefront_event`) |
 
 ### 9.2 ERD (V1–V19 → V26) — done 2026-11-19 in `PASPM_ERD_V1_V26.drawio`, pending review
 

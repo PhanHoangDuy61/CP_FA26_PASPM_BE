@@ -14,7 +14,7 @@ public class ExpiryPushController {
     private final ExpiryPushService service;
     public ExpiryPushController(ExpiryPushService service) { this.service=service; }
     @GetMapping("/api/utility/expiry-push-batches")
-    @Operation(summary="Discover sellable expiry-push batches independently of Mining",description="Defaults to the current Store-local date. An explicit asOfDate is analytical; recommendations must recheck current eligibility. Ordered FEFO, then productId/batchId. Store scope comes from F01 identity.")
+    @Operation(operationId="listExpiryPushBatches", summary="Discover sellable expiry-push batches independently of Mining",description="Defaults to the current Store-local date. An explicit asOfDate is analytical; recommendations must recheck current eligibility. Ordered FEFO, then productId/batchId. Store scope comes from F01 identity.")
     public ExpiryPushService.PushPage list(@AuthenticationPrincipal Jwt jwt,
         @RequestParam(required=false) Integer productId,
         @RequestParam(required=false) @DateTimeFormat(iso=DateTimeFormat.ISO.DATE) LocalDate asOfDate,

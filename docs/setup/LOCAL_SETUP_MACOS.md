@@ -26,7 +26,7 @@
    "$JAVA_HOME/bin/java" -version
    "$JAVA_HOME/bin/javac" -version
    "$PASPM_MINING_JAVA_EXECUTABLE" -version
-   sh ./mvnw -version
+   ./mvnw -version
    ```
 
    If `java_home` cannot find a JDK, install/register it and retry. Verify architecture with `uname -m`; do not copy `/opt/homebrew` paths from a different Mac.
@@ -40,6 +40,8 @@
    docker compose up -d mysql mailpit
    docker compose ps
    ```
+
+   `compose.yml` already starts MySQL with `--log-bin-trust-function-creators=1` (migration V11 creates triggers; see [common setup](LOCAL_SETUP_COMMON.md#mysql-runs-with---log-bin-trust-function-creators1)). If your MySQL container was created from an older `compose.yml`, `docker compose up -d mysql mailpit` recreates it with the option and keeps your data.
 
    Set nonempty local-only `DB_PASSWORD` and `MYSQL_ROOT_PASSWORD` in `.env` before starting Compose. Never paste the file contents into chat or commit it. The database/user are both `paspm` and host port is 3306. Compose stores local data in a persistent volume; `docker compose down` does not delete it.
 
@@ -71,8 +73,8 @@
 7. Build and start (startup runs Flyway automatically):
 
    ```zsh
-   sh ./mvnw clean verify -Dpaspm.test.spmf-jar="$PASPM_MINING_SPMF_JAR" -Dpaspm.test.spmf-java="$PASPM_MINING_JAVA_EXECUTABLE"
-   sh ./mvnw spring-boot:run
+   ./mvnw clean verify -Dpaspm.test.spmf-jar="$PASPM_MINING_SPMF_JAR" -Dpaspm.test.spmf-java="$PASPM_MINING_JAVA_EXECUTABLE"
+   ./mvnw spring-boot:run
    ```
 
    If SPMF is missing, the full mining tests cannot be claimed as passed; configure it first. Watch logs for Flyway and startup failures. From another terminal, verify migrations using your local password when prompted:

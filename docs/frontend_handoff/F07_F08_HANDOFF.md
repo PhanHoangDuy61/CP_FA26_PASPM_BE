@@ -1,5 +1,7 @@
 # F07/F08 React / TypeScript integration handoff
 
+**OpenAPI client generation:** snapshot Product search uses the explicit ID `layoutSnapshotProducts`. The other renamed generated methods are listed in [ROC-20261125-010](../record-of-changes/2026-11-25/10-f07-openapi-annotations.md). F07 placement validation and response payloads are unchanged.
+
 This handoff is for frontend integration with the current backend contract; it does not implement the UI. See the [F07/F08 API contract](../api/F07_F08_LAYOUT_CAMPAIGN_API.md) for all operations, fields, metrics, and lifecycle rules. Authenticate through the existing F01 flow and send the bearer token. The backend derives Store scope from the token; never send a Store ID.
 
 ## Roles and workflow
@@ -13,10 +15,10 @@ This handoff is for frontend integration with the current backend contract; it d
 Suggested screens:
 
 1. **Layout list/detail/preview.** `GET /api/layouts` supports optional `campaignId`, `page`, and `pageSize`. Read a layout or preview through `GET /api/layouts/{id}` or `/preview`. Show A as read-only. Label its score and B's score **Weighted utility (snapshot)**, not revenue/profit.
-2. **Recommendation picker.** Call `GET /api/layouts/recommendations?snapshotId=…`; render only currently approved, ready items from that response. Each recommendation is one indivisible block. Do not reconstruct or split a block. B cannot repeat a product. Query `GET /api/layouts/policy` to display configured capacity; a null limit means unbounded.
-3. **Edit B.** Send the full selected `recommendationIds` list and the last returned `expectedVersion` to `PUT /api/layouts/{id}/placements`. Replace local state with the returned layout/version. Re-fetch after a 409 and let the user resolve conflicts. `POST /api/layouts/{id}/ready` also requires the current layout version; a lost eligibility check leaves the block visible but invalid and prevents READY.
+2. **Recommendation and product sources.** Call `GET /api/layouts/recommendations?snapshotId=…` for expandable approved F06 sources and `GET /api/layouts/products?snapshotId=…&q=…&page=…&pageSize=…` for searchable snapshot products. A sourced placement carries `sourceRecommendationId`; a manual placement uses `null`. One source recommendation may supply multiple independent placements, but a product may appear once in B.
+3. **Edit B.** Send `{expectedVersion, placements:[{productId,zone,blockNo,position,sourceRecommendationId}]}` to `PUT /api/layouts/{id}/placements`. Replace local state with the returned layout/version. Re-fetch after a 409 and let the user resolve conflicts. `POST /api/layouts/{id}/ready` also requires the current layout version. Save visibly distinguishes F06 provenance from manual source and shows per-product validation errors.
 4. **Campaign setup.** `POST /api/campaigns` with `{name,snapshotId,recommendationIds}` returns campaign, A ID and B ID. A ranks products by distinct transaction frequency in the snapshot (descending, then product ID ascending); B can be edited while DRAFT. Read campaign/detail and paginate with server `totalElements`.
-5. **Optional simulation.** Make A and B READY, then POST `/api/campaigns/{id}/simulations` with current campaign/A/B versions and an inclusive date range whose start is strictly after the snapshot's `rangeEnd`. Overlapping or earlier ranges return `400`. Keep a synchronous loading indicator until the response. Render `simulated:true`, both layout versions, assumptions, dataset hash, range, sample sizes and nullable metric rates. Do not show a fabricated progress bar. Zero denominator or not-yet-defined priority coverage is `null` / N/A.
+5. **Optional simulation.** Make A and B READY, then POST `/api/campaigns/{id}/simulations` with current campaign/A/B versions and an inclusive date range whose start is strictly after the snapshot's `rangeEnd`. Overlapping or earlier ranges return `400`. Keep a synchronous loading indicator until the response. Render `simulated:true`, both layout versions, assumptions, dataset hash, range, sample sizes and nullable metric rates. Do not show a fabricated progress bar. Show nullable rates as N/A and numeric zero as 0%.
 6. **Decision and publish.** A simulation is optional. Send `KEEP_A` or `CHOOSE_B` with expected campaign version; attach a report ID only if it matches the current layout versions. Publish with the updated version. Publish does not alter the storefront.
 7. **Store Admin activation.** Activate a published campaign after rechecking current state. Only activation changes `GET /api/storefront/active-layout`. Ending returns the default layout. Rollback restores the prior active campaign from history or default if none exists.
 
@@ -31,17 +33,19 @@ Suggested screens:
 
 ## Simulation interpretation
 
-The simulator replays historical completed, F03-eligible transactions strictly after the selected snapshot's training date range and excludes training transaction IDs. It retains equal-content baskets with distinct transaction IDs. Hit rate, BUNDLE-only conversion, and captured utility use the formulas and sample sizes in the [API contract](../api/F07_F08_LAYOUT_CAMPAIGN_API.md). Priority coverage is not calculated and is returned as null pending the F03 definition. This is not a real-user A/B test and does not establish causal impact or forecast revenue/profit.
-
-## 2026-11-15 — F03 Weight v2 and priority coverage
-
-`priorityCoverage` and `priorityCoverageDenominator` are still always `null`: the report row is inserted with `NULL,NULL` (`src/main/java/vn/edu/fpt/paspm/layout/LayoutCampaignRepository.java:344-345`) and the stored assumption reads "N/A until the F03 priority coverage formula is confirmed" (`layout/LayoutCampaignService.java:267`). The intended definition "priority item = W(i) > 1" (F03 Weight v2) is **not wired**; no F07/F08 code reads W. F07/F08 routes and bodies did not change on branch `Khoi/feat/f05-progress-f03-weight-v2`.
+The simulator replays historical completed, F03-eligible transactions strictly after the selected snapshot's training date range and excludes training transaction IDs. It retains equal-content baskets with distinct transaction IDs. Hit rate, saved-layout `BUNDLE + blockNo` conversion, and captured utility use the formulas and sample sizes in the [API contract](../api/F07_F08_LAYOUT_CAMPAIGN_API.md). F06 provenance does not define a simulation block. This is not a real-user A/B test and does not establish causal impact or forecast revenue/profit.
 
 ## 2026-11-19 — zone caps, top-K baseline, equal-size comparison (all additive)
 
 - `GET /api/layouts/policy` now returns the configured caps (BANNER 3/3, BUNDLE 4/16, CROSS_SELL 2/8, FBT 2/8, BASELINE 35/35 blocks/products). Use them to limit the B editor; the server rejects over-cap placements with 400.
 - Baseline A of a new campaign holds at most 35 products (top-K by frequency). Old campaigns keep their A.
 - New `LayoutView` fields on **layout B**: `equalSizeBaselineScore` (A's score over its first N products, N = distinct products in B) and `equalSizeProductCount`. Show "difference vs A" as `B.weightedUtilityScore − B.equalSizeBaselineScore`. Both fields are `null` on layout A, whose `weightedUtilityScore` stays the full-A score.
-- New reports have `algorithmVersion: OFFLINE_REPLAY_V2`; show `assumptions.comparedProductCountN` and `assumptions.baselineProductCount` ("B: N products vs A's top N of |A|"). For `OFFLINE_REPLAY_V1` reports, A was measured in full; label them accordingly.
+- Reports from `OFFLINE_REPLAY_V2` onward use the top-N comparison. Show `assumptions.comparedProductCountN` and `assumptions.baselineProductCount` ("B: N products vs A's top N of |A|"). For `OFFLINE_REPLAY_V1` reports, A was measured in full; label them accordingly.
 
 See [F07/F08 API](../api/F07_F08_LAYOUT_CAMPAIGN_API.md) and [DEC-20261119-06](../decisions/2026-11-19/DEC-20261119-06-layout-caps-topk-baseline-equal-size.md).
+
+## 2026-11-25 — Priority coverage (additive)
+
+- Render `priorityCoverage` as a share (`0.25` means 25%). Show `priorityCoverageDenominator` as the actual displayed product count. The backend reads frozen W > 1. The UI does not recalculate it.
+- Layout detail and preview show coverage for the full A or B. A in an `OFFLINE_REPLAY_V4` report uses the top-N products actually compared. If `nExceedsBaseline` is true, display that all of A was used and show each side's own count.
+- Display N/A for a null rate. An empty draft B has denominator 0. A positive denominator with null rate signals unavailable frozen W. Historical reports retain null coverage and denominator. Zero evaluation transactions can still have numeric coverage.

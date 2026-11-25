@@ -4,16 +4,19 @@ Start with current canonical API/handoff and the feature index. `reference*` con
 
 | Feature | Scope | Index |
 |---|---|---|
-| F01 | Authentication, User Management, RBAC, refresh/CSRF/logout (local update) | [F01](F01/README.md) |
-| F02 | Product, Category, Inventory | [F02](F02/README.md) |
-| F03 | Utility Profiling and Weight Rules | [F03](F03/README.md) |
-| F04 | Transaction Import | [F04](F04/README.md) |
-| F05 | HUI-Miner / EFIM Mining | [F05](F05/README.md) |
-| F06 | Recommendation Engine | [F06](F06/README.md) |
-| F07/F08 | Layout simulator and campaigns (no feature README; contract only) | [API](../api/F07_F08_LAYOUT_CAMPAIGN_API.md) · [schema](../architecture/F07_F08_LAYOUT_CAMPAIGN_SCHEMA.md) · [handoff](../frontend_handoff/F07_F08_HANDOFF.md) |
+| F01 | Authentication, sessions and Store management on dev (`7304e29`, PR #27) · 38 operations | [F01](F01/README.md) |
+| F02 | Product, Category, Inventory on dev (PR #28) · 18 operations | [F02](F02/README.md) |
+| F03 | Weight v2 and P5/P6 on dev (PRs #18/#19, `b8c9e63`) · 18 operations | [F03](F03/README.md) |
+| F04 | Async CSV and Excel on dev (`28a6b27`, PR #21) · 9 operations | [F04](F04/README.md) |
+| F05 | EFIM mining on dev (`2a944c5`); scheduler implementation (PR #13), activation disabled by default · 23 operations | [F05](F05/README.md) |
+| F06 | Recommendation Engine with Weight v2 on dev (PRs #18/#19) · 8 operations | [F06](F06/README.md) |
+| F07/F08 | Layout simulator and campaigns on dev (`8f94f94`, `5436bf7`, PR #32) · 21 operations | [API](../api/F07_F08_LAYOUT_CAMPAIGN_API.md) · [schema](../architecture/F07_F08_LAYOUT_CAMPAIGN_SCHEMA.md) · [handoff](../frontend_handoff/F07_F08_HANDOFF.md) |
+| F09 | Public Storefront MVP on dev (PR #33) · 4 operations | [F09](F09/README.md) · [API](../api/F09_STOREFRONT_API.md) · [handoff](../frontend_handoff/F09_HANDOFF.md) |
+| F10 | Bundle Cart **PLANNED** (contract merged in PR #34) | [API](../api/F10_BUNDLE_CART_API.md) · [handoff](../frontend_handoff/F10_HANDOFF.md) |
+| F11 | Dashboard **PLANNED** (contract merged in PR #34) | [API](../api/F11_DASHBOARD_API.md) · [handoff](../frontend_handoff/F11_HANDOFF.md) |
 
-F07/F08 have an API contract (2026-11-12) but no feature README; F09–F11: **UNDEFINED_IN_AVAILABLE_DOCS** for a complete feature/API map. 2026-11-15 branch status (F03 Weight v2, F05 progress): [record 004](../record-of-changes/2026-11-15/04-f03-weight-v2-expiry-season.md). F06 contains downstream exclusion names only. No empty F07–F11 folders or invented contracts are created. See [review register](../requirements/README.md#documentation-review-register).
+The [runtime export](../api/openapi.json) covers **112 paths / 139 operations** on dev at `cded4ab`. See the [review register](../requirements/README.md#documentation-review-register).
 
 ## Shared authentication dependency
 
-The [F01 session guide](F01/F01_SESSION_MANAGEMENT.md) describes the 2026-11-11 local update and its F02–F06 impact. Their business endpoints, roles and Store scopes were not changed by the session implementation. [Agent records](../record-of-changes/README.md) distinguish implementation, documentation and verification sessions.
+The [F01 session guide](F01/F01_SESSION_MANAGEMENT.md) describes session authentication and its F02–F06 impact. Their business endpoints, roles and Store scopes were not changed by the session implementation. [Agent records](../record-of-changes/README.md) distinguish implementation, documentation and verification sessions.

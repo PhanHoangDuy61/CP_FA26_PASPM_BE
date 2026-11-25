@@ -2,11 +2,11 @@
 
 > Last verified Backend: `dev` @ `11973a0` (merge of PR #11; source tree identical to `a4f1115`, whose code passed the full verification script on `45dbd80`, 23/23 stages). Evidence: [Core release readiness](../../reports/F03_F05_CORE_RELEASE_READINESS_2026-11-02.md), [audit matrix](../../reports/F03_F05_API_AUDIT_MATRIX_2026-11-02.md).
 >
-> **2026-11-15:** current scoring is `W2_EXPIRY_SEASON_V1` (branch `Khoi/feat/f05-progress-f03-weight-v2`, not merged).
+> **2026-11-15:** `W2_EXPIRY_SEASON_V1` is on `dev` through PRs #18 and #19 (`49cb0b8`, `3e438f8`).
 >
 > **Requirements caveat (legacy v1.2 only):** the formally approved Weight Rules v1.2 source file is **not tracked** in the repository ([gap notice](../../requirements/README.md#f03-v12-source-gap)). [F03_UTILITY_API.md](../../api/F03_UTILITY_API.md) is the written v1.2 implementation contract; it is not a substitute approval.
 
-## Current status — branch `Khoi/feat/f03-remove-legacy-product-fields` (2026-11-16, not merged)
+## Current status on dev — P5/P6 merge `b8c9e63`
 
 Code paths are relative to `src/main/java/vn/edu/fpt/paspm/`; V26 is `src/main/java/db/migration/V26__f03_drop_legacy_product_scoring_columns.java`.
 

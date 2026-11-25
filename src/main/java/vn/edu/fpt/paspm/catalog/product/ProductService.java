@@ -1,6 +1,8 @@
 package vn.edu.fpt.paspm.catalog.product;
 
 import java.util.Locale;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.Set;
 
@@ -64,7 +66,8 @@ public class ProductService {
         validateRequest(storeId, request);
         requireNameConfirmation(storeId, 0, request.name(), request.confirmSimilarName());
         return products.create(storeId, request.name(), request.categoryId(), request.unit(),
-                request.requiresExpiry(), request.sellingPrice(), request.costPrice(), request.status());
+                request.requiresExpiry(), request.sellingPrice(), request.costPrice(), request.status(),
+                request.imageUrl(), request.description());
     }
 
     @Transactional
@@ -77,7 +80,8 @@ public class ProductService {
             throw new ApiException(400, "Cannot require expiry while a batch has no expiry date");
         }
         if (!products.update(storeId, id, request.name(), request.categoryId(), request.unit(),
-                request.requiresExpiry(), request.sellingPrice(), request.costPrice(), request.status())) {
+                request.requiresExpiry(), request.sellingPrice(), request.costPrice(), request.status(),
+                request.imageUrl(), request.description())) {
             throw missing();
         }
         return requireProduct(storeId, id);
@@ -118,6 +122,7 @@ public class ProductService {
 
     private void validateRequest(int storeId, ProductRequest request) {
         validateStatus(request.status());
+        validateImageUrl(request.imageUrl());
         if (request.categoryId() != null && categories.find(storeId, request.categoryId()) == null) {
             throw new ApiException(404, "Category not found");
         }
@@ -161,6 +166,20 @@ public class ProductService {
 
     private static String normalizeName(String name) {
         return name.strip().replaceAll("\\s+", " ").toLowerCase(Locale.ROOT);
+    }
+
+    /** F09 display metadata: only an absolute HTTP(S) URL is stored; the storefront never fetches it server-side. */
+    private void validateImageUrl(String value) {
+        if (value == null || value.isBlank()) return;
+        try {
+            URI uri = new URI(value.trim());
+            if (!uri.isAbsolute() || uri.getHost() == null
+                    || !("http".equalsIgnoreCase(uri.getScheme()) || "https".equalsIgnoreCase(uri.getScheme()))) {
+                throw new ApiException(400, "imageUrl must be an absolute HTTP or HTTPS URL");
+            }
+        } catch (URISyntaxException exception) {
+            throw new ApiException(400, "imageUrl must be a valid HTTP or HTTPS URL");
+        }
     }
 
     private ProductView requireProduct(int storeId, int id) {

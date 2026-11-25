@@ -15,7 +15,7 @@ public class ProductScoreController {
     private final ProductScoreService service;
     public ProductScoreController(ProductScoreService service) { this.service=service; }
     @GetMapping @PreAuthorize("hasAnyRole('STORE_ADMIN','MERCHANDISER')")
-    @Operation(summary="Read the current W2 preview of a product in the authenticated Store",
+    @Operation(operationId="getProductScores", summary="Read the current W2 preview of a product in the authenticated Store",
         description="U_expiry (FEFO), M(i) from active seasons, current W (2 decimals) and the batches missing a push day. Store-local today; not a frozen historical value.")
     public Scores get(@AuthenticationPrincipal Jwt jwt,@PathVariable int productId) { return service.get(jwt,productId); }
 }

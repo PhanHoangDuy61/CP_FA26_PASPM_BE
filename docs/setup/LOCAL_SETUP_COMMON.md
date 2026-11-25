@@ -4,7 +4,7 @@ This guide describes `dev` as of PR #11 (`11973a0`). Branches that are not merge
 
 ## What you need
 
-- Git; a full JDK 17 for Spring Boot and Maven. The repository supplies Maven Wrapper 3.3.4 and downloads Maven 3.9.9 on first use; network access or a prepopulated trusted Maven cache is needed. Use `mvnw.cmd` in PowerShell and `sh ./mvnw` in zsh. The latter does not depend on executable file permissions.
+- Git; a full JDK 17 for Spring Boot and Maven. The repository supplies Maven Wrapper 3.3.4 and downloads Maven 3.9.9 on first use; network access or a prepopulated trusted Maven cache is needed. Use `mvnw.cmd` in PowerShell and `./mvnw` in zsh.
 - Docker Desktop with Compose for the supplied local MySQL 8.4 and Mailpit services. Follow Docker's installation guide for [Windows](https://docs.docker.com/desktop/setup/install/windows-install/) or [Mac](https://docs.docker.com/desktop/setup/install/mac-install/). The repo has no Backend Dockerfile/service; run Backend on the host.
 - For F05 mining only: separately installed Java 25+ executable and the approved SPMF 2.67a JAR. Obtain the exact artifact from your team's approved source; the [upstream page](https://www.philippe-fournier-viger.com/spmf/download.php) can change and the latest JAR is not necessarily approved. The JAR is not in this Backend repository. Verify SHA-256 `4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a` and banner `-- SPMF version 2.67a --`. See [SPMF setup](F05_SPMF_RUNTIME_SETUP.md). Never commit binaries or machine-specific runtime paths.
 - The sample `dev` profile seeds demo Stores, accounts, products and inventory. Use it **only in an isolated local database**; it is not necessary to start the application and must not be used with real data.
@@ -34,6 +34,36 @@ Compose reads `.env`; Spring Boot does **not** automatically import it. `.env` i
 | `GOOGLE_CLIENT_ID` | Optional; empty by default. |
 
 Current worker capacity is one active request and eight queued per instance; polling is one second, lease 30 seconds, heartbeat five seconds. These values are currently constants, not supported environment settings. Linux Docker process supervision is under verification; Windows/macOS development does not have the Linux parent-death guarantee. Scheduler activation is deliberately **503**, not a setup error. Successful startup does not certify scheduler or process-recovery acceptance.
+
+## MySQL runs with `--log-bin-trust-function-creators=1`
+
+Migration V11 creates triggers. The application user `paspm` has no `SUPER` privilege and MySQL 8.4 enables binary logging, so MySQL must run with this server option; without it Flyway stops at V11 with `You do not have the SUPER privilege and binary logging is enabled` (Error 1419) and the Backend does not start.
+
+**With Compose, nothing to do:** the option is already in the `mysql` service of `compose.yml` (`command: ["--log-bin-trust-function-creators=1"]`). If you started MySQL from an older `compose.yml`, run `docker compose up -d mysql mailpit` again: Compose recreates the container with the option, and your named volume `paspm_mysql` and its data are kept. Check it with `docker compose exec mysql mysql -uroot -p -e "SELECT @@log_bin_trust_function_creators"` (enter `MYSQL_ROOT_PASSWORD`; the value must be `1`).
+
+**Without Compose (plain `docker run`, a disposable database).** Pass the option after the image name. Replace the two passwords with local-only values.
+
+macOS / Linux (bash, zsh):
+
+```bash
+docker run -d --name paspm-mysql -p 127.0.0.1:3306:3306 \
+  -e MYSQL_ROOT_PASSWORD=<local-root-password> -e MYSQL_DATABASE=paspm \
+  -e MYSQL_USER=paspm -e MYSQL_PASSWORD=<local-db-password> \
+  mysql:8.4 --log-bin-trust-function-creators=1
+```
+
+Windows (PowerShell):
+
+```powershell
+docker run -d --name paspm-mysql -p 127.0.0.1:3306:3306 `
+  -e MYSQL_ROOT_PASSWORD=<local-root-password> -e MYSQL_DATABASE=paspm `
+  -e MYSQL_USER=paspm -e MYSQL_PASSWORD=<local-db-password> `
+  mysql:8.4 --log-bin-trust-function-creators=1
+```
+
+Tests that create their own disposable MySQL (`-Dpaspm.test.mysql=true`) connect as root and do not need the option.
+
+If the Backend already failed at V11 on your local database, the migration may be half applied. For a disposable local database follow the reset in [troubleshooting](LOCAL_SETUP_TROUBLESHOOTING.md#safe-fix--local-disposable-compose-database-only); otherwise ask before touching it.
 
 ## Flyway, accounts and verification
 

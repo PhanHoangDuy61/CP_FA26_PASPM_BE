@@ -8,6 +8,9 @@ import java.util.*;
 import java.util.regex.*;
 import java.util.stream.*;
 import org.junit.jupiter.api.Test;
+import org.flywaydb.core.Flyway;
+import org.flywaydb.core.api.MigrationVersion;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 /** DB-free guard: Flyway versions must be unique and F05 mining migrations must sit after F04's V12. */
 class MigrationVersioningTest {
@@ -47,5 +50,43 @@ class MigrationVersioningTest {
     @Test void f04V12IsNotTakenByMining() throws IOException {
         List<String> v12 = versions().getOrDefault(12, List.of());
         assertTrue(v12.isEmpty() || v12.equals(List.of("f04_preserve_large_raw_import_rows")), "V12 belongs to F04 only, found " + v12);
+    }
+
+    @Test void f09KeepsDevV29AndV30DropsTheOldStorefrontColumns() throws IOException {
+        Map<Integer, List<String>> v = versions();
+        assertEquals(List.of("f01_store_profile_and_status"), v.get(27));
+        assertEquals(List.of("f02_product_soft_delete"), v.get(28));
+        assertEquals(List.of("f09_storefront"), v.get(29), "V29 is the old F09 merge on dev and must stay as is");
+        assertEquals(List.of("f09_drop_old_storefront_columns"), v.get(30));
+
+        // Upgrade path: a database already at dev's V29, with Stores and products, then V30.
+        String url = "jdbc:h2:mem:f09_v30_upgrade;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1;NON_KEYWORDS=USER";
+        Flyway.configure().dataSource(url, "sa", "").locations("classpath:db/migration")
+                .target(MigrationVersion.fromVersion("28")).load().migrate();
+        var jdbc = new org.springframework.jdbc.core.JdbcTemplate(new DriverManagerDataSource(url, "sa", ""));
+        jdbc.update("INSERT INTO store(name,slug) VALUES ('Existing Store','existing-store')");
+        int store = jdbc.queryForObject("SELECT MAX(store_id) FROM store", Integer.class);
+        jdbc.update("INSERT INTO product(store_id,sku,name,unit,requires_expiry,selling_price,cost_price,status) "
+                + "VALUES (?, 'SKU-00000000001', 'Existing Product', 'each', FALSE, 10, 2, 'ACTIVE')", store);
+        int product = jdbc.queryForObject("SELECT MAX(product_id) FROM product WHERE store_id=?", Integer.class, store);
+
+        Flyway.configure().dataSource(url, "sa", "").locations("classpath:db/migration")
+                .target(MigrationVersion.fromVersion("29")).load().migrate();
+        assertNotNull(jdbc.queryForObject("SELECT store_slug FROM store WHERE store_id=?", String.class, store),
+                "dev's V29 backfills store_slug");
+        jdbc.update("UPDATE store SET storefront_enabled=TRUE WHERE store_id=?", store);
+        jdbc.update("UPDATE product SET image_url='https://example.com/a.png', description='Kept' WHERE product_id=?", product);
+
+        Flyway.configure().dataSource(url, "sa", "").locations("classpath:db/migration").load().migrate();
+
+        assertEquals("https://example.com/a.png",
+                jdbc.queryForObject("SELECT image_url FROM product WHERE product_id=?", String.class, product));
+        assertEquals("Kept", jdbc.queryForObject("SELECT description FROM product WHERE product_id=?", String.class, product));
+        assertEquals("existing-store", jdbc.queryForObject("SELECT slug FROM store WHERE store_id=?", String.class, store));
+        assertEquals(0, jdbc.queryForObject("SELECT COUNT(*) FROM information_schema.columns WHERE table_name='store' "
+                + "AND column_name IN ('store_slug','storefront_enabled')", Integer.class),
+                "F09 uses store.slug and store.status; V30 drops the old slug and visibility columns");
+        assertEquals(2, jdbc.queryForObject("SELECT COUNT(*) FROM information_schema.columns WHERE table_name='product' "
+                + "AND column_name IN ('image_url','description')", Integer.class));
     }
 }

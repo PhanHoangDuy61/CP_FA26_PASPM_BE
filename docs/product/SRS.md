@@ -3,8 +3,8 @@
 | Field | Value |
 |---|---|
 | Project | PASPM (FA26SE048) |
-| Version / date | 0.4 — 2026-11-20 (synced with `dev` @ `636952b`) |
-| Baseline | Backend `dev` @ `530651b`: Flyway V1–V26, OpenAPI 102 paths / 123 operations (at `222e54f`) |
+| Version / date | 0.4 — API inventory synchronized 2026-11-25 |
+| Baseline | Backend `dev` @ `cded4ab`: Flyway V1–V30, OpenAPI 112 paths / 139 operations |
 | Audited against code | `530651bad5b02d90bcb48ecffaf7fa5a0f6b0b7e`, see (audit report kept outside the repo, 2026-11-19) |
 | Synced with | `dev` @ `636952b` (2026-11-20): F02 update `d22f735`; PR #20 (decisions); PR #21 (F04 Excel); PR #22 (zone caps, top-K baseline, equal-size simulation, DEC-20261119-06); PR #23 (SPMF whole-đồng fallback, DEC-20261119-05); PR #25 (agent kit). Checked for these changes only, not a full re-audit |
 | Based on | Report 3 (SRS) plus newer owner decisions and current code |
@@ -56,11 +56,11 @@ UC03 and UC22 were removed earlier, and their numbers are not reused.
 | 09 | Configure Utility Formula & Priority | Merch | F03 | DONE | Now λ ∈ [0, λmax], α + β = 1, N. **Seasons CRUD plus product assignment.** Product scores and the expiry window were removed |
 | 10 | Generate Bundle / Cross-sell / FBT / Banner | Merch | F06 | DONE | — |
 | 11 | Review / Approve / Reject | Merch | F06 | DONE | Warns about `seasonEnded` and `inventoryChanged` |
-| 12 | Arrange Layout | Merch | F07 | DONE (API) | B is edited by **replacing whole recommendation blocks** (`PUT /placements`). Drag-and-drop is client-side |
+| 12 | Arrange Layout | Merch | F07 | DONE (API) | B is edited **per placed product** (`PUT /placements` sends product, zone, block, position and nullable source recommendation). F06 evidence and Layout A remain immutable |
 | 13 | Create A/B Layout Variants | Merch | F07/F08 | DONE (API) | A is generated (frequency baseline, read-only). B is built at campaign creation |
 | 14 | Prepare / Publish Campaign | Merch | F08 | DONE (API) | Also covers *withdraw* |
 | 15 | Run A/B Simulation | Merch | F08 | DONE (API) | **Offline replay** of transactions dated after the snapshot. Synthetic traffic is not modelled |
-| 16 | Compare Simulated Results | Merch | F08 | PARTIAL | Metrics are hitRate, bundleConversion and capturedUtility. **`priorityCoverage` is null.** CTR and estimated revenue from Report 3 are not implemented |
+| 16 | Compare Simulated Results | Merch | F08 | PARTIAL | Metrics are hitRate, bundleConversion, capturedUtility and priorityCoverage (PR #32, `516183d`). CTR and estimated revenue from Report 3 are not implemented |
 | 17 | Manage Products | Store Admin | F02 | DONE | Legacy score fields removed. SKU format and similar-name confirmation (2026-11-19) |
 | 18 | Manage Categories | Store Admin | F02 | DONE | — |
 | 19 | Manage Selling Prices / Costs | Store Admin | F02 | DONE | — |
@@ -69,10 +69,10 @@ UC03 and UC22 were removed earlier, and their numbers are not reused.
 | 23 | Activate Approved Campaign | Store Admin | F08 | DONE (API) | Also **end** and **rollback** |
 | 24 | View Retail Performance Dashboard | Store Admin, Merch | F11 | PLANNED | MVP scope decided 2026-11-19 (see FR-11.1) |
 | 25 | View A/B Reports | Store Admin, Merch | F08/F11 | DONE (API read) | Reports are immutable |
-| 26 | View Merchandising Homepage | End Customer / guest | F09 | PLANNED | MVP: anonymous, by `storeSlug` |
-| 27 | View Product Details / Related | End Customer / guest | F09 | PLANNED | Related products come after the MVP |
-| 28 | View Recommended Bundles | End Customer / guest | F09 | PLANNED | Only APPROVED and ready bundles |
-| 29 | Add Whole Bundle to Cart | End Customer | F10 | PLANNED | Login required. Atomic. No reservation |
+| 26 | View Merchandising Homepage | End Customer / guest | F09 | DONE (API, MVP) | Anonymous, by `storeSlug` = `store.slug`; ACTIVE Stores only (DEC-20261125-04). Frontend still mock |
+| 27 | View Product Details / Related | End Customer / guest | F09 | PARTIAL (API) | Product list and detail done; related products come after the MVP |
+| 28 | View Recommended Bundles | End Customer / guest | F09 | DONE (API, MVP) | Bundles are rendered as homepage placements; only APPROVED blocks whose components are all still sellable |
+| 29 | Add Whole Bundle to Cart | End Customer | F10 | PLANNED | Login required. Skips unavailable components. No reservation |
 | 30 | Validate / Preprocess Orders | (included in UC21) | F04 | DONE | — |
 | 31 | Create Frozen Utility Snapshot | Merch | F03 | DONE | Freezes W2 inputs, seasons and warnings |
 | 32 | Set Global Utility Lambda Policy | SA | F03 | DONE | **λmax only** (range [0, λmax], default 0.5) |
@@ -118,7 +118,7 @@ Each line gives the behaviour an agent must preserve. Exact request and response
 
 ### F02 — Catalogue & inventory (DONE)
 
-- FR-02.1: CRUD for categories and products, scoped to the Store. Categories are deactivated, not deleted. A product is deactivated (`PATCH …/status`) or **soft-deleted** (`DELETE /api/products/{id}`, FR-02.5). SKU is trimmed, uppercased and must match `^SKU-[A-Z0-9-]{11}$` (15 characters, unique per Store). A product name that equals, or is one character away from, another product's normalized name in the Store (names of 4+ characters) returns 409 `PRODUCT_NAME_CONFIRMATION_REQUIRED` until the client retries with `confirmSimilarName: true`. Product and batch IDs are generated by the database.
+- FR-02.1: CRUD for categories and products, scoped to the Store. Categories are deactivated, not deleted. A product is deactivated (`PATCH …/status`) or **soft-deleted** (`DELETE /api/products/{id}`, FR-02.5). SKU is **generated by the backend** from the product ID as `SKU-%011d` (for example `SKU-00000000042`), read-only and never changed; clients must not send `sku` (400 unknown field) ([DEC-20261119-07](../decisions/2026-11-19/DEC-20261119-07-server-generated-product-sku.md)). Existing SKUs, including `FOODMART-xxxx` in databases seeded before 2026-11-20, are kept. A product name that equals, or is one character away from, another product's normalized name in the Store (names of 4+ characters) returns 409 `PRODUCT_NAME_CONFIRMATION_REQUIRED` until the client retries with `confirmSimilarName: true`. Product and batch IDs are generated by the database.
 - FR-02.2: Inventory batches:
   - quantity, remaining quantity and expiry date, which is mandatory when the product requires one;
   - status ACTIVE / BLOCKED;
@@ -208,10 +208,10 @@ Each line gives the behaviour an agent must preserve. Exact request and response
 ### F07 — Layout simulator (DONE API; PARTIAL)
 
 - FR-07.1: Baseline A is deterministic (frequency order, ties broken by product id) and read-only. Since PR #22 (DEC-20261119-06) it holds only the top-K products, with K = the BASELINE product capacity (35), as `F07_BASELINE_V2`. `baseline_params` stores `k` and `candidateProducts`. Older `F07_BASELINE_V1` layouts, which hold every product, are unchanged and stay valid.
-- FR-07.2: Layout B is built only from recommendations that are in the same Store and snapshot, APPROVED and ready. A product appears at most once. Zone capacities come from configuration (`paspm.layout.*`). Configured in `application.yml` since PR #22, and overridable through `PASPM_LAYOUT_MAX_BLOCKS_<ZONE>` / `PASPM_LAYOUT_MAX_PRODUCTS_<ZONE>`: BANNER 3 blocks / 3 products, BUNDLE 4 / 16, CROSS_SELL 2 / 8, FBT 2 / 8, BASELINE 35 / 35.
+- FR-07.2: Layout B is built per product, with an optional source F06 recommendation. A sourced placement remains in the same Store/snapshot and must belong to an APPROVED source recommendation; eligibility is checked per placed product. A manual placement uses `sourceRecommendationId:null` and is eligible only if active, snapshot-present and sellable. A product appears at most once. Zone capacities come from configuration (`paspm.layout.*`). Configured in `application.yml` since PR #22, and overridable through `PASPM_LAYOUT_MAX_BLOCKS_<ZONE>` / `PASPM_LAYOUT_MAX_PRODUCTS_<ZONE>`: BANNER 3 blocks / 3 products, BUNDLE 4 / 16, CROSS_SELL 2 / 8, FBT 2 / 8, BASELINE 35 / 35.
 - FR-07.3: Each edit is a new revision. A block that becomes invalid is shown with errors and blocks READY, publish and activate.
 - FR-07.4: The utility score is the sum of snapshot weighted utility over distinct displayed products. Preview returns validation and score.
-- FR-07.5: Priority coverage is products with W > 1 on the layout ÷ products on the layout. **Not implemented**: the response returns null.
+- FR-07.5: Priority coverage is products with W > 1 on the layout ÷ products on the layout. The layout view uses the full layout, and the simulation uses the actual products compared on each side.
 
 ### F08 — Campaign & simulated A/B (DONE API)
 
@@ -225,27 +225,25 @@ Each line gives the behaviour an agent must preserve. Exact request and response
   - returns `simulated:true`.
 - FR-08.4: Every operation is synchronous. No polling.
 
-### F09 — Storefront (PLANNED, MVP draft v2)
+### F09 — Storefront (DONE API, MVP)
 
-- FR-09.1: Public read API, separate from the staff API, keyed by `storeSlug`. No login needed.
+- FR-09.1: Public read API, separate from the staff API, keyed by `storeSlug` = `store.slug` (V27). No login needed. A Store is public exactly when it is ACTIVE; there is no separate visibility switch (DEC-20261125-04). Unknown or INACTIVE Store → 404.
 - FR-09.2: The homepage renders the zones of the **active** campaign layout in placement order. With no active campaign it falls back to the default layout. Draft and ended layouts are never shown.
-- FR-09.3: Product detail and the bundle list. Bundles are APPROVED and ready. A bundle with an invalid component is hidden. An out-of-stock product shows `OUT_OF_STOCK`.
-- FR-09.4: No admin fields (cost, batches) in public DTOs. The product gets `image_url` and `description` columns through a new migration.
+- FR-09.3: Product detail and the bundle list. Bundles are APPROVED and ready. A bundle with an invalid component is hidden. An out-of-stock product shows `OUT_OF_STOCK`: the public `availability` is `AVAILABLE | OUT_OF_STOCK` (PO review 2026-11-25, DEC-20261125-04 addendum). Soft-deleted and INACTIVE products are never public (DEC-20261124-03); a batch is sellable on its expiry date (DEC-20261124-01).
+- FR-09.4: No admin fields (cost, batches) in public DTOs. The product gets `image_url` and `description` columns in **V29** (V30 drops the Store columns V29 also added); F02 `ProductRequest`/`ProductView` accept and return them (`imageUrl` absolute HTTP(S) only).
 
-### F10 — Bundle cart (PLANNED, MVP draft v2)
+### F10 — Bundle cart (PLANNED)
 
-- FR-10.1: Cart:
-  - `END_CUSTOMER` login is required;
-  - one open cart per customer per Store;
-  - optimistic cart version and idempotent adds.
-- FR-10.2: Adding a whole bundle is atomic after rechecking the bundle and each item. No stock reservation, order, payment or discount.
-- FR-10.3: Removing a bundle line removes the whole bundle group.
-- FR-10.4: Each successful cart operation writes exactly one row to `storefront_event`, in the same transaction. Rejected bundle adds are also logged.
+- FR-10.1: END_CUSTOMER login, one persistent cart per customer/Store, a 99-unit cap per Product, current price and stock checked on adds/increases. All mutations require `If-Match`. Stale version returns `409 CART_VERSION_CONFLICT`.
+- FR-10.2: Each BUNDLE block on the active selected Layout B supports a whole-bundle action by opaque `bundleKey`. One click requests one bundle. Add up to the requested quantity, sellable stock available for the increment and remaining capacity under 99 per Product. Report requested and added quantities for every component. If no component can be added, return 409 and record rejection.
+- FR-10.3: Each line is independently editable and removable. No reservation, discount, checkout, order or payment.
+- FR-10.4: Record one event per successful mutation that changes the cart. Record unsuccessful adds when a resolved bundle has no eligible component. Bundle events classify the full block as MINED or MANUAL and store actual units added.
 
-### F11 — Dashboard (PLANNED, MVP scope decided 2026-11-19)
+### F11 — Dashboard (PLANNED)
 
-- FR-11.1: F11 MVP (decided 2026-11-19): for `STORE_ADMIN` and `MERCHANDISER` of the Store, built only from data that already exists — total weighted utility per utility snapshot, A/B simulation results from `comparison_report` (labelled simulated), and bundle add-to-cart counts from `storefront_event` (after F10). No benchmark charts. Detailed spec and screens are still to write.
-- Benchmark charts were dropped together with HUI-Miner.
+- FR-11.1: `/store/dashboard` is shared by `STORE_ADMIN` and `MERCHANDISER` in their own Store. Three independent panels show frozen snapshot utility, stored simulated F08 reports (including priorityCoverage), and successful bundle additions by origin plus total Product units added. Date range defaults to 30 Store-local days, maximum 90, with optional campaign filter. Benchmark charts are out of scope.
+
+See [DEC-20261125-06](../decisions/2026-11-25/DEC-20261125-06-f10-f11-mvp-contract.md), [F10 API](../api/F10_BUNDLE_CART_API.md) and [F11 API](../api/F11_DASHBOARD_API.md).
 
 ## 4. Business rules
 
@@ -272,13 +270,13 @@ BR-01 to BR-13 keep Report 3 numbering. BR-14 onward are new proposals in this d
 | BR-17 | Frozen JSON is never rewritten. It is read by `scoringVersion`, and unknown versions or fields are rejected | New |
 | BR-18 | Mining input: ≤ 1,600 products, ≤ 20,000 rows. Per-transaction utility, product TWU and converted minUtil each ≤ int32 max | New |
 | BR-19 | Downstream features consume a recommendation only if `APPROVED ∧ readyForConsumption`, rechecked at the moment of use | New |
-| BR-20 | Layout B uses whole recommendation blocks. A product appears once per layout. Baseline A is read-only | New |
+| BR-20 | Layout B placements are edited per product with optional F06 provenance. A product appears once. Removing or moving a placement does not alter F06 evidence or Layout A | Changed by DEC-20261125-01 |
 | BR-21 | At most one ACTIVE campaign per Store | New |
 | BR-22 | Layout utility score is a snapshot priority score, not revenue or profit | New |
-| BR-23 | A priority product is one with W > 1 in the layout's snapshot | New (decided, not coded) |
+| BR-23 | A priority product is one with W > 1 in the layout's snapshot | Merged in PR #32 (`516183d`) |
 | BR-24 | Scheduled-mining enable returns 503 until release sign-off | New |
-| BR-25 | (F09, planned) Only the active campaign layout is public. Public DTOs never expose cost or batch data | Planned |
-| BR-26 | (F10, planned) Bundle add is atomic, with no reservation and no discount. Removing one bundle line removes the bundle | Planned |
+| BR-25 | (F09) Only the active campaign layout of an ACTIVE Store is public. Public DTOs never expose cost or batch data | Valid (DEC-20261125-04) |
+| BR-26 | (F10, planned) Bundle add merges currently eligible Product lines. Each line is independently editable and removable. No reservation or discount | DEC-20261125-06, PLANNED |
 | BR-27 | A Store name is unique after trimming, ignoring case (service rule; no database UNIQUE yet) | New (DEC-20261123-01) |
 | BR-28 | A Store slug is unique and only a System Admin sets or changes it | New (DEC-20261123-01) |
 | BR-29 | A Store is never hard-deleted | New (DEC-20261123-01) |
@@ -292,10 +290,10 @@ BR-01 to BR-13 keep Report 3 numbering. BR-14 onward are new proposals in this d
 ### 5.1 External interfaces
 
 - **Web SPA:** React and TypeScript, desktop and mobile widths from 320 to 1440 px.
-- **REST/JSON API:** Bearer JWT plus refresh cookie and CSRF. Errors are returned as `{"error":"…"}`. **123 operations / 102 paths** at `222e54f`, with F09–F11 not yet included. Swagger is at `/swagger`.
+- **REST/JSON API:** Bearer JWT plus refresh cookie and CSRF. Errors are returned as `{"error":"…"}`. **139 operations / 112 paths** on `dev` at `cded4ab`, including F09 (PR #33); F10–F11 not yet included. Swagger is at `/swagger`.
 - **Identity and email:** Google Identity for sign-in, SMTP for OTP (Mailpit in development).
 - **Mining runtime:** SPMF 2.67a on Java 25, pinned by SHA-256.
-- **Database:** MySQL 8.4 with Flyway **V1–V26**. H2 is used for some automated tests.
+- **Database:** MySQL 8.4 with Flyway **V1–V30** (V27 Store management, V28 product soft delete, V29 F09 storefront from the old `dev` merge, V30 drops its unused Store columns; V31 reserved for F10). H2 is used for some automated tests.
 
 ### 5.2 Limits
 
@@ -397,8 +395,9 @@ Changes against Report 3 §3.1.2:
 | F05 | 04–07, 33 | `F05_MINING_API.md` | `F05_HANDOFF.md` |
 | F06 | 10, 11 | `F06_RECOMMENDATION_API.md` | `F06_HANDOFF.md` |
 | F07/F08 | 12–16, 23, 25 | `F07_F08_LAYOUT_CAMPAIGN_API.md` | `F07_F08_HANDOFF.md` |
-| F09/F10 | 26–29 | plan drafts `F09_STOREFRONT_PLAN_API_SCREENS.md`, `F10_BUNDLE_CART_PLAN_API_SCREENS.md` | — |
-| F11 | 24 | — | — |
+| F09 | 26–28 | `F09_STOREFRONT_API.md` | `F09_HANDOFF.md` |
+| F10 | 29 | [Bundle Cart API (PLANNED)](../api/F10_BUNDLE_CART_API.md) | [F10 handoff](../frontend_handoff/F10_HANDOFF.md) |
+| F11 | 24 | [Dashboard API (PLANNED)](../api/F11_DASHBOARD_API.md) | [F11 handoff](../frontend_handoff/F11_HANDOFF.md) |
 
 ## 10. Report 3 items superseded
 
@@ -416,16 +415,16 @@ Update Report 3 using the template layout, changing content only.
 
 ## 11. Open items
 
-1. `priorityCoverage` (Direction 1) is not implemented.
+1. Historical simulation reports retain their stored priority coverage fields.
 2. N+1 queries in F06 `ProductEligibilityService` (3 queries per product: product, batches, units sold) have not been measured.
 3. Frontend still calls removed APIs and fields (breaking changes #15–#18). This is still true on FE `dev` @ `86d677d` (for example `expiryPushDays`, `compareAlgorithms`, `HUI_MINER`, `/benchmark`). `origin/feature/fe-v26-integration` removes part of it and is not merged.
 4. Demo minUtil: on the demo seed, the single day 2026-10-02 at `PERCENTAGE 0.25` gave 179 patterns (inside the 100–300 target). The full range 2026-10-01..04 at 0.25 gave 0 patterns. For the full range 2026-10-01..04, `PERCENTAGE 0.12` gives 180 patterns (EFIM 385 ms, `LOSSLESS`), measured 2026-11-19 (DEC-20261119-05). The demo still has to set it as policy.
-5. Demo seed is broken on `dev` @ `222e54f` by the 2026-11-19 F02 rules (SKU format, similar-name 409, `batchCode` no longer accepted); the FoodMart import files still use `FOODMART-xxxx` SKUs. Fix deferred by the owner.
-6. The F02 rules of 2026-11-19 have no DEC or record-of-changes entry yet.
-7. Open F09/F10 questions:
+5. ~~Demo seed broken by the 2026-11-19 F02 rules~~: fixed on branch `Khoi/fix/sku-foodmart-seed` (DEC-20261119-07, ROC-20261125-004): the seed creates products by name, writes `mapping.csv` and imports CSV copies with server SKUs. Was: demo seed is broken on `dev` @ `222e54f` by the 2026-11-19 F02 rules (SKU format, similar-name 409, `batchCode` no longer accepted); the FoodMart import files still use `FOODMART-xxxx` SKUs. Fix deferred by the owner.
+6. ~~The F02 rules of 2026-11-19 have no DEC~~: recorded as [DEC-20261119-07](../decisions/2026-11-19/DEC-20261119-07-server-generated-product-sku.md) (server-generated SKU).
+7. F09/F10 scope notes:
    - ~~currency~~: VND, whole đồng (decided 2026-11-19);
-   - maximum quantity (99 proposed);
-   - whether `BUNDLE_VIEWED` can be logged anonymously;
-   - the "daily deal" single-product block (Direction 2).
-8. F11 detailed specification (MVP scope decided 2026-11-19).
+   - maximum quantity is 99 per Product per cart (DEC-20261125-06);
+   - anonymous `BUNDLE_VIEWED` is outside the MVP;
+   - the "daily deal" single-product block (Direction 2) is outside the MVP.
+8. F10 component quantities and the single-bundle action, plus F11 scope and planned contract, are recorded in DEC-20261125-06.
 9. Cleanup after DEC-20261123-01: drop the unused `store.mining_schedule` column; consider a database UNIQUE on the normalized Store name once the data is clean.

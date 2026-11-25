@@ -29,7 +29,7 @@ public class TransactionController {
         this.transactions = transactions;
     }
 
-    @Operation(summary = "List sales transactions for the authenticated Store")
+    @Operation(operationId = "listTransactions", summary = "List sales transactions for the authenticated Store")
     @GetMapping("/api/transactions")
     public Page<TransactionView> list(@AuthenticationPrincipal Jwt jwt,
             @RequestParam(required = false) String status,
@@ -43,7 +43,7 @@ public class TransactionController {
         return new Page<>(content, page, pageSize, transactions.count(storeId, normalize(status), from, to));
     }
 
-    @Operation(summary = "Get one sales transaction and its historical product lines")
+    @Operation(operationId = "getTransaction", summary = "Get one sales transaction and its historical product lines")
     @GetMapping("/api/transactions/{id}")
     public TransactionView get(@AuthenticationPrincipal Jwt jwt, @PathVariable int id) {
         TransactionView transaction = transactions.get(access.currentStoreId(jwt), id);

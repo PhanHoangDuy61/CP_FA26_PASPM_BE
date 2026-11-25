@@ -19,10 +19,16 @@ public class ProductMetadataPersistence {
 
     public int create(int storeId, String name, Integer categoryId, String unit,
             boolean requiresExpiry, BigDecimal sellingPrice, BigDecimal costPrice, String status) {
+        return create(storeId, name, categoryId, unit, requiresExpiry, sellingPrice, costPrice, status, null, null);
+    }
+
+    public int create(int storeId, String name, Integer categoryId, String unit,
+            boolean requiresExpiry, BigDecimal sellingPrice, BigDecimal costPrice, String status,
+            String imageUrl, String description) {
         var product = new ProductEntity(storeId);
         // Persist once with a private temporary value to obtain the database-generated ID.
         product.assignSku("TMP-" + UUID.randomUUID());
-        product.replaceMetadata(name,categoryId,unit,requiresExpiry,sellingPrice,costPrice,status);
+        product.replaceMetadata(name,categoryId,unit,requiresExpiry,sellingPrice,costPrice,status,imageUrl,description);
         em.persist(product);
         // JDBC readbacks do not trigger JPA auto-flush. Surface constraints inside this translated boundary.
         em.flush();
@@ -49,11 +55,17 @@ public class ProductMetadataPersistence {
 
     public boolean update(int storeId, int id, String name, Integer categoryId, String unit,
             boolean requiresExpiry, BigDecimal sellingPrice, BigDecimal costPrice, String status) {
+        return update(storeId, id, name, categoryId, unit, requiresExpiry, sellingPrice, costPrice, status, null, null);
+    }
+
+    public boolean update(int storeId, int id, String name, Integer categoryId, String unit,
+            boolean requiresExpiry, BigDecimal sellingPrice, BigDecimal costPrice, String status,
+            String imageUrl, String description) {
         var product = products.findByStoreIdAndProductId(storeId,id).orElse(null);
         if (product == null) return false;
         // A previous native/JDBC write in the same transaction may have made this managed instance stale.
         em.refresh(product);
-        product.replaceMetadata(name,categoryId,unit,requiresExpiry,sellingPrice,costPrice,status);
+        product.replaceMetadata(name,categoryId,unit,requiresExpiry,sellingPrice,costPrice,status,imageUrl,description);
         em.flush();
         return true;
     }

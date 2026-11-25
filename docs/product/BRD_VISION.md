@@ -98,17 +98,17 @@ Workflow ownership (Review 2):
 
 | ID | Feature | Status on `dev` @ `530651b` |
 |---|---|---|
-| F01 | User & RBAC: accounts, email OTP, Google sign-in, JWT plus refresh cookie/CSRF. **Store management** (2026-11-23, DEC-20261123-01): System Admin creates, edits and deactivates/reactivates Stores (no delete); own Store profile with icon and banner | Implemented. Store management: branch `Khoi/feat/store-management`, PR pending |
+| F01 | User & RBAC: accounts, email OTP, Google sign-in, JWT plus refresh cookie/CSRF. **Store management** (2026-11-23, DEC-20261123-01): System Admin creates, edits and deactivates/reactivates Stores (no delete); own Store profile with icon and banner | Implemented. Store management merged in PR #27 (`3d51f5b`) |
 | F02 | Product & Inventory: categories, products, prices/costs, batches, **push day** | Implemented. 2026-11-19 update (`d22f735`): SKU format, similar-name confirmation, generated batch codes, editable/clearable batch expiry date |
 | F03 | Utility Profiling: Weight v2, seasons, immutable snapshots | Implemented |
 | F04 | Transaction Pipeline: CSV import (sync and async), Excel import, validation, preprocessing | Implemented. Excel (`POST /api/transactions/imports/excel`, synchronous, `STORE_ADMIN`) merged 2026-11-19 (PR #21) |
 | F05 | Mining Engine: EFIM via SPMF, minUtil policy, async worker, progress, schedules | Implemented. **Schedule enable stays HTTP 503** until sign-off |
 | F06 | Recommendation Engine: BUNDLE / CROSS_SELL / FBT / BANNER, review, live eligibility | Implemented |
-| F07 | Layout Simulator: baseline A, editable B, zones, utility score, preview | Backend API implemented. `priorityCoverage` not wired. Frontend in progress (mock screens on the local branch `feature/f07-f11-mock`, not pushed) |
+| F07 | Layout Simulator: baseline A, editable B, zones, utility score, preview | Backend API implemented. `priorityCoverage` merged in PR #32 (`516183d`). Frontend in progress (mock screens on the local branch `feature/f07-f11-mock`, not pushed) |
 | F08 | Campaign & A/B (simulated): campaign lifecycle, offline replay report | Backend API implemented. Frontend in progress |
-| F09 | Storefront: homepage, product detail, bundles | **Planned.** MVP plan draft v2 (2026-11-17). Branch `Duy/Feature/F09_Storefront` exists on `origin` but has no commits beyond `dev` @ `530651b` |
-| F10 | Bundle Cart: whole-bundle add-to-cart | **Planned.** MVP plan draft v2 (2026-11-17) |
-| F11 | Analytics Dashboard: utility, bundle revenue, A/B charts | **Planned.** F11 MVP (decided 2026-11-19): for `STORE_ADMIN` and `MERCHANDISER` of the Store, built only from data that already exists — total weighted utility per utility snapshot, A/B simulation results from `comparison_report` (labelled simulated), and bundle add-to-cart counts from `storefront_event` (after F10). No benchmark charts |
+| F09 | Storefront: homepage, product detail, bundles | **Backend MVP** (Duy Phan, branch `Duy/Feature/F09_Storefront`, 2026-11-21) merged with `dev` through `Khoi/merge/f09-storefront-be` (V29; public = Store ACTIVE, DEC-20261125-04). Related products and the frontend storefront are still open |
+| F10 | Bundle Cart | **PLANNED.** Whole-bundle action adds eligible components to ordinary Product lines, with current price, stock validation and If-Match (DEC-20261125-06). |
+| F11 | Retail Performance Dashboard | **PLANNED.** Same-Store dashboard for STORE_ADMIN and MERCHANDISER with frozen snapshot utility, saved simulated A/B including priority coverage, and bundle add counts by origin plus actual units added (DEC-20261125-06). |
 
 ### 6.2 Out of scope
 
@@ -150,14 +150,16 @@ flowchart LR
 | 2026-11-16 | Legacy product score fields and columns removed (V26). The two obsolete routes deleted | Breaking API change, communicated to frontend |
 | 2026-11-16 | **EFIM-only** mining. HUI-Miner, compare mode and benchmarks removed | Research RQ changed |
 | 2026-11-17 | Lossless EFIM-aware int32 guard (no rounding of utilities), DEC-20261117-01 | A global utility total above int32 is now accepted. A request still fails with 400 when a transaction utility, a product TWU or the converted minUtil exceeds int32: superseded in part by DEC-20261119-05 (whole-đồng fallback), with which the realistic 4,100-order fixture is now accepted |
-| 2026-11-17 | `priorityCoverage` = products with W > 1 on the layout ÷ products on the layout | Retail must sometimes push single priority items ("daily deal"), not only bundles. Not coded yet (the API returns `null`). Recorded as DEC-20261117-02 |
+| 2026-11-17 | `priorityCoverage` = products with W > 1 on the layout ÷ products on the layout | Retail must sometimes push single priority items ("daily deal"), not only bundles. Recorded as DEC-20261117-02. Merged in PR #32 (`516183d`) |
 | 2026-11-12 | A/B compares **2** layouts. F07 only opens layouts created by F08. A is read-only | DEC-20261112-01 |
 | 2026-11-01 | Scheduled mining dispatch stays disabled (503) pending tests and owner policy | Safety gate |
 | 2026-11-17 | F09/F10 go ahead as the proposed MVP; the plans are expected to be revised | See SRS §4. Recorded as DEC-20261117-03 |
 | 2026-11-19 | The UML baseline is the **36-page** pack (27 core diagrams + R2-05 Package + 8 class diagrams R2-07.x), not the 27-page copy on `dev` | The 36-page pack is updated to V26 and then committed to `docs/diagrams/` (DEC-20261119-02) |
-| 2026-11-19 | F02 rules from Duy's update (`d22f735`): SKU is trimmed, uppercased and must match `^SKU-[A-Z0-9-]{11}$` (15 characters, unique per Store). A product name that equals, or is one character away from, another product's normalized name in the Store (names of 4+ characters) returns 409 `PRODUCT_NAME_CONFIRMATION_REQUIRED` until the client retries with `confirmSimilarName: true`; batch codes `BATCH-YYYYMMDD-NNN` are generated by the backend | Owner accepted the SKU format (2026-11-19). No DEC or record of changes yet |
+| 2026-11-19 | F02 rules from Duy's update (`d22f735`, then `24b9b01` on 2026-11-20): the SKU is **generated by the backend** as `SKU-%011d` from the product ID (read-only, unique per Store; clients must not send it). A product name that equals, or is one character away from, another product's normalized name in the Store (names of 4+ characters) returns 409 `PRODUCT_NAME_CONFIRMATION_REQUIRED` until the client retries with `confirmSimilarName: true`; batch codes `BATCH-YYYYMMDD-NNN` are generated by the backend | Recorded as [DEC-20261119-07](../decisions/2026-11-19/DEC-20261119-07-server-generated-product-sku.md) (2026-11-25). Existing SKUs, including `FOODMART-xxxx`, are kept without migration |
 | 2026-11-23 | Store management belongs to F01: Store name unique (trim, ignoring case), `slug` = F09 `storeSlug` (System Admin only), status ACTIVE/INACTIVE with one central guard (403 `STORE_INACTIVE`), no hard delete, picker lists ACTIVE Stores by default, PNG/JPEG icon and banner on a shared media storage | DEC-20261123-01; V27 |
 | 2026-11-24 | F02: a batch is expired only when today (`Asia/Ho_Chi_Minh`) is **after** its expiry date, computed on read (`effectiveStatus`, `daysToExpiry`; EXPIRED wins over BLOCKED; no stored INACTIVE); the push day has no default and the batch API warns `MISSING_PUSH_DAY`; products are soft-deleted, refused with 409 while they have sellable stock or sit in a PUBLISHED/ACTIVE campaign layout, no restore | DEC-20261124-01, -02, -03; V28 |
+| 2026-11-25 | F09: a Store is public exactly when it is ACTIVE; `storeSlug` = `store.slug`; no separate storefront visibility switch. F09/F10 exclude INACTIVE and soft-deleted products | DEC-20261125-04; F09 migration renumbered to V29 |
+| 2026-11-25 | SPMF (GPL v3) 2.67a is redistributed through the public GitHub Release `spmf-2.67a` with its license and source, the image carries them, the image builds for linux/amd64, `THIRD_PARTY_NOTICES.md` lists SPMF only, and backend code never imports SPMF classes (it runs only as a separate process) | DEC-20261125-03 |
 | 2026-11-19 | Merging into `dev` goes **only through a PR with green CI** | DEC-20261119-01. Binding from PR #20; earlier merges (including F02 `d22f735` on 2026-11-19) were pushed directly |
 | 2026-11-19 | Layout zone capacities (`paspm.layout.*`) must be configured **before F09**: BANNER 3 blocks / 3 products, BUNDLE 4 / 16, CROSS_SELL 2 / 8, FBT 2 / 8, BASELINE 35 / 35 | Planned (prompt issued). Configurable through `application.yml` |
 | 2026-11-19 | Baseline A keeps only the **top-K** products by frequency (K = BASELINE capacity, 35; `F07_BASELINE_V2`). F08 compares B with the **top-N of A**, where N = distinct products in B | Showing every product made A's hit rate and captured utility about 100%. The layout score grows with size, so only same-size layouts are comparable. **DONE** (PR #22, DEC-20261119-06): `OFFLINE_REPLAY_V2`, additive `LayoutView.equalSizeBaselineScore` / `equalSizeProductCount` |
@@ -211,15 +213,15 @@ Quantitative targets are **TBD**: no response-time, throughput or availability t
 | Low minUtil causes output explosion or timeouts | Limits of 2,000 patterns, 4 MiB output, 60 s and 256 MiB. Choose minUtil from pilot runs. On the demo seed, the single day 2026-10-02 at `PERCENTAGE 0.25` gave 179 patterns, inside the demo target of about 100–300. The full range 2026-10-01..04 at 0.25 gave 0 patterns. For the multi-day demo (2026-10-01..04), `PERCENTAGE 0.12` gives 180 patterns in 385 ms (LOSSLESS) |
 | High-price data overflows SPMF int32 | EFIM-aware guard returns 400 with a clear reason. Since PR #23, the input falls back to whole-đồng rounding only on overflow. The 4,100-order fixture (lossless product TWU 3,217,593,703) is accepted. If whole-đồng still overflows, the request gets 400; coarser units need a new decision |
 | Reports 1–4 and diagrams drift from code | This document set plus the record of changes; update the reports before Review 3 (**TBD**) |
-| Demo seed (`scripts/seed/seed_demo.py`) fails on `dev` @ `222e54f`: it creates products with `FOODMART-xxxx` SKUs (now 400), near-identical names (now 409 without `confirmSimilarName`) and sends `batchCode` (now 400). Import files also reference `FOODMART-xxxx` SKUs | Owner keeps the new SKU format; fixing the seed and the FoodMart CSV/Excel SKUs is **deferred**. Existing databases keep working, but seeded products cannot be edited until their SKU is migrated |
+| The FoodMart dataset uses its own product codes (`FOODMART-xxxx`) while the backend generates SKUs (DEC-20261119-07) | The demo seed creates each product as `FoodMart Item NNNN`, reads back the server SKU, writes `mapping.csv` and imports CSV copies whose `sku` column holds the server SKUs; the original files are unchanged (ROC-20261125-004). Databases seeded before 2026-11-20 keep their `FOODMART-xxxx` SKUs with no migration; their products can be edited normally because updates never touch the SKU |
 | Frontend uses removed APIs or fields | Breaking-change list #15–#18 in the frontend handoff |
-| F09–F11 are not fully specified | MVP plans for F09/F10; F11 MVP scope decided 2026-11-19, detailed spec still to write |
-| CI repository variable `PASPM_CI_SPMF_ARTIFACT_URL` missing (recorded 2026-11-16; current value UNVERIFIED) | Repo admin to configure it |
+| F09–F11 are not fully specified | MVP plans for F09/F10; planned F10/F11 contracts recorded in DEC-20261125-06 |
+| CI repository variable `PASPM_CI_SPMF_ARTIFACT_URL` missing (recorded 2026-11-16; on PR #28 the `integration` job failed for this reason on 2026-11-25; current value UNVERIFIED in dev's record) | Since DEC-20261125-03 the approved URL is the Release asset `spmf-2.67a`; the owner creates the Release and sets the variable; repo admin to configure it |
 
 ## 12. Open questions (ask the owner)
 
 1. ~~RQ3 and G4~~: kept (2026-11-19).
-2. ~~F11 scope~~: MVP decided (2026-11-19, see §6.1). Open: detailed spec and screens.
+2. F11 scope and planned contract are recorded in DEC-20261125-06. Implementation is pending.
 3. ~~Currency~~: VND, whole đồng (2026-11-19).
 4. ~~F04 Excel import~~: merged on 2026-11-19 (PR #21).
 5. ~~Sign-off~~: the Team Leader (Nguyễn Minh Khôi) acts as Product Owner and signs off owner decisions; the supervisor reviews them at Review 3 (2026-11-19). Enabling the scheduler still needs that sign-off after its acceptance tests.
