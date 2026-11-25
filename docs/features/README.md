@@ -12,10 +12,10 @@ Start with current canonical API/handoff and the feature index. `reference*` con
 | F06 | Recommendation Engine with Weight v2 on dev (PRs #18/#19) · 8 operations | [F06](F06/README.md) |
 | F07/F08 | Layout simulator and campaigns on dev (`8f94f94`, `5436bf7`, PR #32) · 21 operations | [API](../api/F07_F08_LAYOUT_CAMPAIGN_API.md) · [schema](../architecture/F07_F08_LAYOUT_CAMPAIGN_SCHEMA.md) · [handoff](../frontend_handoff/F07_F08_HANDOFF.md) |
 | F09 | Public Storefront MVP on dev (PR #33) · 4 operations | [F09](F09/README.md) · [API](../api/F09_STOREFRONT_API.md) · [handoff](../frontend_handoff/F09_HANDOFF.md) |
-| F10 | Bundle Cart **PLANNED** (contract merged in PR #34) | [API](../api/F10_BUNDLE_CART_API.md) · [handoff](../frontend_handoff/F10_HANDOFF.md) |
+| F10 | Ordinary cart implemented on the F10 Part 1 branch (5 operations); whole-bundle add **PLANNED** | [API](../api/F10_BUNDLE_CART_API.md) · [handoff](../frontend_handoff/F10_HANDOFF.md) |
 | F11 | Dashboard **PLANNED** (contract merged in PR #34) | [API](../api/F11_DASHBOARD_API.md) · [handoff](../frontend_handoff/F11_HANDOFF.md) |
 
-The [runtime export](../api/openapi.json) covers **112 paths / 139 operations** on dev at `cded4ab`. See the [review register](../requirements/README.md#documentation-review-register).
+The [runtime export](../api/openapi.json) covers **115 paths / 144 operations** on the F10 Part 1 branch, up from 112 paths / 139 operations on dev. See the [review register](../requirements/README.md#documentation-review-register).
 
 ## Shared authentication dependency
 

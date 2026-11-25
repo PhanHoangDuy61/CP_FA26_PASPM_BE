@@ -232,7 +232,7 @@ Each line gives the behaviour an agent must preserve. Exact request and response
 - FR-09.3: Product detail and the bundle list. Bundles are APPROVED and ready. A bundle with an invalid component is hidden. An out-of-stock product shows `OUT_OF_STOCK`: the public `availability` is `AVAILABLE | OUT_OF_STOCK` (PO review 2026-11-25, DEC-20261125-04 addendum). Soft-deleted and INACTIVE products are never public (DEC-20261124-03); a batch is sellable on its expiry date (DEC-20261124-01).
 - FR-09.4: No admin fields (cost, batches) in public DTOs. The product gets `image_url` and `description` columns in **V29** (V30 drops the Store columns V29 also added); F02 `ProductRequest`/`ProductView` accept and return them (`imageUrl` absolute HTTP(S) only).
 
-### F10 — Bundle cart (PLANNED)
+### F10 — Bundle cart (Part 1 on `Khoi/feat/f10-cart-core`, whole-bundle add PLANNED)
 
 - FR-10.1: END_CUSTOMER login, one persistent cart per customer/Store, a 99-unit cap per Product, current price and stock checked on adds/increases. All mutations require `If-Match`. Stale version returns `409 CART_VERSION_CONFLICT`.
 - FR-10.2: Each BUNDLE block on the active selected Layout B supports a whole-bundle action by opaque `bundleKey`. One click requests one bundle. Add up to the requested quantity, sellable stock available for the increment and remaining capacity under 99 per Product. Report requested and added quantities for every component. If no component can be added, return 409 and record rejection.
@@ -290,7 +290,7 @@ BR-01 to BR-13 keep Report 3 numbering. BR-14 onward are new proposals in this d
 ### 5.1 External interfaces
 
 - **Web SPA:** React and TypeScript, desktop and mobile widths from 320 to 1440 px.
-- **REST/JSON API:** Bearer JWT plus refresh cookie and CSRF. Errors are returned as `{"error":"…"}`. **139 operations / 112 paths** on `dev` at `cded4ab`, including F09 (PR #33); F10–F11 not yet included. Swagger is at `/swagger`.
+- **REST/JSON API:** Bearer JWT plus refresh cookie and CSRF. Errors are returned as `{"error":"…"}`. **144 operations / 115 paths** on the F10 Part 1 branch (dev baseline: 139 operations / 112 paths). Whole-bundle add and F11 are outside this export. Swagger is at `/swagger`.
 - **Identity and email:** Google Identity for sign-in, SMTP for OTP (Mailpit in development).
 - **Mining runtime:** SPMF 2.67a on Java 25, pinned by SHA-256.
 - **Database:** MySQL 8.4 with Flyway **V1–V30** (V27 Store management, V28 product soft delete, V29 F09 storefront from the old `dev` merge, V30 drops its unused Store columns; V31 reserved for F10). H2 is used for some automated tests.

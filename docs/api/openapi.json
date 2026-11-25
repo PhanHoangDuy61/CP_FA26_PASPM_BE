@@ -30,6 +30,336 @@
     }
   ],
   "paths": {
+    "/api/storefront/{storeSlug}/cart/items": {
+      "post": {
+        "tags": [
+          "cart-controller"
+        ],
+        "summary": "Add a Product or increase its quantity in the cart",
+        "operationId": "addStorefrontCartItem",
+        "parameters": [
+          {
+            "name": "storeSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "description": "Strong quoted cart version, e.g. \"0\" for a virtual cart",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddCartItem"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartView"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          }
+        }
+      }
+    },
+    "/api/storefront/{storeSlug}/cart/items/{itemId}": {
+      "delete": {
+        "tags": [
+          "cart-controller"
+        ],
+        "summary": "Remove one line from the customer's cart",
+        "operationId": "removeStorefrontCartItem",
+        "parameters": [
+          {
+            "name": "storeSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "description": "Strong quoted cart version, e.g. \"0\" for a virtual cart",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartView"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "cart-controller"
+        ],
+        "summary": "Set the quantity of a customer's cart line",
+        "operationId": "changeStorefrontCartItemQuantity",
+        "parameters": [
+          {
+            "name": "storeSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "description": "Strong quoted cart version, e.g. \"0\" for a virtual cart",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeCartItemQuantity"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartView"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          }
+        }
+      }
+    },
+    "/api/storefront/{storeSlug}/cart": {
+      "get": {
+        "tags": [
+          "cart-controller"
+        ],
+        "summary": "Read the customer's cart in an ACTIVE Store",
+        "operationId": "getStorefrontCart",
+        "parameters": [
+          {
+            "name": "storeSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartView"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "cart-controller"
+        ],
+        "summary": "Clear the customer's cart while retaining its identity",
+        "operationId": "clearStorefrontCart",
+        "parameters": [
+          {
+            "name": "storeSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "description": "Strong quoted cart version, e.g. \"0\" for a virtual cart",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartView"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          }
+        }
+      }
+    },
     "/api/utility/seasons/{seasonId}": {
       "get": {
         "tags": [
@@ -8286,6 +8616,139 @@
   },
   "components": {
     "schemas": {
+      "AddCartItem": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "productId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "required": [
+          "productId",
+          "quantity"
+        ]
+      },
+      "CartLineView": {
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "productId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "imageUrl": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "unit": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unitPrice": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "lineTotal": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "AVAILABLE",
+              "OUT_OF_STOCK",
+              "NO_LONGER_AVAILABLE"
+            ]
+          },
+          "addedFromBundle": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CartView": {
+        "type": "object",
+        "properties": {
+          "cartId": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64"
+          },
+          "store": {
+            "$ref": "#/components/schemas/PublicStore"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "currency": {
+            "type": "string",
+            "enum": [
+              "VND"
+            ]
+          },
+          "updatedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CartLineView"
+            }
+          },
+          "subtotal": {
+            "type": [
+              "number",
+              "null"
+            ]
+          }
+        }
+      },
+      "ChangeCartItemQuantity": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "quantity": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "required": [
+          "quantity"
+        ]
+      },
       "SeasonRequest": {
         "type": "object",
         "properties": {

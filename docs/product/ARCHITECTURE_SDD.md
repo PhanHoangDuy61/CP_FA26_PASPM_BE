@@ -61,7 +61,7 @@ PASPM is **one web application**: a React single-page app and a single Spring Bo
 | 15 | Persistence | Hybrid: JPA for products and categories, JDBC (`JdbcTemplate`) for everything else | DONE |
 | 16 | Deployment / legacy recovery | Flyway callback and recovery of legacy utility-matrix data | DONE |
 | 17 | Storefront public API | Anonymous read by `storeSlug` (= `store.slug`), ACTIVE Stores only, non-deleted ACTIVE products | DONE (API, MVP; DEC-20261125-04) |
-| 18 | Cart service plus `storefront_event` | Customer cart, component-level bundle add, event log | **PLANNED** (F10) |
+| 18 | Cart service plus `storefront_event` | Customer cart and item events | Part 1 implemented on `Khoi/feat/f10-cart-core`; whole-bundle add **PLANNED** |
 | 19 | Dashboard | Aggregates for F11: snapshot weighted utility, `comparison_report` results, `storefront_event` bundle counts | **PLANNED**, MVP scope decided 2026-11-19 |
 
 ## 3. Module (package) map
@@ -82,7 +82,8 @@ Root package: `vn.edu.fpt.paspm`. Java migrations live in `db.migration`.
 | `common` | Shared | 7 | Errors, shared contracts, transaction manager. `common.media`: `MediaStorage` / `LocalMediaStorage` (Store images, avatars) |
 | `deployment` | Ops | 5 | Flyway callback, legacy recovery |
 | `storefront` | F09 | `StorefrontController`, `StorefrontService`, `StorefrontRepository` | DONE (MVP). Separate public controller; reads the active selected layout and rechecks recommendation blocks |
-| *(planned)* `cart`, `dashboard` | F10–F11 | — | **PLANNED** |
+| `storefront.cart` | F10 | Five ordinary cart operations and item events | Part 1 implemented on `Khoi/feat/f10-cart-core` |
+| *(planned)* `dashboard` | F11 | — | **PLANNED** |
 
 Dependency rules:
 - Downstream modules read upstream data through **frozen artifacts**: F05 reads the snapshot, F06 reads the run and its patterns, F07/F08 read the recommendations and snapshot. They never read live mutable data for historical results.
@@ -160,7 +161,7 @@ There are **45 tables**: 31 from V1–V19, plus 2 (V20), 8 (V23) and 4 (V25), wi
 | Mining | `mining_config_head`, `mining_config_version`, `mining_request`, `mining_run`, `high_utility_pattern`, `pattern_item`, `mining_schedule`, `mining_schedule_occurrence` |
 | Recommendation | `recommendation_rule_config`, `recommendation`, `recommendation_item`, `recommendation_source`, `recommendation_review_history` |
 | Layout & campaign | `campaign`, `campaign_history`, `storefront_layout`, `storefront_layout_revision`, `layout_placement`, `comparison_report`, `comparison_report_layout`, `comparison_report_transaction` |
-| *(PLANNED F10)* | Cart tables, `storefront_event`. Names are not final |
+| V31 (F10 Part 1 branch) | `shopping_cart`, `shopping_cart_item`, `storefront_event` |
 
 ### 5.3 Data invariants
 
@@ -232,13 +233,13 @@ flowchart LR
 - **Activation** locks the Store row, rechecks validity, ends the previously active campaign and records history.
 - **Priority coverage (OFFLINE_REPLAY_V4):** distinct displayed products with W > 1 divided by the distinct products displayed. The service reads W from the frozen campaign snapshot and saves the rate and denominator in `comparison_report_layout`. Layout views use their complete placement list, and reports use the actual A prefix and full B. Historical reports are read as stored.
 
-### 6.5 Storefront (F09 — DONE, MVP) and cart (F10 — PLANNED)
+### 6.5 Storefront (F09 — DONE, MVP) and cart (F10 Part 1 branch)
 
 - `StorefrontController` (anonymous GETs, permitted in `SecurityConfig`) resolves `storeSlug` = `store.slug` of an ACTIVE Store to the active campaign's selected READY layout. With no ACTIVE campaign it returns `DEFAULT_CATALOG` (ACTIVE, non-deleted products by category), not baseline A.
 - Public DTOs carry no cost or batch data. `availability` is computed with aggregate queries.
 - The cart is per customer and per Store. Every mutation checks the optimistic version from If-Match.
 - Whole-bundle add resolves the F09 key against active Layout B, checks each component, merges eligible Product lines, advances cart version and records one successful event in a transaction. An all-skipped request records rejection without a cart change.
-- Planned V31 creates `shopping_cart`, `shopping_cart_item` and `storefront_event`. F11 reads snapshot, comparison report and bundle event aggregates without a separate schema. Migrations after V31 start at V32. See [DEC-20261125-06](../decisions/2026-11-25/DEC-20261125-06-f10-f11-mvp-contract.md).
+- F10 Part 1 migration V31 creates `shopping_cart`, `shopping_cart_item` and `storefront_event`. F11 reads snapshot, comparison report and bundle event aggregates without a separate schema. Migrations after V31 start at V32. See [DEC-20261125-06](../decisions/2026-11-25/DEC-20261125-06-f10-f11-mvp-contract.md).
 
 ## 7. Cross-cutting concerns
 
