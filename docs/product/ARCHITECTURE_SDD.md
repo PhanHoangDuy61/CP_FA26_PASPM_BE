@@ -312,7 +312,7 @@ The tables below were written against the V1–V19 state and `dev` @ `530651b`; 
 | R2-08.07 / R2-07.07 Seq & Class AD07 | Rewrite | `MetricType {UTILITY, CTR, CONVERSION, ESTIMATED_REVENUE}` becomes `OfflineLayoutSimulation` with hitRate, bundleConversion, capturedUtility and priorityCoverage. Report tables: `comparison_report`, `_layout`, `_transaction` |
 | R2-08.08 / R2-07.08 Seq & Class AD08 | Keep (planned) | Align `CartService.addBundle` with the F10 plan (If-Match, partial adds, `storefront_event`) |
 
-### 9.2 ERD (V1–V19 → V26) — done 2026-11-19 in `PASPM_ERD_V1_V26.drawio`, pending review
+### 9.2 ERD (V1–V19 → V26) — done 2026-11-19; committed 2026-11-26 as `PASPM_ERD_V1_V26.drawio` and extended to V30 in `PASPM_ERD_V1_V30.drawio` (DEC-20261126-01)
 
 The file in `outputs/diagrams/` has 9 pages (the 8 listed plus the new Layout & Campaign page). Its Logical ERD draws 45 tables and 100 relationship edges, matching §5.2 and §10.
 
