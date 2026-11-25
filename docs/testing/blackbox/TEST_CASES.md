@@ -2279,8 +2279,8 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Role | Merchandiser |
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded); S1; DP-03 |
 | Test data | {"requestKey":"<uuid>","snapshotId":S1} |
-| Steps | 1. [API] POST /api/mining/requests (API in this round; the Merchandiser screen comes later, DEC-20261126-03)<br>2. [API] GET /api/mining/requests/{id}/progress until terminal |
-| Expected result | 202; one EFIM run; requestedBy is the Merchandiser; the request completes. |
+| Steps | 1. Sign in as ACC-MER-A and open Product Combination Analysis in the sidebar (/mining?view=setup)<br>2. On the Run Analysis tab pick snapshot S1 and submit<br>3. Follow the request in Analysis History until it ends |
+| Expected result | The UI confirms `Analysis #<id> accepted` (API 202 with a new requestKey) and switches to Analysis History; progress is shown (polled) until COMPLETED; the request has one EFIM run and requestedBy is the Merchandiser; Store A is used without any Store choice. |
 | Priority / type | High / functional |
 | Status | NOT RUN |
 
@@ -2290,12 +2290,12 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 | Field | Value |
 |---|---|
-| Trace | FR-05.2; NFR 5.4 |
+| Trace | FR-05.2; NFR 5.4; DEC-20261126-03 |
 | Role | Merchandiser, Store Admin |
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded) |
 | Test data | body plus storeId; plus minUtilValue; plus compareAlgorithms |
-| Steps | 1. [API] POST /api/mining/requests with each extra field as Merchandiser<br>2. [API] POST a valid body as Store Admin |
-| Expected result | Extra fields: 400. Store Admin: 403. |
+| Steps | 1. Sign in as ACC-STA-A, open /mining and then /mining?view=setup directly<br>2. [API] POST /api/mining/requests with each extra field as Merchandiser (the UI cannot send them)<br>3. [API] POST a valid body as Store Admin |
+| Expected result | Store Admin sees the Analysis History page only: no Run Analysis tab, and /mining?view=setup shows the history. Extra fields: 400. Store Admin POST: 403. |
 | Priority / type | High / security |
 | Status | NOT RUN |
 
@@ -2339,8 +2339,8 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Role | Merchandiser |
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded); S1 frozen with λ 0.3; System Admin then sets λmax 0.2 |
 | Test data | S1 |
-| Steps | 1. [API] Merchandiser submits mining on S1 |
-| Expected result | 409 `The lambda policy changed: this snapshot exceeds the current lambda maximum…`. |
+| Steps | 1. Merchandiser opens /mining?view=setup, picks S1 and submits |
+| Expected result | Refused with 409 `The lambda policy changed: this snapshot exceeds the current lambda maximum…`; the UI shows the message and no request appears in Analysis History. |
 | Priority / type | Medium / negative |
 | Status | NOT RUN |
 
@@ -2485,12 +2485,12 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 | Field | Value |
 |---|---|
-| Trace | UC07; FR-05.5 |
+| Trace | UC07; FR-05.5; DEC-20261126-03 |
 | Role | Store Admin |
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded); a running or completed own-Store request |
 | Test data | request id |
-| Steps | 1. [API] GET /api/mining/requests, /{id}, /{id}/runs, /{id}/progress |
-| Expected result | 200 for each; status matches the System Admin view. |
+| Steps | 1. Sign in as ACC-STA-A and open /mining (Analysis History)<br>2. Open the request |
+| Expected result | The list shows own-Store requests; the request shows its status, stage, progress and run; the values match the System Admin view; no Run Analysis action is offered. |
 | Priority / type | Medium / functional |
 | Status | NOT RUN |
 

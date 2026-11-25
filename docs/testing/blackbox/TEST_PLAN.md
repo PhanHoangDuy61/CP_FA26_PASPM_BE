@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Version / date | 0.3 — 2026-11-26 (Asia/Ho_Chi_Minh); 0.2 applied DEC-20261126-02, 0.3 applies DEC-20261126-03 (all PO questions answered) |
-| Baseline | Backend `dev` @ `fb48d55` (merged into this branch); FE `dev` @ `7f298bc` (routes only, used to name screens) |
+| Version / date | 0.4 — 2026-11-26 (Asia/Ho_Chi_Minh); 0.2 applied DEC-20261126-02, 0.3 applied DEC-20261126-03, 0.4 its Q-05 addendum (Run mining screen) and known issue KI-01 |
+| Baseline | Backend `dev` @ `fb48d55` (merged into this branch); FE `dev` @ `7f298bc` (routes used to name screens); F05 mining screen checked at FE `dev` @ `0cd57a6` |
 | Deliverables | [TEST_CASES.md](TEST_CASES.md) / [TEST_CASES.csv](TEST_CASES.csv) (248 cases), [TRACEABILITY.md](TRACEABILITY.md), [PO_QUESTIONS.md](PO_QUESTIONS.md) |
 | Execution status | **NOT RUN.** No case has been executed. This pack contains designs only |
 
@@ -17,7 +17,7 @@
 | F02 | Categories, products (server SKU, similar-name confirmation, soft delete), batches (generated code, expiry boundary, `effectiveStatus`, push day and `MISSING_PUSH_DAY`), inventory summary |
 | F03 | λmax policy, α/β/λ/N, seasons, Weight v2 values and rounding, preview, immutable snapshots |
 | F04 | CSV (sync and async) and Excel import, row and order validation, duplicates and conflicts |
-| F05 | minUtil policy, EFIM submission by System Admin and Merchandiser, progress, input bounds and int32 / whole-đồng fallback, output limit. Scheduler: only "enabling a schedule returns 503" (TC-F05-022); schedule creation and history are `[OUT OF ROUND]` |
+| F05 | minUtil policy, EFIM submission by System Admin (`/admin/mining/run`) and Merchandiser (`/mining?view=setup`, "Run Analysis"; Store Admin: history only), progress, input bounds and int32 / whole-đồng fallback, output limit. Scheduler: only "enabling a schedule returns 503" (TC-F05-022); schedule creation and history are `[OUT OF ROUND]` |
 | F06 | Generation, policy, review, live eligibility, ranking, expiry alerts |
 | F07/F08 | Baseline A, Layout B editor and caps, priority coverage, simulation, campaign lifecycle, single ACTIVE campaign, rollback |
 | F09 | Public storefront API by Store slug. Accepted on the API in this round; storefront UI checks come when the FE calls the real API |
@@ -138,9 +138,15 @@ Decided by DEC-20261126-03 (Q-16). The script is a separate small code task and 
 | KD-01 | FE `dev`: the Merchandiser cannot open several screens its role allows. Post-login role mapping grants F03 only and the sidebar is disabled, although the screen owner map assigns Merchandiser routes (noted on the R2-03 screen flow). The backend already allows the role | DEC-20261126-02 §2 (PO: defect, not intended) | UI steps of the Merchandiser cases in F05–F08 |
 | KD-02 | FE `dev` still has routes for removed features: `/f03/expiry-window`, `/f03/product-scores`, `/admin/benchmark` | DEC-20261126-03 (PO: tests assert they are unreachable; fixed together with KD-01) | TC-F03-028, TC-F05-025 |
 
+**Known issues (do not block the round)**
+
+| ID | Issue | Source | Affects | Workaround |
+|---|---|---|---|---|
+| KI-01 | FE: the browser test for selecting a Store **with the keyboard** on Users & Roles (`/admin/users`) fails | Reported by Codex (FE browser test); not reproduced in this pack | Store selection in TC-F01-019, TC-F01-020, TC-F01-022, TC-F01-040; keyboard use in TC-F01-051 | Select the Store with the mouse and note KI-01 in the result; retest keyboard selection when fixed |
+
 **Risks**
 
 - TDP-01 is not written yet; every isolation and INACTIVE case is BLOCKED until it exists.
-- If KD-01 or KD-02 is not fixed in time, the affected UI cases are BLOCKED (not run with API steps instead). Merchandiser mining (TC-F05-006) and F09 use API steps by decision, not as a workaround.
+- If KD-01 or KD-02 is not fixed in time, the affected UI cases are BLOCKED (not run with API steps instead). F09 uses API steps by decision, not as a workaround.
 - Date-dependent cases must be prepared on the day they run.
 - DP-08 datasets take time to build; F05 boundary cases may be BLOCKED until they exist.

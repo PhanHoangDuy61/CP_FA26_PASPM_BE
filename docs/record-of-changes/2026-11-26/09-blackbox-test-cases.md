@@ -9,7 +9,7 @@
 | Features | F01–F09 (implemented), F10–F11 (PLANNED) |
 | Branch / base HEAD | `Khoi/docs/blackbox-test-cases` / `origin/dev` @ `b94584b`; `origin/dev` @ `fb48d55` merged in update 3 |
 | Execution status | COMPLETED (design only; no case executed) |
-| Release status | UNRELEASED — branch pushed (`5fbf473`, update 2 `c836795`, update 3 after the merge `56a0225`), no PR opened |
+| Release status | UNRELEASED — branch pushed (`5fbf473`, update 2 `c836795`, update 3 `6c391ce` after the merge `56a0225`, update 4), no PR opened |
 | Daily summary | [README of the day](README.md) |
 
 ## 1. Request and scope
@@ -128,5 +128,20 @@ The PO answered every remaining question; recorded as [DEC-20261126-03](../../de
 | Default and `--work-dir` runs produce identical files | PASS |
 | 248 cases; existing IDs unchanged (none added, none removed in update 3) | PASS |
 | Every FR, UC and BR still traced | PASS (0 missing) |
+| Cited case IDs exist; relative links; `git diff --check` | PASS |
+| Test case execution; Maven | NOT RUN |
+
+## 8. Update 4 — Run mining screen (Q-05 updated) and known issue KI-01 (2026-11-26)
+
+| Change | Where |
+|---|---|
+| The PO updated Q-05: the Run mining screen exists on FE `dev` ("Product Combination Analysis" → `/mining?view=setup` → "Run Analysis"); Merchandiser runs mining for its own Store, Store Admin sees history only. Checked in FE `dev` @ `0cd57a6` (`F05WorkspaceView`, `MiningSubmissionPanel`, route `f05-mining` → `/mining`) | Addendum in DEC-20261126-03; PO_QUESTIONS.md Q-05 |
+| F05 cases switched from API to UI steps; IDs kept | TC-F05-006 (submit), TC-F05-007 (Store Admin has no Run tab; extra fields and Store Admin POST stay API), TC-F05-010 (λ error shown), TC-F05-020 (Store Admin history) |
+| Known issue KI-01: FE browser test for keyboard Store selection on Users & Roles fails (reported by Codex, not reproduced here); not an entry criterion | TEST_PLAN.md §9 (affected cases and workaround) |
+| Test plan version 0.4; F05 scope line; traceability text | TEST_PLAN.md, TRACEABILITY.md (via `outputs/blackbox-tools/trace.py`) |
+
+| Check | Result |
+|---|---|
+| 248 cases; IDs unchanged; every FR, UC and BR traced | PASS |
 | Cited case IDs exist; relative links; `git diff --check` | PASS |
 | Test case execution; Maven | NOT RUN |
