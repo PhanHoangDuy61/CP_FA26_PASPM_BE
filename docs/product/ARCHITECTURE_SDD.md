@@ -62,7 +62,7 @@ PASPM is **one web application**: a React single-page app and a single Spring Bo
 | 16 | Deployment / legacy recovery | Flyway callback and recovery of legacy utility-matrix data | DONE |
 | 17 | Storefront public API | Anonymous read by `storeSlug` (= `store.slug`), ACTIVE Stores only, non-deleted ACTIVE products | DONE (API, MVP; DEC-20261125-04) |
 | 18 | Cart service plus `storefront_event` | Customer cart and item events | Part 1 implemented on `Khoi/feat/f10-cart-core`; whole-bundle add **PLANNED** |
-| 19 | Dashboard | Aggregates for F11: snapshot weighted utility, `comparison_report` results, `storefront_event` bundle counts | **PLANNED**, MVP scope decided 2026-11-19 |
+| 19 | Dashboard | Aggregates for F11: snapshot weighted utility, `comparison_report` results, `storefront_event` bundle counts | Backend implemented on the stacked F11 branch |
 
 ## 3. Module (package) map
 
@@ -83,7 +83,7 @@ Root package: `vn.edu.fpt.paspm`. Java migrations live in `db.migration`.
 | `deployment` | Ops | 5 | Flyway callback, legacy recovery |
 | `storefront` | F09 | `StorefrontController`, `StorefrontService`, `StorefrontRepository` | DONE (MVP). Separate public controller; reads the active selected layout and rechecks recommendation blocks |
 | `storefront.cart` | F10 | Five ordinary cart operations, whole-bundle add and storefront events | Parts 1 and 2 implemented on `Khoi/feat/f10-bundle-add` |
-| *(planned)* `dashboard` | F11 | — | **PLANNED** |
+| `dashboard` | F11 | Frozen READY snapshot headers and Store-local bundle activity; F08 report reads stay in `layout` | Backend implemented on `Khoi/feat/f11-dashboard-api` |
 
 Dependency rules:
 - Downstream modules read upstream data through **frozen artifacts**: F05 reads the snapshot, F06 reads the run and its patterns, F07/F08 read the recommendations and snapshot. They never read live mutable data for historical results.

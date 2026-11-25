@@ -105,7 +105,7 @@ Workflow ownership (Review 2):
 | F08 | Campaign & A/B (simulated): campaign lifecycle, offline replay report | Backend API implemented. Frontend in progress |
 | F09 | Storefront: homepage, product detail, bundles | **Backend MVP** (Duy Phan, branch `Duy/Feature/F09_Storefront`, 2026-11-21) merged with `dev` through `Khoi/merge/f09-storefront-be` (V29; public = Store ACTIVE, DEC-20261125-04). Related products and the frontend storefront are still open |
 | F10 | Bundle Cart | **Implemented on the stacked Part 2 branch.** Whole-bundle action adds eligible components to ordinary Product lines, with current price, stock validation and If-Match (DEC-20261125-06). |
-| F11 | Retail Performance Dashboard | **PLANNED.** Same-Store dashboard for STORE_ADMIN and MERCHANDISER with frozen snapshot utility, saved simulated A/B including priority coverage, and bundle add counts by origin plus actual units added (DEC-20261125-06). |
+| F11 | Retail Performance Dashboard | **Backend implemented on the stacked F11 branch.** Same-Store dashboard for STORE_ADMIN and MERCHANDISER with frozen snapshot utility, saved simulated A/B including priority coverage, and bundle add counts by origin plus actual units added (DEC-20261125-06). |
 
 ### 6.2 Out of scope
 
@@ -219,7 +219,7 @@ Quantitative targets are **TBD**: no response-time, throughput or availability t
 ## 12. Open questions (ask the owner)
 
 1. ~~RQ3 and G4~~: kept (2026-11-19).
-2. F11 scope and planned contract are recorded in DEC-20261125-06. Implementation is pending.
+2. F11 scope is recorded in DEC-20261125-06. The Backend is implemented on the stacked F11 branch.
 3. ~~Currency~~: VND, whole đồng (2026-11-19).
 4. ~~F04 Excel import~~: merged on 2026-11-19 (PR #21).
 5. ~~Sign-off~~: the Team Leader (Nguyễn Minh Khôi) acts as Product Owner and signs off owner decisions; the supervisor reviews them at Review 3 (2026-11-19). Enabling the scheduler still needs that sign-off after its acceptance tests.
