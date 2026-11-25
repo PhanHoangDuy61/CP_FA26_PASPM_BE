@@ -24,7 +24,7 @@ The public storefront is anonymous and read-only. Staff routes remain protected.
 - [ ] Render baseline A as `BASELINE`; do not label it as fallback.
 - [ ] When `fallbackType=DEFAULT_CATALOG`, render category groups and their name-then-productId sorted products.
 - [ ] Render `BUNDLE`, `CROSS_SELL`, `FBT`, `BANNER` and `BASELINE` placement types.
-- [ ] Treat omitted recommendation blocks as no longer eligible; do not infer why from private F06 evidence.
+- [ ] Treat omitted products or blocks as no longer eligible; do not infer why from private F06 evidence.
 - [ ] If an active layout returns `503` because capacities are unconfigured, show a generic unavailable state and retry later. Do not show the internal configuration error to shoppers.
 
 ### Product list and Product Detail
@@ -37,8 +37,8 @@ The public storefront is anonymous and read-only. Staff routes remain protected.
 
 ### Bundles
 
-- [ ] Treat each `BUNDLE`/`FBT` recommendation placement as a grouped list of public Products.
-- [ ] The backend hides the entire block if its approval/current eligibility or any component fails recheck.
+- [ ] Treat each placement (one zone + block) as a grouped list of public Products; `type` is the zone name.
+- [ ] The backend checks each placed product on its own (F07 product-level Layout B) and drops a block only when none of its products pass.
 - [ ] Cart, quantity selection, reservations, discounts, checkout, payment and order creation are F10/deferred.
 
 ### Store visibility (no separate control)
@@ -46,7 +46,7 @@ The public storefront is anonymous and read-only. Staff routes remain protected.
 - [ ] Do not build a storefront visibility toggle. Public visibility follows Store status; the existing Store management screen already deactivates/reactivates a Store and edits its slug.
 - [ ] If a slug changes, old links return 404; reload the Store list.
 
-> **Breaking vs the unmerged F09 branch (2026-11-21):** `PUT /api/system/stores/{storeId}/storefront-visibility`, its `{"storefrontEnabled":…}` body and the `store_visibility_not_found_error.json` example were removed during the merge into `dev`. Example slugs no longer carry a hash suffix because they are ordinary Store slugs. `availability` value `UNAVAILABLE` is renamed to `OUT_OF_STOCK` (FR-09.3, PO review 2026-11-25).
+> **Breaking vs current `dev` (old F09 merge `68d6f0b`, 2026-11-21):** `PUT /api/system/stores/{storeId}/storefront-visibility`, its `{"storefrontEnabled":…}` body and the `store_visibility_not_found_error.json` example are removed; V30 drops `store.store_slug` and `store.storefront_enabled`. Example slugs no longer carry a hash suffix because they are ordinary Store slugs. `availability` value `UNAVAILABLE` is renamed to `OUT_OF_STOCK` (FR-09.3, PO review 2026-11-25).
 
 ## Public models
 
@@ -63,7 +63,7 @@ export interface StorefrontProductPage {
   items: ProductCard[]; page: number; pageSize: number; totalElements: number;
 }
 export interface HomePlacement {
-  type: 'BASELINE' | 'BUNDLE' | 'CROSS_SELL' | 'FBT' | 'BANNER';
+  type: 'BUNDLE' | 'CROSS_SELL' | 'FBT' | 'BANNER'; // the zone name
   blockNo: number; startPosition: number; products: ProductCard[];
 }
 export interface HomeZone { name: string; placements: HomePlacement[] }

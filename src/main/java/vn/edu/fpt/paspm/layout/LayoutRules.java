@@ -2,6 +2,7 @@ package vn.edu.fpt.paspm.layout;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.stereotype.Component;
@@ -23,6 +24,23 @@ public class LayoutRules {
     }
 
     public String zone(RecType type) { return zones.get(type); }
+
+    public boolean isEditableZone(String zone) {
+        return java.util.Arrays.stream(RecType.values()).anyMatch(type -> type.name().equals(zone));
+    }
+
+    public List<String> capacityErrorsForPlacements(List<PlacementRequest> placements) {
+        var grouped = new LinkedHashMap<String, Map<Integer, List<Integer>>>();
+        for (PlacementRequest placement : placements) {
+            grouped.computeIfAbsent(placement.zone(), ignored -> new java.util.LinkedHashMap<>())
+                    .computeIfAbsent(placement.blockNo(), ignored -> new ArrayList<>())
+                    .add(placement.productId());
+        }
+        var blocks = new ArrayList<PlacementBlock>();
+        grouped.forEach((zone, zoneBlocks) -> zoneBlocks.forEach((blockNo, products) ->
+                blocks.add(new PlacementBlock(null, null, List.copyOf(products), zone, blockNo, 1))));
+        return capacityErrors(blocks);
+    }
 
     /** F09 renders an active layout only when every zone has a configured cap (DEC-20261119-03). */
     public void requireConfiguredPublicCapacities() {

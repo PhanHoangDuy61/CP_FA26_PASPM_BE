@@ -19,7 +19,7 @@ The public `storeSlug` is the Store's existing `slug` from F01 Store management 
 
 A Store is public exactly when `store.status = ACTIVE` (DEC-20261125-04). There is no separate storefront visibility flag or endpoint: deactivating a Store hides its storefront immediately, reactivating it shows it again. Neither action publishes, activates or ends a campaign.
 
-> **Merge note (2026-11-25).** The original F09 branch (`Duy/Feature/F09_Storefront`, 2026-11-21) added `store.store_slug`, `store.storefront_enabled` and `PUT /api/system/stores/{storeId}/storefront-visibility` in a migration numbered V27. That number was already used by Store management on `dev`, so the merge renumbers the migration to **V29**, keeps only the product display columns, and drops the slug/visibility columns and the endpoint in favour of `store.slug` and `store.status`.
+> **Merge note (2026-11-25).** An older copy of the F09 branch (`Duy/Feature/F09_Storefront`) was merged into `dev` directly at `68d6f0b` (2026-11-21). It added `V29__f09_storefront.java` (`store.store_slug`, `store.storefront_enabled`, `product.image_url`, `product.description`) and `PUT /api/system/stores/{storeId}/storefront-visibility`. V29 is kept unchanged because it may already be applied. **V30** `f09_drop_old_storefront_columns` drops `store.store_slug` and `store.storefront_enabled`; the visibility endpoint is removed. Public lookup uses `store.slug` and `store.status` (DEC-20261125-04, addendum "Migrations").
 
 ## Public Product fields
 
@@ -39,8 +39,8 @@ Product list query parameters follow F02 naming: `search` (name/description), `c
 
 `GET /home` returns `{store,campaignName,fallbackType,zones,catalog}`.
 
-- If an ACTIVE campaign exists, only `selected_layout_id` is read. The selected layout must be READY. Layout contents are emitted in stored zone/block/position order. Baseline A placements use type `BASELINE`. Recommendation placements support the current F06 types `BUNDLE`, `CROSS_SELL`, `FBT`, and `BANNER`.
-- A recommendation block is omitted as a whole unless its current status is APPROVED, it belongs to the selected snapshot, its stored product set still matches its placement, and every component is ACTIVE, not soft-deleted, and meets the recommendation's captured F06 `minimumSellableQuantity`. Required-expiry metadata is rechecked. The response does not expose recommendation ids, policy/evidence, review status/history, or utility.
+- If an ACTIVE campaign exists, only `selected_layout_id` is read. The selected layout must be READY. Layout contents are emitted in stored zone/block/position order, one `HomePlacement` per zone and block. Since F07 product-level Layout B (DEC-20261125-01, `dev` `5436bf7`), `HomePlacement.type` is the zone name (`BUNDLE`, `CROSS_SELL`, `FBT` or `BANNER`); `BASELINE` is no longer emitted.
+- Each placed product is checked on its own; a block is omitted only when none of its products pass. A product passes when it is ACTIVE, not soft-deleted, has no missing required-expiry metadata and has at least 1 sellable unit. A product placed from a recommendation also needs that recommendation APPROVED, from the selected snapshot, still containing the product, and stock at or above its captured F06 `minimumSellableQuantity`. The response does not expose recommendation ids, policy/evidence, review status/history, or utility.
 - When there is no ACTIVE campaign, the response has `fallbackType=DEFAULT_CATALOG`, no zones, and ACTIVE, non-deleted Products grouped by category; within each category products sort by name and then `productId`. This is not baseline A.
 - A DRAFT, PUBLISHED-but-not-active, or ENDED campaign is never projected.
 - `priorityCoverage` is not part of F09; its F07/F08 definition/use remains a separate follow-up.

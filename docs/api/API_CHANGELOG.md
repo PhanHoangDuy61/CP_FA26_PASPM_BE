@@ -1,15 +1,28 @@
 # API Changelog
 
-## 2026-11-25 — F09 Storefront MVP merged with dev (branch `Khoi/merge/f09-storefront-be`, PR to `dev` pending)
+## 2026-11-25 — F09 Storefront MVP merged with dev (branch `Khoi/merge/f09-storefront-be`, PR to `dev` pending; replaces the old F09 merge `68d6f0b`)
 
-Rules: [DEC-20261125-04](../decisions/2026-11-25/DEC-20261125-04-f09-public-store-follows-store-status.md), DEC-20261117-03, DEC-20261123-01, DEC-20261124-01, DEC-20261124-03. Contract: [F09_STOREFRONT_API.md](F09_STOREFRONT_API.md). Migration **V29**. Original implementation: Duy Phan (`Duy/Feature/F09_Storefront`, 2026-11-21).
+Rules: [DEC-20261125-04](../decisions/2026-11-25/DEC-20261125-04-f09-public-store-follows-store-status.md), DEC-20261117-03, DEC-20261123-01, DEC-20261124-01, DEC-20261124-03. Contract: [F09_STOREFRONT_API.md](F09_STOREFRONT_API.md). Migrations: **V29** `f09_storefront` from the old F09 merge on `dev` (`68d6f0b`) is kept unchanged; new **V30** drops `store.store_slug` and `store.storefront_enabled`. Original implementation: Duy Phan (`Duy/Feature/F09_Storefront`, 2026-11-21).
 
 - **Added (additive):** anonymous `GET /api/storefront/stores`, `GET /api/storefront/{storeSlug}/home`, `GET /api/storefront/{storeSlug}/products`, `GET /api/storefront/{storeSlug}/products/{productId}`; public schemas `PublicStore`, `StoreSummary`, `ProductCard`, `ProductCategory`, `StorefrontProductPage`, `CatalogCategory`, `HomePlacement`, `HomeZone`, `HomeView`.
 - **Added (additive) to F02:** optional `imageUrl` (absolute HTTP(S), max 2048) and `description` (max 2000) on `ProductRequest`; both returned on `ProductView`. PUT stays a full replacement: omitting them clears them.
 - **Rules:** a Store is public exactly when ACTIVE; `storeSlug` = `store.slug`. `ProductCard.availability` is `AVAILABLE | OUT_OF_STOCK` (FR-09.3; the original branch used `UNAVAILABLE`). INACTIVE and soft-deleted products are never listed, shown or AVAILABLE. A batch is sellable on its expiry date.
-- **Not merged from the branch:** `PUT /api/system/stores/{storeId}/storefront-visibility`, `store.store_slug`, `store.storefront_enabled`.
-- **OpenAPI:** 107 paths / 134 operations → **111 / 138**.
-- **Breaking for clients:** none for staff clients. Against the unmerged F09 branch: the visibility route and its body are gone.
+- **Removed (was on `dev` since the direct merge `68d6f0b`):** `PUT /api/system/stores/{storeId}/storefront-visibility` and its `VisibilityRequest`/`VisibilityView` schemas; `store.store_slug` and `store.storefront_enabled` (dropped by V30). Public `availability` `UNAVAILABLE` is replaced by `OUT_OF_STOCK`.
+- **OpenAPI:** `dev` 113 paths / 140 operations → **112 / 139** (visibility route removed; F07 paths from `dev` unchanged).
+- **Breaking for clients:** against current `dev`, the System Admin visibility route is gone, public Stores follow `store.status` instead of the toggle, `storeSlug` is `store.slug`, and `availability` is `AVAILABLE | OUT_OF_STOCK`. No staff route other than the visibility route changes.
+
+## 2026-11-25 — F07/F08 snapshot priority coverage
+
+- Added coverage and its denominator to LayoutView for A and B. New OFFLINE_REPLAY_V4 reports populate the existing fields from frozen W > 1 and the actual products compared on each side. Historical reports remain as stored. The runtime export confirms the same 113 paths and 140 operations.
+
+## 2026-11-25 — F07 individual Layout B products (feature branch, owner-approved)
+
+- **Breaking `PUT /api/layouts/{id}/placements`:** replaces `recommendationIds` with `placements`, each containing `productId`, `zone`, `blockNo`, `position`, and nullable `sourceRecommendationId`. Multiple placements may reference the same F06 recommendation, and `null` means manual provenance.
+- **Added:** `GET /api/layouts/products?snapshotId=...&q=...&page=...&pageSize=...` for snapshot product search, snapshot utility, current status, sellable quantity and individual eligibility.
+- **Changed behavior:** saving a Layout B revision validates and persists individual placements; removing or moving one placement leaves F06 evidence and Layout A unchanged. READY rechecks each placed product rather than invalidating a whole source recommendation.
+- **F08:** `OFFLINE_REPLAY_V3` derives BUNDLE conversion from `BUNDLE + blockNo` in the exact saved Layout B revision. Historical V1/V2 reports remain unchanged.
+- No migration: V23 already has nullable `layout_placement.recommendation_id` and placement zone/block/position columns.
+- Contract/handoff: [F07/F08 API](F07_F08_LAYOUT_CAMPAIGN_API.md), [F07/F08 handoff](../frontend_handoff/F07_F08_HANDOFF.md), [DEC-20261125-01](../decisions/2026-11-25/DEC-20261125-01-f07-product-level-layout-b.md).
 
 ## 2026-11-24 — F02 expiry boundary, push-day warning, product soft delete (branch `Khoi/feat/f02-expiry-pushday-product-delete`, PR to `dev` pending)
 
@@ -55,6 +68,13 @@ Rules: [DEC-20261123-01](../decisions/2026-11-23/DEC-20261123-01-store-managemen
 - Product updates preserve the existing SKU. Existing Product records are not rewritten. This changes the F02 request contract; update clients to display the returned SKU instead of accepting manual input.
 - No migration or route change. The current OpenAPI export and F02 examples are updated with the request/response contract.
 
+## 2026-11-20 — F09 public storefront MVP
+
+- Added anonymous read-only Store selection, Homepage, Product list and Product detail APIs under /api/storefront.
+- Added a SYSTEM_ADMIN visibility toggle. Existing Stores remain private unless enabled; visibility does not publish or activate a campaign.
+- Added Product imageUrl and description display fields, a distinct public ProductCard response and Store-local availability summary. Public DTOs omit cost, stock quantities, batch data, recommendation evidence and utility.
+- Added migration V29 to assign stable Store slugs and add Store visibility and Product display metadata columns. It was renumbered from V27 during integration because F01 uses V27 and F02 uses V28. See [F09 contract](F09_STOREFRONT_API.md) and [handoff](../frontend_handoff/F09_HANDOFF.md).
+- The combined checked-in OpenAPI now contains 112 paths and 139 operations, including the F01/F02 additions and F09 routes.
 ## 2026-11-19 — F04 Excel import brought onto current `dev` (branch `Khoi/feat/f04-excel-import-v26`, PR to `dev`)
 
 The Excel route of 2026-10-26 (entry at the end of this file) is cherry-picked onto `dev` `530651b` without contract change: `POST /api/transactions/imports/excel`, `STORE_ADMIN`, multipart `file`, synchronous `201 ImportSummary`; there is no async Excel route. The sync and async CSV routes keep their behavior and messages. OpenAPI: **101 paths / 122 operations** (100 / 121 plus the Excel route); no existing path or component schema changed. New runtime dependencies: Apache POI `poi-ooxml` 6.0.0 and `commons-io` 2.22.0. No migration.

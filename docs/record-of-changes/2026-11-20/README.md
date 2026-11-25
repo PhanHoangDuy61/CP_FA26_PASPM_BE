@@ -8,4 +8,4 @@
 
 ## Record 002 — F09 Storefront MVP (branch `Duy/Feature/F09_Storefront`)
 
-[Record 002](02-f09-storefront-mvp.md) is Duy Phan's F09 Storefront MVP record, written on the feature branch as record 001 and renumbered when it was merged with `dev` on 2026-11-25. Its V27, Store slug/visibility columns and visibility endpoint were replaced in the merge; see [ROC-20261125-002](../2026-11-25/02-f09-storefront-merge-into-dev.md).
+[Record 002](02-f09-storefront-mvp.md) is Duy Phan's F09 Storefront MVP record, written on the feature branch as record 001 and renumbered when it was merged with `dev` on 2026-11-25. An older copy of this branch was merged into `dev` directly at `68d6f0b` on 2026-11-21 ([ROC-20261121](../2026-11-21/README.md)); its runtime was replaced and its `store_slug`/`storefront_enabled` columns dropped by V30 in [ROC-20261125-005](../2026-11-25/05-f09-storefront-merge-into-dev.md).

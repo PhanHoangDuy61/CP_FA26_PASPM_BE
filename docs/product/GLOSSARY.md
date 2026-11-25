@@ -123,16 +123,16 @@
 | **Zone** | Layout area mapped to a recommendation type: `BASELINE`, `BUNDLE`, `CROSS_SELL`, `FBT`, `BANNER`. Capacities come from the shared policy (`GET /api/layouts/policy`), with no invented defaults. Configured since 2026-11-19 (DEC-20261119-06): BANNER 3 blocks / 3 products, BUNDLE 4 / 16, CROSS_SELL 2 / 8, FBT 2 / 8, BASELINE 35 / 35. A capacity that is not configured is unbounded (`UNCONFIGURED_LIMITS_ARE_UNBOUNDED`). |
 | **Layout A (baseline)** | Read-only layout built deterministically from the snapshot, ordered by how many transactions contain each product. It is a frequency baseline, not a utility ranking. Since 2026-11-19 it holds the top-K products only (K = 35, `F07_BASELINE_V2`); older V1 layouts hold every product. |
 | **Equal-size comparison** | `OFFLINE_REPLAY_V2` compares B with the first N products of A, with N = distinct products in B, because the metrics and score grow with the number of products shown. F07 shows `equalSizeBaselineScore`. |
-| **Layout B (proposed)** | Editable layout the Merchandiser builds from approved, ready recommendations. A product may appear only once. B must be `READY` before it can be selected. |
+| **Layout B (proposed)** | Editable layout the Merchandiser builds per product. Each placement carries `zone`, `blockNo`, `position` and optional F06 `sourceRecommendationId`; manual source is `null`. A product may appear only once. Editing B never changes F06 evidence or Layout A. B must be `READY` before it can be selected. |
 | **Layout revision** | Every edit creates a new revision. Reports pin exact revisions. |
 | **Layout utility score** | "Weighted utility (snapshot)": the sum of `weighted_utility` of the distinct displayed products in the same snapshot. It is not revenue. |
 | **Campaign** | A pairing of A and B for one snapshot, with lifecycle `DRAFT → PUBLISHED → ACTIVE → ENDED`. *Withdraw* moves PUBLISHED back to DRAFT. **Only an activated campaign changes the storefront.** A Store has at most one ACTIVE campaign. |
 | **Decision** | The Merchandiser's choice of A or B, optionally backed by a report that matches the current revisions. |
 | **Simulation report (offline replay)** | Immutable, `simulated:true`, `OFFLINE_REPLAY_V1`. It replays eligible transactions dated after the snapshot range and outside the snapshot. It is not a real-user A/B test and not a forecast. |
 | **hitRate** | Evaluation transactions with ≥ 1 displayed product ÷ evaluation transactions. |
-| **bundleConversion** | Evaluation transactions that contain every product of ≥ 1 displayed BUNDLE ÷ evaluation transactions. |
+| **bundleConversion** | Evaluation transactions that contain every product of ≥ 1 saved `BUNDLE + blockNo` block in Layout B ÷ evaluation transactions. F06 provenance does not define the bundle. |
 | **capturedUtility** | Base utility of purchased lines whose product is displayed ÷ base utility of all lines. |
-| **priorityCoverage** | Agreed formula: priority products (W > 1) on the layout ÷ products on the layout, with W taken from the layout's frozen snapshot. **It is not wired yet and the API currently returns `null`.** |
+| **priorityCoverage** | Agreed formula: priority products (W > 1) on the layout ÷ products on the layout, with W taken from the layout's frozen snapshot. Layout views measure the full layout. New offline reports measure the products compared on each side. |
 | **Active layout projection** | `GET /api/storefront/active-layout` returns the layout of the active campaign, or `defaultLayout:true`. It is JWT-scoped for staff and is not the public storefront API. |
 | **Rollback** | Store Admin action that restores the previously active campaign, or the default layout. |
 

@@ -20,6 +20,7 @@ GROUPS = {
                 "PushDayIntegrationTest", "WeightV2CalculationTest", "VersionedUtilityJsonTest", "VersionedUtilityPersistenceTest", "WeightRulesV12MigrationTest",
                 "StoreMigrationV27Test", "StoreInactiveGuardHttpTest", "StoreAdministrationHttpTest", "StoreProfileHttpTest",
                 "StoreImageHttpTest", "LocalMediaStorageTest", "MediaFileMissingHttpTest",
+                "LayoutCampaignIntegrationTest",
                 "BatchExpiryRulesTest", "ExpiryBoundaryF03F06Test", "ProductSoftDeleteIntegrationTest", "ProductSoftDeleteV28MigrationTest",
                 "StorefrontIntegrationTest"],
     "mysql": ["SessionMySqlIntegrationTest", "SessionV21MigrationMySqlTest", "FlywayRecoveryTest", "LegacyRecoveryMySqlTest", "LegacyRecoverySchemaTest",

@@ -56,11 +56,11 @@ UC03 and UC22 were removed earlier, and their numbers are not reused.
 | 09 | Configure Utility Formula & Priority | Merch | F03 | DONE | Now λ ∈ [0, λmax], α + β = 1, N. **Seasons CRUD plus product assignment.** Product scores and the expiry window were removed |
 | 10 | Generate Bundle / Cross-sell / FBT / Banner | Merch | F06 | DONE | — |
 | 11 | Review / Approve / Reject | Merch | F06 | DONE | Warns about `seasonEnded` and `inventoryChanged` |
-| 12 | Arrange Layout | Merch | F07 | DONE (API) | B is edited by **replacing whole recommendation blocks** (`PUT /placements`). Drag-and-drop is client-side |
+| 12 | Arrange Layout | Merch | F07 | DONE (API) | B is edited **per placed product** (`PUT /placements` sends product, zone, block, position and nullable source recommendation). F06 evidence and Layout A remain immutable |
 | 13 | Create A/B Layout Variants | Merch | F07/F08 | DONE (API) | A is generated (frequency baseline, read-only). B is built at campaign creation |
 | 14 | Prepare / Publish Campaign | Merch | F08 | DONE (API) | Also covers *withdraw* |
 | 15 | Run A/B Simulation | Merch | F08 | DONE (API) | **Offline replay** of transactions dated after the snapshot. Synthetic traffic is not modelled |
-| 16 | Compare Simulated Results | Merch | F08 | PARTIAL | Metrics are hitRate, bundleConversion and capturedUtility. **`priorityCoverage` is null.** CTR and estimated revenue from Report 3 are not implemented |
+| 16 | Compare Simulated Results | Merch | F08 | PARTIAL | Metrics are hitRate, bundleConversion, capturedUtility and priorityCoverage (implemented on the feature branch). CTR and estimated revenue from Report 3 are not implemented |
 | 17 | Manage Products | Store Admin | F02 | DONE | Legacy score fields removed. SKU format and similar-name confirmation (2026-11-19) |
 | 18 | Manage Categories | Store Admin | F02 | DONE | — |
 | 19 | Manage Selling Prices / Costs | Store Admin | F02 | DONE | — |
@@ -208,10 +208,10 @@ Each line gives the behaviour an agent must preserve. Exact request and response
 ### F07 — Layout simulator (DONE API; PARTIAL)
 
 - FR-07.1: Baseline A is deterministic (frequency order, ties broken by product id) and read-only. Since PR #22 (DEC-20261119-06) it holds only the top-K products, with K = the BASELINE product capacity (35), as `F07_BASELINE_V2`. `baseline_params` stores `k` and `candidateProducts`. Older `F07_BASELINE_V1` layouts, which hold every product, are unchanged and stay valid.
-- FR-07.2: Layout B is built only from recommendations that are in the same Store and snapshot, APPROVED and ready. A product appears at most once. Zone capacities come from configuration (`paspm.layout.*`). Configured in `application.yml` since PR #22, and overridable through `PASPM_LAYOUT_MAX_BLOCKS_<ZONE>` / `PASPM_LAYOUT_MAX_PRODUCTS_<ZONE>`: BANNER 3 blocks / 3 products, BUNDLE 4 / 16, CROSS_SELL 2 / 8, FBT 2 / 8, BASELINE 35 / 35.
+- FR-07.2: Layout B is built per product, with an optional source F06 recommendation. A sourced placement remains in the same Store/snapshot and must belong to an APPROVED source recommendation; eligibility is checked per placed product. A manual placement uses `sourceRecommendationId:null` and is eligible only if active, snapshot-present and sellable. A product appears at most once. Zone capacities come from configuration (`paspm.layout.*`). Configured in `application.yml` since PR #22, and overridable through `PASPM_LAYOUT_MAX_BLOCKS_<ZONE>` / `PASPM_LAYOUT_MAX_PRODUCTS_<ZONE>`: BANNER 3 blocks / 3 products, BUNDLE 4 / 16, CROSS_SELL 2 / 8, FBT 2 / 8, BASELINE 35 / 35.
 - FR-07.3: Each edit is a new revision. A block that becomes invalid is shown with errors and blocks READY, publish and activate.
 - FR-07.4: The utility score is the sum of snapshot weighted utility over distinct displayed products. Preview returns validation and score.
-- FR-07.5: Priority coverage is products with W > 1 on the layout ÷ products on the layout. **Not implemented**: the response returns null.
+- FR-07.5: Priority coverage is products with W > 1 on the layout ÷ products on the layout. The layout view uses the full layout, and the simulation uses the actual products compared on each side.
 
 ### F08 — Campaign & simulated A/B (DONE API)
 
@@ -230,7 +230,7 @@ Each line gives the behaviour an agent must preserve. Exact request and response
 - FR-09.1: Public read API, separate from the staff API, keyed by `storeSlug` = `store.slug` (V27). No login needed. A Store is public exactly when it is ACTIVE; there is no separate visibility switch (DEC-20261125-04). Unknown or INACTIVE Store → 404.
 - FR-09.2: The homepage renders the zones of the **active** campaign layout in placement order. With no active campaign it falls back to the default layout. Draft and ended layouts are never shown.
 - FR-09.3: Product detail and the bundle list. Bundles are APPROVED and ready. A bundle with an invalid component is hidden. An out-of-stock product shows `OUT_OF_STOCK`: the public `availability` is `AVAILABLE | OUT_OF_STOCK` (PO review 2026-11-25, DEC-20261125-04 addendum). Soft-deleted and INACTIVE products are never public (DEC-20261124-03); a batch is sellable on its expiry date (DEC-20261124-01).
-- FR-09.4: No admin fields (cost, batches) in public DTOs. The product gets `image_url` and `description` columns in **V29**; F02 `ProductRequest`/`ProductView` accept and return them (`imageUrl` absolute HTTP(S) only).
+- FR-09.4: No admin fields (cost, batches) in public DTOs. The product gets `image_url` and `description` columns in **V29** (V30 drops the Store columns V29 also added); F02 `ProductRequest`/`ProductView` accept and return them (`imageUrl` absolute HTTP(S) only).
 
 ### F10 — Bundle cart (PLANNED, MVP draft v2)
 
@@ -272,10 +272,10 @@ BR-01 to BR-13 keep Report 3 numbering. BR-14 onward are new proposals in this d
 | BR-17 | Frozen JSON is never rewritten. It is read by `scoringVersion`, and unknown versions or fields are rejected | New |
 | BR-18 | Mining input: ≤ 1,600 products, ≤ 20,000 rows. Per-transaction utility, product TWU and converted minUtil each ≤ int32 max | New |
 | BR-19 | Downstream features consume a recommendation only if `APPROVED ∧ readyForConsumption`, rechecked at the moment of use | New |
-| BR-20 | Layout B uses whole recommendation blocks. A product appears once per layout. Baseline A is read-only | New |
+| BR-20 | Layout B placements are edited per product with optional F06 provenance. A product appears once. Removing or moving a placement does not alter F06 evidence or Layout A | Changed by DEC-20261125-01 |
 | BR-21 | At most one ACTIVE campaign per Store | New |
 | BR-22 | Layout utility score is a snapshot priority score, not revenue or profit | New |
-| BR-23 | A priority product is one with W > 1 in the layout's snapshot | New (decided, not coded) |
+| BR-23 | A priority product is one with W > 1 in the layout's snapshot | Implemented on the feature branch |
 | BR-24 | Scheduled-mining enable returns 503 until release sign-off | New |
 | BR-25 | (F09) Only the active campaign layout of an ACTIVE Store is public. Public DTOs never expose cost or batch data | Valid (DEC-20261125-04) |
 | BR-26 | (F10, planned) Bundle add is atomic, with no reservation and no discount. Removing one bundle line removes the bundle | Planned |
@@ -292,10 +292,10 @@ BR-01 to BR-13 keep Report 3 numbering. BR-14 onward are new proposals in this d
 ### 5.1 External interfaces
 
 - **Web SPA:** React and TypeScript, desktop and mobile widths from 320 to 1440 px.
-- **REST/JSON API:** Bearer JWT plus refresh cookie and CSRF. Errors are returned as `{"error":"…"}`. **138 operations / 111 paths** with F09 (branch `Khoi/merge/f09-storefront-be`); F10–F11 not yet included. Swagger is at `/swagger`.
+- **REST/JSON API:** Bearer JWT plus refresh cookie and CSRF. Errors are returned as `{"error":"…"}`. **139 operations / 112 paths** with F09 (branch `Khoi/merge/f09-storefront-be`; `dev` had 140 / 113 with the old F09 visibility route); F10–F11 not yet included. Swagger is at `/swagger`.
 - **Identity and email:** Google Identity for sign-in, SMTP for OTP (Mailpit in development).
 - **Mining runtime:** SPMF 2.67a on Java 25, pinned by SHA-256.
-- **Database:** MySQL 8.4 with Flyway **V1–V29** (V27 Store management, V28 product soft delete, V29 F09 product display metadata). H2 is used for some automated tests.
+- **Database:** MySQL 8.4 with Flyway **V1–V30** (V27 Store management, V28 product soft delete, V29 F09 storefront from the old `dev` merge, V30 drops its unused Store columns; V31 reserved for F10). H2 is used for some automated tests.
 
 ### 5.2 Limits
 
@@ -417,7 +417,7 @@ Update Report 3 using the template layout, changing content only.
 
 ## 11. Open items
 
-1. `priorityCoverage` (Direction 1) is not implemented.
+1. Historical simulation reports retain their stored priority coverage fields.
 2. N+1 queries in F06 `ProductEligibilityService` (3 queries per product: product, batches, units sold) have not been measured.
 3. Frontend still calls removed APIs and fields (breaking changes #15–#18). This is still true on FE `dev` @ `86d677d` (for example `expiryPushDays`, `compareAlgorithms`, `HUI_MINER`, `/benchmark`). `origin/feature/fe-v26-integration` removes part of it and is not merged.
 4. Demo minUtil: on the demo seed, the single day 2026-10-02 at `PERCENTAGE 0.25` gave 179 patterns (inside the 100–300 target). The full range 2026-10-01..04 at 0.25 gave 0 patterns. For the full range 2026-10-01..04, `PERCENTAGE 0.12` gives 180 patterns (EFIM 385 ms, `LOSSLESS`), measured 2026-11-19 (DEC-20261119-05). The demo still has to set it as policy.

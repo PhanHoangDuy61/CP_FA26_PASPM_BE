@@ -4,7 +4,7 @@ This guide describes `dev` as of PR #11 (`11973a0`). Branches that are not merge
 
 ## What you need
 
-- Git; a full JDK 17 for Spring Boot and Maven. The repository supplies Maven Wrapper 3.3.4 and downloads Maven 3.9.9 on first use; network access or a prepopulated trusted Maven cache is needed. Use `mvnw.cmd` in PowerShell and `sh ./mvnw` in zsh. The latter does not depend on executable file permissions.
+- Git; a full JDK 17 for Spring Boot and Maven. The repository supplies Maven Wrapper 3.3.4 and downloads Maven 3.9.9 on first use; network access or a prepopulated trusted Maven cache is needed. Use `mvnw.cmd` in PowerShell and `./mvnw` in zsh.
 - Docker Desktop with Compose for the supplied local MySQL 8.4 and Mailpit services. Follow Docker's installation guide for [Windows](https://docs.docker.com/desktop/setup/install/windows-install/) or [Mac](https://docs.docker.com/desktop/setup/install/mac-install/). The repo has no Backend Dockerfile/service; run Backend on the host.
 - For F05 mining only: separately installed Java 25+ executable and the approved SPMF 2.67a JAR. Obtain the exact artifact from your team's approved source; the [upstream page](https://www.philippe-fournier-viger.com/spmf/download.php) can change and the latest JAR is not necessarily approved. The JAR is not in this Backend repository. Verify SHA-256 `4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a` and banner `-- SPMF version 2.67a --`. See [SPMF setup](F05_SPMF_RUNTIME_SETUP.md). Never commit binaries or machine-specific runtime paths.
 - The sample `dev` profile seeds demo Stores, accounts, products and inventory. Use it **only in an isolated local database**; it is not necessary to start the application and must not be used with real data.

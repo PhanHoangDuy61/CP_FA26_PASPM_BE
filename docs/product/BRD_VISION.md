@@ -104,7 +104,7 @@ Workflow ownership (Review 2):
 | F04 | Transaction Pipeline: CSV import (sync and async), Excel import, validation, preprocessing | Implemented. Excel (`POST /api/transactions/imports/excel`, synchronous, `STORE_ADMIN`) merged 2026-11-19 (PR #21) |
 | F05 | Mining Engine: EFIM via SPMF, minUtil policy, async worker, progress, schedules | Implemented. **Schedule enable stays HTTP 503** until sign-off |
 | F06 | Recommendation Engine: BUNDLE / CROSS_SELL / FBT / BANNER, review, live eligibility | Implemented |
-| F07 | Layout Simulator: baseline A, editable B, zones, utility score, preview | Backend API implemented. `priorityCoverage` not wired. Frontend in progress (mock screens on the local branch `feature/f07-f11-mock`, not pushed) |
+| F07 | Layout Simulator: baseline A, editable B, zones, utility score, preview | Backend API implemented. `priorityCoverage` implemented on the feature branch. Frontend in progress (mock screens on the local branch `feature/f07-f11-mock`, not pushed) |
 | F08 | Campaign & A/B (simulated): campaign lifecycle, offline replay report | Backend API implemented. Frontend in progress |
 | F09 | Storefront: homepage, product detail, bundles | **Backend MVP** (Duy Phan, branch `Duy/Feature/F09_Storefront`, 2026-11-21) merged with `dev` through `Khoi/merge/f09-storefront-be` (V29; public = Store ACTIVE, DEC-20261125-04). Related products and the frontend storefront are still open |
 | F10 | Bundle Cart: whole-bundle add-to-cart | **Planned.** MVP plan draft v2 (2026-11-17) |
@@ -150,7 +150,7 @@ flowchart LR
 | 2026-11-16 | Legacy product score fields and columns removed (V26). The two obsolete routes deleted | Breaking API change, communicated to frontend |
 | 2026-11-16 | **EFIM-only** mining. HUI-Miner, compare mode and benchmarks removed | Research RQ changed |
 | 2026-11-17 | Lossless EFIM-aware int32 guard (no rounding of utilities), DEC-20261117-01 | A global utility total above int32 is now accepted. A request still fails with 400 when a transaction utility, a product TWU or the converted minUtil exceeds int32: superseded in part by DEC-20261119-05 (whole-đồng fallback), with which the realistic 4,100-order fixture is now accepted |
-| 2026-11-17 | `priorityCoverage` = products with W > 1 on the layout ÷ products on the layout | Retail must sometimes push single priority items ("daily deal"), not only bundles. Not coded yet (the API returns `null`). Recorded as DEC-20261117-02 |
+| 2026-11-17 | `priorityCoverage` = products with W > 1 on the layout ÷ products on the layout | Retail must sometimes push single priority items ("daily deal"), not only bundles. Recorded as DEC-20261117-02. Implemented on the feature branch |
 | 2026-11-12 | A/B compares **2** layouts. F07 only opens layouts created by F08. A is read-only | DEC-20261112-01 |
 | 2026-11-01 | Scheduled mining dispatch stays disabled (503) pending tests and owner policy | Safety gate |
 | 2026-11-17 | F09/F10 go ahead as the proposed MVP; the plans are expected to be revised | See SRS §4. Recorded as DEC-20261117-03 |

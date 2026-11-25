@@ -1214,12 +1214,32 @@
         }
       }
     },
+    "/api/layouts/products": {
+      "get": {
+        "tags": ["F07 Layouts and F08 Campaigns"],
+        "summary": "Search products in a Store snapshot with snapshot utility and current placement eligibility",
+        "operationId": "layoutSnapshotProducts",
+        "parameters": [
+          {"name": "snapshotId", "in": "query", "required": true, "schema": {"type": "integer", "format": "int32", "exclusiveMinimum": 0}},
+          {"name": "q", "in": "query", "required": false, "schema": {"type": "string", "default": ""}},
+          {"name": "page", "in": "query", "required": false, "schema": {"type": "integer", "format": "int32", "default": 0, "minimum": 0}},
+          {"name": "pageSize", "in": "query", "required": false, "schema": {"type": "integer", "format": "int32", "default": 20, "maximum": 100, "minimum": 1}}
+        ],
+        "responses": {
+          "200": {"description": "OK", "content": {"*/*": {"schema": {"$ref": "#/components/schemas/PageSnapshotProductOption"}}}},
+          "400": {"description": "Invalid request / verification"},
+          "401": {"description": "Authentication required / invalid"},
+          "403": {"description": "Permission denied"},
+          "404": {"description": "Resource not found or outside the authenticated Store"}
+        }
+      }
+    },
     "/api/layouts/{id}/placements": {
       "put": {
         "tags": [
           "F07 Layouts and F08 Campaigns"
         ],
-        "summary": "Replace B placements as whole recommendation blocks using expectedVersion",
+        "summary": "Replace Layout B with individual product placements and provenance using expectedVersion",
         "operationId": "placements",
         "parameters": [
           {
@@ -8007,278 +8027,257 @@
         }
       }
     },
-    "/api/storefront/stores": {
-      "get": {
-        "tags": [
-          "F09 Public Storefront"
-        ],
-        "summary": "List ACTIVE Stores (public storefront); storeSlug is the Store slug",
-        "operationId": "stores",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PublicStore"
+    "/api/storefront/{storeSlug}/products" : {
+      "get" : {
+        "tags" : [ "F09 Public Storefront" ],
+        "summary" : "Search and page through ACTIVE public products",
+        "operationId" : "products_1",
+        "parameters" : [ {
+          "name" : "storeSlug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "search",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "default" : ""
+          }
+        }, {
+          "name" : "categoryId",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "exclusiveMinimum" : 0
+          }
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 0,
+            "minimum" : 0
+          }
+        }, {
+          "name" : "pageSize",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 20,
+            "minimum" : 1
+          }
+        }, {
+          "name" : "sortBy",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "default" : "name"
+          }
+        }, {
+          "name" : "sortDirection",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "default" : "asc"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/StorefrontProductPage"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Permission denied"
+          },
+          "429" : {
+            "description" : "Rate limit exceeded"
+          },
+          "401" : {
+            "description" : "Authentication required / invalid"
+          },
+          "400" : {
+            "description" : "Invalid request / verification"
+          },
+          "503" : {
+            "description" : "Service configuration or required dependency unavailable"
+          },
+          "409" : {
+            "description" : "Conflict"
+          },
+          "404" : {
+            "description" : "Resource not found or outside the authenticated Store"
+          }
+        },
+        "security" : [ ]
+      }
+    },
+    "/api/storefront/{storeSlug}/products/{productId}" : {
+      "get" : {
+        "tags" : [ "F09 Public Storefront" ],
+        "summary" : "Read public product detail without internal inventory or cost fields",
+        "operationId" : "product",
+        "parameters" : [ {
+          "name" : "storeSlug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "productId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "exclusiveMinimum" : 0
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProductCard"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Permission denied"
+          },
+          "429" : {
+            "description" : "Rate limit exceeded"
+          },
+          "401" : {
+            "description" : "Authentication required / invalid"
+          },
+          "400" : {
+            "description" : "Invalid request / verification"
+          },
+          "503" : {
+            "description" : "Service configuration or required dependency unavailable"
+          },
+          "409" : {
+            "description" : "Conflict"
+          },
+          "404" : {
+            "description" : "Resource not found or outside the authenticated Store"
+          }
+        },
+        "security" : [ ]
+      }
+    },
+    "/api/storefront/{storeSlug}/home" : {
+      "get" : {
+        "tags" : [ "F09 Public Storefront" ],
+        "summary" : "Read the public homepage of an ACTIVE Store",
+        "operationId" : "home",
+        "parameters" : [ {
+          "name" : "storeSlug",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/HomeView"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Permission denied"
+          },
+          "429" : {
+            "description" : "Rate limit exceeded"
+          },
+          "401" : {
+            "description" : "Authentication required / invalid"
+          },
+          "400" : {
+            "description" : "Invalid request / verification"
+          },
+          "503" : {
+            "description" : "Service configuration or required dependency unavailable"
+          },
+          "409" : {
+            "description" : "Conflict"
+          },
+          "404" : {
+            "description" : "Resource not found or outside the authenticated Store"
+          }
+        },
+        "security" : [ ]
+      }
+    },
+    "/api/storefront/stores" : {
+      "get" : {
+        "tags" : [ "F09 Public Storefront" ],
+        "summary" : "List ACTIVE Stores (public storefront); storeSlug is the Store slug",
+        "operationId" : "stores",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/PublicStore"
                   }
                 }
               }
             }
           },
-          "400": {
-            "description": "Invalid request / verification"
+          "403" : {
+            "description" : "Permission denied"
           },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
+          "429" : {
+            "description" : "Rate limit exceeded"
           },
-          "409": {
-            "description": "Conflict"
+          "401" : {
+            "description" : "Authentication required / invalid"
           },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
+          "400" : {
+            "description" : "Invalid request / verification"
           },
-          "403": {
-            "description": "Permission denied"
+          "503" : {
+            "description" : "Service configuration or required dependency unavailable"
           },
-          "429": {
-            "description": "Rate limit exceeded"
+          "409" : {
+            "description" : "Conflict"
           },
-          "401": {
-            "description": "Authentication required / invalid"
+          "404" : {
+            "description" : "Resource not found or outside the authenticated Store"
           }
         },
-        "security": []
-      }
-    },
-    "/api/storefront/{storeSlug}/home": {
-      "get": {
-        "tags": [
-          "F09 Public Storefront"
-        ],
-        "summary": "Read the public homepage of an ACTIVE Store",
-        "operationId": "home",
-        "parameters": [
-          {
-            "name": "storeSlug",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/HomeView"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
-          },
-          "409": {
-            "description": "Conflict"
-          },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          }
-        },
-        "security": []
-      }
-    },
-    "/api/storefront/{storeSlug}/products": {
-      "get": {
-        "tags": [
-          "F09 Public Storefront"
-        ],
-        "summary": "Search and page through ACTIVE public products",
-        "operationId": "products_1",
-        "parameters": [
-          {
-            "name": "storeSlug",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": ""
-            }
-          },
-          {
-            "name": "categoryId",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "exclusiveMinimum": 0
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0,
-              "minimum": 0
-            }
-          },
-          {
-            "name": "pageSize",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 20,
-              "minimum": 1
-            }
-          },
-          {
-            "name": "sortBy",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "name"
-            }
-          },
-          {
-            "name": "sortDirection",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "asc"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/StorefrontProductPage"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
-          },
-          "409": {
-            "description": "Conflict"
-          },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          }
-        },
-        "security": []
-      }
-    },
-    "/api/storefront/{storeSlug}/products/{productId}": {
-      "get": {
-        "tags": [
-          "F09 Public Storefront"
-        ],
-        "summary": "Read public product detail without internal inventory or cost fields",
-        "operationId": "product",
-        "parameters": [
-          {
-            "name": "storeSlug",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "productId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "exclusiveMinimum": 0
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProductCard"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid request / verification"
-          },
-          "503": {
-            "description": "Service configuration or required dependency unavailable"
-          },
-          "409": {
-            "description": "Conflict"
-          },
-          "404": {
-            "description": "Resource not found or outside the authenticated Store"
-          },
-          "403": {
-            "description": "Permission denied"
-          },
-          "429": {
-            "description": "Rate limit exceeded"
-          },
-          "401": {
-            "description": "Authentication required / invalid"
-          }
-        },
-        "security": []
+        "security" : [ ]
       }
     }
   },
@@ -8849,17 +8848,17 @@
             "type": "boolean",
             "description": "Set true only after confirming the similar-name warning returned with 409"
           },
-          "imageUrl": {
-            "type": "string",
-            "description": "Optional absolute HTTP(S) image URL for F09 display (no upload)",
-            "maxLength": 2048,
-            "minLength": 0
+          "imageUrl" : {
+            "type" : "string",
+            "description" : "Optional absolute HTTP(S) image URL for F09 display (no upload)",
+            "maxLength" : 2048,
+            "minLength" : 0
           },
-          "description": {
-            "type": "string",
-            "description": "Optional display description for F09",
-            "maxLength": 2000,
-            "minLength": 0
+          "description" : {
+            "type" : "string",
+            "description" : "Optional display description for F09",
+            "maxLength" : 2000,
+            "minLength" : 0
           }
         },
         "required": [
@@ -8927,11 +8926,11 @@
             "description": "Derived sum of inventory batch remainingQuantity values",
             "readOnly": true
           },
-          "imageUrl": {
-            "type": "string"
+          "imageUrl" : {
+            "type" : "string"
           },
-          "description": {
-            "type": "string"
+          "description" : {
+            "type" : "string"
           }
         }
       },
@@ -8943,20 +8942,53 @@
             "type": "integer",
             "format": "int64"
           },
-          "recommendationIds": {
+          "placements": {
             "type": "array",
             "items": {
-              "type": "integer",
-              "format": "int64"
+              "$ref": "#/components/schemas/PlacementRequest"
             },
-            "maxItems": 100,
             "minItems": 0
           }
         },
         "required": [
           "expectedVersion",
-          "recommendationIds"
+          "placements"
         ]
+      },
+      "PlacementRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "productId": {"type": "integer", "format": "int32"},
+          "zone": {"type": "string", "enum": ["BANNER", "BUNDLE", "CROSS_SELL", "FBT"]},
+          "blockNo": {"type": "integer", "format": "int32"},
+          "position": {"type": "integer", "format": "int32"},
+          "sourceRecommendationId": {"type": ["integer", "null"], "format": "int64"}
+        },
+        "required": ["productId", "zone", "blockNo", "position"]
+      },
+      "SnapshotProductOption": {
+        "type": "object",
+        "properties": {
+          "productId": {"type": "integer", "format": "int32"},
+          "sku": {"type": "string"},
+          "productName": {"type": "string"},
+          "productStatus": {"type": "string"},
+          "deleted": {"type": "boolean"},
+          "sellableQuantity": {"type": "integer", "format": "int64"},
+          "snapshotWeightedUtility": {"type": "number"},
+          "eligible": {"type": "boolean"},
+          "validationErrors": {"type": "array", "items": {"type": "string"}}
+        }
+      },
+      "PageSnapshotProductOption": {
+        "type": "object",
+        "properties": {
+          "items": {"type": "array", "items": {"$ref": "#/components/schemas/SnapshotProductOption"}},
+          "page": {"type": "integer", "format": "int32"},
+          "pageSize": {"type": "integer", "format": "int32"},
+          "totalElements": {"type": "integer", "format": "int64"}
+        }
       },
       "LayoutView": {
         "type": "object",
@@ -9035,6 +9067,18 @@
             ],
             "format": "int32",
             "description": "Layout B only: number of A products in that prefix, min(N, |A|). Null for layout A."
+          },
+          "priorityCoverage": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Share of distinct displayed products with frozen snapshot W > 1, rounded to six decimals. Null for an empty layout or unavailable frozen weight."
+          },
+          "priorityCoverageDenominator": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Number of distinct displayed products, including zero for an empty layout"
           }
         }
       },
@@ -9048,6 +9092,11 @@
           "recommendationId": {
             "type": "integer",
             "format": "int64"
+          },
+          "sourceRecommendationId": {
+            "type": ["integer", "null"],
+            "format": "int64",
+            "description": "F06 source recommendation; null means manually added"
           },
           "recommendationType": {
             "type": "string",
@@ -10766,11 +10815,19 @@
             "$ref": "#/components/schemas/UtilityMetricView"
           },
           "priorityCoverage": {
-            "type": "number"
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Distinct priority products divided by actual displayed product count on this comparison side. Uses frozen W > 1. Null when unavailable or on historical reports without the metric."
           },
           "priorityCoverageDenominator": {
-            "type": "integer",
-            "format": "int32"
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32",
+            "description": "Actual distinct displayed product count on this comparison side. Null on historical reports without the metric."
           }
         }
       },
@@ -12915,177 +12972,171 @@
           }
         }
       },
-      "ProductCard": {
-        "type": "object",
-        "properties": {
-          "productId": {
-            "type": "integer",
-            "format": "int32"
+      "ProductCard" : {
+        "type" : "object",
+        "properties" : {
+          "productId" : {
+            "type" : "integer",
+            "format" : "int32"
           },
-          "name": {
-            "type": "string"
+          "name" : {
+            "type" : "string"
           },
-          "description": {
-            "type": "string"
+          "description" : {
+            "type" : "string"
           },
-          "imageUrl": {
-            "type": "string"
+          "imageUrl" : {
+            "type" : "string"
           },
-          "unit": {
-            "type": "string"
+          "unit" : {
+            "type" : "string"
           },
-          "sellingPrice": {
-            "type": "number"
+          "sellingPrice" : {
+            "type" : "number"
           },
-          "category": {
-            "$ref": "#/components/schemas/ProductCategory"
+          "category" : {
+            "$ref" : "#/components/schemas/ProductCategory"
           },
-          "availability": {
-            "type": "string",
-            "enum": [
-              "AVAILABLE",
-              "OUT_OF_STOCK"
-            ]
+          "availability" : {
+            "type" : "string",
+            "enum" : [ "AVAILABLE", "OUT_OF_STOCK" ]
           }
         }
       },
-      "ProductCategory": {
-        "type": "object",
-        "properties": {
-          "categoryId": {
-            "type": "integer",
-            "format": "int32"
+      "ProductCategory" : {
+        "type" : "object",
+        "properties" : {
+          "categoryId" : {
+            "type" : "integer",
+            "format" : "int32"
           },
-          "name": {
-            "type": "string"
+          "name" : {
+            "type" : "string"
           }
         }
       },
-      "StorefrontProductPage": {
-        "type": "object",
-        "properties": {
-          "items": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ProductCard"
+      "StorefrontProductPage" : {
+        "type" : "object",
+        "properties" : {
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ProductCard"
             }
           },
-          "page": {
-            "type": "integer",
-            "format": "int32"
+          "page" : {
+            "type" : "integer",
+            "format" : "int32"
           },
-          "pageSize": {
-            "type": "integer",
-            "format": "int32"
+          "pageSize" : {
+            "type" : "integer",
+            "format" : "int32"
           },
-          "totalElements": {
-            "type": "integer",
-            "format": "int64"
+          "totalElements" : {
+            "type" : "integer",
+            "format" : "int64"
           }
         }
       },
-      "CatalogCategory": {
-        "type": "object",
-        "properties": {
-          "categoryId": {
-            "type": "integer",
-            "format": "int32"
+      "CatalogCategory" : {
+        "type" : "object",
+        "properties" : {
+          "categoryId" : {
+            "type" : "integer",
+            "format" : "int32"
           },
-          "name": {
-            "type": "string"
+          "name" : {
+            "type" : "string"
           },
-          "products": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ProductCard"
+          "products" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ProductCard"
             }
           }
         }
       },
-      "HomePlacement": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string"
+      "HomePlacement" : {
+        "type" : "object",
+        "properties" : {
+          "type" : {
+            "type" : "string"
           },
-          "blockNo": {
-            "type": "integer",
-            "format": "int32"
+          "blockNo" : {
+            "type" : "integer",
+            "format" : "int32"
           },
-          "startPosition": {
-            "type": "integer",
-            "format": "int32"
+          "startPosition" : {
+            "type" : "integer",
+            "format" : "int32"
           },
-          "products": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ProductCard"
+          "products" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ProductCard"
             }
           }
         }
       },
-      "HomeView": {
-        "type": "object",
-        "properties": {
-          "store": {
-            "$ref": "#/components/schemas/StoreSummary"
+      "HomeView" : {
+        "type" : "object",
+        "properties" : {
+          "store" : {
+            "$ref" : "#/components/schemas/StoreSummary"
           },
-          "campaignName": {
-            "type": "string"
+          "campaignName" : {
+            "type" : "string"
           },
-          "fallbackType": {
-            "type": [
-              "string",
-              "null"
-            ]
+          "fallbackType" : {
+            "type" : [ "string", "null" ]
           },
-          "zones": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/HomeZone"
+          "zones" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/HomeZone"
             }
           },
-          "catalog": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CatalogCategory"
+          "catalog" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/CatalogCategory"
             }
           }
         }
       },
-      "HomeZone": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
+      "HomeZone" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
           },
-          "placements": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/HomePlacement"
+          "placements" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/HomePlacement"
             }
           }
         }
       },
-      "StoreSummary": {
-        "type": "object",
-        "properties": {
-          "storeSlug": {
-            "type": "string"
+      "StoreSummary" : {
+        "type" : "object",
+        "properties" : {
+          "storeSlug" : {
+            "type" : "string"
           },
-          "name": {
-            "type": "string"
+          "name" : {
+            "type" : "string"
           }
         }
       },
-      "PublicStore": {
-        "type": "object",
-        "properties": {
-          "storeSlug": {
-            "type": "string"
+      "PublicStore" : {
+        "type" : "object",
+        "properties" : {
+          "storeSlug" : {
+            "type" : "string"
           },
-          "name": {
-            "type": "string"
+          "name" : {
+            "type" : "string"
           }
         }
       }

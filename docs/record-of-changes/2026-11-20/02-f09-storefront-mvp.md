@@ -52,7 +52,7 @@ F02 contract/handoff, F09 API/OpenAPI/RBAC, examples, frontend checklists, featu
 
 | Path | Change | Reason |
 |---|---|---|
-| `src/main/java/db/migration/V27__f09_storefront.java` | Added | Store/Product schema and safe slug backfill |
+| `src/main/java/db/migration/V29__f09_storefront.java (renumbered from V27 during F01/F02 integration)` | Added | Store/Product schema and safe slug backfill |
 | `src/main/java/vn/edu/fpt/paspm/storefront/` | Added | Slug, public contracts, repository, service, controller |
 | `src/main/java/vn/edu/fpt/paspm/catalog/CatalogContracts.java` | Modified | F02 Product display fields |
 | `src/main/java/vn/edu/fpt/paspm/catalog/SystemStoreController.java` | Modified | SYSTEM_ADMIN visibility API |
@@ -107,4 +107,4 @@ The task's context recorded the F07/F08 contract and F06/F02 source/tests alread
 
 ## 8. Delivery
 
-No commit, push, merge or deployment was performed. All work remains local and unpublished.
+At the time of this implementation handoff, no commit, push, merge or deployment had been performed. The subsequent merge to `dev` and its verification are recorded in [ROC-20261121](../2026-11-21/README.md).

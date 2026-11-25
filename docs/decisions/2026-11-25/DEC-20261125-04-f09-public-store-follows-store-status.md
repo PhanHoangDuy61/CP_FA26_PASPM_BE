@@ -19,15 +19,26 @@ Since then `dev` gained Store management (DEC-20261123-01, V27): `store.slug` is
 1. A Store is public in F09 **exactly when `store.status = ACTIVE`**. There is no separate storefront visibility flag or endpoint.
 2. The public `storeSlug` is `store.slug`. F09 adds no slug column.
 3. Unknown and INACTIVE Stores both return `404 Storefront not found`.
-4. The F09 migration is renumbered to **V29** and only adds `product.image_url` and `product.description` (FR-09.4).
+4. ~~The F09 migration is renumbered to **V29** and only adds `product.image_url` and `product.description` (FR-09.4).~~ Superseded by the addendum "Migrations" below: `dev`'s V29 `f09_storefront` is kept and V30 drops the unused Store columns.
 5. F09 (and F10 when built) exclude INACTIVE and soft-deleted products (`deleted_at IS NOT NULL`, DEC-20261124-03) from every public read, and follow the DEC-20261124-01 expiry boundary.
 
 ## Consequences
 - Deactivating a Store hides its storefront immediately; reactivating shows it again. Neither touches campaigns.
 - A newly created ACTIVE Store is public at once, with the fallback `DEFAULT_CATALOG` homepage until it has an ACTIVE campaign.
 - Frontend: no visibility screen. Store status and slug are managed in the existing Store management screens.
-- If the owner later wants a Store to stay ACTIVE for staff but hidden from shoppers, that needs a new DEC and a new migration (V30+).
+- If the owner later wants a Store to stay ACTIVE for staff but hidden from shoppers, that needs a new DEC and a new migration (V32+; V30 is this F09 cleanup and V31 is reserved for F10).
 
 ## Addendum — FR-09.3 availability value (PO review, 2026-11-25)
 
 The SRS is the standard ("docs làm chuẩn"): FR-09.3 says an out-of-stock product shows `OUT_OF_STOCK`. The original F09 branch returned `UNAVAILABLE`. Decision: the public `ProductCard.availability` is **`AVAILABLE | OUT_OF_STOCK`**; `UNAVAILABLE` is not used. Since INACTIVE and soft-deleted products are never returned publicly, every non-AVAILABLE product in a public response is one without sellable stock. Changed in code (`StorefrontContracts.Availability`), tests, OpenAPI and the F09 API/handoff on branch `Khoi/merge/f09-storefront-be`.
+
+## Addendum — Migrations (PO decision, 2026-11-25)
+
+Before this branch was merged, an older copy of `Duy/Feature/F09_Storefront` had already been merged into `dev` directly (merge commit `68d6f0b`, Duy Phan, 2026-11-21, pushed without a pull request; logged in [ROC-20261121](../../record-of-changes/2026-11-21/README.md)). It added `V29__f09_storefront.java`: `store.store_slug` (unique `uq_store_store_slug`, backfilled), `store.storefront_enabled BOOLEAN NOT NULL DEFAULT FALSE`, `product.image_url VARCHAR(2048) NULL`, `product.description TEXT NULL`. That V29 may already be applied on teammates' databases.
+
+Decision:
+1. `dev`'s V29 stays **exactly as merged** (an applied migration is never edited). The branch's own `V29__f09_product_display_metadata.sql` is removed, so there is one V29.
+2. `vn.edu.fpt.paspm.storefront.StoreSlug` stays only because V29 calls it; runtime code does not use it.
+3. New **V30** `f09_drop_old_storefront_columns` drops `uq_store_store_slug`, `store.store_slug` and `store.storefront_enabled`. It does not touch `product.image_url`/`product.description`, which V29 already adds.
+4. Runtime follows decisions 1–3 and 5 above and the FR-09.3 addendum: lookup by `store.slug`, public only when ACTIVE, no visibility endpoint, `AVAILABLE | OUT_OF_STOCK`.
+5. V31 is reserved for F10.

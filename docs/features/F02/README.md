@@ -17,6 +17,8 @@ Rules: [DEC-20261124-01](../../decisions/2026-11-24/DEC-20261124-01-batch-expiry
 
 The current branch adds allowlisted/stable sorting for all product-list display fields; database-generated, read-only Product/Batch IDs; Product SKU generation from the database Product ID; backend-generated per-Product batch codes (`BATCH-YYYYMMDD-NNN`); a confirm-and-retry warning for similar product names; and expiry-date correction/clearing for inventory batches. Batch source fields (`batchCode`, `receivedAt`, `initialQuantity`) remain immutable. No migration was needed, and this repository has no frontend UI; see the current [API contract](../../api/F02_PRODUCT_INVENTORY_API.md) and [frontend handoff](../../frontend_handoff/F02_HANDOFF.md).
 
+F09 adds optional Product display metadata in V27: `imageUrl` (absolute HTTP(S), max 2,048 characters) and `description` (max 2,000). F02 returns both fields; image upload is not supported. SKU remains backend-generated and read-only.
+
 > Historical verification record: Backend `dev` @ `11973a0` (merge of PR #11; source tree identical to `a4f1115`, whose code passed the full verification script on `45dbd80`). See the 2026-11-19 follow-up above for current changes and tests.
 
 ## Historical status — branch `Khoi/feat/f03-remove-legacy-product-fields` (2026-11-16)

@@ -15,7 +15,8 @@ Backend scope: public Store selection, Homepage, Product list/detail, and the se
 | A Store is public only while `store.status = ACTIVE`; `storeSlug` is `store.slug` | `storefront/StorefrontRepository.java` (`publicStores`, `publicStore`) |
 | Only ACTIVE, non-deleted Products (`deleted_at IS NULL`) are listed, shown or AVAILABLE | `storefront/StorefrontRepository.java` (`products`, `activeProduct`, `activeProductsByCategory`, `availability`, `placements`) |
 | A batch is sellable on its expiry date, expired only the day after | `StorefrontRepository.availability` (`expiry_date >= today`) |
-| Recommendation blocks: APPROVED, same snapshot, unchanged product set, every component sellable | `storefront/StorefrontService.java` (`validBlock`) |
-| Product display metadata: `product.image_url`, `product.description` | Migration `V29__f09_product_display_metadata.sql` |
+| Homepage placements are checked one by one (F07 product-level Layout B, DEC-20261125-01): the product must be public and sellable; a placement from a recommendation also needs that recommendation APPROVED, from the active snapshot, still containing the product, and stock at or above its policy minimum | `storefront/StorefrontService.java` (`validPlacement`) |
+| Product display metadata: `product.image_url`, `product.description` | Migration `V29__f09_storefront.java` (old F09 merge on `dev`, kept unchanged) |
+| No F09 Store columns: `store.store_slug` and `store.storefront_enabled` (added by V29) are dropped | Migration `V30__f09_drop_old_storefront_columns.sql` (DEC-20261125-04, addendum "Migrations") |
 
 The draft plan lives outside the repository (`outputs/plans/F09_STOREFRONT_PLAN_API_SCREENS.md`, DEC-20261117-03). Related Products, F10 cart and checkout, image upload, discounts and priority coverage are deferred.

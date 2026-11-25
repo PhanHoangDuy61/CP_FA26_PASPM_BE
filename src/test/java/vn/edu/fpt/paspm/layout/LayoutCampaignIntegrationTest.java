@@ -54,6 +54,7 @@ class LayoutCampaignIntegrationTest {
     @Autowired UserRepository users;
     @Autowired AuthService auth;
     @Autowired ObjectMapper json;
+    @Autowired LayoutPolicyProperties layoutPolicy;
     @MockitoBean RecommendationService recommendations;
 
     int storeId;
@@ -118,7 +119,7 @@ class LayoutCampaignIntegrationTest {
                 .andExpect(jsonPath("$.role").value("A"))
                 .andExpect(jsonPath("$.valid").value(true));
         put("/api/layouts/" + layoutA + "/placements", merchantToken,
-                "{\"expectedVersion\":1,\"recommendationIds\":[]}").andExpect(status().isConflict());
+                "{\"expectedVersion\":1,\"placements\":[]}").andExpect(status().isConflict());
         get("/api/layouts/" + layoutA, foreignToken).andExpect(status().isNotFound());
         get("/api/campaigns/" + campaign, foreignToken).andExpect(status().isNotFound());
         get("/api/campaigns", token("END_CUSTOMER", null)).andExpect(status().isForbidden());
@@ -204,8 +205,13 @@ class LayoutCampaignIntegrationTest {
                 "{\"expectedVersion\":1,\"decision\":\"CHOOSE_B\"}").andExpect(status().isOk()));
         setRecommendation(bundle, ReviewStatus.APPROVED, false);
         get("/api/layouts/" + layoutB, merchantToken).andExpect(status().isOk())
+                .andExpect(jsonPath("$.valid").value(true))
+                .andExpect(jsonPath("$.placements[0].valid").value(true));
+        jdbc.update("UPDATE product SET status='INACTIVE' WHERE product_id=?", products.get(0));
+        get("/api/layouts/" + layoutB, merchantToken).andExpect(status().isOk())
                 .andExpect(jsonPath("$.valid").value(false))
-                .andExpect(jsonPath("$.placements[0].valid").value(false));
+                .andExpect(jsonPath("$.placements[0].valid").value(false))
+                .andExpect(jsonPath("$.placements[1].valid").value(true));
         post("/api/campaigns/" + campaignId + "/publish", merchantToken,
                 "{\"expectedVersion\":" + decision.path("version").asLong() + "}")
                 .andExpect(status().isConflict());
@@ -216,19 +222,140 @@ class LayoutCampaignIntegrationTest {
     }
 
     @Test
+    void placementsCanSplitRecommendationsAndSimulationPinsTheSavedProductRevision() throws Exception {
+        long bundle = recommendation(RecType.BUNDLE, List.of(products.get(0), products.get(1)),
+                ReviewStatus.APPROVED, true);
+        JsonNode created = createCampaign(List.of(bundle));
+        long layoutB = created.path("layoutBId").asLong();
+
+        put("/api/layouts/" + layoutB + "/placements", merchantToken,
+                placementRequest(1, new int[] {products.get(0), products.get(1)},
+                        new String[] {"BUNDLE", "CROSS_SELL"}, new int[] {1, 1},
+                        new int[] {1, 1}, new Long[] {bundle, bundle}))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.version").value(2))
+                .andExpect(jsonPath("$.placements.length()").value(2))
+                .andExpect(jsonPath("$.placements[0].sourceRecommendationId").value(bundle))
+                .andExpect(jsonPath("$.placements[1].sourceRecommendationId").value(bundle));
+        assertEquals(2, jdbc.queryForObject("SELECT COUNT(*) FROM recommendation_item WHERE recommendation_id=?",
+                Integer.class, bundle), "editing B must not alter F06 recommendation evidence");
+        assertEquals(1, jdbc.queryForObject(
+                "SELECT COUNT(*) FROM storefront_layout_revision WHERE layout_id=? AND version=2",
+                Integer.class, layoutB));
+        assertEquals(2, jdbc.queryForObject("""
+                SELECT COUNT(*) FROM layout_placement
+                WHERE layout_id=? AND recommendation_id=? AND product_id IN (?,?)
+                """, Integer.class, layoutB, bundle, products.get(0), products.get(1)));
+
+        put("/api/layouts/" + layoutB + "/placements", merchantToken,
+                placementRequest(2, new int[] {products.get(0)}, new String[] {"BUNDLE"},
+                        new int[] {1}, new int[] {1}, new Long[] {bundle}))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.placements.length()").value(1));
+        assertEquals(2, jdbc.queryForObject("SELECT COUNT(*) FROM recommendation_item WHERE recommendation_id=?",
+                Integer.class, bundle), "removing a placement must retain F06 evidence");
+        assertEquals(1, jdbc.queryForObject("SELECT COUNT(*) FROM layout_placement WHERE layout_id=?",
+                Integer.class, layoutB));
+        assertEquals(1, jdbc.queryForObject(
+                "SELECT COUNT(*) FROM storefront_layout_revision WHERE layout_id=? AND version=3",
+                Integer.class, layoutB));
+
+        post("/api/layouts/" + layoutB + "/ready", merchantToken, "{\"expectedVersion\":3}")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("READY"));
+        JsonNode report = read(post("/api/campaigns/" + created.path("campaignId").asLong() + "/simulations",
+                merchantToken, simulationRequest(1, 1, 3, today.plusDays(1), today.plusDays(2)))
+                .andExpect(status().isCreated()));
+        assertEquals(3, report.path("layouts").get(1).path("layoutVersion").asLong());
+        assertEquals("OFFLINE_REPLAY_V4", report.path("algorithmVersion").asText());
+        assertEquals(3, jdbc.queryForObject("""
+                SELECT layout_version FROM comparison_report_layout
+                WHERE report_id=? AND role='B'
+                """, Integer.class, report.path("reportId").asLong()));
+    }
+
+    @Test
+    void manualPlacementsUseSnapshotUtilityAndCurrentProductEligibility() throws Exception {
+        JsonNode created = createCampaign(List.of());
+        long layoutB = created.path("layoutBId").asLong();
+
+        mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/api/layouts/products")
+                .param("snapshotId", String.valueOf(snapshotId))
+                .param("q", "Layout product")
+                .param("page", "0")
+                .param("pageSize", "10")
+                .header("Authorization", bearer(merchantToken)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalElements").value(3))
+                .andExpect(jsonPath("$.items[0].snapshotWeightedUtility").isNotEmpty())
+                .andExpect(jsonPath("$.items[0].productStatus").value("ACTIVE"))
+                .andExpect(jsonPath("$.items[0].sellableQuantity").value(10))
+                .andExpect(jsonPath("$.items[0].eligible").value(true));
+
+        put("/api/layouts/" + layoutB + "/placements", merchantToken,
+                "{\"expectedVersion\":1,\"recommendationIds\":[]}")
+                .andExpect(status().isBadRequest());
+        int recommendationItemsBeforeManualPlacement = jdbc.queryForObject(
+                "SELECT COUNT(*) FROM recommendation_item", Integer.class);
+        put("/api/layouts/" + layoutB + "/placements", merchantToken,
+                placementRequest(1, new int[] {products.get(2)}, new String[] {"BANNER"},
+                        new int[] {1}, new int[] {1}, new Long[] {null}))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.placements[0].sourceRecommendationId").isEmpty())
+                .andExpect(jsonPath("$.placements[0].recommendationId").isEmpty());
+        assertEquals(recommendationItemsBeforeManualPlacement,
+                jdbc.queryForObject("SELECT COUNT(*) FROM recommendation_item", Integer.class),
+                "a manual placement must not create F06 evidence");
+        assertEquals(1, jdbc.queryForObject(
+                "SELECT COUNT(*) FROM storefront_layout_revision WHERE layout_id=? AND version=2",
+                Integer.class, layoutB));
+    }
+
+    @Test
+    void ineligibleManualProductAndRepeatedProductAreRejectedWithoutChangingRevision() throws Exception {
+        long layoutB = createCampaign(List.of()).path("layoutBId").asLong();
+        String repeated = placementRequest(1, new int[] {products.get(0), products.get(0)},
+                new String[] {"BANNER", "BANNER"}, new int[] {1, 1}, new int[] {1, 2},
+                new Long[] {null, null});
+        put("/api/layouts/" + layoutB + "/placements", merchantToken, repeated)
+                .andExpect(status().isBadRequest());
+
+        jdbc.update("UPDATE product SET status='INACTIVE' WHERE product_id=?", products.get(0));
+        put("/api/layouts/" + layoutB + "/placements", merchantToken,
+                placementRequest(1, new int[] {products.get(0)}, new String[] {"BANNER"},
+                        new int[] {1}, new int[] {1}, new Long[] {null}))
+                .andExpect(status().isConflict());
+        assertEquals(0, jdbc.queryForObject("SELECT COUNT(*) FROM layout_placement WHERE layout_id=?",
+                Integer.class, layoutB));
+        assertEquals(1, jdbc.queryForObject(
+                "SELECT COUNT(*) FROM storefront_layout_revision WHERE layout_id=? AND version=1",
+                Integer.class, layoutB));
+    }
+
+    @Test
     void openApiExposesF07F08OperationsAndSchemas() throws Exception {
         String document = mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/v3/api-docs"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
         JsonNode openApi = json.readTree(document);
         JsonNode paths = openApi.path("paths");
-        for (String path : List.of("/api/layouts", "/api/layouts/{id}/placements", "/api/campaigns",
+        for (String path : List.of("/api/layouts", "/api/layouts/products", "/api/layouts/{id}/placements", "/api/campaigns",
                 "/api/campaigns/{id}/simulations", "/api/campaigns/{id}/activate",
                 "/api/campaigns/{id}/rollback", "/api/storefront/active-layout")) {
             assertTrue(paths.has(path), "Missing OpenAPI path " + path);
         }
         assertTrue(paths.path("/api/campaigns").path("post").path("responses").has("201"));
         assertTrue(openApi.path("components").path("schemas").has("CampaignReportView"));
+        JsonNode schemas = openApi.path("components").path("schemas");
+        for (String schema : List.of("LayoutView", "ReportLayoutView")) {
+            JsonNode fields = schemas.path(schema).path("properties");
+            assertTrue(fields.path("priorityCoverage").path("type").toString().contains("null"));
+            assertTrue(fields.has("priorityCoverageDenominator"));
+        }
+        JsonNode saveRequest = openApi.path("components").path("schemas").path("SavePlacementsRequest");
+        assertTrue(saveRequest.path("properties").has("placements"));
+        assertFalse(saveRequest.path("properties").has("recommendationIds"));
+        assertTrue(openApi.path("components").path("schemas").has("PlacementRequest"));
         assertTrue(openApi.path("tags").toString().contains("F07 Layouts and F08 Campaigns"));
     }
 
@@ -245,7 +372,10 @@ class LayoutCampaignIntegrationTest {
         transaction(today, List.of(products.get(1), products.get(2)),
                 new String[] {"10.00", "5.00"}, new String[] {"4.00", "1.00"});
 
-        put("/api/layouts/" + layoutB + "/placements", merchantToken, placements(1, bundle))
+        put("/api/layouts/" + layoutB + "/placements", merchantToken,
+                placementRequest(1, new int[] {products.get(0), products.get(1)},
+                        new String[] {"BUNDLE", "BUNDLE"}, new int[] {1, 1},
+                        new int[] {1, 2}, new Long[] {bundle, bundle}))
                 .andExpect(status().isOk());
         mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/api/layouts/{id}/ready", layoutB)
                         .header("Authorization", bearer(merchantToken)).contentType(MediaType.APPLICATION_JSON)
@@ -280,8 +410,10 @@ class LayoutCampaignIntegrationTest {
         assertEquals(2, reportB.path("hitRate").path("numerator").asInt());
         assertEquals(2, reportB.path("hitRate").path("denominator").asInt());
         assertDecimal(new BigDecimal("0.500000"), reportB.path("bundleConversion").path("rate").decimalValue());
+        assertTrue(report.path("assumptions").path("bundleConversion").asText().contains("saved B layout revision"));
         assertDecimal(new BigDecimal("0.714286"), reportB.path("capturedUtility").path("rate").decimalValue());
-        assertTrue(reportB.path("priorityCoverage").isNull());
+        assertDecimal(BigDecimal.ZERO, reportB.path("priorityCoverage").decimalValue());
+        assertEquals(2, reportB.path("priorityCoverageDenominator").asInt());
         assertEquals(evaluationIds, jdbc.query("""
                 SELECT transaction_id FROM comparison_report_transaction
                 WHERE report_id=? ORDER BY transaction_id
@@ -403,7 +535,7 @@ class LayoutCampaignIntegrationTest {
                 String.class, currentCampaign));
     }
 
-    // ---- DEC-20261119-06: owner zone caps, top-K baseline (F07_BASELINE_V2) and equal-size simulation (OFFLINE_REPLAY_V2).
+    // ---- DEC-20261119-06: owner zone caps, top-K baseline and equal-size simulation; F08 saved-block semantics started in OFFLINE_REPLAY_V3.
 
     @Test
     void policyExposesTheOwnerZoneCapacities() throws Exception {
@@ -423,6 +555,10 @@ class LayoutCampaignIntegrationTest {
                     VALUES (?,?,?,'each',FALSE,10,1,'ACTIVE')
                     """, storeId, "WIDE-" + i, "Wide product " + i);
             added.add(jdbc.queryForObject("SELECT MAX(product_id) FROM product", Integer.class));
+            jdbc.update("""
+                    INSERT INTO inventory_batch(product_id,batch_code,received_at,initial_quantity,remaining_quantity,status)
+                    VALUES (?, ?, CURRENT_TIMESTAMP, 10, 10, 'ACTIVE')
+                    """, added.get(added.size() - 1), "WIDE-AVAILABLE-" + i);
         }
         String[] prices = new String[37], costs = new String[37];
         java.util.Arrays.fill(prices, "10.00");
@@ -472,8 +608,66 @@ class LayoutCampaignIntegrationTest {
     }
 
     @Test
+    void priorityCoverageUsesFrozenWeightsAndHandlesEmptyLayoutsAndAnOversizedB() throws Exception {
+        // The second product occurs in multiple matrix rows, but counts only once in a layout.
+        setSnapshotWeight(products.get(1), "1.01");
+        Integer oldCapacity = layoutPolicy.getMaxProductsByZone().put("BASELINE", 1);
+        try {
+            long bundle = recommendation(RecType.BUNDLE, List.of(products.get(0), products.get(1)),
+                    ReviewStatus.APPROVED, true);
+            JsonNode created = createCampaign(List.of());
+            long layoutA = created.path("layoutAId").asLong();
+            long layoutB = created.path("layoutBId").asLong();
+            var empty = read(get("/api/layouts/" + layoutB + "/preview", merchantToken).andExpect(status().isOk()));
+            assertTrue(empty.path("priorityCoverage").isNull());
+            assertEquals(0, empty.path("priorityCoverageDenominator").asInt(-1));
+            var a = read(get("/api/layouts/" + layoutA, merchantToken).andExpect(status().isOk()));
+            assertCoverage(a, "1", 1);
+            var b = read(put("/api/layouts/" + layoutB + "/placements", merchantToken, placements(1, bundle))
+                    .andExpect(status().isOk()));
+            assertCoverage(b, "0.5", 2);
+            post("/api/layouts/" + layoutB + "/ready", merchantToken, "{\"expectedVersion\":2}")
+                    .andExpect(status().isOk());
+            var report = read(post("/api/campaigns/" + created.path("campaignId").asLong() + "/simulations",
+                    merchantToken, simulationRequest(1, 1, 2, today.plusDays(2), today.plusDays(3)))
+                    .andExpect(status().isCreated()));
+            assertEquals(0, report.path("evaluationCount").asInt());
+            assertTrue(report.path("assumptions").path("nExceedsBaseline").asBoolean());
+            assertCoverage(report.path("layouts").get(0), "1", 1);
+            assertCoverage(report.path("layouts").get(1), "0.5", 2);
+            // Simulate inconsistent historical fixture data and verify the saved report stays frozen.
+            jdbc.update("""
+                    UPDATE utility_matrix_item SET weight_value=1
+                    WHERE snapshot_id=? AND product_id=? AND transaction_id=(SELECT MIN(transaction_id) FROM utility_matrix_item WHERE snapshot_id=? AND product_id=?)
+                    """, snapshotId, products.get(1), snapshotId, products.get(1));
+            var unavailable = read(get("/api/layouts/" + layoutB, merchantToken).andExpect(status().isOk()));
+            assertTrue(unavailable.path("priorityCoverage").isNull());
+            assertEquals(2, unavailable.path("priorityCoverageDenominator").asInt(-1));
+            var savedReport = read(get("/api/campaign-reports/" + report.path("reportId").asLong(), merchantToken)
+                    .andExpect(status().isOk()));
+            assertCoverage(savedReport.path("layouts").get(1), "0.5", 2);
+        } finally {
+            if (oldCapacity == null) layoutPolicy.getMaxProductsByZone().remove("BASELINE");
+            else layoutPolicy.getMaxProductsByZone().put("BASELINE", oldCapacity);
+        }
+    }
+
+    private void setSnapshotWeight(int productId, String weight) {
+        jdbc.update("UPDATE utility_matrix_item SET weight_value=? WHERE snapshot_id=? AND product_id=?",
+                new BigDecimal(weight), snapshotId, productId);
+    }
+
+    private void assertCoverage(JsonNode layout, String expected, int count) {
+        assertTrue(layout.path("priorityCoverage").isNumber());
+        assertDecimal(new BigDecimal(expected), layout.path("priorityCoverage").decimalValue());
+        assertEquals(count, layout.path("priorityCoverageDenominator").asInt(-1));
+    }
+
+    @Test
     void equalSizeSimulationComparesBWithTheTopNOfAAndReportsNAndTheSizeOfA() throws Exception {
         List<Integer> ranked = fortyProductSnapshot();
+        setSnapshotWeight(ranked.get(0), "1.01");
+        setSnapshotWeight(ranked.get(8), "1.02");
         long first = recommendation(RecType.BUNDLE, ranked.subList(22, 26), ReviewStatus.APPROVED, true);
         long second = recommendation(RecType.BUNDLE, ranked.subList(26, 30), ReviewStatus.APPROVED, true);
         JsonNode created = createCampaign(List.of(first, second));
@@ -489,13 +683,15 @@ class LayoutCampaignIntegrationTest {
         JsonNode viewA = read(get("/api/layouts/" + created.path("layoutAId").asLong(), merchantToken).andExpect(status().isOk()));
         assertTrue(viewA.path("equalSizeBaselineScore").isNull());
         assertTrue(viewA.path("equalSizeProductCount").isNull());
+        assertCoverage(viewA, "0.057143", 35);
+        assertCoverage(viewB, "0", 8);
 
         // Evaluation: one basket holds only A's 9th product (in A, outside A's top 8), the other only A's 1st product.
         transaction(today.minusDays(1), List.of(ranked.get(8)), new String[] {"10.00"}, new String[] {"3.00"});
         transaction(today.minusDays(1), List.of(ranked.get(0)), new String[] {"10.00"}, new String[] {"4.00"});
         JsonNode report = read(post("/api/campaigns/" + campaignId + "/simulations", merchantToken,
                 simulationRequest(1, 1, 1, today.minusDays(1), today)).andExpect(status().isCreated()));
-        assertEquals("OFFLINE_REPLAY_V2", report.path("algorithmVersion").asText());
+        assertEquals("OFFLINE_REPLAY_V4", report.path("algorithmVersion").asText());
         JsonNode assumptions = report.path("assumptions");
         assertEquals("EQUAL_SIZE_TOP_N_OF_A", assumptions.path("comparisonMode").asText());
         assertEquals(8, assumptions.path("comparedProductCountN").asInt());
@@ -505,6 +701,11 @@ class LayoutCampaignIntegrationTest {
         assertFalse(assumptions.path("nExceedsBaseline").asBoolean());
         JsonNode reportA = report.path("layouts").get(0);
         assertEquals("A", reportA.path("role").asText());
+        assertCoverage(reportA, "0.125", 8);
+        assertCoverage(report.path("layouts").get(1), "0", 8);
+        JsonNode stored = read(get("/api/campaign-reports/" + report.path("reportId").asLong(), merchantToken)
+                .andExpect(status().isOk()));
+        assertCoverage(stored.path("layouts").get(0), "0.125", 8);
         assertEquals(2, reportA.path("hitRate").path("denominator").asInt());
         assertEquals(1, reportA.path("hitRate").path("numerator").asInt(), "the 9th product of A is outside the equal-size prefix");
         assertEquals(0, report.path("layouts").get(1).path("hitRate").path("numerator").asInt());
@@ -513,9 +714,12 @@ class LayoutCampaignIntegrationTest {
         long reportId = report.path("reportId").asLong();
         String v1Assumptions = "{\"label\":\"simulated\",\"priorityCoverage\":\"N/A until the F03 priority coverage formula is confirmed.\"}";
         jdbc.update("UPDATE comparison_report SET algorithm_version='OFFLINE_REPLAY_V1',assumptions=? WHERE report_id=?", v1Assumptions, reportId);
+        jdbc.update("UPDATE comparison_report_layout SET priority_coverage=NULL,priority_coverage_denominator=NULL WHERE report_id=?", reportId);
         JsonNode legacy = read(get("/api/campaign-reports/" + reportId, merchantToken).andExpect(status().isOk()));
         assertEquals("OFFLINE_REPLAY_V1", legacy.path("algorithmVersion").asText());
         assertEquals(json.readTree(v1Assumptions), legacy.path("assumptions"));
+        assertTrue(legacy.path("layouts").get(0).path("priorityCoverage").isNull());
+        assertTrue(legacy.path("layouts").get(0).path("priorityCoverageDenominator").isNull());
         assertEquals(1, legacy.path("layouts").get(0).path("hitRate").path("numerator").asInt(), "stored metrics are not recomputed");
     }
 
@@ -653,11 +857,40 @@ class LayoutCampaignIntegrationTest {
                 """, Integer.class, storeId, java.sql.Date.valueOf(date));
     }
 
-    private static String placements(long version, long... recommendationIds) {
-        return "{\"expectedVersion\":" + version + ",\"recommendationIds\":["
-                + java.util.Arrays.stream(recommendationIds).mapToObj(String::valueOf)
-                        .collect(java.util.stream.Collectors.joining(","))
-                + "]}";
+    private String placements(long version, long... recommendationIds) {
+        var counts = new java.util.HashMap<String, Integer>();
+        var positions = new java.util.HashMap<String, Integer>();
+        var items = new ArrayList<String>();
+        for (long recommendationId : recommendationIds) {
+            String zone = jdbc.queryForObject("SELECT type FROM recommendation WHERE recommendation_id=?",
+                    String.class, recommendationId);
+            int blockNo = counts.merge(zone, 1, Integer::sum);
+            List<Integer> productIds = jdbc.query(
+                    "SELECT product_id FROM recommendation_item WHERE recommendation_id=? ORDER BY product_id",
+                    (rs, row) -> rs.getInt(1), recommendationId);
+            int position = positions.getOrDefault(zone, 0) + 1;
+            positions.put(zone, position + productIds.size() - 1);
+            for (int i = 0; i < productIds.size(); i++) {
+                items.add("{\"productId\":" + productIds.get(i) + ",\"zone\":\"" + zone
+                        + "\",\"blockNo\":" + blockNo + ",\"position\":" + (position + i)
+                        + ",\"sourceRecommendationId\":" + recommendationId + "}");
+            }
+        }
+        return "{\"expectedVersion\":" + version + ",\"placements\":["
+                + String.join(",", items) + "]}";
+    }
+
+    private static String placementRequest(long version, int[] productIds, String[] zones,
+            int[] blockNos, int[] positions, Long[] sourceRecommendationIds) {
+        var items = new ArrayList<String>();
+        for (int i = 0; i < productIds.length; i++) {
+            items.add("{\"productId\":" + productIds[i] + ",\"zone\":\"" + zones[i]
+                    + "\",\"blockNo\":" + blockNos[i] + ",\"position\":" + positions[i]
+                    + ",\"sourceRecommendationId\":"
+                    + (sourceRecommendationIds[i] == null ? "null" : sourceRecommendationIds[i]) + "}");
+        }
+        return "{\"expectedVersion\":" + version + ",\"placements\":["
+                + String.join(",", items) + "]}";
     }
 
     private static String simulationRequest(long campaignVersion, long versionA, long versionB,
