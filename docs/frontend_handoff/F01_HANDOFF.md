@@ -1,4 +1,6 @@
-> **Updated 2026-11-12 — reconciled with published dev V20 plus V21.** Registration is 202 for a new email and 409 for an existing email; the current session contract adds refresh/CSRF/logout. Historical reference documents keep their original dates. This documentation update does not re-execute tests. See [current feature guide](../features/F01/README.md).
+<!-- docs-reorganization:notice -->
+> **NEEDS_REVIEW — documentation review 2026-10-26.** Duplicate-registration response prose must be reconciled with source 409; no contract is silently changed here. See [current navigation](../features/F01/README.md). Original results and business-rule text below are retained; this notice is not a new execution or approval.
+<!-- /docs-reorganization:notice -->
 
 # F01 Frontend Handoff
 
@@ -8,7 +10,7 @@ For React + TypeScript. Contract and synthetic JSON files: [`../api/F01_AUTH_USE
 
 Backend default is `http://localhost:8080` (`PORT` overrides it). Use `VITE_PASPM_API_BASE_URL` in the Frontend's local environment, without a trailing slash, e.g. `http://localhost:8080`. Swagger UI is `/swagger`; OpenAPI is `/v3/api-docs`. QA has used port8799; that is not the default. Backend environment names used by deployment include `PORT`, `DB_URL`, `DB_USER`, `DB_PASSWORD`, `JWT_SECRET`, `OTP_SECRET`, `TOKEN_TTL_SECONDS`, `OTP_TTL_SECONDS`, `OTP_COOLDOWN_SECONDS`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_AUTH`, `SMTP_TLS`, `MAIL_FROM`, and optional `GOOGLE_CLIENT_ID`. Configure these in the Backend environment/secrets manager; never expose them to React. For the React app, only the API origin belongs in `VITE_PASPM_API_BASE_URL`.
 
-Send `Authorization: Bearer <accessToken>` for protected calls. HTTP login now returns `accessToken`, `expiresIn`, `tokenType`, `csrfToken`, and sets refresh/CSRF cookies. Use `credentials: include`; keep the access token in memory. POST `/api/auth/refresh` with the matching CSRF cookie/header restores or renews the session. POST `/api/auth/logout` revokes this session; `/api/auth/logout-all` revokes every session of the account. Both require Bearer plus the CSRF cookie/header belonging to that family; a raw refresh cookie is not required for logout. See the [current session contract](../api/F01_AUTH_USER_API.md#session-integration-update--2026-11-11). Use HTTPS in deployment and keep JWT/OTP/database/mail secrets out of `VITE_*` and browser bundles.
+Send `Authorization: Bearer <accessToken>` for protected calls. F01 returns only a short-lived JWT (`expiresIn` seconds; default900), no refresh token. The current source has no logout endpoint: client logout means clear its token/session state. On 401, clear the stale token and send the user through login; role/status changes also invalidate previously issued tokens. Use HTTPS in deployment and keep JWT/OTP/database/mail secrets out of `VITE_*` and browser bundles.
 
 Backend source has no CORS mapping or allowed-origin configuration. A browser served from a different origin may fail preflight; for local work use a same-origin dev proxy or arrange allowed origins in deployment infrastructure before browser integration. Do not assume CORS is currently configured by this API.
 
@@ -28,11 +30,11 @@ Backend source has no CORS mapping or allowed-origin configuration. A browser se
 | Edit User | Only name can be changed through current PUT; no email/password edit |
 | Account activation | `/api/auth/activate` invitation flow or successful self-registration completion; no manual OTP bypass |
 | Password reset | `POST /api/auth/password-reset/request` + `POST /api/auth/password-reset/confirm` via separate OTP flow |
-| Logout / refresh token | POST `/api/auth/refresh`, `/logout`, `/logout-all`; use cookies + X-CSRF-Token, and Bearer for logout |
+| Logout / refresh token | Not implemented; clear client session for logout; no refresh API |
 
 ## Real authentication sequences
 
-Self-registration: email request → OTP email → verify → complete with password/name → login → load `/me`. Public registration has no role/store fields and creates only `END_CUSTOMER`. A duplicate email receives 409 `Email already exists`; this discloses registration status.
+Self-registration: email request → OTP email → verify → complete with password/name → login → load `/me`. Public registration has no role/store fields and creates only `END_CUSTOMER`. A duplicate email receives the same generic 202 response to avoid account enumeration.
 
 Staff: System Admin creates an invitation with role and optional Store assignment → recipient receives `ADMIN_INVITE` OTP → recipient sets password and activates → login. For Store Admin/Merchandiser the System Admin must provide an existing `storeId`; global roles and End Customer must have null/no Store.
 
@@ -53,7 +55,7 @@ export type RoleCode = 'SYSTEM_ADMIN' | 'STORE_ADMIN' | 'MERCHANDISER' | 'END_CU
 export type AccountStatus = 'PENDING_VERIFICATION' | 'ACTIVE' | 'INACTIVE';
 export interface LoginRequest { email: string; password: string }
 export interface ChangePasswordRequest { currentPassword: string; newPassword: string }
-export interface TokenResponse { accessToken: string; expiresIn: number; tokenType: 'Bearer'; csrfToken: string }
+export interface TokenResponse { accessToken: string; expiresIn: number; tokenType: 'Bearer' | string }
 export interface UserView { userId: number; email: string; name: string | null; roleCode: RoleCode | string; storeId: number | null; status: AccountStatus | string; emailVerified: boolean; avatarUrl: string | null }
 export interface EmailRequest { email: string }
 export interface RegistrationRequest { name: string; email: string; password: string }
@@ -76,52 +78,3 @@ export interface ApiError { error: string }
 ## Loading and errors
 
 Show pending while requests run; registration may show “check your email” after generic 202. Map 400 to field/form validation, 401 to login/session reset, 403 to access denied, 404 to missing account, 409 to duplicate/identity conflict, 429 to a wait/retry-after style message (server does not return Retry-After contract), 503 to email/Google configuration unavailable, and network/5xx to retryable server error. Handled JSON errors have `{error:string}`; a Spring Security 401 may have no JSON body.
-
-## Local cookie configuration
-
-For local HTTP development set Backend `REFRESH_COOKIE_SECURE=false` and `PASPM_SESSION_ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000`. Use the existing same-origin Vite `/api` proxy; direct cross-origin requests still require a separate CORS deployment decision. Production keeps Secure cookies and HTTPS. Refresh requires no request JSON and no Bearer. Read `__Host-PASPM-CSRF` (HTTPS) or `PASPM-CSRF` (local HTTP), send the value as `X-CSRF-Token`, and replace the in-memory credentials with each refresh response. On permanent refresh rejection clear local session state and return to sign-in. Do not retry a consumed refresh credential.
-
-## Reconciliation update — 2026-11-12
-
-Use the canonical dev settings REFRESH_COOKIE_SECURE and absolute/idle TTLs in the [current contract](../api/F01_AUTH_USER_API.md#session-integration-update--2026-11-11). V20 is retained; V21 binds CSRF server-side. Users with V20 refresh cookies must sign in again when refresh returns401; never retry that rejected token. Existing FE login response fields/cookie names remain compatible. Logout response text stays dev's `Logged out` / `Logged out from all sessions`; do not depend on the earlier local messages. No Frontend implementation was edited. The earlier browser evidence is historical; current runtime checks are listed in the reconciliation report.
-
-## Store management (2026-11-23)
-
-Contract: [F01_STORE_MANAGEMENT_API.md](../api/F01_STORE_MANAGEMENT_API.md). Rules: [DEC-20261123-01](../decisions/2026-11-23/DEC-20261123-01-store-management.md). Branch `Khoi/feat/store-management`.
-
-| Screen | API | Role |
-|---|---|---|
-| Stores (list, search, status filter) | `GET /api/system/stores?page&pageSize&q&status` (`status` ACTIVE by default, INACTIVE or ALL) | System Admin |
-| Create Store | `POST /api/system/stores` `{name, slug, address?, phone?}` → 201 | System Admin |
-| Store detail and edit | `GET` / `PUT /api/system/stores/{storeId}` (`expectedVersion`); detail lists `assignedUserCount` and read-only `assignedUsers` | System Admin |
-| Deactivate / reactivate (confirm dialog) | `PATCH /api/system/stores/{storeId}/status` `{expectedVersion, status}` | System Admin |
-| My Store | `GET /api/store/profile`; Store Admin edits only address and phone with `PUT /api/store/profile` `{expectedVersion, address, phone}` | Store Admin (edit), Merchandiser (read-only) |
-| Icon and banner upload, with local preview | `PUT` / `DELETE /api/stores/{storeId}/images/{icon\|banner}` (multipart part `file`); preview of an INACTIVE Store's image with `GET /api/stores/{storeId}/images/{kind}` (Bearer, returns bytes) | System Admin (any Store), Store Admin (own Store) |
-
-```ts
-export type StoreStatus = 'ACTIVE' | 'INACTIVE';
-export interface StoreView { storeId: number; name: string; slug: string; status: StoreStatus; address: string | null; phone: string | null; iconUrl: string | null; bannerUrl: string | null; version: number; createdAt: string; updatedAt: string; deactivatedAt: string | null }
-export interface AssignedUser { userId: number; name: string | null; email: string; role: string; status: string }
-export interface StoreDetailView extends StoreView { deactivatedBy: number | null; assignedUserCount: number; assignedUsers: AssignedUser[] }
-export interface CreateStoreRequest { name: string; slug: string; address?: string | null; phone?: string | null }
-export interface UpdateStoreRequest { expectedVersion: number; name: string; slug: string; address: string | null; phone: string | null }
-export interface ChangeStoreStatusRequest { expectedVersion: number; status: StoreStatus }
-export interface UpdateStoreProfileRequest { expectedVersion: number; address: string | null; phone: string | null }
-export interface ApiError { error: string; code?: string }
-```
-
-Frontend notes:
-- **INACTIVE Store users.**
-  - Any call may return **403 `{code: "STORE_INACTIVE"}`**, and so may login or refresh.
-  - Show a "your Store is inactive" screen and do not loop on refresh.
-  - Keep the session: it works again once the Store is reactivated.
-- **Images.**
-  - Check the type (PNG or JPEG) and size (icon ≤ 1 MiB, banner ≤ 5 MiB) on the client and preview the chosen file locally. The server is the authority: it returns 400 for type, content or dimensions over 4000×4000, and 413 for size.
-  - When a URL is `null`, show a placeholder.
-  - `iconUrl` and `bannerUrl` are public, cacheable `<img src>` values, but only while the Store is ACTIVE. For an INACTIVE Store's preview, fetch the authenticated route with the Bearer token and show a blob URL.
-- **Version after an image change.** Uploading or removing an icon or banner increments the Store `version`. After any image `PUT` or `DELETE`, the client **must re-fetch the Store** (`GET /api/store/profile`, or `GET /api/system/stores/{storeId}` for a System Admin) and use the new `version` as `expectedVersion` before the next `PUT /api/store/profile` or `PUT /api/system/stores/{storeId}`. Otherwise the save returns **409** `Store version conflict`. The image response's `StoreView.version` is the same value, but re-fetching keeps the form in sync.
-- **Conflicts.**
-  - On 409 `Store version conflict`, reload the Store and ask the user to retry.
-  - On 409 `Store name already exists` or `Store slug already exists`, show the error on that field.
-  - On 409 `STORE_INACTIVE` (mining, schedules, user assignment), say "reactivate the Store first".
-- **Pickers.** The existing pickers (mining, account creation) need no change: the list now returns ACTIVE Stores by default.

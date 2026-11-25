@@ -18,9 +18,9 @@ flowchart LR
   fe -->|"REST requests; Bearer token for protected requests"| app
   systemAdmin -->|"account administration API"| app
   storeAdmin -->|"own-store catalog, inventory and utility API"| app
-  merchandiser -->|"utility API calls"| app
-  operator -->|"CSV import API"| app
-  endCustomer -->|"storefront checkout"| fe
+  merchandiser -->|"F03 API calls; mining/recommendation API availability is not wired to the FE screens yet"| app
+  operator -->|"CSV import API; no matching FE screen route"| app
+  endCustomer -->|"storefront checkout is simulated in FE"| fe
   app <-->|"persist users, catalog, inventory, transactions, snapshots, mining and reviews"| db
   app -->|"execute HUI-Miner / EFIM against frozen normalized input"| sPMF
   app <-->|"verification and federated identity flows, when configured"| mail

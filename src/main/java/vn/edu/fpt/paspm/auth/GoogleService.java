@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import vn.edu.fpt.paspm.common.ApiException;
+import vn.edu.fpt.paspm.common.Contracts.Token;
 import vn.edu.fpt.paspm.security.RateLimits;
 import vn.edu.fpt.paspm.user.User;
 import vn.edu.fpt.paspm.user.UserRepository;
@@ -127,7 +128,7 @@ public class GoogleService {
         otp.issue(user);
     }
 
-    public AuthCredentials login(String token, String ip) {
+    public Token login(String token, String ip) {
         limits.hit("google:" + ip, 20, 900);
         Jwt jwt = verify(token);
         int userId = identities.findGoogleUserId(jwt.getSubject())
@@ -137,7 +138,7 @@ public class GoogleService {
         if (!user.active()) {
             throw new ApiException(401, "Account unavailable");
         }
-        return auth.issueCredentials(user);
+        return auth.token(user);
     }
 
     @Transactional

@@ -1,24 +1,3 @@
-# F05 integration update — 2026-11-15
-
-## Current policy — 2026-11-16
-
-New mining requests are EFIM-only. Configure minUtil without an algorithm field; submit manual work with `{storeId,snapshotId,requestKey}` or `{snapshotId,requestKey}` for Merchandiser. Do not send `compareAlgorithms`; it is rejected for new requests and schedules. Both benchmark routes have been removed (404). Historical HUI-Miner runs and comparison results remain readable, and schedule response comparison flags are legacy-only. Run-level runtime and memory fields are execution telemetry, not a benchmark API.
-
-**Merchandiser workflow:** select an own-Store READY snapshot → POST `/api/mining/requests` with only snapshotId/requestKey → poll GET `/api/mining/requests/{id}/progress` → read existing request/runs/patterns. Store Admin can poll/read but cannot submit. System Admin uses the fixed-EFIM submission body above and polls `/api/system/mining/stores/{storeId}/requests/{requestId}/progress`.
-
-This replaces the prior decision "System Admin is the only mining submitter". Do not show Merchandiser algorithm/minUtil override fields: the Backend pins the current System Admin minUtil configuration and always runs EFIM. Lambda is frozen in F03; a new submission beyond the current maximum gives 409 and requires a valid new snapshot. Do not modify historical snapshot data. Matching requestKey retries return the original request even after policy changes.
-
-**Contract changes:** the formerly forbidden Store POST now accepts `{requestKey: UUID, snapshotId: integer}`; the old algorithms/minUtil body is rejected with 400. Existing RequestView remains unchanged. Two additive progress endpoints share ProgressView; see [exact fields, nullability and errors](../api/F05_MINING_API.md). F03 two-component config/season APIs are NOT available yet.
-
-> **Superseded 2026-11-16 ([DEC-20261116-04](../decisions/2026-11-16/DEC-20261116-04-f05-efim-only-mining.md)).** New requests have one EFIM run, so `COMPARING`, HUI-Miner progress and `comparisonStatus` values other than `NOT_REQUESTED` appear only on historical requests (or a legacy two-run request reclaimed after the upgrade). Keep rendering them for history; do not offer comparison or benchmark actions.
-
-Render stage and algorithm, not a simulated time-based percentage. Use percent from the response; it measures completed work and may reset on recovery. FAILED can be below 100%. Historical requests may still have comparison status and a COMPARING stage. Show attemptNo (request fence, not RunView.attemptNo). Handle LEGACY timing as unavailable. Stop polling on terminal request status; elapsedMs is current-stage age, not total duration. Queue-full leaves durable work pending; never resubmit with a different key merely because progress is slow.
-
-401: sign in; 403: role/read-group restriction; 404: absent or foreign Store record; 409: display Backend conflict including the instruction to create a valid snapshot; 503: dependency unavailable or scheduler intentionally disabled. Use current REQUESTS gate configuration for System Admin progress. No scheduler activation or automatic F06 regeneration is added.
-
----
-## Earlier handoff (historical; submission restrictions superseded above)
-
 > **Status 2026-11-02 — F03/F05 Core is merged into `dev` (PR #11, `11973a0`).** Verified surface: see [OPTION_B_BACKEND_API_HANDOFF.md](OPTION_B_BACKEND_API_HANDOFF.md) (status table and the per-flow readiness table in its section 12). Closed by design: the five System Admin Store-read routes (403 until decision D1, per group) and schedule activation (503). This file explains how to build the F05 screens; the route/role truth is [F05_MINING_API.md](../api/F05_MINING_API.md).
 
 # F05 Mining — Frontend Integration Handoff
@@ -27,9 +6,9 @@ Render stage and algorithm, not a simulated time-based percentage. Use percent f
 
 | Actor | Does | Cannot |
 |---|---|---|
-| SYSTEM_ADMIN | Sets global minUtil policy (EFIM is fixed), starts a request for a chosen Store, reads Store snapshots / requests / runs (not patterns), picks a Store, manages schedules and their history | Use Store-scoped `/api/mining/**` routes; read raw patterns (403 by decision D1); call benchmark routes (removed) |
-| MERCHANDISER | Creates F03 snapshots; submits mining for own Store; reads own-Store snapshots, requests, runs and patterns | Override minUtil/algorithm; request comparisons; call benchmark routes (removed) |
-| STORE_ADMIN | Reads own-Store snapshots, requests, runs and patterns | Submit mining; request comparisons; call benchmark routes (removed) |
+| SYSTEM_ADMIN | Sets the global mining policy (algorithm, minUtil), starts a mining request for a chosen Store, reads benchmarks, reads Store snapshots / requests / runs (not patterns), picks a Store, manages schedules and their history | Use the Store-scoped `/api/mining/**` routes (403); read raw patterns (403 by decision D1) |
+| MERCHANDISER | Creates F03 snapshots; reads own-Store snapshots, requests, runs and patterns | Submit mining (403), read benchmarks (403) |
+| STORE_ADMIN | Reads own-Store snapshots, requests, runs and patterns | Submit mining, read benchmarks |
 | END_CUSTOMER | – | Everything (403) |
 
 Send the F01 JWT in `Authorization: Bearer <token>`. Store users never send `storeId`; the System Admin routes carry `storeId` explicitly. Missing or invalid JWT: 401. A foreign or unknown snapshot/request/run: 404. Do not infer mining access from a role's F01 permissions.
@@ -42,16 +21,17 @@ Mining runs asynchronously on a Java 17 backend with an external Java 25 SPMF ch
 
 | Screen / action | API | Role | State |
 |---|---|---|---|
-| Global policy form | `GET`/`PUT /api/system/mining/config` (send minUtil fields and `expectedVersion`; EFIM is fixed) | System Admin | Ready |
-| Store selection | `GET /api/system/stores?page=0&pageSize=100` → `{items:[{storeId,name,…}],page,pageSize,totalElements}` ordered by name; **ACTIVE Stores only by default** since DEC-20261123-01 (no client change needed) | System Admin | Ready (D2) |
+| Global policy form | `GET`/`PUT /api/system/mining/config` (send `expectedVersion`) | System Admin | Ready |
+| Store selection | `GET /api/system/stores?page=0&pageSize=100` → `{items:[{storeId,name}],page,pageSize,totalElements}` ordered by name | System Admin | Ready (D2) |
 | Snapshot choice | System Admin: `GET /api/system/mining/stores/{storeId}/snapshots` (D1); or take the `snapshotId` from the Merchandiser's F03 snapshot response | System Admin | Ready |
-| Run button | `POST /api/system/mining/requests` body `{storeId,snapshotId,requestKey}` | System Admin | Ready; one EFIM run |
+| Run button | `POST /api/system/mining/requests` body `{storeId,snapshotId,requestKey,compareAlgorithms?}` | System Admin | Ready |
 | Status polling | System Admin: `GET /api/system/mining/stores/{storeId}/requests/{requestId}` (D1); Store users: `GET /api/mining/requests/{id}` | both | Ready |
 | Algorithm runs | System Admin `…/requests/{requestId}/runs` (D1); Store users `GET /api/mining/runs…` as `GET /api/mining/requests/{id}/runs` | both | Ready |
 | Patterns | **Store users only**: `GET /api/mining/runs/{id}/patterns`. System Admin `…/runs/{runId}/patterns` always answers 403 (decision D1) — do not render a pattern table for System Admin | Store Admin, Merchandiser | Ready |
+| Benchmark | `GET /api/system/mining/stores/{storeId}/runs/{runId}/benchmark` (get `runId` from the runs route above) | System Admin | Ready |
 | Schedules | `POST`/`GET /api/system/mining/schedules`, `GET`/`PUT …/{id}`, `GET …/{id}/occurrences` | System Admin | Ready. Activation (`enabled:true`) works only where the Backend enables scheduling (default off → 503): show "scheduling is not enabled in this environment" on 503 |
 
-A 403 on a System Admin results route means an operator removed that group from the Backend configuration; the body is `{"error":"System Admin reads of Store mining results (<GROUP>) are disabled by configuration (decision D1)"}`. Benchmark routes are removed and return 404.
+A 403 on a System Admin results route means an operator removed that group from the Backend configuration; the body is `{"error":"System Admin reads of Store mining results (<GROUP>) are disabled by configuration (decision D1)"}`. Do not call `POST /api/mining/requests` or `GET /api/mining/runs/{id}/benchmark` (403 for every role).
 
 **Schedule form (D3–D5):** `timeZone` is fixed to `Asia/Ho_Chi_Minh` (send it; any other value is a 400). `lookbackDays` is optional, 7–365; offer presets 30, 60, 90, 180 and a free input; leave it out for the default (30 weekly, 90 monthly). Monthly day 29/30/31 runs on the month's last day when the day does not exist — say so in the UI.
 
@@ -64,40 +44,37 @@ All list endpoints accept `page >= 0`, `pageSize = 1..100`, defaults 0/20. Patte
 ## Form and response examples
 
 ```json
-{"minUtilMode":"PERCENTAGE","minUtilValue":0.5,"expectedVersion":0}
+{"algorithm":"EFIM","minUtilMode":"PERCENTAGE","minUtilValue":0.5,"expectedVersion":0}
 ```
 
 ```json
-{"storeId":3,"snapshotId":7,"requestKey":"009f3ef1-d4ba-4291-9854-b74c6878d26b"}
+{"storeId":3,"snapshotId":7,"requestKey":"009f3ef1-d4ba-4291-9854-b74c6878d26b","compareAlgorithms":true}
 ```
 
-Use `crypto.randomUUID()` once per deliberate submission and keep it for transport retries: the same key with the same `snapshotId` returns the existing request (202) without enqueueing duplicate work; the same key with different values is 409. A deliberate rerun needs a new UUID. There is no cancel, retry or delete route. A missing minUtil configuration answers 409 `Configure mining policy before execution`.
+Use `crypto.randomUUID()` once per deliberate submission and keep it for transport retries: the same key with the same `snapshotId`/`compareAlgorithms` returns the existing request (202) without enqueueing duplicate work; the same key with different values is 409. A deliberate rerun needs a new UUID. There is no cancel, retry or delete route. A missing configuration answers 409 `Configure mining policy before execution`.
 
 Percentage is in percent units (`0.5` = 0.5%, allowed `(0,100]`, at most 6 decimals); absolute is frozen weighted utility units. The response shows `minUtilSpmf`, `effectiveMinUtility`, `divisor`, `utilityScale`, `totalScaledUtility` so the UI can display the exact effective threshold, including upward rounding. Do not recompute conversions, Product weights or expiry scores in React.
 
-**Numeric compatibility (2026-11-17):** `RequestView.totalScaledUtility` is now a signed 64-bit total (`integer/int64` in OpenAPI) and can exceed `2,147,483,647`; this is a non-breaking widening of a JSON number. At the existing input bounds, the maximum row-derived total is below JavaScript's exact integer limit `2^53` (`20,000 × 2,147,483,647 = 42,949,672,940,000`). Keep it as a JavaScript `number` if the application only performs display/approximate arithmetic; use a lossless integer representation for exact comparisons or arithmetic. Other EFIM-bound values (`minUtilSpmf`, transaction utility and Product TWU) remain signed int32. The request is rejected before enqueueing if any transaction utility, Product TWU or converted minUtil exceeds that bound. Error messages identify which bound failed; see the [F05 API contract](../api/F05_MINING_API.md#lossless-efim-numeric-bounds--2026-11-17).
-
-Sample responses (captured against synthetic data): [create_response.json](F05_examples/create_response.json), [request_response.json](F05_examples/request_response.json), [runs_response.json](F05_examples/runs_response.json), [patterns_response.json](F05_examples/patterns_response.json), [snapshot_list_response.json](F05_examples/snapshot_list_response.json). Earlier HUI-Miner/comparison samples are historical, not examples of new requests. The older `create_request.json` and `percentage_request.json` show the retired Merchandiser body and must not be used. Full field tables: [F05_MINING_API.md](../api/F05_MINING_API.md).
+Sample responses (captured against synthetic data): [create_response.json](F05_examples/create_response.json), [request_response.json](F05_examples/request_response.json), [runs_response.json](F05_examples/runs_response.json), [patterns_response.json](F05_examples/patterns_response.json), [benchmark_response.json](F05_examples/benchmark_response.json), [snapshot_list_response.json](F05_examples/snapshot_list_response.json). The older `create_request.json` and `percentage_request.json` show the retired Merchandiser body and must not be used. Full field tables: [F05_MINING_API.md](../api/F05_MINING_API.md).
 
 ## State and error handling
 
-- Poll the own-Store request endpoint (`GET /api/mining/requests/{id}`) or System Admin equivalent (`GET /api/system/mining/stores/{storeId}/requests/{requestId}`) every 1–2 seconds while request status is `PENDING`/`RUNNING`. Poll the matching runs route for per-algorithm status. Stop when request is `COMPLETED`/`FAILED` and every run is terminal (`COMPLETED`, `FAILED`, or `TIMED_OUT`). Status and results are persisted in the database and can be read again after navigation/restart; there is no percentage field because the engine does not expose measured intermediate progress.
-- Request `PENDING` is the queued equivalent; request terminal states are `COMPLETED` and `FAILED`. `TIMED_OUT` is a run-level terminal status, not a request status.
 - Request `PENDING`/`RUNNING`: execution has not finished; an empty pattern page is not final evidence of zero patterns.
 - Run `COMPLETED`, patternCount 0: valid empty mining result. Request can finish COMPLETED/MATCH with both outputs empty.
 - Run `FAILED` or `TIMED_OUT`: show the sanitized failure; do not render partial patterns as successful output.
-- Legacy request comparison fields may be `PENDING`, `MATCH`, `FAILED` or `BLOCKED`; display them only when reading historical requests. New requests are single EFIM runs and report `NOT_REQUESTED`.
+- Request `FAILED`, comparisonStatus `FAILED`: algorithms completed but exact itemsets/utilities did not match. Do not show a successful comparison.
+- Comparison `PENDING`: wait; `NOT_REQUESTED`: only one algorithm selected; `BLOCKED`: at least one algorithm did not complete or capacity/recovery prevented comparison.
 - Queue full: a committed PENDING request remains eligible for durable polling; do not interpret 202 alone as a completed mining success. Monitor request and run status and consult the current worker architecture for recovery limitations.
 - Restart or instance loss: a request whose worker lease expires is recovered and re-run by another (or the restarted) instance, with a higher fencing token so the stale worker cannot write results; poll the status instead of resubmitting. Legacy RUNNING rows without a lease owner are never assumed abandoned and need operator investigation. A terminal FAILED request is not replayed automatically; a deliberate retry needs a new UUID.
 - 400: fix inputs or select a compatible snapshot. 401: use existing login/session recovery. 403: hide/disable forbidden actions. 404: unavailable/foreign record, do not disclose Store details. 409: resolve requestKey conflict. 503: deployment dependency unavailable; keep configuration details out of user forms.
 
 Common application error envelope is `{"error":"message"}`. Authentication middleware may return an empty 401 body; handle both JSON and empty responses. Unknown JSON fields (including storeId) are rejected. No credential is present in handoff examples.
 
-## Utility and run metrics
+## Utility and benchmark display
 
 `PatternView.utility` is summed frozen weighted utility for the Products when they co-occur in a transaction. It is not revenue, current stock, margin percentage or support. `utilitySpmf` is the normalized integer; display `utility` as the business value. `supportCount` is null because the selected SPMF text output does not measure it; do not display zero or infer support from utility.
 
-`memoryMiB` is SPMF's sampled Java heap metric, not peak RSS. `runtimeMillis` measures child JVM wall time including startup and algorithm IO, excluding common input preparation and Backend parsing/persistence. These are per-run telemetry fields only; there is no benchmark endpoint or new HUI-Miner/EFIM comparison workflow. HUI-Miner and comparison metadata remain readable on historical requests.
+`memoryMiB` is SPMF's sampled Java heap metric, not peak RSS. `runtimeMillis` measures child JVM wall time including startup and algorithm IO, excluding common input preparation and Backend parsing/persistence. Runs are sequential, one cold execution per algorithm, no warmup. This is useful for this input/environment; do not present a universal “faster algorithm” claim. Compare only when inputHash, snapshot, minUtilSpmf, conversionVersion and environment match and comparisonStatus is MATCH. The frozen Product mapping is shared; output order may differ.
 
 Java long IDs/divisor and decimal utility values are JSON numbers. Preserve precision using a lossless numeric strategy when values exceed JavaScript's safe integer or decimal precision; do not round a minUtil field through binary floating-point arithmetic. Timestamps are ISO-8601 instants; format for the user's timezone (Store's F03 analysis timezone is stored separately). Configure database JDBC connection/session timezone consistently with the backend, normally UTC.
 
@@ -111,7 +88,3 @@ Java long IDs/divisor and decimal utility values are JSON numbers. Preserve prec
 - Scheduling: implemented on the Scheduler branch (not yet on `dev`), locally verified, **not release accepted** and **off by default**: enabling a schedule returns 503 and the dispatcher does not run unless the Backend instance sets `paspm.mining.schedule-dispatch-enabled=true`. Decisions D1–D10 are confirmed ([register](../decisions/PO_DECISION_REGISTER_F05_2026-11-01.md)). Do not promise scheduled execution in production until release sign-off.
 - F06 recommendations are separate ([F06 handoff](F06_HANDOFF.md)); they combine COMPLETED raw patterns with current inventory and Merchandiser review. `E_i=1` does not guarantee appearance in a pattern.
 - Not verified: Frontend end-to-end flows, native Linux production image, remote CI.
-
-## 2026-11-19 — whole-đồng SPMF input (additive fields)
-
-`RequestView` and `RunView` gain `conversionMode` (`LOSSLESS` | `WHOLE_UNIT_HALF_UP`, nullable) and `roundingUnit` (`1` or `null`). When `conversionMode` is `WHOLE_UNIT_HALF_UP`, show "mining input rounded to 1 đồng" next to the request; `totalScaledUtility`, `minUtilSpmf` and pattern `utilitySpmf` are then whole đồng. Pattern `utility` and `effectiveMinUtility` are always đồng. Historical requests show `LOSSLESS`. A request that still overflows returns 400 whose message ends with `even after WHOLE_UNIT_HALF_UP rounding to 1 đồng`. Nothing was removed or renamed. See [F05 API](../api/F05_MINING_API.md) and [DEC-20261119-05](../decisions/2026-11-19/DEC-20261119-05-spmf-whole-dong-fallback.md).

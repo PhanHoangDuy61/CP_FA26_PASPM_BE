@@ -20,7 +20,7 @@ public class UtilitySnapshotController {
     @PostMapping("/snapshots") @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary="Atomically create an immutable snapshot; revalidate lambda against current policy")
     public SnapshotView create(@AuthenticationPrincipal Jwt jwt,@Valid @RequestBody RangeRequest request) { return service.create(jwt,request); }
-    @GetMapping("/snapshots/{id}") @Operation(operationId="getUtilitySnapshot", summary="Read frozen snapshot settings without consulting current policy or inventory")
+    @GetMapping("/snapshots/{id}") @Operation(summary="Read frozen snapshot settings without consulting current policy or inventory")
     public SnapshotView get(@AuthenticationPrincipal Jwt jwt,@PathVariable int id) { return service.get(jwt,id); }
     @GetMapping("/snapshots/{id}/matrix") @Operation(summary="Read immutable matrix rows with stable Product-to-mining-item mapping")
     public MatrixPage matrix(@AuthenticationPrincipal Jwt jwt,@PathVariable int id,@RequestParam(defaultValue="0") int page,@RequestParam(defaultValue="20") int pageSize) { return service.matrix(jwt,id,page,pageSize); }

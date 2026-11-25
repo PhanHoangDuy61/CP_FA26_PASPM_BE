@@ -1,7 +1,5 @@
 # Review 2 documents (SWP490, project FA26SE048)
 
-Copies of the submitted documents, kept next to the code that Review 2 refers to. They were copied unchanged on 2026-11-04 from
-`<project-folder>` (the Review 2 working folder of the team leader); each SHA-256 below is that of the
 Copies of the submitted documents, kept next to the code that Review 2 refers to. They were copied unchanged on 2026-11-04 (SRS and SDD re-copied after the report-versus-code corrections of the same day) from
 `/Users/khoinm/Desktop/khoi/fpt/ki9/FA26SE048_HUPAS` (the Review 2 working folder of the team leader); each SHA-256 below is that of the
 source file and of the copy.

@@ -4,7 +4,7 @@ Execution date: 2026-10-23, Asia/Ho_Chi_Minh. Overall progression: **BLOCKED**. 
 
 ## Actual GitHub state
 
-[Recovery PR #1](https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/pull/1) was merged by `<implementation-author>` at 2026-10-23 02:10:21 +07, before this audit. Merge commit: `691371b9a283208f41269f0956b1386a045fe27a`; recovery head: `3a9c66632cd52f2a0a6720977aff10828d5176e6`. Its description was empty; the prepared description appeared in an author discussion comment. The audit found 39 changed files, zero submitted reviews, zero inline review threads, zero requested reviewers and no checks/statuses/Actions runs at the recovery head.
+[Recovery PR #1](https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/pull/1) was merged by `khoinm04` at 2026-10-23 02:10:21 +07, before this audit. Merge commit: `691371b9a283208f41269f0956b1386a045fe27a`; recovery head: `3a9c66632cd52f2a0a6720977aff10828d5176e6`. Its description was empty; the prepared description appeared in an author discussion comment. The audit found 39 changed files, zero submitted reviews, zero inline review threads, zero requested reviewers and no checks/statuses/Actions runs at the recovery head.
 
 | Gate | Verified status |
 |---|---|
@@ -17,7 +17,7 @@ Execution date: 2026-10-23, Asia/Ho_Chi_Minh. Overall progression: **BLOCKED**. 
 | Product merge | NOT_PERFORMED |
 | Category entry | NOT_STARTED; prerequisites unmet |
 
-Candidate `PhanHoangDuy61` and author `<implementation-author>` are different account names. This does not establish different people. Candidate permission lookup returned 403; no review request or approval was fabricated. Public dev metadata reports protected=false, active rules=[], rulesets=[]. Authenticated policy/collaborator REST probes returned 401. No required-check configuration or equivalent independent-approval gate was verified. These facts do not waive Team Lead requirements.
+Candidate `PhanHoangDuy61` and author `khoinm04` are different account names. This does not establish different people. Candidate permission lookup returned 403; no review request or approval was fabricated. Public dev metadata reports protected=false, active rules=[], rulesets=[]. Authenticated policy/collaborator REST probes returned 401. No required-check configuration or equivalent independent-approval gate was verified. These facts do not waive Team Lead requirements.
 
 ## Executed local verification
 

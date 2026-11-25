@@ -1,9 +1,5 @@
 > **Status 2026-11-02.** FEFO tie order is expiry date, oldest receipt, then batch ID; historical snapshots are unchanged. The routes and roles in this file are checked by `F03F05RbacMatrixTest` and the F03 suites listed in the [audit matrix](../reports/F03_F05_API_AUDIT_MATRIX_2026-11-02.md). The Weight Rules v1.2 source file is not tracked in the repository, so [F03_UTILITY_API.md](../api/F03_UTILITY_API.md) is the only written v1.2 contract.
 
-> **2026-11-16:** `PUT /api/utility/config/expiry-window` and `PATCH /api/utility/products/{productId}/scores` are **deleted** (404 / 405 instead of 410), and `expiryPushDays`, `stockPriorityScore`, `seasonalPriorityScore` are gone from every live contract (400 if sent). Use batch `pushDay` and season assignment. See [breaking changes 15–18](F03_W2_BREAKING_CHANGES.md) and [DEC-20261116-03](../decisions/2026-11-16/DEC-20261116-03-p6-delete-obsolete-routes.md). Remove both calls and the fields from the Frontend.
->
-> **2026-11-15 — Weight v2 (`W2_EXPIRY_SEASON_V1`).** Config, policy, product scores and expiry-push bodies changed and seasons were added. Read [F03 W2 breaking changes](F03_W2_BREAKING_CHANGES.md) first; the text below describes the legacy v1.2 contract, still valid only for reading pre-V25 snapshots.
-
 <!-- docs-reorganization:notice -->
 > **NEEDS_REVIEW — documentation review 2026-10-26.** Final v1.2 source and some referenced examples are absent from tracked dev; untracked originals are not imported. See [current navigation](../features/F03/README.md). Original results and business-rule text below are retained; this notice is not a new execution or approval.
 <!-- /docs-reorganization:notice -->
@@ -30,17 +26,13 @@ The normal transaction provider is now F04_DATABASE_V1, reading validated persis
 8. Save returned snapshotId, then GET metadata and matrix pages. There is no snapshot-history list endpoint. Preserve/display scoringVersion; old F03_LINEAR_V1 snapshots remain decimal and must not be relabeled or recalculated in React.
 9. Hand the frozen `snapshotId` to the System Admin, who starts mining for that Store with `POST /api/system/mining/requests` (Merchandisers and Store Admins only read results through `GET /api/mining/**`; see the [F05 handoff](F05_HANDOFF.md)). Mining/Recommendation execution uses their separate contracts, not the Product score endpoints. Never hide the independent push list because an item was absent from HUI/EFIM output.
 
-### Preview/snapshot loading states
-
-F03 preview and snapshot creation remain synchronous. Keep the relevant button/loading state active until `POST /api/utility/preview` returns its `200 MatrixPage` or `POST /api/utility/snapshots` returns its `201 SnapshotView`; then render the response and end loading. A request-level `4xx/5xx` ends loading as an error and uses the existing error envelope. There is no F03 progress endpoint, job ID or percentage.
-
 SYSTEM_ADMIN cannot edit Store/Product utility inputs. STORE_ADMIN may read current Product scores/E/W but cannot configure weights, edit manual scores or use Preview/snapshots. MERCHANDISER cannot edit Product expiryPushDays or global bounds. END_CUSTOMER has no F03 permissions. Missing token401, wrong role403, foreign record404. No request accepts storeId.
 
 ## Breaking changes
 
 - Product threshold replaces Store expiryWindowDays. The legacy Store PUT remains callable and deprecated but has no effect on scoring; remove that form from the active weight workflow.
 - New scoring version is EXPIRY_PRODUCT_EARLIEST_BATCH_BINARY_V1. E is either0/1 when valid, using the earliest future-expiry sellable batch. No quantity averaging.
-- *(Superseded 2026-11-24, DEC-20261124-01: a batch is expired only when the analysis date is after its expiry date, so a batch expiring today is no longer excluded; F02 summary uses the same rule.)* Batch expiring today was excluded; F02 summary used this strict future-date boundary too. The summary's expiringSoonQuantity is still a requested lookahead statistic, not the configured Product push quantity.
+- Batch expiring today is excluded; F02 summary now uses this strict future-date boundary too. The summary's expiringSoonQuantity is still a requested lookahead statistic, not the configured Product push quantity.
 - MatrixItem adds expiryEvidence; SnapshotView adds warnings; frozen configuration adds timeZone. Legacy responses may have null evidence/timeZone. Store config legacy expiryWindowDays can be null.
 
 ## TypeScript additions and nullability

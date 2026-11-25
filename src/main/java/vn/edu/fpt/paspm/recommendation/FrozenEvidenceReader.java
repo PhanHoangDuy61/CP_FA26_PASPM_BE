@@ -44,28 +44,21 @@ public class FrozenEvidenceReader {
             &&snapshot.totalWeightedUtility()!=null&&actual.totalWeightedUtility()!=null
             &&snapshot.totalWeightedUtility().compareTo(actual.totalWeightedUtility())==0
             &&"READY".equals(snapshot.status())&&"READY".equals(actual.status())&&snapshot.roundingScale()==6&&actual.roundingScale()==6);
-        // DEC-20261119-05: dispatch on the frozen conversion version; anything but the two known modes is rejected.
-        String mode=input==null?null:input.mode();
         require(input!=null&&input.text()!=null&&input.products()!=null&&input.divisor()>0&&input.totalUtility()>=0
-            &&mode!=null&&"HALF_UP".equals(input.roundingMode())&&input.conversionVersion().equals(run.conversionVersion())
+            &&input.utilityScale()==6&&"HALF_UP".equals(input.roundingMode())
+            &&MiningInputBuilder.VERSION.equals(input.conversionVersion())&&input.conversionVersion().equals(run.conversionVersion())
             &&Objects.equals(input.hash(),MiningInputBuilder.sha(input.text()))&&Objects.equals(input.hash(),run.inputHash())
             &&Objects.equals(input.hash(),request.inputHash())&&request.threshold()==run.minUtilSpmf()&&request.threshold()>0
             &&request.value()!=null&&request.value().signum()>0&&Set.of("ABSOLUTE","PERCENTAGE").contains(request.mode()));
         var configuration=snapshot.configuration();
         require(configuration!=null&&configuration.utilityScale()==6&&"HALF_UP".equals(configuration.roundingMode())
             &&"PRODUCT_ID_V1".equals(configuration.itemMapping()));
-        if(MiningInputBuilder.MODE_LOSSLESS.equals(mode))require(input.originalUtility(input.totalUtility()).compareTo(snapshot.totalWeightedUtility())==0);
+        require(input.originalUtility(input.totalUtility()).compareTo(snapshot.totalWeightedUtility())==0);
         var transactions=parse(input);
         require(transactions.size()==input.transactionCount());
         require(snapshots.countItems(snapshot.snapshotId())<=MiningInputBuilder.MAX_ROWS);
         var rows=snapshots.page(store,snapshot.snapshotId(),0,MiningInputBuilder.MAX_ROWS);
         require(rows.size()==snapshots.countItems(snapshot.snapshotId()));
-        if(MiningInputBuilder.MODE_WHOLE_UNIT.equals(mode)) {
-            // The whole-unit total is the sum of HALF_UP-rounded frozen items, never the exact snapshot total.
-            long rounded=0;
-            for(var row:rows)rounded=Math.addExact(rounded,row.weightedUtility().setScale(0,java.math.RoundingMode.HALF_UP).longValueExact());
-            require(rounded==input.totalUtility());
-        }
         var matrix=new TreeMap<Integer,Set<Integer>>();
         for(var row:rows) {
             require(row.transactionId()>0&&row.productId()>0&&row.algorithmItemId()==row.productId());

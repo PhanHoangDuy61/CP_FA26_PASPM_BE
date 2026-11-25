@@ -18,13 +18,6 @@ services:
       BOOTSTRAP_PASSWORD: ${BOOTSTRAP_PASSWORD:-}
       SMTP_HOST: mailpit
       SMTP_PORT: "1025"
-      # DEC-20261123-01: Store images and avatars persist on the paspm_media volume.
-      PASPM_MEDIA_ROOT: /var/lib/paspm/media
-      PROFILE_IMAGE_DIRECTORY: /var/lib/paspm/media/avatars
-    volumes:
-      - paspm_media:/var/lib/paspm/media
     depends_on:
       mysql:
         condition: service_healthy
-volumes:
-  paspm_media:

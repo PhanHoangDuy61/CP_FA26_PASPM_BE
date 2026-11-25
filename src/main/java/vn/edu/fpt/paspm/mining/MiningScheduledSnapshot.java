@@ -7,18 +7,20 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 import vn.edu.fpt.paspm.common.ApiException;
-import vn.edu.fpt.paspm.utility.UtilityFreezer;
+import vn.edu.fpt.paspm.utility.UtilityConfigurationService;
+import vn.edu.fpt.paspm.utility.UtilityMath;
 import vn.edu.fpt.paspm.utility.UtilityMatrixBuilder;
 import vn.edu.fpt.paspm.utility.UtilityMatrixContracts.*;
+import vn.edu.fpt.paspm.utility.UtilitySettingsRepository;
 import vn.edu.fpt.paspm.utility.UtilitySnapshotRepository;
 import vn.edu.fpt.paspm.utility.UtilityTimeZone;
 
 /** Internal-only occurrence-scoped snapshot creation; no HTTP endpoint grants F03 write access. */
 @Service
 public class MiningScheduledSnapshot {
-    private final JdbcTemplate jdbc;private final UtilityFreezer freezer;private final UtilityMatrixBuilder builder;
+    private final JdbcTemplate jdbc;private final UtilitySettingsRepository settings;private final UtilityMatrixBuilder builder;
     private final UtilitySnapshotRepository snapshots;private final UtilityTimeZone timeZone;private final SchedulerPrincipal principal;private final TransactionTemplate transaction;
-    public MiningScheduledSnapshot(JdbcTemplate jdbc,UtilityFreezer freezer,UtilityMatrixBuilder builder,UtilitySnapshotRepository snapshots,UtilityTimeZone timeZone,SchedulerPrincipal principal,PlatformTransactionManager manager){this.jdbc=jdbc;this.freezer=freezer;this.builder=builder;this.snapshots=snapshots;this.timeZone=timeZone;this.principal=principal;this.transaction=new TransactionTemplate(manager);this.transaction.setIsolationLevel(TransactionDefinition.ISOLATION_REPEATABLE_READ);}
+    public MiningScheduledSnapshot(JdbcTemplate jdbc,UtilitySettingsRepository settings,UtilityMatrixBuilder builder,UtilitySnapshotRepository snapshots,UtilityTimeZone timeZone,SchedulerPrincipal principal,PlatformTransactionManager manager){this.jdbc=jdbc;this.settings=settings;this.builder=builder;this.snapshots=snapshots;this.timeZone=timeZone;this.principal=principal;this.transaction=new TransactionTemplate(manager);this.transaction.setIsolationLevel(TransactionDefinition.ISOLATION_REPEATABLE_READ);}
     private record Occurrence(int store,int actor,long version,String status,Integer snapshot,LocalDate start,LocalDate end,LocalDate date,String zone) {}
     public int prepare(long occurrenceId){
         var scheduleId=jdbc.query("SELECT schedule_id FROM mining_schedule_occurrence WHERE occurrence_id=?",(r,n)->r.getLong(1),occurrenceId).stream().findFirst().orElseThrow(()->new ApiException(404,"Occurrence not found"));
@@ -37,12 +39,14 @@ public class MiningScheduledSnapshot {
         if(row.actor()<=0||row.start()==null||row.end()==null||row.date()==null||row.start().isAfter(row.end()))throw new ApiException(409,"Occurrence context unavailable");
         if(!timeZone.id().equals(row.zone()))throw new ApiException(409,"Occurrence time zone differs from the Store calendar zone "+timeZone.id());
         principal.require(row.actor());
-        // Same freeze path and active-season rule (P3) as manual snapshots: seasons active on the occurrence analysis date.
+        var policy=settings.policy(true);var config=settings.config(row.store(),true);
+        UtilityConfigurationService.requireLambda(config.lambda(),policy,409);
         var range=new RangeRequest(row.start(),row.end(),row.date());
-        var frozen=freezer.freeze(row.store(),row.date(),builder.sourceType());
+        var frozen=new FrozenConfiguration(config,policy,new EffectiveCoefficients(config.effectiveAlpha(),config.effectiveBeta(),config.effectiveGamma()),row.date(),builder.sourceType(),UtilityMath.SCALE,"HALF_UP","PRODUCT_ID_V1",timeZone.id());
         var matrix=builder.build(row.store(),range,frozen);
+        if(!matrix.ready())throw new ApiException(400,"Scheduled snapshot requires complete enabled scores and expiry metadata");
         if(matrix.items().isEmpty())throw new ApiException(400,"No eligible transaction items in the selected range");
-        int id=snapshots.create(row.store(),row.actor(),range,frozen,matrix);snapshots.saveSeasons(id,row.store(),frozen.seasons());snapshots.saveItems(id,matrix.items());
+        int id=snapshots.create(row.store(),row.actor(),range,frozen,matrix);snapshots.saveItems(id,matrix.items());
         jdbc.update("UPDATE mining_schedule_occurrence SET snapshot_id=?,updated_at=CURRENT_TIMESTAMP WHERE occurrence_id=?",id,occurrenceId);
         return id;
     }

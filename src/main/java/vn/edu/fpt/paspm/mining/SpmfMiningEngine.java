@@ -17,7 +17,6 @@ public class SpmfMiningEngine implements MiningEngine {
     private final ThreadLocal<ExecutionIdentity> identity=new ThreadLocal<>();
     public static final String VERSION="SPMF_2.67a";
     public static final String JAR_HASH="4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a";
-    public static final long MAX_OUTPUT_BYTES=4L*1024*1024;
     public static final String MEMORY_METHOD="SPMF_SAMPLED_JAVA_HEAP_MIB_NOT_RSS";
     public static final String RUNTIME_METHOD="CHILD_JVM_WALL_TIME_INCLUDING_STARTUP_AND_IO_EXCLUDING_INPUT_PREPARATION";
     private final SpmfRuntime runtime;
@@ -49,27 +48,25 @@ public class SpmfMiningEngine implements MiningEngine {
             Files.writeString(source,input.text(),StandardCharsets.UTF_8);
             var command=List.of(java.toString(),"-Xmx"+heapMiB+"m","-Djava.awt.headless=true","-jar",jar.toString(),"run",algorithm==Algorithm.HUI_MINER?"HUI-Miner":"EFIM",source.toString(),output.toString(),Integer.toString(minUtility));
             if(!"Linux".equalsIgnoreCase(System.getProperty("os.name")))SpmfMiningEngine.log.warn("SPMF local development: Linux parent-death protection is unavailable on this platform");
-            long started=System.nanoTime();process=new ProcessBuilder(MiningProcessLauncher.command(System.getProperty("os.name"),command,ProcessHandle.current().pid(),MAX_OUTPUT_BYTES)).directory(dir.toFile()).redirectErrorStream(true).redirectOutput(log.toFile()).start();
+            long started=System.nanoTime();process=new ProcessBuilder(LinuxParentDeathLauncher.command(System.getProperty("os.name"),command,ProcessHandle.current().pid())).directory(dir.toFile()).redirectErrorStream(true).redirectOutput(log.toFile()).start();
             var job=identity.get();
             if(job!=null)SpmfMiningEngine.log.info("SPMF_PROCESS_STARTED store={} request={} run={} owner={} fence={} pid={} startedAt={} linuxParentDeathRequested={}",job.storeId(),job.requestId(),job.runId(),job.owner(),job.fence(),process.pid(),process.info().startInstant().orElse(null),"Linux".equalsIgnoreCase(System.getProperty("os.name")));
             long deadline=started+TimeUnit.MILLISECONDS.toNanos(timeoutMillis);
             while(process.isAlive()){
                 if(System.nanoTime()>=deadline)throw new ExecutionFailure("TIMED_OUT","Mining exceeded its execution time limit");
-                if((Files.exists(log)&&Files.size(log)>65536)||(Files.exists(output)&&Files.size(output)>=MAX_OUTPUT_BYTES))throw new ExecutionFailure("OUTPUT_LIMIT","Mining exceeded its output size limit");
+                if((Files.exists(log)&&Files.size(log)>65536)||(Files.exists(output)&&Files.size(output)>4*1024*1024))throw new ExecutionFailure("OUTPUT_LIMIT","Mining exceeded its output size limit");
                 process.waitFor(Math.min(20,timeoutMillis),TimeUnit.MILLISECONDS);
             }
             long elapsed=Math.max(1,TimeUnit.NANOSECONDS.toMillis(System.nanoTime()-started));
-            if(Files.exists(output)&&Files.size(output)>=MAX_OUTPUT_BYTES)throw new ExecutionFailure("OUTPUT_LIMIT","Mining exceeded its output size limit");
             if(process.exitValue()!=0)throw new ExecutionFailure("SPMF_FAILED","SPMF process failed; check configured Java compatibility and resource limits");
-            if(!Files.isRegularFile(output)||Files.size(output)>MAX_OUTPUT_BYTES||Files.size(log)>65536)throw new ExecutionFailure("OUTPUT_LIMIT","SPMF output missing or exceeds limits");
+            if(!Files.isRegularFile(output)||Files.size(output)>4*1024*1024||Files.size(log)>65536)throw new ExecutionFailure("OUTPUT_LIMIT","SPMF output missing or exceeds limits");
             String stats=Files.readString(log);
             var memory=Pattern.compile(algorithm==Algorithm.HUI_MINER?"Memory ~ ([0-9.]+) MB":"Max memory:([0-9.]+)").matcher(stats);
             if(!memory.find())throw new ExecutionFailure("INVALID_METRICS","SPMF memory measurement is missing");
             double heap=Double.parseDouble(memory.group(1));
             if(!Double.isFinite(heap)||heap<0)throw new ExecutionFailure("INVALID_METRICS","SPMF memory measurement is invalid");
-            long outputBytes=Files.size(output);
             var result=new Output(parse(Files.readString(output),input,minUtility,deadline),elapsed,heap,
-                "SPMF="+VERSION+";jarSha256="+JAR_HASH+";heapMiB="+heapMiB+";os="+System.getProperty("os.name")+";arch="+System.getProperty("os.arch")+";javaExecutableSha256="+executableHash()+";outputBytes="+outputBytes);
+                "SPMF="+VERSION+";jarSha256="+JAR_HASH+";heapMiB="+heapMiB+";os="+System.getProperty("os.name")+";arch="+System.getProperty("os.arch")+";javaExecutableSha256="+executableHash());
             success=true;return result;
         }catch(InterruptedException e){Thread.currentThread().interrupt();throw new ExecutionFailure("INTERRUPTED","Mining execution interrupted");}
         catch(IOException e){throw new ExecutionFailure("SPMF_FAILED","Mining dependency or temporary IO failed");}

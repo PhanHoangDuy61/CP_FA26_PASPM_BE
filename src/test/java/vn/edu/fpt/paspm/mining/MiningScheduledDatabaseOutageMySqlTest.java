@@ -134,8 +134,8 @@ class MiningScheduledDatabaseOutageMySqlTest {
             for (int i = 0; i < ids.length; i++) jdbc.update("INSERT INTO transaction_item(store_id,transaction_id,product_id,quantity,unit_price,unit_cost) VALUES (?,?,?,1,?,0)", store, tx, products.get(Integer.parseInt(ids[i]) - 1), Integer.parseInt(util[i]));
         }
         var admin = admin();
-        assertEquals(HttpStatus.OK, http.exchange("/api/system/mining/config", HttpMethod.PUT, new HttpEntity<>("{\"minUtilMode\":\"ABSOLUTE\",\"minUtilValue\":30,\"expectedVersion\":0}", admin), JsonNode.class).getStatusCode());
-        String schedule = "{\"storeId\":" + store + ",\"frequency\":\"WEEKLY\",\"dayOfWeek\":" + fire.getDayOfWeek().getValue() + ",\"localTime\":\"" + fire.toLocalTime() + "\",\"timeZone\":\"Asia/Ho_Chi_Minh\",\"lookbackDays\":7}";
+        assertEquals(HttpStatus.OK, http.exchange("/api/system/mining/config", HttpMethod.PUT, new HttpEntity<>("{\"algorithm\":\"HUI_MINER\",\"minUtilMode\":\"ABSOLUTE\",\"minUtilValue\":30,\"expectedVersion\":0}", admin), JsonNode.class).getStatusCode());
+        String schedule = "{\"storeId\":" + store + ",\"frequency\":\"WEEKLY\",\"dayOfWeek\":" + fire.getDayOfWeek().getValue() + ",\"localTime\":\"" + fire.toLocalTime() + "\",\"timeZone\":\"Asia/Ho_Chi_Minh\",\"lookbackDays\":7,\"compareAlgorithms\":true}";
         long id = http.exchange("/api/system/mining/schedules", HttpMethod.POST, new HttpEntity<>(schedule, admin), JsonNode.class).getBody().path("scheduleId").asLong();
         assertEquals(HttpStatus.OK, http.exchange("/api/system/mining/schedules/" + id, HttpMethod.PUT, new HttpEntity<>("{\"schedule\":" + schedule + ",\"enabled\":true,\"expectedVersion\":1}", admin), JsonNode.class).getStatusCode());
 
@@ -166,9 +166,9 @@ class MiningScheduledDatabaseOutageMySqlTest {
         assertEquals(1, direct.queryForObject("SELECT COUNT(*) FROM mining_schedule_occurrence WHERE schedule_id=?", Integer.class, id));
         assertEquals(1, direct.queryForObject("SELECT COUNT(*) FROM mining_request WHERE store_id=?", Integer.class, store), "no duplicate logical request");
         assertEquals(1, direct.queryForObject("SELECT COUNT(*) FROM utility_snapshot WHERE store_id=?", Integer.class, store), "no orphan snapshot");
-        assertEquals(1, direct.queryForObject("SELECT COUNT(*) FROM mining_run WHERE store_id=? AND status='COMPLETED'", Integer.class, store));
-        assertEquals(8, direct.queryForObject("SELECT COUNT(*) FROM high_utility_pattern p JOIN mining_run r ON p.run_id=r.run_id WHERE r.store_id=?", Integer.class, store));
+        assertEquals(2, direct.queryForObject("SELECT COUNT(*) FROM mining_run WHERE store_id=? AND status='COMPLETED'", Integer.class, store));
+        assertEquals(16, direct.queryForObject("SELECT COUNT(*) FROM high_utility_pattern p JOIN mining_run r ON p.run_id=r.run_id WHERE r.store_id=?", Integer.class, store));
         String evidence = System.getenv("PASPM_MULTIJVM_EVIDENCE_FILE");
-        if (evidence != null) java.nio.file.Files.writeString(java.nio.file.Path.of(evidence), "database_outage schedule=" + id + " outage_while_due=8s outage_during=" + seen + " 8s occurrence=COMPLETED requests=1 snapshots=1 patterns=8 PASS\n", java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+        if (evidence != null) java.nio.file.Files.writeString(java.nio.file.Path.of(evidence), "database_outage schedule=" + id + " outage_while_due=8s outage_during=" + seen + " 8s occurrence=COMPLETED requests=1 snapshots=1 patterns=16 PASS\n", java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
     }
 }

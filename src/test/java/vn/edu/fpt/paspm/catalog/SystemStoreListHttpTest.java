@@ -14,7 +14,7 @@ import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-/** Decision D2 (confirmed 2026-11-02): GET /api/system/stores, System Admin only, paginated. DEC-20261123-01 extended it additively (more fields, ACTIVE Stores by default). */
+/** Decision D2 (confirmed 2026-11-02): GET /api/system/stores, System Admin only, read-only, paginated, minimal fields. */
 @SpringBootTest(properties={"spring.datasource.url=jdbc:h2:mem:systemstorelist;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1","spring.datasource.username=sa","spring.datasource.password=","spring.flyway.enabled=true","paspm.jwt-secret=01234567890123456789012345678901","paspm.otp-secret=01234567890123456789012345678901","paspm.bootstrap-email=","paspm.bootstrap-password=","paspm.avatar.directory=/tmp/paspm-storelist-avatars"})
 @AutoConfigureMockMvc
 class SystemStoreListHttpTest {
@@ -29,12 +29,10 @@ class SystemStoreListHttpTest {
     }
     int store(String name){ jdbc.update("INSERT INTO store(name) VALUES (?)",name); return jdbc.queryForObject("SELECT MAX(store_id) FROM store",Integer.class); }
 
-    @Test void systemAdminListsActiveStoresInDeterministicNameThenIdOrderWithTheD2FieldsStillPresent() throws Exception {
+    @Test void systemAdminListsStoresInDeterministicNameThenIdOrderWithMinimalFieldsOnly() throws Exception {
         jdbc.update("DELETE FROM store WHERE store_id NOT IN (SELECT store_id FROM app_user WHERE store_id IS NOT NULL) AND store_id NOT IN (SELECT store_id FROM product) AND store_id NOT IN (SELECT store_id FROM mining_schedule)");
         String tag="Zlist"+UUID.randomUUID().toString().substring(0,8);
-        // Store names are unique (DEC-20261123-01); ordering is by name, then storeId.
-        int b=store(tag+" B"), a2=store(tag+" A2"), a1=store(tag+" A1"), inactive=store(tag+" A0");
-        jdbc.update("UPDATE store SET status='INACTIVE' WHERE store_id=?",inactive);
+        int b=store(tag+" B"), a2=store(tag+" A"), a1=store(tag+" A");
         String admin="Bearer "+token("SYSTEM_ADMIN",null);
         var body=mvc.perform(get("/api/system/stores?page=0&pageSize=100").header("Authorization",admin)).andExpect(status().isOk())
             .andExpect(jsonPath("$.page").value(0)).andExpect(jsonPath("$.pageSize").value(100))
@@ -45,12 +43,11 @@ class SystemStoreListHttpTest {
         var ids=new java.util.ArrayList<Integer>();
         for(var item:items){
             var fields=new java.util.TreeSet<String>();item.fieldNames().forEachRemaining(fields::add);
-            org.junit.jupiter.api.Assertions.assertTrue(fields.containsAll(java.util.Set.of("name","storeId")),"the D2 picker fields stay (additive change only)");
-            org.junit.jupiter.api.Assertions.assertEquals("ACTIVE",item.path("status").asText(),"the picker lists ACTIVE Stores by default");
+            org.junit.jupiter.api.Assertions.assertEquals(java.util.Set.of("name","storeId"),fields,"only the Store id and name may be returned");
             if(item.path("name").asText().startsWith(tag))ids.add(item.path("storeId").asInt());
         }
-        org.junit.jupiter.api.Assertions.assertEquals(List.of(a1,a2,b),ids,"name ascending, then storeId ascending; the INACTIVE Store is not listed");
-        org.junit.jupiter.api.Assertions.assertEquals(jdbc.queryForObject("SELECT COUNT(*) FROM store WHERE status='ACTIVE'",Long.class),mapper.readTree(body).path("totalElements").asLong());
+        org.junit.jupiter.api.Assertions.assertEquals(List.of(Math.min(a1,a2),Math.max(a1,a2),b),ids,"name ascending, then storeId ascending");
+        org.junit.jupiter.api.Assertions.assertEquals(jdbc.queryForObject("SELECT COUNT(*) FROM store",Long.class),mapper.readTree(body).path("totalElements").asLong());
     }
     @Test void paginationIsValidatedAndPagesPastTheEndAreEmpty() throws Exception {
         String admin="Bearer "+token("SYSTEM_ADMIN",null);
@@ -68,7 +65,6 @@ class SystemStoreListHttpTest {
             mvc.perform(get("/api/system/stores").header("Authorization","Bearer "+token(role,role.equals("END_CUSTOMER")?null:store))).andExpect(status().isForbidden());
         mvc.perform(get("/api/system/stores")).andExpect(status().isUnauthorized());
         String admin="Bearer "+token("SYSTEM_ADMIN",null);
-        // POST {} is now a create request with missing fields (400); the collection itself still has no PUT/DELETE/PATCH.
         for(var method:List.of(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/api/system/stores"),org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/system/stores"),org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete("/api/system/stores"),org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch("/api/system/stores")))
             mvc.perform(method.header("Authorization",admin).contentType("application/json").content("{}")).andExpect(status().is4xxClientError());
     }

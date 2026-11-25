@@ -39,10 +39,8 @@ class MiningMigrationMySqlTest {
         int usersBefore=jdbc.queryForObject("SELECT COUNT(*) FROM app_user",Integer.class);
         String rowBefore=jdbc.queryForObject("SELECT CONCAT(status,'|',failure_code,'|',config_version) FROM mining_schedule_occurrence WHERE occurrence_id=94",String.class);
         var latest=Flyway.configure().dataSource(db.url(),db.user(),db.password()).load();
-        int expectedPending=latest.info().pending().length;
-        assertTrue(expectedPending>0);assertEquals(expectedPending,latest.migrate().migrationsExecuted);latest.validate();
-        assertEquals(0,latest.info().pending().length);
-        assertEquals(latest.info().all()[latest.info().all().length-1].getVersion(),latest.info().current().getVersion());
+        assertEquals(2,latest.migrate().migrationsExecuted);latest.validate();
+        assertEquals("19",latest.info().current().getVersion().toString());
         assertEquals(rowBefore,jdbc.queryForObject("SELECT CONCAT(status,'|',failure_code,'|',config_version) FROM mining_schedule_occurrence WHERE occurrence_id=94",String.class));
         assertNull(jdbc.queryForObject("SELECT failure_message FROM mining_schedule_occurrence WHERE occurrence_id=94",String.class));
         assertNull(jdbc.queryForObject("SELECT skip_reason FROM mining_schedule_occurrence WHERE occurrence_id=94",String.class));

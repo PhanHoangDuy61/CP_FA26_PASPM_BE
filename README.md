@@ -2,13 +2,11 @@
 
 Backend cho FA26_SE048 — Product Arrangement Support Platform. Source hiện tại có các module F01–F06, Java 17/Spring Boot, Hybrid JPA + JDBC, MySQL/Flyway và SPMF chạy bằng child JVM riêng.
 
-F01 access JWT mặc định hết hạn sau 3600 giây; refresh session mặc định 30 ngày tuyệt đối/7 ngày không hoạt động, dùng opaque token trong HttpOnly cookie và CSRF double-submit. Cấu hình trong [hướng dẫn setup chung](docs/setup/LOCAL_SETUP_COMMON.md) và contract [F01](docs/api/F01_AUTH_USER_API.md).
-
 ## Getting Started — Local Development (Windows / macOS)
 
 Chọn hướng dẫn [Windows PowerShell](docs/setup/LOCAL_SETUP_WINDOWS.md) hoặc [macOS zsh](docs/setup/LOCAL_SETUP_MACOS.md); xem [cấu hình chung](docs/setup/LOCAL_SETUP_COMMON.md) và [xử lý lỗi](docs/setup/LOCAL_SETUP_TROUBLESHOOTING.md). Backend dùng JDK 17; F05 cần JAR SPMF 2.67a được duyệt và Java 25+ riêng. Scheduler hiện trả 503 khi bật và chưa sẵn sàng. Các bước cài mới Windows/macOS chưa được kiểm chứng đầy đủ trên máy sạch.
 
-`compose.yml` đã chạy MySQL với `--log-bin-trust-function-creators=1` (migration V11 tạo trigger; thiếu thì Flyway báo lỗi 1419 và Backend không khởi động); nếu chạy MySQL bằng `docker run` thì phải tự thêm cờ này: xem [hướng dẫn](docs/setup/LOCAL_SETUP_COMMON.md#mysql-runs-with---log-bin-trust-function-creators1). Đích triển khai dự kiến là Linux Docker; `compose.yml` cung cấp MySQL và Mailpit, còn `Dockerfile` và `compose.backend.yml` là định nghĩa image Backend tùy chọn (JRE 25 và SPMF được ghim bằng SHA-256, chưa được kiểm chứng trên môi trường production). Cơ chế Linux dọn tiến trình SPMF (`PR_SET_PDEATHSIG`) đã được kiểm thử trong container Linux; xem [kiến trúc worker](docs/architecture/F05_WORKER_DISPATCH.md) trước khi triển khai.
+Đích triển khai dự kiến là Linux Docker; `compose.yml` cung cấp MySQL và Mailpit, còn `Dockerfile` và `compose.backend.yml` là định nghĩa image Backend tùy chọn (JRE 25 và SPMF được ghim bằng SHA-256, chưa được kiểm chứng trên môi trường production). Cơ chế Linux dọn tiến trình SPMF (`PR_SET_PDEATHSIG`) đã được kiểm thử trong container Linux; xem [kiến trúc worker](docs/architecture/F05_WORKER_DISPATCH.md) trước khi triển khai.
 
 - **Bắt đầu từ [cổng tài liệu](docs/README.md).**
 - [Chạy local](docs/setup/LOCAL_DEVELOPMENT.md) và [SPMF runtime](docs/setup/F05_SPMF_RUNTIME_SETUP.md).

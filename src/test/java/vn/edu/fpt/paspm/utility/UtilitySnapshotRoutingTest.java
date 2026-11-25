@@ -14,11 +14,11 @@ class UtilitySnapshotRoutingTest {
   jdbc.execute("CREATE TABLE utility_snapshot_storage(snapshot_id INT,store_id INT,storage_kind VARCHAR,source_namespace VARCHAR)");
   jdbc.execute("CREATE TABLE product(product_id INT,store_id INT)");jdbc.execute("CREATE TABLE sales_transaction(transaction_id INT,store_id INT)");
   String columns="(snapshot_id INT,transaction_id INT,product_id INT,quantity INT,base_utility DECIMAL,stock_score DECIMAL,expiry_score DECIMAL,seasonal_score DECIMAL,expiry_status VARCHAR,weight_value DECIMAL,weighted_utility DECIMAL)";
-  jdbc.execute("CREATE TABLE utility_matrix_item_legacy_v5"+columns);jdbc.execute("CREATE TABLE utility_matrix_item"+columns);jdbc.execute("ALTER TABLE utility_matrix_item ADD expiry_evidence VARCHAR");jdbc.execute("ALTER TABLE utility_matrix_item ADD expiry_risk DECIMAL(24,18)");jdbc.execute("ALTER TABLE utility_matrix_item ADD season_weight DECIMAL(7,6)");jdbc.execute("ALTER TABLE utility_matrix_item ADD season_id INT");
+  jdbc.execute("CREATE TABLE utility_matrix_item_legacy_v5"+columns);jdbc.execute("CREATE TABLE utility_matrix_item"+columns);jdbc.execute("ALTER TABLE utility_matrix_item ADD expiry_evidence VARCHAR");
   jdbc.update("INSERT INTO utility_snapshot VALUES(1,1,2,'{}'),(2,2,3,'{}')");jdbc.update("INSERT INTO product VALUES(11,1),(22,2)");
   jdbc.update("INSERT INTO utility_snapshot_storage VALUES(1,1,'LEGACY_V5_ARCHIVE','V5:TEST'),(2,2,'LEGACY_V5_ARCHIVE','V5:TEST')");
   jdbc.update("INSERT INTO utility_matrix_item_legacy_v5 VALUES(1,7,11,1,2,NULL,NULL,NULL,'NOT_APPLICABLE',1,2),(2,7,22,1,3,NULL,NULL,NULL,'NOT_APPLICABLE',1,3)");
-  repository=new UtilitySnapshotRepository(jdbc,new UtilitySettingsRepository(jdbc,JsonMapper.builder().findAndAddModules().addModule(vn.edu.fpt.paspm.utility.UtilityJsonVersions.module()).build()));
+  repository=new UtilitySnapshotRepository(jdbc,new UtilitySettingsRepository(jdbc,JsonMapper.builder().findAndAddModules().build()));
  }
  @Test void legacyCountAndPagesAreStoreScopedAndHaveNoInventedExpiryEvidence(){assertEquals(1,repository.countItems(1,1));var rows=repository.page(1,1,0,1);assertEquals(11,rows.get(0).productId());assertNull(rows.get(0).expiryEvidence());assertTrue(repository.page(1,1,1,1).isEmpty());assertEquals(404,assertThrows(ApiException.class,()->repository.countItems(2,1)).status());}
  @Test void archiveWritesAndAssociationMembershipAreRejectedBeforeAnyMutation(){assertEquals(409,assertThrows(ApiException.class,()->repository.saveItems(1,List.of())).status());jdbc.update("INSERT INTO sales_transaction VALUES(7,1)");assertEquals(409,assertThrows(ApiException.class,()->repository.assertAssociationEvidence(1,1)).status());}

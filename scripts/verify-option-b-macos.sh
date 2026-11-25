@@ -264,9 +264,6 @@ flyway_stages() {
     && DEV_OK=1 || DEV_OK=0
   local cjar djar; cjar="$(ls "$cand"/target/paspm-backend-*.jar 2>/dev/null | grep -v '\.original$' | head -1)"; djar="$(ls "$dev"/target/paspm-backend-*.jar 2>/dev/null | grep -v '\.original$' | head -1)"
   local fresh="paspm_fresh_$(date -u +%H%M%S)" up="paspm_upgrade_$(date -u +%H%M%S)"
-  local expected_versions
-  expected_versions="$(find "$cand/src/main/resources/db/migration" "$cand/src/main/java/db/migration" -type f -name 'V[0-9]*__*' -exec basename {} \; | sed -E 's/^V([0-9]+)__.*/\1/' | sort -n | uniq | tr '\n' ' ')"
-  [ -n "$expected_versions" ] || { record "flyway.fresh" FAIL "no versioned migrations found in the candidate tree"; return 1; }
 
   # A. fresh install -----------------------------------------------------------------------------------
   sql -e "CREATE DATABASE $fresh" 2>>"$out/sql-errors.log"
@@ -282,7 +279,7 @@ flyway_stages() {
   nver="$(awk -F'\t' 'NR>1 && $2!="-"{print $2}' "$out/fresh-history-1.tsv" | sort -n | uniq | tr '\n' ' ')"
   local dup; dup="$(awk -F'\t' 'NR>1 && $2!="-"{print $2}' "$out/fresh-history-1.tsv" | sort | uniq -d | tr '\n' ' ')"
   local order_ok; order_ok="$(awk -F'\t' 'NR>1 && $2!="-"{v=$2+0; if(v<last){bad=1}; last=v} END{print bad?"NO":"YES"}' "$out/fresh-history-1.tsv")"
-  if [ "$bad" = 0 ] && [ -z "$dup" ] && [ "$order_ok" = YES ] && [ "$nver" = "$expected_versions" ]; then record "flyway.fresh" PASS "all candidate migrations ($expected_versions) applied once, in ascending order, success=1 for every row ($out/fresh-history-1.tsv)"
+  if [ "$bad" = 0 ] && [ -z "$dup" ] && [ "$order_ok" = YES ] && [ "$nver" = "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 " ]; then record "flyway.fresh" PASS "versions 1-19 each applied once, in ascending order, success=1 for every row ($out/fresh-history-1.tsv)"
   else record "flyway.fresh" FAIL "failed_rows=$bad duplicates='$dup' ascending=$order_ok versions='$nver' ($out/fresh-history-1.tsv)"; fi
   if awk -F'\t' 'NR>1 && $2=="11" && $4=="JDBC" && $6==1{f=1} END{exit f?0:1}' "$out/fresh-history-1.tsv"; then record "flyway.v11" PASS "Java migration V11 (type JDBC) executed successfully on the fresh database"; else record "flyway.v11" FAIL "V11 Java migration missing or failed in $out/fresh-history-1.tsv"; fi
 
@@ -304,13 +301,13 @@ flyway_stages() {
         data_fingerprint "$up" > "$out/upgrade-data-before.txt"
         if start_app "$cjar" "$up" "$out/upgrade-candidate-start.log" 18084; then
           stop_app; history "$up" "$out/upgrade-history-after.tsv"; data_fingerprint "$up" > "$out/upgrade-data-after.txt"
-          local prefix_ok data_ok bad2 actual_versions
+          local prefix_ok data_ok bad2 newv
           prefix_ok="NO"; head -n "$(wc -l < "$out/upgrade-history-dev.tsv")" "$out/upgrade-history-after.tsv" | cmp -s - "$out/upgrade-history-dev.tsv" && prefix_ok="YES"
           cmp -s "$out/upgrade-data-before.txt" "$out/upgrade-data-after.txt" && data_ok="YES" || data_ok="NO"
           bad2="$(awk -F'\t' 'NR>1 && $6!=1' "$out/upgrade-history-after.tsv" | wc -l | tr -d ' ')"
-          actual_versions="$(awk -F'\t' 'NR>1 && $2!="-"{print $2}' "$out/upgrade-history-after.tsv" | sort -n | uniq | tr '\n' ' ')"
-          if [ "$prefix_ok" = YES ] && [ "$data_ok" = YES ] && [ "$bad2" = 0 ] && [ "$actual_versions" = "$expected_versions" ]; then record "flyway.upgrade" PASS "origin/dev history and seeded data preserved; candidate migrations ($expected_versions) validated with no failed rows"
-          else record "flyway.upgrade" FAIL "prefix_unchanged=$prefix_ok data_unchanged=$data_ok failed_rows=$bad2 candidate_versions='$actual_versions' expected='$expected_versions' (see $out/upgrade-*)"; fi
+          newv="$(awk -F'\t' 'NR>1 && $2!="-"{print $2}' "$out/upgrade-history-after.tsv" | tail -n 7 | tr '\n' ' ')"
+          if [ "$prefix_ok" = YES ] && [ "$data_ok" = YES ] && [ "$bad2" = 0 ] && [ "$newv" = "13 14 15 16 17 18 19 " ]; then record "flyway.upgrade" PASS "origin/dev schema (V1-V12) + seeded rows upgraded by V13-V19: earlier history rows and checksums unchanged, seeded data fingerprints identical, no failed rows"
+          else record "flyway.upgrade" FAIL "prefix_unchanged=$prefix_ok data_unchanged=$data_ok failed_rows=$bad2 last7='$newv' (see $out/upgrade-*)"; fi
         else stop_app; record "flyway.upgrade" FAIL "candidate failed to start on the dev schema; see $out/upgrade-candidate-start.log"; fi
       else record "flyway.upgrade" FAIL "seeding representative data failed; see $out/sql-errors.log"; fi
     else stop_app; record "flyway.upgrade" BLOCKED "origin/dev jar did not start on a fresh database; see $out/upgrade-dev-start.log"; fi
@@ -341,16 +338,16 @@ if [ "$MODE" = inspect ]; then inspect_local_history; exit 0; fi
 
 preflight
 if [ "$MODE" = preflight ]; then
-    for id in mvn.verify test.flag test.mysql_group test.full_optin test.multijvm flyway.fresh flyway.upgrade flyway.rerun flyway.v11 jpa.validate openapi.export; do record "$id" "NOT RUN" "preflight only; re-run with --run"; done
+  for id in mvn.verify test.flag test.mysql_group test.full_optin flyway.fresh flyway.upgrade flyway.rerun flyway.v11 jpa.validate openapi.export; do record "$id" "NOT RUN" "preflight only; re-run with --run"; done
 else
   if [ "$(uname -s)" != Darwin ] && [ "${PASPM_VERIFY_ALLOW_NON_MACOS:-0}" != 1 ]; then
-    for id in mvn.verify test.flag test.mysql_group test.full_optin test.multijvm flyway.fresh flyway.upgrade flyway.rerun flyway.v11 jpa.validate openapi.export; do record "$id" BLOCKED "not macOS"; done
+    for id in mvn.verify test.flag test.mysql_group test.full_optin flyway.fresh flyway.upgrade flyway.rerun flyway.v11 jpa.validate openapi.export; do record "$id" BLOCKED "not macOS"; done
   else
     # S1/S2: no database needed
     # SPMF suites need the Java 25 child and the jar; without them they return 503 (SPMF_JAVA_VERSION_UNSUPPORTED / SPMF_JAR_NOT_FOUND).
     SPMF_ARGS=(); [ -n "$J25" ] && SPMF_ARGS+=("-Dpaspm.test.spmf-java=$J25"); [ -n "$SPMF_JAR" ] && SPMF_ARGS+=("-Dpaspm.test.spmf-jar=$SPMF_JAR")
     # ${arr[@]+...} keeps an empty array safe under `set -u` on macOS bash 3.2
-      if need "mvn.verify" java17 maven python3; then mvn_stage "mvn.verify" "default Maven verify (H2 suites)" "$EVID/mvn-verify" clean verify ${SPMF_ARGS[@]+"${SPMF_ARGS[@]}"} -Dlogging.level.root=ERROR; fi
+    if need "mvn.verify" java17 maven python3; then mvn_stage "mvn.verify" "default Maven verify (H2 suites)" "$EVID/mvn-verify" clean verify ${SPMF_ARGS[@]+"${SPMF_ARGS[@]}"} -Dlogging.level.root=ERROR; fi
     if need "test.flag" java17 maven python3; then mvn_stage "test.flag" "dispatcher flag + migration versioning tests" "$EVID/flag-test" test -Dtest=MiningOccurrenceDispatcherFlagTest,MigrationVersioningTest -Dsurefire.failIfNoSpecifiedTests=false -Dlogging.level.root=ERROR; fi
     # disposable MySQL for the rest
     start_mysql
@@ -371,13 +368,12 @@ else
         record "test.full_optin" BLOCKED "Docker host networking unavailable (see test.mysql_group)"
       elif need "test.full_optin" java17 java25 spmf maven python3 mysql; then
         export PASPM_MINING_SPMF_JAR="$SPMF_JAR" PASPM_MINING_JAVA_EXECUTABLE="$J25"
-        mvn_stage "test.full_optin" "full opt-in verify (MySQL + SPMF + Java 17 backend + synthetic F03-F06 scale E2E)" "$EVID/full-optin" clean verify -DargLine="-Djava.io.tmpdir=$WRAP/tmp" -Dpaspm.test.mysql=true -Dpaspm.test.java17-backend=true -Dpaspm.test.java17="$J17/bin/java" -Dpaspm.test.spmf-jar="$SPMF_JAR" -Dpaspm.test.spmf-java="$J25" -Dpaspm.test.foodmart-e2e=true -Dpaspm.f05.foodmart-e2e.output="$EVID/foodmart-e2e" -Dpaspm.avatar.directory="$WRAP/avatars" -Dlogging.level.root=ERROR
-        mvn_stage "test.multijvm" "opt-in real multi-JVM MySQL lease/recovery suites" "$EVID/multijvm" test -DargLine="-Djava.io.tmpdir=$WRAP/tmp" -Dpaspm.test.mysql=true -Dpaspm.test.multijvm=true -Dpaspm.test.spmf-jar="$SPMF_JAR" -Dpaspm.test.spmf-java="$J25" -Dpaspm.avatar.directory="$WRAP/avatars" -Dlogging.level.root=ERROR -Dtest=MiningMultiJvmMySqlTest,MiningSchedulerMultiJvmMySqlTest,MiningSchedulerUpgradeCompatibilityMySqlTest
+        mvn_stage "test.full_optin" "full opt-in verify (MySQL + SPMF + Java 17 backend)" "$EVID/full-optin" clean verify -DargLine="-Djava.io.tmpdir=$WRAP/tmp" -Dpaspm.test.mysql=true -Dpaspm.test.java17-backend=true -Dpaspm.test.java17="$J17/bin/java" -Dpaspm.test.spmf-jar="$SPMF_JAR" -Dpaspm.test.spmf-java="$J25" -Dpaspm.avatar.directory="$WRAP/avatars" -Dlogging.level.root=ERROR
       fi
       rm -rf "$WRAP"
       flyway_stages
     else
-      for id in test.mysql_group test.full_optin test.multijvm flyway.fresh flyway.upgrade flyway.rerun flyway.v11 jpa.validate openapi.export; do record "$id" BLOCKED "no disposable MySQL 8.4"; done
+      for id in test.mysql_group test.full_optin flyway.fresh flyway.upgrade flyway.rerun flyway.v11 jpa.validate openapi.export; do record "$id" BLOCKED "no disposable MySQL 8.4"; done
     fi
   fi
 fi

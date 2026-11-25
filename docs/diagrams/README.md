@@ -1,10 +1,8 @@
 # Diagrams and Database Models
 
-> **Source of truth: the `.drawio` files and their exported images.** [`PASPM_Unified_UML2_Editable.drawio`](PASPM_Unified_UML2_Editable.drawio) (UML, 42 pages) and [`PASPM_ERD_V1_V30.drawio`](PASPM_ERD_V1_V30.drawio) (ERD, 9 pages) follow `dev`. Every Mermaid file in this folder (`mermaid/`, the top-level `*.mmd` and `rendered/`) is an **ARCHIVED**, outdated mirror (mostly Flyway V1–V19) and is no longer maintained or regenerated (PO decision of 2026-11-26).
+## Review 2 Mermaid pack — final diagrams (`mermaid/`)
 
-## Review 2 Mermaid pack (`mermaid/`) — ARCHIVED
-
-The files in [`mermaid/`](mermaid/) were transcribed on 2026-11-04 from the **final clean** draw.io diagrams (the 36-page UML pack, and an ERD file `PASPM_ERD_V1_V19_clean.drawio`, SHA-256 `64f9c7e712b8dfa2e3d81ac8f2c07167807f982470fa33be175330f300014c3a`, that was not kept in this repository and is superseded by [`PASPM_ERD_V1_V30.drawio`](PASPM_ERD_V1_V30.drawio)). They are mirrors: the draw.io files are the source, and a mirror may lag behind the page it mirrors. Names, states, transitions, guards, actors and steps follow the draw.io pages; nothing was added or dropped. SVG renders are in [`mermaid/rendered/`](mermaid/rendered/) (Mermaid CLI 12.2.0). The draw.io files remain the master; the figure numbers are those of Report 4 (SDD) and Report 3 (SRS) in `docs/review-2/`.
+The files in [`mermaid/`](mermaid/) are transcribed from the **final clean** draw.io diagrams (UML: branch `Khoi/docs/diagrams-final-clean`, 36 pages; ERD: `PASPM_ERD_V1_V19_clean.drawio`, SHA-256 `64f9c7e712b8dfa2e3d81ac8f2c07167807f982470fa33be175330f300014c3a`). Names, states, transitions, guards, actors and steps follow the draw.io pages; nothing was added or dropped. SVG renders are in [`mermaid/rendered/`](mermaid/rendered/) (Mermaid CLI 12.2.0). The draw.io files remain the master; the figure numbers are those of Report 4 (SDD) and Report 3 (SRS) in `docs/review-2/`.
 
 | Mermaid source | draw.io page | Report figure |
 |---|---|---|
@@ -16,20 +14,17 @@ The files in [`mermaid/`](mermaid/) were transcribed on 2026-11-04 from the **fi
 | `state-mining-request-and-schedule-occurrence.mmd` | R2-06.03 — Mining Request State, with the Schedule Occurrence State drawn on the same page | SDD Figure 14 |
 | `state-mining-run.mmd` | R2-06.04 — Mining Run State | SDD Figure 15 |
 | `state-recommendation-review.mmd` | R2-06.05 — Recommendation Review State | SDD Figure 16 |
-| `state-campaign.mmd` | F08 campaign lifecycle implemented in V23 |
-| `layout-campaign-erd.mmd` | Focused F07/F08 physical model from Flyway V23 |
-| `layout-campaign-sequence.mmd` | F07/F08 campaign, layout edit, optional simulation, and activation interactions |
 | `state-staging-row.mmd` | R2-06.06 — Staging Row State | SDD Figure 12 |
 | `activity-ad01-overall-system-workflow.mmd` | AD01 - Overall System Workflow | SDD Figure 19 |
 | `activity-ad02-transaction-data-processing.mmd` | AD02 - Transaction Data Processing | SDD Figure 22 |
 | `activity-ad03-mining-execution-configuration.mmd` | AD03 - Mining Execution & Configuration | SDD Figure 25 |
 | `activity-ad04-algorithm-benchmarking.mmd` | AD04 - Algorithm Benchmarking | SDD Figure 28 |
 | `activity-ad05-product-recommendation-approval.mmd` | AD05 - Product Recommendation & Approval | SDD Figure 31 |
-| `activity-ad06-layout-campaign-management.mmd` | AD06 - Layout & Campaign Management, reconciled with F07/F08 implementation |
+| `activity-ad06-layout-campaign-management.mmd` | AD06 - Layout & Campaign Management | SDD Figure 34 |
 | `activity-ad07-ab-testing-performance-evaluation.mmd` | AD07 - A/B Testing & Performance Evaluation | SDD Figure 37 |
 | `activity-ad08-customer-shopping-bundle.mmd` | AD08 - Customer Shopping & Bundle | SDD Figure 40 |
 
-Activity diagrams use one Mermaid `subgraph` per swimlane exactly as drawn (AD01 has one lane). Use cases, context, screen flow, package diagram, class and sequence diagrams are not part of this pack; they exist only as draw.io pages. The new focused F07/F08 diagrams document the current backend and do not claim to be transcriptions of the historical Review 2 pages.
+Activity diagrams use one Mermaid `subgraph` per swimlane exactly as drawn (AD01 has one lane). Use cases, context, screen flow, package diagram, class and sequence diagrams are not part of this pack; they exist only as draw.io pages.
 
 Re-render with `PUPPETEER_SKIP_DOWNLOAD=1 npx -y @mermaid-js/mermaid-cli@12.2.0 -i mermaid/<file>.mmd -o mermaid/rendered/<file>.svg` (a Chrome executable can be passed with `-p <puppeteer-config.json>`).
 
@@ -54,15 +49,9 @@ Kept unchanged as history; **do not use them for Review 2**. Comparison with the
 | `08-screen-flow.mmd` | R2-03 — Screen Flow | Same screens and paths; the legacy file adds explanatory notes and an `F03` label prefix |
 | `09-f05-scheduler-erd-v14-v19.mmd` | Mining & Scheduling (ERD file) | Subset of the final schema (7 tables) |
 
-> **2026-11-15:** the drawings do not yet show V24 (mining progress) or V25 (F03 Weight v2: seasons, push day, versioned JSON). The pages to redraw are listed in [F03 W2 schema notes](../architecture/F03_W2_SCHEMA_V24_V25.md#diagram-pages-that-must-be-redrawn-not-edited-in-this-pass).
+## Editable UML 2.0 pack (27 pages) — current
 
-## Editable UML 2.0 pack (42 pages) — current
-
-[`PASPM_Unified_UML2_Editable.drawio`](PASPM_Unified_UML2_Editable.drawio) is the maintained, editable source (open with diagrams.net). It has **42 pages** (DEC-20261126-01): the 27 core diagrams, the R2-05 Package Diagram, eight class diagrams R2-07.01–08, the Store management pages (AD09, R2-06.07, R2-08.09, R2-07.09) and the pages AD10 and AD11. The file was renamed from `PASPM_Unified_27_Diagrams_UML2_Editable.drawio` on 2026-11-26 because the old name no longer matched the page count; every link was updated.
-
-[`PASPM_ERD_V1_V30.drawio`](PASPM_ERD_V1_V30.drawio) is the editable ERD (9 pages), Flyway V1–V30 (named after its last Flyway version). The records of 2026-11-26 in [`docs/record-of-changes/`](../record-of-changes/2026-11-26/README.md) list, per phase, the pages changed to follow `dev`.
-
-Edit the `.drawio` files; never replace them with exported images. The earlier [27-page audit](../reports/UML27_DIAGRAM_QA_2026-11-02.md) describes the 27-page state and is kept as history.
+[`PASPM_Unified_27_Diagrams_UML2_Editable.drawio`](PASPM_Unified_27_Diagrams_UML2_Editable.drawio) is the maintained, editable source (open with diagrams.net). It covers requirements, context, use cases, eight activity diagrams, screen flow, architecture, six state machines and eight sequence diagrams (F07–F11 pages are marked PLANNED). It was audited page by page against the Backend on `dev` @ `11973a0`: see the [27-page audit](../reports/UML27_DIAGRAM_QA_2026-11-02.md) for per-page results, the pages that are informal rather than UML, and the known gaps. Edit the `.drawio` file; never replace it with exported images.
 
 ## Legacy Mermaid pack (Review 2) — not synchronised after PR #11
 
@@ -96,14 +85,14 @@ Mermaid source diagrams are derived from backend code and migrations in this rep
 ### Source and accuracy notes
 
 - The current repository has Flyway migrations V1–V11. V11 is a Java migration at `src/main/java/db/migration/V11__historical_utility_matrix_storage.java`; it installs/validates the `utility_matrix_item_legacy_v5` archive and `utility_snapshot_storage` registry. The ERD includes these alongside F04 transaction, F05 mining, and F06 recommendation tables. Archived legacy utility data is not treated as valid F04 transaction provenance.
-- State names are copied from database constraints and implementation. Recommendation states stop at `APPROVED` or `REJECTED`. F08 campaign state and schema are shown in the focused `state-campaign.mmd` and `layout-campaign-erd.mmd`; the historical ERD and draw.io pack are not rewritten.
+- State names are copied from database constraints and implementation. Recommendation states stop at `APPROVED` or `REJECTED`: F06 stores reviewable business candidates and does not implement campaign publication or storefront activation. Campaign state is omitted because no campaign entity or F08 implementation is present here.
 - The utility snapshot schema permits `READY` or `FAILED`; the current create service persists `READY` only after successful validation and returns an error before creating a record when validation fails. A snapshot is captured with frozen policy/input values; there is no persisted `DRAFT` or `BUILDING` state.
 - F04 import records `PROCESSING`, `COMPLETED`, `COMPLETED_WITH_ERRORS`, or `FAILED`; staging rows separately use `PENDING`, `VALID`, `REJECTED`, and `PROCESSED`. CSV import is idempotent by `(store_id, source_system, source_order_id)` and does not write inventory batches.
 - Utility base is `(unit_price - unit_cost) * quantity` unless a source utility is supplied. Enabled stock, expiry, and seasonal scores contribute according to the frozen weighting configuration. E is derived from sellable inventory batch expiry metadata; S and M are product priority scores. F05 consumes frozen weighted matrix values.
 - Expiry Push is a recommendation-generation path based on live expiry eligibility; it is not a published campaign. Transaction-backed candidates use frozen mining evidence and live eligibility checks.
 - Screen-flow routes are sourced from the sibling frontend checkout `D:\Capstone\FE-FA26\src\utils\navigationRouter.ts` and screen components. The FE source labels only S01, S02, S05, S06, and S07. Other screen IDs in a putative S01–S18 inventory are not assigned here because the FE source does not identify them.
 - `forgot-password` is rendered by the FE but is absent from its explicit `SCREEN_TO_PATH` map; the app falls back to `/forgot-password`, which is not added to the reverse path map.
-- FE routes and rendered prototype screens do not imply BE integration. Authentication, account management, F02 catalog/inventory, and F03 utility use `/api`. Mining UI actions, Merchandiser recommendations/campaign/simulation pages, and customer storefront purchase flow are separate from this backend API contract; the new F07/F08 APIs do not claim end-to-end FE wiring. F04 CSV import has a backend endpoint but no matching CSV import screen in the FE route map.
+- FE routes and rendered prototype screens do not imply BE integration. Authentication, account management, F02 catalog/inventory, and F03 utility use `/api`. Mining UI actions, Merchandiser recommendations/campaign/simulation pages, and customer storefront purchase flow currently use local/demo state without matching API calls. F04 CSV import has a backend endpoint but no matching CSV import screen in the FE route map.
 - A role mismatch is present in FE source: `SCREEN_OWNER_MAP` assigns recommendation/campaign routes to Merchandiser, but both `ROLE_PERMISSIONS` and post-login `MERCHANDISER` mapping grant only F03 routes, and the Merchandiser sidebar is disabled in `AppLayout`. In BE, mining and recommendation APIs allow Store Admin/Merchandiser, while the FE mining console is grouped under System Admin. Resolve this before presenting end-to-end authorization as verified.
 - Context and role use cases are inferred from the backend API/authorization and FE route/screen sources. The repository tree contains no Report 3/Report 4 files, so exported diagram insertion into those reports remains outstanding.
 

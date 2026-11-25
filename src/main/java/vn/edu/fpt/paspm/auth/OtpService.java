@@ -28,7 +28,6 @@ public class OtpService {
     private final VerificationChallengeRepository challenges;
     private final JavaMailSender mail;
     private final AuthService auth;
-    private final AuthSessionService sessions;
     private final RateLimits limits;
     private final String secret;
     private final String from;
@@ -41,7 +40,6 @@ public class OtpService {
             VerificationChallengeRepository challenges,
             JavaMailSender mail,
             AuthService auth,
-            AuthSessionService sessions,
             RateLimits limits,
             @Value("${paspm.otp-secret}") String secret,
             @Value("${paspm.mail-from}") String from,
@@ -51,7 +49,6 @@ public class OtpService {
         this.challenges = challenges;
         this.mail = mail;
         this.auth = auth;
-        this.sessions = sessions;
         this.limits = limits;
         this.secret = secret;
         this.from = from;
@@ -192,7 +189,6 @@ public class OtpService {
         challenges.consume(user.id());
         if ("PASSWORD_RESET".equals(purpose)) {
             userRepository.updatePassword(user.id(), passwordHash);
-            sessions.revokeUserSessions(user.id());
         } else if (emailOnlyRegistration) {
             userRepository.markEmailVerified(user.id(), Instant.now());
         } else {

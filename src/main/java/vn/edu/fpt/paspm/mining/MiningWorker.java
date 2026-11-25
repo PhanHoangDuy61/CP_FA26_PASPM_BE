@@ -63,7 +63,6 @@ public class MiningWorker {
             var request=repository.find(store,id);
             for(var run:repository.runs(store,id)){
                 if(!repository.claimRun(claim,run.runId()))continue;
-                leases.stage(claim,"RUNNING",run.runId());
                 MiningEngine.Output output;
                 try{
                     output=engine.execute(run.algorithm(),request.input(),request.view().minUtilSpmf(),new MiningEngine.ExecutionIdentity(store,id,run.runId(),claim.owner(),claim.fence()));
@@ -76,12 +75,10 @@ public class MiningWorker {
                     repository.failRun(claim,run.runId(),"EXECUTION_FAILED","Mining execution or result persistence failed");
                     continue;
                 }
-                leases.stage(claim,"SAVING",run.runId());
                 repository.complete(claim,run.runId(),request.input(),output);
             }
             var runs=repository.runs(store,id);
             boolean success=runs.stream().allMatch(r->r.status().equals("COMPLETED"));
-            if(runs.size()==2)leases.stage(claim,"COMPARING",null);
             String comparison=runs.size()==1?"NOT_REQUESTED":success?(repository.canonical(store,runs.get(0).runId()).equals(repository.canonical(store,runs.get(1).runId()))?"MATCH":"FAILED"):"BLOCKED";
             leases.terminal(claim,success&&!comparison.equals("FAILED")?"COMPLETED":"FAILED",comparison);
         }catch(Exception e){log.warn("Mining request could not finish under its lease; it remains recoverable",e);}

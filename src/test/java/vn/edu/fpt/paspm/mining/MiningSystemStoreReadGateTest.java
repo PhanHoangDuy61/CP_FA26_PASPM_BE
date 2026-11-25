@@ -47,7 +47,7 @@ class MiningSystemStoreReadGateTest {
             mvc.perform(get(prefix+"/runs/1/patterns").header("Authorization",bearer)).andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.error").value(org.hamcrest.Matchers.containsString("raw mining patterns")));
     }
-    @Test void gateDoesNotWeakenRolesAndBenchmarkRouteIsRemoved() throws Exception {
+    @Test void gateDoesNotWeakenRolesAndDoesNotCoverTheRequiredBenchmarkRoute() throws Exception {
         jdbc.update("INSERT INTO store(name) VALUES (?)","Read gate roles "+UUID.randomUUID());
         int store=jdbc.queryForObject("SELECT MAX(store_id) FROM store",Integer.class);
         String system=token("SYSTEM_ADMIN",null);

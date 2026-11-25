@@ -11,7 +11,7 @@ Scope: FrozenEvidenceReader, TransactionEvidence, RecommendationExpiryService, R
 
 ### [P2] Verify completed-run pattern count before accepting the frozen source
 
-File: `<project-folder>/BE/src/main/java/vn/edu/fpt/paspm/recommendation/FrozenEvidenceReader.java`, lines 68–85 (particularly line 83).
+File: `/Users/khoinm/Desktop/khoi/fpt/ki9/FA26SE048_HUPAS/BE/src/main/java/vn/edu/fpt/paspm/recommendation/FrozenEvidenceReader.java`, lines 68–85 (particularly line 83).
 
 The paging termination trusts the current pattern table count and never compares collected patterns against `run.itemsetCount()`, which F05 records atomically when completing the run. If any high_utility_pattern rows are missing, the reader accepts a truncated source; deleting every pattern makes a run that originally completed with patterns look like a legitimate zero-pattern result. The brief requires inconsistent persisted sources to fail with sanitized 409 while allowing genuinely completed zero-pattern runs. Validate the recorded completed itemset count against the retrieved total/collected unique pattern IDs, rejecting null/negative/inconsistent count as appropriate. Add regression cases for a recorded nonzero count with no patterns and a partially missing pattern list; keep a genuine zero-count/zero-pattern case valid. The existing zero-pattern test currently leaves RunView.itemsetCount at 1 and therefore masks this gap.
 

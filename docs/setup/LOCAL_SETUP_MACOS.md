@@ -26,7 +26,7 @@
    "$JAVA_HOME/bin/java" -version
    "$JAVA_HOME/bin/javac" -version
    "$PASPM_MINING_JAVA_EXECUTABLE" -version
-   ./mvnw -version
+   sh ./mvnw -version
    ```
 
    If `java_home` cannot find a JDK, install/register it and retry. Verify architecture with `uname -m`; do not copy `/opt/homebrew` paths from a different Mac.
@@ -40,8 +40,6 @@
    docker compose up -d mysql mailpit
    docker compose ps
    ```
-
-   `compose.yml` already starts MySQL with `--log-bin-trust-function-creators=1` (migration V11 creates triggers; see [common setup](LOCAL_SETUP_COMMON.md#mysql-runs-with---log-bin-trust-function-creators1)). If your MySQL container was created from an older `compose.yml`, `docker compose up -d mysql mailpit` recreates it with the option and keeps your data.
 
    Set nonempty local-only `DB_PASSWORD` and `MYSQL_ROOT_PASSWORD` in `.env` before starting Compose. Never paste the file contents into chat or commit it. The database/user are both `paspm` and host port is 3306. Compose stores local data in a persistent volume; `docker compose down` does not delete it.
 
@@ -73,8 +71,8 @@
 7. Build and start (startup runs Flyway automatically):
 
    ```zsh
-   ./mvnw clean verify -Dpaspm.test.spmf-jar="$PASPM_MINING_SPMF_JAR" -Dpaspm.test.spmf-java="$PASPM_MINING_JAVA_EXECUTABLE"
-   ./mvnw spring-boot:run
+   sh ./mvnw clean verify -Dpaspm.test.spmf-jar="$PASPM_MINING_SPMF_JAR" -Dpaspm.test.spmf-java="$PASPM_MINING_JAVA_EXECUTABLE"
+   sh ./mvnw spring-boot:run
    ```
 
    If SPMF is missing, the full mining tests cannot be claimed as passed; configure it first. Watch logs for Flyway and startup failures. From another terminal, verify migrations using your local password when prompted:
@@ -88,4 +86,4 @@
 9. Stop Backend with `Ctrl+C`, then `docker compose down`. This leaves the local database volume intact. The documented `dev` fixture and SPMF success require separate verification in your environment; the Linux Docker parent-death mechanism does not apply to macOS host processes.
 
 
-`dev` (after the P5/P6 merge, 2026-11-16) includes Flyway V1–V26 ([list](LOCAL_SETUP_COMMON.md)). F05 mining migrations are V9, V13–V19 and V24; V12 is F04 `f04_preserve_large_raw_import_rows`. A checksum mismatch at startup: see [known checksum mismatches](LOCAL_SETUP_TROUBLESHOOTING.md#known-flyway-checksum-mismatches). The Linux container multi-JVM crash tests passed in Docker (emulated amd64); native-Linux and production-image acceptance are still pending; a successful host startup does not validate Linux container process supervision. Scheduler activation remains 503. See the [runtime guide](F05_SPMF_RUNTIME_SETUP.md#linux-docker-image-on-dev-production-acceptance-pending). This guide has not been verified on a clean target-OS installation.
+`dev` includes Flyway V1–V17. F05 mining migrations are V13–V17; V12 is F04 `f04_preserve_large_raw_import_rows`. The Linux container multi-JVM crash tests passed in Docker (emulated amd64); native-Linux and production-image acceptance are still pending; a successful host startup does not validate Linux container process supervision. Scheduler activation remains 503. See the [runtime guide](F05_SPMF_RUNTIME_SETUP.md#linux-docker-image-on-dev-production-acceptance-pending). This guide has not been verified on a clean target-OS installation.

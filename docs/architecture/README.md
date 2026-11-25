@@ -24,13 +24,3 @@ SPMF is an external pinned binary with a separately configured Java 25 child pro
 [Archived PR/delivery packages](../archive/README.md) retain original decisions and branch identities. They do not define current merge status. [Testing index](../testing/README.md) separates local/CI/real-data evidence.
 
 F04 adds [V12 raw-evidence capacity](../features/F04/F04_IMPROVEMENT_REPORT.md) after the immutable V1–V11 migrations. It widens the existing staging raw_data column only; order identity, snapshots and history are preserved.
-
-## F01 browser session update — 2026-11-11 local changes
-
-[Session design and source map](../features/F01/F01_SESSION_MANAGEMENT.md) covers V20 session families, hashed one-use refresh credentials, row locking, revocation, CSRF/Origin checks and legacy JWT compatibility. This is an uncommitted local addition; it does not change F03–F06 historical data or the hybrid persistence architecture. [Implementation evidence](../testing/reports/F01_SESSION_VERIFICATION.md).
-
-Current F01 reconciliation (2026-11-12): preserves published dev V20/AuthSessionService and adds V21 binding; [current evidence](../testing/reports/F01_SESSION_RECONCILIATION_2026-11-12.md). Earlier local-variant details are dated history; no source database repair/deployment was performed.
-
-## F07/F08 layout and campaign
-
-The current working tree adds Flyway V23 and JDBC-backed Store-scoped layout, campaign, revision, simulation-report and history tables. Activation/rollback serialize on the Store row; A/B reports pin immutable layout revisions. See the [schema notes](F07_F08_LAYOUT_CAMPAIGN_SCHEMA.md), [API contract](../api/F07_F08_LAYOUT_CAMPAIGN_API.md), and [Mermaid ERD/state diagrams](../diagrams/README.md). V23 was not published in the starting repository state and must be applied through Flyway before deploying the endpoints.
