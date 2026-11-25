@@ -33,3 +33,7 @@
 ## Record 008 — PO answers: rename, Mermaid archived, FK edges, review
 
 [Record 008](08-po-answers-rename-archive-fk-review.md) applies the PO answers of 2026-11-26 (pack renamed, Mermaid mirrors archived, FK edges drawn) and the page-by-page review fixes. Documentation only; Maven NOT RUN.
+
+## Record 009 — TDP-01 test-data preparation script
+
+[Record 009](09-tdp-01-test-store-seed.md) adds `scripts/seed/seed_test_stores.py` (Store B / Store C and four test accounts through the public API, idempotent) for the black-box test round ([DEC-20261126-03](../../decisions/2026-11-26/DEC-20261126-03-blackbox-test-round-scope-and-remaining-answers.md)). Unit tests PASS; run twice against a disposable local stack. No backend change.
