@@ -4,25 +4,27 @@ Canonical contract locations stay stable in this directory. `CURRENT` describes 
 
 | Feature | Contract | Status / caveat | Handoff |
 |---|---|---|---|
-| F01 | [Authentication/User](F01_AUTH_USER_API.md) | Local session update: csrfToken, refresh/logout; 202/409 reconciled; uncommitted | [F01](../frontend_handoff/F01_HANDOFF.md) |
-| F01 | [Store management](F01_STORE_MANAGEMENT_API.md) | 2026-11-23 (DEC-20261123-01, V27): Store administration, own Store profile, icon/banner, public image GET, INACTIVE guard; branch `Khoi/feat/store-management` | [F01](../frontend_handoff/F01_HANDOFF.md#store-management-2026-11-23) |
+| F01 | [Authentication/User](F01_AUTH_USER_API.md) | Session reconciliation on dev (`7304e29`): csrfToken, refresh/logout and 202/409 | [F01](../frontend_handoff/F01_HANDOFF.md) |
+| F01 | [Store management](F01_STORE_MANAGEMENT_API.md) | 2026-11-23 (DEC-20261123-01, V27): Store administration, own Store profile, icon/banner, public image GET, INACTIVE guard; merged in PR #27 (`3d51f5b`) | [F01](../frontend_handoff/F01_HANDOFF.md#store-management-2026-11-23) |
 | F02 | [Product/Inventory](F02_PRODUCT_INVENTORY_API.md) | CURRENT scoped contract + batch `pushDay`; product `expiryPushDays` **removed 2026-11-16** (400 if sent; V26); old v3 role/expiry clauses differ | [F02](../frontend_handoff/F02_HANDOFF.md) |
 | F03 | [Utility](F03_UTILITY_API.md) | CURRENT: two routes deleted 2026-11-16 (expiry-window, score PATCH); P2–P6 resolved. Weight v2 since 2026-11-15: Weight v2 section first; v1.2 section kept as legacy for pre-V25 data. Requirements are derived, pending formal approval ([F03 W2 requirements](../requirements/F03_WEIGHT_V2_REQUIREMENTS.md)) | [F03](../frontend_handoff/F03_HANDOFF.md) |
 | F04 | [Transaction](F04_TRANSACTION_API.md) | CURRENT CSV P0 contract (sync and async) + XLS/XLSX upload under the approved Excel contract of 2026-10-26; broader workflow acceptance separate | [F04](../frontend_handoff/F04_HANDOFF.md) |
-| F05 | [Mining](F05_MINING_API.md) | Current EFIM numeric contract includes lossless per-TU/per-Product-TWU/minUtil int32 checks and an int64 global total; this change is local/unpublished | [F05](../frontend_handoff/F05_HANDOFF.md) |
+| F05 | [Mining](F05_MINING_API.md) | Current EFIM numeric contract includes lossless per-TU/per-Product-TWU/minUtil int32 checks and an int64 global total; merged at `530651b` | [F05](../frontend_handoff/F05_HANDOFF.md) |
 | F06 | [Recommendation](F06_RECOMMENDATION_API.md) | Current Backend v1.1 contract + W2; frozen evidence reader validates exact int64 mining totals; historical test statements retain dates | [F06](../frontend_handoff/F06_HANDOFF.md) |
-| F07/F08 | [Layout and Campaign](F07_F08_LAYOUT_CAMPAIGN_API.md) | Layout detail and offline reports expose frozen-snapshot priority coverage on this feature branch | [F07/F08](../frontend_handoff/F07_F08_HANDOFF.md) |
-| F09 | [Public Storefront](F09_STOREFRONT_API.md) | MVP public projection; ACTIVE Stores only, by `store.slug`; active homepage needs configured layout caps | [F09](../frontend_handoff/F09_HANDOFF.md) |
-| F10 | [Bundle Cart](F10_BUNDLE_CART_API.md) | PLANNED, V31 after F09 V30 | [F10](../frontend_handoff/F10_HANDOFF.md) |
-| F11 | [Dashboard](F11_DASHBOARD_API.md) | PLANNED, read-only | [F11](../frontend_handoff/F11_HANDOFF.md) |
+| F07/F08 | [Layout and Campaign](F07_F08_LAYOUT_CAMPAIGN_API.md) | Layout detail and offline reports expose frozen-snapshot priority coverage on dev (PR #32, `516183d`) | [F07/F08](../frontend_handoff/F07_F08_HANDOFF.md) |
+| F09 | [Public Storefront](F09_STOREFRONT_API.md) | Merged in PR #33 (`0ef5a55`); ACTIVE Stores only, by `store.slug`; active homepage needs configured layout caps | [F09](../frontend_handoff/F09_HANDOFF.md) |
+| F10 | [Bundle Cart](F10_BUNDLE_CART_API.md) | PLANNED, contract merged in PR #34; V31 after F09 V30 | [F10](../frontend_handoff/F10_HANDOFF.md) |
+| F11 | [Dashboard](F11_DASHBOARD_API.md) | PLANNED, contract merged in PR #34; read-only | [F11](../frontend_handoff/F11_HANDOFF.md) |
 
-[OpenAPI export](openapi.json) (historical counts: 96 paths / 114 operations at the F07/F08 merge, 98 / 116 at F05 Checkpoint 1; current counts below). The export's server entry is the local test origin; configure the target origin in the integration environment. The session changes are uncommitted. Earlier operation counts are historical evidence, not the current export. Role prose still needs source-based interpretation; use the [RBAC matrix](F01_F02_RBAC_MATRIX.md). [RBAC matrix](F01_F02_RBAC_MATRIX.md) and [integration notes](F03_V12_F05_F06_INTEGRATION.md) have review notices. [API changelog](API_CHANGELOG.md) remains append-only history.
+[OpenAPI export](openapi.json) matches the runtime document from dev at `cded4ab`: **112 paths / 139 operations**. The generated server URL, `http://localhost:8080`, is the export test origin. Use the deployment's base URL for integration and the [RBAC matrix](F01_F02_RBAC_MATRIX.md) for role checks. Historical counts below describe their dated checkpoints. See the [API changelog](API_CHANGELOG.md).
+
+The CSV async `Idempotency-Key` header remains required and its schema now shows `minLength: 1`. The F07 export reflects the generated snapshot-product operation ID, placement schemas and response metadata. Use the [F07/F08 contract](F07_F08_LAYOUT_CAMPAIGN_API.md) for validation and nullable provenance that Springdoc omits.
 
 ## 2026-11-25 F09 Storefront merge export
 
 Branch `Khoi/merge/f09-storefront-be` (F09 branch `Duy/Feature/F09_Storefront` + `dev` `516183d`): **112 paths / 139 operations**. Against `dev` (113 / 140, which already had the old F09 merge `68d6f0b`): −1 path, −1 operation (`PUT /api/system/stores/{storeId}/storefront-visibility`). The four anonymous F09 GETs `/api/storefront/stores`, `/{storeSlug}/home`, `/{storeSlug}/products`, `/{storeSlug}/products/{productId}` stay.
 - Removed schemas: `VisibilityRequest`, `VisibilityView`. Changed: `ProductCard.availability` enum `AVAILABLE | UNAVAILABLE` → `AVAILABLE | OUT_OF_STOCK`; the `/stores` and `/home` summaries; descriptions on `ProductRequest.imageUrl`/`description` (DEC-20261125-04).
-- The runtime `/v3/api-docs` was taken through `-Dpaspm.test.export-openapi=true` on `TransactionExcelImportIntegrationTest`, and only these F09 changes were applied; the rest of the file is byte-identical to `dev`. Pre-existing runtime-vs-file differences on `dev` were left as they are: `servers`, the `Idempotency-Key` `minLength` of `/api/transactions/imports/csv/async`, and F07 items (`PlacementRequest` zone enum/required list and `sourceRecommendationId` type, `PlacementView` descriptions and `recommendationId`, `SavePlacementsRequest.placements.minItems`, the `/api/layouts/products` operationId and responses, the `/placements` and `/ready` summaries).
+- The runtime `/v3/api-docs` was taken through `-Dpaspm.test.export-openapi=true` on `TransactionExcelImportIntegrationTest`, and only these F09 changes were applied; the rest of the file is byte-identical to `dev`. At that F09 checkpoint, the following pre-existing differences were deferred and are now synchronized by [ROC-20261125-009](../record-of-changes/2026-11-25/09-openapi-status-sync.md): `servers`, the `Idempotency-Key` `minLength` of `/api/transactions/imports/csv/async`, and F07 items (`PlacementRequest` zone enum/required list and `sourceRecommendationId` type, `PlacementView` descriptions and `recommendationId`, `SavePlacementsRequest.placements.minItems`, the `/api/layouts/products` operationId and responses, the `/placements` and `/ready` summaries).
 
 ## 2026-11-24 F02 expiry / push-day / product-delete export
 
@@ -50,16 +52,16 @@ Current F01 reconciliation (2026-11-12): preserves published dev V20/AuthSession
 
 ## 2026-11-20 F09 feature-branch export (historical)
 
-The unmerged branch `Duy/Feature/F09_Storefront` exported 105 paths / 126 operations on its older base, including five F09 operations (four public GETs and the SYSTEM_ADMIN visibility PUT, removed in the merge below).
+The original branch `Duy/Feature/F09_Storefront` exported 105 paths / 126 operations on its older base, including five F09 operations (four public GETs and the SYSTEM_ADMIN visibility PUT, removed in the merge below).
 
 ## 2026-11-16 export update
 The follow-up export has **103 paths / 125 operations**, adding DELETE `/api/inventory-batches/{id}/push-day` to the 102/124 baseline. Recommendation views include `seasonEnded` and `endedSeasons`; all local schema references resolve.
 
-**Branch `Khoi/feat/f03-remove-legacy-product-fields` (2026-11-16, not merged): 100 paths, 121 operations** (F01 27, F02 16, F03 18, F04 8, F05 24, F06 8, F07/F08 20). Before: 101 paths / 123 operations in the export committed on `dev` `2a944c5`. Removed: `PUT /api/utility/config/expiry-window`, `PATCH /api/utility/products/{productId}/scores`. Regenerated through the MockMvc export hook of `RecommendationIntegrationTest` (`-Dpaspm.f06.export-dir`); this is not an interactive Swagger UI execution. Besides the two removals, the regenerated file renumbers two springdoc `operationId`s and picks up the current EFIM-only summary of `POST /api/mining/requests`.
+**Branch `Khoi/feat/f03-remove-legacy-product-fields` (2026-11-16 branch checkpoint, before merge `b8c9e63`): 100 paths, 121 operations** (F01 27, F02 16, F03 18, F04 8, F05 24, F06 8, F07/F08 20). Before: 101 paths / 123 operations in the export committed on `dev` `2a944c5`. Removed: `PUT /api/utility/config/expiry-window`, `PATCH /api/utility/products/{productId}/scores`. Regenerated through the MockMvc export hook of `RecommendationIntegrationTest` (`-Dpaspm.f06.export-dir`); this is not an interactive Swagger UI execution. Besides the two removals, the regenerated file renumbers two springdoc `operationId`s and picks up the current EFIM-only summary of `POST /api/mining/requests`.
 
 ## 2026-11-17 F05 numeric contract update
 
-The current local export remains **100 paths / 121 operations**. No route was added or removed. `RequestView.totalScaledUtility` is now `integer/int64`; transaction utility, Product TWU and converted positive `minUtil` remain int32-bounded for EFIM. The export matches the captured runtime OpenAPI document. See [DEC-20261117-01](../decisions/2026-11-17/DEC-20261117-01-efim-aware-lossless-int32-guard.md) and [Record 015](../record-of-changes/2026-11-17/15-f05-efim-aware-int32-guard.md).
+The export at this checkpoint had **100 paths / 121 operations**. No route was added or removed. `RequestView.totalScaledUtility` is now `integer/int64`; transaction utility, Product TWU and converted positive `minUtil` remain int32-bounded for EFIM. The export matches the captured runtime OpenAPI document. See [DEC-20261117-01](../decisions/2026-11-17/DEC-20261117-01-efim-aware-lossless-int32-guard.md) and [Record 015](../record-of-changes/2026-11-17/15-f05-efim-aware-int32-guard.md).
 
 ## 2026-11-19 F04 Excel export update
 
