@@ -24,3 +24,5 @@ Release status: **UNRELEASED**, feature branch only. No push.
 - no API, schema or runtime change.
 
 Backend group: 449 tests, 0 failures. The owner created the Release `spmf-2.67a` (verified from the public API) and set `PASPM_CI_SPMF_ARTIFACT_URL`; still to do: Release immutability (API shows `immutable: false`) and a re-run of the `integration` job.
+
+Record 002 also carries the CI skipped-test policy ([DEC-20261125-05](../../decisions/2026-11-25/DEC-20261125-05-ci-skipped-test-allowlist.md), section 10 of the record).

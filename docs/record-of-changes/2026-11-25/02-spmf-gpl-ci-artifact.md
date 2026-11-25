@@ -42,6 +42,7 @@
 | `Dockerfile`, `scripts/staging/build-image.sh` | Modified | license copy, labels, amd64 |
 | `src/test/java/vn/edu/fpt/paspm/mining/SpmfProcessBoundaryTest.java`, `SpmfThirdPartyNoticesTest.java` | Added | guards |
 | `.github/scripts/test-groups.py` | Modified | two classes in `backend` |
+| `.github/scripts/test-summary.py`, `.github/scripts/allowed-skips.txt` (added), `.github/scripts/tests/test_ci_summary.py`, `.github/workflows/backend-verification.yml` (summary step of `integration` only), `.github/workflows/backend-full-verification.yml` (added) | Modified / Added | skip policy, section 10 |
 | `src/test/java/vn/edu/fpt/paspm/mining/SpmfChildProcessSupport.java` (added), `MiningMultiJvmMySqlTest.java`, `MiningSchedulerMultiJvmMySqlTest.java`, `MiningProcessOutputLimitTest.java` (modified) | Added / Modified | test fixes after the first full CI run, section 9 |
 | `CLAUDE.md`, `AGENTS.md`, `.claude/skills/paspm-context/SKILL.md`, `.agents/skills/paspm-context/SKILL.md` | Modified | the rule |
 | `docs/decisions/2026-11-25/DEC-20261125-03-…md` (renamed from `-01`), `docs/setup/{F05_SPMF_RUNTIME_SETUP,SPMF_ARTIFACT_HOSTING,BACKEND_CI,STAGING}.md`, `docs/product/{ARCHITECTURE_SDD,BRD_VISION}.md` | Added / Modified | decision and facts |
@@ -98,3 +99,20 @@ Verification of these fixes, same container, each from a clean copy of the branc
 **Open:** `test-summary.py` rejects any skipped test and the `integration` job reported 12 skipped. The opt-in tests that stay skipped under the job's flags include the two natural-lease tests; the full list is in the job's step 11 log (not readable without authentication). Native Linux acceptance (`scripts/verify-native-linux.sh`) is still `NOT RUN`.
 
 Numbering for 2026-11-25 is fixed across branches: DEC 01 F07, 02 source-of-truth rule, 03 SPMF (this branch, renamed from 01), 04 F09; ROC 001 F07, 002 SPMF, 003 source-of-truth, 004 seed, 005 F09.
+
+## 10. Skip policy ([DEC-20261125-05](../../decisions/2026-11-25/DEC-20261125-05-ci-skipped-test-allowlist.md))
+
+The 12 skipped tests of the `integration` job were identified by running the whole suite in the amd64 container (flags of the `integration` job; Linux under Rosetta): **882 tests, 12 skipped**, the same 12 as CI. All are opt-in: 3 `FoodMartScaleSyntheticE2EMySqlIntegrationTest` (`foodmart-e2e`), 2 `MiningSchedulerMultiJvmMySqlTest` natural-lease, 1 `MiningSchedulerUpgradeCompatibilityMySqlTest` (`legacy-jar`), 1 `MiningConversionStabilityTest` (`stability-matrix`), 5 `PilotCloneApiIntegrationTest` (`jpa-clone`). The same run had 10 failures and 1 error that belong to the container, not to CI: no `mysql`/`mysqldump` client (`LegacyRecoveryMySqlTest`, `LegacyReaderMySqlTest`) and the client-SKU test (`JpaPilotMigrationMySqlTest`, fixed by the seed PR). All 4 formerly failing mining tests passed in it.
+
+Changes: `test-summary.py` takes `--allowed-skips FILE --profile pr|full`; it still fails on failures, errors, zero tests and any skip outside the allowlist (including a skip that no testcase identifies) and prints the allowed skips that occurred; `allowed-skips.txt` lists the 12 tests with flag, profile, runtime and reason; the `integration` summary step uses profile `pr`; the new manual workflow `backend-full-verification.yml` enables every opt-in that can run on synthetic data. The PR job's test selection is unchanged.
+
+| Command | Result |
+|---|---|
+| `python3 -m unittest discover -s .github/scripts/tests -p test_ci_summary.py` | 13 run, 0 failures (5 existing + 8 new: allowed skip printed, class-level entry, unlisted skip, no allowlist, other profile, unidentified skip, failures/errors/zero tests with an allowlist, malformed allowlist) |
+| `test-summary.py --allowed-skips … --profile pr` on the Surefire XML of the 882-test container run | all 12 skips matched and printed; exit status non-zero only because of the container's own failures above |
+| `sh ./mvnw -B clean verify -Dtest="$(python3 .github/scripts/test-groups.py backend)"`, JDK 17 | 472 run, 0 failures, 0 errors, 0 skipped; `test-summary.py` (strict, no allowlist) agrees |
+| `backend-full-verification.yml` | YAML parses; **NOT RUN** on GitHub (manual workflow, needs the default branch to expose it) |
+
+Pre-existing and unrelated: 2 tests in `test_ci_helpers.py` error with `KeyError: 'SPMF_JAR_PATH'` unless that variable is set (the `integration` job sets it); they fail the same way before this change.
+
+Numbering check on 2026-11-25: DEC 01–05 are free of collisions on `origin/*`. **ROC 002 collides**: `dev` already has `02-mvnw-executable.md` titled ROC-20261125-002 (PR #31), so this record needs another number before merge (owner to confirm).
