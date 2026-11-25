@@ -347,7 +347,7 @@
         ],
         "summary": "Merchandiser sets alpha (expiry) + beta (season) = 1, lambda in [0, lambdaMax] and the sales window N",
         "description": "400 when alpha + beta != 1 or lambda is outside [0, lambdaMax]. Removed fields (enableStock/enableExpiry/enableSeason/gamma) are rejected as unknown.",
-        "operationId": "config_1",
+        "operationId": "updateUtilityConfig",
         "requestBody": {
           "content": {
             "application/json": {
@@ -722,7 +722,7 @@
         ],
         "summary": "Change lambdaMax without rewriting Store settings or snapshots",
         "description": "Body {lambdaMax}. lambdaMin is no longer accepted (400 as an unknown field).",
-        "operationId": "policy_1",
+        "operationId": "updateLambdaPolicy",
         "requestBody": {
           "content": {
             "application/json": {
@@ -773,7 +773,7 @@
         "tags": [
           "mining-schedule-controller"
         ],
-        "operationId": "get_1",
+        "operationId": "getMiningSchedule",
         "parameters": [
           {
             "name": "id",
@@ -823,7 +823,7 @@
         "tags": [
           "mining-schedule-controller"
         ],
-        "operationId": "update_1",
+        "operationId": "updateMiningSchedule",
         "parameters": [
           {
             "name": "id",
@@ -885,7 +885,7 @@
         "tags": [
           "mining-administration-controller"
         ],
-        "operationId": "get_2",
+        "operationId": "getMiningConfig",
         "responses": {
           "200": {
             "description": "OK",
@@ -924,7 +924,7 @@
         "tags": [
           "mining-administration-controller"
         ],
-        "operationId": "update_2",
+        "operationId": "updateMiningConfig",
         "requestBody": {
           "content": {
             "application/json": {
@@ -976,7 +976,7 @@
           "F06 Recommendations"
         ],
         "summary": "Read effective own-Store versioned rule policy and approved defaults",
-        "operationId": "config_2",
+        "operationId": "getRecommendationConfig",
         "responses": {
           "200": {
             "description": "OK",
@@ -1017,7 +1017,7 @@
         ],
         "summary": "Store Admin updates own-Store policy with expectedVersion",
         "description": "Does not rewrite existing recommendation policy/evidence/review history. Defaults version1; first update produces version2.",
-        "operationId": "config_3",
+        "operationId": "updateRecommendationConfig",
         "requestBody": {
           "content": {
             "application/json": {
@@ -1070,7 +1070,7 @@
         ],
         "summary": "Get a product and batch-derived stock for the authenticated Store",
         "description": "STORE_ADMIN or MERCHANDISER.",
-        "operationId": "get_3",
+        "operationId": "getProduct",
         "parameters": [
           {
             "name": "id",
@@ -1122,7 +1122,7 @@
         ],
         "summary": "Update product information without changing stock",
         "description": "STORE_ADMIN. SKU is generated at create time and remains unchanged. A similar name in this Store returns 409 with code PRODUCT_NAME_CONFIRMATION_REQUIRED; retry with confirmSimilarName=true after user confirmation. Existing batches without expiry prevent enabling requiresExpiry.",
-        "operationId": "update_3",
+        "operationId": "updateProduct",
         "parameters": [
           {
             "name": "id",
@@ -1174,7 +1174,7 @@
         ],
         "summary": "Soft-delete a product of the authenticated Store",
         "description": "STORE_ADMIN of the owning Store only (another Store's, unknown or already deleted product is 404). 409 with {code, error, reason, sellableQuantity, campaigns}: PRODUCT_HAS_SELLABLE_STOCK while ACTIVE, non-expired batches still hold units (a batch expiring today counts), PRODUCT_IN_LIVE_CAMPAIGN while a PUBLISHED or ACTIVE campaign layout (A or B) places the product; the stock code wins when both apply and campaigns is always listed. On success the row is kept (history, snapshots, mining, layouts, SKU), status becomes INACTIVE and the product disappears from catalogue reads before pagination. There is no restore; the SKU is never reused.",
-        "operationId": "delete_1",
+        "operationId": "deleteProduct",
         "parameters": [
           {
             "name": "id",
@@ -1218,7 +1218,7 @@
       "get": {
         "tags": ["F07 Layouts and F08 Campaigns"],
         "summary": "Search products in a Store snapshot with snapshot utility and current placement eligibility",
-        "operationId": "products_2",
+        "operationId": "layoutSnapshotProducts",
         "parameters": [
           {"name": "snapshotId", "in": "query", "required": true, "schema": {"type": "integer", "format": "int32", "exclusiveMinimum": 0}},
           {"name": "q", "in": "query", "required": false, "schema": {"type": "string", "default": ""}},
@@ -1307,7 +1307,7 @@
           "category-controller"
         ],
         "summary": "Get a Store category",
-        "operationId": "get_4",
+        "operationId": "getCategory",
         "parameters": [
           {
             "name": "id",
@@ -1358,7 +1358,7 @@
           "category-controller"
         ],
         "summary": "Update a Store category",
-        "operationId": "update_4",
+        "operationId": "updateCategory",
         "parameters": [
           {
             "name": "id",
@@ -1601,7 +1601,7 @@
         ],
         "summary": "Merchandiser creates a season",
         "description": "name unique per Store (case-insensitive, 409); startDate <= endDate (400); weight in [0,1]. expectedVersion must be absent.",
-        "operationId": "create_1",
+        "operationId": "createSeason",
         "requestBody": {
           "content": {
             "application/json": {
@@ -2046,7 +2046,7 @@
         "tags": [
           "mining-schedule-controller"
         ],
-        "operationId": "list_1",
+        "operationId": "listMiningSchedules",
         "parameters": [
           {
             "name": "page",
@@ -2107,7 +2107,7 @@
         "tags": [
           "mining-schedule-controller"
         ],
-        "operationId": "create_2",
+        "operationId": "createMiningSchedule",
         "requestBody": {
           "content": {
             "application/json": {
@@ -2158,7 +2158,7 @@
         "tags": [
           "mining-system-controller"
         ],
-        "operationId": "create_3",
+        "operationId": "createSystemMiningRequest",
         "requestBody": {
           "content": {
             "application/json": {
@@ -2390,7 +2390,7 @@
         ],
         "summary": "Search and filter products in the authenticated Store",
         "description": "STORE_ADMIN or MERCHANDISER. sortBy supports name, sku, category, unit, costPrice, sellingPrice, status, requiresExpiry and stockQuantity; equal values are ordered by product ID.",
-        "operationId": "list_2",
+        "operationId": "listProducts",
         "parameters": [
           {
             "name": "search",
@@ -2511,7 +2511,7 @@
         ],
         "summary": "Create a product in the authenticated Store; stock is managed through batches",
         "description": "STORE_ADMIN. Product ID and SKU are generated by the backend. A similar name returns 409 with code PRODUCT_NAME_CONFIRMATION_REQUIRED; retry with confirmSimilarName=true after user confirmation.",
-        "operationId": "create_4",
+        "operationId": "createProduct",
         "requestBody": {
           "content": {
             "application/json": {
@@ -2564,7 +2564,7 @@
         ],
         "summary": "List inventory batches for a Store product",
         "description": "STORE_ADMIN only. Every batch carries the computed effectiveStatus (ACTIVE|BLOCKED|EXPIRED), daysToExpiry and warnings; the client never compares dates itself.",
-        "operationId": "list_3",
+        "operationId": "listProductBatches",
         "parameters": [
           {
             "name": "id",
@@ -2619,7 +2619,7 @@
         ],
         "summary": "Receive an inventory batch for a Store product",
         "description": "STORE_ADMIN only. Batch ID and batchCode are generated by the backend; do not send batchCode. It uses receivedAt's Store-local date and the next Product-scoped sequence (minimum three digits). Expiry date is required when the product requires expiry; pushDay must not be after expiryDate. pushDay is optional and is never auto-filled; the response warns with MISSING_PUSH_DAY when an expiry-tracked product's batch has none.",
-        "operationId": "create_5",
+        "operationId": "createProductBatch",
         "parameters": [
           {
             "name": "id",
@@ -2744,7 +2744,7 @@
           "F05 Mining"
         ],
         "summary": "Submit this Store READY snapshot using the current System Admin EFIM/minUtil policy",
-        "operationId": "create_6",
+        "operationId": "createStoreMiningRequest",
         "requestBody": {
           "content": {
             "application/json": {
@@ -2860,7 +2860,7 @@
           "category-controller"
         ],
         "summary": "List categories for the authenticated Store",
-        "operationId": "list_4",
+        "operationId": "listCategories",
         "responses": {
           "200": {
             "description": "OK",
@@ -2903,7 +2903,7 @@
           "category-controller"
         ],
         "summary": "Create a category in the authenticated Store",
-        "operationId": "create_7",
+        "operationId": "createCategory",
         "requestBody": {
           "content": {
             "application/json": {
@@ -4262,7 +4262,7 @@
         ],
         "summary": "Kích hoạt tài khoản được mời",
         "description": "Dành cho nhân viên được quản trị viên mời: nhập email, OTP và mật khẩu mới để kích hoạt.",
-        "operationId": "activate_1",
+        "operationId": "activateAccount",
         "requestBody": {
           "content": {
             "application/json": {
@@ -4446,7 +4446,7 @@
         ],
         "summary": "Get a Store inventory batch",
         "description": "STORE_ADMIN only; foreign Store batches and batches of a soft-deleted product return 404.",
-        "operationId": "get_5",
+        "operationId": "getInventoryBatch",
         "parameters": [
           {
             "name": "id",
@@ -4498,7 +4498,7 @@
         ],
         "summary": "Update remaining quantity, block state and/or expiry date for a Store inventory batch",
         "description": "STORE_ADMIN only. remainingQuantity must be 0..initialQuantity. batchCode, receivedAt and initialQuantity are immutable. Expiry date null/omitted is unchanged; DELETE /api/inventory-batches/{id}/expiry-date clears it when the product does not require expiry. pushDay must not be after expiryDate. An expired batch can still be edited; status accepts only ACTIVE|BLOCKED (EXPIRED is derived, never writable).",
-        "operationId": "update_5",
+        "operationId": "updateInventoryBatch",
         "parameters": [
           {
             "name": "id",
@@ -4561,7 +4561,7 @@
           "category-controller"
         ],
         "summary": "Activate or deactivate a Store category",
-        "operationId": "updateStatus_1",
+        "operationId": "updateCategoryStatus",
         "parameters": [
           {
             "name": "id",
@@ -4624,7 +4624,7 @@
           "utility-snapshot-controller"
         ],
         "summary": "Read frozen snapshot settings without consulting current policy or inventory",
-        "operationId": "get_6",
+        "operationId": "getUtilitySnapshot",
         "parameters": [
           {
             "name": "id",
@@ -4824,7 +4824,7 @@
         ],
         "summary": "Read the current W2 preview of a product in the authenticated Store",
         "description": "U_expiry (FEFO), M(i) from active seasons, current W (2 decimals) and the batches missing a push day. Store-local today; not a frozen historical value.",
-        "operationId": "get_7",
+        "operationId": "getProductScores",
         "parameters": [
           {
             "name": "productId",
@@ -4878,7 +4878,7 @@
         ],
         "summary": "Discover sellable expiry-push batches independently of Mining",
         "description": "Defaults to the current Store-local date. An explicit asOfDate is analytical; recommendations must recheck current eligibility. Ordered FEFO, then productId/batchId. Store scope comes from F01 identity.",
-        "operationId": "list_5",
+        "operationId": "listExpiryPushBatches",
         "parameters": [
           {
             "name": "productId",
@@ -5015,7 +5015,7 @@
           "transaction-controller"
         ],
         "summary": "List sales transactions for the authenticated Store",
-        "operationId": "list_6",
+        "operationId": "listTransactions",
         "parameters": [
           {
             "name": "status",
@@ -5105,7 +5105,7 @@
           "transaction-controller"
         ],
         "summary": "Get one sales transaction and its historical product lines",
-        "operationId": "get_8",
+        "operationId": "getTransaction",
         "parameters": [
           {
             "name": "id",
@@ -5158,7 +5158,7 @@
           "transaction-import-controller"
         ],
         "summary": "List transaction imports for the authenticated Store",
-        "operationId": "list_7",
+        "operationId": "listTransactionImports",
         "parameters": [
           {
             "name": "page",
@@ -5225,7 +5225,7 @@
           "transaction-import-controller"
         ],
         "summary": "Get one transaction import owned by the authenticated Store",
-        "operationId": "get_9",
+        "operationId": "getTransactionImport",
         "parameters": [
           {
             "name": "id",
@@ -6238,7 +6238,7 @@
           "mining-system-controller"
         ],
         "summary": "System Admin: list a Store's mining requests, newest first, including scheduled ones (decision D1)",
-        "operationId": "requests_1",
+        "operationId": "listSystemStoreMiningRequests",
         "parameters": [
           {
             "name": "storeId",
@@ -6729,7 +6729,7 @@
         ],
         "summary": "List candidates; miningRunId scopes deterministic live ranking",
         "description": "Without miningRunId, chronological history; raw utility is never ranked across unrelated snapshots. Filters: snapshotId, type, reviewStatus. Rank evaluated before pagination.",
-        "operationId": "list_8",
+        "operationId": "listRecommendations",
         "parameters": [
           {
             "name": "miningRunId",
@@ -6839,7 +6839,7 @@
         ],
         "summary": "Get immutable evidence, review history and rechecked live eligibility",
         "description": "Downstream must require reviewStatus=APPROVED and readyForConsumption=true at time of use. Inventory is not reserved; recheck again when actually activating/fulfilling.",
-        "operationId": "get_10",
+        "operationId": "getRecommendation",
         "parameters": [
           {
             "name": "id",
@@ -6893,7 +6893,7 @@
         ],
         "summary": "Read current sellable expiry-push batches without Mining",
         "description": "Uses the current Store-local date only; historical asOfDate is rejected. Ordered by expiry date, productId and batchId. checkedAt records this eligibility check, not an inventory reservation.",
-        "operationId": "list_9",
+        "operationId": "listRecommendationExpiryPush",
         "parameters": [
           {
             "name": "productId",
@@ -7042,7 +7042,7 @@
           "F05 Mining"
         ],
         "summary": "List this Store's READY frozen snapshots; numerical eligibility is validated on submission",
-        "operationId": "snapshots_1",
+        "operationId": "listStoreMiningSnapshots",
         "parameters": [
           {
             "name": "page",
@@ -7160,7 +7160,7 @@
         ],
         "summary": "Page raw high-utility patterns by utility descending, canonical Product IDs ascending",
         "description": "Empty while pending/failed; check run status. Utility is frozen weighted utility, not revenue. pageSize controls display only and never changes minUtil. Support is not measured.",
-        "operationId": "patterns_1",
+        "operationId": "listMiningRunPatterns",
         "parameters": [
           {
             "name": "id",
@@ -7233,7 +7233,7 @@
           "F05 Mining"
         ],
         "summary": "Get immutable input provenance and current mining request status",
-        "operationId": "request_1",
+        "operationId": "getStoreMiningRequest",
         "parameters": [
           {
             "name": "id",
@@ -7286,7 +7286,7 @@
           "F05 Mining"
         ],
         "summary": "Get each persisted algorithm run for a request",
-        "operationId": "runs_1",
+        "operationId": "listStoreMiningRequestRuns",
         "parameters": [
           {
             "name": "id",
@@ -7527,7 +7527,7 @@
           "F07 Layouts and F08 Campaigns"
         ],
         "summary": "Preview placements, current recommendation validity, and snapshot utility",
-        "operationId": "preview_1",
+        "operationId": "previewLayout",
         "parameters": [
           {
             "name": "id",
@@ -7658,7 +7658,7 @@
           "F07 Layouts and F08 Campaigns"
         ],
         "summary": "Read the shared layout zones and configured capacities used by F07 and F09",
-        "operationId": "policy_2",
+        "operationId": "getLayoutPolicy",
         "responses": {
           "200": {
             "description": "OK",
@@ -8034,7 +8034,7 @@
       "get" : {
         "tags" : [ "F09 Public Storefront" ],
         "summary" : "Search and page through ACTIVE public products",
-        "operationId" : "products_1",
+        "operationId" : "listStorefrontProducts",
         "parameters" : [ {
           "name" : "storeSlug",
           "in" : "path",
@@ -8962,12 +8962,12 @@
         "additionalProperties": false,
         "properties": {
           "productId": {"type": "integer", "format": "int32"},
-          "zone": {"type": "string", "minLength": 1},
-          "blockNo": {"type": "integer", "format": "int32"},
-          "position": {"type": "integer", "format": "int32"},
-          "sourceRecommendationId": {"type": "integer", "format": "int64"}
+          "zone": {"type": "string", "minLength": 1, "enum": ["BANNER", "BUNDLE", "CROSS_SELL", "FBT"]},
+          "blockNo": {"type": "integer", "format": "int32", "minimum": 1},
+          "position": {"type": "integer", "format": "int32", "minimum": 1},
+          "sourceRecommendationId": {"type": ["integer", "null"], "format": "int64", "description": "F06 source recommendation; null means manually added"}
         },
-        "required": ["productId", "zone"]
+        "required": ["blockNo", "position", "productId", "zone"]
       },
       "SnapshotProductOption": {
         "type": "object",
@@ -9092,14 +9092,15 @@
             "format": "int32"
           },
           "recommendationId": {
-            "type": "integer",
+            "type": ["integer", "null"],
             "format": "int64",
             "description": "Legacy alias of sourceRecommendationId; null means manually added",
             "deprecated": true
           },
           "sourceRecommendationId": {
-            "type": "integer",
-            "format": "int64"
+            "type": ["integer", "null"],
+            "format": "int64",
+            "description": "F06 source recommendation; null means manually added"
           },
           "recommendationType": {
             "type": "string",

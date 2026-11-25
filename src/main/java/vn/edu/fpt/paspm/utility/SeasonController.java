@@ -23,7 +23,7 @@ public class SeasonController {
     @Operation(summary="Read one season of the authenticated Store; another Store's season is 404")
     public SeasonView get(@AuthenticationPrincipal Jwt jwt,@PathVariable int seasonId) { return service.get(jwt,seasonId); }
     @PostMapping @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary="Merchandiser creates a season",description="name unique per Store (case-insensitive, 409); startDate <= endDate (400); weight in [0,1]. expectedVersion must be absent.")
+    @Operation(operationId="createSeason", summary="Merchandiser creates a season",description="name unique per Store (case-insensitive, 409); startDate <= endDate (400); weight in [0,1]. expectedVersion must be absent.")
     public SeasonView create(@AuthenticationPrincipal Jwt jwt,@Valid @RequestBody SeasonRequest request) { return service.create(jwt,request); }
     @PutMapping("/{seasonId}")
     @Operation(summary="Merchandiser updates a season",description="Requires expectedVersion (409 on mismatch). Existing snapshots keep their own copy of the season.")

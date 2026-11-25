@@ -18,7 +18,7 @@ Canonical contract locations stay stable in this directory. `CURRENT` describes 
 
 [OpenAPI export](openapi.json) matches the runtime document from dev at `cded4ab`: **112 paths / 139 operations**. The generated server URL, `http://localhost:8080`, is the export test origin. Use the deployment's base URL for integration and the [RBAC matrix](F01_F02_RBAC_MATRIX.md) for role checks. Historical counts below describe their dated checkpoints. See the [API changelog](API_CHANGELOG.md).
 
-The CSV async `Idempotency-Key` header remains required and its schema now shows `minLength: 1`. The F07 export reflects the generated snapshot-product operation ID, placement schemas and response metadata. Use the [F07/F08 contract](F07_F08_LAYOUT_CAMPAIGN_API.md) for validation and nullable provenance that Springdoc omits.
+The CSV async `Idempotency-Key` header remains required and its schema now shows `minLength: 1`. F07 snapshot-product search uses the explicit operation ID `layoutSnapshotProducts`. The export documents the allowed B zones, positive placement coordinates and nullable provenance. See the [F07/F08 contract](F07_F08_LAYOUT_CAMPAIGN_API.md).
 
 ## 2026-11-25 F09 Storefront merge export
 

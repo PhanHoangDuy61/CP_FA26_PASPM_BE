@@ -1,5 +1,6 @@
 package vn.edu.fpt.paspm.mining;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
@@ -33,9 +34,11 @@ public class MiningAdministrationController {
         MiningEngine.Algorithm algorithm, MiningContracts.MinUtilMode minUtilMode,
         BigDecimal minUtilValue, Integer changedBy, Instant changedAt) {}
     @GetMapping
+    @Operation(operationId = "getMiningConfig")
     @Transactional(readOnly=true)
     public View get() { return read(); }
     @PutMapping
+    @Operation(operationId = "updateMiningConfig")
     @Transactional
     public View update(@AuthenticationPrincipal Jwt jwt,@Valid @RequestBody Request request) {
         if(request.minUtilMode()==MiningContracts.MinUtilMode.PERCENTAGE && request.minUtilValue().compareTo(BigDecimal.valueOf(100))>0)

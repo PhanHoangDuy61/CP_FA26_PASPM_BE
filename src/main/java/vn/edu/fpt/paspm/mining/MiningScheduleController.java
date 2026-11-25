@@ -1,5 +1,6 @@
 package vn.edu.fpt.paspm.mining;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
@@ -34,15 +35,19 @@ public class MiningScheduleController {
         long configVersion,Integer actorId,LocalDate rangeStart,LocalDate rangeEnd,LocalDate analysisDate,String timeZone,
         @Schema(description="Legacy stored value, retained for history only; the occurrence runs EFIM without comparison.",types={"boolean","null"}) Boolean compareAlgorithms,Integer snapshotId,Long requestId,@Schema(allowableValues={"PENDING","PROCESSING","DISPATCHED","COMPLETED","FAILED","SKIPPED"}) String status,String failureCode,@Schema(description="Actionable final cause of a FAILED occurrence (decision D7); null otherwise.",nullable=true) String failureMessage,@Schema(description="Set only for SKIPPED: a missed fire time superseded by a later one (decision D6).",nullable=true) String skipReason,int attemptCount,Instant nextRetryAt,Instant createdAt,Instant updatedAt) {}
     @PostMapping @ResponseStatus(HttpStatus.CREATED)
+    @Operation(operationId = "createMiningSchedule")
     public View create(@AuthenticationPrincipal Jwt jwt,@Valid @RequestBody Request request){return service.create(jwt,request);}
     @GetMapping
+    @Operation(operationId = "listMiningSchedules")
     public MiningContracts.Page<View> list(@RequestParam(defaultValue="0") int page,@RequestParam(defaultValue="20") int pageSize){return service.list(page,pageSize);}
     @GetMapping("/{id}")
+    @Operation(operationId = "getMiningSchedule")
     public View get(@PathVariable long id){return service.get(id);}
     @GetMapping("/{id}/occurrences")
     public MiningContracts.Page<OccurrenceView> occurrences(@PathVariable long id,@RequestParam(defaultValue="0") int page,@RequestParam(defaultValue="20") int pageSize){return service.occurrences(id,page,pageSize);}
     @GetMapping("/{id}/occurrences/{occurrenceId}")
     public OccurrenceView occurrence(@PathVariable long id,@PathVariable long occurrenceId){return service.occurrence(id,occurrenceId);}
     @PutMapping("/{id}")
+    @Operation(operationId = "updateMiningSchedule")
     public View update(@AuthenticationPrincipal Jwt jwt,@PathVariable long id,@Valid @RequestBody Update request){return service.update(jwt,id,request);}
 }

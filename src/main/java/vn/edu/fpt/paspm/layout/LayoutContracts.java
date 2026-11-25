@@ -33,9 +33,11 @@ public final class LayoutContracts {
     @Schema(additionalProperties = Schema.AdditionalPropertiesValue.FALSE)
     public record PlacementRequest(
             @NotNull @Positive @JsonDeserialize(using = StrictIntegerDeserializer.class) Integer productId,
+            @Schema(allowableValues = {"BANNER", "BUNDLE", "CROSS_SELL", "FBT"})
             @NotBlank String zone,
-            @Positive int blockNo,
-            @Positive int position,
+            @Schema(requiredMode = Schema.RequiredMode.REQUIRED, minimum = "1") @Positive int blockNo,
+            @Schema(requiredMode = Schema.RequiredMode.REQUIRED, minimum = "1") @Positive int position,
+            @Schema(types = {"integer", "null"}, description = "F06 source recommendation; null means manually added")
             @Positive Long sourceRecommendationId) {}
 
     @Schema(additionalProperties = Schema.AdditionalPropertiesValue.FALSE)
@@ -61,8 +63,11 @@ public final class LayoutContracts {
             LayoutStatus status, long version, String name, Instant createdAt, Instant updatedAt) {}
 
     public record PlacementView(Integer productId,
-            @Schema(deprecated = true, description = "Legacy alias of sourceRecommendationId; null means manually added")
-            Long recommendationId, Long sourceRecommendationId, RecType recommendationType,
+            @Schema(types = {"integer", "null"}, deprecated = true,
+                    description = "Legacy alias of sourceRecommendationId; null means manually added")
+            Long recommendationId,
+            @Schema(types = {"integer", "null"}, description = "F06 source recommendation; null means manually added")
+            Long sourceRecommendationId, RecType recommendationType,
             String sku, String productName, String zone, int blockNo, int position,
             BigDecimal snapshotWeightedUtility, boolean valid, List<String> validationErrors) {}
 

@@ -19,19 +19,19 @@ import vn.edu.fpt.paspm.utility.UtilityMatrixContracts.SnapshotView;
 public class MiningController {
     private final MiningService service;
     public MiningController(MiningService service){this.service=service;}
-    @GetMapping("/snapshots") @Operation(summary="List this Store's READY frozen snapshots; numerical eligibility is validated on submission")
+    @GetMapping("/snapshots") @Operation(operationId="listStoreMiningSnapshots", summary="List this Store's READY frozen snapshots; numerical eligibility is validated on submission")
     public Page<SnapshotView> snapshots(@AuthenticationPrincipal Jwt jwt,@RequestParam(defaultValue="0") int page,@RequestParam(defaultValue="20") int pageSize){return service.snapshots(jwt,page,pageSize);}
     @PostMapping("/requests") @ResponseStatus(HttpStatus.ACCEPTED) @PreAuthorize("hasRole('MERCHANDISER')")
-    @Operation(summary="Submit this Store READY snapshot using the current System Admin EFIM/minUtil policy")
+    @Operation(operationId="createStoreMiningRequest", summary="Submit this Store READY snapshot using the current System Admin EFIM/minUtil policy")
     public RequestView create(@AuthenticationPrincipal Jwt jwt,@Valid @RequestBody StoreCreateRequest request){return service.createMerchandiser(jwt,request);}
     @GetMapping("/requests") @Operation(summary="List this Store's mining requests, newest first")
     public Page<RequestView> requests(@AuthenticationPrincipal Jwt jwt,@RequestParam(defaultValue="0") int page,@RequestParam(defaultValue="20") int pageSize){return service.requests(jwt,page,pageSize);}
-    @GetMapping("/requests/{id}") @Operation(summary="Get immutable input provenance and current mining request status")
+    @GetMapping("/requests/{id}") @Operation(operationId="getStoreMiningRequest", summary="Get immutable input provenance and current mining request status")
     public RequestView request(@AuthenticationPrincipal Jwt jwt,@PathVariable long id){return service.request(jwt,id);}
-    @GetMapping("/requests/{id}/runs") @Operation(summary="Get each persisted algorithm run for a request")
+    @GetMapping("/requests/{id}/runs") @Operation(operationId="listStoreMiningRequestRuns", summary="Get each persisted algorithm run for a request")
     public List<RunView> runs(@AuthenticationPrincipal Jwt jwt,@PathVariable long id){return service.runs(jwt,id);}
     @GetMapping("/runs/{id}") @Operation(summary="Get run status, measured metrics and sanitized failure information")
     public RunView run(@AuthenticationPrincipal Jwt jwt,@PathVariable long id){return service.run(jwt,id);}
-    @GetMapping("/runs/{id}/patterns") @Operation(summary="Page raw high-utility patterns by utility descending, canonical Product IDs ascending",description="Empty while pending/failed; check run status. Utility is frozen weighted utility, not revenue. pageSize controls display only and never changes minUtil. Support is not measured.")
+    @GetMapping("/runs/{id}/patterns") @Operation(operationId="listMiningRunPatterns", summary="Page raw high-utility patterns by utility descending, canonical Product IDs ascending",description="Empty while pending/failed; check run status. Utility is frozen weighted utility, not revenue. pageSize controls display only and never changes minUtil. Support is not measured.")
     public Page<PatternView> patterns(@AuthenticationPrincipal Jwt jwt,@PathVariable long id,@RequestParam(defaultValue="0") int page,@RequestParam(defaultValue="20") int pageSize){return service.patterns(jwt,id,page,pageSize);}
 }
