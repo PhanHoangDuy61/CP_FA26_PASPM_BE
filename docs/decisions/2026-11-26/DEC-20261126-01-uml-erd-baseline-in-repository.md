@@ -16,4 +16,4 @@
 ## Consequences
 - The sentence "only as an uncommitted working copy" in DEC-20261119-02, in `ARCHITECTURE_SDD.md` §9 and in the BRD decision log is replaced by this DEC.
 - The 2.8 MB review PDF and the 2026-11-04 review package of the old branch `Khoi/docs/diagrams-final-clean` are **not** landed.
-- Mermaid files under `docs/diagrams/mermaid/` are mirrors. They are updated in the same commit as the draw.io page they mirror when the mirror exists, and otherwise listed in the record as not updated.
+- Mermaid files under `docs/diagrams/` (`mermaid/`, the top-level `*.mmd` and `rendered/`) are **ARCHIVED** mirrors (PO decision of 2026-11-26): outdated, not regenerated, not a source. The source of truth is the `.drawio` files and their exported images.

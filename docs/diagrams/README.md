@@ -1,6 +1,8 @@
 # Diagrams and Database Models
 
-## Review 2 Mermaid pack — final diagrams (`mermaid/`)
+> **Source of truth: the `.drawio` files and their exported images.** [`PASPM_Unified_UML2_Editable.drawio`](PASPM_Unified_UML2_Editable.drawio) (UML, 42 pages) and [`PASPM_ERD_V1_V30.drawio`](PASPM_ERD_V1_V30.drawio) (ERD, 9 pages) follow `dev`. Every Mermaid file in this folder (`mermaid/`, the top-level `*.mmd` and `rendered/`) is an **ARCHIVED**, outdated mirror (mostly Flyway V1–V19) and is no longer maintained or regenerated (PO decision of 2026-11-26).
+
+## Review 2 Mermaid pack (`mermaid/`) — ARCHIVED
 
 The files in [`mermaid/`](mermaid/) were transcribed on 2026-11-04 from the **final clean** draw.io diagrams (the 36-page UML pack, and an ERD file `PASPM_ERD_V1_V19_clean.drawio`, SHA-256 `64f9c7e712b8dfa2e3d81ac8f2c07167807f982470fa33be175330f300014c3a`, that was not kept in this repository and is superseded by [`PASPM_ERD_V1_V30.drawio`](PASPM_ERD_V1_V30.drawio)). They are mirrors: the draw.io files are the source, and a mirror may lag behind the page it mirrors. Names, states, transitions, guards, actors and steps follow the draw.io pages; nothing was added or dropped. SVG renders are in [`mermaid/rendered/`](mermaid/rendered/) (Mermaid CLI 12.2.0). The draw.io files remain the master; the figure numbers are those of Report 4 (SDD) and Report 3 (SRS) in `docs/review-2/`.
 
@@ -54,7 +56,7 @@ Kept unchanged as history; **do not use them for Review 2**. Comparison with the
 
 > **2026-11-15:** the drawings do not yet show V24 (mining progress) or V25 (F03 Weight v2: seasons, push day, versioned JSON). The pages to redraw are listed in [F03 W2 schema notes](../architecture/F03_W2_SCHEMA_V24_V25.md#diagram-pages-that-must-be-redrawn-not-edited-in-this-pass).
 
-## Editable UML 2.0 pack (36 pages) — current
+## Editable UML 2.0 pack (42 pages) — current
 
 [`PASPM_Unified_UML2_Editable.drawio`](PASPM_Unified_UML2_Editable.drawio) is the maintained, editable source (open with diagrams.net). It has **42 pages** (DEC-20261126-01): the 27 core diagrams, the R2-05 Package Diagram, eight class diagrams R2-07.01–08, the Store management pages (AD09, R2-06.07, R2-08.09, R2-07.09) and the pages AD10 and AD11. The file was renamed from `PASPM_Unified_27_Diagrams_UML2_Editable.drawio` on 2026-11-26 because the old name no longer matched the page count; every link was updated.
 
