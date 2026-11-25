@@ -7,7 +7,7 @@
 | Agent | Claude Code (Claude Opus 5.5), requested by Nguyễn Minh Khôi |
 | Type | Implementation / Database / Documentation |
 | Features | F09 (with F01 Store management, F02 product, F07/F08 layouts) |
-| Branch / base HEAD | `Khoi/merge/f09-storefront-be`, created from `origin/Duy/Feature/F09_Storefront` @ `0107582` (Duy Phan, 2026-11-21) merged with `origin/dev` @ `82b0ced`, then again with `origin/dev` @ `516183d` (which already contained the old F09 merge `68d6f0b`) |
+| Branch / base HEAD | `Khoi/merge/f09-storefront-be`, created from `origin/Duy/Feature/F09_Storefront` @ `0107582` (Duy Phan, 2026-11-21) merged with `origin/dev` @ `82b0ced`, then again with `origin/dev` @ `516183d` (which already contained the old F09 merge `68d6f0b`), then with `origin/dev` @ `2d1280b` (PR #30, seed/SKU) |
 | Execution status | COMPLETED |
 | Release status | PR_OPEN pending (no PR opened by the agent) |
 | Daily summary | [README](README.md) |
@@ -94,6 +94,10 @@ PO decision (addendum "Migrations" of [DEC-20261125-04](../../decisions/2026-11-
 | Second merge: Flyway **fresh** V1→V30 with the branch's compiled classes (Flyway API, `classpath:db/migration`) | disposable `mysql:8.4` (8.4.13), empty schema | PASS — 30 applied; `store` has `slug` only (`uk_store_slug`), no `store_slug`/`storefront_enabled`/`uq_store_store_slug`; `product.image_url varchar(2048)`, `description text`; validate OK | local console |
 | Second merge: Flyway **upgrade** — `origin/dev` `516183d` compiled classes to V28, insert 2 Stores + 2 products, `origin/dev` V28→V29 (backfills `store_slug`), insert 2 more Stores + products with `image_url`/`description`, set `storefront_enabled`; then branch classes V29→V30 | same container, second schema | PASS — 1 migration applied (V30); V29 history row (checksum null, Java) still valid; 4 Stores and 4 products unchanged (slug, status, image_url, description); old columns and index gone; column set identical to the fresh schema (487 columns) | local console |
 | Second merge: runtime OpenAPI export | Temurin 17.0.21, H2 | PASS — 112 paths / 139 operations; only F09 differences applied to `dev`'s file | `docs/api/openapi.json` |
+| **Third merge (dev `2d1280b`, PR #30 seed/SKU):** only conflict `docs/record-of-changes/2026-11-25/README.md`, kept both (records 001, 002, 004, 005, 006). Checked: one V29 (`dev`'s, no diff), V30 present, `StoreSlug` kept, no V30+ on any other `origin/*` branch | — | done | git |
+| Third merge: `sh mvnw -B clean test -Dtest=MigrationVersioningTest,StorefrontIntegrationTest,LayoutCampaignIntegrationTest` | Temurin 17.0.21, H2 | PASS — 28 tests (4 + 7 + 17), 0 failures, 0 errors, 0 skipped | local console |
+| Third merge: `sh mvnw -B clean verify -Dtest="$(python3 .github/scripts/test-groups.py backend)"` | same | PASS — 466 tests, 0 failures, 0 errors, 0 skipped, 67 classes, BUILD SUCCESS | local console |
+| Third merge: MySQL Flyway fresh/upgrade | — | NOT RE-RUN (PR #30 adds no migration; V1–V30 unchanged since the second-merge run) | — |
 | `mysql` CI group, full `integration` suite | — | NOT RUN (by request) | — |
 
 `sh mvnw` was used because `mvnw` is mode 100644 in git; the file mode was not changed.

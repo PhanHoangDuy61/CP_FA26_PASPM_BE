@@ -1,6 +1,9 @@
 services:
   mysql:
     image: mysql:8.4
+    # Migration V11 creates triggers. The non-root application user paspm has no SUPER privilege and MySQL 8.4 enables
+    # binary logging, so without this flag Flyway stops with "You do not have the SUPER privilege and binary logging is enabled".
+    command: ["--log-bin-trust-function-creators=1"]
     environment:
       MYSQL_DATABASE: paspm
       MYSQL_USER: paspm

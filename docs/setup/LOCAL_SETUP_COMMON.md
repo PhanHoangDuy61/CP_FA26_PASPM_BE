@@ -35,6 +35,36 @@ Compose reads `.env`; Spring Boot does **not** automatically import it. `.env` i
 
 Current worker capacity is one active request and eight queued per instance; polling is one second, lease 30 seconds, heartbeat five seconds. These values are currently constants, not supported environment settings. Linux Docker process supervision is under verification; Windows/macOS development does not have the Linux parent-death guarantee. Scheduler activation is deliberately **503**, not a setup error. Successful startup does not certify scheduler or process-recovery acceptance.
 
+## MySQL runs with `--log-bin-trust-function-creators=1`
+
+Migration V11 creates triggers. The application user `paspm` has no `SUPER` privilege and MySQL 8.4 enables binary logging, so MySQL must run with this server option; without it Flyway stops at V11 with `You do not have the SUPER privilege and binary logging is enabled` (Error 1419) and the Backend does not start.
+
+**With Compose, nothing to do:** the option is already in the `mysql` service of `compose.yml` (`command: ["--log-bin-trust-function-creators=1"]`). If you started MySQL from an older `compose.yml`, run `docker compose up -d mysql mailpit` again: Compose recreates the container with the option, and your named volume `paspm_mysql` and its data are kept. Check it with `docker compose exec mysql mysql -uroot -p -e "SELECT @@log_bin_trust_function_creators"` (enter `MYSQL_ROOT_PASSWORD`; the value must be `1`).
+
+**Without Compose (plain `docker run`, a disposable database).** Pass the option after the image name. Replace the two passwords with local-only values.
+
+macOS / Linux (bash, zsh):
+
+```bash
+docker run -d --name paspm-mysql -p 127.0.0.1:3306:3306 \
+  -e MYSQL_ROOT_PASSWORD=<local-root-password> -e MYSQL_DATABASE=paspm \
+  -e MYSQL_USER=paspm -e MYSQL_PASSWORD=<local-db-password> \
+  mysql:8.4 --log-bin-trust-function-creators=1
+```
+
+Windows (PowerShell):
+
+```powershell
+docker run -d --name paspm-mysql -p 127.0.0.1:3306:3306 `
+  -e MYSQL_ROOT_PASSWORD=<local-root-password> -e MYSQL_DATABASE=paspm `
+  -e MYSQL_USER=paspm -e MYSQL_PASSWORD=<local-db-password> `
+  mysql:8.4 --log-bin-trust-function-creators=1
+```
+
+Tests that create their own disposable MySQL (`-Dpaspm.test.mysql=true`) connect as root and do not need the option.
+
+If the Backend already failed at V11 on your local database, the migration may be half applied. For a disposable local database follow the reset in [troubleshooting](LOCAL_SETUP_TROUBLESHOOTING.md#safe-fix--local-disposable-compose-database-only); otherwise ask before touching it.
+
 ## Flyway, accounts and verification
 
 Flyway runs automatically on Backend startup; the current mainline schema (after the P5/P6 merge, 2026-11-16) includes **V1–V26** (V11, V25 and V26 are Java migrations in `src/main/java/db/migration/`). V20 adds F01 refresh sessions and V21 their CSRF binding; F05 migrations are V9, V13–V19 and V24; V12 is F04 `f04_preserve_large_raw_import_rows`. Added after V21:
