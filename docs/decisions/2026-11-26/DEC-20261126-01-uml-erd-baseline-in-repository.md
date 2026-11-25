@@ -9,7 +9,7 @@
 
 ## Decision
 1. `docs/diagrams/PASPM_Unified_27_Diagrams_UML2_Editable.drawio` holds the **36-page** pack (27 core diagrams, R2-05 Package Diagram, eight class diagrams R2-07.01–08), later extended by the Store management pages. The file keeps its old name so that links stay valid; the name no longer states the page count.
-2. The ERD baseline is `docs/diagrams/PASPM_ERD_V1_V26.drawio` when landed, and is renamed after each phase to its last Flyway version (`PASPM_ERD_V1_V28.drawio` after the Store phase, and so on). It replaces `PASPM_ERD_V1_V19_clean.drawio`, which was never committed to this repository.
+2. The ERD baseline is `docs/diagrams/PASPM_ERD_V1_V26.drawio` when landed, and is renamed after each phase to its last Flyway version (`PASPM_ERD_V1_V30.drawio` after the Store phase, and so on). It replaces `PASPM_ERD_V1_V19_clean.drawio`, which was never committed to this repository.
 3. The pack is then brought to the state of `dev` one phase at a time (Store V27, F02 V28, F09 V29/V30, EFIM-only and Weight v2, F07/F08, F10/F11 and SPMF), as one commit per phase, with a record in `docs/record-of-changes/2026-11-26/`.
 4. The source of truth for diagram content is the code on `dev` and the DEC files; the latest PO decision wins (DEC-20261125-02).
 

@@ -273,7 +273,7 @@ flowchart LR
 Two Draw.io files make up the baseline (DEC-20261126-01):
 
 - **`PASPM_Unified_27_Diagrams_UML2_Editable.drawio`**: the **36-page** pack committed at `docs/diagrams/` (27 core diagrams, R2-05 Package Diagram and 8 class diagrams R2-07.01–08). The old 27-page copy was replaced; the file name is kept. The Store management pages (AD09, R2-06.07, R2-08.09, R2-07.09) extend it to 40 pages.
-- **`PASPM_ERD_V1_V28.drawio`** (`docs/diagrams/`, named after its last Flyway version), with 9 pages: Logical ERD, Conceptual ERD and 7 area diagrams. It replaces the V1–V19 file, which was never committed.
+- **`PASPM_ERD_V1_V30.drawio`** (`docs/diagrams/`, named after its last Flyway version), with 9 pages: Logical ERD, Conceptual ERD and 7 area diagrams. It replaces the V1–V19 file, which was never committed.
 
 The tables below were written against the V1–V19 state and `dev` @ `530651b`; the diagram records of 2026-11-26 list which rows each phase closed.
 
