@@ -1,6 +1,6 @@
 # 27-page UML 2.0 diagram audit — 2026-11-02
 
-File: [`docs/diagrams/PASPM_Unified_UML2_Editable.drawio`](../diagrams/PASPM_Unified_UML2_Editable.drawio) (editable diagrams.net source, 27 pages, page ids unchanged). Baseline code: `dev` @ `11973a0` (tree identical to the verified Core commit `a4f1115`). Starting point: branch `Khoi/docs/diagrams-27-uml2-f03-f05-sync` (`ae55fd9`, itself derived from `3e369f0`), imported file-by-file; neither old branch was modified. Notation reference: `uml2_diagrams.pdf` (33 pages, read in full: activity, state machine, sequence with combined fragments, use case with include/extend, component and deployment notation).
+File: [`docs/diagrams/PASPM_Unified_27_Diagrams_UML2_Editable.drawio`](../diagrams/PASPM_Unified_27_Diagrams_UML2_Editable.drawio) (editable diagrams.net source, 27 pages, page ids unchanged). Baseline code: `dev` @ `11973a0` (tree identical to the verified Core commit `a4f1115`). Starting point: branch `Khoi/docs/diagrams-27-uml2-f03-f05-sync` (`ae55fd9`, itself derived from `3e369f0`), imported file-by-file; neither old branch was modified. Notation reference: `uml2_diagrams.pdf` (33 pages, read in full: activity, state machine, sequence with combined fragments, use case with include/extend, component and deployment notation).
 
 ## How each page was judged
 1. Text and connectors extracted from the XML and compared with the controllers, `SecurityConfig`, DTOs, status constraints in the Flyway SQL and the worker/lease code.

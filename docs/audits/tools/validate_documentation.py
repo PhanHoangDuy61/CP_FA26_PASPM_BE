@@ -156,7 +156,7 @@ def main():
     originals = {r['finalPath'] for r in mapping['records']} | {root['archived']}
     for name in paths:
         if name not in originals and name.endswith(('.md', '.json')):
-            if re.search(r'(?:\x2fUsers\x2f[^\s"\']+|\x2fprivate\x2ftmp\x2f[^\s"\']+)', (repo / name).read_text()):
+            if re.search(r'(?:/Users/[^\s"\']+|/private/tmp/[^\s"\']+)', (repo / name).read_text()):
                 failures.append({'check': 'private_workstation_path_in_new_file', 'path': name})
     result = {
         'executedAt': datetime.now(ZoneInfo('Asia/Ho_Chi_Minh')).isoformat(timespec='seconds'),

@@ -17,7 +17,6 @@ public class MiningRepository {
     private final UtilitySettingsRepository json;
     private final MiningDispatchLease leases;
     public MiningRepository(JdbcTemplate jdbc,UtilitySettingsRepository json,MiningDispatchLease leases){this.jdbc=jdbc;this.json=json;this.leases=leases;}
-    vn.edu.fpt.paspm.utility.UtilityVersionedContracts.LambdaV2 lambdaPolicyForUpdate(){return json.policy(true);}
     record Stored(RequestView view,MiningInputBuilder.Dataset input,String payloadHash) {}
     Stored find(int store,long id){return jdbc.query("SELECT * FROM mining_request WHERE store_id=? AND request_id=?",this::stored,store,id).stream().findFirst().orElseThrow(()->new ApiException(404,"Mining request not found"));}
     Stored byKey(int store,UUID key){return jdbc.query("SELECT * FROM mining_request WHERE store_id=? AND request_key=?",this::stored,store,key.toString()).stream().findFirst().orElse(null);}
@@ -30,7 +29,7 @@ public class MiningRepository {
     }
     Stored create(int store,int actor,CreateRequest request,String payloadHash,SnapshotView snapshot,MiningInputBuilder.Dataset input,int threshold){
         String algorithms=request.algorithms().stream().sorted().map(Enum::name).collect(java.util.stream.Collectors.joining(","));
-        long id=insert("INSERT INTO mining_request(store_id,requested_by,utility_snapshot_id,request_key,payload_hash,algorithms,min_util_mode,min_util_value,min_util_spmf,input_snapshot_hash,frozen_input,utility_config_snapshot,comparison_status,stage,stage_started_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,'QUEUED',CURRENT_TIMESTAMP)","request_id",store,actor,snapshot.snapshotId(),request.requestKey().toString(),payloadHash,algorithms,request.minUtilMode().name(),request.minUtilValue(),threshold,input.hash(),json.write(input),json.write(snapshot),request.algorithms().size()==2?"PENDING":"NOT_REQUESTED");
+        long id=insert("INSERT INTO mining_request(store_id,requested_by,utility_snapshot_id,request_key,payload_hash,algorithms,min_util_mode,min_util_value,min_util_spmf,input_snapshot_hash,frozen_input,utility_config_snapshot,comparison_status) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)","request_id",store,actor,snapshot.snapshotId(),request.requestKey().toString(),payloadHash,algorithms,request.minUtilMode().name(),request.minUtilValue(),threshold,input.hash(),json.write(input),json.write(snapshot),request.algorithms().size()==2?"PENDING":"NOT_REQUESTED");
         for(var algorithm:request.algorithms().stream().sorted().toList())jdbc.update("INSERT INTO mining_run(store_id,request_id,algorithm,library_version,conversion_version,memory_method,runtime_method) VALUES (?,?,?,?,?,?,?)",store,id,algorithm.name(),SpmfMiningEngine.VERSION,input.conversionVersion(),SpmfMiningEngine.MEMORY_METHOD,SpmfMiningEngine.RUNTIME_METHOD);
         return find(store,id);
     }

@@ -59,7 +59,7 @@ F04 P0 code, migration, F03 adapter, API contract, handoff, sample CSV and runti
 - [x] Run the migration test before V7; it failed at `SELECT COUNT(*) FROM import_batch` because the table did not exist.
 - [x] Create V7 with `api_connection` metadata fields exactly matching the approved ERD (`connection_id`, `store_id`, `name`, `base_url`, nullable `secret_reference`, `status`, nullable `last_synced_at`); add Store-scoped import metadata; row `source_order_id`, `row_number`, raw payload, status/errors and optional resolved Product/transaction/item references; transaction status, eligibility and canonical hash; transaction item historical quantity, unit price and unit cost.
 - [x] Keep FKs restrictive for auditability; add unique `(import_batch_id,row_number)`, `(store_id,source_system,source_order_id)`, and indexes for `(store_id,started_at)`, `(import_batch_id,status)`, and `(store_id,occurred_at,transaction_id)`; add composite Store FKs for staging/item traceability.
-- [x] Run `mvn -q -Dpaspm.avatar.directory=<temporary-dir>/paspm-f04-test-avatars -Dtest=TransactionImportSchemaTest#flywayCreatesStoreScopedImportAndTransactionTables test`; H2 MySQL mode migrated through V7 and assertions passed.
+- [x] Run `mvn -q -Dpaspm.avatar.directory=/private/tmp/paspm-f04-test-avatars -Dtest=TransactionImportSchemaTest#flywayCreatesStoreScopedImportAndTransactionTables test`; H2 MySQL mode migrated through V7 and assertions passed.
 
 ## Task 2: Implement and test the bounded RFC 4180 CSV parser
 

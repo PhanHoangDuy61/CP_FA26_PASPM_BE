@@ -17,7 +17,7 @@ Approved policy package: explicit user reply “Duyệt bộ đề xuất trên�
 | Rule version | F06_RULES_V1_1; policy version1 defaults, first update version2 |
 | Policy ownership | Own-Store STORE_ADMIN config write; MERCHANDISER/STORE_ADMIN read; only MERCHANDISER generate/approve/reject; SystemAdmin/Customer no management access |
 
-Store Admin may update the full policy with expectedVersion: maxBundleSize integer2..256 (an independent F06 bundle-size policy bound; it is not the F05 mining-input product limit), minSupportCount integer>=1, minSupportRatio/minConfidence decimal0..1 with <=6 fractional digits, minimumSellableQuantity integer>=1. Initial values are4/2/0.05/0.50/1. Policies are captured on candidates and do not rewrite past evidence or decisions. No business threshold remains unresolved.
+Store Admin may update the full policy with expectedVersion: maxBundleSize integer2..256 (256 is F05 technical item limit), minSupportCount integer>=1, minSupportRatio/minConfidence decimal0..1 with <=6 fractional digits, minimumSellableQuantity integer>=1. Initial values are4/2/0.05/0.50/1. Policies are captured on candidates and do not rewrite past evidence or decisions. No business threshold remains unresolved.
 
 ## Immutable source and transaction evidence
 

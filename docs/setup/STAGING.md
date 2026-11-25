@@ -25,7 +25,7 @@ Files used (all in the repository root unless noted):
 * `git`, `curl`, `python3` (3.9+, used by the seed script), `gzip`.
 * To build on the server: JDK **17** (Temurin) and Maven 3.9. Alternatively build the JAR elsewhere and copy
   `target/paspm-backend-0.1.0.jar` to the same path on the server (use `--skip-jar`).
-* The approved **SPMF 2.67a** `spmf.jar` (GPL v3, from the GitHub Release `spmf-2.67a`), SHA-256 `4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a`
+* The approved **SPMF 2.67a** `spmf.jar`, SHA-256 `4aa468384693b2016b457ea310a08cc24aa83abd42d3169ad65b9027778dfe6a`
   (the build refuses any other file; see `docs/setup/F05_SPMF_RUNTIME_SETUP.md` and `.github/scripts/provision-spmf.py`).
 * Internet access to Docker Hub for `mysql:8.4`, `axllent/mailpit:v1.27.8`, `eclipse-temurin:17-jre-jammy` and
   `eclipse-temurin:25-jre-jammy`.
@@ -69,7 +69,7 @@ scripts/staging/build-image.sh "$TAG"          # add --skip-jar to reuse target/
 
 The script runs `mvn -DskipTests package` (tests are run separately by CI and `mvn verify`), copies the Linux **Java 25** JRE out of
 `eclipse-temurin:25-jre-jammy`, verifies the SPMF checksum and runs `docker build` with the two named contexts the Dockerfile
-expects (`java25`, `spmf`). The image is built for **linux/amd64** by default (`PLATFORM=linux/arm64` overrides it; on a host of another architecture the `RUN` steps run under emulation), the script checks the image architecture, lists `/opt/paspm/licenses` and verifies the SPMF banner inside the image (`SKIP_SMOKE=1` skips that last run). The SPMF jar comes from the Release `spmf-2.67a` ([THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md)): download it and check the SHA-256 before you build. Then set
+expects (`java25`, `spmf`). The architecture is that of the build host (use `PLATFORM=linux/amd64` to force it). Then set
 `PASPM_BACKEND_IMAGE=paspm-backend:$TAG` in `.env`.
 
 ## 4. Start the services
@@ -81,7 +81,7 @@ docker compose -f compose.yml -f compose.backend.yml -f compose.staging.yml up -
 docker compose -f compose.yml -f compose.backend.yml -f compose.staging.yml ps
 ```
 
-On an empty volume the backend applies Flyway V1–V26 (the current `dev`; this said V1-V19 when written) and creates the bootstrap System Admin. If port 3306 is already used on the
+On an empty volume the backend applies Flyway V1-V19 and creates the bootstrap System Admin. If port 3306 is already used on the
 host, add a fourth file with `services: { mysql: { ports: !override ["127.0.0.1:33306:3306"] } }` (needs Compose 2.24+).
 
 ## 5. Seed the demo data (empty database only)
@@ -97,10 +97,7 @@ inventory batches and the two CSV imports. The only direct SQL is one `INSERT IN
 that creates a store. The product rows are parsed from `scripts/seed/data/FoodMart_Product_Direct_Insert.sql` (the SQL file itself is
 not executed). Running it again changes nothing (see the evidence below). The OTP codes are read from Mailpit, so the stack must be the
 compose one (a real SMTP server cannot be read back). Seeded data: 1 store, 4 accounts (one per role; the System Admin is the bootstrap account) plus the internal scheduler account,
-1 category, 1,559 products with one batch each, and 4,141 imported orders (18,319 order lines, 2026-10-01 to 2026-10-04).
-Since 2026-11-17 the seed also creates Weight v2 demo data: 551 products that require expiry (batches with expiry date and push day), four seasons and the weight
-configuration α 0.6 / β 0.4 / λ 0.3 / N 30. It is switched off with `SEED_WEIGHT_V2=0`. What it contains, the environment variables, how to reseed (recreate the
-database), the date to analyse and the recommended F05 snapshot range are in [scripts/seed/README.md](../../scripts/seed/README.md).
+1 category, 1,559 products with one batch of 1,000 units each, and 4,141 imported orders (18,319 order lines, 3 days of October 2026).
 
 ## 6. Health check
 
@@ -146,7 +143,7 @@ own MySQL on 3306 (that server was not touched). All containers, volumes and tes
 | Step | Result |
 |---|---|
 | `scripts/staging/build-image.sh rehearsal-1` (arm64, native) | Built; SPMF checksum `OK`; Java 25.0.5 inside the image |
-| `docker compose up -d` with `compose.yml` + `compose.backend.yml` only | **Backend exits**: Flyway V11 fails, `You do not have the SUPER privilege and binary logging is enabled` (application user `paspm`). Fixed by `compose.staging.yml`; since 2026-11-25 `compose.yml` carries the flag itself |
+| `docker compose up -d` with `compose.yml` + `compose.backend.yml` only | **Backend exits**: Flyway V11 fails, `You do not have the SUPER privilege and binary logging is enabled` (application user `paspm`). Fixed by `compose.staging.yml` |
 | Same with `compose.staging.yml`, empty volume | Flyway applied 19 migrations; backend started in 4.1 s |
 | `scripts/staging/healthcheck.sh` | 6 of 6 checks passed |
 | `scripts/seed/seed.sh`, first run | Everything created: 1,559 products, 1,559 batches, imports `COMPLETED` (9,999 rows / 2,272 orders and 8,320 rows / 1,869 orders, 0 rejected) |
@@ -162,10 +159,12 @@ server, TLS or a reverse proxy, the multi-process crash and recovery tests on na
 ## Known issues found while preparing this procedure
 
 1. `compose.yml` + `compose.backend.yml` alone cannot start the backend (V11 needs `--log-bin-trust-function-creators=1` for the non-root
-   database user); `compose.staging.yml` carries the flag. **Resolved 2026-11-25:** `compose.yml` now sets the flag too (the same value in `compose.staging.yml` is harmless). CI runs the migrations as MySQL root, which hides this.
-2. **Historical staging finding — superseded by the 2026-11-16 F05 input-bound change:** the old Backend rejected requests above 256 distinct products. The current code accepts up to 1,600 Products and 20,000 matrix rows. The public FoodMart SPMF reference input (1,559 Products / 18,319 item rows) completed a bounded standalone EFIM run. A separate synthetic PASPM fixture then passed the persisted F03 → F05 → F06 lifecycle at 1,559 Products on disposable MySQL; its 1,759 matrix rows are synthetic, not actual FoodMart dimensions. Authentic FoodMart F03 acceptance remains NOT RUN because the extract does not provide canonical order grouping or approved inventory expiry/push-day/season evidence. Do not treat either standalone mining or the synthetic lifecycle as authentic FoodMart staging acceptance; see [the scalability report](../testing/F05_FOODMART_SCALABILITY_BENCHMARK.md).
+   database user); `compose.staging.yml` carries the flag. CI runs the migrations as MySQL root, which hides this.
+2. The seeded FoodMart data cannot be mined as a whole: the API accepts at most 256 distinct products per request, and every day of
+   the 4,141-order data set contains about 1,500 distinct products (`Snapshot exceeds 256 distinct products`, HTTP 400). The demo scenario
+   DS-02a needs a smaller product set or a different data subset.
 3. The seed files contain no unknown SKU or conflicting order, so scenario DS-01b (`COMPLETED_WITH_ERRORS`) needs an extra file.
-4. Uploaded images are written to the named volume `paspm_media` mounted at `/var/lib/paspm/media` (`compose.backend.yml`): Store icons and banners under `PASPM_MEDIA_ROOT=/var/lib/paspm/media/stores/…`, avatars under `PROFILE_IMAGE_DIRECTORY=/var/lib/paspm/media/avatars`. They survive container re-creation (DEC-20261123-01). Back the volume up with the database. A database row whose file is missing answers 404, not 503.
+4. Avatar files are written inside the container (`/var/lib/paspm/profile-images`); they are lost when the container is recreated.
 5. `GOOGLE_CLIENT_ID` is read by the backend but not passed through by `compose.backend.yml`; Google sign-in therefore stays disabled.
 6. `/swagger` and `/v3/api-docs` are public (`SecurityConfig`); use `SPRINGDOC_*` above to hide them.
 7. The backend has no health endpoint or compose health check.

@@ -3,7 +3,7 @@
 ## Integration and scope
 
 - CodeGraph CLI 0.9.9 was already available in the development environment; it was not installed or replaced for this task.
-- The CodeGraph project is initialized at the PASPM workspace root: `<project-folder>`.
+- The CodeGraph project is initialized at the PASPM workspace root: `/Users/khoinm/Desktop/khoi/fpt/ki9/FA26SE048_HUPAS`.
 - The full workspace index includes Backend and Frontend source. The final verified index reports 134 files, 2,378 nodes, 5,727 edges, and languages Java (37 files), TSX (39), TypeScript (24), JavaScript (6), Python (24), YAML (2), properties (1), and XML (1).
 - CodeGraph CLI status reported the index up to date after the final sync. No FE source was changed; generated/dependency/secret exclusions follow the CodeGraph project configuration.
 

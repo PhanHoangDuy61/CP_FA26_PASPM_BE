@@ -24,22 +24,6 @@ public final class UtilityMath {
         if(weight.precision()-weight.scale()>20)throw new ApiException(400,"Weight exceeds supported decimal precision");
         return weight;
     }
-    /**
-     * W2_EXPIRY_SEASON_V1: W = 1 + lambda * (alpha * riskNum/riskDen + beta * m), computed exactly and rounded
-     * half-up to 2 decimals once (paspm-experiments src/weighting.py, assumption A1). 1 <= W <= round(1 + lambda, 2).
-     */
-    public static BigDecimal weightV2(BigDecimal lambda,BigDecimal alpha,BigDecimal beta,
-            java.math.BigInteger riskNum,java.math.BigInteger riskDen,BigDecimal m) {
-        if(lambda==null||alpha==null||beta==null||m==null||riskNum==null||riskDen==null)throw new ApiException(400,"Weight input is incomplete");
-        if(lambda.signum()<0||alpha.signum()<0||beta.signum()<0||alpha.add(beta).compareTo(BigDecimal.ONE)!=0)throw new ApiException(400,"Invalid Weight coefficients");
-        if(m.signum()<0||m.compareTo(BigDecimal.ONE)>0)throw new ApiException(400,"Invalid season weight");
-        if(riskDen.signum()<=0||riskNum.signum()<0||riskNum.compareTo(riskDen)>0)throw new ApiException(400,"Invalid expiry risk");
-        BigDecimal d=new BigDecimal(riskDen);
-        BigDecimal numerator=d.add(lambda.multiply(alpha.multiply(new BigDecimal(riskNum)).add(beta.multiply(m).multiply(d))));
-        BigDecimal weight=numerator.divide(d,2,RoundingMode.HALF_UP);
-        if(weight.precision()-weight.scale()>20)throw new ApiException(400,"Weight exceeds supported decimal precision");
-        return weight;
-    }
     private static BigDecimal score(BigDecimal value,String label) {
         if(value==null)throw new ApiException(400,"Missing enabled "+label+" priority score");
         if(value.signum()<0||value.compareTo(BigDecimal.ONE)>0)throw new ApiException(400,"Invalid "+label+" priority score");

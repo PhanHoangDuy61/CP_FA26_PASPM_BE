@@ -1,5 +1,5 @@
 <!-- docs-reorganization:notice -->
-> **SUPERSEDED — documentation review 2026-10-26; Product SKU behavior updated 2026-11-20.** Current catalog-read permissions and expiry-today boundary differ from the retained original v3 clauses. The current Product API also generates SKU server-side; omit `sku` from create/update requests. See [current navigation](../../../api/F02_PRODUCT_INVENTORY_API.md). Original results and business-rule text below are retained; this notice is not a new execution or approval.
+> **SUPERSEDED — documentation review 2026-10-26.** Current catalog-read permissions and expiry-today boundary differ from the retained original v3 clauses. See [current navigation](../../../api/F02_PRODUCT_INVENTORY_API.md). Original results and business-rule text below are retained; this notice is not a new execution or approval.
 <!-- /docs-reorganization:notice -->
 
 # F02 API Contract

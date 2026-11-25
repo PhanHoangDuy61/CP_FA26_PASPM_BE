@@ -42,8 +42,6 @@
    docker compose ps
    ```
 
-   `compose.yml` already starts MySQL with `--log-bin-trust-function-creators=1` (migration V11 creates triggers; see [common setup](LOCAL_SETUP_COMMON.md#mysql-runs-with---log-bin-trust-function-creators1)). If your MySQL container was created from an older `compose.yml`, `docker compose up -d mysql mailpit` recreates it with the option and keeps your data.
-
    Set nonempty local-only `DB_PASSWORD` and `MYSQL_ROOT_PASSWORD` before starting Compose. Never commit or share `.env`. Compose uses database and user `paspm`, port `127.0.0.1:3306`, and a persistent local volume.
 
 5. Set Backend process variables in the **same PowerShell window**. Use the same database password as `.env`; choose separate private JWT and OTP values of at least 32 UTF-8 bytes. The bootstrap password needs 12 characters, uppercase, lowercase and a digit:
@@ -89,4 +87,4 @@
 9. Stop Backend with `Ctrl+C`, then run `docker compose down`. This does not delete the database volume. See [troubleshooting](LOCAL_SETUP_TROUBLESHOOTING.md) before changing settings or data.
 
 
-`dev` (after the P5/P6 merge, 2026-11-16) includes Flyway V1–V26 ([list](LOCAL_SETUP_COMMON.md)). F05 mining migrations are V9, V13–V19 and V24; V12 is F04 `f04_preserve_large_raw_import_rows`. A checksum mismatch at startup: see [known checksum mismatches](LOCAL_SETUP_TROUBLESHOOTING.md#known-flyway-checksum-mismatches). The Linux container multi-JVM crash tests passed in Docker (emulated amd64); native-Linux and production-image acceptance are still pending; a successful host startup does not validate Linux container process supervision. Scheduler activation remains 503. See the [runtime guide](F05_SPMF_RUNTIME_SETUP.md#linux-docker-image-on-dev-production-acceptance-pending). This guide has not been verified on a clean target-OS installation.
+`dev` includes Flyway V1–V17. F05 mining migrations are V13–V17; V12 is F04 `f04_preserve_large_raw_import_rows`. The Linux container multi-JVM crash tests passed in Docker (emulated amd64); native-Linux and production-image acceptance are still pending; a successful host startup does not validate Linux container process supervision. Scheduler activation remains 503. See the [runtime guide](F05_SPMF_RUNTIME_SETUP.md#linux-docker-image-on-dev-production-acceptance-pending). This guide has not been verified on a clean target-OS installation.

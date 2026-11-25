@@ -1,7 +1,7 @@
 # Independent technical review — Category JPA CRUD pilot
 
 Date: 2026-10-25 (Asia/Ho_Chi_Minh).
-Reviewed worktree: `<worktree>`.
+Reviewed worktree: `/private/tmp/paspm-legacy-matrix-recovery`.
 Base: Product integration `202761a81abf8ce627f55a4dd2eaa8194070546b`.
 Category changes were uncommitted when reviewed. Reviewer made no implementation, GitHub, or database changes.
 
@@ -25,7 +25,7 @@ No verified Critical/Required production defect identified in the inspected Cate
 
 Read the new 14 Category tests inherited by the MySQL subclass (28 executions), existing Product persistence tests, CatalogIntegrationTest successful own-Store Category PUT/PATCH coverage, ProductService category validation, V3 schema, PersistenceConfiguration and persistence.properties.
 
-Observed actual parent-run `<evidence-dir>/category-after.log`: **63 tests, 0 failures, 0 errors, 0 skipped; BUILD SUCCESS** (28 Category + 35 Product tests, H2/MySQL). This reviewer inspected that log and source; did not rerun database suites concurrently with the primary agent. Full F01–F06/SPMF and migration verification must be reported using the primary agent's eventual full run, not inferred from these 63 cases.
+Observed actual parent-run `/private/tmp/paspm-hybrid-integration/category-after.log`: **63 tests, 0 failures, 0 errors, 0 skipped; BUILD SUCCESS** (28 Category + 35 Product tests, H2/MySQL). This reviewer inspected that log and source; did not rerun database suites concurrently with the primary agent. Full F01–F06/SPMF and migration verification must be reported using the primary agent's eventual full run, not inferred from these 63 cases.
 
 `git diff --check` completed successfully. `git diff --name-only HEAD -- src/main/resources/db/migration` returned no files.
 

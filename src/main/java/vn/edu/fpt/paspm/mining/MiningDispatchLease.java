@@ -18,7 +18,7 @@ public class MiningDispatchLease {
         return tx.execute(status->{
             Timestamp now=jdbc.queryForObject("SELECT CURRENT_TIMESTAMP",Timestamp.class);
             Timestamp expiry=Timestamp.from(now.toInstant().plusSeconds(seconds));
-            int changed=jdbc.update("UPDATE mining_request SET status='RUNNING',stage='QUEUED',stage_started_at=CURRENT_TIMESTAMP,current_run_id=NULL,lease_owner=?,lease_fence=lease_fence+1,lease_until=? WHERE store_id=? AND request_id=? AND (status='PENDING' OR (status='RUNNING' AND lease_owner IS NOT NULL AND lease_until<=CURRENT_TIMESTAMP))",owner,expiry,store,id);
+            int changed=jdbc.update("UPDATE mining_request SET status='RUNNING',lease_owner=?,lease_fence=lease_fence+1,lease_until=? WHERE store_id=? AND request_id=? AND (status='PENDING' OR (status='RUNNING' AND lease_owner IS NOT NULL AND lease_until<=CURRENT_TIMESTAMP))",owner,expiry,store,id);
             if(changed==0)return Optional.empty();
             Long fence=jdbc.queryForObject("SELECT lease_fence FROM mining_request WHERE store_id=? AND request_id=? AND lease_owner=?",Long.class,store,id,owner);
             return Optional.of(new Claim(store,id,owner,fence));
@@ -37,11 +37,6 @@ public class MiningDispatchLease {
             requireCurrent(c);
         });
     }
-    /** A short, separately committed transition; never wrap the engine or result saving here. */
-    public void stage(Claim c,String stage,Long runId) {
-        if(!java.util.Set.of("RUNNING","SAVING","COMPARING").contains(stage))throw new IllegalArgumentException("Invalid active stage");
-        guarded(c,()->jdbc.update("UPDATE mining_request SET stage=?,stage_started_at=CURRENT_TIMESTAMP,current_run_id=? WHERE store_id=? AND request_id=?",stage,runId,c.storeId(),c.requestId()));
-    }
     private void requireCurrent(Claim c){
         int active=jdbc.query("SELECT request_id FROM mining_request WHERE store_id=? AND request_id=? AND status='RUNNING' AND lease_owner=? AND lease_fence=? AND lease_until>CURRENT_TIMESTAMP FOR UPDATE",(r,n)->r.getLong(1),c.storeId(),c.requestId(),c.owner(),c.fence()).size();
         if(active!=1)throw new IllegalStateException("Mining lease is no longer active");
@@ -49,7 +44,7 @@ public class MiningDispatchLease {
     public void terminal(Claim c,String result,String comparison){
         tx.executeWithoutResult(status->{
             requireCurrent(c);
-            if(jdbc.update("UPDATE mining_request SET status=?,stage=?,stage_started_at=CURRENT_TIMESTAMP,current_run_id=NULL,comparison_status=?,lease_owner=NULL,lease_until=NULL WHERE store_id=? AND request_id=? AND status='RUNNING' AND lease_owner=? AND lease_fence=? AND lease_until>CURRENT_TIMESTAMP",result,result,comparison,c.storeId(),c.requestId(),c.owner(),c.fence())!=1)throw new IllegalStateException("Mining lease expired before completion");
+            if(jdbc.update("UPDATE mining_request SET status=?,comparison_status=?,lease_owner=NULL,lease_until=NULL WHERE store_id=? AND request_id=? AND status='RUNNING' AND lease_owner=? AND lease_fence=? AND lease_until>CURRENT_TIMESTAMP",result,comparison,c.storeId(),c.requestId(),c.owner(),c.fence())!=1)throw new IllegalStateException("Mining lease expired before completion");
         });
     }
     /** The callback must perform database writes in this same transaction only. */

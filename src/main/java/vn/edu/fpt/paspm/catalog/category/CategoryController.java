@@ -28,31 +28,31 @@ public class CategoryController {
 
     public CategoryController(CategoryService categories) { this.categories = categories; }
 
-    @Operation(operationId = "listCategories", summary = "List categories for the authenticated Store")
+    @Operation(summary = "List categories for the authenticated Store")
     @GetMapping("/api/categories")
     @PreAuthorize("hasAnyRole('STORE_ADMIN','MERCHANDISER')")
     public List<CategoryView> list(@AuthenticationPrincipal Jwt jwt) { return categories.list(jwt); }
 
-    @Operation(operationId = "getCategory", summary = "Get a Store category")
+    @Operation(summary = "Get a Store category")
     @GetMapping("/api/categories/{id}")
     @PreAuthorize("hasAnyRole('STORE_ADMIN','MERCHANDISER')")
     public CategoryView get(@AuthenticationPrincipal Jwt jwt, @PathVariable int id) { return categories.get(jwt, id); }
 
-    @Operation(operationId = "createCategory", summary = "Create a category in the authenticated Store")
+    @Operation(summary = "Create a category in the authenticated Store")
     @PostMapping("/api/categories")
     @ResponseStatus(HttpStatus.CREATED)
     public CategoryView create(@AuthenticationPrincipal Jwt jwt, @Valid @RequestBody CategoryRequest request) {
         return categories.create(jwt, request);
     }
 
-    @Operation(operationId = "updateCategory", summary = "Update a Store category")
+    @Operation(summary = "Update a Store category")
     @PutMapping("/api/categories/{id}")
     public CategoryView update(@AuthenticationPrincipal Jwt jwt, @PathVariable int id,
                                @Valid @RequestBody CategoryRequest request) {
         return categories.update(jwt, id, request);
     }
 
-    @Operation(operationId = "updateCategoryStatus", summary = "Activate or deactivate a Store category")
+    @Operation(summary = "Activate or deactivate a Store category")
     @PatchMapping("/api/categories/{id}/status")
     public CategoryView updateStatus(@AuthenticationPrincipal Jwt jwt, @PathVariable int id,
                                      @Valid @RequestBody StatusRequest request) {

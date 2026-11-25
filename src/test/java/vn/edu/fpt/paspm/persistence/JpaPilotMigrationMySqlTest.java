@@ -60,11 +60,9 @@ class JpaPilotMigrationMySqlTest {
     @Test void freshV1ToV17ValidatesJpaConstraintsAndActualCategoryProductHttpApis() {
         var db=MySqlTestDatabase.create();
         var flyway=Flyway.configure().dataSource(db.url(),db.user(),db.password()).load();
-        int expectedPending=flyway.info().pending().length;
-        assertTrue(expectedPending>0);assertEquals(expectedPending,flyway.migrate().migrationsExecuted);flyway.validate();
+        assertEquals(19,flyway.migrate().migrationsExecuted);flyway.validate();
         var jdbc=jdbc(db);
-        assertEquals(0,flyway.info().pending().length);
-        assertEquals(flyway.info().all()[flyway.info().all().length-1].getVersion(),flyway.info().current().getVersion());
+        assertEquals("19",flyway.info().current().getVersion().toString());
         assertEquals(1,jdbc.queryForObject("SELECT COUNT(*) FROM information_schema.statistics WHERE table_schema=DATABASE() AND table_name='product' AND index_name='uq_product_store_sku' AND column_name='sku' AND non_unique=0",Integer.class));
         assertEquals(2,jdbc.queryForObject("SELECT COUNT(*) FROM information_schema.key_column_usage WHERE constraint_schema=DATABASE() AND constraint_name='fk_product_category_store'",Integer.class));
         try(var context=application(db)) {
@@ -79,12 +77,12 @@ class JpaPilotMigrationMySqlTest {
             var http=new TestRestTemplate();
             var category=http.exchange(base+"/api/categories",HttpMethod.POST,new HttpEntity<>(Map.of("name","Synthetic dairy","status","ACTIVE"),headers),JsonNode.class);
             assertEquals(HttpStatus.CREATED,category.getStatusCode());int categoryId=category.getBody().path("id").asInt();assertTrue(categoryId>0);
-            var payload=Map.of("name","Synthetic milk","categoryId",categoryId,"unit","bottle","requiresExpiry",true,"sellingPrice",30,"costPrice",20,"status","ACTIVE");
+            var payload=Map.of("sku","MIGRATION-MILK","name","Synthetic milk","categoryId",categoryId,"unit","bottle","requiresExpiry",true,"sellingPrice",30,"costPrice",20,"status","ACTIVE");
             var created=http.exchange(base+"/api/products",HttpMethod.POST,new HttpEntity<>(payload,headers),JsonNode.class);
             assertEquals(HttpStatus.CREATED,created.getStatusCode());int product=created.getBody().path("id").asInt();
             assertEquals(HttpStatus.OK,http.exchange(base+"/api/categories/"+categoryId,HttpMethod.GET,new HttpEntity<>(headers),JsonNode.class).getStatusCode());
             var read=http.exchange(base+"/api/products/"+product,HttpMethod.GET,new HttpEntity<>(headers),JsonNode.class);
-            assertEquals(HttpStatus.OK,read.getStatusCode());assertEquals(String.format(java.util.Locale.ROOT,"SKU-%011d",product),read.getBody().path("sku").asText()); // DEC-20261119-07: server-generated SKU
+            assertEquals(HttpStatus.OK,read.getStatusCode());assertEquals("MIGRATION-MILK",read.getBody().path("sku").asText());
             assertEquals(categoryId,jdbc.queryForObject("SELECT category_id FROM product WHERE product_id=?",Integer.class,product));
             assertEquals(HttpStatus.UNAUTHORIZED,http.getForEntity(base+"/api/products/"+product,String.class).getStatusCode());
             assertCheckViolation(()->jdbc.update("UPDATE product SET selling_price=-1 WHERE product_id=?",product));
@@ -98,12 +96,10 @@ class JpaPilotMigrationMySqlTest {
         assertEquals(5,Flyway.configure().dataSource(db.url(),db.user(),db.password()).target("5").load().migrate().migrationsExecuted);
         seedV5(jdbc,false);var before=fingerprints(jdbc);
         var current=Flyway.configure().dataSource(db.url(),db.user(),db.password()).load();
-        int expectedPending=current.info().pending().length;
-        assertTrue(expectedPending>0);assertEquals(expectedPending,current.migrate().migrationsExecuted);current.validate();
-        assertEquals(0,current.info().pending().length);
-        assertEquals(current.info().all()[current.info().all().length-1].getVersion(),current.info().current().getVersion());
+        assertEquals(14,current.migrate().migrationsExecuted);current.validate();
+        assertEquals("19",current.info().current().getVersion().toString());
         assertEquals(before,fingerprints(jdbc));
-        // V26 (DEC-20261116-02) dropped the legacy product scoring columns; the remaining product columns are fingerprinted above.
+        assertEquals(0,jdbc.queryForObject("SELECT expiry_push_days FROM product WHERE product_id=201",Integer.class));
         assertNull(jdbc.queryForObject("SELECT validation_warnings FROM utility_snapshot WHERE snapshot_id=401",String.class));
         for(String table:new String[]{"sales_transaction","transaction_item","mining_request","recommendation"})
             assertEquals(0,jdbc.queryForObject("SELECT COUNT(*) FROM "+table,Integer.class));
@@ -115,10 +111,11 @@ class JpaPilotMigrationMySqlTest {
             var sharedJdbc=context.getBean(JdbcTemplate.class);
             assertEquals("V5-MILK",products.find(1,201).sku());assertEquals("Synthetic dairy",categories.find(1,101).name());
             new TransactionTemplate(context.getBean(PlatformTransactionManager.class)).executeWithoutResult(status->{
-                assertTrue(products.update(1,201,"Changed only inside rollback",101,"bottle",true,new BigDecimal("35"),new BigDecimal("20"),"ACTIVE"));
+                assertTrue(products.update(1,201,"V5-MILK","Changed only inside rollback",101,"bottle",true,new BigDecimal("35"),new BigDecimal("20"),"ACTIVE",3));
                 assertEquals("Changed only inside rollback",products.find(1,201).name());
+                assertEquals(0,new BigDecimal("0.8").compareTo(sharedJdbc.queryForObject("SELECT stock_priority_score FROM product WHERE product_id=201",BigDecimal.class)));
                 assertEquals(7,sharedJdbc.queryForObject("SELECT remaining_quantity FROM inventory_batch WHERE batch_id=301",Integer.class));
-                assertTrue(products.create(1,"Synthetic transient",101,"bottle",false,BigDecimal.TEN,BigDecimal.ONE,"ACTIVE").id()>0);
+                assertTrue(products.create(1,"ROLLBACK-ONLY","Synthetic transient",101,"bottle",false,BigDecimal.TEN,BigDecimal.ONE,"ACTIVE",0).id()>0);
                 sharedJdbc.update("UPDATE category SET name='Rolled back JDBC category' WHERE category_id=101");
                 status.setRollbackOnly();
             });
@@ -183,13 +180,12 @@ class JpaPilotMigrationMySqlTest {
         }
         var guarded=Flyway.configure().dataSource(target.url(),target.user(),target.password())
                 .callbacks(new LegacyRecoveryCallback(true,manifest.toString(),restored.url(),user,password)).load();
-        assertTrue(guarded.migrate().success);guarded.validate();assertEquals(0,guarded.info().pending().length);
-        assertEquals(guarded.info().all()[guarded.info().all().length-1].getVersion(),guarded.info().current().getVersion());
+        assertTrue(guarded.migrate().success);guarded.validate();assertEquals("19",guarded.info().current().getVersion().toString());
         try(var context=application(target)) {
             var products=context.getBean(ProductRepository.class);
             new TransactionTemplate(context.getBean(PlatformTransactionManager.class)).executeWithoutResult(status -> {
-                assertTrue(products.update(1,201,"Metadata after recovery",101,"bottle",true,
-                        new BigDecimal("35"),new BigDecimal("20"),"ACTIVE"));
+                assertTrue(products.update(1,201,"V5-MILK","Metadata after recovery",101,"bottle",true,
+                        new BigDecimal("35"),new BigDecimal("20"),"ACTIVE",3));
                 assertTrue(products.updateStatus(1,201,"INACTIVE"));
                 assertEquals("Metadata after recovery",products.find(1,201).name());
                 assertNull(products.find(2,201));
@@ -201,6 +197,8 @@ class JpaPilotMigrationMySqlTest {
         assertEquals(0,jdbc.queryForObject("SELECT COUNT(*) FROM sales_transaction",Integer.class));
         assertEquals(0,jdbc.queryForObject("SELECT COUNT(*) FROM utility_matrix_item",Integer.class));
         assertEquals(7,jdbc.queryForObject("SELECT remaining_quantity FROM inventory_batch WHERE batch_id=301",Integer.class));
+        assertEquals(0,new BigDecimal("0.8").compareTo(jdbc.queryForObject("SELECT stock_priority_score FROM product WHERE product_id=201",BigDecimal.class)));
+        assertEquals(0,new BigDecimal("0.9").compareTo(jdbc.queryForObject("SELECT seasonal_priority_score FROM product WHERE product_id=201",BigDecimal.class)));
         System.out.println("JPA_SUPPORTED_RECOVERY_BOOT frozen="+frozen+" archivePreserved=true fakeSales=0 metadataWrite=true");
     }
 
@@ -222,12 +220,10 @@ class JpaPilotMigrationMySqlTest {
 
     private Map<String,String> fingerprints(JdbcTemplate jdbc) throws Exception {
         var queries=new LinkedHashMap<String,String>();
-        // V25 (W2) rewrites the live utility_config by owner decision 2026-11-15; it is checked separately via utility_weight_v2_conversion.
-        queries.put("store","SELECT store_id,name,mining_schedule FROM store ORDER BY store_id");
+        queries.put("store","SELECT store_id,name,utility_config,mining_schedule FROM store ORDER BY store_id");
         queries.put("category","SELECT category_id,store_id,name,status FROM category ORDER BY category_id");
-        // V26 drops stock_priority_score, seasonal_priority_score and expiry_push_days by owner decision 2026-11-16; every other column must stay identical.
-        queries.put("product","SELECT product_id,store_id,category_id,sku,name,unit,requires_expiry,selling_price,cost_price,status FROM product ORDER BY product_id");
-        queries.put("inventory_batch","SELECT batch_id,product_id,batch_code,received_at,expiry_date,initial_quantity,remaining_quantity,status,created_at,updated_at FROM inventory_batch ORDER BY batch_id");
+        queries.put("product","SELECT product_id,store_id,category_id,sku,name,unit,requires_expiry,selling_price,cost_price,status,stock_priority_score,seasonal_priority_score FROM product ORDER BY product_id");
+        queries.put("inventory_batch","SELECT * FROM inventory_batch ORDER BY batch_id");
         queries.put("utility_snapshot","SELECT snapshot_id,store_id,created_by,range_start,range_end,as_of_date,config_snapshot,source_hash,matrix_hash,total_weighted_utility,rounding_scale,status,created_at FROM utility_snapshot ORDER BY snapshot_id");
         queries.put("utility_matrix_item","SELECT matrix_item_id,snapshot_id,transaction_id,product_id,quantity,base_utility,stock_score,expiry_score,seasonal_score,expiry_status,weight_value,weighted_utility FROM utility_matrix_item ORDER BY matrix_item_id");
         var result=new LinkedHashMap<String,String>();

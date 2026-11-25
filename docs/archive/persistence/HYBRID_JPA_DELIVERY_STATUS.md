@@ -33,11 +33,11 @@ Runs overlap; do not sum them as distinct cases. Product first failures were obs
 Actual task runner commands (the private harness supplies the exact safe options listed in the Product report; no credentials in commands):
 
 ```sh
-python3 <evidence-dir>/run.py product-after.log test -Dtest=ProductPersistenceIntegrationTest,ProductPersistenceMySqlIntegrationTest,JpaPilotMigrationMySqlTest,PilotCloneApiIntegrationTest,PilotCloneSafetyTest
-python3 <evidence-dir>/run.py product-full.log clean verify
-python3 <evidence-dir>/run.py category-red-corrected.log test -Dtest=CategoryPersistenceIntegrationTest,CategoryPersistenceMySqlIntegrationTest
-python3 <evidence-dir>/run.py category-after.log test -Dtest=CategoryPersistenceIntegrationTest,CategoryPersistenceMySqlIntegrationTest,ProductPersistenceIntegrationTest,ProductPersistenceMySqlIntegrationTest
-python3 <evidence-dir>/run.py category-full.log clean verify
+python3 /private/tmp/paspm-hybrid-integration/run.py product-after.log test -Dtest=ProductPersistenceIntegrationTest,ProductPersistenceMySqlIntegrationTest,JpaPilotMigrationMySqlTest,PilotCloneApiIntegrationTest,PilotCloneSafetyTest
+python3 /private/tmp/paspm-hybrid-integration/run.py product-full.log clean verify
+python3 /private/tmp/paspm-hybrid-integration/run.py category-red-corrected.log test -Dtest=CategoryPersistenceIntegrationTest,CategoryPersistenceMySqlIntegrationTest
+python3 /private/tmp/paspm-hybrid-integration/run.py category-after.log test -Dtest=CategoryPersistenceIntegrationTest,CategoryPersistenceMySqlIntegrationTest,ProductPersistenceIntegrationTest,ProductPersistenceMySqlIntegrationTest
+python3 /private/tmp/paspm-hybrid-integration/run.py category-full.log clean verify
 ```
 
 These harness/config files are private local task tools, not committed production scripts or a generic command that may target source data. Product report documents the Maven equivalent and required opt-ins. MySQL CLI/restore wrappers copied unchanged from proven PR3 tooling were used outside Git; the Product/Category branches do not silently absorb the unmerged CI PR. Raw Surefire properties and raw DB dumps are excluded. Committed results contain case IDs/counts, not test tokens/options/passwords.
@@ -50,7 +50,7 @@ Independent technical AI reviews: Product and Category completed; no unresolved 
 
 BLOCKED_REMOTE_CI: PR3 is still open/unmerged; approved immutable SPMF hosting URL remains unavailable. Product202761a PR-triggered workflow lookup returned no runs. Also provision the disposable Pilot clone with DBA migration before schema-limited runtime tests and enable all expected opt-ins in accepted CI. Never call local330 a GitHub-hosted result or mark unexecuted required CI green.
 
-REVIEW_PENDING: eligible independent human identity/permission not established. Candidate PhanHoangDuy61 and author <implementation-author> are different account names; that does not prove distinct eligible humans. No self-approval/branch-protection bypass. Previous merged PR1/2 are not retroactively approved.
+REVIEW_PENDING: eligible independent human identity/permission not established. Candidate PhanHoangDuy61 and author khoinm04 are different account names; that does not prove distinct eligible humans. No self-approval/branch-protection bypass. Previous merged PR1/2 are not retroactively approved.
 
 REAL_DATA_BLOCKED: all data in this task are synthetic. No genuine authorized production dataset was verified. Original user checkout branch/head/status/config/migration fingerprints were unchanged. Original sourceV5 database received no task connection/write; no new source fingerprint audit is claimed.
 

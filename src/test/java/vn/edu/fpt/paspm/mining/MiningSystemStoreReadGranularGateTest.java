@@ -38,7 +38,6 @@ class MiningSystemStoreReadGranularGateTest {
         mvc.perform(get(base+"/requests/987654").header("Authorization",bearer)).andExpect(status().isNotFound());
         mvc.perform(get(base+"/requests/987654/runs").header("Authorization",bearer)).andExpect(status().isNotFound());
         mvc.perform(get(unknown+"/requests").header("Authorization",bearer)).andExpect(status().isNotFound());
-        mvc.perform(get(base+"/requests/987654/progress").header("Authorization",bearer)).andExpect(status().isNotFound());
         // closed groups: 403 with the decision reference, identical for a known and an unknown Store
         for(String prefix:List.of(base,unknown)) {
             mvc.perform(get(prefix+"/snapshots").header("Authorization",bearer)).andExpect(status().isForbidden())
@@ -49,11 +48,11 @@ class MiningSystemStoreReadGranularGateTest {
         // roles are unchanged: opening a group for System Admin never opens it for anyone else
         for(String role:List.of("MERCHANDISER","STORE_ADMIN","END_CUSTOMER")) {
             String other="Bearer "+token(role,role.equals("END_CUSTOMER")?null:store);
-            for(String path:List.of(base+"/requests",base+"/requests/1",base+"/requests/1/progress",base+"/requests/1/runs",base+"/snapshots",base+"/runs/1/patterns"))
+            for(String path:List.of(base+"/requests",base+"/requests/1",base+"/requests/1/runs",base+"/snapshots",base+"/runs/1/patterns"))
                 mvc.perform(get(path).header("Authorization",other)).andExpect(status().isForbidden());
         }
         mvc.perform(get(base+"/requests")).andExpect(status().isUnauthorized());
-        // The removed benchmark route is not part of the read gate.
+        // the approved benchmark route is not part of the gate
         mvc.perform(get(base+"/runs/987654/benchmark").header("Authorization",bearer)).andExpect(status().isNotFound());
     }
 }

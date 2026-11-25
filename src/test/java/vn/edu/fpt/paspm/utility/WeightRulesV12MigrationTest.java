@@ -21,8 +21,7 @@ class WeightRulesV12MigrationTest {
         jdbc.update("INSERT INTO utility_matrix_item(snapshot_id,transaction_id,product_id,quantity,base_utility,stock_score,expiry_score,seasonal_score,expiry_status,weight_value,weighted_utility) VALUES (1,1,1,3,12000,.8,.166666666666666667,.9,'AVAILABLE',1.351666666666666667,16220)");
         var config=jdbc.queryForObject("SELECT config_snapshot FROM utility_snapshot WHERE snapshot_id=1",String.class);
         var storeConfig=jdbc.queryForObject("SELECT utility_config FROM store WHERE store_id=1",String.class);
-        // V25 (W2) rewrites live Store config by design; this test keeps asserting the v1.2 upgrade (V12..V24).
-        Flyway.configure().dataSource(source).target("24").load().migrate();
+        Flyway.configure().dataSource(source).load().migrate();
         assertEquals(0,jdbc.queryForObject("SELECT expiry_push_days FROM product WHERE product_id=1",Integer.class));
         assertEquals(config,jdbc.queryForObject("SELECT config_snapshot FROM utility_snapshot WHERE snapshot_id=1",String.class));
         assertEquals(storeConfig,jdbc.queryForObject("SELECT utility_config FROM store WHERE store_id=1",String.class));

@@ -4,8 +4,6 @@
 
 # F05 Implementation & Verification Report
 
-> **Superseded 2026-11-16 ([DEC-20261116-04](../../../decisions/2026-11-16/DEC-20261116-04-f05-efim-only-mining.md), EFIM-only).** The HUI-Miner, comparison and benchmark rows below are historical evidence; the benchmark routes no longer exist.
-
 Execution date:2026-10-19, timezone Asia/Ho_Chi_Minh. Backend P0 functionality implemented and verified; clean MySQL provisioning remains **PARTIAL/BLOCKED by existing V7**, described below. No clean-deployment DONE claim. P1 scheduling deliberately deferred. No commit/push/merge performed for this task.
 
 ## A. Task status and evidence
