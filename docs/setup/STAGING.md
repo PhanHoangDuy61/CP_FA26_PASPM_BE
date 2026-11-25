@@ -93,8 +93,8 @@ scripts/seed/seed.sh
 ```
 
 The script uses the REST API for accounts (invitation and self-registration, OTP codes read from Mailpit), category, products,
-inventory batches and the two CSV imports. The only direct SQL is one `INSERT INTO store`, because the backend has no endpoint
-that creates a store. The product rows are parsed from `scripts/seed/data/FoodMart_Product_Direct_Insert.sql` (the SQL file itself is
+inventory batches and the two CSV imports. The Store is created with `POST /api/system/stores` (DEC-20261123-01); direct SQL is
+used only for the final record counts. (Before Store management existed the seed used one `INSERT INTO store`.) The product rows are parsed from `scripts/seed/data/FoodMart_Product_Direct_Insert.sql` (the SQL file itself is
 not executed). Running it again changes nothing (see the evidence below). The OTP codes are read from Mailpit, so the stack must be the
 compose one (a real SMTP server cannot be read back). Seeded data: 1 store, 4 accounts (one per role; the System Admin is the bootstrap account) plus the internal scheduler account,
 1 category, 1,559 products with one batch each, and 4,141 imported orders (18,319 order lines, 2026-10-01 to 2026-10-04).

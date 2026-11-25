@@ -1,6 +1,6 @@
 # PASPM black-box test cases
 
-Generated from the sources listed in [TEST_PLAN.md](TEST_PLAN.md) §2. Same content as [TEST_CASES.csv](TEST_CASES.csv) (one row per case). Every case is **NOT RUN**; results are recorded as described in TEST_PLAN.md §8. Cases titled `[PLANNED]` cover F10/F11, which are not implemented yet, and run once those features are merged.
+Generated from the sources listed in [TEST_PLAN.md](TEST_PLAN.md) §2. Same content as [TEST_CASES.csv](TEST_CASES.csv) (one row per case). Every case is **NOT RUN**; results are recorded as described in TEST_PLAN.md §8. Cases titled `[PLANNED]` cover F10/F11, which are not implemented yet, and run once those features are merged. Cases titled `[OUT OF ROUND]` are kept with their IDs but are not run in the current round (scheduler, DEC-20261126-03).
 
 Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`ACC-…`), environments (`ENV-1`), setups (`SETUP-B`) and data preparations (`DP-…`) are defined in TEST_PLAN.md §4–§6. Steps prefixed `[API]` have no UI path (no screen exists, the FE screen is still mock data, or the step forces a call the UI never makes, such as a forbidden role or an extra field); run them with Swagger (`/swagger`) or curl using the role's bearer token.
 
@@ -85,7 +85,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 | Field | Value |
 |---|---|
-| Trace | FR-01.1; FR-01.4; UC01; BR-02; NFR 5.5 |
+| Trace | FR-01.1; FR-01.4; UC01; BR-02; NFR 5.5; DEC-20261126-03 |
 | Role | System Admin, Store Admin, Merchandiser, End Customer |
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded) |
 | Test data | ACC-SA, ACC-STA-A, ACC-MER-A, ACC-EC (passwords from .env.seed) |
@@ -475,12 +475,12 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 | Field | Value |
 |---|---|
-| Trace | FR-01.5 |
+| Trace | FR-01.5; DEC-20261126-03 |
 | Role | Merchandiser |
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded) |
-| Test data | PNG 400×400 (200 KiB); PNG > 5 MiB; .txt renamed .png; PNG 4097×10 |
+| Test data | PNG 400×400 (200 KiB); PNG of exactly 5,242,880 bytes (5 MiB); PNG of 5,242,881 bytes; .txt renamed .png; PNG 4097×10 |
 | Steps | 1. Profile → upload each file<br>2. Another user requests GET /api/users/{merchandiserId}/avatar |
-| Expected result | Valid PNG: 200 and the avatar shows. > 5 MiB: 413. Fake PNG and 4097 px wide: 400. Another user's avatar: 403. |
+| Expected result | Valid PNG and the 5 MiB PNG: 200 and the avatar shows. 5 MiB + 1 byte: 413 (a 413 from the multipart size limit with a different message is accepted). Fake PNG and 4097 px wide: 400. Another user's avatar: 403. |
 | Priority / type | Medium / boundary |
 | Status | NOT RUN |
 
@@ -730,12 +730,12 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 | Field | Value |
 |---|---|
-| Trace | FR-01.10; BR-31; NFR 5.2 |
+| Trace | FR-01.10; BR-31; NFR 5.2; DEC-20261126-03 |
 | Role | Store Admin |
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded) |
 | Test data | PNG icon of exactly 1,048,576 bytes; icon of 1,048,577 bytes; JPEG banner of exactly 5,242,880 bytes; banner of 5,242,881 bytes |
 | Steps | 1. Upload each file to the matching slot |
-| Expected result | Files at the limit are accepted. One byte over returns 413 `The icon must be at most 1 MiB` / `The banner must be at most 5 MiB`. |
+| Expected result | Files at the limit are accepted. One byte over returns 413 `The icon must be at most 1 MiB` / `The banner must be at most 5 MiB`. If the multipart size limit rejects the file first, a 413 with a different message is accepted (binary MiB, DEC-20261126-03). |
 | Priority / type | High / boundary |
 | Status | NOT RUN |
 
@@ -969,12 +969,12 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 | Field | Value |
 |---|---|
-| Trace | FR-02.1; DEC-20261119-07 |
+| Trace | FR-02.1; DEC-20261119-07; DEC-20261126-03 |
 | Role | Store Admin |
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded); products Milo, Tea exist |
-| Test data | Milk (1 edit, 4 chars); Mile (1 edit) ; Mint (2 edits); Ten (1 edit, 3 chars); TEA (exact, 3 chars) |
+| Test data | Milk (1 edit, 4 chars); Mile (1 edit) ; Mint (2 edits); Ten (1 edit, 3 chars); TEA (exact, 3 chars); Teas (1 insertion; the shorter name Tea has 3 chars) |
 | Steps | 1. Create each product without confirmation |
-| Expected result | Milk, Mile and TEA return 409 PRODUCT_NAME_CONFIRMATION_REQUIRED. Mint (two edits) and Ten (3-char name, one edit) are created directly. |
+| Expected result | Milk, Mile and TEA return 409 PRODUCT_NAME_CONFIRMATION_REQUIRED. Mint (two edits), Ten (3-char names, one edit) and Teas (the threshold applies to the shorter name, Tea) are created directly. |
 | Priority / type | High / boundary |
 | Status | NOT RUN |
 
@@ -1890,12 +1890,12 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 | Field | Value |
 |---|---|
-| Trace | UC09; DEC-20261116-03 |
+| Trace | UC09; DEC-20261116-03; DEC-20261126-03 |
 | Role | Store Admin, Merchandiser |
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded) |
 | Test data | — |
-| Steps | 1. [API] PUT /api/utility/config/expiry-window<br>2. [API] PATCH /api/utility/products/{id}/scores |
-| Expected result | 404 and 405. No Expiry Window or Product Scores edit screen is reachable. |
+| Steps | 1. Check the menus of every role have no Expiry Window or Product Scores entry<br>2. Open /f03/expiry-window and /f03/product-scores directly<br>3. [API] PUT /api/utility/config/expiry-window<br>4. [API] PATCH /api/utility/products/{id}/scores |
+| Expected result | No menu entry; both URLs show not-found or redirect (known defect KD-02 until fixed). API: 404 and 405. |
 | Priority / type | Low / negative |
 | Status | NOT RUN |
 
@@ -2187,9 +2187,9 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | [TC-F05-018](#tc-f05-018) | SPMF runtime unavailable | Low | negative |
 | [TC-F05-019](#tc-f05-019) | Store users read patterns; System Admin cannot | High | security |
 | [TC-F05-020](#tc-f05-020) | Store Admin follows request status and progress | Medium | functional |
-| [TC-F05-021](#tc-f05-021) | Create schedules: disabled, lookback default and bounds | Medium | boundary |
+| [TC-F05-021](#tc-f05-021) | [OUT OF ROUND] Create schedules: disabled, lookback default and bounds | Medium | boundary |
 | [TC-F05-022](#tc-f05-022) | Enabling a schedule returns 503 | High | negative |
-| [TC-F05-023](#tc-f05-023) | Occurrence history is readable | Low | functional |
+| [TC-F05-023](#tc-f05-023) | [OUT OF ROUND] Occurrence history is readable | Low | functional |
 | [TC-F05-024](#tc-f05-024) | No new System Admin work for an INACTIVE Store | High | negative |
 | [TC-F05-025](#tc-f05-025) | Benchmark is removed | Low | negative |
 | [TC-F05-026](#tc-f05-026) | F05 RBAC (decision table) | High | security |
@@ -2275,11 +2275,11 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 | Field | Value |
 |---|---|
-| Trace | UC05; FR-05.2 |
+| Trace | UC05; FR-05.2; DEC-20261126-03 |
 | Role | Merchandiser |
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded); S1; DP-03 |
 | Test data | {"requestKey":"<uuid>","snapshotId":S1} |
-| Steps | 1. [API] POST /api/mining/requests (see PO question Q-05 about the missing screen)<br>2. [API] GET /api/mining/requests/{id}/progress until terminal |
+| Steps | 1. [API] POST /api/mining/requests (API in this round; the Merchandiser screen comes later, DEC-20261126-03)<br>2. [API] GET /api/mining/requests/{id}/progress until terminal |
 | Expected result | 202; one EFIM run; requestedBy is the Merchandiser; the request completes. |
 | Priority / type | High / functional |
 | Status | NOT RUN |
@@ -2496,13 +2496,13 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 ### TC-F05-021
 
-**Create schedules: disabled, lookback default and bounds**
+**[OUT OF ROUND] Create schedules: disabled, lookback default and bounds**
 
 | Field | Value |
 |---|---|
-| Trace | UC06; FR-05.6 |
+| Trace | UC06; FR-05.6; DEC-20261126-03 |
 | Role | System Admin |
-| Preconditions | ENV-1 (local Docker stack, demo seed loaded) |
+| Preconditions | Not run in this test round: the scheduler stays gated and only the 503 is tested (DEC-20261126-03). ENV-1 (local Docker stack, demo seed loaded) |
 | Test data | WEEKLY dayOfWeek 1 08:00; MONTHLY dayOfMonth 31; lookback omitted, 7, 365, 6, 366; timeZone UTC |
 | Steps | 1. [API] POST /api/system/mining/schedules with each body (no schedule screen in the FE) |
 | Expected result | Created with enabled false, no nextFireAt, version 1; lookback default 30 (weekly) / 90 (monthly); 7 and 365 accepted; 6, 366 and UTC refused with 400. |
@@ -2515,24 +2515,24 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 | Field | Value |
 |---|---|
-| Trace | UC06; FR-05.6; BR-24 |
+| Trace | UC06; FR-05.6; BR-24; DEC-20261126-03 |
 | Role | System Admin |
-| Preconditions | ENV-1 (local Docker stack, demo seed loaded) (schedule-dispatch-enabled unset) |
-| Test data | schedule from the previous case |
-| Steps | 1. [API] PUT with enabled true<br>2. [API] PUT edit lookback with enabled false<br>3. [API] PUT with a stale expectedVersion |
-| Expected result | Enable: 503 `Scheduled mining dispatch is not available`, nothing written. Edit/disable: 200. Stale version: 409. |
+| Preconditions | ENV-1 (local Docker stack, demo seed loaded) (schedule-dispatch-enabled unset); one disabled weekly schedule for Store A created in setup with POST /api/system/mining/schedules (setup only, not tested) |
+| Test data | that schedule and its current version |
+| Steps | 1. [API] PUT /api/system/mining/schedules/{id} with enabled true and the current version<br>2. [API] GET the schedule |
+| Expected result | 503 `Scheduled mining dispatch is not available`. The schedule is unchanged: enabled false, no nextFireAt, same version. This is the only scheduler check in this round. |
 | Priority / type | High / negative |
 | Status | NOT RUN |
 
 ### TC-F05-023
 
-**Occurrence history is readable**
+**[OUT OF ROUND] Occurrence history is readable**
 
 | Field | Value |
 |---|---|
-| Trace | UC06; FR-05.6 |
+| Trace | UC06; FR-05.6; DEC-20261126-03 |
 | Role | System Admin |
-| Preconditions | ENV-1 (local Docker stack, demo seed loaded) |
+| Preconditions | Not run in this test round (DEC-20261126-03). ENV-1 (local Docker stack, demo seed loaded) |
 | Test data | schedule id |
 | Steps | 1. [API] GET …/schedules/{id}/occurrences |
 | Expected result | 200 with an empty page (no dispatch while gated). |
@@ -2545,12 +2545,12 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 | Field | Value |
 |---|---|
-| Trace | FR-01.9; BR-30 |
+| Trace | FR-01.9; BR-30; DEC-20261126-03 |
 | Role | System Admin |
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded); Store C INACTIVE with an earlier request (key KC) and a snapshot |
 | Test data | Store C |
-| Steps | 1. [API] Submit new mining for Store C<br>2. [API] Replay key KC<br>3. [API] Create a schedule for Store C<br>4. [API] Read Store C request history |
-| Expected result | New request and schedule: 409 code STORE_INACTIVE. Replay of KC: 202 existing request. History: 200. |
+| Steps | 1. [API] Submit new mining for Store C<br>2. [API] Replay key KC<br>3. [API] Read Store C request history |
+| Expected result | New request: 409 code STORE_INACTIVE (the schedule variant is out of this round). Replay of KC: 202 existing request. History: 200. |
 | Priority / type | High / negative |
 | Status | NOT RUN |
 
@@ -2560,12 +2560,12 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 | Field | Value |
 |---|---|
-| Trace | UC08 (REMOVED); DEC-20261116-04 |
+| Trace | UC08 (REMOVED); DEC-20261116-04; DEC-20261126-03 |
 | Role | System Admin, Merchandiser |
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded); R1 |
 | Test data | R1 |
-| Steps | 1. Check there is no Benchmark screen (/admin/benchmark) in the menu<br>2. [API] GET /api/mining/runs/{R1}/benchmark |
-| Expected result | No screen; 403 for every role. |
+| Steps | 1. Check there is no Benchmark entry in the menu and open /admin/benchmark directly<br>2. [API] GET /api/mining/runs/{R1}/benchmark |
+| Expected result | No menu entry; the URL shows not-found or redirects (known defect KD-02 until fixed). API: 403 for every role. |
 | Priority / type | Low / negative |
 | Status | NOT RUN |
 
@@ -3278,7 +3278,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 | Field | Value |
 |---|---|
-| Trace | UC23; FR-08.1; BR-12 |
+| Trace | UC23; FR-08.1; BR-12; DEC-20261126-03 |
 | Role | Store Admin |
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded); PUBLISHED campaign C1 choosing B |
 | Test data | C1 |
@@ -3398,12 +3398,12 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 | Field | Value |
 |---|---|
-| Trace | UC25; BR-22 |
+| Trace | UC25; UC16; BR-22; DEC-20261126-03 |
 | Role | Store Admin |
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded); reports exist |
 | Test data | campaign reports |
 | Steps | 1. Open the campaign's reports and one report |
-| Expected result | Both roles can read. Scores are labelled `Weighted utility (snapshot)`, not revenue or profit; results are labelled simulated; no CTR or revenue figures. |
+| Expected result | Both roles can read. Scores are labelled `Weighted utility (snapshot)`, not revenue or profit; results are labelled simulated; no CTR or revenue figures (not part of PASPM, DEC-20261126-03). |
 | Priority / type | Medium / UI |
 | Status | NOT RUN |
 
@@ -3463,11 +3463,11 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 | Field | Value |
 |---|---|
-| Trace | UC26; FR-09.1; BR-25 |
+| Trace | UC26; FR-09.1; BR-25; DEC-20261126-03 |
 | Role | Guest (anonymous) |
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded); Store C INACTIVE |
 | Test data | — |
-| Steps | 1. [API] GET /api/storefront/stores without a token (FE /storefront is still mock data) |
+| Steps | 1. [API] GET /api/storefront/stores without a token (F09 is accepted on the API in this round, DEC-20261126-03) |
 | Expected result | 200; Store A and B with storeSlug and name only (no storeId); Store C absent. |
 | Priority / type | High / functional |
 | Status | NOT RUN |
@@ -3643,11 +3643,11 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 | Field | Value |
 |---|---|
-| Trace | FR-09.3; FR-09.4; DEC-20261126-02 |
+| Trace | FR-09.3; FR-09.4; DEC-20261126-02; DEC-20261126-03 |
 | Role | Guest (anonymous) |
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded); Store A products with sellingPrice 15000.50 and 15000.49 |
 | Test data | slug foodmart-benchmark |
-| Steps | 1. [API] GET …/products/{id} for both products<br>2. When the storefront FE calls the real API (Q-08): open both product pages |
+| Steps | 1. [API] GET …/products/{id} for both products<br>2. Later round, once the storefront FE calls the real API (DEC-20261126-03): open both product pages |
 | Expected result | API returns 15000.50 and 15000.49 unchanged. The storefront shows `15.001 ₫` and `15.000 ₫`. |
 | Priority / type | Medium / boundary |
 | Status | NOT RUN |
@@ -3756,12 +3756,12 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 | Field | Value |
 |---|---|
-| Trace | FR-10.1; FR-10.3 |
+| Trace | FR-10.1; FR-10.3; DEC-20261126-03 |
 | Role | End Customer, Store Admin |
-| Preconditions | Feature PLANNED (DEC-20261125-06); run when F10 is merged. P2 has 3 sellable units; line P2 ×3 |
-| Test data | add 1; then Store Admin sets stock to 1; PATCH 3 → 2 |
-| Steps | 1. [API] Add 1 more P2<br>2. Store Admin lowers stock<br>3. [API] Reduce the line to 2 |
-| Expected result | Add: 409 INSUFFICIENT_SELLABLE_STOCK. Reduce: 200 (reductions are always allowed). |
+| Preconditions | Feature PLANNED (DEC-20261125-06); run when F10 is merged. P2 has 3 sellable units; empty cart |
+| Test data | add 4; add 3; add 1 more; then Store Admin sets stock to 1; PATCH 3 → 2 |
+| Steps | 1. [API] Add 4 P2<br>2. [API] Add 3 P2<br>3. [API] Add 1 more P2<br>4. Store Admin lowers stock<br>5. [API] Reduce the line to 2 |
+| Expected result | Add 4: 409 INSUFFICIENT_SELLABLE_STOCK for the whole request — nothing added (not 3), version unchanged, no event. Add 3: 200, line 3. Add 1 more: 409, line stays 3. Reduce: 200 (reductions are always allowed). |
 | Priority / type | High / boundary |
 | Status | NOT RUN |
 

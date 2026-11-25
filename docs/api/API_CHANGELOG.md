@@ -1,9 +1,11 @@
 # API Changelog
 
-## 2026-11-26 — PO answers for F10/F11 (PLANNED) and VND display (DEC-20261126-02)
+## 2026-11-26 — PO answers for F10/F11 (PLANNED), VND display and doc fixes (DEC-20261126-02, DEC-20261126-03)
 
 - Documentation only; no route, schema or OpenAPI change (F10/F11 are not implemented).
 - [F10](F10_BUNDLE_CART_API.md): a single-item `POST /items` or `PATCH /items/{itemId}` that would exceed 99 units per Product is refused as a whole with `409 CART_QUANTITY_LIMIT` (no clamping). Whole-bundle add still adds as much as fits per component.
+- [F10](F10_BUNDLE_CART_API.md): a single-item add or increase above the sellable stock is also refused as a whole with `409 INSUFFICIENT_SELLABLE_STOCK` ([DEC-20261126-03](../decisions/2026-11-26/DEC-20261126-03-blackbox-test-round-scope-and-remaining-answers.md)).
+- [F07/F08](F07_F08_LAYOUT_CAMPAIGN_API.md): documents that editing Layout A returns 409 `Layout A is immutable and read-only` (existing behaviour). [F05](F05_MINING_API.md): historical sections labelled Superseded.
 - [F11](F11_DASHBOARD_API.md): a bundle-additions window of exactly 90 days (both ends included) is accepted; 91 or more returns 400.
 - Money keeps 2 decimals in responses; UIs display VND as whole đồng rounded HALF_UP. See [DEC-20261126-02](../decisions/2026-11-26/DEC-20261126-02-vnd-display-cart-cap-dashboard-window-merch-screens.md) and [ROC-20261126-009](../record-of-changes/2026-11-26/09-blackbox-test-cases.md).
 

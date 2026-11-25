@@ -86,7 +86,7 @@ UC03 and UC22 were removed before Report 3 and are not reused.
 | UC13 | Create A/B Layout Variants | DONE (API) | TC-F07-001, TC-F07-002 |
 | UC14 | Prepare / Publish Campaign | DONE (API) | TC-F08-006, TC-F08-007, TC-F08-008, TC-F08-016, TC-F08-018 |
 | UC15 | Run A/B Simulation | DONE (API) | TC-F08-001, TC-F08-002, TC-F08-003 |
-| UC16 | Compare Simulated Results | PARTIAL | TC-F08-001, TC-F08-004 |
+| UC16 | Compare Simulated Results | PARTIAL | TC-F08-001, TC-F08-004, TC-F08-017 |
 | UC17 | Manage Products | DONE | TC-F02-003, TC-F02-008, TC-F02-010, TC-F02-012, TC-F02-014 |
 | UC18 | Manage Categories | DONE | TC-F02-001, TC-F02-002, TC-F02-014 |
 | UC19 | Manage Selling Prices / Costs | DONE | TC-F02-009, TC-F02-014 |
@@ -157,7 +157,7 @@ UC03 and UC22 were removed before Report 3 and are not reused.
 
 ## 5. Diagram FR page (UML pack) → SRS
 
-The FR page of `PASPM_Unified_UML2_Editable.drawio` (on `dev` since PR #37, `fb48d55`) numbers requirements as `FRxx.yy`. They map to SRS IDs as follows; the test cases are those of the SRS IDs in §1.
+The FR page of `PASPM_Unified_UML2_Editable.drawio` (on `dev` since PR #37, `fb48d55`; FR08.04 relabelled on this branch) numbers requirements as `FRxx.yy`. They map to SRS IDs as follows; the test cases are those of the SRS IDs in §1.
 
 | Diagram FR | SRS requirement(s) |
 |---|---|
@@ -193,7 +193,7 @@ The FR page of `PASPM_Unified_UML2_Editable.drawio` (on `dev` since PR #37, `fb4
 | FR08.01 Create baseline / suggested layouts | FR-07.1, FR-07.2 |
 | FR08.02 Publish / manage layout campaigns | FR-08.1 |
 | FR08.03 Simulate tests from historical data | FR-08.3 |
-| FR08.04 Compare CTR / conversion rate | FR-08.3 (CTR not implemented — see Q-12) |
+| FR08.04 Compare simulated A/B metrics (relabelled from "Compare CTR / conversion rate", DEC-20261126-03) | FR-08.3 |
 | FR08.05 Activate approved layout campaign | FR-08.1, FR-08.2 |
 | FR09.01 Display optimized homepage blocks | FR-09.2 |
 | FR09.02 Display product details and availability | FR-09.3 |
@@ -223,8 +223,11 @@ Decisions cited directly in a case's trace. Decisions not listed here are covere
 | DEC-20261125-04 | TC-F09-004, TC-F09-011 |
 | DEC-20261125-06 | TC-F10-004, TC-F10-011 |
 | DEC-20261126-02 | TC-F02-009, TC-F09-013, TC-F10-004, TC-F10-016, TC-F11-006 |
+| DEC-20261126-03 | TC-F01-001, TC-F01-027, TC-F01-044, TC-F02-006, TC-F03-028, TC-F05-006, TC-F05-021, TC-F05-022, TC-F05-023, TC-F05-024, TC-F05-025, TC-F08-009, TC-F08-017, TC-F09-001, TC-F09-013, TC-F10-006 |
 
 [DEC-20261126-02](../../decisions/2026-11-26/DEC-20261126-02-vnd-display-cart-cap-dashboard-window-merch-screens.md) (PO answers of 2026-11-26) sets: VND displayed as whole đồng HALF_UP; F10 single-item writes above 99 refused whole with 409 `CART_QUANTITY_LIMIT`; F11 window of 90 days inclusive accepted, 91 refused; the Merchandiser screen gap on FE `dev` is a defect to fix before the run (TEST_PLAN.md §7 and §9).
+
+[DEC-20261126-03](../../decisions/2026-11-26/DEC-20261126-03-blackbox-test-round-scope-and-remaining-answers.md) (remaining PO answers of 2026-11-26) sets the scope of this round: scheduler limited to the 503 check, F09 on the API, Merchandiser mining on the API, removed FE routes must be unreachable (KD-02), binary MiB limits, similar-name threshold on the shorter name, whole-request refusal above sellable stock in F10, Stores B/C from a preparation script, and the exit criteria.
 
 ## 7. Requirements with no black-box test, and why
 
@@ -232,10 +235,10 @@ Decisions cited directly in a case's trace. Decisions not listed here are covere
 |---|---|---|
 | UC08 / diagram FR05.06 / FR11.04 — benchmark | REMOVED on 2026-11-16 (DEC-20261116-04). Only its absence is tested. | TC-F05-025 (negative) |
 | UC27 — Related Products | Deferred after the F09 MVP; no API exists. | — |
-| UC16 / diagram FR08.04 — CTR and estimated revenue | Not implemented and not in the current contract (SRS UC16 PARTIAL). See Q-12. | TC-F08-001/017 check that no CTR or revenue is shown |
-| FR-05.6 — scheduled dispatch behaviour (SKIPPED occurrences, retries, RETRY_EXHAUSTED, STORE_INACTIVE skip) | Needs `paspm.mining.schedule-dispatch-enabled=true`, which must stay off until owner sign-off (BR-24). Only the 503 gate, schedule CRUD and the empty history are testable. | Automated opt-in tests `MiningScheduledActivationE2EMySqlTest`, `MiningSchedulerMultiJvmMySqlTest` (not part of this pack) |
+| UC16 / diagram FR08.04 — CTR and estimated revenue | Not part of PASPM (DEC-20261126-03); the diagram label FR08.04 was changed to "Compare simulated A/B metrics". | TC-F08-001/017 check that no CTR or revenue is shown |
+| FR-05.6 — scheduled dispatch behaviour (SKIPPED occurrences, retries, RETRY_EXHAUSTED, STORE_INACTIVE skip) | Not in this test round (DEC-20261126-03): the scheduler stays gated (BR-24) and the round only checks that enabling returns 503 (TC-F05-022). TC-F05-021 (schedule creation) and TC-F05-023 (history) are kept as [OUT OF ROUND]; the schedule part of FR-01.9 (409 for an INACTIVE Store) is not run either. | Automated opt-in tests `MiningScheduledActivationE2EMySqlTest`, `MiningSchedulerMultiJvmMySqlTest` (not part of this pack) |
 | FR-04.2 / FR-05.4 / NFR 5.3 — leases, fencing, takeover after a crash; 256 MiB heap; 64 KiB log cap | Internal mechanisms with no user-visible input; they need process kills or memory probes. | Automated backend tests; out of black-box scope |
-| FR-06.2 — 10,000-candidate cap | Needs a run with more than 10,000 candidates, which the 2,000-pattern cap makes impractical to build by hand. Listed as a known gap; ask whether a fixture is wanted (Q-10). | — |
+| FR-06.2 — 10,000-candidate cap | Needs a run with more than 10,000 candidates, which the 2,000-pattern cap makes impractical to build by hand. The PO decided the automated test is the evidence (DEC-20261126-03). | — |
 | NFR 5.2 — response time, throughput, availability | No targets defined (TBD in SRS §5.2). | Measurements only, in separate performance reports |
 | NFR 5.4 — per-IP rate limits (30/IP login, 10/IP registration, 20/IP OTP) | Needs many source IPs or a proxy; only the per-email login limit is in this pack. | TC-F01-011 (per-email) |
 | FR-01.1 — successful Google sign-in | Needs a configured Google client ID and real Google accounts; the default local stack has none. | TC-F01-012 (503 path); conditional note in the case |
