@@ -2,7 +2,7 @@
 
 ## Review 2 Mermaid pack — final diagrams (`mermaid/`)
 
-The files in [`mermaid/`](mermaid/) were transcribed on 2026-11-04 from the **final clean** draw.io diagrams (the 36-page UML pack, and an ERD file `PASPM_ERD_V1_V19_clean.drawio`, SHA-256 `64f9c7e712b8dfa2e3d81ac8f2c07167807f982470fa33be175330f300014c3a`, that was not kept in this repository and is superseded by [`PASPM_ERD_V1_V26.drawio`](PASPM_ERD_V1_V26.drawio)). They are mirrors: the draw.io files are the source, and a mirror may lag behind the page it mirrors. Names, states, transitions, guards, actors and steps follow the draw.io pages; nothing was added or dropped. SVG renders are in [`mermaid/rendered/`](mermaid/rendered/) (Mermaid CLI 12.2.0). The draw.io files remain the master; the figure numbers are those of Report 4 (SDD) and Report 3 (SRS) in `docs/review-2/`.
+The files in [`mermaid/`](mermaid/) were transcribed on 2026-11-04 from the **final clean** draw.io diagrams (the 36-page UML pack, and an ERD file `PASPM_ERD_V1_V19_clean.drawio`, SHA-256 `64f9c7e712b8dfa2e3d81ac8f2c07167807f982470fa33be175330f300014c3a`, that was not kept in this repository and is superseded by [`PASPM_ERD_V1_V27.drawio`](PASPM_ERD_V1_V27.drawio)). They are mirrors: the draw.io files are the source, and a mirror may lag behind the page it mirrors. Names, states, transitions, guards, actors and steps follow the draw.io pages; nothing was added or dropped. SVG renders are in [`mermaid/rendered/`](mermaid/rendered/) (Mermaid CLI 12.2.0). The draw.io files remain the master; the figure numbers are those of Report 4 (SDD) and Report 3 (SRS) in `docs/review-2/`.
 
 | Mermaid source | draw.io page | Report figure |
 |---|---|---|
@@ -58,7 +58,7 @@ Kept unchanged as history; **do not use them for Review 2**. Comparison with the
 
 [`PASPM_Unified_27_Diagrams_UML2_Editable.drawio`](PASPM_Unified_27_Diagrams_UML2_Editable.drawio) is the maintained, editable source (open with diagrams.net). Despite its name it has **36 pages** (DEC-20261126-01): the 27 core diagrams, the R2-05 Package Diagram and eight class diagrams R2-07.01–08. It covers requirements, context, use cases, eight activity diagrams, screen flow, architecture, six state machines, eight sequence diagrams and their class diagrams. The file keeps its old name so that links stay valid.
 
-[`PASPM_ERD_V1_V26.drawio`](PASPM_ERD_V1_V26.drawio) is the editable ERD (9 pages) for Flyway V1–V26. The records of 2026-11-26 in [`docs/record-of-changes/`](../record-of-changes/2026-11-26/README.md) list, per phase, the pages changed to follow `dev`.
+[`PASPM_ERD_V1_V27.drawio`](PASPM_ERD_V1_V27.drawio) is the editable ERD (9 pages), Flyway V1–V27 (renamed after each phase that adds migrations). The records of 2026-11-26 in [`docs/record-of-changes/`](../record-of-changes/2026-11-26/README.md) list, per phase, the pages changed to follow `dev`.
 
 Edit the `.drawio` files; never replace them with exported images. The earlier [27-page audit](../reports/UML27_DIAGRAM_QA_2026-11-02.md) describes the 27-page state and is kept as history.
 

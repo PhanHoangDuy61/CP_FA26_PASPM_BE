@@ -5,3 +5,7 @@
 ## Record 001 — Diagram baseline
 
 [Record 001](01-diagram-baseline.md) lands the 36-page UML pack and the ERD V1–V26 ([DEC-20261126-01](../../decisions/2026-11-26/DEC-20261126-01-uml-erd-baseline-in-repository.md)) and ports the scheduler wording. Documentation only; Maven NOT RUN.
+
+## Record 002 — Store management (V27) in the diagrams
+
+[Record 002](02-store-management-v27.md) draws Store management (V27, DEC-20261123-01): four new UML pages, four changed pages and the `store` table of the ERD. Documentation only; Maven NOT RUN.
