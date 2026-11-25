@@ -30,6 +30,91 @@
     }
   ],
   "paths": {
+    "/api/storefront/{storeSlug}/cart/bundles": {
+      "post": {
+        "tags": [
+          "cart-controller"
+        ],
+        "summary": "Add one active Layout B bundle to the cart",
+        "operationId": "addStorefrontCartBundle",
+        "parameters": [
+          {
+            "name": "storeSlug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "description": "Strong quoted cart version, e.g. \"0\" for a virtual cart",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddBundle"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "At least one component was added",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BundleAddResult"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Stale cart, unavailable bundle or no component added",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/BundleAddRejected"
+                    },
+                    {
+                      "$ref": "#/components/schemas/BundleConflict"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request / verification"
+          },
+          "401": {
+            "description": "Authentication required / invalid"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "403": {
+            "description": "Permission denied"
+          },
+          "404": {
+            "description": "Resource not found or outside the authenticated Store"
+          },
+          "503": {
+            "description": "Service configuration or required dependency unavailable"
+          }
+        }
+      }
+    },
     "/api/storefront/{storeSlug}/cart/items": {
       "post": {
         "tags": [
@@ -8616,6 +8701,94 @@
   },
   "components": {
     "schemas": {
+      "AddBundle": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "bundleKey": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "bundleKey"
+        ]
+      },
+      "BundleAddResult": {
+        "type": "object",
+        "properties": {
+          "cart": {
+            "$ref": "#/components/schemas/CartView"
+          },
+          "components": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BundleComponentResult"
+            }
+          }
+        }
+      },
+      "BundleAddRejected": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string",
+            "enum": [
+              "BUNDLE_ADD_REJECTED"
+            ]
+          },
+          "components": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BundleComponentResult"
+            }
+          }
+        },
+        "required": [
+          "code",
+          "components",
+          "error"
+        ]
+      },
+      "BundleComponentResult": {
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requested": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "added": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "BundleConflict": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string",
+            "enum": [
+              "CART_VERSION_CONFLICT",
+              "BUNDLE_UNAVAILABLE"
+            ]
+          }
+        },
+        "required": [
+          "code",
+          "error"
+        ]
+      },
       "AddCartItem": {
         "type": "object",
         "additionalProperties": false,
@@ -13540,6 +13713,10 @@
             "items" : {
               "$ref" : "#/components/schemas/ProductCard"
             }
+          },
+          "bundleKey" : {
+            "type" : "string",
+            "description" : "Opaque F10 key, present only for a BUNDLE block on the active selected Layout B"
           }
         }
       },

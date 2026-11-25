@@ -160,6 +160,12 @@ public class SecurityConfig {
                             "429", "Rate limit exceeded",
                             "503", "Service configuration or required dependency unavailable"
                     ).entrySet()) {
+                        var declared = operation.getResponses().get(entry.getKey());
+                        // Keep declared JSON error DTOs. Springdoc can infer a wildcard success DTO on error responses.
+                        if (declared != null && declared.getContent() != null
+                                && declared.getContent().containsKey(org.springframework.http.MediaType.APPLICATION_JSON_VALUE)) {
+                            continue;
+                        }
                         operation.getResponses().addApiResponse(
                                 entry.getKey(),
                                 new io.swagger.v3.oas.models.responses.ApiResponse().description(entry.getValue())

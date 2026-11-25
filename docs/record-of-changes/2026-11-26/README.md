@@ -37,3 +37,8 @@
 ## Record 010 — F10 Part 1 ordinary cart
 
 Record 009 belongs to the separate black-box test cases branch. [Record 010](10-f10-cart-core.md) records the V31 migration, ordinary cart operations and verification.
+
+
+## Record 011 — F10 Part 2 whole-bundle add
+
+[Record 011](11-f10-bundle-add.md) records the F09 bundle key, versioned bundle cart endpoint, bundle events and the single-item rejection boundary tests.

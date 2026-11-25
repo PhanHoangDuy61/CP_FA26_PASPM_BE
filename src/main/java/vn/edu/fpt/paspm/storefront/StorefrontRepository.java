@@ -26,7 +26,8 @@ public class StorefrontRepository {
             boolean requiresExpiry, String status) {}
     public record AvailabilityRow(boolean productActive, long sellableQuantity, boolean missingRequiredExpiry) {}
     public record ProductResults(List<ProductRow> items, long totalElements) {}
-    public record ActiveLayout(String campaignName, int snapshotId, long layoutId, String role, String status) {}
+    public record ActiveLayout(long campaignId, String campaignName, int snapshotId, long layoutId,
+            long layoutVersion, String role, String status) {}
     public record PlacementRow(int productId, Long recommendationId, String recommendationType,
             Integer recommendationSnapshotId, String recommendationStatus, String recommendationPolicy,
             String zone, int blockNo, int position, String name, String description, String imageUrl,
@@ -52,10 +53,18 @@ public class StorefrontRepository {
     }
 
     public StoreRow publicStore(String slug) {
+        return publicStore(slug, false);
+    }
+
+    public StoreRow publicStoreForUpdate(String slug) {
+        return publicStore(slug, true);
+    }
+
+    private StoreRow publicStore(String slug, boolean lock) {
         return jdbc.query("""
                 SELECT store_id,slug,name FROM store
                 WHERE slug=? AND status='ACTIVE'
-                """, (rs, row) -> new StoreRow(rs.getInt("store_id"), rs.getString("slug"),
+                """ + (lock ? " FOR UPDATE" : ""), (rs, row) -> new StoreRow(rs.getInt("store_id"), rs.getString("slug"),
                 rs.getString("name")), slug).stream().findFirst().orElse(null);
     }
 
@@ -135,19 +144,15 @@ public class StorefrontRepository {
 
     public ActiveLayout activeLayout(int storeId) {
         List<ActiveLayout> layouts = jdbc.query("""
-                SELECT c.name AS campaign_name,c.utility_snapshot_id,l.layout_id,l.role,l.status
+                SELECT c.campaign_id,c.name AS campaign_name,c.utility_snapshot_id,l.layout_id,l.version,l.role,l.status
                 FROM campaign c
                 LEFT JOIN storefront_layout l
                   ON l.store_id=c.store_id AND l.layout_id=c.selected_layout_id
                 WHERE c.store_id=? AND c.status='ACTIVE'
                 ORDER BY c.campaign_id
-                """, (rs, row) -> {
-            long layoutId = rs.getLong("layout_id");
-            if (rs.wasNull()) return new ActiveLayout(rs.getString("campaign_name"),
-                    rs.getInt("utility_snapshot_id"), 0, null, null);
-            return new ActiveLayout(rs.getString("campaign_name"), rs.getInt("utility_snapshot_id"),
-                    layoutId, rs.getString("role"), rs.getString("status"));
-        }, storeId);
+                """, (rs, row) -> new ActiveLayout(rs.getLong("campaign_id"), rs.getString("campaign_name"),
+                        rs.getInt("utility_snapshot_id"), rs.getLong("layout_id"), rs.getLong("version"),
+                        rs.getString("role"), rs.getString("status")), storeId);
         if (layouts.size() > 1) throw new IllegalStateException("Multiple active campaigns violate the Store invariant");
         if (layouts.isEmpty()) return null;
         ActiveLayout active = layouts.get(0);
@@ -182,6 +187,26 @@ public class StorefrontRepository {
                     (Integer) rs.getObject("category_id"), rs.getString("category_name"),
                     rs.getBoolean("requires_expiry"), rs.getString("product_status"));
         }, storeId, layoutId);
+    }
+
+    List<Integer> bundleProducts(int storeId, long layoutId, long version, int blockNo) {
+        return jdbc.queryForList("""
+                SELECT p.product_id FROM layout_placement p
+                JOIN storefront_layout_revision r ON r.store_id=p.store_id AND r.layout_id=p.layout_id
+                WHERE p.store_id=? AND p.layout_id=? AND r.version=? AND p.zone='BUNDLE' AND p.block_no=?
+                ORDER BY p.position,p.product_id
+                """, Integer.class, storeId, layoutId, version, blockNo);
+    }
+
+    List<RecommendationRow> approvedBundleCandidates(int storeId, int snapshotId, String canonicalKey) {
+        return jdbc.query("""
+                SELECT recommendation_id,utility_snapshot_id,type,review_status,policy_snapshot
+                FROM recommendation
+                WHERE store_id=? AND utility_snapshot_id=? AND type='BUNDLE'
+                  AND review_status='APPROVED' AND canonical_key=?
+                """, (rs, row) -> new RecommendationRow(rs.getLong("recommendation_id"),
+                        rs.getInt("utility_snapshot_id"), rs.getString("type"), rs.getString("review_status"),
+                        rs.getString("policy_snapshot")), storeId, snapshotId, canonicalKey);
     }
 
     public Map<Long, RecommendationRow> recommendations(int storeId, List<Long> recommendationIds) {

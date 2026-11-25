@@ -1,9 +1,15 @@
 package vn.edu.fpt.paspm.storefront.cart;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
@@ -21,6 +27,31 @@ public final class CartContracts {
     @Schema(additionalProperties = Schema.AdditionalPropertiesValue.FALSE)
     public record ChangeCartItemQuantity(
             @NotNull @Positive @JsonDeserialize(using = StrictIntegerDeserializer.class) Integer quantity) {}
+
+    @Schema(additionalProperties = Schema.AdditionalPropertiesValue.FALSE)
+    public record AddBundle(
+            @NotBlank @JsonDeserialize(using = BundleKeyDeserializer.class) String bundleKey) {}
+
+    static final class BundleKeyDeserializer extends JsonDeserializer<String> {
+        @Override
+        public String deserialize(JsonParser parser, DeserializationContext context) throws IOException {
+            if (!parser.hasToken(JsonToken.VALUE_STRING)) {
+                return context.reportInputMismatch(String.class, "bundleKey must be a JSON string");
+            }
+            return parser.getText();
+        }
+    }
+
+    public record BundleComponentResult(int productId, int requested, int added) {}
+
+    public record BundleAddResult(CartView cart, List<BundleComponentResult> components) {}
+
+    public record BundleAddRejected(@NotNull String error,
+            @NotNull @Schema(allowableValues = {"BUNDLE_ADD_REJECTED"}) String code,
+            @NotNull List<BundleComponentResult> components) {}
+
+    public record BundleConflict(@NotNull String error,
+            @NotNull @Schema(allowableValues = {"CART_VERSION_CONFLICT", "BUNDLE_UNAVAILABLE"}) String code) {}
 
     public enum CartLineState { AVAILABLE, OUT_OF_STOCK, NO_LONGER_AVAILABLE }
 

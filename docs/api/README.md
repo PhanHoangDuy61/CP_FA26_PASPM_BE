@@ -13,10 +13,10 @@ Canonical contract locations stay stable in this directory. `CURRENT` describes 
 | F06 | [Recommendation](F06_RECOMMENDATION_API.md) | Current Backend v1.1 contract + W2; frozen evidence reader validates exact int64 mining totals; historical test statements retain dates | [F06](../frontend_handoff/F06_HANDOFF.md) |
 | F07/F08 | [Layout and Campaign](F07_F08_LAYOUT_CAMPAIGN_API.md) | Layout detail and offline reports expose frozen-snapshot priority coverage on dev (PR #32, `516183d`) | [F07/F08](../frontend_handoff/F07_F08_HANDOFF.md) |
 | F09 | [Public Storefront](F09_STOREFRONT_API.md) | Merged in PR #33 (`0ef5a55`); ACTIVE Stores only, by `store.slug`; active homepage needs configured layout caps | [F09](../frontend_handoff/F09_HANDOFF.md) |
-| F10 | [Bundle Cart](F10_BUNDLE_CART_API.md) | Part 1 implemented on the F10 branch (ordinary cart and item events, V31); whole-bundle add planned | [F10](../frontend_handoff/F10_HANDOFF.md) |
+| F10 | [Bundle Cart](F10_BUNDLE_CART_API.md) | Part 2 implemented on the stacked F10 branch (ordinary cart, whole-bundle add and events; uses V31) | [F10](../frontend_handoff/F10_HANDOFF.md) |
 | F11 | [Dashboard](F11_DASHBOARD_API.md) | PLANNED, contract merged in PR #34; read-only | [F11](../frontend_handoff/F11_HANDOFF.md) |
 
-[OpenAPI export](openapi.json) has **115 paths / 144 operations** on this branch. It adds five F10 operations to the dev baseline of 112 paths / 139 operations. The generated server URL, `http://localhost:8080`, is the export test origin. Use the deployment's base URL for integration and the [RBAC matrix](F01_F02_RBAC_MATRIX.md) for role checks. Historical counts below describe their dated checkpoints. See the [API changelog](API_CHANGELOG.md).
+[OpenAPI export](openapi.json) has **116 paths / 145 operations** on this branch. It adds six F10 operations to the dev baseline of 112 paths / 139 operations. The generated server URL, `http://localhost:8080`, is the export test origin. Use the deployment's base URL for integration and the [RBAC matrix](F01_F02_RBAC_MATRIX.md) for role checks. Historical counts below describe their dated checkpoints. See the [API changelog](API_CHANGELOG.md).
 
 The CSV async `Idempotency-Key` header remains required and its schema now shows `minLength: 1`. F07 snapshot-product search uses the explicit operation ID `layoutSnapshotProducts`. The export documents the allowed B zones, positive placement coordinates and nullable provenance. See the [F07/F08 contract](F07_F08_LAYOUT_CAMPAIGN_API.md).
 
@@ -42,7 +42,7 @@ Branch `Khoi/feat/store-management` (base `dev` `6d2a877`): **107 paths / 133 op
 
 `API_INVENTORY_BY_FEATURE.md`, `.csv` and `API_FEATURE_GAP_REPORT.md` are absent from current dev. They exist only in local branch `Khoi/docs/backend-api-inventory-audit` at `39a4918`; no remote publication or merge is assumed. This reorganization does not cherry-pick/copy them. They are not presented as live links until a separately reviewed integration supplies them.
 
-The F10 Part 1 operations are included in the export. F10 whole-bundle add and F11 are PLANNED. F07/F08 routes are documented in the linked contract. The documented unavailable F03 `GET /api/utility/snapshots` is not an implemented route; F05 `GET /api/mining/snapshots` is a distinct selector. Framework Swagger/OpenAPI paths are not business APIs.
+The export includes F10 Parts 1 and 2. F11 remains PLANNED. F07/F08 routes are documented in the linked contract. The documented unavailable F03 `GET /api/utility/snapshots` is not an implemented route; F05 `GET /api/mining/snapshots` is a distinct selector. Framework Swagger/OpenAPI paths are not business APIs.
 
 Current F01 reconciliation (2026-11-12): preserves published dev V20/AuthSessionService and adds V21 binding; [current evidence](../testing/reports/F01_SESSION_RECONCILIATION_2026-11-12.md). Earlier local-variant details are dated history; no source database repair/deployment was performed.
 

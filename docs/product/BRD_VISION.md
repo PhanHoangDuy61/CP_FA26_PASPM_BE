@@ -107,7 +107,7 @@ Workflow ownership (Review 2):
 | F07 | Layout Simulator: baseline A, editable B, zones, utility score, preview | Backend API implemented. `priorityCoverage` merged in PR #32 (`516183d`). Frontend in progress (mock screens on the local branch `feature/f07-f11-mock`, not pushed) |
 | F08 | Campaign & A/B (simulated): campaign lifecycle, offline replay report | Backend API implemented. Frontend in progress |
 | F09 | Storefront: homepage, product detail, bundles | **Backend MVP** (Duy Phan, branch `Duy/Feature/F09_Storefront`, 2026-11-21) merged with `dev` through `Khoi/merge/f09-storefront-be` (V29; public = Store ACTIVE, DEC-20261125-04). Related products and the frontend storefront are still open |
-| F10 | Bundle Cart | **PLANNED.** Whole-bundle action adds eligible components to ordinary Product lines, with current price, stock validation and If-Match (DEC-20261125-06). |
+| F10 | Bundle Cart | **Implemented on the stacked Part 2 branch.** Whole-bundle action adds eligible components to ordinary Product lines, with current price, stock validation and If-Match (DEC-20261125-06). |
 | F11 | Retail Performance Dashboard | **PLANNED.** Same-Store dashboard for STORE_ADMIN and MERCHANDISER with frozen snapshot utility, saved simulated A/B including priority coverage, and bundle add counts by origin plus actual units added (DEC-20261125-06). |
 
 ### 6.2 Out of scope
