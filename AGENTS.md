@@ -23,7 +23,7 @@ PASPM (FA26SE048) backend: Java 17, Spring Boot 3.5, MySQL 8.4 + Flyway, SPMF 2.
 ## Non-negotiable rules
 
 - `dev` changes only through a PR with green CI. Work on a new branch `<member>/<type>/<topic>`. No direct push to `dev`, no force-push. Commit, push or merge only when asked.
-- Never edit Flyway V1–V26; add V27+. Never touch a teammate's local database; tests use disposable databases.
+- Never edit Flyway V1–V26; add new migrations from V32 (V30 is used by F09, V31 is reserved for F10). Never touch a teammate's local database; tests use disposable databases.
 - Register every new test class in `.github/scripts/test-groups.py`. CI's backend and mysql jobs only run the classes named there.
 - Never fabricate results. Anything not executed is `NOT RUN`. Never print or commit secrets.
 - Frozen JSON and historical rows are immutable. New formats get a new version tag.
