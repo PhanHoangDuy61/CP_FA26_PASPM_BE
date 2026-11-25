@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 # Build with named contexts `java25` (JRE home) and `spmf` (directory containing spmf.jar); use scripts/staging/build-image.sh,
 # which builds linux/amd64 by default. SPMF is GPL v3 and runs only as a separate process: the license, SOURCE.md and
-# THIRD_PARTY_NOTICES.md are copied to /opt/paspm/licenses/ next to the jar (DEC-20261125-01).
+# THIRD_PARTY_NOTICES.md are copied to /opt/paspm/licenses/ next to the jar (DEC-20261125-03).
 # The Backend JAR is built separately with Java 17: mvn -DskipTests package
 ARG RUNTIME_IMAGE=eclipse-temurin:17-jre-jammy
 FROM ${RUNTIME_IMAGE}

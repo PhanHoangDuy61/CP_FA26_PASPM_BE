@@ -1,4 +1,4 @@
-# DEC-20261125-01 — SPMF (GPL v3): public Release, license in the image, separate-process rule
+# DEC-20261125-03 — SPMF (GPL v3): public Release, license in the image, separate-process rule
 
 | Field | Value |
 |---|---|

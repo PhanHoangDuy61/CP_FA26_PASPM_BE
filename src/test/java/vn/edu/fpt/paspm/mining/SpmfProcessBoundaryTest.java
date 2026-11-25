@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 /**
- * DEC-20261125-01: SPMF is GPL v3 and PASPM runs it only as a separate process ({@code java -jar spmf.jar run EFIM ...}).
+ * DEC-20261125-03: SPMF is GPL v3 and PASPM runs it only as a separate process ({@code java -jar spmf.jar run EFIM ...}).
  * The backend must never import an SPMF class, depend on SPMF in Maven, or bundle it. The package name is built from two
  * parts so that this file does not match its own scan.
  */

@@ -8,13 +8,13 @@
 | Type | Implementation (build and CI support) / Documentation |
 | Features | F05 runtime (SPMF), CI, Docker deployment. No API, schema or runtime behaviour change |
 | Branch / base HEAD | `Khoi/chore/spmf-ci-artifact` / `origin/dev` `82b0ced` (merge of PR #28) |
-| Execution status | COMPLETED. The GitHub Release and the Actions variable were created by the owner, not by this change (section 7) |
+| Execution status | COMPLETED (test fixes of section 9 added after the first full CI run). The GitHub Release and the Actions variable were created by the owner, not by this change (section 7) |
 | Release status | BRANCH_PUSHED — committed and pushed to `origin/Khoi/chore/spmf-ci-artifact`; PR not opened, not merged |
 | Daily summary | [README of the day](README.md) |
 
 ## 1. Request and scope
 - The Product Owner asked to finish CI/CD for the SPMF dependency (GPL v3). Phase 1 was an audit and Phase 2 a plan; on 2026-11-25 the owner approved all 7 recommendations and asked for part C only: notices and license files, Dockerfile copy and `LABEL`, an amd64 build script, `SpmfProcessBoundaryTest`, a DEC, docs and this record.
-- Rules: [DEC-20261125-01](../../decisions/2026-11-25/DEC-20261125-01-spmf-gpl-distribution-and-process-boundary.md).
+- Rules: [DEC-20261125-03](../../decisions/2026-11-25/DEC-20261125-03-spmf-gpl-distribution-and-process-boundary.md).
 - Audit result that shaped the work: the repository is public, so the credential-free downloader works with a Release asset and no token workflow is needed (part B was skipped by the owner); SPMF is only ever started with `ProcessBuilder` and `java -jar` (`SpmfMiningEngine.java:50-52`, `SpmfRuntime.java:76`), with no import and no Maven dependency; the CI `integration` job fails today because `PASPM_CI_SPMF_ARTIFACT_URL` is unset (seen on PR #28's head).
 - The main checkout and its uncommitted `application.yml` were never touched (all work is in the worktree `outputs/spmf-ci-wt`).
 
@@ -23,7 +23,7 @@
 ### Added
 - `THIRD_PARTY_NOTICES.md` (SPMF only), `third_party/spmf/LICENSE-GPL-3.0.txt` (the copy inside SPMF 2.67a, 35,147 bytes, SHA-256 `8ceb4b9e…b903`), `third_party/spmf/SOURCE.md`, and `.gitattributes` (`third_party/spmf/* -text`, so the license bytes stay identical on Windows).
 - Tests `SpmfProcessBoundaryTest` (no SPMF import in `src/main` and `src/test`, no SPMF in `pom.xml`, the scanner itself is checked on synthetic input) and `SpmfThirdPartyNoticesTest` (license hash, notices carry the same pin as `provision-spmf.py`, the Dockerfile copies and labels, the build script defaults to amd64); both registered in the `backend` group of `.github/scripts/test-groups.py`.
-- DEC-20261125-01.
+- DEC-20261125-03.
 
 ### Changed
 - `Dockerfile`: copies `third_party/spmf/` and `THIRD_PARTY_NOTICES.md` to `/opt/paspm/licenses/` next to the jar and adds `LABEL`s (`paspm.third-party.spmf.version|license|sha256|source|usage`).
@@ -42,8 +42,9 @@
 | `Dockerfile`, `scripts/staging/build-image.sh` | Modified | license copy, labels, amd64 |
 | `src/test/java/vn/edu/fpt/paspm/mining/SpmfProcessBoundaryTest.java`, `SpmfThirdPartyNoticesTest.java` | Added | guards |
 | `.github/scripts/test-groups.py` | Modified | two classes in `backend` |
+| `src/test/java/vn/edu/fpt/paspm/mining/SpmfChildProcessSupport.java` (added), `MiningMultiJvmMySqlTest.java`, `MiningSchedulerMultiJvmMySqlTest.java`, `MiningProcessOutputLimitTest.java` (modified) | Added / Modified | test fixes after the first full CI run, section 9 |
 | `CLAUDE.md`, `AGENTS.md`, `.claude/skills/paspm-context/SKILL.md`, `.agents/skills/paspm-context/SKILL.md` | Modified | the rule |
-| `docs/decisions/2026-11-25/DEC-20261125-01-…md`, `docs/setup/{F05_SPMF_RUNTIME_SETUP,SPMF_ARTIFACT_HOSTING,BACKEND_CI,STAGING}.md`, `docs/product/{ARCHITECTURE_SDD,BRD_VISION}.md` | Added / Modified | decision and facts |
+| `docs/decisions/2026-11-25/DEC-20261125-03-…md` (renamed from `-01`), `docs/setup/{F05_SPMF_RUNTIME_SETUP,SPMF_ARTIFACT_HOSTING,BACKEND_CI,STAGING}.md`, `docs/product/{ARCHITECTURE_SDD,BRD_VISION}.md` | Added / Modified | decision and facts |
 | `docs/record-of-changes/2026-11-25/*`, `docs/record-of-changes/README.md` | Added / Modified | this record |
 
 ## 4. API and compatibility impact
@@ -66,10 +67,34 @@ Java 17 (`JAVA_HOME=~/.sdkman/candidates/java/17.0.21.0+9-tem`), `sh ./mvnw` (th
 - Phase 1 audit and plan of the same day (`side-session-notes/…/spmf-ci-artifact-plan.md`): PR #28's `integration` check failed with "SPMF provisioning unavailable"; the repository is public (unauthenticated API: `private: false`); a Release URL redirects to `release-assets.githubusercontent.com`, which `provision-spmf.py:43` allows; the official SPMF site serves 2.69 (2026-11-22); the local `spmf.zip` is the official 2.67a source (3,051 `.java` files, `SPMF_VERSION = "2.67a"`).
 
 ## 7. Limitations and next actions
-- **Owner actions:** the owner reported on 2026-11-25 that the Release `spmf-2.67a` is created, the downloaded `spmf.jar` hash matches and `PASPM_CI_SPMF_ARTIFACT_URL` is set. **Verified here from the public API:** the Release exists (not a draft, not a pre-release, published 2026-11-24T17:40:10Z UTC) with the four assets and sizes `spmf.jar` 15,907,956 / `LICENSE-GPL-3.0.txt` 35,147 / `SOURCE.md` 1,935 / `spmf-2.67a-src.zip` 34,107,808; their SHA-256 digests match the pins (`4aa46838…dfe6a`, `8ceb4b9e…b903`, `48599087…9c10`; `SOURCE.md` `0bfbfd80…2e7a` equals the repository copy); a fresh unauthenticated download of the asset URL gives 15,907,956 bytes with SHA-256 `4aa46838…dfe6a`. **Not verifiable without a token:** the value of the Actions variable. **Still open:** the API reports `immutable: false`, so Release immutability (DEC-20261125-01 §4) is not on yet. **Still to do:** re-run the `integration` job of an open PR and read its result; no green `integration` run is claimed here.
+- **Owner actions:** the owner reported on 2026-11-25 that the Release `spmf-2.67a` is created, the downloaded `spmf.jar` hash matches and `PASPM_CI_SPMF_ARTIFACT_URL` is set. **Verified here from the public API:** the Release exists (not a draft, not a pre-release, published 2026-11-24T17:40:10Z UTC) with the four assets and sizes `spmf.jar` 15,907,956 / `LICENSE-GPL-3.0.txt` 35,147 / `SOURCE.md` 1,935 / `spmf-2.67a-src.zip` 34,107,808; their SHA-256 digests match the pins (`4aa46838…dfe6a`, `8ceb4b9e…b903`, `48599087…9c10`; `SOURCE.md` `0bfbfd80…2e7a` equals the repository copy); a fresh unauthenticated download of the asset URL gives 15,907,956 bytes with SHA-256 `4aa46838…dfe6a`. **Not verifiable without a token:** the value of the Actions variable. **Still open:** the API reports `immutable: false`, so Release immutability (DEC-20261125-03 §4) is not on yet. **Still to do:** re-run the `integration` job of an open PR and read its result; no green `integration` run is claimed here.
 - The binary/source link is evidenced by names only (all 3,051 sources have a class in the jar; 38 jar classes have no same-named source file, normal for multi-class files); no rebuild was done (DEC §3).
 - No CI job builds the image and no registry is chosen. Building on a host of another architecture works through emulation (shown here on arm64), but a native amd64 host is not tested.
 - Windows checkouts: `.gitattributes` keeps the license bytes; `SpmfThirdPartyNoticesTest` would catch a change. Not run on Windows.
 
 ## 8. Delivery
 Commit: one commit on `Khoi/chore/spmf-ci-artifact` (hooks not bypassed), made at the owner's request after the Release was created. Push: `git push -u origin Khoi/chore/spmf-ci-artifact`, no force. PR: **NOT OPENED, NOT MERGED**; `gh` is not installed, compare URL `https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/compare/dev...Khoi/chore/spmf-ci-artifact?expand=1`; the PR body draft is `outputs/pr-bodies/PR-spmf-ci-artifact.md`. The test image `paspm-backend:spmf-ci-amd64` and `target/staging-build` were deleted after the commit. The main checkout is untouched.
+
+## 9. Follow-up: the first full CI run on Linux (PR #29, run `45453262829`) and the test fixes
+
+The `integration` job provisioned SPMF and ran the whole suite for the first time on a native Linux runner: 872 tests, 6 failures, 12 skipped. Diagnosis (reproduced in an amd64 `ubuntu:24.04` container, uid 10001, JDK 17 + JDK 25, MySQL 8.4, Docker Desktop kernel 6.10.14-linuxkit under Rosetta, so **not native Linux**):
+
+| Failing test | Cause | Action |
+|---|---|---|
+| `MiningMultiJvmMySqlTest` (`gracefulShutdown…`, `killedDuringRealSpmf…` ×2) and `MiningSchedulerMultiJvmMySqlTest.crashPoint6` | Test race, not a launcher defect. The pid in `SPMF_PROCESS_STARTED` is first the Python parent-death launcher (its argv also contains `EFIM`). The tests stopped it with SIGSTOP before it called `prctl(PR_SET_PDEATHSIG)`, so it outlived the killed Backend. Commit `24ab3e5` (2026-11-02) fixed the same race with `!contains("-c")`; commit `cd90e58` (2026-11-16, EFIM-only) dropped that guard in both tests, and nothing ran them on Linux afterwards | One shared helper, `SpmfChildProcessSupport`, accepts only the process whose argv has `EFIM` and `-jar` and no `-c`. It does not use `info().command()`, because under Rosetta/QEMU `/proc/<pid>/exe` is the emulator |
+| `MiningProcessOutputLimitTest:39` (expected 4194304, was 0) | The test passed the bare name `python3`; the launcher stats and execs its target by path, exits 125 and the output file stays empty | The test resolves an absolute `python3` from `PATH` and fails clearly when there is none |
+| `JpaPilotMigrationMySqlTest:84` (400 instead of 201) | Client-sent `sku` (DEC-20261119-07) | Not changed here; fixed by the seed PR (`Khoi/fix/sku-foodmart-seed`, commit `5eac3e9`) |
+
+No production code changed, and no test was skipped, disabled or weakened.
+
+Verification of these fixes, same container, each from a clean copy of the branch:
+
+| Command | Result |
+|---|---|
+| `-Dtest=MiningProcessOutputLimitTest,LinuxParentDeathLauncherTest,MiningMultiJvmMySqlTest` with the `integration` job's flags (`-Dpaspm.test.mysql/java17-backend/multijvm=true`, JDK 17, JDK 25 child, SPMF 2.67a) | 10 run, 0 failures, 0 errors, 0 skipped. Before the fix: `MiningProcessOutputLimitTest` 1 failure and `MiningMultiJvmMySqlTest` 3 failures |
+| `-Dtest=MiningSchedulerMultiJvmMySqlTest` (same flags) | 12 run, 0 failures, 0 errors, **2 skipped** (the two natural-lease tests need `-Dpaspm.test.natural-lease=true`, about 14 minutes) |
+| `sh ./mvnw -B clean verify -Dtest="$(python3 .github/scripts/test-groups.py backend)"` on macOS, JDK 17.0.21 | 472 run, 0 failures, 0 errors, 0 skipped |
+
+**Open:** `test-summary.py` rejects any skipped test and the `integration` job reported 12 skipped. The opt-in tests that stay skipped under the job's flags include the two natural-lease tests; the full list is in the job's step 11 log (not readable without authentication). Native Linux acceptance (`scripts/verify-native-linux.sh`) is still `NOT RUN`.
+
+Numbering for 2026-11-25 is fixed across branches: DEC 01 F07, 02 source-of-truth rule, 03 SPMF (this branch, renamed from 01), 04 F09; ROC 001 F07, 002 SPMF, 003 source-of-truth, 004 seed, 005 F09.

@@ -7,7 +7,7 @@
 #   JAVA25_IMAGE (default eclipse-temurin:25-jre-jammy; its JRE becomes the separate Java 25 SPMF runtime),
 #   WORK_DIR (default target/staging-build), SKIP_SMOKE=1 (skip the run of `spmf.jar version` inside the image).
 # The Dockerfile itself verifies the SPMF SHA-256; this script verifies it first so a wrong file fails early.
-# SPMF is GPL v3: the image carries its license, SOURCE.md and THIRD_PARTY_NOTICES.md in /opt/paspm/licenses (DEC-20261125-01).
+# SPMF is GPL v3: the image carries its license, SOURCE.md and THIRD_PARTY_NOTICES.md in /opt/paspm/licenses (DEC-20261125-03).
 # On a host of another architecture (for example an arm64 Mac) the RUN steps execute under emulation (QEMU/Rosetta).
 set -euo pipefail
 TAG="${1:?usage: build-image.sh <image-tag> [--skip-jar]}"

@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 import org.junit.jupiter.api.Test;
 
 /**
- * DEC-20261125-01: SPMF 2.67a is redistributed under GPL v3 (Release asset and Docker image). The repository keeps the license,
+ * DEC-20261125-03: SPMF 2.67a is redistributed under GPL v3 (Release asset and Docker image). The repository keeps the license,
  * the source note and the notices, and the image copies them next to the jar. Every record must carry the same pinned SHA-256.
  */
 class SpmfThirdPartyNoticesTest {

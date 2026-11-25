@@ -17,7 +17,7 @@ Release status: **UNRELEASED**, feature branch only. No push.
 
 ## Record 002 — SPMF notices, license in the Docker image, amd64 build, process-boundary guard
 
-[Record 002](02-spmf-gpl-ci-artifact.md) implements [DEC-20261125-01](../../decisions/2026-11-25/DEC-20261125-01-spmf-gpl-distribution-and-process-boundary.md):
+[Record 002](02-spmf-gpl-ci-artifact.md) implements [DEC-20261125-03](../../decisions/2026-11-25/DEC-20261125-03-spmf-gpl-distribution-and-process-boundary.md):
 - `THIRD_PARTY_NOTICES.md` and `third_party/spmf/` (GPL v3 text, `SOURCE.md`); the Docker image copies them next to the jar and labels the image;
 - `scripts/staging/build-image.sh` builds `linux/amd64` by default; the build was run on an arm64 Mac without an emulation failure;
 - `SpmfProcessBoundaryTest` and `SpmfThirdPartyNoticesTest`; the rule "SPMF only as a separate process" in `CLAUDE.md`, `AGENTS.md` and both `paspm-context` skills;
