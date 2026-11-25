@@ -1,5 +1,11 @@
 # API Changelog
 
+## 2026-11-25 — OpenAPI synchronization on dev `cded4ab`
+
+- Documentation only. The committed and runtime exports both contain **112 paths / 139 operations**.
+- Synchronized the generated test server URL, the required CSV async `Idempotency-Key` header schema (`minLength: 1`), F07 placement schemas and summaries, and snapshot product search response metadata. Its generated operation ID is now `products_2` in the file. This can rename a generated client method.
+- The [F07/F08 contract](F07_F08_LAYOUT_CAMPAIGN_API.md) explains validation and nullable provenance that the generated schema does not capture. See [ROC-20261125-009](../record-of-changes/2026-11-25/09-openapi-status-sync.md).
+
 ## 2026-11-25 — F09 Storefront MVP merged with dev (branch `Khoi/merge/f09-storefront-be`, PR to `dev` pending; replaces the old F09 merge `68d6f0b`)
 
 Rules: [DEC-20261125-04](../decisions/2026-11-25/DEC-20261125-04-f09-public-store-follows-store-status.md), DEC-20261117-03, DEC-20261123-01, DEC-20261124-01, DEC-20261124-03. Contract: [F09_STOREFRONT_API.md](F09_STOREFRONT_API.md). Migrations: **V29** `f09_storefront` from the old F09 merge on `dev` (`68d6f0b`) is kept unchanged; new **V30** drops `store.store_slug` and `store.storefront_enabled`. Original implementation: Duy Phan (`Duy/Feature/F09_Storefront`, 2026-11-21).

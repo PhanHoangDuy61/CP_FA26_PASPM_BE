@@ -60,6 +60,8 @@ Replace all placements in B with individual product placements and provenance us
 }
 ```
 
+Supply positive `blockNo` and `position` for every row. Omitting either gives the primitive field its default zero, which fails validation. Use `BANNER`, `BUNDLE`, `CROSS_SELL` or `FBT` for B; the service validates zone names. The optional `sourceRecommendationId` accepts null. The response's legacy `recommendationId` alias can also be null. Springdoc on `dev` at `cded4ab` does not express all of these constraints. See [ROC-20261125-009](../record-of-changes/2026-11-25/09-openapi-status-sync.md).
+
 `PUT /api/layouts/{id}/placements` is the only B placement write. A product can appear once, but the same source recommendation ID may be used by multiple placements. Removing or moving one product updates only F07 placement/revision data and does not change F06 evidence or Layout A.
 
 `GET /api/layouts/products?snapshotId=...&q=...&page=0&pageSize=20` returns paginated snapshot products for the editor. Results include current product status, sellable quantity, snapshot weighted utility, deleted/eligible flags and per-product validation errors.

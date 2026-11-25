@@ -3,8 +3,8 @@
 | Field | Value |
 |---|---|
 | Project | PASPM (FA26SE048) |
-| Version / date | 0.4 — 2026-11-20 (synced with `dev` @ `636952b`) |
-| Baseline | Backend `dev` @ `530651b`: Flyway V1–V26, OpenAPI 102 paths / 123 operations (at `222e54f`) |
+| Version / date | 0.4 — API inventory synchronized 2026-11-25 |
+| Baseline | Backend `dev` @ `cded4ab`: Flyway V1–V30, OpenAPI 112 paths / 139 operations |
 | Audited against code | `530651bad5b02d90bcb48ecffaf7fa5a0f6b0b7e`, see (audit report kept outside the repo, 2026-11-19) |
 | Synced with | `dev` @ `636952b` (2026-11-20): F02 update `d22f735`; PR #20 (decisions); PR #21 (F04 Excel); PR #22 (zone caps, top-K baseline, equal-size simulation, DEC-20261119-06); PR #23 (SPMF whole-đồng fallback, DEC-20261119-05); PR #25 (agent kit). Checked for these changes only, not a full re-audit |
 | Based on | Report 3 (SRS) plus newer owner decisions and current code |
@@ -60,7 +60,7 @@ UC03 and UC22 were removed earlier, and their numbers are not reused.
 | 13 | Create A/B Layout Variants | Merch | F07/F08 | DONE (API) | A is generated (frequency baseline, read-only). B is built at campaign creation |
 | 14 | Prepare / Publish Campaign | Merch | F08 | DONE (API) | Also covers *withdraw* |
 | 15 | Run A/B Simulation | Merch | F08 | DONE (API) | **Offline replay** of transactions dated after the snapshot. Synthetic traffic is not modelled |
-| 16 | Compare Simulated Results | Merch | F08 | PARTIAL | Metrics are hitRate, bundleConversion, capturedUtility and priorityCoverage (implemented on the feature branch). CTR and estimated revenue from Report 3 are not implemented |
+| 16 | Compare Simulated Results | Merch | F08 | PARTIAL | Metrics are hitRate, bundleConversion, capturedUtility and priorityCoverage (PR #32, `516183d`). CTR and estimated revenue from Report 3 are not implemented |
 | 17 | Manage Products | Store Admin | F02 | DONE | Legacy score fields removed. SKU format and similar-name confirmation (2026-11-19) |
 | 18 | Manage Categories | Store Admin | F02 | DONE | — |
 | 19 | Manage Selling Prices / Costs | Store Admin | F02 | DONE | — |
@@ -273,7 +273,7 @@ BR-01 to BR-13 keep Report 3 numbering. BR-14 onward are new proposals in this d
 | BR-20 | Layout B placements are edited per product with optional F06 provenance. A product appears once. Removing or moving a placement does not alter F06 evidence or Layout A | Changed by DEC-20261125-01 |
 | BR-21 | At most one ACTIVE campaign per Store | New |
 | BR-22 | Layout utility score is a snapshot priority score, not revenue or profit | New |
-| BR-23 | A priority product is one with W > 1 in the layout's snapshot | Implemented on the feature branch |
+| BR-23 | A priority product is one with W > 1 in the layout's snapshot | Merged in PR #32 (`516183d`) |
 | BR-24 | Scheduled-mining enable returns 503 until release sign-off | New |
 | BR-25 | (F09) Only the active campaign layout of an ACTIVE Store is public. Public DTOs never expose cost or batch data | Valid (DEC-20261125-04) |
 | BR-26 | (F10, planned) Bundle add merges currently eligible Product lines. Each line is independently editable and removable. No reservation or discount | DEC-20261125-06, PLANNED |
@@ -290,7 +290,7 @@ BR-01 to BR-13 keep Report 3 numbering. BR-14 onward are new proposals in this d
 ### 5.1 External interfaces
 
 - **Web SPA:** React and TypeScript, desktop and mobile widths from 320 to 1440 px.
-- **REST/JSON API:** Bearer JWT plus refresh cookie and CSRF. Errors are returned as `{"error":"…"}`. **139 operations / 112 paths** with F09 (branch `Khoi/merge/f09-storefront-be`; `dev` had 140 / 113 with the old F09 visibility route); F10–F11 not yet included. Swagger is at `/swagger`.
+- **REST/JSON API:** Bearer JWT plus refresh cookie and CSRF. Errors are returned as `{"error":"…"}`. **139 operations / 112 paths** on `dev` at `cded4ab`, including F09 (PR #33); F10–F11 not yet included. Swagger is at `/swagger`.
 - **Identity and email:** Google Identity for sign-in, SMTP for OTP (Mailpit in development).
 - **Mining runtime:** SPMF 2.67a on Java 25, pinned by SHA-256.
 - **Database:** MySQL 8.4 with Flyway **V1–V30** (V27 Store management, V28 product soft delete, V29 F09 storefront from the old `dev` merge, V30 drops its unused Store columns; V31 reserved for F10). H2 is used for some automated tests.
@@ -396,8 +396,8 @@ Changes against Report 3 §3.1.2:
 | F06 | 10, 11 | `F06_RECOMMENDATION_API.md` | `F06_HANDOFF.md` |
 | F07/F08 | 12–16, 23, 25 | `F07_F08_LAYOUT_CAMPAIGN_API.md` | `F07_F08_HANDOFF.md` |
 | F09 | 26–28 | `F09_STOREFRONT_API.md` | `F09_HANDOFF.md` |
-| F10 | 29 | plan draft `F10_BUNDLE_CART_PLAN_API_SCREENS.md` (outside the repo) | — |
-| F11 | 24 | — | — |
+| F10 | 29 | [Bundle Cart API (PLANNED)](../api/F10_BUNDLE_CART_API.md) | [F10 handoff](../frontend_handoff/F10_HANDOFF.md) |
+| F11 | 24 | [Dashboard API (PLANNED)](../api/F11_DASHBOARD_API.md) | [F11 handoff](../frontend_handoff/F11_HANDOFF.md) |
 
 ## 10. Report 3 items superseded
 
