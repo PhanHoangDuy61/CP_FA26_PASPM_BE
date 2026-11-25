@@ -56,7 +56,7 @@ Kept unchanged as history; **do not use them for Review 2**. Comparison with the
 
 ## Editable UML 2.0 pack (36 pages) — current
 
-[`PASPM_Unified_27_Diagrams_UML2_Editable.drawio`](PASPM_Unified_27_Diagrams_UML2_Editable.drawio) is the maintained, editable source (open with diagrams.net). Despite its name it has **36 pages** (DEC-20261126-01): the 27 core diagrams, the R2-05 Package Diagram and eight class diagrams R2-07.01–08. It covers requirements, context, use cases, eight activity diagrams, screen flow, architecture, six state machines, eight sequence diagrams and their class diagrams. The file keeps its old name so that links stay valid.
+[`PASPM_Unified_UML2_Editable.drawio`](PASPM_Unified_UML2_Editable.drawio) is the maintained, editable source (open with diagrams.net). It has **42 pages** (DEC-20261126-01): the 27 core diagrams, the R2-05 Package Diagram, eight class diagrams R2-07.01–08, the Store management pages (AD09, R2-06.07, R2-08.09, R2-07.09) and the pages AD10 and AD11. The file was renamed from `PASPM_Unified_27_Diagrams_UML2_Editable.drawio` on 2026-11-26 because the old name no longer matched the page count; every link was updated.
 
 [`PASPM_ERD_V1_V30.drawio`](PASPM_ERD_V1_V30.drawio) is the editable ERD (9 pages), Flyway V1–V30 (named after its last Flyway version). The records of 2026-11-26 in [`docs/record-of-changes/`](../record-of-changes/2026-11-26/README.md) list, per phase, the pages changed to follow `dev`.
 

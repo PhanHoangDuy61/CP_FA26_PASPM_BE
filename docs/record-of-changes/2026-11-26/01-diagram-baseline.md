@@ -12,7 +12,7 @@
 
 ## Scope and changes
 
-- `docs/diagrams/PASPM_Unified_27_Diagrams_UML2_Editable.drawio` is replaced by the 36-page pack (byte-identical to the backup commit `a7dadf5` of the old branch, SHA-256 prefix `b7d23a48956c05f5`), then edited as described below. The eight numbered `.mmd` files and their SVG renders that the working copy had changed are taken from the same backup commit.
+- `docs/diagrams/PASPM_Unified_UML2_Editable.drawio` is replaced by the 36-page pack (byte-identical to the backup commit `a7dadf5` of the old branch, SHA-256 prefix `b7d23a48956c05f5`), then edited as described below. The eight numbered `.mmd` files and their SVG renders that the working copy had changed are taken from the same backup commit.
 - `docs/diagrams/PASPM_ERD_V1_V26.drawio` (9 pages, SHA-256 prefix `3bd9749632792804`) is added.
 - Not landed: the review PDF (2.8 MB) and the 2026-11-04 review package, the V14–V19 scheduler ERD file and the 27-page scheduler QA report (their content is covered by the V1–V26 ERD page "Mining & Scheduling" and by this pack), `PASPM_ERD_V1_V19.drawio` (superseded by V1–V26).
 - Scheduler synchronisation of the old commit `f59f85a` (V18/V19 wording): the 36-page pack had part of it. Ported by cell: 3 cells that the 36-page pack had left unchanged, and 15 cells whose new text carries the gating or V18/V19 facts (GATED, SKIPPED, SYSTEM_SCHEDULER, D1/D9, "System Admin: no pattern reads") on the pages FR, Use Case, AD03, R2-03, R2-04, R2-06.03, R2-08.01, R2-08.03; 2 note cells were added. Not ported: 61 cells where the 36-page pack has newer wording of its own, and 18 explanatory note boxes (no free space on the page or no geometry to copy). The list is in `outputs/diagrams-overnight/phaseAB_port_sync_result.json`.
