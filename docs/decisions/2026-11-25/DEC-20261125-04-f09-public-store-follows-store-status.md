@@ -30,7 +30,7 @@ Since then `dev` gained Store management (DEC-20261123-01, V27): `store.slug` is
 
 ## Addendum — FR-09.3 availability value (PO review, 2026-11-25)
 
-The SRS is the standard ("docs làm chuẩn"): FR-09.3 says an out-of-stock product shows `OUT_OF_STOCK`. The original F09 branch returned `UNAVAILABLE`. Decision: the public `ProductCard.availability` is **`AVAILABLE | OUT_OF_STOCK`**; `UNAVAILABLE` is not used. Since INACTIVE and soft-deleted products are never returned publicly, every non-AVAILABLE product in a public response is one without sellable stock. Changed in code (`StorefrontContracts.Availability`), tests, OpenAPI and the F09 API/handoff on branch `Khoi/merge/f09-storefront-be`.
+The SRS requirement FR-09.3 (confirmed by the PO review of 2026-11-25) says an out-of-stock product shows `OUT_OF_STOCK`. The original F09 branch returned `UNAVAILABLE`. Decision: the public `ProductCard.availability` is **`AVAILABLE | OUT_OF_STOCK`**; `UNAVAILABLE` is not used. Since INACTIVE and soft-deleted products are never returned publicly, every non-AVAILABLE product in a public response is one without sellable stock. Changed in code (`StorefrontContracts.Availability`), tests, OpenAPI and the F09 API/handoff on branch `Khoi/merge/f09-storefront-be`.
 
 ## Addendum — Migrations (PO decision, 2026-11-25)
 

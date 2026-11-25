@@ -74,7 +74,7 @@ Load `paspm-context` first. This skill is the "how"; that skill is the "what" an
 |---|---|
 | Endpoint, request or response shape | `docs/api/Fxx_*.md`. Regenerate `docs/api/openapi.json` with the runtime export hook (e.g. `-Dpaspm.test.export-openapi=true` on `TransactionExcelImportIntegrationTest`), keep the existing formatting, and insert only the real diff. Update the path/operation counts in `docs/api/README.md` and `API_CHANGELOG.md`, the RBAC matrix, and `docs/frontend_handoff/Fxx_HANDOFF.md`, flagging every **breaking** change |
 | Business rule, limit, formula, role | DEC file (owner-approved), `docs/features/Fxx/README.md`, and the affected `docs/product/*` (SRS rules or limits, GLOSSARY terms, BRD decision log) |
-| Schema | Migration V27+, plus `docs/product/ARCHITECTURE_SDD.md` §5 (tables, FKs, migrations). Note the ERD diagram that needs an update |
+| Schema | New migration from V32 (V30 is used by F09, V31 is reserved for F10), plus `docs/product/ARCHITECTURE_SDD.md` §5 (tables, FKs, migrations). Note the ERD diagram that needs an update |
 | Anything | A record-of-changes entry: `docs/record-of-changes/YYYY-MM-DD/NN-topic.md` from `TEMPLATE.md`, plus the day README and the index row. Follow the rules in `docs/record-of-changes/README.md` |
 
 ## 5. Pull request
