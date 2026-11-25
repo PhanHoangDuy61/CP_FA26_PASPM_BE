@@ -1,4 +1,4 @@
-<mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1" pages="36">
+<mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1" pages="41">
   <diagram id="polished-fr" name="FR">
     <mxGraphModel dx="2025" dy="1205" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="0" fold="1" page="1" pageScale="1" pageWidth="1816" pageHeight="1640" background="#FFFFFF" math="0" shadow="0">
       <root>
@@ -55,7 +55,7 @@
             <mxPoint x="1172" y="325" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="FR02-function-1" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=17;fontStyle=0;align=left;verticalAlign=middle;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0;text=;fillColor=none;strokeColor=none;" value="FR02.01  Manage product details" vertex="1">
+        <mxCell id="FR02-function-1" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=17;fontStyle=0;align=left;verticalAlign=middle;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0;text=;fillColor=none;strokeColor=none;" value="FR02.01 Manage product details; soft delete" vertex="1">
           <mxGeometry height="32" width="492" x="662" y="338" as="geometry" />
         </mxCell>
         <mxCell id="FR02-function-2" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=17;fontStyle=0;align=left;verticalAlign=middle;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0;text=;fillColor=none;strokeColor=none;" value="FR02.02  Manage product categories" vertex="1">
@@ -67,7 +67,7 @@
         <mxCell id="FR02-function-4" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=17;fontStyle=0;align=left;verticalAlign=middle;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0;text=;fillColor=none;strokeColor=none;" value="FR02.04  Manage product costs" vertex="1">
           <mxGeometry height="32" width="492" x="662" y="440" as="geometry" />
         </mxCell>
-        <mxCell id="FR02-function-5" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=17;fontStyle=0;align=left;verticalAlign=middle;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0;text=;fillColor=none;strokeColor=none;" value="FR02.05  Manage inventory quantities" vertex="1">
+        <mxCell id="FR02-function-5" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=17;fontStyle=0;align=left;verticalAlign=middle;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0;text=;fillColor=none;strokeColor=none;" value="FR02.05 Manage inventory batches and expiry status" vertex="1">
           <mxGeometry height="32" width="492" x="662" y="474" as="geometry" />
         </mxCell>
         <mxCell id="fr-link-FR02" edge="1" parent="1" source="fr-platform" style="edgeStyle=none;rounded=0;html=0;endArrow=none;startArrow=none;strokeColor=#000000;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="FR02-header">
@@ -685,7 +685,7 @@
         <mxCell id="UC16" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontSize=17;fontStyle=0;fontColor=#000000;align=center;verticalAlign=middle;spacing=0;shadow=0;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;rounded=0;shape=ellipse;" value="UC16 Compare&#xa;Simulated A/B Results" vertex="1">
           <mxGeometry height="94" width="370" x="2095" y="695" as="geometry" />
         </mxCell>
-        <mxCell id="UC17" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontSize=18;fontStyle=0;fontColor=#000000;align=center;verticalAlign=middle;spacing=0;shadow=0;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;rounded=0;shape=ellipse;" value="UC17 Manage Products" vertex="1">
+        <mxCell id="UC17" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontSize=18;fontStyle=0;fontColor=#000000;align=center;verticalAlign=middle;spacing=0;shadow=0;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;rounded=0;shape=ellipse;" value="UC17 Manage Products (create, edit, deactivate, soft delete)" vertex="1">
           <mxGeometry height="94" width="370" x="535" y="1125" as="geometry" />
         </mxCell>
         <mxCell id="UC18" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontSize=18;fontStyle=0;fontColor=#000000;align=center;verticalAlign=middle;spacing=0;shadow=0;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;rounded=0;shape=ellipse;" value="UC18 Manage Categories" vertex="1">
@@ -694,7 +694,7 @@
         <mxCell id="UC19" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontSize=18;fontStyle=0;fontColor=#000000;align=center;verticalAlign=middle;spacing=0;shadow=0;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;rounded=0;shape=ellipse;" value="UC19 Manage Selling Prices /&#xa;Costs" vertex="1">
           <mxGeometry height="94" width="370" x="535" y="1365" as="geometry" />
         </mxCell>
-        <mxCell id="UC20" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontSize=18;fontStyle=0;fontColor=#000000;align=center;verticalAlign=middle;spacing=0;shadow=0;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;rounded=0;shape=ellipse;" value="UC20 Manage Inventory" vertex="1">
+        <mxCell id="UC20" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontSize=18;fontStyle=0;fontColor=#000000;align=center;verticalAlign=middle;spacing=0;shadow=0;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;rounded=0;shape=ellipse;" value="UC20 Manage Inventory (effective expiry status, push-day warning)" vertex="1">
           <mxGeometry height="94" width="370" x="535" y="1485" as="geometry" />
         </mxCell>
         <mxCell id="UC21" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontSize=18;fontStyle=0;fontColor=#000000;align=center;verticalAlign=middle;spacing=0;shadow=0;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;rounded=0;shape=ellipse;" value="UC21 Import CSV Transaction Files" vertex="1">
@@ -2554,6 +2554,188 @@
     </mxGraphModel>
   </diagram>
   <diagram id="paspm-unified-ad09" name="AD09 - Store Management"><mxGraphModel dx="1200" dy="1700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1700" math="0" shadow="0" background="#FFFFFF"><root><mxCell id="0" /><mxCell id="1" parent="0" /><mxCell id="lane0" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=0;fillColor=#FFFFFF;strokeColor=#D5DEE6;strokeWidth=1;" vertex="1" parent="1"><mxGeometry x="48.0" y="130" width="552.0" height="1510" as="geometry" /></mxCell><mxCell id="lane0head" value="SYSTEM ADMINISTRATOR" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=0;fillColor=#EAF0F5;strokeColor=#D5DEE6;fontSize=15;fontStyle=1;fontColor=#223247;" vertex="1" parent="1"><mxGeometry x="48.0" y="130" width="552.0" height="48" as="geometry" /></mxCell><mxCell id="lane1" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=0;fillColor=#FAFCFD;strokeColor=#D5DEE6;strokeWidth=1;" vertex="1" parent="1"><mxGeometry x="600.0" y="130" width="552.0" height="1510" as="geometry" /></mxCell><mxCell id="lane1head" value="PASPM / STORE SERVICE" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=0;fillColor=#EAF0F5;strokeColor=#D5DEE6;fontSize=15;fontStyle=1;fontColor=#223247;" vertex="1" parent="1"><mxGeometry x="600.0" y="130" width="552.0" height="48" as="geometry" /></mxCell><mxCell id="title" value="Store management" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=30;fontColor=#223247;fontStyle=1;spacing=0;" vertex="1" parent="1"><mxGeometry x="48" y="54" width="1104" height="44" as="geometry" /></mxCell><mxCell id="s" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;strokeColor=#000000;fillColor=#000000;" vertex="1" parent="1"><mxGeometry x="312.0" y="200" width="24" height="24" as="geometry" /></mxCell><mxCell id="open" value="Open the Stores screen" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1"><mxGeometry x="174.0" y="254" width="300" height="80" as="geometry" /></mxCell><mxCell id="list" value="List Stores with status&lt;br&gt;(default filter: ACTIVE)" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1"><mxGeometry x="726.0" y="364" width="300" height="80" as="geometry" /></mxCell><mxCell id="action" value="Action?" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rhombus;fillColor=#FFFFFF;strokeColor=#245B83;strokeWidth=1.6;fontSize=16;fontColor=#223247;spacing=8;" vertex="1" parent="1"><mxGeometry x="200.0" y="474" width="248" height="108" as="geometry" /></mxCell><mxCell id="form" value="Enter name, slug, address,&lt;br&gt;phone; choose icon / banner&lt;br&gt;(PNG or JPEG)" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1"><mxGeometry x="174.0" y="622" width="300" height="80" as="geometry" /></mxCell><mxCell id="check" value="Check name unique (trim,&lt;br&gt;case-insensitive), slug unique,&lt;br&gt;expectedVersion, image rules" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1"><mxGeometry x="726.0" y="742" width="300" height="100" as="geometry" /></mxCell><mxCell id="valid" value="Valid?" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rhombus;fillColor=#FFFFFF;strokeColor=#245B83;strokeWidth=1.6;fontSize=16;fontColor=#223247;spacing=8;" vertex="1" parent="1"><mxGeometry x="752.0" y="872" width="248" height="108" as="geometry" /></mxCell><mxCell id="error" value="Show error (400 / 409)&lt;br&gt;and fix the input" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1"><mxGeometry x="174.0" y="886" width="300" height="80" as="geometry" /></mxCell><mxCell id="save" value="Save the Store (version + 1);&lt;br&gt;store new image, delete old file" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1"><mxGeometry x="726.0" y="1010" width="300" height="80" as="geometry" /></mxCell><mxCell id="confirm" value="Confirm deactivate /&lt;br&gt;reactivate" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1"><mxGeometry x="174.0" y="1124" width="300" height="80" as="geometry" /></mxCell><mxCell id="status" value="Set status ACTIVE &amp;#8644; INACTIVE&lt;br&gt;(PATCH &amp;#8230;/status, expectedVersion)" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1"><mxGeometry x="726.0" y="1234" width="300" height="80" as="geometry" /></mxCell><mxCell id="effects" value="INACTIVE Store: its users get 403 STORE_INACTIVE (central guard, also at login and token refresh); schedulers skip it; System Admin cannot create new jobs for it and users cannot be assigned to it (409 STORE_INACTIVE); in-flight jobs finish; history stays readable; public images are not served. deactivated_at / deactivated_by are set, and cleared on reactivate." style="shape=note;size=14;html=1;whiteSpace=wrap;fontFamily=Helvetica;align=left;verticalAlign=top;spacing=8;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=15;fontColor=#223247;" vertex="1" parent="1"><mxGeometry x="78.0" y="1262" width="400" height="170" as="geometry" /></mxCell><mxCell id="merge" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rhombus;fillColor=#FFFFFF;strokeColor=#66788A;strokeWidth=1.6;" vertex="1" parent="1"><mxGeometry x="864.0" y="1396" width="24" height="24" as="geometry" /></mxCell><mxCell id="show" value="Show the updated Store" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1"><mxGeometry x="726.0" y="1450" width="300" height="80" as="geometry" /></mxCell><mxCell id="e" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;fillColor=#FFFFFF;strokeWidth=1.5;strokeColor=#000000;" vertex="1" parent="1"><mxGeometry x="862.0" y="1570" width="28" height="28" as="geometry" /></mxCell><mxCell id="e-dot" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;strokeColor=#000000;fillColor=#000000;" vertex="1" parent="1"><mxGeometry x="868.0" y="1576" width="16" height="16" as="geometry" /></mxCell><mxCell id="e1" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="s" target="open"><mxGeometry relative="1" as="geometry" /></mxCell><mxCell id="e2" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="open" target="list"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="324.0" y="349" /><mxPoint x="876.0" y="349" /></Array></mxGeometry></mxCell><mxCell id="e3" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="list" target="action"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="876.0" y="459" /><mxPoint x="324.0" y="459" /></Array></mxGeometry></mxCell><mxCell id="e4" value="[create / edit]" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;" edge="1" parent="1" source="action" target="form"><mxGeometry relative="1" as="geometry"><mxPoint x="62" y="0" as="offset" /></mxGeometry></mxCell><mxCell id="e5" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="form" target="check"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="324.0" y="722" /><mxPoint x="876.0" y="722" /></Array></mxGeometry></mxCell><mxCell id="e6" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="check" target="valid"><mxGeometry relative="1" as="geometry" /></mxCell><mxCell id="e7" value="[no]" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;" edge="1" parent="1" source="valid" target="error"><mxGeometry relative="1" as="geometry"><mxPoint x="0" y="-14" as="offset" /></mxGeometry></mxCell><mxCell id="e8" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="error" target="form"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="110" y="926" /><mxPoint x="110" y="662" /></Array></mxGeometry></mxCell><mxCell id="e9" value="[yes]" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;" edge="1" parent="1" source="valid" target="save"><mxGeometry relative="1" as="geometry"><mxPoint x="30" y="0" as="offset" /></mxGeometry></mxCell><mxCell id="e10" value="[deactivate / reactivate]" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;" edge="1" parent="1" source="action" target="confirm"><mxGeometry relative="1" as="geometry" x="-0.86"><Array as="points"><mxPoint x="80" y="528" /><mxPoint x="80" y="1164" /></Array><mxPoint x="0" y="-16" as="offset" /></mxGeometry></mxCell><mxCell id="e11" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="confirm" target="status"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="324.0" y="1219" /><mxPoint x="876.0" y="1219" /></Array></mxGeometry></mxCell><mxCell id="e12" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="save" target="merge"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1100" y="1050" /><mxPoint x="1100" y="1408" /></Array></mxGeometry></mxCell><mxCell id="e13" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="status" target="merge"><mxGeometry relative="1" as="geometry" /></mxCell><mxCell id="e14" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="merge" target="show"><mxGeometry relative="1" as="geometry" /></mxCell><mxCell id="e15" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="show" target="e"><mxGeometry relative="1" as="geometry" /></mxCell><mxCell id="n1" value="" style="edgeStyle=none;html=1;endArrow=none;dashed=1;dashPattern=4 4;strokeColor=#8092A3;strokeWidth=1.2;" edge="1" parent="1" source="effects" target="status"><mxGeometry relative="1" as="geometry" /></mxCell></root></mxGraphModel></diagram>
+  <diagram id="paspm-unified-ad10" name="AD10 - Product Delete &amp; Batch Expiry">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="2320" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Product delete and batch expiry rules" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=30;fontColor=#223247;fontStyle=1;spacing=0;" vertex="1" parent="1">
+          <mxGeometry x="48" y="54" width="1104" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="lane0" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=0;fillColor=#FFFFFF;strokeColor=#D5DEE6;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="48" y="130" width="552" height="2130" as="geometry" />
+        </mxCell>
+        <mxCell id="lane0head" value="STORE ADMIN" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=0;fillColor=#EAF0F5;strokeColor=#D5DEE6;fontSize=15;fontStyle=1;fontColor=#223247;" vertex="1" parent="1">
+          <mxGeometry x="48" y="130" width="552" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="lane1" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=0;fillColor=#FAFCFE;strokeColor=#D5DEE6;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="600" y="130" width="552" height="2130" as="geometry" />
+        </mxCell>
+        <mxCell id="lane1head" value="PASPM / CATALOG SERVICE" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=0;fillColor=#EAF0F5;strokeColor=#D5DEE6;fontSize=15;fontStyle=1;fontColor=#223247;" vertex="1" parent="1">
+          <mxGeometry x="600" y="130" width="552" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="s0" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;strokeColor=#000000;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="312" y="200" width="24" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="choose" value="Choose Delete on a product (Products &amp; Inventory screen)" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="174" y="254" width="300" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="check" value="Check the caller is STORE_ADMIN of the owning Store (401 / 403) and the product exists in this Store and is not deleted (404)" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="726" y="354" width="300" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="stock" value="Sellable stock?" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rhombus;fillColor=#FFFFFF;strokeColor=#245B83;strokeWidth=1.6;fontSize=16;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="752" y="520" width="248" height="108" as="geometry" />
+        </mxCell>
+        <mxCell id="r409a" value="Show 409 PRODUCT_HAS_SELLABLE_STOCK (sellableQuantity); sell or block the stock first" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="174" y="534" width="300" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="ea" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;fillColor=#FFFFFF;strokeWidth=1.5;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="310" y="660" width="28" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="ea-dot" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;strokeColor=#000000;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="316" y="666" width="16" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="camp" value="In a PUBLISHED / ACTIVE campaign?" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rhombus;fillColor=#FFFFFF;strokeColor=#245B83;strokeWidth=1.6;fontSize=16;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="726" y="700" width="300" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="r409b" value="Show 409 PRODUCT_IN_LIVE_CAMPAIGN (campaignId, status)" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="174" y="720" width="300" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eb" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;fillColor=#FFFFFF;strokeWidth=1.5;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="310" y="840" width="28" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="eb-dot" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;strokeColor=#000000;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="316" y="846" width="16" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="del" value="Lock product and batches; set deleted_at, deleted_by and status INACTIVE (V28); history untouched" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="726" y="880" width="300" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="ret" value="Return 204; catalogue reads exclude the product before pagination" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="726" y="1030" width="300" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="show" value="The product disappears from the list" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="174" y="1030" width="300" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="ec" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;fillColor=#FFFFFF;strokeWidth=1.5;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="310" y="1160" width="28" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="ec-dot" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;strokeColor=#000000;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="316" y="1166" width="16" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="a1" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="s0" target="choose">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="a2" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="choose" target="check">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="324" y="344" /><mxPoint x="876" y="344" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="a3" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="check" target="stock">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="a4" value="[yes]" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="stock" target="r409a">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="0" y="-14" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="a5" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="r409a" target="ea">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="a6" value="[no]" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="stock" target="camp">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="24" y="0" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="a7" value="[yes]" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="camp" target="r409b">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="0" y="-14" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="a8" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="r409b" target="eb">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="a9" value="[no]" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="camp" target="del">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="24" y="0" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="a10" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="del" target="ret">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="a11" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="ret" target="show">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="a12" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="show" target="ec">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="nsoft" value="No restore endpoint; the SKU is never reused. History (snapshots, mining results, recommendations, DRAFT / ENDED layouts, transactions) keeps resolving the row; the F04 import warns PRODUCT_DELETED per row." style="shape=note;size=14;html=1;whiteSpace=wrap;fontFamily=Helvetica;align=left;verticalAlign=top;spacing=8;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=15;fontColor=#223247;" vertex="1" parent="1">
+          <mxGeometry x="60" y="890" width="420" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="nsoft-link" value="" style="edgeStyle=none;html=1;endArrow=none;dashed=1;dashPattern=4 4;strokeColor=#8092A3;strokeWidth=1.2;" edge="1" parent="1" source="nsoft" target="del">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="s1" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;strokeColor=#000000;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="312" y="1290" width="24" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="open2" value="Open the batches of a product (Inventory Batches / Expiry Window)" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="174" y="1344" width="300" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="load" value="Load the batches of the product" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="726" y="1444" width="300" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eff" value="For each batch compute effectiveStatus and daysToExpiry (today in Asia/Ho_Chi_Minh)" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="726" y="1574" width="300" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="pushq" value="Push day missing and not EXPIRED?" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rhombus;fillColor=#FFFFFF;strokeColor=#245B83;strokeWidth=1.6;fontSize=16;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="726" y="1720" width="300" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="warn" value="Add warning MISSING_PUSH_DAY (no default, no auto-fill)" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="726" y="1880" width="300" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="mg" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rhombus;fillColor=#FFFFFF;strokeColor=#66788A;strokeWidth=1.6;" vertex="1" parent="1">
+          <mxGeometry x="864" y="2010" width="24" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="ret2" value="Return BatchView: effectiveStatus, daysToExpiry, warnings[]" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="726" y="2070" width="300" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="show2" value="Show Expired, Expiring soon (0 ≤ daysToExpiry ≤ 7) and the warning" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="174" y="2070" width="300" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="ed" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;fillColor=#FFFFFF;strokeWidth=1.5;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="310" y="2200" width="28" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="ed-dot" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;strokeColor=#000000;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="316" y="2206" width="16" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="b1" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="s1" target="open2">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="b2" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="open2" target="load">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="324" y="1434" /><mxPoint x="876" y="1434" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="b3" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="load" target="eff">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="b4" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="eff" target="pushq">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="b5" value="[yes]" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="pushq" target="warn">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="24" y="0" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="b6" value="[no]" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="pushq" target="mg">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1066" y="1780" /><mxPoint x="1066" y="2022" /></Array><mxPoint x="0" y="-14" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="b7" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="warn" target="mg">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="b8" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="mg" target="ret2">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="b9" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="ret2" target="show2">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="b10" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="show2" target="ed">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
+        </mxCell>
+        <mxCell id="neff" value="EXPIRED only when today &gt; expiry_date; on the expiry date the batch is still sellable. EXPIRED wins over BLOCKED. The stored status stays ACTIVE | BLOCKED and is the only writable one. daysToExpiry is 0 on the expiry date. The warning applies when the product has requires_expiry and no push day (DEC-20261124-01, -02)." style="shape=note;size=14;html=1;whiteSpace=wrap;fontFamily=Helvetica;align=left;verticalAlign=top;spacing=8;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=15;fontColor=#223247;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1560" width="420" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="neff-link" value="" style="edgeStyle=none;html=1;endArrow=none;dashed=1;dashPattern=4 4;strokeColor=#8092A3;strokeWidth=1.2;" edge="1" parent="1" source="neff" target="eff">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
   <diagram id="r2-01-page" name="R2-03 — Screen Flow">
     <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3084.898" pageHeight="1820.0" math="0" shadow="0">
       <root>
