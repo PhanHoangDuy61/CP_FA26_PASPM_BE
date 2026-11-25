@@ -26,3 +26,7 @@ Release status: **UNRELEASED**, feature branch only. No push.
 ## Record 006 — Frozen snapshot priority coverage
 
 [Record 006](06-f07-f08-priority-coverage.md) records the F07/F08 implementation of DEC-20261117-02 and the approved empty-layout and oversized-B behavior.
+
+## Record 008 — F10/F11 planned MVP contracts
+
+[Record 008](08-f10-f11-mvp-contract.md) records the approved F10/F11 design, planned APIs and frontend handoffs.

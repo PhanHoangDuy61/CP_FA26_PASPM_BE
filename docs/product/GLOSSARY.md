@@ -143,9 +143,9 @@
 | **Storefront (F09)** | Public shop pages: homepage from the active layout, product detail and bundles. Planned as anonymous read access through a separate public API. |
 | **storeSlug** | The Store `slug` (V27): unique, lowercase letters, digits and hyphens, set and changed only by a System Admin. Planned as the F09 public key of a Store. |
 | **availability** | Planned per-product state such as `OUT_OF_STOCK`, recomputed when the response is built. |
-| **Bundle cart (F10)** | Planned per-customer, per-Store cart. Adding a bundle adds all its items atomically after a recheck. No stock reservation, no order or payment, and no bundle discount. |
+| **Bundle cart (F10)** | Planned per-customer, per-Store cart. A whole-bundle action adds eligible components as independent Product lines and reports skipped items. No stock reservation, no order or payment, and no bundle discount. |
 | **storefront_event** | Planned append-only event table (cart and bundle actions) that feeds F11. |
-| **Retail Performance Dashboard (F11)** | Planned (MVP decided 2026-11-19), for Store Admin and Merchandiser: total weighted utility per snapshot, A/B simulation results (labelled simulated), bundle add-to-cart counts from `storefront_event`. No benchmark charts. |
+| **Retail Performance Dashboard (F11)** | Planned (MVP decided 2026-11-19), for Store Admin and Merchandiser: total weighted utility per snapshot, A/B simulation results (labelled simulated), successful bundle actions by MINED/MANUAL origin and actual Product units from `storefront_event`. No benchmark charts. |
 
 ## 8. Process and evidence
 
