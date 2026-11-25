@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.util.List;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import vn.edu.fpt.paspm.storefront.StorefrontBundleService.Bundle;
 
 @Repository
 class CartRepository {
@@ -19,7 +20,7 @@ class CartRepository {
     record Cart(long id, long version, Instant updatedAt) {}
     record Line(long id, int productId, int quantity, boolean fromBundle, String name, String imageUrl,
             String unit, BigDecimal price) {}
-    enum Event { ITEM_ADDED, ITEM_QUANTITY_CHANGED, ITEM_REMOVED, CART_CLEARED }
+    enum Event { ITEM_ADDED, ITEM_QUANTITY_CHANGED, ITEM_REMOVED, CART_CLEARED, BUNDLE_ADDED, BUNDLE_ADD_REJECTED }
 
     private final JdbcTemplate jdbc;
 
@@ -65,13 +66,26 @@ class CartRepository {
     }
 
     void insertLine(int storeId, long cartId, int productId, int quantity) {
-        jdbc.update("INSERT INTO shopping_cart_item(store_id,cart_id,product_id,quantity) VALUES (?,?,?,?)",
-                storeId, cartId, productId, quantity);
+        insertLine(storeId, cartId, productId, quantity, false);
+    }
+
+    void insertLine(int storeId, long cartId, int productId, int quantity, boolean fromBundle) {
+        jdbc.update("""
+                INSERT INTO shopping_cart_item(store_id,cart_id,product_id,quantity,added_from_bundle)
+                VALUES (?,?,?,?,?)
+                """, storeId, cartId, productId, quantity, fromBundle);
     }
 
     void updateQuantity(int storeId, long cartId, long itemId, int quantity) {
         jdbc.update("UPDATE shopping_cart_item SET quantity=? WHERE store_id=? AND cart_id=? AND item_id=?",
                 quantity, storeId, cartId, itemId);
+    }
+
+    void addBundleToLine(int storeId, long cartId, long itemId, int quantity) {
+        jdbc.update("""
+                UPDATE shopping_cart_item SET quantity=?,added_from_bundle=TRUE
+                WHERE store_id=? AND cart_id=? AND item_id=?
+                """, quantity, storeId, cartId, itemId);
     }
 
     void deleteLine(int storeId, long cartId, long itemId) {
@@ -83,12 +97,27 @@ class CartRepository {
         return jdbc.update("DELETE FROM shopping_cart_item WHERE store_id=? AND cart_id=?", storeId, cartId);
     }
 
-    void recordChange(int storeId, long cartId, Event event) {
+    void advanceVersion(int storeId, long cartId) {
         jdbc.update("""
                 UPDATE shopping_cart SET version=version+1,updated_at=CURRENT_TIMESTAMP(6)
                 WHERE store_id=? AND cart_id=?
                 """, storeId, cartId);
+    }
+
+    void recordChange(int storeId, long cartId, Event event) {
+        advanceVersion(storeId, cartId);
         jdbc.update("INSERT INTO storefront_event(store_id,cart_id,event_type) VALUES (?,?,?)",
                 storeId, cartId, event.name());
+    }
+
+    void recordBundle(int storeId, Long cartId, Bundle bundle, int addedUnits) {
+        boolean rejected = addedUnits == 0;
+        Event event = rejected ? Event.BUNDLE_ADD_REJECTED : Event.BUNDLE_ADDED;
+        jdbc.update("""
+                INSERT INTO storefront_event(store_id,cart_id,event_type,campaign_id,layout_id,layout_version,
+                    block_no,bundle_origin,added_product_units,failure_code)
+                VALUES (?,?,?,?,?,?,?,?,?,?)
+                """, storeId, cartId, event.name(), bundle.campaignId(), bundle.layoutId(), bundle.layoutVersion(),
+                bundle.blockNo(), bundle.origin().name(), addedUnits, rejected ? event.name() : null);
     }
 }
