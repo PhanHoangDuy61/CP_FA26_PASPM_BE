@@ -4,7 +4,7 @@
 |---|---|
 | Date | 2026-11-19 (Asia/Ho_Chi_Minh) |
 | Source | Owner decision of 2026-11-19; recorded in [ROC-20261119-001](../../record-of-changes/2026-11-19/01-record-owner-decisions.md) |
-| Status | OWNER_DECISION — not yet applied in the repository |
+| Status | OWNER_DECISION — applied by [DEC-20261126-01](../2026-11-26/DEC-20261126-01-uml-erd-baseline-in-repository.md) (baseline committed on branch `Khoi/docs/diagrams-update-20261126`) |
 
 ## Decision
 - The UML baseline is the **36-page** `PASPM_Unified_27_Diagrams_UML2_Editable.drawio`: the 27 core diagrams, R2-05 Package Diagram and the 8 class diagrams R2-07.01–R2-07.08.
