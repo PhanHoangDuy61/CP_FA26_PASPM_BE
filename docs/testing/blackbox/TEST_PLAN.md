@@ -1,0 +1,122 @@
+# PASPM black-box test plan
+
+| Field | Value |
+|---|---|
+| Version / date | 0.1 — 2026-11-26 (Asia/Ho_Chi_Minh) |
+| Baseline | Backend `dev` @ `b94584b`; FE `dev` @ `7f298bc` (routes only, used to name screens) |
+| Deliverables | [TEST_CASES.md](TEST_CASES.md) / [TEST_CASES.csv](TEST_CASES.csv) (246 cases), [TRACEABILITY.md](TRACEABILITY.md), [PO_QUESTIONS.md](PO_QUESTIONS.md) |
+| Execution status | **NOT RUN.** No case has been executed. This pack contains designs only |
+
+## 1. Scope
+
+**In scope: implemented on `dev`**
+
+| Feature | What is tested |
+|---|---|
+| F01 | Sign-in, registration, OTP, sessions (refresh, CSRF, logout), password reset/change, user and role administration, avatar; Store management (create, edit, slug, ACTIVE/INACTIVE, central `STORE_INACTIVE` guard, icon/banner) |
+| F02 | Categories, products (server SKU, similar-name confirmation, soft delete), batches (generated code, expiry boundary, `effectiveStatus`, push day and `MISSING_PUSH_DAY`), inventory summary |
+| F03 | λmax policy, α/β/λ/N, seasons, Weight v2 values and rounding, preview, immutable snapshots |
+| F04 | CSV (sync and async) and Excel import, row and order validation, duplicates and conflicts |
+| F05 | minUtil policy, EFIM submission by System Admin and Merchandiser, progress, input bounds and int32 / whole-đồng fallback, output limit, schedules (enable is gated 503) |
+| F06 | Generation, policy, review, live eligibility, ranking, expiry alerts |
+| F07/F08 | Baseline A, Layout B editor and caps, priority coverage, simulation, campaign lifecycle, single ACTIVE campaign, rollback |
+| F09 | Public storefront API by Store slug |
+
+**In scope, PLANNED:** F10 bundle cart and F11 dashboard, written from [DEC-20261125-06](../../decisions/2026-11-25/DEC-20261125-06-f10-f11-mvp-contract.md), the [F10](../../api/F10_BUNDLE_CART_API.md) and [F11](../../api/F11_DASHBOARD_API.md) API docs. Their cases are titled `[PLANNED]` and run when the features are merged.
+
+**Out of scope:** automated unit, integration and MySQL tests (they run in CI from `.github/scripts/test-groups.py`); performance targets (none defined, SRS §5.2); scheduled dispatch with the gate on (BR-24); internal lease, fencing and crash takeover; removed features except checks that they are absent. See TRACEABILITY.md §6.
+
+## 2. Sources and precedence
+
+The latest PO decision wins ([DEC-20261125-02](https://github.com/PhanHoangDuy61/CP_FA26_PASPM_BE/blob/Khoi/docs/source-of-truth-rule/docs/decisions/2026-11-25/DEC-20261125-02-source-of-truth-latest-po-decision.md), on branch `Khoi/docs/source-of-truth-rule`): DEC files, then merged code, then `docs/product/*` and `docs/api/*`.
+
+- [SRS v0.4](../../product/SRS.md) (FR, UC, BR, NFR), [ARCHITECTURE_SDD](../../product/ARCHITECTURE_SDD.md) (state machines), [GLOSSARY](../../product/GLOSSARY.md).
+- `docs/api/*` contracts and the [RBAC matrix](../../api/F01_F02_RBAC_MATRIX.md); `docs/frontend_handoff/*`; feature READMEs.
+- DEC files up to 2026-11-25 on `dev`, including DEC-20261123-01, DEC-20261124-01/-02/-03, DEC-20261125-01/-04/-06, DEC-20261119-05/-06/-07.
+- The UML pack `PASPM_Unified_UML2_Editable.drawio` (use cases, screen flow, Store state) on branch `Khoi/docs/diagrams-update-20261126`, not yet merged.
+- Two behaviours the docs leave open were read from the code (DEC-20261125-02 allows reporting, not silently choosing): editing Layout A returns 409 `Layout A is immutable and read-only`; repeated SKU lines with a different price, cost or status are a row error.
+
+## 3. Design techniques
+
+| Technique | Where |
+|---|---|
+| Equivalence partitioning | Valid / invalid inputs for every form and request body; strict JSON (unknown field → 400) |
+| Boundary values | Expiry date = today (T), T−1, T+1, and the local-midnight edge; push day = expiry; 99-unit cap; image 1 MiB / 5 MiB and 4000 px; password 12–72; slug 50; Store fields; N 1–365; λ = λmax; α + β = 1; W rounding at .xx5; season start/end; mining 1,600 products / 20,000 rows / 2,000 patterns; int32 and whole-đồng HALF_UP; lookback 7–365; Idempotency-Key 128; import 5 MiB / 10,000 rows; zone caps; F11 90 days; paging 1–100 |
+| Decision tables | Role × action per feature (RBAC); role × Store binding; `MISSING_PUSH_DAY` conditions; product delete guards × campaign status; bundle origin MINED/MANUAL; block visibility |
+| State transitions | Store ACTIVE ⇄ INACTIVE; batch ACTIVE ⇄ BLOCKED with computed EXPIRED; account states; layout draft → READY → new revision; campaign DRAFT → PUBLISHED → ACTIVE → ENDED, withdraw, rollback; recommendation review; λ validity |
+| Negative and security | 401 / 403 / 404 per role; cross-Store access returns 404; `STORE_INACTIVE` 403 and 409; version conflicts 409; token replay; CSRF; public DTO privacy |
+
+## 4. Environment
+
+**ENV-1 — local Docker stack with the demo seed.**
+
+1. Start the stack as in [LOCAL_SETUP_MACOS.md](../../setup/LOCAL_SETUP_MACOS.md) / [LOCAL_SETUP_WINDOWS.md](../../setup/LOCAL_SETUP_WINDOWS.md) and [STAGING.md](../../setup/STAGING.md): MySQL 8.4 (Flyway V1–V30), Mailpit (SMTP 1025, UI http://127.0.0.1:8025), backend on http://127.0.0.1:8080 with SPMF 2.67a on Java 25, `REFRESH_COOKIE_SECURE=false` for local HTTP.
+2. Use a **disposable** database volume. Never run the pack against a teammate's database.
+3. Run [`scripts/seed/seed.sh`](../../../scripts/seed/README.md) on the empty database. It creates Store A (`FoodMart Benchmark`, slug `foodmart-benchmark`), 1,559 products with batches, 4,141 orders dated 2026-10-01 to 2026-10-04, 4 seasons and α 0.6 / β 0.4 / λ 0.3 / N 30.
+4. Frontend: FE `dev` started against the backend (same-origin proxy). F09 FE is still mock data, so F09 runs on the API.
+5. Keep `paspm.mining.schedule-dispatch-enabled` unset (scheduler enable must return 503).
+6. Cases that need a special backend start (short token TTL, timeout 1 ms, no SPMF jar, zone cap 0) say so in their preconditions; use a separate test instance and restore defaults afterwards.
+7. API steps: Swagger at `/swagger` or curl with the role's bearer token. Record the exact request and response status.
+
+**Clock.** `T` means today in `Asia/Ho_Chi_Minh` on the day of execution. Expiry and push-day data are created relative to T on that day. TC-F02-023 must run between 00:00 and 07:00 local time.
+
+## 5. Roles and accounts
+
+| Account | Role | Store | Source |
+|---|---|---|---|
+| ACC-SA | System Admin | — | `SEED_SYSADMIN_EMAIL` (bootstrap account) |
+| ACC-STA-A | Store Admin | A | `storeadmin@paspm.example` (seed) |
+| ACC-MER-A | Merchandiser | A | `merchandiser@paspm.example` (seed) |
+| ACC-EC | End Customer | — | `customer@paspm.example` (seed) |
+| ACC-STA-B, ACC-MER-B | Store Admin, Merchandiser | B | `qa-storeadmin-b@paspm.example`, `qa-merchandiser-b@paspm.example` (SETUP-B) |
+| ACC-STA-C, ACC-MER-C | Store Admin, Merchandiser | C | `qa-storeadmin-c@paspm.example`, `qa-merchandiser-c@paspm.example` (DP-07) |
+| ACC-PENDING | Store Admin, not activated | A | invited in TC-F01-019 setup, never activated |
+| ACC-EC2 | second End Customer | — | self-registered (F10 isolation) |
+
+Passwords come from the tester's local `scripts/seed/.env.seed` (git-ignored) or are typed when the account is created. Never write a password, token, OTP or cookie value into this pack or into result records.
+
+## 6. Test data setup
+
+| ID | Setup | How |
+|---|---|---|
+| SETUP-B | Store B `QA Store B` (slug `qa-store-b`), ACC-STA-B and ACC-MER-B, 1 category, 3 products with batches | System Admin creates the Store and invites the users (OTP from Mailpit); Store Admin B creates the catalogue |
+| DP-01 | QA products in Store A: `QA Milk 1L` (requiresExpiry, category `QA Dairy`), `QA Rice 5kg` (no expiry) | Store Admin A, TC-F02-001/003 |
+| DP-02 | Snapshot S1: rangeStart 2026-10-01, rangeEnd 2026-10-03, asOfDate 2026-10-03 | Merchandiser A on `/f03/snapshot`. 2026-10-04 stays free for simulation (TC-F08-001) |
+| DP-03 | Mining policy `PERCENTAGE 0.12` | System Admin. Measured on the full seed range at 180 patterns (SRS §11 item 4); record the pattern count for S1 |
+| DP-04 | Completed mining request R1 on S1 | System Admin or Merchandiser A |
+| DP-05 | F06 candidates from R1 (all four types), at least two BUNDLE approved; controlled datasets for the F06 threshold cases | Merchandiser A; the threshold cases need a small hand-built Store (40 transactions) |
+| DP-06 | Campaigns in each status (DRAFT, PUBLISHED, ACTIVE, ENDED) using DP-05 | Merchandiser A and Store Admin A |
+| DP-07 | Store C `QA Store C` (slug `qa-store-c`) with ACC-STA-C, ACC-MER-C, a snapshot, a mining request (key KC) and an icon; deactivated when a case says so | System Admin |
+| DP-08 | Synthetic Store D for F05 bounds: snapshots with 1,600 / 1,601 products, 20,000 / 20,001 rows, an int32 lossless / whole-đồng / overflow trio, and a 2,000 / 2,001 pattern pair | Generated CSV imports; build once and keep the files outside the repository |
+| DP-09 | Import files `qa_valid.csv`, `qa_conflict.csv`, `qa_valid.xlsx/.xls`, boundary files (5 MiB, 10,000 / 10,001 rows), files with bad rows | Created by the tester from the F04 template |
+
+## 7. Entry and exit criteria
+
+**Entry**
+
+- ENV-1 is up, Flyway reports V30, the seed run finished without error and its record counts match `scripts/seed/README.md`.
+- SETUP-B and the DP items a case needs are prepared.
+- The PO has answered, or explicitly deferred, the questions that affect the cases being run (PO_QUESTIONS.md).
+- For `[PLANNED]` cases: F10/F11 merged on `dev` and their contracts final.
+
+**Exit (proposed; Q-17)**
+
+- Every non-PLANNED case has a recorded result (PASS, FAIL, BLOCKED or NOT RUN with a reason).
+- 100 % of High cases PASS; at least 95 % of Medium cases PASS.
+- No open defect of severity Critical or Major; Minor defects have an owner and a target.
+- Every FAIL links to a defect, and every requirement in TRACEABILITY.md has at least one executed case or a documented reason.
+
+## 8. Recording results
+
+- Do not edit the case definitions to record results. Copy `TEST_CASES.csv` to `docs/testing/blackbox/runs/<YYYY-MM-DD>-<tester>.csv` and add the columns `Result` (PASS / FAIL / BLOCKED / NOT RUN), `Executed at` (local date-time), `Build` (backend and FE commits), `Evidence` (relative path to screenshots or request/response logs under `docs/testing/blackbox/runs/evidence/<date>/`) and `Defect`.
+- Keep local, CI and manual evidence separate, as `docs/testing/README.md` requires. A result without evidence stays NOT RUN.
+- Redact tokens, cookies, OTP codes and passwords from every screenshot and log before saving it.
+- A failed case means a defect: open a GitHub issue with the case ID, steps, actual vs expected result and the build. If the contract itself is unclear, raise a PO question instead of "fixing" the expected result.
+- After each cycle, add a record-of-changes entry with the counts per feature and result.
+
+## 9. Risks
+
+- The demo seed has one Store; isolation tests depend on SETUP-B (Q-16).
+- Several screens are not wired in FE `dev` for the Merchandiser (Q-03, Q-05) and F09 FE is mock (Q-08); those cases fall back to API steps.
+- Date-dependent cases must be prepared on the day they run.
+- DP-08 datasets take time to build; F05 boundary cases may be BLOCKED until they exist.
