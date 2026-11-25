@@ -128,12 +128,13 @@ The evaluation set contains completed, F03-eligible F04 transaction IDs in the r
 The response has `simulated:true`. It describes historical replay fit, not a real-user A/B test, causal lift, revenue forecast, or actual profit.
 
 - **Hit rate:** transactions with at least one displayed product / evaluation transactions.
-- **Bundle conversion (`OFFLINE_REPLAY_V3`):** transactions containing every product in at least one saved `BUNDLE` block, grouped by `blockNo` in the exact Layout B revision, / evaluation transactions. F06 source-recommendation provenance does not define simulation blocks. FBT is not counted as BUNDLE. Historical V1/V2 reports remain as stored.
+- **Bundle conversion (`OFFLINE_REPLAY_V3` and later):** transactions containing every product in at least one saved `BUNDLE` block, grouped by `blockNo` in the exact Layout B revision, / evaluation transactions. F06 source-recommendation provenance does not define simulation blocks. FBT is not counted as BUNDLE. Historical V1/V2 reports remain as stored.
 - **Captured utility:** numerator is F03 `UtilityMath.base` for purchased item lines whose product is displayed; denominator is F03 base utility for all item lines in the evaluation set. Base utility is `(unit_price - unit_cost) * quantity`, rounded HALF_UP to six decimals.
-- **Priority coverage:** `null` until the F03 formula is confirmed.
-- A zero denominator yields `rate:null` (N/A). Empty evaluation sets are stored as valid reports with all denominator-based rates null.
+- **Priority coverage (`OFFLINE_REPLAY_V4`):** distinct displayed products whose frozen F03 snapshot weight W > 1, divided by distinct displayed products on that side, rounded HALF_UP to six decimals. Read only `utility_matrix_item.weight_value` in the same Store and campaign snapshot. For reports, A uses the same top-N prefix as replay and B uses all its products. When N > |A|, use all of A, set `nExceedsBaseline=true` and divide each side by its own actual count.
+- **LayoutView:** additive `priorityCoverage` (number in [0,1] or null) and `priorityCoverageDenominator` (integer). Each reads the full layout, so full A can differ from report A. An empty draft returns `null` and `0`. If a displayed product's frozen W is missing or inconsistent across its rows, the rate is null and the actual count remains visible.
+- Zero evaluation denominators yield `rate:null` for the replay metrics. Layout coverage is independent of evaluation transactions. Historical V1–V3 reports keep both coverage fields as stored (null/null).
 
-Example response shape (IDs and values illustrative):
+Example report excerpt (Layout A row, illustrative IDs and values):
 
 ```json
 {
@@ -147,8 +148,13 @@ Example response shape (IDs and values illustrative):
   "datasetHash": "<64 lowercase hex characters>",
   "evaluationCount": 120,
   "simulated": true,
-  "algorithmVersion": "OFFLINE_REPLAY_V1",
-  "assumptions": {},
+  "algorithmVersion": "OFFLINE_REPLAY_V4",
+  "assumptions": {
+    "comparedProductCountN": 8,
+    "baselineProductCount": 35,
+    "baselineProductsCompared": 8,
+    "nExceedsBaseline": false
+  },
   "layouts": [
     {
       "layoutId": 91,
@@ -157,8 +163,8 @@ Example response shape (IDs and values illustrative):
       "hitRate": {"numerator": 84, "denominator": 120, "rate": 0.7},
       "bundleConversion": {"numerator": 0, "denominator": 120, "rate": 0},
       "capturedUtility": {"numerator": 840, "denominator": 1200, "rate": 0.7},
-      "priorityCoverage": null,
-      "priorityCoverageDenominator": null
+      "priorityCoverage": 0.25,
+      "priorityCoverageDenominator": 8
     }
   ],
   "createdAt": "2026-01-31T12:00:00Z"
@@ -180,7 +186,3 @@ Only a DRAFT campaign can be edited, simulated, and decided. Simulation is optio
 ## Loading and polling
 
 F07 preview, F08 simulation, and all lifecycle mutations are synchronous. Keep the corresponding action in a loading state until its HTTP response; success ends loading and renders that response, while an error ends loading and follows the shared `{"error":"..."}` contract. There is no polling interval, job ID, or percentage progress for these operations.
-
-## 2026-11-15 — F03 Weight v2 and priority coverage
-
-`priorityCoverage` and `priorityCoverageDenominator` are still always `null`: the report row is inserted with `NULL,NULL` (`src/main/java/vn/edu/fpt/paspm/layout/LayoutCampaignRepository.java:344-345`) and the stored assumption reads "N/A until the F03 priority coverage formula is confirmed" (`layout/LayoutCampaignService.java:267`). The intended definition "priority item = W(i) > 1" (F03 Weight v2) is **not wired**; no F07/F08 code reads W. F07/F08 routes and bodies did not change on branch `Khoi/feat/f05-progress-f03-weight-v2`.

@@ -73,7 +73,11 @@ public final class LayoutContracts {
             @Schema(types = {"number", "null"}, description = "Layout B only (DEC-20261119-06): weighted utility score of the first N products of baseline A, N = distinct products in this B (all of A when N > |A|). Difference vs A for F07 = weightedUtilityScore - equalSizeBaselineScore. Null for layout A.")
             BigDecimal equalSizeBaselineScore,
             @Schema(types = {"integer", "null"}, description = "Layout B only: number of A products in that prefix, min(N, |A|). Null for layout A.")
-            Integer equalSizeProductCount) {}
+            Integer equalSizeProductCount,
+            @Schema(types = {"number", "null"}, description = "Share of distinct displayed products with frozen snapshot W > 1, rounded to six decimals. Null for an empty layout or unavailable frozen weight.")
+            BigDecimal priorityCoverage,
+            @Schema(description = "Number of distinct displayed products, including zero for an empty layout")
+            int priorityCoverageDenominator) {}
 
     public record RecommendationOption(long recommendationId, int snapshotId, RecType type,
             List<Integer> productIds, BigDecimal utility, long version) {}
@@ -103,7 +107,10 @@ public final class LayoutContracts {
 
     public record ReportLayoutView(long layoutId, long layoutVersion, LayoutRole role,
             MetricView hitRate, MetricView bundleConversion, UtilityMetricView capturedUtility,
-            BigDecimal priorityCoverage, Integer priorityCoverageDenominator) {}
+            @Schema(types = {"number", "null"}, description = "Distinct priority products divided by actual displayed product count on this comparison side. Uses frozen W > 1. Null when unavailable or on historical reports without the metric.")
+            BigDecimal priorityCoverage,
+            @Schema(types = {"integer", "null"}, description = "Actual distinct displayed product count on this comparison side. Null on historical reports without the metric.")
+            Integer priorityCoverageDenominator) {}
 
     public record CampaignReportView(long reportId, long campaignId, int snapshotId, int createdBy,
             LocalDate rangeStart, LocalDate rangeEnd, String sourceNamespace, String datasetHash,

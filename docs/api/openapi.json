@@ -9125,6 +9125,18 @@
             ],
             "format": "int32",
             "description": "Layout B only: number of A products in that prefix, min(N, |A|). Null for layout A."
+          },
+          "priorityCoverage": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Share of distinct displayed products with frozen snapshot W > 1, rounded to six decimals. Null for an empty layout or unavailable frozen weight."
+          },
+          "priorityCoverageDenominator": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Number of distinct displayed products, including zero for an empty layout"
           }
         }
       },
@@ -10861,11 +10873,19 @@
             "$ref": "#/components/schemas/UtilityMetricView"
           },
           "priorityCoverage": {
-            "type": "number"
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Distinct priority products divided by actual displayed product count on this comparison side. Uses frozen W > 1. Null when unavailable or on historical reports without the metric."
           },
           "priorityCoverageDenominator": {
-            "type": "integer",
-            "format": "int32"
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32",
+            "description": "Actual distinct displayed product count on this comparison side. Null on historical reports without the metric."
           }
         }
       },

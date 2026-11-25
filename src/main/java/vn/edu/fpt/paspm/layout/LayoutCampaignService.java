@@ -41,7 +41,7 @@ import static vn.edu.fpt.paspm.layout.LayoutCampaignRepository.*;
 @Service
 public class LayoutCampaignService {
     private static final String SOURCE_NAMESPACE = "F04_DATABASE_V1";
-    private static final String SIMULATION_VERSION = "OFFLINE_REPLAY_V3";
+    private static final String SIMULATION_VERSION = "OFFLINE_REPLAY_V4";
     static final String BASELINE_V1 = "F07_BASELINE_V1", BASELINE_V2 = "F07_BASELINE_V2";
     private static final int PAGE_MAX = 100;
 
@@ -286,6 +286,9 @@ public class LayoutCampaignService {
         Set<Integer> productsB = productSet(placementsB);
         List<Integer> orderedA = orderedProducts(placementsA);
         Set<Integer> productsA = Set.copyOf(LayoutRules.equalSizePrefix(orderedA, productsB.size()));
+        var priorities = repository.snapshotPriorityByProduct(store, campaign.snapshotId());
+        BigDecimal priorityCoverageA = priorityCoverage(productsA, priorities);
+        BigDecimal priorityCoverageB = priorityCoverage(productsB, priorities);
         List<Set<Integer>> bundleBlocks = bundleBlocks(placementsB);
         Timestamp from = Timestamp.from(request.rangeStart().atStartOfDay(storeZone).toInstant());
         Timestamp to = Timestamp.from(request.rangeEnd().plusDays(1).atStartOfDay(storeZone).toInstant());
@@ -303,7 +306,7 @@ public class LayoutCampaignService {
         assumptions.put("capturedUtilityDenominator", "Sum of base utility for every product line in the evaluation transactions.");
         assumptions.put("zeroDenominator", "rate is null (N/A) when its denominator is zero.");
         assumptions.put("bundleConversion", "A transaction converts when it contains every product in at least one BUNDLE zone block (products with the same blockNo) in the saved B layout revision; source recommendation provenance does not define the simulated block, and FBT is not counted as BUNDLE.");
-        assumptions.put("priorityCoverage", "N/A until the F03 priority coverage formula is confirmed.");
+        assumptions.put("priorityCoverage", "Distinct displayed products with frozen snapshot W > 1 divided by the actual distinct displayed product count on each comparison side. Zero products or an unavailable frozen weight result in null.");
         assumptions.putAll(LayoutRules.equalSizeAssumptions(productsB.size(), orderedA.size(), baselineK(layoutA)));
 
         long reportId = repository.createReport(store, campaignId, request.rangeStart(), request.rangeEnd(),
@@ -312,11 +315,11 @@ public class LayoutCampaignService {
         repository.insertReportLayout(reportId, store, layoutA.id(), layoutA.version(), LayoutRole.A,
                 outcome.layoutA().hitCount(), outcome.layoutA().denominator(), outcome.layoutA().bundleConversionCount(),
                 outcome.layoutA().denominator(), outcome.layoutA().capturedUtilityNumerator(),
-                outcome.layoutA().capturedUtilityDenominator());
+                outcome.layoutA().capturedUtilityDenominator(), priorityCoverageA, productsA.size());
         repository.insertReportLayout(reportId, store, layoutB.id(), layoutB.version(), LayoutRole.B,
                 outcome.layoutB().hitCount(), outcome.layoutB().denominator(), outcome.layoutB().bundleConversionCount(),
                 outcome.layoutB().denominator(), outcome.layoutB().capturedUtilityNumerator(),
-                outcome.layoutB().capturedUtilityDenominator());
+                outcome.layoutB().capturedUtilityDenominator(), priorityCoverageB, productsB.size());
         repository.insertEvaluationTransactionIds(reportId, store, campaign.snapshotId(), from, to);
         return reportView(store, repository.report(store, reportId));
     }
@@ -506,7 +509,9 @@ public class LayoutCampaignService {
         return new LayoutView(layout.id(), layout.campaignId(), layout.snapshotId(), layout.role(),
                 layout.status(), layout.version(), layout.name(), score.setScale(6, RoundingMode.HALF_UP),
                 errors.isEmpty(), List.copyOf(errors), List.copyOf(views), layout.createdAt(), layout.updatedAt(),
-                equalSizeScore, equalSizeCount);
+                equalSizeScore, equalSizeCount,
+                priorityCoverage(distinctProducts, repository.snapshotPriorityByProduct(layout.storeId(), layout.snapshotId())),
+                distinctProducts.size());
     }
 
     private Map<Integer, List<String>> placementErrors(Jwt jwt, LayoutRow layout, List<PlacementRow> rows) {
@@ -693,7 +698,8 @@ public class LayoutCampaignService {
                 new MetricView(row.bundleCount(), row.bundleDenominator(),
                         ratio(BigDecimal.valueOf(row.bundleCount()), BigDecimal.valueOf(row.bundleDenominator()))),
                 new UtilityMetricView(row.utilityNumerator(), row.utilityDenominator(),
-                        ratio(row.utilityNumerator(), row.utilityDenominator())), null, null);
+                        ratio(row.utilityNumerator(), row.utilityDenominator())),
+                row.priorityCoverage(), row.priorityCoverageDenominator());
     }
 
     private void saveInitialRevision(int store, long layoutId, int actor) {
@@ -826,6 +832,16 @@ public class LayoutCampaignService {
 
     private static int actorId(Jwt jwt) {
         return Integer.parseInt(jwt.getSubject());
+    }
+
+    private static BigDecimal priorityCoverage(Set<Integer> products, Map<Integer, Boolean> priorities) {
+        long count = 0;
+        for (int productId : products) {
+            Boolean priority = priorities.get(productId);
+            if (priority == null) return null;
+            if (priority) count++;
+        }
+        return ratio(BigDecimal.valueOf(count), BigDecimal.valueOf(products.size()));
     }
 
     private static BigDecimal ratio(BigDecimal numerator, BigDecimal denominator) {

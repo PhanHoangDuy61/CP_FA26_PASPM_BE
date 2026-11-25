@@ -15,6 +15,14 @@ Verification: frontend lint/build and 568 tests passed; 34 focused backend integ
 
 Release status: **UNRELEASED**, feature branch only. No push.
 
+## Record 002 — Executable Maven Wrapper
+
+[Record 002](02-mvnw-executable.md) records the Git mode fix, setup guide updates and local wrapper verification.
+
+## Record 006 — Frozen snapshot priority coverage
+
+[Record 006](06-f07-f08-priority-coverage.md) records the F07/F08 implementation of DEC-20261117-02 and the approved empty-layout and oversized-B behavior.
+
 ## Record 007 — SPMF notices, license in the Docker image, amd64 build, process-boundary guard
 
 [Record 007](07-spmf-gpl-ci-artifact.md) implements [DEC-20261125-03](../../decisions/2026-11-25/DEC-20261125-03-spmf-gpl-distribution-and-process-boundary.md):
