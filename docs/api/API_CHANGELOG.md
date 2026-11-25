@@ -1,5 +1,11 @@
 # API Changelog
 
+## 2026-11-26 — F10 Part 1 ordinary cart
+
+- Added five END_CUSTOMER operations under `/api/storefront/{storeSlug}/cart`. Every mutation uses a quoted `If-Match` version and records one item event for each actual change.
+- V31 creates `shopping_cart`, `shopping_cart_item` and `storefront_event`. The branch export grows from 112 paths / 139 operations to 115 paths / 144 operations.
+- Whole-bundle add and F11 remain planned. See the [F10 contract](F10_BUNDLE_CART_API.md).
+
 ## 2026-11-25 — Stable operation IDs and F07 placement schema
 
 - `GET /api/layouts/products` explicitly uses `layoutSnapshotProducts`. See [ROC-20261125-010](../record-of-changes/2026-11-25/10-f07-openapi-annotations.md) for all 47 prior runtime IDs and replacements. Regenerated client method names can change.

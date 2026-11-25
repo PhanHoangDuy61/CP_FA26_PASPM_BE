@@ -33,3 +33,7 @@
 ## Record 008 — PO answers: rename, Mermaid archived, FK edges, review
 
 [Record 008](08-po-answers-rename-archive-fk-review.md) applies the PO answers of 2026-11-26 (pack renamed, Mermaid mirrors archived, FK edges drawn) and the page-by-page review fixes. Documentation only; Maven NOT RUN.
+
+## Record 010 — F10 Part 1 ordinary cart
+
+Record 009 belongs to the separate black-box test cases branch. [Record 010](10-f10-cart-core.md) records the V31 migration, ordinary cart operations and verification.
