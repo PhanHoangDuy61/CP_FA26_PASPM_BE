@@ -11,8 +11,9 @@ Start with current canonical API/handoff and the feature index. `reference*` con
 | F05 | HUI-Miner / EFIM Mining | [F05](F05/README.md) |
 | F06 | Recommendation Engine | [F06](F06/README.md) |
 | F07/F08 | Layout simulator and campaigns (no feature README; contract only) | [API](../api/F07_F08_LAYOUT_CAMPAIGN_API.md) · [schema](../architecture/F07_F08_LAYOUT_CAMPAIGN_SCHEMA.md) · [handoff](../frontend_handoff/F07_F08_HANDOFF.md) |
+| F09 | Storefront MVP | [F09](F09/README.md) · [API](../api/F09_STOREFRONT_API.md) · [handoff](../frontend_handoff/F09_HANDOFF.md) |
 
-F07/F08 have an API contract (2026-11-12) but no feature README; F09–F11: **UNDEFINED_IN_AVAILABLE_DOCS** for a complete feature/API map. 2026-11-15 branch status (F03 Weight v2, F05 progress): [record 004](../record-of-changes/2026-11-15/04-f03-weight-v2-expiry-season.md). F06 contains downstream exclusion names only. No empty F07–F11 folders or invented contracts are created. See [review register](../requirements/README.md#documentation-review-register).
+F07/F08 have an API contract (2026-11-12) but no feature README; F10–F11 remain **UNDEFINED_IN_AVAILABLE_DOCS**. F09 is documented on the current local feature branch; see its README for the missing-plan and verification caveats. 2026-11-15 branch status (F03 Weight v2, F05 progress): [record 004](../record-of-changes/2026-11-15/04-f03-weight-v2-expiry-season.md). F06 contains downstream exclusion names only. No empty F10–F11 folders or invented contracts are created. See [review register](../requirements/README.md#documentation-review-register).
 
 ## Shared authentication dependency
 

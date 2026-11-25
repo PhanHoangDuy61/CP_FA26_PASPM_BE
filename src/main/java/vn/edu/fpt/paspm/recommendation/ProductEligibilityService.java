@@ -23,10 +23,16 @@ public class ProductEligibilityService {
         this.products=products;this.risk=risk;this.timeZone=timeZone;this.settings=settings;
     }
     public EligibilityV2 check(int store,List<Integer> ids,RecPolicy policy) {
+        return check(store,ids,policy.minimumSellableQuantity());
+    }
+    public EligibilityV2 checkForLayout(int store,List<Integer> ids) {
+        return check(store,ids,1);
+    }
+    private EligibilityV2 check(int store,List<Integer> ids,int minimumSellableQuantity) {
         var date=timeZone.today();var checkedAt=Instant.now();var results=new ArrayList<ProductEligibilityV2>();var warnings=new ArrayList<String>();
         int window=settings.config(store,false).salesWindowDays();
         var from=date.minusDays(window-1L).atStartOfDay(timeZone.zone()).toInstant();var to=date.plusDays(1).atStartOfDay(timeZone.zone()).toInstant();
-        var fingerprint=new StringBuilder(UtilityVersionedContracts.V2+"|"+date+"|"+policy.minimumSellableQuantity());EligibilityStatus overall=EligibilityStatus.ELIGIBLE;
+        var fingerprint=new StringBuilder(UtilityVersionedContracts.V2+"|"+date+"|"+minimumSellableQuantity);EligibilityStatus overall=EligibilityStatus.ELIGIBLE;
         for(int id:ids) {
             UtilityProductRepository.Product product;
             try {product=products.product(store,id);}catch(ApiException e){
@@ -46,7 +52,7 @@ public class ProductEligibilityService {
             var messages=new ArrayList<String>();EligibilityStatus status;
             if(!"ACTIVE".equals(product.status())){status=EligibilityStatus.INELIGIBLE;messages.add("Product inactive");}
             else if(missing){status=EligibilityStatus.NEEDS_RECHECK;messages.add("Missing required batch expiry metadata");}
-            else if(sellable<policy.minimumSellableQuantity()){status=EligibilityStatus.INELIGIBLE;messages.add("Insufficient current sellable inventory");}
+            else if(sellable<minimumSellableQuantity){status=EligibilityStatus.INELIGIBLE;messages.add("Insufficient current sellable inventory");}
             else status=EligibilityStatus.ELIGIBLE;
             if(!score.batchesMissingPushDay().isEmpty())messages.add("Batches "+score.batchesMissingPushDay()+" have no push day");
             if(status==EligibilityStatus.INELIGIBLE||overall==EligibilityStatus.INELIGIBLE)overall=EligibilityStatus.INELIGIBLE;

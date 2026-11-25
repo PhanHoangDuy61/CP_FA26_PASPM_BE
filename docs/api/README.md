@@ -12,6 +12,7 @@ Canonical contract locations stay stable in this directory. `CURRENT` describes 
 | F05 | [Mining](F05_MINING_API.md) | Current EFIM numeric contract includes lossless per-TU/per-Product-TWU/minUtil int32 checks and an int64 global total; this change is local/unpublished | [F05](../frontend_handoff/F05_HANDOFF.md) |
 | F06 | [Recommendation](F06_RECOMMENDATION_API.md) | Current Backend v1.1 contract + W2; frozen evidence reader validates exact int64 mining totals; historical test statements retain dates | [F06](../frontend_handoff/F06_HANDOFF.md) |
 | F07/F08 | [Layout and Campaign](F07_F08_LAYOUT_CAMPAIGN_API.md) | Merged to dev at `8f94f94` (V23); `priorityCoverage` still null (priority = W > 1 not wired) | [F07/F08](../frontend_handoff/F07_F08_HANDOFF.md) |
+| F09 | [Public Storefront](F09_STOREFRONT_API.md) | MVP public projection; public Store visibility is opt-in; active homepage needs configured layout caps | [F09](../frontend_handoff/F09_HANDOFF.md) |
 
 [OpenAPI export](openapi.json) (historical counts: 96 paths / 114 operations at the F07/F08 merge, 98 / 116 at F05 Checkpoint 1; current counts below). The export's server entry is the local test origin; configure the target origin in the integration environment. The session changes are uncommitted. Earlier operation counts are historical evidence, not the current export. Role prose still needs source-based interpretation; use the [RBAC matrix](F01_F02_RBAC_MATRIX.md). [RBAC matrix](F01_F02_RBAC_MATRIX.md) and [integration notes](F03_V12_F05_F06_INTEGRATION.md) have review notices. [API changelog](API_CHANGELOG.md) remains append-only history.
 
@@ -31,13 +32,17 @@ Branch `Khoi/feat/store-management` (base `dev` `6d2a877`): **107 paths / 133 op
 
 `API_INVENTORY_BY_FEATURE.md`, `.csv` and `API_FEATURE_GAP_REPORT.md` are absent from current dev. They exist only in local branch `Khoi/docs/backend-api-inventory-audit` at `39a4918`; no remote publication or merge is assumed. This reorganization does not cherry-pick/copy them. They are not presented as live links until a separately reviewed integration supplies them.
 
-F09–F11 contracts are not defined here. F07/F08 routes are documented in the linked contract. The documented unavailable F03 `GET /api/utility/snapshots` is not an implemented route; F05 `GET /api/mining/snapshots` is a distinct selector. Framework Swagger/OpenAPI paths are not business APIs.
+F10–F11 contracts are not defined here. F07/F08 routes are documented in the linked contract. The documented unavailable F03 `GET /api/utility/snapshots` is not an implemented route; F05 `GET /api/mining/snapshots` is a distinct selector. Framework Swagger/OpenAPI paths are not business APIs.
 
 Current F01 reconciliation (2026-11-12): preserves published dev V20/AuthSessionService and adds V21 binding; [current evidence](../testing/reports/F01_SESSION_RECONCILIATION_2026-11-12.md). Earlier local-variant details are dated history; no source database repair/deployment was performed.
 
 2026-11-15 feature branch, Checkpoint 1 (historical): 98 paths / 116 operations with the two F05 progress routes and Merchandiser Store submission.
 
-**Current export on branch `Khoi/feat/f05-progress-f03-weight-v2` @ `c8c837a`: 102 paths, 124 operations** (F01 27, F02 15, F03 20, F04 8, F05 26, F06 8, F07/F08 20), regenerated through the MockMvc export hook of `RecommendationIntegrationTest`; adds the 8 F03 season operations. Every one of the 124 operations is named in a contract in this folder; the only documented route absent from the export is `GET /api/utility/snapshots`, listed as NOT IMPLEMENTED. This is not an interactive Swagger UI execution.
+**Branch `Khoi/feat/f05-progress-f03-weight-v2` @ `c8c837a` (historical): 102 paths, 124 operations** (F01 27, F02 15, F03 20, F04 8, F05 26, F06 8, F07/F08 20), regenerated through the MockMvc export hook of `RecommendationIntegrationTest`; adds the 8 F03 season operations. Every one of the 124 operations is named in a contract in this folder; the only documented route absent from the export is `GET /api/utility/snapshots`, listed as NOT IMPLEMENTED. This is not an interactive Swagger UI execution.
+
+## 2026-11-20 F09 local feature-branch export
+
+The checked-in export is **105 paths / 126 operations**, including five F09 operations. It was captured from Springdoc through the MockMvc OpenAPI export hook and parsed as JSON. F09 route presence and public Product schema fields are also asserted by `StorefrontIntegrationTest`; this is not a live Swagger UI or deployment check.
 
 ## 2026-11-16 export update
 The follow-up export has **103 paths / 125 operations**, adding DELETE `/api/inventory-batches/{id}/push-day` to the 102/124 baseline. Recommendation views include `seasonEnded` and `endedSeasons`; all local schema references resolve.

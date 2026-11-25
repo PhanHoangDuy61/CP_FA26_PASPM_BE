@@ -1,8 +1,8 @@
-# ROC-20261125-001 — SPMF (GPL v3): notices, license in the image, amd64 build, process-boundary guard
+# ROC-20261125-002 — SPMF (GPL v3): notices, license in the image, amd64 build, process-boundary guard
 
 | Field | Value |
 |---|---|
-| Record ID | ROC-20261125-001 |
+| Record ID | ROC-20261125-002 |
 | Date / timezone | 2026-11-25 / Asia/Ho_Chi_Minh |
 | Agent | Claude Code (Sonnet 5.5) |
 | Type | Implementation (build and CI support) / Documentation |

@@ -30,7 +30,10 @@ import vn.edu.fpt.paspm.common.ApiException;
 import vn.edu.fpt.paspm.recommendation.RecommendationContracts.RecType;
 import vn.edu.fpt.paspm.recommendation.RecommendationContracts.RecView;
 import vn.edu.fpt.paspm.recommendation.RecommendationContracts.ReviewStatus;
+import vn.edu.fpt.paspm.recommendation.ProductEligibilityService;
 import vn.edu.fpt.paspm.recommendation.RecommendationService;
+import vn.edu.fpt.paspm.recommendation.RecommendationVersionedContracts.ProductEligibilityV2;
+import vn.edu.fpt.paspm.recommendation.RecommendationContracts.EligibilityStatus;
 import vn.edu.fpt.paspm.utility.UtilitySnapshotService;
 import static vn.edu.fpt.paspm.layout.LayoutContracts.*;
 import static vn.edu.fpt.paspm.layout.LayoutCampaignRepository.*;
@@ -38,13 +41,14 @@ import static vn.edu.fpt.paspm.layout.LayoutCampaignRepository.*;
 @Service
 public class LayoutCampaignService {
     private static final String SOURCE_NAMESPACE = "F04_DATABASE_V1";
-    private static final String SIMULATION_VERSION = "OFFLINE_REPLAY_V2";
+    private static final String SIMULATION_VERSION = "OFFLINE_REPLAY_V3";
     static final String BASELINE_V1 = "F07_BASELINE_V1", BASELINE_V2 = "F07_BASELINE_V2";
     private static final int PAGE_MAX = 100;
 
     private final CatalogAccess access;
     private final UtilitySnapshotService snapshots;
     private final RecommendationService recommendations;
+    private final ProductEligibilityService productEligibility;
     private final LayoutCampaignRepository repository;
     private final LayoutRules rules;
     private final OfflineLayoutSimulation simulation;
@@ -52,12 +56,14 @@ public class LayoutCampaignService {
     private final ZoneId storeZone;
 
     public LayoutCampaignService(CatalogAccess access, UtilitySnapshotService snapshots,
-            RecommendationService recommendations, LayoutCampaignRepository repository,
+            RecommendationService recommendations, ProductEligibilityService productEligibility,
+            LayoutCampaignRepository repository,
             LayoutRules rules, OfflineLayoutSimulation simulation, ObjectMapper json,
             @Value("${paspm.store-time-zone:Asia/Ho_Chi_Minh}") String storeTimeZone) {
         this.access = access;
         this.snapshots = snapshots;
         this.recommendations = recommendations;
+        this.productEligibility = productEligibility;
         this.repository = repository;
         this.rules = rules;
         this.simulation = simulation;
@@ -89,6 +95,29 @@ public class LayoutCampaignService {
     @Transactional(readOnly = true)
     public LayoutPolicyView policy() {
         return rules.policy();
+    }
+
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
+    public Page<SnapshotProductOption> snapshotProducts(Jwt jwt, int snapshotId, String query,
+            int page, int pageSize) {
+        pagination(page, pageSize);
+        if (query == null || query.length() > 180) throw new ApiException(400, "q must be at most 180 characters");
+        int store = access.currentStoreId(jwt);
+        snapshots.get(jwt, snapshotId);
+        List<SnapshotProductRow> rows = repository.snapshotProducts(store, snapshotId, query, page, pageSize);
+        List<Integer> ids = rows.stream().map(SnapshotProductRow::productId).toList();
+        Map<Integer, ProductEligibilityV2> current = productEligibility.checkForLayout(store, ids).products().stream()
+                .collect(java.util.stream.Collectors.toMap(ProductEligibilityV2::productId, item -> item));
+        var items = new ArrayList<SnapshotProductOption>();
+        for (SnapshotProductRow row : rows) {
+            ProductEligibilityV2 live = current.get(row.productId());
+            List<String> errors = productValidationErrors(row.productId(), row.productStatus(), row.deleted(), live);
+            items.add(new SnapshotProductOption(row.productId(), row.sku(), row.productName(),
+                    row.productStatus(), row.deleted(), live == null ? 0 : live.sellableQuantity(),
+                    row.snapshotWeightedUtility(), errors.isEmpty(), errors));
+        }
+        return new Page<>(List.copyOf(items), page, pageSize,
+                repository.countSnapshotProducts(store, snapshotId, query));
     }
 
     @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
@@ -129,6 +158,7 @@ public class LayoutCampaignService {
         List<PlacementBlock> baselineBlocks = baselineBlocks(baseline);
         rules.requireCapacity(baselineBlocks);
         List<PlacementBlock> blocks = recommendationBlocks(jwt, request.snapshotId(), request.recommendationIds());
+        requireUniqueProducts(blocks);
         rules.requireCapacity(blocks);
 
         repository.lockStore(store);
@@ -179,13 +209,13 @@ public class LayoutCampaignService {
         requireDraft(campaign);
         requireB(layout);
         requireVersion(layout.version(), request.expectedVersion(), "Layout version is stale");
-        List<PlacementBlock> blocks = recommendationBlocks(jwt, layout.snapshotId(), request.recommendationIds());
-        requireUniqueProducts(blocks);
-        rules.requireCapacity(blocks);
+        validatePlacements(jwt, store, layout.snapshotId(), request.placements());
+        List<String> capacityErrors = rules.capacityErrorsForPlacements(request.placements());
+        if (!capacityErrors.isEmpty()) throw new ApiException(400, String.join("; ", capacityErrors));
 
         repository.updateLayoutVersion(store, layoutId, layout.version());
         repository.updateLayoutState(store, layoutId, LayoutStatus.DRAFT);
-        repository.replacePlacements(store, layoutId, layout.snapshotId(), blocks);
+        repository.replaceIndividualPlacements(store, layoutId, layout.snapshotId(), request.placements());
         List<PlacementRow> saved = repository.placements(store, layoutId);
         repository.saveRevision(store, layoutId, layout.version() + 1, saved, actorId(jwt), hash(saved));
         repository.clearCampaignDecision(store, campaign.id());
@@ -202,7 +232,7 @@ public class LayoutCampaignService {
         requireB(layout);
         requireVersion(layout.version(), request.expectedVersion(), "Layout version is stale");
         LayoutView current = layoutView(jwt, layout);
-        if (!current.valid()) throw new ApiException(409, "Layout B contains invalid blocks or exceeds configured capacity");
+        if (!current.valid()) throw new ApiException(409, validationMessage(current));
         if (layout.status() == LayoutStatus.READY) return current;
         repository.updateLayoutState(store, layoutId, LayoutStatus.READY);
         return layoutView(jwt, repository.layout(store, layoutId, false));
@@ -272,7 +302,7 @@ public class LayoutCampaignService {
         assumptions.put("capturedUtilityNumerator", "Sum of base utility for purchased product lines whose product is in the layout.");
         assumptions.put("capturedUtilityDenominator", "Sum of base utility for every product line in the evaluation transactions.");
         assumptions.put("zeroDenominator", "rate is null (N/A) when its denominator is zero.");
-        assumptions.put("bundleConversion", "A transaction converts when it contains every product in at least one displayed recommendation block of type BUNDLE; FBT is not counted as BUNDLE.");
+        assumptions.put("bundleConversion", "A transaction converts when it contains every product in at least one BUNDLE zone block (products with the same blockNo) in the saved B layout revision; source recommendation provenance does not define the simulated block, and FBT is not counted as BUNDLE.");
         assumptions.put("priorityCoverage", "N/A until the F03 priority coverage formula is confirmed.");
         assumptions.putAll(LayoutRules.equalSizeAssumptions(productsB.size(), orderedA.size(), baselineK(layoutA)));
 
@@ -429,29 +459,28 @@ public class LayoutCampaignService {
     private LayoutView layoutView(Jwt jwt, LayoutRow layout) {
         List<PlacementRow> rows = repository.placements(layout.storeId(), layout.id());
         Map<Integer, BigDecimal> utilities = repository.weightedUtilityByProduct(layout.snapshotId());
-        Map<Long, List<String>> recommendationErrors = recommendationErrors(jwt, layout, rows);
+        Map<Integer, List<String>> productErrors = placementErrors(jwt, layout, rows);
         var errors = new LinkedHashSet<String>();
         var views = new ArrayList<PlacementView>();
         var distinctProducts = new HashSet<Integer>();
         if (layout.role() == LayoutRole.B && rows.isEmpty()) {
-            errors.add("Layout B must contain at least one recommendation block");
+            errors.add("Layout B must contain at least one product");
         }
+        List<String> capacityErrors = layout.role() == LayoutRole.B || baselineK(layout) != null
+                ? rules.capacityErrors(capacityBlocks(layout.role(), rows)) : List.of();
+        errors.addAll(capacityErrors);
         for (PlacementRow row : rows) {
-            var rowErrors = new ArrayList<String>();
+            var rowErrors = new ArrayList<>(productErrors.getOrDefault(row.productId(), List.of()));
             if (!distinctProducts.add(row.productId())) rowErrors.add("Product is repeated in this layout");
-            if (row.recommendationId() != null) {
-                rowErrors.addAll(recommendationErrors.getOrDefault(row.recommendationId(), List.of()));
-            }
             BigDecimal utility = utilities.get(row.productId());
             if (utility == null) rowErrors.add("Product is not present in the selected utility snapshot");
+            for (String capacityError : capacityErrors) {
+                if (capacityError.startsWith(row.zone() + " ")) rowErrors.add(capacityError);
+            }
             errors.addAll(rowErrors);
-            views.add(new PlacementView(row.productId(), row.recommendationId(),
+            views.add(new PlacementView(row.productId(), row.recommendationId(), row.recommendationId(),
                     row.type() == null ? null : RecType.valueOf(row.type()), row.sku(), row.productName(),
                     row.zone(), row.blockNo(), row.position(), utility, rowErrors.isEmpty(), List.copyOf(rowErrors)));
-        }
-        // DEC-20261119-06: the BASELINE cap governs F07_BASELINE_V2 layouts; historical V1 baselines keep their stored size.
-        if (layout.role() == LayoutRole.B || baselineK(layout) != null) {
-            errors.addAll(rules.capacityErrors(capacityBlocks(layout.role(), rows)));
         }
         BigDecimal score = BigDecimal.ZERO;
         for (Integer product : distinctProducts) {
@@ -480,32 +509,114 @@ public class LayoutCampaignService {
                 equalSizeScore, equalSizeCount);
     }
 
-    private Map<Long, List<String>> recommendationErrors(Jwt jwt, LayoutRow layout, List<PlacementRow> rows) {
-        var result = new HashMap<Long, List<String>>();
-        var ids = new TreeSet<Long>();
-        rows.stream().map(PlacementRow::recommendationId).filter(java.util.Objects::nonNull).forEach(ids::add);
-        for (Long id : ids) {
-            var errors = new ArrayList<String>();
-            RecView current;
-            try {
-                current = recommendations.get(jwt, id);
-            } catch (ApiException e) {
-                if (e.status() != 404) throw e;
-                result.put(id, List.of("Recommendation is no longer available"));
-                continue;
+    private Map<Integer, List<String>> placementErrors(Jwt jwt, LayoutRow layout, List<PlacementRow> rows) {
+        if (layout.role() != LayoutRole.B || rows.isEmpty()) return Map.of();
+        List<Integer> productIds = rows.stream().map(PlacementRow::productId).distinct().toList();
+        Map<Integer, ProductEligibilityV2> currentEligibility = productEligibility
+                .checkForLayout(layout.storeId(), productIds).products().stream()
+                .collect(java.util.stream.Collectors.toMap(ProductEligibilityV2::productId, item -> item));
+        var sourceRecommendations = new HashMap<Long, RecView>();
+        var missingRecommendations = new HashSet<Long>();
+        var result = new HashMap<Integer, List<String>>();
+        for (PlacementRow row : rows) {
+            var rowErrors = new LinkedHashSet<String>();
+            ProductEligibilityV2 live = currentEligibility.get(row.productId());
+            if (live == null || live.status() != EligibilityStatus.ELIGIBLE) {
+                if (live == null || live.warnings().isEmpty()) {
+                    rowErrors.add("Product is not currently eligible for Layout B");
+                } else {
+                    rowErrors.addAll(live.warnings());
+                }
             }
-            List<PlacementRow> block = rows.stream().filter(row -> id.equals(row.recommendationId())).toList();
-            if (current.snapshotId() != layout.snapshotId()) errors.add("Recommendation belongs to another snapshot");
-            if (current.reviewStatus() != ReviewStatus.APPROVED) errors.add("Recommendation is not APPROVED");
-            if (!current.readyForConsumption()) errors.add("Recommendation is not currently readyForConsumption");
-            if (current.type() != RecType.valueOf(block.get(0).type())) errors.add("Recommendation type changed");
-            List<Integer> storedProducts = block.stream().map(PlacementRow::productId).toList();
-            if (!current.productIds().equals(storedProducts)) errors.add("Recommendation block no longer matches its saved products");
-            String zone = rules.zone(current.type());
-            if (block.stream().anyMatch(row -> !zone.equals(row.zone()))) errors.add("Recommendation is in the wrong layout zone");
-            result.put(id, List.copyOf(errors));
+            if (row.recommendationId() != null) {
+                long recommendationId = row.recommendationId();
+                RecView source = sourceRecommendations.get(recommendationId);
+                if (source == null && !missingRecommendations.contains(recommendationId)) {
+                    try {
+                        source = recommendations.get(jwt, recommendationId);
+                        sourceRecommendations.put(recommendationId, source);
+                    } catch (ApiException e) {
+                        if (e.status() != 404) throw e;
+                        missingRecommendations.add(recommendationId);
+                    }
+                }
+                if (source == null) {
+                    rowErrors.add("Source recommendation is no longer available");
+                } else {
+                    if (source.snapshotId() != layout.snapshotId()) {
+                        rowErrors.add("Source recommendation belongs to another snapshot");
+                    }
+                    if (source.reviewStatus() != ReviewStatus.APPROVED) {
+                        rowErrors.add("Source recommendation is not APPROVED");
+                    }
+                    if (!source.productIds().contains(row.productId())) {
+                        rowErrors.add("Product is not part of its source recommendation");
+                    }
+                }
+            }
+            result.put(row.productId(), List.copyOf(rowErrors));
         }
         return result;
+    }
+
+    private void validatePlacements(Jwt jwt, int store, int snapshotId, List<PlacementRequest> placements) {
+        var productIds = placements.stream().map(PlacementRequest::productId).toList();
+        if (new HashSet<>(productIds).size() != productIds.size()) {
+            throw new ApiException(400, "A product may appear only once in a layout");
+        }
+        repository.requireProductsInStore(store, productIds);
+        var utilities = repository.weightedUtilityByProduct(snapshotId);
+        var positions = new HashSet<String>();
+        var sourceRecommendations = new HashMap<Long, RecView>();
+        for (PlacementRequest placement : placements) {
+            if (!rules.isEditableZone(placement.zone())) {
+                throw new ApiException(400, "Unsupported Layout B zone: " + placement.zone());
+            }
+            if (!positions.add(placement.zone() + ":" + placement.position())) {
+                throw new ApiException(400, "A position may contain only one product in each zone");
+            }
+            if (!utilities.containsKey(placement.productId())) {
+                throw new ApiException(400, "Product " + placement.productId()
+                        + " is not present in the selected utility snapshot");
+            }
+            if (placement.sourceRecommendationId() != null) {
+                RecView source = sourceRecommendations.computeIfAbsent(placement.sourceRecommendationId(),
+                        id -> requireApprovedRecommendation(jwt, id, snapshotId));
+                if (!source.productIds().contains(placement.productId())) {
+                    throw new ApiException(409, "Product is not part of its source recommendation");
+                }
+            }
+        }
+        Map<Integer, ProductEligibilityV2> current = productEligibility.checkForLayout(store, productIds)
+                .products().stream()
+                .collect(java.util.stream.Collectors.toMap(ProductEligibilityV2::productId, item -> item));
+        for (Integer productId : productIds) {
+            ProductEligibilityV2 live = current.get(productId);
+            if (live == null || live.status() != EligibilityStatus.ELIGIBLE) {
+                String detail = live == null || live.warnings().isEmpty()
+                        ? "not currently eligible" : String.join(", ", live.warnings());
+                throw new ApiException(409, "Product " + productId + " is " + detail);
+            }
+        }
+    }
+
+    private static List<String> productValidationErrors(int productId, String status, boolean deleted,
+            ProductEligibilityV2 current) {
+        var errors = new LinkedHashSet<String>();
+        if (deleted) errors.add("Product is deleted");
+        if (!"ACTIVE".equals(status)) errors.add("Product is inactive");
+        if (current == null || current.status() != EligibilityStatus.ELIGIBLE) {
+            if (current == null || current.warnings().isEmpty()) {
+                errors.add("Product " + productId + " is not currently eligible for Layout B");
+            } else {
+                errors.addAll(current.warnings());
+            }
+        }
+        return List.copyOf(errors);
+    }
+
+    private static String validationMessage(LayoutView layout) {
+        return "Layout B validation failed: " + String.join("; ", layout.validationErrors());
     }
 
     private List<PlacementBlock> recommendationBlocks(Jwt jwt, int snapshotId, List<Long> recommendationIds) {
@@ -536,10 +647,17 @@ public class LayoutCampaignService {
         return current;
     }
 
+    private RecView requireApprovedRecommendation(Jwt jwt, long recommendationId, int snapshotId) {
+        RecView current = recommendations.get(jwt, recommendationId);
+        if (current.snapshotId() != snapshotId) throw new ApiException(409, "Recommendation must use this campaign's snapshot");
+        if (current.reviewStatus() != ReviewStatus.APPROVED) throw new ApiException(409, "Recommendation must be APPROVED");
+        return current;
+    }
+
     private void requireSelectedLayout(Jwt jwt, LayoutRow layout) {
         if (layout.status() != LayoutStatus.READY) throw new ApiException(409, "Selected layout is not READY");
         LayoutView current = layoutView(jwt, layout);
-        if (!current.valid()) throw new ApiException(409, "Selected layout contains invalid blocks or exceeds configured capacity");
+        if (!current.valid()) throw new ApiException(409, validationMessage(current));
     }
 
     private void requireCurrentReport(int store, CampaignRow campaign, long reportId) {
@@ -616,18 +734,15 @@ public class LayoutCampaignService {
             }
             return blocks;
         }
-        var grouped = new LinkedHashMap<Long, List<PlacementRow>>();
+        var grouped = new LinkedHashMap<String, Map<Integer, List<PlacementRow>>>();
         for (PlacementRow row : rows) {
-            if (row.recommendationId() != null) grouped.computeIfAbsent(row.recommendationId(), ignored -> new ArrayList<>()).add(row);
+            grouped.computeIfAbsent(row.zone(), ignored -> new LinkedHashMap<>())
+                    .computeIfAbsent(row.blockNo(), ignored -> new ArrayList<>()).add(row);
         }
         var blocks = new ArrayList<PlacementBlock>();
-        for (Map.Entry<Long, List<PlacementRow>> entry : grouped.entrySet()) {
-            List<PlacementRow> block = entry.getValue();
-            if (block.get(0).type() == null) continue;
-            RecType type = RecType.valueOf(block.get(0).type());
-            blocks.add(new PlacementBlock(entry.getKey(), type, block.stream().map(PlacementRow::productId).toList(),
-                    block.get(0).zone(), block.get(0).blockNo(), block.get(0).position()));
-        }
+        grouped.forEach((zone, zoneBlocks) -> zoneBlocks.forEach((blockNo, block) ->
+                blocks.add(new PlacementBlock(null, null, block.stream().map(PlacementRow::productId).toList(),
+                        zone, blockNo, block.get(0).position()))));
         return blocks;
     }
 
@@ -642,10 +757,10 @@ public class LayoutCampaignService {
     }
 
     private static List<Set<Integer>> bundleBlocks(List<PlacementRow> rows) {
-        var groups = new LinkedHashMap<Long, List<PlacementRow>>();
+        var groups = new LinkedHashMap<Integer, List<PlacementRow>>();
         for (PlacementRow row : rows) {
-            if (row.recommendationId() != null && RecType.BUNDLE.name().equals(row.type())) {
-                groups.computeIfAbsent(row.recommendationId(), ignored -> new ArrayList<>()).add(row);
+            if ("BUNDLE".equals(row.zone())) {
+                groups.computeIfAbsent(row.blockNo(), ignored -> new ArrayList<>()).add(row);
             }
         }
         return groups.values().stream().map(rowsInBlock -> rowsInBlock.stream()

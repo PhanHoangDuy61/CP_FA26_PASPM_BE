@@ -9,9 +9,12 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -40,6 +43,9 @@ public class LayoutCampaignRepository {
 
     public record PlacementRow(Integer productId, Long recommendationId, String type, String sku,
             String productName, String zone, int blockNo, int position) {}
+
+    public record SnapshotProductRow(int productId, String sku, String productName, String productStatus,
+            boolean deleted, BigDecimal snapshotWeightedUtility) {}
 
     public record ReportRow(long reportId, long campaignId, int snapshotId, LocalDate rangeStart,
             LocalDate rangeEnd, int createdBy, String sourceNamespace, String datasetHash, int evaluationCount,
@@ -156,6 +162,61 @@ public class LayoutCampaignRepository {
                 rs.getInt("position")), storeId, layoutId);
     }
 
+    public List<SnapshotProductRow> snapshotProducts(int storeId, int snapshotId, String query,
+            int page, int pageSize) {
+        String filter = query.isBlank() ? "" : " AND (LOWER(p.name) LIKE LOWER(?) OR LOWER(p.sku) LIKE LOWER(?))";
+        String term = "%" + query.trim() + "%";
+        Object[] args = query.isBlank()
+                ? new Object[] {storeId, snapshotId, pageSize, (long) page * pageSize}
+                : new Object[] {storeId, snapshotId, term, term, pageSize, (long) page * pageSize};
+        return jdbc.query("""
+                SELECT p.product_id,p.sku,p.name,p.status,p.deleted_at,
+                       SUM(m.weighted_utility) AS snapshot_weighted_utility
+                FROM utility_matrix_item m
+                JOIN utility_snapshot s ON s.snapshot_id=m.snapshot_id AND s.store_id=?
+                JOIN product p ON p.product_id=m.product_id AND p.store_id=s.store_id
+                WHERE m.snapshot_id=?
+                """.replace("WHERE m.snapshot_id=?", "WHERE m.snapshot_id=?" + filter)
+                + """
+                GROUP BY p.product_id,p.sku,p.name,p.status,p.deleted_at
+                ORDER BY p.name,p.product_id LIMIT ? OFFSET ?
+                """, (rs, row) -> new SnapshotProductRow(rs.getInt("product_id"), rs.getString("sku"),
+                rs.getString("name"), rs.getString("status"), rs.getTimestamp("deleted_at") != null,
+                rs.getBigDecimal("snapshot_weighted_utility")), args);
+    }
+
+    public long countSnapshotProducts(int storeId, int snapshotId, String query) {
+        String filter = query.isBlank() ? "" : " AND (LOWER(p.name) LIKE LOWER(?) OR LOWER(p.sku) LIKE LOWER(?))";
+        String term = "%" + query.trim() + "%";
+        if (query.isBlank()) return jdbc.queryForObject("""
+                SELECT COUNT(DISTINCT m.product_id)
+                FROM utility_matrix_item m
+                JOIN utility_snapshot s ON s.snapshot_id=m.snapshot_id AND s.store_id=?
+                WHERE m.snapshot_id=?
+                """, Long.class, storeId, snapshotId);
+        return jdbc.queryForObject("""
+                SELECT COUNT(DISTINCT m.product_id)
+                FROM utility_matrix_item m
+                JOIN utility_snapshot s ON s.snapshot_id=m.snapshot_id AND s.store_id=?
+                JOIN product p ON p.product_id=m.product_id AND p.store_id=s.store_id
+                WHERE m.snapshot_id=?
+                """ + filter, Long.class, storeId, snapshotId, term, term);
+    }
+
+    public void requireProductsInStore(int storeId, Collection<Integer> productIds) {
+        if (productIds.isEmpty()) return;
+        Set<Integer> ids = new TreeSet<>(productIds);
+        String placeholders = String.join(",", java.util.Collections.nCopies(ids.size(), "?"));
+        Object[] args = new Object[ids.size() + 1];
+        args[0] = storeId;
+        int index = 1;
+        for (Integer id : ids) args[index++] = id;
+        List<Integer> found = jdbc.queryForList(
+                "SELECT product_id FROM product WHERE store_id=? AND product_id IN (" + placeholders + ")",
+                Integer.class, args);
+        if (found.size() != ids.size()) throw new ApiException(404, "Product not found");
+    }
+
     public void replacePlacements(int storeId, long layoutId, int snapshotId, List<PlacementBlock> blocks) {
         jdbc.update("DELETE FROM layout_placement WHERE store_id=? AND layout_id=?", storeId, layoutId);
         var rows = new ArrayList<Object[]>();
@@ -164,6 +225,23 @@ public class LayoutCampaignRepository {
                 rows.add(new Object[] {storeId, layoutId, snapshotId, block.recommendationId(),
                         block.productIds().get(i), block.zone(), block.blockNo(), block.startPosition() + i});
             }
+        }
+        if (!rows.isEmpty()) {
+            jdbc.batchUpdate("""
+                    INSERT INTO layout_placement(store_id,layout_id,utility_snapshot_id,recommendation_id,
+                        product_id,zone,block_no,position)
+                    VALUES (?,?,?,?,?,?,?,?)
+                    """, rows);
+        }
+    }
+
+    public void replaceIndividualPlacements(int storeId, long layoutId, int snapshotId,
+            List<PlacementRequest> placements) {
+        jdbc.update("DELETE FROM layout_placement WHERE store_id=? AND layout_id=?", storeId, layoutId);
+        var rows = new ArrayList<Object[]>();
+        for (PlacementRequest placement : placements) {
+            rows.add(new Object[] {storeId, layoutId, snapshotId, placement.sourceRecommendationId(),
+                    placement.productId(), placement.zone(), placement.blockNo(), placement.position()});
         }
         if (!rows.isEmpty()) {
             jdbc.batchUpdate("""

@@ -56,7 +56,7 @@ UC03 and UC22 were removed earlier, and their numbers are not reused.
 | 09 | Configure Utility Formula & Priority | Merch | F03 | DONE | Now λ ∈ [0, λmax], α + β = 1, N. **Seasons CRUD plus product assignment.** Product scores and the expiry window were removed |
 | 10 | Generate Bundle / Cross-sell / FBT / Banner | Merch | F06 | DONE | — |
 | 11 | Review / Approve / Reject | Merch | F06 | DONE | Warns about `seasonEnded` and `inventoryChanged` |
-| 12 | Arrange Layout | Merch | F07 | DONE (API) | B is edited by **replacing whole recommendation blocks** (`PUT /placements`). Drag-and-drop is client-side |
+| 12 | Arrange Layout | Merch | F07 | DONE (API) | B is edited **per placed product** (`PUT /placements` sends product, zone, block, position and nullable source recommendation). F06 evidence and Layout A remain immutable |
 | 13 | Create A/B Layout Variants | Merch | F07/F08 | DONE (API) | A is generated (frequency baseline, read-only). B is built at campaign creation |
 | 14 | Prepare / Publish Campaign | Merch | F08 | DONE (API) | Also covers *withdraw* |
 | 15 | Run A/B Simulation | Merch | F08 | DONE (API) | **Offline replay** of transactions dated after the snapshot. Synthetic traffic is not modelled |
@@ -208,7 +208,7 @@ Each line gives the behaviour an agent must preserve. Exact request and response
 ### F07 — Layout simulator (DONE API; PARTIAL)
 
 - FR-07.1: Baseline A is deterministic (frequency order, ties broken by product id) and read-only. Since PR #22 (DEC-20261119-06) it holds only the top-K products, with K = the BASELINE product capacity (35), as `F07_BASELINE_V2`. `baseline_params` stores `k` and `candidateProducts`. Older `F07_BASELINE_V1` layouts, which hold every product, are unchanged and stay valid.
-- FR-07.2: Layout B is built only from recommendations that are in the same Store and snapshot, APPROVED and ready. A product appears at most once. Zone capacities come from configuration (`paspm.layout.*`). Configured in `application.yml` since PR #22, and overridable through `PASPM_LAYOUT_MAX_BLOCKS_<ZONE>` / `PASPM_LAYOUT_MAX_PRODUCTS_<ZONE>`: BANNER 3 blocks / 3 products, BUNDLE 4 / 16, CROSS_SELL 2 / 8, FBT 2 / 8, BASELINE 35 / 35.
+- FR-07.2: Layout B is built per product, with an optional source F06 recommendation. A sourced placement remains in the same Store/snapshot and must belong to an APPROVED source recommendation; eligibility is checked per placed product. A manual placement uses `sourceRecommendationId:null` and is eligible only if active, snapshot-present and sellable. A product appears at most once. Zone capacities come from configuration (`paspm.layout.*`). Configured in `application.yml` since PR #22, and overridable through `PASPM_LAYOUT_MAX_BLOCKS_<ZONE>` / `PASPM_LAYOUT_MAX_PRODUCTS_<ZONE>`: BANNER 3 blocks / 3 products, BUNDLE 4 / 16, CROSS_SELL 2 / 8, FBT 2 / 8, BASELINE 35 / 35.
 - FR-07.3: Each edit is a new revision. A block that becomes invalid is shown with errors and blocks READY, publish and activate.
 - FR-07.4: The utility score is the sum of snapshot weighted utility over distinct displayed products. Preview returns validation and score.
 - FR-07.5: Priority coverage is products with W > 1 on the layout ÷ products on the layout. **Not implemented**: the response returns null.
@@ -272,7 +272,7 @@ BR-01 to BR-13 keep Report 3 numbering. BR-14 onward are new proposals in this d
 | BR-17 | Frozen JSON is never rewritten. It is read by `scoringVersion`, and unknown versions or fields are rejected | New |
 | BR-18 | Mining input: ≤ 1,600 products, ≤ 20,000 rows. Per-transaction utility, product TWU and converted minUtil each ≤ int32 max | New |
 | BR-19 | Downstream features consume a recommendation only if `APPROVED ∧ readyForConsumption`, rechecked at the moment of use | New |
-| BR-20 | Layout B uses whole recommendation blocks. A product appears once per layout. Baseline A is read-only | New |
+| BR-20 | Layout B placements are edited per product with optional F06 provenance. A product appears once. Removing or moving a placement does not alter F06 evidence or Layout A | Changed by DEC-20261125-01 |
 | BR-21 | At most one ACTIVE campaign per Store | New |
 | BR-22 | Layout utility score is a snapshot priority score, not revenue or profit | New |
 | BR-23 | A priority product is one with W > 1 in the layout's snapshot | New (decided, not coded) |
