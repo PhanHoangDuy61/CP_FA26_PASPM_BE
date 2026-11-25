@@ -15,9 +15,9 @@ Verification: frontend lint/build and 568 tests passed; 34 focused backend integ
 
 Release status: **UNRELEASED**, feature branch only. No push.
 
-## Record 002 — SPMF notices, license in the Docker image, amd64 build, process-boundary guard
+## Record 007 — SPMF notices, license in the Docker image, amd64 build, process-boundary guard
 
-[Record 002](02-spmf-gpl-ci-artifact.md) implements [DEC-20261125-03](../../decisions/2026-11-25/DEC-20261125-03-spmf-gpl-distribution-and-process-boundary.md):
+[Record 007](07-spmf-gpl-ci-artifact.md) implements [DEC-20261125-03](../../decisions/2026-11-25/DEC-20261125-03-spmf-gpl-distribution-and-process-boundary.md):
 - `THIRD_PARTY_NOTICES.md` and `third_party/spmf/` (GPL v3 text, `SOURCE.md`); the Docker image copies them next to the jar and labels the image;
 - `scripts/staging/build-image.sh` builds `linux/amd64` by default; the build was run on an arm64 Mac without an emulation failure;
 - `SpmfProcessBoundaryTest` and `SpmfThirdPartyNoticesTest`; the rule "SPMF only as a separate process" in `CLAUDE.md`, `AGENTS.md` and both `paspm-context` skills;
@@ -25,4 +25,4 @@ Release status: **UNRELEASED**, feature branch only. No push.
 
 Backend group: 449 tests, 0 failures. The owner created the Release `spmf-2.67a` (verified from the public API) and set `PASPM_CI_SPMF_ARTIFACT_URL`; still to do: Release immutability (API shows `immutable: false`) and a re-run of the `integration` job.
 
-Record 002 also carries the CI skipped-test policy ([DEC-20261125-05](../../decisions/2026-11-25/DEC-20261125-05-ci-skipped-test-allowlist.md), section 10 of the record).
+Record 007 also carries the CI skipped-test policy ([DEC-20261125-05](../../decisions/2026-11-25/DEC-20261125-05-ci-skipped-test-allowlist.md), section 10 of the record).

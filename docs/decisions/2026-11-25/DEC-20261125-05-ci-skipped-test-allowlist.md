@@ -6,7 +6,7 @@
 | Source | Product Owner instruction in chat on 2026-11-25, after the first full CI run (PR #29, 872 tests, 6 failures, 12 skipped) |
 | Status | OWNER_DECISION, implemented on branch `Khoi/chore/spmf-ci-artifact`; PR to `dev` pending |
 | Feature | CI (all features) |
-| Related | DEC-20261125-03 (SPMF in CI), `docs/setup/BACKEND_CI.md`, ROC-20261125-002 section 10 |
+| Related | DEC-20261125-03 (SPMF in CI), `docs/setup/BACKEND_CI.md`, ROC-20261125-007 section 10 |
 
 ## Context
 - `.github/scripts/test-summary.py` failed the `integration` job on **any** skipped test. The full suite always has opt-in tests that stay skipped on a hosted runner, so the job could never be green.

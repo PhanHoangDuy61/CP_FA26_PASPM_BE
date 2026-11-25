@@ -1,8 +1,8 @@
-# ROC-20261125-002 — SPMF (GPL v3): notices, license in the image, amd64 build, process-boundary guard
+# ROC-20261125-007 — SPMF (GPL v3): notices, license in the image, amd64 build, process-boundary guard
 
 | Field | Value |
 |---|---|
-| Record ID | ROC-20261125-002 |
+| Record ID | ROC-20261125-007 |
 | Date / timezone | 2026-11-25 / Asia/Ho_Chi_Minh |
 | Agent | Claude Code (Sonnet 5.5) |
 | Type | Implementation (build and CI support) / Documentation |
@@ -98,7 +98,7 @@ Verification of these fixes, same container, each from a clean copy of the branc
 
 **Open:** `test-summary.py` rejects any skipped test and the `integration` job reported 12 skipped. The opt-in tests that stay skipped under the job's flags include the two natural-lease tests; the full list is in the job's step 11 log (not readable without authentication). Native Linux acceptance (`scripts/verify-native-linux.sh`) is still `NOT RUN`.
 
-Numbering for 2026-11-25 is fixed across branches: DEC 01 F07, 02 source-of-truth rule, 03 SPMF (this branch, renamed from 01), 04 F09; ROC 001 F07, 002 SPMF, 003 source-of-truth, 004 seed, 005 F09.
+Numbering for 2026-11-25 is fixed across branches: DEC 01 F07, 02 source-of-truth rule, 03 SPMF (this branch, renamed from 01), 04 F09; ROC 001 F07, 002 mvnw-executable, 003 source-of-truth, 004 seed, 005 F09, 006 F07/F08 priority coverage, 007 SPMF (this record, renumbered from 002 after dev took 002 for PR #31).
 
 ## 10. Skip policy ([DEC-20261125-05](../../decisions/2026-11-25/DEC-20261125-05-ci-skipped-test-allowlist.md))
 
@@ -115,4 +115,4 @@ Changes: `test-summary.py` takes `--allowed-skips FILE --profile pr|full`; it st
 
 Pre-existing and unrelated: 2 tests in `test_ci_helpers.py` error with `KeyError: 'SPMF_JAR_PATH'` unless that variable is set (the `integration` job sets it); they fail the same way before this change.
 
-Numbering check on 2026-11-25: DEC 01–05 are free of collisions on `origin/*`. **ROC 002 collides**: `dev` already has `02-mvnw-executable.md` titled ROC-20261125-002 (PR #31), so this record needs another number before merge (owner to confirm).
+Numbering check on 2026-11-25: DEC 01–05 are free of collisions on `origin/*`. This record was first numbered ROC-20261125-002, which collided with `02-mvnw-executable.md` on `dev` (PR #31). It is now **ROC-20261125-007**, the next free number across `origin/dev` and every `origin/*` branch (existing: 001–006).
