@@ -27,6 +27,9 @@ class PlanConfig:
     mid_pct: float
     push_reached_pct: float
     push_missing_pct: float
+    push_lead_min_days: int
+    push_lead_max_days: int
+    expiry_edge_pct: float
     batch_quantity: int
     qty_min_pct: float
     alpha: Decimal
@@ -45,7 +48,7 @@ class ProductPlan:
     requires_expiry: bool
     expiry_date: "date | None"
     push_day: "date | None"
-    push_kind: str  # NONE (not perishable), MISSING, REACHED or STANDARD
+    push_kind: str  # NONE (not perishable), MISSING, REACHED or SET
     quantity: int
 
 
@@ -70,6 +73,16 @@ def _pct(environ, name, default, low=0.0, high=100.0):
     return value
 
 
+def _int(environ, name, default, low, high):
+    try:
+        value = int(environ.get(name, default))
+    except ValueError:
+        raise PlanConfigError(f"{name} must be an integer")
+    if not low <= value <= high:
+        raise PlanConfigError(f"{name} must be between {low} and {high}")
+    return value
+
+
 def _decimal(environ, name, default, low, high):
     try:
         value = Decimal(str(environ.get(name, default)))
@@ -87,9 +100,14 @@ def config_from_env(environ, today):
     except ValueError:
         raise PlanConfigError("SEED_AS_OF must be an ISO date (YYYY-MM-DD)")
     soon, mid = _pct(environ, "SEED_EXPIRY_SOON_PCT", 15), _pct(environ, "SEED_EXPIRY_MID_PCT", 25)
-    reached, missing = _pct(environ, "SEED_PUSH_REACHED_PCT", 5), _pct(environ, "SEED_PUSH_MISSING_PCT", 5)
-    if soon + mid > 100:
-        raise PlanConfigError("SEED_EXPIRY_SOON_PCT + SEED_EXPIRY_MID_PCT must not exceed 100")
+    # Demo push days (PO, 2026-11-25): ~60% set, ~15% already reached, ~25% missing; no `expiry - 7` rule.
+    reached, missing = _pct(environ, "SEED_PUSH_REACHED_PCT", 15), _pct(environ, "SEED_PUSH_MISSING_PCT", 25)
+    lead_min, lead_max = _int(environ, "SEED_PUSH_LEAD_MIN_DAYS", 3, 0, 365), _int(environ, "SEED_PUSH_LEAD_MAX_DAYS", 21, 0, 365)
+    if lead_min > lead_max:
+        raise PlanConfigError("SEED_PUSH_LEAD_MIN_DAYS must not exceed SEED_PUSH_LEAD_MAX_DAYS")
+    edge = _pct(environ, "SEED_EXPIRY_EDGE_PCT", 3, 0, 50)
+    if edge + soon + mid > 100:
+        raise PlanConfigError("SEED_EXPIRY_EDGE_PCT + SEED_EXPIRY_SOON_PCT + SEED_EXPIRY_MID_PCT must not exceed 100")
     if reached + missing > 100:
         raise PlanConfigError("SEED_PUSH_REACHED_PCT + SEED_PUSH_MISSING_PCT must not exceed 100")
     alpha = _decimal(environ, "SEED_WEIGHT_ALPHA", "0.6", 0, 1)
@@ -109,7 +127,8 @@ def config_from_env(environ, today):
         enabled=str(environ.get("SEED_WEIGHT_V2", "1")).strip().lower() not in ("0", "false", "no", "off"),
         as_of=as_of, seed=str(environ.get("SEED_RANDOM_SEED", "paspm-demo-weight-v2")),
         expiry_product_pct=_pct(environ, "SEED_EXPIRY_PRODUCT_PCT", 35), soon_pct=soon, mid_pct=mid,
-        push_reached_pct=reached, push_missing_pct=missing, batch_quantity=quantity,
+        push_reached_pct=reached, push_missing_pct=missing, push_lead_min_days=lead_min, push_lead_max_days=lead_max,
+        expiry_edge_pct=edge, batch_quantity=quantity,
         qty_min_pct=_pct(environ, "SEED_EXPIRY_QTY_MIN_PCT", 2, 0.1, 100),
         alpha=alpha, beta=beta, lam=_decimal(environ, "SEED_WEIGHT_LAMBDA", "0.3", 0, 1000000),
         sales_window_days=window,
@@ -130,9 +149,12 @@ def plan_product(config, sku, force_expiry=False):
     if not force_expiry and unit(config, sku, "perishable") >= config.expiry_product_pct / 100:
         return ProductPlan(sku, False, None, None, "NONE", config.batch_quantity)
     u, v = unit(config, sku, "expiry-bucket"), unit(config, sku, "expiry-days")
-    if u < config.soon_pct / 100:
+    edge = config.expiry_edge_pct / 100
+    if u < edge:
+        days = -1 if v < 0.5 else 0          # expired yesterday / expires today (DEC-20261124-01 boundary demo)
+    elif u < edge + config.soon_pct / 100:
         days = int(v * 8)                    # 0..7
-    elif u < (config.soon_pct + config.mid_pct) / 100:
+    elif u < edge + (config.soon_pct + config.mid_pct) / 100:
         days = 8 + int(v * 23)               # 8..30
     else:
         days = 31 + int(v * 150)             # 31..180
@@ -141,9 +163,10 @@ def plan_product(config, sku, force_expiry=False):
     if p < config.push_missing_pct / 100:
         push, kind = None, "MISSING"
     elif p < (config.push_missing_pct + config.push_reached_pct) / 100:
-        push, kind = config.as_of - timedelta(days=int(w * 11)), "REACHED"    # 0..10 days ago
+        push, kind = min(config.as_of - timedelta(days=int(w * 11)), expiry), "REACHED"   # 0..10 days ago, never after expiry
     else:
-        push, kind = expiry - timedelta(days=7 + int(w * 8)), "STANDARD"      # expiry - 7..14
+        span = config.push_lead_max_days - config.push_lead_min_days + 1
+        push, kind = expiry - timedelta(days=config.push_lead_min_days + int(w * span)), "SET"  # spread, no fixed lead
     minimum = max(1, round(config.batch_quantity * config.qty_min_pct / 100))
     # log-uniform between the minimum and the configured quantity, so sell-through differs a lot between products
     quantity = max(minimum, round(config.batch_quantity * (minimum / config.batch_quantity) ** unit(config, sku, "quantity")))

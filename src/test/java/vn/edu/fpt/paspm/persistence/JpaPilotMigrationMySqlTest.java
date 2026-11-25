@@ -79,12 +79,12 @@ class JpaPilotMigrationMySqlTest {
             var http=new TestRestTemplate();
             var category=http.exchange(base+"/api/categories",HttpMethod.POST,new HttpEntity<>(Map.of("name","Synthetic dairy","status","ACTIVE"),headers),JsonNode.class);
             assertEquals(HttpStatus.CREATED,category.getStatusCode());int categoryId=category.getBody().path("id").asInt();assertTrue(categoryId>0);
-            var payload=Map.of("sku","SKU-MIGRA-00001","name","Synthetic milk","categoryId",categoryId,"unit","bottle","requiresExpiry",true,"sellingPrice",30,"costPrice",20,"status","ACTIVE");
+            var payload=Map.of("name","Synthetic milk","categoryId",categoryId,"unit","bottle","requiresExpiry",true,"sellingPrice",30,"costPrice",20,"status","ACTIVE");
             var created=http.exchange(base+"/api/products",HttpMethod.POST,new HttpEntity<>(payload,headers),JsonNode.class);
             assertEquals(HttpStatus.CREATED,created.getStatusCode());int product=created.getBody().path("id").asInt();
             assertEquals(HttpStatus.OK,http.exchange(base+"/api/categories/"+categoryId,HttpMethod.GET,new HttpEntity<>(headers),JsonNode.class).getStatusCode());
             var read=http.exchange(base+"/api/products/"+product,HttpMethod.GET,new HttpEntity<>(headers),JsonNode.class);
-            assertEquals(HttpStatus.OK,read.getStatusCode());assertEquals("SKU-MIGRA-00001",read.getBody().path("sku").asText());
+            assertEquals(HttpStatus.OK,read.getStatusCode());assertEquals(String.format(java.util.Locale.ROOT,"SKU-%011d",product),read.getBody().path("sku").asText()); // DEC-20261119-07: server-generated SKU
             assertEquals(categoryId,jdbc.queryForObject("SELECT category_id FROM product WHERE product_id=?",Integer.class,product));
             assertEquals(HttpStatus.UNAUTHORIZED,http.getForEntity(base+"/api/products/"+product,String.class).getStatusCode());
             assertCheckViolation(()->jdbc.update("UPDATE product SET selling_price=-1 WHERE product_id=?",product));

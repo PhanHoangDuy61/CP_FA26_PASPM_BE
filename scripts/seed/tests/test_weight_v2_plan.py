@@ -62,19 +62,32 @@ class ExpiryDistributionTest(unittest.TestCase):
                 self.assertIsNone(p.expiry_date)
                 self.assertIsNone(p.push_day)
 
-    def test_every_perishable_batch_has_an_expiry_date_on_or_after_as_of(self):
+    def test_every_perishable_batch_has_an_expiry_date_from_yesterday_to_180_days(self):
         for p in self.perishable:
             self.assertIsNotNone(p.expiry_date)
-            self.assertGreaterEqual(p.expiry_date, AS_OF)
+            self.assertGreaterEqual(p.expiry_date, AS_OF - timedelta(days=1))
             self.assertLessEqual(p.expiry_date, AS_OF + timedelta(days=180))
+
+    def test_a_few_batches_expire_today_and_a_few_expired_yesterday(self):
+        # DEC-20261124-01: expiring today is still sellable (daysToExpiry 0); yesterday is EXPIRED.
+        today = [p for p in self.perishable if p.expiry_date == AS_OF]
+        yesterday = [p for p in self.perishable if p.expiry_date == AS_OF - timedelta(days=1)]
+        self.assertGreaterEqual(len(today), 3)
+        self.assertGreaterEqual(len(yesterday), 3)
+        self.assertLess(len(today) + len(yesterday), 0.06 * len(self.perishable))
+
+    def test_the_edge_expiry_share_can_be_switched_off(self):
+        plans = [p for p in all_plans(cfg(SEED_EXPIRY_EDGE_PCT="0")) if p.requires_expiry]
+        self.assertTrue(all(p.expiry_date >= AS_OF for p in plans))
+        self.assertFalse(any(p.expiry_date == AS_OF - timedelta(days=1) for p in plans))
 
     def test_expiry_buckets_follow_the_configured_percentages(self):
         days = [(p.expiry_date - AS_OF).days for p in self.perishable]
         n = len(days)
-        soon = sum(d <= 7 for d in days) / n
+        soon = sum(0 <= d <= 7 for d in days) / n
         mid = sum(8 <= d <= 30 for d in days) / n
         late = sum(d >= 31 for d in days) / n
-        self.assertAlmostEqual(soon, 0.15, delta=0.04)
+        self.assertAlmostEqual(soon, 0.15, delta=0.05)
         self.assertAlmostEqual(mid, 0.25, delta=0.05)
         self.assertAlmostEqual(late, 0.60, delta=0.06)
 
@@ -111,33 +124,58 @@ class ForcedExpiryTest(unittest.TestCase):
 
 
 class PushDayTest(unittest.TestCase):
+    """Demo push days (PO, 2026-11-25): ~60% set, ~15% already reached, ~25% missing; no `expiry - 7` rule."""
+
     def setUp(self):
         self.plans = [p for p in all_plans(cfg()) if p.requires_expiry]
+        self.n = len(self.plans)
+
+    def share(self, kind):
+        return sum(p.push_kind == kind for p in self.plans) / self.n
 
     def test_push_day_never_after_expiry(self):
         for p in self.plans:
             if p.push_day:
                 self.assertLessEqual(p.push_day, p.expiry_date)
 
-    def test_about_five_percent_have_no_push_day(self):
-        missing = sum(p.push_day is None for p in self.plans) / len(self.plans)
-        self.assertAlmostEqual(missing, 0.05, delta=0.03)
+    def test_default_mix_is_sixty_set_fifteen_reached_twenty_five_missing(self):
+        self.assertAlmostEqual(self.share("SET"), 0.60, delta=0.05)
+        self.assertAlmostEqual(self.share("REACHED"), 0.15, delta=0.04)
+        self.assertAlmostEqual(self.share("MISSING"), 0.25, delta=0.05)
+        self.assertEqual(self.share("SET") + self.share("REACHED") + self.share("MISSING"), 1.0)
 
-    def test_most_batches_push_seven_to_fourteen_days_before_expiry(self):
-        standard = [p for p in self.plans if p.push_kind == "STANDARD"]
-        self.assertGreater(len(standard) / len(self.plans), 0.85)
-        for p in standard:
-            self.assertIn((p.expiry_date - p.push_day).days, range(7, 15))
+    def test_missing_push_days_are_none_so_the_missing_push_day_warning_is_visible(self):
+        missing = [p for p in self.plans if p.push_kind == "MISSING"]
+        self.assertGreater(len(missing), 100)
+        self.assertTrue(all(p.push_day is None for p in missing))
 
-    def test_a_few_batches_have_a_push_day_that_is_already_reached(self):
+    def test_reached_push_days_are_on_or_before_as_of(self):
         reached = [p for p in self.plans if p.push_kind == "REACHED"]
-        self.assertGreater(len(reached), 0)
+        self.assertGreater(len(reached), 30)
         for p in reached:
             self.assertLessEqual(p.push_day, AS_OF)
+            self.assertLessEqual(p.push_day, p.expiry_date)
 
-    def test_the_missing_push_day_switch_can_be_set_to_zero(self):
-        config = cfg(SEED_PUSH_MISSING_PCT="0")
-        self.assertTrue(all(p.push_day for p in all_plans(config) if p.requires_expiry))
+    def test_set_push_days_spread_over_three_to_twenty_one_days_before_expiry_with_no_seven_day_rule(self):
+        leads = [(p.expiry_date - p.push_day).days for p in self.plans if p.push_kind == "SET"]
+        self.assertTrue(all(0 <= d <= 21 for d in leads))
+        self.assertGreaterEqual(len(set(leads)), 15, "lead times must vary")
+        self.assertLess(sum(d == 7 for d in leads) / len(leads), 0.12, "no fixed expiry - 7 rule")
+        self.assertGreater(sum(3 <= d <= 21 for d in leads) / len(leads), 0.95)
+
+    def test_lead_range_and_shares_are_tunable(self):
+        config = cfg(SEED_PUSH_MISSING_PCT="0", SEED_PUSH_REACHED_PCT="0",
+                     SEED_PUSH_LEAD_MIN_DAYS="10", SEED_PUSH_LEAD_MAX_DAYS="10")
+        plans = [p for p in all_plans(config) if p.requires_expiry]
+        self.assertTrue(all(p.push_kind == "SET" and p.push_day for p in plans))
+        self.assertTrue(all((p.expiry_date - p.push_day).days == 10 for p in plans))
+
+    def test_invalid_push_settings_are_rejected(self):
+        for bad in ({"SEED_PUSH_LEAD_MIN_DAYS": "20", "SEED_PUSH_LEAD_MAX_DAYS": "5"},
+                    {"SEED_PUSH_LEAD_MIN_DAYS": "-1"}, {"SEED_PUSH_LEAD_MAX_DAYS": "400"},
+                    {"SEED_PUSH_REACHED_PCT": "80", "SEED_PUSH_MISSING_PCT": "30"}, {"SEED_EXPIRY_EDGE_PCT": "60"}):
+            with self.assertRaises(plan.PlanConfigError, msg=str(bad)):
+                cfg(**bad)
 
 
 class SeasonTest(unittest.TestCase):
