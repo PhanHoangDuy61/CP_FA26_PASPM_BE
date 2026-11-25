@@ -14,3 +14,7 @@ Owner-approved per-product Layout B editing across backend and frontend.
 Verification: frontend lint/build and 568 tests passed; 34 focused backend integration tests passed. The full backend CI test group and browser review remain unrun.
 
 Release status: **UNRELEASED**, feature branch only. No push.
+
+## Record 002 — Executable Maven Wrapper
+
+[Record 002](02-mvnw-executable.md) records the Git mode fix, setup guide updates and local wrapper verification.
