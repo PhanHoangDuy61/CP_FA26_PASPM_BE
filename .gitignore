@@ -9,3 +9,7 @@ backups/
 
 # Demo seed output: mapping.csv and import-ready CSV copies (generated per database)
 scripts/seed/out/
+
+# Python bytecode
+__pycache__/
+*.pyc

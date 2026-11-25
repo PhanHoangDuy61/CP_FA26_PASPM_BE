@@ -42,6 +42,8 @@
    docker compose ps
    ```
 
+   **Before `docker compose up`, make MySQL run with `--log-bin-trust-function-creators=1`** (migration V11 creates triggers; without it Flyway fails with Error 1419). Create `compose.override.yml` as described in [common setup](LOCAL_SETUP_COMMON.md#mysql-must-run-with---log-bin-trust-function-creators1).
+
    Set nonempty local-only `DB_PASSWORD` and `MYSQL_ROOT_PASSWORD` before starting Compose. Never commit or share `.env`. Compose uses database and user `paspm`, port `127.0.0.1:3306`, and a persistent local volume.
 
 5. Set Backend process variables in the **same PowerShell window**. Use the same database password as `.env`; choose separate private JWT and OTP values of at least 32 UTF-8 bytes. The bootstrap password needs 12 characters, uppercase, lowercase and a digit:
