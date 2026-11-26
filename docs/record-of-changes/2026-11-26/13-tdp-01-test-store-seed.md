@@ -1,8 +1,8 @@
-# ROC-20261126-009 — TDP-01 test-data preparation script (Store B / Store C)
+# ROC-20261126-013 — TDP-01 test-data preparation script (Store B / Store C)
 
 | Field | Value |
 |---|---|
-| Record ID | ROC-20261126-009 |
+| Record ID | ROC-20261126-013 |
 | Date / timezone | 2026-11-26 / Asia/Ho_Chi_Minh |
 | Agent | Claude Code (Claude Opus 5.5), requested by Nguyễn Minh Khôi |
 | Type | Implementation (test tooling) |
@@ -14,7 +14,7 @@
 
 ## 1. Request and scope
 
-[DEC-20261126-03](../../decisions/2026-11-26/DEC-20261126-03-blackbox-test-round-scope-and-remaining-answers.md) (Q-16, on branch `Khoi/docs/blackbox-test-cases`) decided that black-box testers do not create Stores by hand; the script TDP-01 of TEST_PLAN §6 does. Scope: the script, its tests, README and env example only. No backend code, API or migration change.
+DEC-20261126-03 (Q-16, on branch `Khoi/docs/blackbox-test-cases`) decided that black-box testers do not create Stores by hand; the script TDP-01 of TEST_PLAN §6 does. Scope: the script, its tests, README and env example only. No backend code, API or migration change.
 
 ## 2. Change details
 
