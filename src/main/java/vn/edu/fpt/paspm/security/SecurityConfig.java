@@ -110,6 +110,8 @@ public class SecurityConfig {
                         .requestMatchers("/swagger", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         // DEC-20261123-01 §5: current branding images of ACTIVE Stores (GET only).
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/public/stores/*/images/*").permitAll()
+                        .requestMatchers("/api/storefront/*/cart", "/api/storefront/*/cart/**")
+                                .hasRole("END_CUSTOMER")
                         // F09 public storefront (anonymous, read-only; only ACTIVE Stores are resolved by slug)
                         .requestMatchers(org.springframework.http.HttpMethod.GET,
                                 "/api/storefront/stores", "/api/storefront/*/home",
@@ -158,6 +160,12 @@ public class SecurityConfig {
                             "429", "Rate limit exceeded",
                             "503", "Service configuration or required dependency unavailable"
                     ).entrySet()) {
+                        var declared = operation.getResponses().get(entry.getKey());
+                        // Keep declared JSON error DTOs. Springdoc can infer a wildcard success DTO on error responses.
+                        if (declared != null && declared.getContent() != null
+                                && declared.getContent().containsKey(org.springframework.http.MediaType.APPLICATION_JSON_VALUE)) {
+                            continue;
+                        }
                         operation.getResponses().addApiResponse(
                                 entry.getKey(),
                                 new io.swagger.v3.oas.models.responses.ApiResponse().description(entry.getValue())

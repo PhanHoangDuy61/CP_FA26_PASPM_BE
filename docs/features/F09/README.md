@@ -2,6 +2,8 @@
 
 Backend scope: public Store selection, Homepage, Product list/detail, and the selected F08 layout and recommendation projection. Status: four public GET operations merged into `dev` through PR #33 (`0ef5a55`). Original implementation: Duy Phan, branch `Duy/Feature/F09_Storefront` (2026-11-21).
 
+The stacked F10 Part 2 branch adds an opaque `bundleKey` to public BUNDLE blocks on the active selected Layout B. See the [F10 contract](../../api/F10_BUNDLE_CART_API.md).
+
 - API contract: [F09 Storefront API](../../api/F09_STOREFRONT_API.md)
 - Frontend handoff and screen checklist: [F09 handoff](../../frontend_handoff/F09_HANDOFF.md)
 - OpenAPI: [runtime export](../../api/openapi.json)

@@ -13,6 +13,7 @@
           "type": "BUNDLE",
           "blockNo": 1,
           "startPosition": 1,
+          "bundleKey": "example-only-opaque-key",
           "products": [
             {
               "productId": 210,

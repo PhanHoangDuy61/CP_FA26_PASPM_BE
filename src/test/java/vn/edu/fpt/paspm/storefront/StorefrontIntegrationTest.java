@@ -221,7 +221,7 @@ class StorefrontIntegrationTest {
     }
 
     @Test
-    void activeSelectedLayoutRendersOnlyCurrentApprovedEligiblePublicBlocks() throws Exception {
+    void activeLayoutBExposesAllBundleActionsAndKeepsOtherZonesFiltered() throws Exception {
         int store = store("Campaign " + UUID.randomUUID(), true);
         int actor = user("MERCHANDISER", store);
         int snapshot = snapshot(store, actor);
@@ -274,6 +274,16 @@ class StorefrontIntegrationTest {
         assertEquals(java.util.Set.of("BUNDLE", "CROSS_SELL", "FBT", "BANNER"), renderedTypes);
         assertEquals(4, home.path("zones").size());
         assertEquals(2, home.path("zones").get(1).path("placements").get(0).path("products").size());
+        JsonNode bundles = home.path("zones").get(1).path("placements");
+        assertEquals(2, bundles.size());
+        assertTrue(bundles.get(0).path("bundleKey").isTextual());
+        assertTrue(bundles.get(1).path("bundleKey").isTextual());
+        assertNotEquals(bundles.get(0).path("bundleKey").asText(), bundles.get(1).path("bundleKey").asText());
+        home.path("zones").forEach(zone -> {
+            if (!"BUNDLE".equals(zone.path("name").asText())) {
+                zone.path("placements").forEach(placement -> assertFalse(placement.has("bundleKey")));
+            }
+        });
         String response = home.toString();
         for (String forbidden : List.of("recommendationId", "reviewStatus", "reviewHistory", "evidence",
                 "priorityCoverage", "utility", "weightedUtility", "costPrice", "stockQuantity",
@@ -301,6 +311,12 @@ class StorefrontIntegrationTest {
             assertTrue(operation.path("security").isArray());
             assertEquals(0, operation.path("security").size(), "Public route must not inherit bearer auth: " + path);
         }
+        JsonNode post = paths.path("/api/storefront/{storeSlug}/cart/bundles").path("post");
+        assertEquals("addStorefrontCartBundle", post.path("operationId").asText());
+        assertEquals("#/components/schemas/BundleAddResult",
+                post.at("/responses/200/content/application~1json/schema/$ref").asText());
+        assertEquals(2, post.at("/responses/409/content/application~1json/schema/oneOf").size());
+        assertTrue(api.at("/components/schemas/HomePlacement/properties/bundleKey").isObject());
         JsonNode productSchema = api.path("components").path("schemas").path("ProductCard");
         assertTrue(productSchema.path("properties").has("availability"));
         assertEquals("[\"AVAILABLE\",\"OUT_OF_STOCK\"]",

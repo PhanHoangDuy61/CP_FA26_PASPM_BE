@@ -40,7 +40,8 @@ Product list query parameters follow F02 naming: `search` (name/description), `c
 `GET /home` returns `{store,campaignName,fallbackType,zones,catalog}`.
 
 - If an ACTIVE campaign exists, only `selected_layout_id` is read. The selected layout must be READY. Layout contents are emitted in stored zone/block/position order, one `HomePlacement` per zone and block. Since F07 product-level Layout B (DEC-20261125-01, `dev` `5436bf7`), `HomePlacement.type` is the zone name (`BUNDLE`, `CROSS_SELL`, `FBT` or `BANNER`); `BASELINE` is no longer emitted.
-- Each placed product is checked on its own; a block is omitted only when none of its products pass. A product passes when it is ACTIVE, not soft-deleted, has no missing required-expiry metadata and has at least 1 sellable unit. A product placed from a recommendation also needs that recommendation APPROVED, from the selected snapshot, still containing the product, and stock at or above its captured F06 `minimumSellableQuantity`. The response does not expose recommendation ids, policy/evidence, review status/history, or utility.
+- On the F10 Part 2 branch, every `BUNDLE` block on the selected READY Layout B has an optional-in-schema opaque `HomePlacement.bundleKey`. The block remains visible even when all components are out of stock. Its public Product cards include ACTIVE, non-deleted components and their current availability. If all components are hidden, `products` is empty. Other placements omit `bundleKey`. The key is valid only for its Store, campaign, layout revision and block. Pass it to the [F10 add-bundle API](F10_BUNDLE_CART_API.md). Reload the homepage on `BUNDLE_UNAVAILABLE`.
+- In other zones and on Layout A, each placed product is checked on its own. A block is omitted only when none of its products pass. A product passes when it is ACTIVE, not soft-deleted, has no missing required-expiry metadata and has at least 1 sellable unit. A product placed from a recommendation also needs that recommendation APPROVED, from the selected snapshot, still containing the product, and stock at or above its captured F06 `minimumSellableQuantity`. The response does not expose recommendation ids, policy/evidence, review status/history, or utility.
 - When there is no ACTIVE campaign, the response has `fallbackType=DEFAULT_CATALOG`, no zones, and ACTIVE, non-deleted Products grouped by category; within each category products sort by name and then `productId`. This is not baseline A.
 - A DRAFT, PUBLISHED-but-not-active, or ENDED campaign is never projected.
 - `priorityCoverage` is not part of F09; its F07/F08 definition/use remains a separate follow-up.
@@ -49,7 +50,7 @@ F06 permits BANNER recommendations to contain a singleton or larger product patt
 
 ## Example response shapes
 
-See [`../frontend_handoff/F09_examples/`](../frontend_handoff/F09_examples/) for synthetic Store list, active/fallback homepage, product list/detail, bundle and error examples. Related Products is deferred. F10 cart, checkout, payment, orders, discounts, image upload and priority-coverage calculation are out of scope.
+See [`../frontend_handoff/F09_examples/`](../frontend_handoff/F09_examples/) for synthetic Store list, active/fallback homepage, product list/detail, bundle and error examples. Related Products is deferred. The separate [F10 cart API](F10_BUNDLE_CART_API.md) handles cart writes. Checkout, payment, orders, discounts, image upload and priority-coverage calculation are outside F09.
 
 ## Verification scope
 
