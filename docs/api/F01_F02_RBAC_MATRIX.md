@@ -220,3 +220,24 @@ Anonymous requests: 401. Foreign Store records: 404 after authorization. New POS
 |---|---|---|---|---|---|
 | DELETE /api/inventory-batches/{id}/push-day | 403 | 200 own Store; 404 foreign/unknown | 403 | 403 | 401 |
 Regenerated OpenAPI verified: 103 paths / 125 operations (124 baseline + this route).
+
+## 2026-11-26 — F10 customer cart
+
+| Method / path (under `/api/storefront/{storeSlug}/cart`) | END_CUSTOMER | SYSTEM_ADMIN / STORE_ADMIN / MERCHANDISER | Anonymous |
+|---|---|---|---|
+| GET cart root | 200 own cart; 404 unknown/INACTIVE Store | 403 | 401 |
+| POST `/items` | 200 own cart; 404 foreign or hidden Product | 403 | 401 |
+| PATCH or DELETE `/items/{itemId}` | 200 own cart; 404 foreign or unknown line | 403 | 401 |
+| DELETE cart root | 200 own cart; 404 unknown/INACTIVE Store | 403 | 401 |
+| POST `/bundles` | 200 own cart; 404 foreign or invalid key; 409 stale key or all components skipped | 403 | 401 |
+
+All mutations require `If-Match` and reject a stale version for an in-scope resource with 409. [F10 contract](F10_BUNDLE_CART_API.md).
+
+## 2026-11-26 — F11 dashboard reads
+
+| Method / path | STORE_ADMIN / MERCHANDISER | SYSTEM_ADMIN / END_CUSTOMER | Anonymous |
+|---|---|---|---|
+| GET `/api/dashboard/snapshot-utilities` | 200 same-Store READY headers; 404 foreign, absent or unavailable selected snapshot | 403 | 401 |
+| GET `/api/dashboard/bundle-additions` | 200 same-Store successful bundle-event aggregates; 404 foreign or absent campaign | 403 | 401 |
+
+An inactive staff Store returns 403 `STORE_INACTIVE`. F11 reuses the existing own-Store F08 campaign and simulation-report GET operations. [F11 contract](F11_DASHBOARD_API.md).

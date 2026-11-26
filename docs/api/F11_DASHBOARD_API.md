@@ -1,6 +1,6 @@
 # F11 — Retail Performance Dashboard API
 
-**Status: PLANNED.** Dashboard route `/store/dashboard`. See [DEC-20261125-06](../decisions/2026-11-25/DEC-20261125-06-f10-f11-mvp-contract.md). The three panels can load and fail independently.
+**Backend implemented on `Khoi/feat/f11-dashboard-api`, stacked on F10 Part 2.** The frontend route `/store/dashboard` is the integration target. See [DEC-20261125-06](../decisions/2026-11-25/DEC-20261125-06-f10-f11-mvp-contract.md). The three panels can load and fail independently.
 
 ## Authorization and scope
 
@@ -8,7 +8,7 @@ Bearers with `STORE_ADMIN` or `MERCHANDISER` use the Store resolved from JWT. No
 
 ## Snapshot utility
 
-**Proposed** `GET /api/dashboard/snapshot-utilities?page=0&pageSize=20&snapshotId=18`. Optional positive `snapshotId`, page defaults to 0, page size 1–100. Returns READY same-Store snapshots ordered by createdAt and snapshotId descending. Read the stored `utility_snapshot.total_weighted_utility` with six-decimal precision. Utility is a score. The read model serves both roles without changing F03 access. Selecting an absent, foreign or unavailable snapshot returns 404.
+`GET /api/dashboard/snapshot-utilities?page=0&pageSize=20&snapshotId=18` (operation ID `listDashboardSnapshotUtilities`). Optional positive `snapshotId`, page defaults to 0, page size 1–100. Returns READY same-Store snapshots ordered by createdAt and snapshotId descending. Read `totalWeightedUtility` from the stored snapshot header with six-decimal precision. F11 reads headers without loading utility matrix rows or snapshot configuration JSON. Utility is a score. The read model serves both roles without changing F03 access. Selecting an absent, foreign or unavailable snapshot returns 404.
 
 ```json
 {
@@ -23,7 +23,7 @@ Bearers with `STORE_ADMIN` or `MERCHANDISER` use the Store resolved from JWT. No
 
 ## Saved A/B simulations
 
-Reuse **existing** `GET /api/campaigns`, `GET /api/campaigns/{id}/reports` and `GET /api/campaign-reports/{reportId}` with the [F07/F08 API](F07_F08_LAYOUT_CAMPAIGN_API.md). No F11 write or simulation operation. Read saved reports including evaluated revisions, evaluation window, evaluation count, hit rate, bundle conversion, captured utility and priority coverage. Report V4 uses the actual A prefix and B product counts. Show the `nExceedsBaseline` case. Historical values remain as stored.
+Reuse **existing** `GET /api/campaigns`, `GET /api/campaigns/{id}/reports` and `GET /api/campaign-reports/{reportId}` with the [F07/F08 API](F07_F08_LAYOUT_CAMPAIGN_API.md). Both Dashboard roles can read same-Store campaigns and reports. Existing F08 write permissions still apply. Read saved reports including evaluated revisions, evaluation window, evaluation count, hit rate, bundle conversion, captured utility and priority coverage. Report V4 uses the actual A prefix and B product counts. Show the `nExceedsBaseline` case. Historical values remain as stored.
 
 Illustrative excerpt of a single report layout row (the actual report has both A and B):
 
@@ -44,10 +44,10 @@ Illustrative excerpt of a single report layout row (the actual report has both A
 
 ## Bundle additions
 
-**Proposed** `GET /api/dashboard/bundle-additions?from=2026-11-24&to=2026-11-25&campaignId=42`.
-`from` and `to` are supplied together as inclusive Store-local dates. Omit both for the last 30 days including today. The window may span at most 90 days counting both ends: exactly 90 days is accepted, 91 or more returns 400 ([DEC-20261126-02](../decisions/2026-11-26/DEC-20261126-02-vnd-display-cart-cap-dashboard-window-merch-screens.md)). `campaignId` is optional, must belong to the authenticated Store, and filters by the campaign captured on the event even if the campaign has since ended. The repository uses a UTC half-open boundary corresponding to the Store-local window and returns a row per day, filling missing days with zeros.
+`GET /api/dashboard/bundle-additions?from=2026-11-24&to=2026-11-25&campaignId=42` (operation ID `getDashboardBundleAdditions`).
+`from` and `to` are supplied together as inclusive Store-local dates. Omit both for the last 30 days including today. Exactly 90 inclusive days is accepted. A 91-day window, reversed dates, invalid dates or supplying only one date returns 400 ([DEC-20261126-02](../decisions/2026-11-26/DEC-20261126-02-vnd-display-cart-cap-dashboard-window-merch-screens.md), Q-14). Provide dates as `YYYY-MM-DD`. `campaignId` is optional, must belong to the authenticated Store, and filters by the campaign captured on the event even if the campaign has since ended. The repository uses a UTC half-open boundary corresponding to the Store-local window and returns a row per day, filling missing days with zeros.
 
-Main KPI counts successful `BUNDLE_ADDED` events by origin. Secondary KPI sums recorded **Product units actually added**. A partial success of A ×2 and B ×1 is one action and three units; rejected or skipped components contribute zero. No event rows, customer identities, or unrelated cart operations are returned. A valid empty window has both origin counts at zero. A panel whose backend is unavailable shows an unavailable state and does not claim zero activity.
+Main KPI counts successful `BUNDLE_ADDED` events by origin. Secondary KPI sums recorded **Product units actually added**. A bundle action that adds A ×1 and B ×1 is one action and two units. Rejected actions, skipped components, item removals, quantity edits and other cart actions contribute zero. No event rows, customer identities, or unrelated cart operations are returned. A valid empty window has both origin counts at zero. The response uses `campaignId: null` when the filter is omitted. A panel whose backend is unavailable shows an unavailable state and does not claim zero activity.
 
 ```json
 {

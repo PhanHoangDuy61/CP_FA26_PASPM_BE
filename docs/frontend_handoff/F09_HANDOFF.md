@@ -21,9 +21,8 @@ The public storefront is anonymous and read-only. Staff routes remain protected.
 
 - [ ] Render zones and placements in response order.
 - [ ] Render the selected active layout only; DRAFT, PUBLISHED-but-not-active and ENDED campaigns are not public.
-- [ ] Render baseline A as `BASELINE`; do not label it as fallback.
 - [ ] When `fallbackType=DEFAULT_CATALOG`, render category groups and their name-then-productId sorted products.
-- [ ] Render `BUNDLE`, `CROSS_SELL`, `FBT`, `BANNER` and `BASELINE` placement types.
+- [ ] Render `BUNDLE`, `CROSS_SELL`, `FBT` and `BANNER` placement types. Only `fallbackType` identifies the catalog fallback.
 - [ ] Treat omitted products or blocks as no longer eligible; do not infer why from private F06 evidence.
 - [ ] If an active layout returns `503` because capacities are unconfigured, show a generic unavailable state and retry later. Do not show the internal configuration error to shoppers.
 
@@ -39,8 +38,8 @@ The public storefront is anonymous and read-only. Staff routes remain protected.
 ### Bundles
 
 - [ ] Treat each placement (one zone + block) as a grouped list of public Products; `type` is the zone name.
-- [ ] The backend checks each placed product on its own (F07 product-level Layout B) and drops a block only when none of its products pass.
-- [ ] Cart, quantity selection, reservations, discounts, checkout, payment and order creation are F10/deferred.
+- [ ] On the F10 Part 2 branch, a `BUNDLE` placement with `bundleKey` supports the whole-bundle action. Its cards include visible products with `OUT_OF_STOCK` status. The block stays visible and may have an empty products list when every component is hidden.
+- [ ] Treat the key as opaque and use the latest F09 home result. Use the [F10 handoff](F10_HANDOFF.md) for authentication, request and error handling.
 
 ### Store visibility (no separate control)
 
@@ -66,6 +65,7 @@ export interface StorefrontProductPage {
 export interface HomePlacement {
   type: 'BUNDLE' | 'CROSS_SELL' | 'FBT' | 'BANNER'; // the zone name
   blockNo: number; startPosition: number; products: ProductCard[];
+  bundleKey?: string;
 }
 export interface HomeZone { name: string; placements: HomePlacement[] }
 ```

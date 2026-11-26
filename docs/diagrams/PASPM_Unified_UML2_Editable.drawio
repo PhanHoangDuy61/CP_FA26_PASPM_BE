@@ -2135,18 +2135,18 @@
     </mxGraphModel>
   </diagram>
   <diagram id="paspm-unified-ad07" name="AD07 - A/B Testing &amp; Performance Evaluation">
-    <mxGraphModel dx="1200" dy="1950" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1950" math="0" shadow="0" background="#FFFFFF">
+    <mxGraphModel dx="1200" dy="1950" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1990" math="0" shadow="0" background="#FFFFFF">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="lane0" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=0;fillColor=#FFFFFF;strokeColor=#D5DEE6;strokeWidth=1;" vertex="1" parent="1">
-          <mxGeometry x="48.0" y="130" width="552.0" height="1540" as="geometry" />
+          <mxGeometry x="48.0" y="130" width="552.0" height="1580" as="geometry" />
         </mxCell>
         <mxCell id="lane0head" value="MERCHANDISER / RETAIL PLANNER" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=0;fillColor=#EAF0F5;strokeColor=#D5DEE6;fontSize=15;fontStyle=1;fontColor=#223247;" vertex="1" parent="1">
           <mxGeometry x="48.0" y="130" width="552.0" height="48" as="geometry" />
         </mxCell>
         <mxCell id="lane1" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=0;fillColor=#FAFCFD;strokeColor=#D5DEE6;strokeWidth=1;" vertex="1" parent="1">
-          <mxGeometry x="600.0" y="130" width="552.0" height="1540" as="geometry" />
+          <mxGeometry x="600.0" y="130" width="552.0" height="1580" as="geometry" />
         </mxCell>
         <mxCell id="lane1head" value="PASPM / SYSTEM" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=0;fillColor=#EAF0F5;strokeColor=#D5DEE6;fontSize=15;fontStyle=1;fontColor=#223247;" vertex="1" parent="1">
           <mxGeometry x="600.0" y="130" width="552.0" height="48" as="geometry" />
@@ -2187,8 +2187,8 @@
         <mxCell id="e9" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="report" target="review">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="876.0" y="944" />
-              <mxPoint x="324.0" y="944" />
+              <mxPoint x="876.0" y="984" />
+              <mxPoint x="324.0" y="984" />
             </Array>
           </mxGeometry>
         </mxCell>
@@ -2206,7 +2206,7 @@
         <mxCell id="e13" value="[keep A]" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;" edge="1" parent="1" source="choice" target="keep">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="190" y="1122" />
+              <mxPoint x="190" y="1162" />
             </Array>
             <mxPoint x="-38.0" y="24" as="offset" />
           </mxGeometry>
@@ -2214,8 +2214,8 @@
         <mxCell id="e14" value="[select B]" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;spacing=2;" edge="1" parent="1" source="choice" target="choose">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="324" y="1210" />
-              <mxPoint x="450" y="1210" />
+              <mxPoint x="324" y="1250" />
+              <mxPoint x="450" y="1250" />
             </Array>
             <mxPoint x="116.0" y="0" as="offset" />
           </mxGeometry>
@@ -2223,47 +2223,47 @@
         <mxCell id="e15" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="keep" target="selected">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="190" y="1402" />
+              <mxPoint x="190" y="1442" />
             </Array>
           </mxGeometry>
         </mxCell>
         <mxCell id="e16" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="choose" target="selected">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="450" y="1402" />
+              <mxPoint x="450" y="1442" />
             </Array>
           </mxGeometry>
         </mxCell>
         <mxCell id="e17" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="selected" target="save">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="324.0" y="1452" />
-              <mxPoint x="876.0" y="1452" />
+              <mxPoint x="324.0" y="1492" />
+              <mxPoint x="876.0" y="1492" />
             </Array>
           </mxGeometry>
         </mxCell>
         <mxCell id="e18" value="" style="edgeStyle=none;rounded=1;arcSize=10;html=1;endArrow=open;endFill=0;endSize=9;strokeWidth=1.6;strokeColor=#66788A;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=14;fontColor=#245B83;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="save" target="e">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="title" value="A/B testing and performance evaluation" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=30;fontColor=#223247;fontStyle=1;spacing=0;" vertex="1" parent="1">
+        <mxCell id="title" value="A/B testing: offline replay simulation (simulated)" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=30;fontColor=#223247;fontStyle=1;spacing=0;" vertex="1" parent="1">
           <mxGeometry x="48" y="54" width="1104" height="44" as="geometry" />
         </mxCell>
         <mxCell id="s" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;strokeColor=#000000;fillColor=#000000;" vertex="1" parent="1">
           <mxGeometry x="312.0" y="200" width="24" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="select" value="Select baseline A / candidate B&lt;br&gt;and simulation settings" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+        <mxCell id="select" value="Open DRAFT campaign, A/B READY&lt;br&gt;Enter range, run sync simulation" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
           <mxGeometry x="174.0" y="254" width="300" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="data" value="Load synthetic / historical inputs&lt;br&gt;Declare CTR/conversion assumptions" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
-          <mxGeometry x="726.0" y="364" width="300" height="80" as="geometry" />
+        <mxCell id="data" value="Check DRAFT campaign, A/B READY,&lt;br&gt;range starts after snapshot end" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="706" y="364" width="340" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="simulate" value="Validate comparable A/B inputs&lt;br&gt;Run simulation; record any error" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
-          <mxGeometry x="726.0" y="474" width="300" height="80" as="geometry" />
+        <mxCell id="simulate" value="Replay eligible later transactions&lt;br&gt;excluding the snapshot's own" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="706" y="474" width="340" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="success" value="Simulation&lt;br&gt;successful?" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rhombus;fillColor=#FFFFFF;strokeColor=#245B83;strokeWidth=1.6;fontSize=16;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+        <mxCell id="success" value="Simulation&lt;br&gt;succeeded?" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rhombus;fillColor=#FFFFFF;strokeColor=#245B83;strokeWidth=1.6;fontSize=16;fontColor=#223247;spacing=8;" vertex="1" parent="1">
           <mxGeometry x="752.0" y="588" width="248" height="108" as="geometry" />
         </mxCell>
-        <mxCell id="error" value="Review reported simulation issue&lt;br&gt;Retry separately or return to draft" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+        <mxCell id="error" value="Read the 400/409 error message&lt;br&gt;Fix range or layouts, then retry" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
           <mxGeometry x="174.0" y="602" width="300" height="80" as="geometry" />
         </mxCell>
         <mxCell id="fail" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;fillColor=#FFFFFF;strokeWidth=1.5;strokeColor=#000000;" vertex="1" parent="1">
@@ -2272,44 +2272,44 @@
         <mxCell id="fail-dot" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;strokeColor=#000000;fillColor=#000000;" vertex="1" parent="1">
           <mxGeometry x="316.0" y="736" width="16" height="16" as="geometry" />
         </mxCell>
-        <mxCell id="compare" value="Compare simulated utility, CTR,&lt;br&gt;conversion and estimated revenue" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#EDF5FB;strokeColor=#245B83;strokeWidth=1.8;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
-          <mxGeometry x="726.0" y="734" width="300" height="80" as="geometry" />
+        <mxCell id="compare" value="Compare B with A's first N products&lt;br&gt;hitRate, bundleConversion,&lt;br&gt;capturedUtility, priorityCoverage" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#EDF5FB;strokeColor=#245B83;strokeWidth=1.8;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="706" y="734" width="340" height="110" as="geometry" />
         </mxCell>
-        <mxCell id="report" value="Save simulated report including&lt;br&gt;assumptions, time window and source" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
-          <mxGeometry x="726.0" y="844" width="300" height="80" as="geometry" />
+        <mxCell id="report" value="Save immutable report&lt;br&gt;simulated:true, A/B versions, hash" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="706" y="884" width="340" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="review" value="Review metrics and trade-offs" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
-          <mxGeometry x="174.0" y="964" width="300" height="80" as="geometry" />
+        <mxCell id="review" value="Review simulated metrics&lt;br&gt;and trade-offs" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="174.0" y="1004" width="300" height="80" as="geometry" />
         </mxCell>
         <mxCell id="choice" value="Merchandiser&lt;br&gt;decision?" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rhombus;fillColor=#FFFFFF;strokeColor=#245B83;strokeWidth=1.6;fontSize=16;fontColor=#223247;spacing=8;" vertex="1" parent="1">
-          <mxGeometry x="200.0" y="1068" width="248" height="108" as="geometry" />
+          <mxGeometry x="200.0" y="1108" width="248" height="108" as="geometry" />
         </mxCell>
-        <mxCell id="revision" value="Record revision-needed outcome&lt;br&gt;Return to draft in AD06" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
-          <mxGeometry x="726.0" y="1082" width="300" height="80" as="geometry" />
+        <mxCell id="revision" value="Edit layouts in AD06 (new revision)&lt;br&gt;then run a new simulation" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="706" y="1122" width="340" height="80" as="geometry" />
         </mxCell>
         <mxCell id="revend" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;fillColor=#FFFFFF;strokeWidth=1.5;strokeColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="862.0" y="1210" width="28" height="28" as="geometry" />
+          <mxGeometry x="862.0" y="1250" width="28" height="28" as="geometry" />
         </mxCell>
         <mxCell id="revend-dot" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;strokeColor=#000000;fillColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="868.0" y="1216" width="16" height="16" as="geometry" />
+          <mxGeometry x="868.0" y="1256" width="16" height="16" as="geometry" />
         </mxCell>
         <mxCell id="keep" value="Keep baseline A" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
-          <mxGeometry x="80.0" y="1250" width="220" height="68" as="geometry" />
+          <mxGeometry x="80.0" y="1290" width="220" height="68" as="geometry" />
         </mxCell>
         <mxCell id="choose" value="Choose layout B" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#FFFFFF;strokeColor=#8092A3;strokeWidth=1.2;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
-          <mxGeometry x="340.0" y="1250" width="220" height="68" as="geometry" />
+          <mxGeometry x="340.0" y="1290" width="220" height="68" as="geometry" />
         </mxCell>
         <mxCell id="selected" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rhombus;fillColor=#FFFFFF;strokeColor=#66788A;strokeWidth=1.6;" vertex="1" parent="1">
-          <mxGeometry x="312.0" y="1390" width="24" height="24" as="geometry" />
+          <mxGeometry x="312.0" y="1430" width="24" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="save" value="Save the selected layout A / B&lt;br&gt;Return to AD06 for publication" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#EDF5FB;strokeColor=#245B83;strokeWidth=1.8;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
-          <mxGeometry x="726.0" y="1484" width="300" height="80" as="geometry" />
+        <mxCell id="save" value="Record decision KEEP_A / CHOOSE_B&lt;br&gt;with the report; back to AD06" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;rounded=1;arcSize=14;fillColor=#EDF5FB;strokeColor=#245B83;strokeWidth=1.8;fontSize=17;fontColor=#223247;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="706" y="1524" width="340" height="80" as="geometry" />
         </mxCell>
         <mxCell id="e" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;fillColor=#FFFFFF;strokeWidth=1.5;strokeColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="862.0" y="1610" width="28" height="28" as="geometry" />
+          <mxGeometry x="862.0" y="1650" width="28" height="28" as="geometry" />
         </mxCell>
         <mxCell id="e-dot" value="" style="html=1;whiteSpace=wrap;fontFamily=Helvetica;ellipse;strokeColor=#000000;fillColor=#000000;" vertex="1" parent="1">
-          <mxGeometry x="868.0" y="1616" width="16" height="16" as="geometry" />
+          <mxGeometry x="868.0" y="1656" width="16" height="16" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
@@ -9931,365 +9931,387 @@
     </mxGraphModel>
   </diagram>
   <diagram id="r2-15-page" name="R2-08.07 — Sequence AD07">
-    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2160.0" pageHeight="2212.0" math="0" shadow="0">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2160.0" pageHeight="2425" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="r2-15-title" value="R2-08.07 — Sequence AD07" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;" vertex="1" parent="1">
           <mxGeometry x="40.0" y="18" width="2080.0" height="32.0" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-frame-5" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;rounded=0;fillColor=none;strokeColor=#757575;strokeWidth=1.4;" vertex="1" parent="1" semanticKind="combined-fragment" operator="alt" sourceLine="14">
-          <mxGeometry x="45.0" y="586" width="2070.0" height="1196" as="geometry" />
+                <mxCell id="r2-15-frame-5" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;rounded=0;fillColor=none;strokeColor=#757575;strokeWidth=1.4;" vertex="1" parent="1" semanticKind="combined-fragment" operator="alt" sourceLine="14">
+          <mxGeometry x="45" y="528" width="2070" height="1467" as="geometry" />
         </mxCell>
         <mxCell id="r2-15-operator-5" value="alt" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=#F3F3F3;strokeColor=#757575;fontSize=15;align=left;spacingLeft=10;" vertex="1" parent="1" semanticKind="operator">
-          <mxGeometry x="45.0" y="586" width="72.0" height="28.0" as="geometry" />
+          <mxGeometry x="45" y="528" width="72" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-guard-5" value="[Simulation fails]" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;align=left;fontSize=15;" vertex="1" parent="1" semanticKind="guard" sourceLine="14">
-          <mxGeometry x="137.0" y="593" width="1950.0" height="36.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-15-frame-14" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;rounded=0;fillColor=none;strokeColor=#757575;strokeWidth=1.4;" vertex="1" parent="1" semanticKind="combined-fragment" operator="alt" sourceLine="23">
-          <mxGeometry x="61.0" y="1310" width="2038.0" height="426" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-15-operator-14" value="alt" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=#F3F3F3;strokeColor=#757575;fontSize=15;align=left;spacingLeft=10;" vertex="1" parent="1" semanticKind="operator">
-          <mxGeometry x="61.0" y="1310" width="72.0" height="28.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-15-guard-14" value="[Revision needed]" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;align=left;fontSize=15;" vertex="1" parent="1" semanticKind="guard" sourceLine="23">
-          <mxGeometry x="153.0" y="1317" width="1918.0" height="36.0" as="geometry" />
+        <mxCell id="r2-15-guard-5" value="[Validation fails: 400 or 409]" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;align=left;fontSize=15;" vertex="1" parent="1" semanticKind="guard" sourceLine="14">
+          <mxGeometry x="137" y="535" width="1950" height="36" as="geometry" />
         </mxCell>
         <mxCell id="r2-15-divider-8" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;endArrow=none;dashed=1;strokeColor=#757575;" edge="1" parent="1" semanticKind="operand-divider">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="45.0" y="818" as="sourcePoint" />
-            <mxPoint x="2115.0" y="818" as="targetPoint" />
+            <mxPoint x="45" y="778" as="sourcePoint" />
+            <mxPoint x="2115" y="778" as="targetPoint" />
             <Array as="points" />
           </mxGeometry>
         </mxCell>
         <mxCell id="r2-15-operand-8" value="[Simulation succeeds]" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;align=left;fontSize=15;" vertex="1" parent="1" semanticKind="operand-guard" sourceLine="17">
-          <mxGeometry x="137.0" y="827" width="1950.0" height="32.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-15-divider-16" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;endArrow=none;dashed=1;strokeColor=#757575;" edge="1" parent="1" semanticKind="operand-divider">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="61.0" y="1448" as="sourcePoint" />
-            <mxPoint x="2099.0" y="1448" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-15-operand-16" value="[Keep baseline A]" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;align=left;fontSize=15;" vertex="1" parent="1" semanticKind="operand-guard" sourceLine="25">
-          <mxGeometry x="153.0" y="1457" width="1918.0" height="32.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-15-divider-18" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;endArrow=none;dashed=1;strokeColor=#757575;" edge="1" parent="1" semanticKind="operand-divider">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="61.0" y="1582" as="sourcePoint" />
-            <mxPoint x="2099.0" y="1582" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-15-operand-18" value="[Choose layout B]" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;align=left;fontSize=15;" vertex="1" parent="1" semanticKind="operand-guard" sourceLine="27">
-          <mxGeometry x="153.0" y="1591" width="1918.0" height="32.0" as="geometry" />
+          <mxGeometry x="137" y="787" width="1950" height="32" as="geometry" />
         </mxCell>
         <mxCell id="r2-15-participant-Merch" value="merchandiser : User" style="shape=umlActor;html=1;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;fillColor=#FDF4FF;strokeColor=#E879F9;fontFamily=Arial;fontSize=16;whiteSpace=wrap;labelWidth=210;" vertex="1" parent="1" semanticKind="actor" participantId="Merch">
           <mxGeometry x="212.0" y="76" width="36" height="62" as="geometry" />
         </mxCell>
         <mxCell id="r2-15-lifeline-Merch" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;endArrow=none;dashed=1;dashPattern=5 5;strokeColor=#777777;" edge="1" parent="1" semanticKind="lifeline" participantId="Merch">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="230.0" y="178" as="sourcePoint" />
-            <mxPoint x="230.0" y="1834" as="targetPoint" />
+            <mxPoint x="230" y="178" as="sourcePoint" />
+            <mxPoint x="230" y="2047" as="targetPoint" />
             <Array as="points" />
           </mxGeometry>
         </mxCell>
         <mxCell id="r2-15-footer-Merch" value="merchandiser : User" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#FDF4FF;strokeColor=#E879F9;spacing=8;" vertex="1" parent="1" semanticKind="participant-footer" participantId="Merch">
-          <mxGeometry x="125.0" y="1846" width="210.0" height="80.0" as="geometry" />
+          <mxGeometry x="125" y="2059" width="210" height="80" as="geometry" />
         </mxCell>
         <mxCell id="r2-15-participant-UI" value="screen : AbSimulationScreen" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#F0FDFA;strokeColor=#2DD4BF;spacing=10;" vertex="1" parent="1" semanticKind="participant" participantId="UI">
-          <mxGeometry x="465.0" y="76" width="210.0" height="90.0" as="geometry" />
+          <mxGeometry x="465" y="76" width="210" height="90" as="geometry" />
         </mxCell>
         <mxCell id="r2-15-lifeline-UI" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;endArrow=none;dashed=1;dashPattern=5 5;strokeColor=#777777;" edge="1" parent="1" semanticKind="lifeline" participantId="UI">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="570.0" y="178" as="sourcePoint" />
-            <mxPoint x="570.0" y="1834" as="targetPoint" />
+            <mxPoint x="570" y="178" as="sourcePoint" />
+            <mxPoint x="570" y="2047" as="targetPoint" />
             <Array as="points" />
           </mxGeometry>
         </mxCell>
         <mxCell id="r2-15-footer-UI" value="screen : AbSimulationScreen" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#F0FDFA;strokeColor=#2DD4BF;spacing=8;" vertex="1" parent="1" semanticKind="participant-footer" participantId="UI">
-          <mxGeometry x="465.0" y="1846" width="210.0" height="80.0" as="geometry" />
+          <mxGeometry x="465" y="2059" width="210" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-participant-Data" value="source : TransactionSource" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#FFF7ED;strokeColor=#FB923C;spacing=10;" vertex="1" parent="1" semanticKind="participant" participantId="Data">
-          <mxGeometry x="805.0" y="76" width="210.0" height="90.0" as="geometry" />
+        <mxCell id="r2-15-participant-Svc" value="service : LayoutCampaignService" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#FFF7ED;strokeColor=#FB923C;spacing=10;" vertex="1" parent="1" semanticKind="participant" participantId="Svc">
+          <mxGeometry x="805" y="76" width="210" height="90" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-lifeline-Data" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;endArrow=none;dashed=1;dashPattern=5 5;strokeColor=#777777;" edge="1" parent="1" semanticKind="lifeline" participantId="Data">
+        <mxCell id="r2-15-lifeline-Svc" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;endArrow=none;dashed=1;dashPattern=5 5;strokeColor=#777777;" edge="1" parent="1" semanticKind="lifeline" participantId="Svc">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="910.0" y="178" as="sourcePoint" />
-            <mxPoint x="910.0" y="1834" as="targetPoint" />
+            <mxPoint x="910" y="178" as="sourcePoint" />
+            <mxPoint x="910" y="2047" as="targetPoint" />
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="r2-15-footer-Data" value="source : TransactionSource" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#FFF7ED;strokeColor=#FB923C;spacing=8;" vertex="1" parent="1" semanticKind="participant-footer" participantId="Data">
-          <mxGeometry x="805.0" y="1846" width="210.0" height="80.0" as="geometry" />
+        <mxCell id="r2-15-footer-Svc" value="service : LayoutCampaignService" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#FFF7ED;strokeColor=#FB923C;spacing=8;" vertex="1" parent="1" semanticKind="participant-footer" participantId="Svc">
+          <mxGeometry x="805" y="2059" width="210" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-participant-Sim" value="simulation : SimulationService" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#ECFEFF;strokeColor=#22D3EE;spacing=10;" vertex="1" parent="1" semanticKind="participant" participantId="Sim">
-          <mxGeometry x="1145.0" y="76" width="210.0" height="90.0" as="geometry" />
+        <mxCell id="r2-15-participant-Rules" value="rules : LayoutRules" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#F5F3FF;strokeColor=#A78BFA;spacing=10;" vertex="1" parent="1" semanticKind="participant" participantId="Rules">
+          <mxGeometry x="1145" y="76" width="210" height="90" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-lifeline-Sim" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;endArrow=none;dashed=1;dashPattern=5 5;strokeColor=#777777;" edge="1" parent="1" semanticKind="lifeline" participantId="Sim">
+        <mxCell id="r2-15-lifeline-Rules" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;endArrow=none;dashed=1;dashPattern=5 5;strokeColor=#777777;" edge="1" parent="1" semanticKind="lifeline" participantId="Rules">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1250.0" y="178" as="sourcePoint" />
-            <mxPoint x="1250.0" y="1834" as="targetPoint" />
+            <mxPoint x="1250" y="178" as="sourcePoint" />
+            <mxPoint x="1250" y="2047" as="targetPoint" />
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="r2-15-footer-Sim" value="simulation : SimulationService" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#ECFEFF;strokeColor=#22D3EE;spacing=8;" vertex="1" parent="1" semanticKind="participant-footer" participantId="Sim">
-          <mxGeometry x="1145.0" y="1846" width="210.0" height="80.0" as="geometry" />
+        <mxCell id="r2-15-footer-Rules" value="rules : LayoutRules" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#F5F3FF;strokeColor=#A78BFA;spacing=8;" vertex="1" parent="1" semanticKind="participant-footer" participantId="Rules">
+          <mxGeometry x="1145" y="2059" width="210" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-participant-Report" value="reports : ComparativeReportRepository" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#F0FDF4;strokeColor=#4ADE80;spacing=10;" vertex="1" parent="1" semanticKind="participant" participantId="Report">
-          <mxGeometry x="1485.0" y="76" width="210.0" height="90.0" as="geometry" />
+        <mxCell id="r2-15-participant-Replay" value="replay : OfflineLayoutSimulation" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#ECFEFF;strokeColor=#22D3EE;spacing=10;" vertex="1" parent="1" semanticKind="participant" participantId="Replay">
+          <mxGeometry x="1485" y="76" width="210" height="90" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-lifeline-Report" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;endArrow=none;dashed=1;dashPattern=5 5;strokeColor=#777777;" edge="1" parent="1" semanticKind="lifeline" participantId="Report">
+        <mxCell id="r2-15-lifeline-Replay" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;endArrow=none;dashed=1;dashPattern=5 5;strokeColor=#777777;" edge="1" parent="1" semanticKind="lifeline" participantId="Replay">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1590.0" y="178" as="sourcePoint" />
-            <mxPoint x="1590.0" y="1834" as="targetPoint" />
+            <mxPoint x="1590" y="178" as="sourcePoint" />
+            <mxPoint x="1590" y="2047" as="targetPoint" />
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="r2-15-footer-Report" value="reports : ComparativeReportRepository" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#F0FDF4;strokeColor=#4ADE80;spacing=8;" vertex="1" parent="1" semanticKind="participant-footer" participantId="Report">
-          <mxGeometry x="1485.0" y="1846" width="210.0" height="80.0" as="geometry" />
+        <mxCell id="r2-15-footer-Replay" value="replay : OfflineLayoutSimulation" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#ECFEFF;strokeColor=#22D3EE;spacing=8;" vertex="1" parent="1" semanticKind="participant-footer" participantId="Replay">
+          <mxGeometry x="1485" y="2059" width="210" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-participant-Layout" value="layouts : LayoutService" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#F5F3FF;strokeColor=#A78BFA;spacing=10;" vertex="1" parent="1" semanticKind="participant" participantId="Layout">
-          <mxGeometry x="1825.0" y="76" width="210.0" height="90.0" as="geometry" />
+        <mxCell id="r2-15-participant-Repo" value="repo : LayoutCampaignRepository" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#F0FDF4;strokeColor=#4ADE80;spacing=10;" vertex="1" parent="1" semanticKind="participant" participantId="Repo">
+          <mxGeometry x="1825" y="76" width="210" height="90" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-lifeline-Layout" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;endArrow=none;dashed=1;dashPattern=5 5;strokeColor=#777777;" edge="1" parent="1" semanticKind="lifeline" participantId="Layout">
+        <mxCell id="r2-15-lifeline-Repo" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;endArrow=none;dashed=1;dashPattern=5 5;strokeColor=#777777;" edge="1" parent="1" semanticKind="lifeline" participantId="Repo">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1930.0" y="178" as="sourcePoint" />
-            <mxPoint x="1930.0" y="1834" as="targetPoint" />
+            <mxPoint x="1930" y="178" as="sourcePoint" />
+            <mxPoint x="1930" y="2047" as="targetPoint" />
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="r2-15-footer-Layout" value="layouts : LayoutService" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#F5F3FF;strokeColor=#A78BFA;spacing=8;" vertex="1" parent="1" semanticKind="participant-footer" participantId="Layout">
-          <mxGeometry x="1825.0" y="1846" width="210.0" height="80.0" as="geometry" />
+        <mxCell id="r2-15-footer-Repo" value="repo : LayoutCampaignRepository" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=13;fontColor=#28253D;rounded=1;arcSize=8;fillColor=#F0FDF4;strokeColor=#4ADE80;spacing=8;" vertex="1" parent="1" semanticKind="participant-footer" participantId="Repo">
+          <mxGeometry x="1825" y="2059" width="210" height="80" as="geometry" />
         </mxCell>
         <mxCell id="r2-15-anchor-s-1" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Merch">
-          <mxGeometry x="229.5" y="285.5" width="1.0" height="1.0" as="geometry" />
+          <mxGeometry x="229.5" y="285.5" width="1" height="1" as="geometry" />
         </mxCell>
         <mxCell id="r2-15-anchor-t-1" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="UI">
-          <mxGeometry x="569.5" y="285.5" width="1.0" height="1.0" as="geometry" />
+          <mxGeometry x="569.5" y="285.5" width="1" height="1" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-message-1" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="Merch" semanticTarget="UI" semanticArrow="-&gt;&gt;" semanticLabel="selectVariants(baselineLayoutId, candidateLayoutId, settings)" sequenceNumber="1" sourceLine="10" source="r2-15-anchor-s-1" target="r2-15-anchor-t-1">
+        <mxCell id="r2-15-message-1" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="Merch" semanticTarget="UI" semanticArrow="-&gt;&gt;" semanticLabel="runSimulation(campaignId, rangeStart, rangeEnd)" sequenceNumber="1" source="r2-15-anchor-s-1" target="r2-15-anchor-t-1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="230.0" y="286" as="sourcePoint" />
-            <mxPoint x="570.0" y="286" as="targetPoint" />
+            <mxPoint x="230" y="286" as="sourcePoint" />
+            <mxPoint x="570" y="286" as="targetPoint" />
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="r2-15-message-label-1" value="1. selectVariants(baselineLayoutId, candidateLayoutId, settings)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-15-message-1" semanticKind="message-label" ownerEdge="r2-15-message-1">
-          <mxGeometry x="245.0" y="230" width="310.0" height="48" as="geometry" />
+        <mxCell id="r2-15-message-label-1" value="1. runSimulation(campaignId, rangeStart, rangeEnd)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-15-message-1" semanticKind="message-label" ownerEdge="r2-15-message-1">
+          <mxGeometry x="245" y="230" width="310" height="48" as="geometry" />
         </mxCell>
         <mxCell id="r2-15-anchor-s-2" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="UI">
-          <mxGeometry x="569.5" y="379.5" width="1.0" height="1.0" as="geometry" />
+          <mxGeometry x="569.5" y="379.5" width="1" height="1" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-anchor-t-2" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Data">
-          <mxGeometry x="909.5" y="379.5" width="1.0" height="1.0" as="geometry" />
+        <mxCell id="r2-15-anchor-t-2" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Svc">
+          <mxGeometry x="909.5" y="379.5" width="1" height="1" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-message-2" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="UI" semanticTarget="Data" semanticArrow="-&gt;&gt;" semanticLabel="load(storeId, rangeStart, rangeEnd)" sequenceNumber="2" sourceLine="11" source="r2-15-anchor-s-2" target="r2-15-anchor-t-2">
+        <mxCell id="r2-15-message-2" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="UI" semanticTarget="Svc" semanticArrow="-&gt;&gt;" semanticLabel="simulate(jwt, campaignId, request)" sequenceNumber="2" source="r2-15-anchor-s-2" target="r2-15-anchor-t-2">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="570.0" y="380" as="sourcePoint" />
-            <mxPoint x="910.0" y="380" as="targetPoint" />
+            <mxPoint x="570" y="380" as="sourcePoint" />
+            <mxPoint x="910" y="380" as="targetPoint" />
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="r2-15-message-label-2" value="2. load(storeId, rangeStart, rangeEnd)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-15-message-2" semanticKind="message-label" ownerEdge="r2-15-message-2">
-          <mxGeometry x="585.0" y="344" width="310.0" height="28" as="geometry" />
+        <mxCell id="r2-15-message-label-2" value="2. simulate(jwt, campaignId, request)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-15-message-2" semanticKind="message-label" ownerEdge="r2-15-message-2">
+          <mxGeometry x="585" y="344" width="310" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-anchor-s-3" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Data">
-          <mxGeometry x="909.5" y="473.5" width="1.0" height="1.0" as="geometry" />
+        <mxCell id="r2-15-anchor-s-3" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Svc">
+          <mxGeometry x="909.5" y="473.5" width="1" height="1" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-anchor-t-3" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="UI">
-          <mxGeometry x="569.5" y="473.5" width="1.0" height="1.0" as="geometry" />
+        <mxCell id="r2-15-anchor-t-3" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Svc">
+          <mxGeometry x="909.5" y="501.5" width="1" height="1" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-message-3" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=open;endFill=0;dashed=1;dashPattern=5 4;" edge="1" parent="1" semanticKind="message" semanticSource="Data" semanticTarget="UI" semanticArrow="--&gt;&gt;" semanticLabel="List&lt;PreparedTransaction&gt;" sequenceNumber="3" sourceLine="12" source="r2-15-anchor-s-3" target="r2-15-anchor-t-3">
+        <mxCell id="r2-15-message-3" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="Svc" semanticTarget="Svc" semanticArrow="-&gt;&gt;" semanticLabel="requireDraft, versions, A and B READY and valid, rangeStart after snapshot rangeEnd" sequenceNumber="3" source="r2-15-anchor-s-3" target="r2-15-anchor-t-3">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="910.0" y="474" as="sourcePoint" />
-            <mxPoint x="570.0" y="474" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-15-message-label-3" value="3. List&amp;lt;PreparedTransaction&amp;gt;" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-15-message-3" semanticKind="message-label" ownerEdge="r2-15-message-3">
-          <mxGeometry x="585.0" y="438" width="310.0" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-15-anchor-s-4" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="UI">
-          <mxGeometry x="569.5" y="547.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-15-anchor-t-4" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Sim">
-          <mxGeometry x="1249.5" y="547.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-15-message-4" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="UI" semanticTarget="Sim" semanticArrow="-&gt;&gt;" semanticLabel="compare(jwt, request)" sequenceNumber="4" sourceLine="13" source="r2-15-anchor-s-4" target="r2-15-anchor-t-4">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="570.0" y="548" as="sourcePoint" />
-            <mxPoint x="1250.0" y="548" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-15-message-label-4" value="4. compare(jwt, request)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-15-message-4" semanticKind="message-label" ownerEdge="r2-15-message-4">
-          <mxGeometry x="585.0" y="512" width="650.0" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-15-anchor-s-6" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Sim">
-          <mxGeometry x="1249.5" y="685.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-15-anchor-t-6" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="UI">
-          <mxGeometry x="569.5" y="685.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-15-message-5" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=open;endFill=0;dashed=1;dashPattern=5 4;" edge="1" parent="1" semanticKind="message" semanticSource="Sim" semanticTarget="UI" semanticArrow="--&gt;&gt;" semanticLabel="ApiException(status, message)" sequenceNumber="5" sourceLine="15" source="r2-15-anchor-s-6" target="r2-15-anchor-t-6">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1250.0" y="686" as="sourcePoint" />
-            <mxPoint x="570.0" y="686" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-15-message-label-5" value="5. ApiException(status, message)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-15-message-5" semanticKind="message-label" ownerEdge="r2-15-message-5">
-          <mxGeometry x="585.0" y="650" width="650.0" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-15-anchor-s-7" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="UI">
-          <mxGeometry x="569.5" y="779.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-15-anchor-t-7" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Merch">
-          <mxGeometry x="229.5" y="779.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-15-message-6" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=open;endFill=0;dashed=1;dashPattern=5 4;" edge="1" parent="1" semanticKind="message" semanticSource="UI" semanticTarget="Merch" semanticArrow="--&gt;&gt;" semanticLabel="ApiError.api(exception)" sequenceNumber="6" sourceLine="16" source="r2-15-anchor-s-7" target="r2-15-anchor-t-7">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="570.0" y="780" as="sourcePoint" />
-            <mxPoint x="230.0" y="780" as="targetPoint" />
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="r2-15-message-label-6" value="6. ApiError.api(exception)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-15-message-6" semanticKind="message-label" ownerEdge="r2-15-message-6">
-          <mxGeometry x="245.0" y="744" width="310.0" height="28" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-15-anchor-s-9" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Sim">
-          <mxGeometry x="1249.5" y="933.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-15-anchor-t-9" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Sim">
-          <mxGeometry x="1249.5" y="961.5" width="1.0" height="1.0" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-15-message-7" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="Sim" semanticTarget="Sim" semanticArrow="-&gt;&gt;" semanticLabel="compareMetrics(baseline, candidate)" sequenceNumber="7" sourceLine="18" source="r2-15-anchor-s-9" target="r2-15-anchor-t-9">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1250.0" y="934" as="sourcePoint" />
-            <mxPoint x="1250.0" y="962" as="targetPoint" />
+            <mxPoint x="910" y="474" as="sourcePoint" />
+            <mxPoint x="910" y="502" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="1315.0" y="934" />
-              <mxPoint x="1315.0" y="962" />
+              <mxPoint x="975" y="474" />
+              <mxPoint x="975" y="502" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="r2-15-message-label-7" value="7. compareMetrics(baseline, candidate)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=left;spacing=2;" vertex="1" parent="r2-15-message-7" semanticKind="message-label" ownerEdge="r2-15-message-7">
-          <mxGeometry x="1268.0" y="878" width="265.0" height="48.0" as="geometry" />
+        <mxCell id="r2-15-message-label-3" value="3. requireDraft, versions, A and B READY and valid, rangeStart after snapshot rangeEnd" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=left;spacing=2;" vertex="1" parent="r2-15-message-3" semanticKind="message-label" ownerEdge="r2-15-message-3">
+          <mxGeometry x="995" y="472" width="640" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-anchor-s-10" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Sim">
-          <mxGeometry x="1249.5" y="1049.5" width="1.0" height="1.0" as="geometry" />
+        <mxCell id="r2-15-anchor-s-4" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Svc">
+          <mxGeometry x="909.5" y="627.5" width="1" height="1" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-anchor-t-10" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Report">
-          <mxGeometry x="1589.5" y="1049.5" width="1.0" height="1.0" as="geometry" />
+        <mxCell id="r2-15-anchor-t-4" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="UI">
+          <mxGeometry x="569.5" y="627.5" width="1" height="1" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-message-8" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="Sim" semanticTarget="Report" semanticArrow="-&gt;&gt;" semanticLabel="save(storeId, report)" sequenceNumber="8" sourceLine="19" source="r2-15-anchor-s-10" target="r2-15-anchor-t-10">
+        <mxCell id="r2-15-message-4" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=open;endFill=0;dashed=1;dashPattern=5 4;" edge="1" parent="1" semanticKind="message" semanticSource="Svc" semanticTarget="UI" semanticArrow="--&gt;&gt;" semanticLabel="ApiException(400 or 409, message)" sequenceNumber="4" source="r2-15-anchor-s-4" target="r2-15-anchor-t-4">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1250.0" y="1050" as="sourcePoint" />
-            <mxPoint x="1590.0" y="1050" as="targetPoint" />
+            <mxPoint x="910" y="628" as="sourcePoint" />
+            <mxPoint x="570" y="628" as="targetPoint" />
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="r2-15-message-label-8" value="8. save(storeId, report)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-15-message-8" semanticKind="message-label" ownerEdge="r2-15-message-8">
-          <mxGeometry x="1265.0" y="1014" width="310.0" height="28" as="geometry" />
+        <mxCell id="r2-15-message-label-4" value="4. ApiException(400 or 409, message)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-15-message-4" semanticKind="message-label" ownerEdge="r2-15-message-4">
+          <mxGeometry x="585" y="592" width="310" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-anchor-s-11" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Report">
-          <mxGeometry x="1589.5" y="1123.5" width="1.0" height="1.0" as="geometry" />
+        <mxCell id="r2-15-anchor-s-5" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="UI">
+          <mxGeometry x="569.5" y="721.5" width="1" height="1" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-anchor-t-11" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Sim">
-          <mxGeometry x="1249.5" y="1123.5" width="1.0" height="1.0" as="geometry" />
+        <mxCell id="r2-15-anchor-t-5" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Merch">
+          <mxGeometry x="229.5" y="721.5" width="1" height="1" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-message-9" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=open;endFill=0;dashed=1;dashPattern=5 4;" edge="1" parent="1" semanticKind="message" semanticSource="Report" semanticTarget="Sim" semanticArrow="--&gt;&gt;" semanticLabel="long" sequenceNumber="9" sourceLine="20" source="r2-15-anchor-s-11" target="r2-15-anchor-t-11">
+        <mxCell id="r2-15-message-5" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=open;endFill=0;dashed=1;dashPattern=5 4;" edge="1" parent="1" semanticKind="message" semanticSource="UI" semanticTarget="Merch" semanticArrow="--&gt;&gt;" semanticLabel="error message; nothing saved" sequenceNumber="5" source="r2-15-anchor-s-5" target="r2-15-anchor-t-5">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1590.0" y="1124" as="sourcePoint" />
-            <mxPoint x="1250.0" y="1124" as="targetPoint" />
+            <mxPoint x="570" y="722" as="sourcePoint" />
+            <mxPoint x="230" y="722" as="targetPoint" />
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="r2-15-message-label-9" value="9. long" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-15-message-9" semanticKind="message-label" ownerEdge="r2-15-message-9">
-          <mxGeometry x="1265.0" y="1088" width="310.0" height="28" as="geometry" />
+        <mxCell id="r2-15-message-label-5" value="5. error message; nothing saved" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-15-message-5" semanticKind="message-label" ownerEdge="r2-15-message-5">
+          <mxGeometry x="245" y="686" width="310" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-anchor-s-12" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Sim">
-          <mxGeometry x="1249.5" y="1197.5" width="1.0" height="1.0" as="geometry" />
+        <mxCell id="r2-15-anchor-s-6" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Svc">
+          <mxGeometry x="909.5" y="855.5" width="1" height="1" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-anchor-t-12" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="UI">
-          <mxGeometry x="569.5" y="1197.5" width="1.0" height="1.0" as="geometry" />
+        <mxCell id="r2-15-anchor-t-6" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Rules">
+          <mxGeometry x="1249.5" y="855.5" width="1" height="1" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-message-10" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=open;endFill=0;dashed=1;dashPattern=5 4;" edge="1" parent="1" semanticKind="message" semanticSource="Sim" semanticTarget="UI" semanticArrow="--&gt;&gt;" semanticLabel="ComparisonReport" sequenceNumber="10" sourceLine="21" source="r2-15-anchor-s-12" target="r2-15-anchor-t-12">
+        <mxCell id="r2-15-message-6" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="Svc" semanticTarget="Rules" semanticArrow="-&gt;&gt;" semanticLabel="equalSizePrefix(orderedA, N)" sequenceNumber="6" source="r2-15-anchor-s-6" target="r2-15-anchor-t-6">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1250.0" y="1198" as="sourcePoint" />
-            <mxPoint x="570.0" y="1198" as="targetPoint" />
+            <mxPoint x="910" y="856" as="sourcePoint" />
+            <mxPoint x="1250" y="856" as="targetPoint" />
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="r2-15-message-label-10" value="10. ComparisonReport" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-15-message-10" semanticKind="message-label" ownerEdge="r2-15-message-10">
-          <mxGeometry x="585.0" y="1162" width="650.0" height="28" as="geometry" />
+        <mxCell id="r2-15-message-label-6" value="6. equalSizePrefix(orderedA, N)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-15-message-6" semanticKind="message-label" ownerEdge="r2-15-message-6">
+          <mxGeometry x="925" y="820" width="310" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-anchor-s-13" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="UI">
-          <mxGeometry x="569.5" y="1271.5" width="1.0" height="1.0" as="geometry" />
+        <mxCell id="r2-15-anchor-s-7" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Rules">
+          <mxGeometry x="1249.5" y="949.5" width="1" height="1" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-anchor-t-13" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Merch">
-          <mxGeometry x="229.5" y="1271.5" width="1.0" height="1.0" as="geometry" />
+        <mxCell id="r2-15-anchor-t-7" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Svc">
+          <mxGeometry x="909.5" y="949.5" width="1" height="1" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-message-11" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=open;endFill=0;dashed=1;dashPattern=5 4;" edge="1" parent="1" semanticKind="message" semanticSource="UI" semanticTarget="Merch" semanticArrow="--&gt;&gt;" semanticLabel="ComparisonReport" sequenceNumber="11" sourceLine="22" source="r2-15-anchor-s-13" target="r2-15-anchor-t-13">
+        <mxCell id="r2-15-message-7" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=open;endFill=0;dashed=1;dashPattern=5 4;" edge="1" parent="1" semanticKind="message" semanticSource="Rules" semanticTarget="Svc" semanticArrow="--&gt;&gt;" semanticLabel="A's first N products" sequenceNumber="7" source="r2-15-anchor-s-7" target="r2-15-anchor-t-7">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="570.0" y="1272" as="sourcePoint" />
-            <mxPoint x="230.0" y="1272" as="targetPoint" />
+            <mxPoint x="1250" y="950" as="sourcePoint" />
+            <mxPoint x="910" y="950" as="targetPoint" />
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="r2-15-message-label-11" value="11. ComparisonReport" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-15-message-11" semanticKind="message-label" ownerEdge="r2-15-message-11">
-          <mxGeometry x="245.0" y="1236" width="310.0" height="28" as="geometry" />
+        <mxCell id="r2-15-message-label-7" value="7. A's first N products" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-15-message-7" semanticKind="message-label" ownerEdge="r2-15-message-7">
+          <mxGeometry x="925" y="914" width="310" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-anchor-s-15" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Merch">
-          <mxGeometry x="229.5" y="1409.5" width="1.0" height="1.0" as="geometry" />
+        <mxCell id="r2-15-anchor-s-8" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Svc">
+          <mxGeometry x="909.5" y="1043.5" width="1" height="1" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-anchor-t-15" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Layout">
-          <mxGeometry x="1929.5" y="1409.5" width="1.0" height="1.0" as="geometry" />
+        <mxCell id="r2-15-anchor-t-8" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Svc">
+          <mxGeometry x="909.5" y="1071.5" width="1" height="1" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-message-12" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="Merch" semanticTarget="Layout" semanticArrow="-&gt;&gt;" semanticLabel="recordDecision(jwt, layoutId, decision)" sequenceNumber="12" sourceLine="24" source="r2-15-anchor-s-15" target="r2-15-anchor-t-15">
+        <mxCell id="r2-15-message-8" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="Svc" semanticTarget="Svc" semanticArrow="-&gt;&gt;" semanticLabel="priorityCoverage(A, B) from frozen snapshot weights" sequenceNumber="8" source="r2-15-anchor-s-8" target="r2-15-anchor-t-8">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="230.0" y="1410" as="sourcePoint" />
-            <mxPoint x="1930.0" y="1410" as="targetPoint" />
+            <mxPoint x="910" y="1044" as="sourcePoint" />
+            <mxPoint x="910" y="1072" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="975" y="1044" />
+              <mxPoint x="975" y="1072" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r2-15-message-label-8" value="8. priorityCoverage(A, B) from frozen snapshot weights" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=left;spacing=2;" vertex="1" parent="r2-15-message-8" semanticKind="message-label" ownerEdge="r2-15-message-8">
+          <mxGeometry x="995" y="1042" width="640" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="r2-15-anchor-s-9" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Svc">
+          <mxGeometry x="909.5" y="1137.5" width="1" height="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r2-15-anchor-t-9" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Replay">
+          <mxGeometry x="1589.5" y="1137.5" width="1" height="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r2-15-message-9" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="Svc" semanticTarget="Replay" semanticArrow="-&gt;&gt;" semanticLabel="evaluate(storeId, snapshotId, from, to, productsA, productsB, bundleBlocksB)" sequenceNumber="9" source="r2-15-anchor-s-9" target="r2-15-anchor-t-9">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="910" y="1138" as="sourcePoint" />
+            <mxPoint x="1590" y="1138" as="targetPoint" />
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="r2-15-message-label-12" value="12. recordDecision(jwt, layoutId, decision)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-15-message-12" semanticKind="message-label" ownerEdge="r2-15-message-12">
-          <mxGeometry x="245.0" y="1374" width="1670.0" height="28" as="geometry" />
+        <mxCell id="r2-15-message-label-9" value="9. evaluate(storeId, snapshotId, from, to, productsA, productsB, bundleBlocksB)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-15-message-9" semanticKind="message-label" ownerEdge="r2-15-message-9">
+          <mxGeometry x="925" y="1102" width="650" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-anchor-s-17" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Merch">
-          <mxGeometry x="229.5" y="1543.5" width="1.0" height="1.0" as="geometry" />
+        <mxCell id="r2-15-anchor-s-10" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Replay">
+          <mxGeometry x="1589.5" y="1231.5" width="1" height="1" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-anchor-t-17" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Layout">
-          <mxGeometry x="1929.5" y="1543.5" width="1.0" height="1.0" as="geometry" />
+        <mxCell id="r2-15-anchor-t-10" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Repo">
+          <mxGeometry x="1929.5" y="1231.5" width="1" height="1" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-message-13" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="Merch" semanticTarget="Layout" semanticArrow="-&gt;&gt;" semanticLabel="recordDecision(jwt, layoutId, decision)" sequenceNumber="13" sourceLine="26" source="r2-15-anchor-s-17" target="r2-15-anchor-t-17">
+        <mxCell id="r2-15-message-10" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="Replay" semanticTarget="Repo" semanticArrow="-&gt;&gt;" semanticLabel="evaluationRows(storeId, snapshotId, from, to)" sequenceNumber="10" source="r2-15-anchor-s-10" target="r2-15-anchor-t-10">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="230.0" y="1544" as="sourcePoint" />
-            <mxPoint x="1930.0" y="1544" as="targetPoint" />
+            <mxPoint x="1590" y="1232" as="sourcePoint" />
+            <mxPoint x="1930" y="1232" as="targetPoint" />
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="r2-15-message-label-13" value="13. recordDecision(jwt, layoutId, decision)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-15-message-13" semanticKind="message-label" ownerEdge="r2-15-message-13">
-          <mxGeometry x="245.0" y="1508" width="1670.0" height="28" as="geometry" />
+        <mxCell id="r2-15-message-label-10" value="10. evaluationRows(storeId, snapshotId, from, to)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-15-message-10" semanticKind="message-label" ownerEdge="r2-15-message-10">
+          <mxGeometry x="1605" y="1176" width="310" height="48" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-anchor-s-19" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Merch">
-          <mxGeometry x="229.5" y="1677.5" width="1.0" height="1.0" as="geometry" />
+        <mxCell id="r2-15-anchor-s-11" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Repo">
+          <mxGeometry x="1929.5" y="1325.5" width="1" height="1" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-anchor-t-19" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Layout">
-          <mxGeometry x="1929.5" y="1677.5" width="1.0" height="1.0" as="geometry" />
+        <mxCell id="r2-15-anchor-t-11" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Replay">
+          <mxGeometry x="1589.5" y="1325.5" width="1" height="1" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15-message-14" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="Merch" semanticTarget="Layout" semanticArrow="-&gt;&gt;" semanticLabel="recordDecision(jwt, layoutId, decision)" sequenceNumber="14" sourceLine="28" source="r2-15-anchor-s-19" target="r2-15-anchor-t-19">
+        <mxCell id="r2-15-message-11" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=open;endFill=0;dashed=1;dashPattern=5 4;" edge="1" parent="1" semanticKind="message" semanticSource="Repo" semanticTarget="Replay" semanticArrow="--&gt;&gt;" semanticLabel="completed eligible transactions after the snapshot, snapshot ones excluded" sequenceNumber="11" source="r2-15-anchor-s-11" target="r2-15-anchor-t-11">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="230.0" y="1678" as="sourcePoint" />
-            <mxPoint x="1930.0" y="1678" as="targetPoint" />
+            <mxPoint x="1930" y="1326" as="sourcePoint" />
+            <mxPoint x="1590" y="1326" as="targetPoint" />
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="r2-15-message-label-14" value="14. recordDecision(jwt, layoutId, decision)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-15-message-14" semanticKind="message-label" ownerEdge="r2-15-message-14">
-          <mxGeometry x="245.0" y="1642" width="1670.0" height="28" as="geometry" />
+        <mxCell id="r2-15-message-label-11" value="11. completed eligible transactions after the snapshot, snapshot ones excluded" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-15-message-11" semanticKind="message-label" ownerEdge="r2-15-message-11">
+          <mxGeometry x="1605" y="1270" width="310" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="r2-15-anchor-s-12" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Replay">
+          <mxGeometry x="1589.5" y="1419.5" width="1" height="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r2-15-anchor-t-12" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Svc">
+          <mxGeometry x="909.5" y="1419.5" width="1" height="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r2-15-message-12" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=open;endFill=0;dashed=1;dashPattern=5 4;" edge="1" parent="1" semanticKind="message" semanticSource="Replay" semanticTarget="Svc" semanticArrow="--&gt;&gt;" semanticLabel="Outcome(datasetHash, evaluationCount, hitRate, bundleConversion, capturedUtility)" sequenceNumber="12" source="r2-15-anchor-s-12" target="r2-15-anchor-t-12">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1590" y="1420" as="sourcePoint" />
+            <mxPoint x="910" y="1420" as="targetPoint" />
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r2-15-message-label-12" value="12. Outcome(datasetHash, evaluationCount, hitRate, bundleConversion, capturedUtility)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-15-message-12" semanticKind="message-label" ownerEdge="r2-15-message-12">
+          <mxGeometry x="925" y="1384" width="650" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="r2-15-anchor-s-13" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Svc">
+          <mxGeometry x="909.5" y="1513.5" width="1" height="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r2-15-anchor-t-13" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Repo">
+          <mxGeometry x="1929.5" y="1513.5" width="1" height="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r2-15-message-13" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="Svc" semanticTarget="Repo" semanticArrow="-&gt;&gt;" semanticLabel="createReport(storeId, campaignId, range, datasetHash, OFFLINE_REPLAY_V4, assumptions)" sequenceNumber="13" source="r2-15-anchor-s-13" target="r2-15-anchor-t-13">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="910" y="1514" as="sourcePoint" />
+            <mxPoint x="1930" y="1514" as="targetPoint" />
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r2-15-message-label-13" value="13. createReport(storeId, campaignId, range, datasetHash, OFFLINE_REPLAY_V4, assumptions)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-15-message-13" semanticKind="message-label" ownerEdge="r2-15-message-13">
+          <mxGeometry x="925" y="1478" width="990" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="r2-15-anchor-s-14" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Svc">
+          <mxGeometry x="909.5" y="1607.5" width="1" height="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r2-15-anchor-t-14" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Repo">
+          <mxGeometry x="1929.5" y="1607.5" width="1" height="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r2-15-message-14" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=block;endFill=1;" edge="1" parent="1" semanticKind="message" semanticSource="Svc" semanticTarget="Repo" semanticArrow="-&gt;&gt;" semanticLabel="insertReportLayout(A), insertReportLayout(B), insertEvaluationTransactionIds()" sequenceNumber="14" source="r2-15-anchor-s-14" target="r2-15-anchor-t-14">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="910" y="1608" as="sourcePoint" />
+            <mxPoint x="1930" y="1608" as="targetPoint" />
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r2-15-message-label-14" value="14. insertReportLayout(A), insertReportLayout(B), insertEvaluationTransactionIds()" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-15-message-14" semanticKind="message-label" ownerEdge="r2-15-message-14">
+          <mxGeometry x="925" y="1572" width="990" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="r2-15-anchor-s-15" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Repo">
+          <mxGeometry x="1929.5" y="1701.5" width="1" height="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r2-15-anchor-t-15" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Svc">
+          <mxGeometry x="909.5" y="1701.5" width="1" height="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r2-15-message-15" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=open;endFill=0;dashed=1;dashPattern=5 4;" edge="1" parent="1" semanticKind="message" semanticSource="Repo" semanticTarget="Svc" semanticArrow="--&gt;&gt;" semanticLabel="reportId" sequenceNumber="15" source="r2-15-anchor-s-15" target="r2-15-anchor-t-15">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1930" y="1702" as="sourcePoint" />
+            <mxPoint x="910" y="1702" as="targetPoint" />
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r2-15-message-label-15" value="15. reportId" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-15-message-15" semanticKind="message-label" ownerEdge="r2-15-message-15">
+          <mxGeometry x="925" y="1666" width="990" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="r2-15-anchor-s-16" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Svc">
+          <mxGeometry x="909.5" y="1795.5" width="1" height="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r2-15-anchor-t-16" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="UI">
+          <mxGeometry x="569.5" y="1795.5" width="1" height="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r2-15-message-16" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=open;endFill=0;dashed=1;dashPattern=5 4;" edge="1" parent="1" semanticKind="message" semanticSource="Svc" semanticTarget="UI" semanticArrow="--&gt;&gt;" semanticLabel="CampaignReportView (simulated : true, 4 metrics per layout)" sequenceNumber="16" source="r2-15-anchor-s-16" target="r2-15-anchor-t-16">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="910" y="1796" as="sourcePoint" />
+            <mxPoint x="570" y="1796" as="targetPoint" />
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r2-15-message-label-16" value="16. CampaignReportView (simulated : true, 4 metrics per layout)" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-15-message-16" semanticKind="message-label" ownerEdge="r2-15-message-16">
+          <mxGeometry x="585" y="1740" width="310" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="r2-15-anchor-s-17" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="UI">
+          <mxGeometry x="569.5" y="1889.5" width="1" height="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r2-15-anchor-t-17" value="" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;fillColor=none;strokeColor=none;opacity=0;" vertex="1" parent="1" semanticKind="message-anchor" participantId="Merch">
+          <mxGeometry x="229.5" y="1889.5" width="1" height="1" as="geometry" />
+        </mxCell>
+        <mxCell id="r2-15-message-17" value="" style="html=1;rounded=0;endArrow=open;endFill=0;strokeColor=#333333;strokeWidth=1.4;fontFamily=Arial;fontSize=15;exitX=.5;exitY=.5;entryX=.5;entryY=.5;endArrow=open;endFill=0;dashed=1;dashPattern=5 4;" edge="1" parent="1" semanticKind="message" semanticSource="UI" semanticTarget="Merch" semanticArrow="--&gt;&gt;" semanticLabel="show simulated report: hitRate, bundleConversion, capturedUtility, priorityCoverage" sequenceNumber="17" source="r2-15-anchor-s-17" target="r2-15-anchor-t-17">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="570" y="1890" as="sourcePoint" />
+            <mxPoint x="230" y="1890" as="targetPoint" />
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="r2-15-message-label-17" value="17. show simulated report: hitRate, bundleConversion, capturedUtility, priorityCoverage" style="html=1;whiteSpace=wrap;overflow=visible;fontFamily=Arial;fontSize=16;fontColor=#28253D;text;fillColor=#FFFFFF;strokeColor=none;fontSize=15;align=center;spacing=2;" vertex="1" parent="r2-15-message-17" semanticKind="message-label" ownerEdge="r2-15-message-17">
+          <mxGeometry x="245" y="1814" width="310" height="68" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
@@ -10305,50 +10327,47 @@
         <mxCell id="r2-15c-page-k-User" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«actor»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;User&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;- id : int&lt;br/&gt;- role : String&lt;br/&gt;- storeId : Integer&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
           <mxGeometry x="1200" y="100" width="180" height="110" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15c-page-k-AbSimulationScreen" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«boundary»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;AbSimulationScreen&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;&amp;nbsp;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ selectVariants(baselineLayoutId : long, candidateLayoutId :&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;long, settings : SimulationSettings) : void&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
-          <mxGeometry x="600" y="100" width="420" height="120" as="geometry" />
+        <mxCell id="r2-15c-page-k-AbSimulationScreen" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«boundary»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;AbSimulationScreen&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;&amp;nbsp;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ runSimulation(campaignId : long, rangeStart : LocalDate,&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;rangeEnd : LocalDate) : void&lt;br/&gt;+ showReport(report : CampaignReportView) : void&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
+          <mxGeometry x="600" y="100" width="420" height="130" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15c-page-k-SimulationService" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«control»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;SimulationService&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;- source : TransactionSource&lt;br/&gt;- reports : ComparativeReportRepository&lt;br/&gt;- layouts : LayoutService&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ compare(jwt : Jwt, request : SimulationRequest) :&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;ComparisonReport&lt;br/&gt;~ compareMetrics(baseline : SimulationResult, candidate :&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;SimulationResult) : List&amp;lt;MetricComparison&amp;gt;&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
+        <mxCell id="r2-15c-page-k-LayoutCampaignService" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«control»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;LayoutCampaignService&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;- repository : LayoutCampaignRepository&lt;br/&gt;- simulation : OfflineLayoutSimulation&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ simulate(jwt : Jwt, campaignId : long,&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;request : SimulationRequest) : CampaignReportView&lt;br/&gt;+ report(jwt : Jwt, reportId : long) : CampaignReportView&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
           <mxGeometry x="610" y="350" width="400" height="180" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15c-page-k-TransactionSource" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«interface»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;TransactionSource&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;&amp;nbsp;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ sourceType() : String&lt;br/&gt;+ load(storeId : int, rangeStart : LocalDate, rangeEnd :&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;LocalDate) : List&amp;lt;PreparedTransaction&amp;gt;&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
-          <mxGeometry x="1570" y="660" width="390" height="130" as="geometry" />
+        <mxCell id="r2-15c-page-k-OfflineLayoutSimulation" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«control»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;OfflineLayoutSimulation&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;- repository : LayoutCampaignRepository&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ evaluate(storeId : int, snapshotId : int, from : Timestamp,&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;to : Timestamp, productsA : Set&amp;lt;Integer&amp;gt;,&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;productsB : Set&amp;lt;Integer&amp;gt;,&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;bundleBlocksB : List&amp;lt;Set&amp;lt;Integer&amp;gt;&amp;gt;,&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;splitDescription : String) : Outcome&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
+          <mxGeometry x="1570" y="660" width="390" height="190" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15c-page-k-ComparativeReportRepository" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«repository»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;ComparativeReportRepository&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;- jdbc : JdbcTemplate&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ save(storeId : int, report : ComparisonReport) : long&lt;br/&gt;+ find(storeId : int, reportId : long) : ComparisonReport&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
-          <mxGeometry x="610" y="660" width="400" height="120" as="geometry" />
+        <mxCell id="r2-15c-page-k-LayoutCampaignRepository" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«repository»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;LayoutCampaignRepository&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;&amp;nbsp;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ evaluationRows(storeId : int, snapshotId : int, from, to)&lt;br/&gt;+ createReport(...) : long&lt;br/&gt;+ insertReportLayout(...) : void&lt;br/&gt;+ insertEvaluationTransactionIds(...) : void&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
+          <mxGeometry x="610" y="660" width="400" height="140" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15c-page-k-LayoutService" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«control»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;LayoutService&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;- layouts : LayoutRepository&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ recordDecision(jwt : Jwt, layoutId : long, decision :&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;SimulationDecision) : LayoutView&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
-          <mxGeometry x="60" y="350" width="390" height="120" as="geometry" />
+        <mxCell id="r2-15c-page-k-LayoutRules" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«control»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;LayoutRules&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;&amp;nbsp;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ equalSizePrefix(orderedA : List&amp;lt;Integer&amp;gt;,&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;n : int) : List&amp;lt;Integer&amp;gt;&lt;br/&gt;+ equalSizeAssumptions(n : int, baselineCount : int,&lt;br/&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;baselineK : int) : Map&amp;lt;String, Object&amp;gt;&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="350" width="390" height="140" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15c-page-k-SimulationRequest" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«entity»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;SimulationRequest&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ baselineLayoutId : long&lt;br/&gt;+ candidateLayoutId : long&lt;br/&gt;+ rangeStart : LocalDate&lt;br/&gt;+ rangeEnd : LocalDate&lt;br/&gt;+ assumptions : SimulationSettings&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
-          <mxGeometry x="1170" y="350" width="250" height="140" as="geometry" />
+        <mxCell id="r2-15c-page-k-SimulationRequest" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«entity»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;SimulationRequest&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ expectedCampaignVersion : long&lt;br/&gt;+ expectedLayoutAVersion : long&lt;br/&gt;+ expectedLayoutBVersion : long&lt;br/&gt;+ rangeStart : LocalDate&lt;br/&gt;+ rangeEnd : LocalDate&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
+          <mxGeometry x="1170" y="350" width="270" height="140" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15c-page-k-ComparisonReport" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«entity»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;ComparisonReport&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ reportId : long&lt;br/&gt;+ baselineLayoutId : long&lt;br/&gt;+ candidateLayoutId : long&lt;br/&gt;+ dataPeriodStart : LocalDate&lt;br/&gt;+ dataPeriodEnd : LocalDate&lt;br/&gt;+ assumptions : SimulationSettings&lt;br/&gt;+ decision : SimulationDecision&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
-          <mxGeometry x="680" y="920" width="250" height="170" as="geometry" />
+        <mxCell id="r2-15c-page-k-CampaignReportView" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«entity»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;CampaignReportView&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ reportId : long&lt;br/&gt;+ campaignId : long&lt;br/&gt;+ snapshotId : int&lt;br/&gt;+ createdBy : int&lt;br/&gt;+ rangeStart : LocalDate&lt;br/&gt;+ rangeEnd : LocalDate&lt;br/&gt;+ sourceNamespace : String&lt;br/&gt;+ datasetHash : String&lt;br/&gt;+ evaluationCount : int&lt;br/&gt;+ simulated : boolean = true&lt;br/&gt;+ algorithmVersion : String&lt;br/&gt;+ assumptions : Object&lt;br/&gt;+ createdAt : Instant&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
+          <mxGeometry x="680" y="920" width="270" height="270" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15c-page-k-MetricComparison" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«entity»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;MetricComparison&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ metric : MetricType&lt;br/&gt;+ baselineValue : BigDecimal&lt;br/&gt;+ candidateValue : BigDecimal&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
-          <mxGeometry x="1180" y="920" width="220" height="110" as="geometry" />
+        <mxCell id="r2-15c-page-k-ReportLayoutView" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«entity»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;ReportLayoutView&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ layoutId : long&lt;br/&gt;+ layoutVersion : long&lt;br/&gt;+ role : LayoutRole&lt;br/&gt;+ hitRate : RatioMetric&lt;br/&gt;+ bundleConversion : RatioMetric&lt;br/&gt;+ capturedUtility : RatioMetric&lt;br/&gt;+ priorityCoverage : BigDecimal&lt;br/&gt;+ priorityCoverageDenominator : Integer&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="920" width="290" height="190" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15c-page-k-PreparedTransaction" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«entity»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;PreparedTransaction&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ storeId : int&lt;br/&gt;+ transactionId : int&lt;br/&gt;+ occurredOn : LocalDate&lt;br/&gt;+ eligible : boolean&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
-          <mxGeometry x="1670" y="920" width="190" height="120" as="geometry" />
+        <mxCell id="r2-15c-page-k-ReplayMetrics" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«entity»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;ReplayMetrics&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ hitCount : int&lt;br/&gt;+ denominator : int&lt;br/&gt;+ bundleConversionCount : int&lt;br/&gt;+ capturedUtilityNumerator : BigDecimal&lt;br/&gt;+ capturedUtilityDenominator : BigDecimal&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="920" width="260" height="130" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15c-page-k-MetricType" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«enumeration»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;MetricType&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;UTILITY&lt;br/&gt;CTR&lt;br/&gt;CONVERSION&lt;br/&gt;ESTIMATED_REVENUE&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
-          <mxGeometry x="1200" y="1220" width="180" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="r2-15c-page-k-SimulationDecision" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«enumeration»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;SimulationDecision&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;KEEP_A&lt;br/&gt;CHOOSE_B&lt;br/&gt;REVISION_NEEDED&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
-          <mxGeometry x="720" y="1220" width="180" height="110" as="geometry" />
+        <mxCell id="r2-15c-page-k-RatioMetric" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«entity»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;RatioMetric&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;+ numerator : BigDecimal&lt;br/&gt;+ denominator : BigDecimal&lt;br/&gt;+ rate : BigDecimal&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
+          <mxGeometry x="1235" y="1220" width="180" height="100" as="geometry" />
         </mxCell>
         <mxCell id="r2-15c-page-e0" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;dashed=1;dashPattern=6 4;exitX=0.0000;exitY=0.5455;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.0000;entryY=0.5000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-15c-page-k-User" target="r2-15c-page-k-AbSimulationScreen">
           <mxGeometry relative="1" as="geometry">
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="r2-15c-page-e1" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;dashed=1;dashPattern=6 4;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-15c-page-k-AbSimulationScreen" target="r2-15c-page-k-SimulationService">
+        <mxCell id="r2-15c-page-e1" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;dashed=1;dashPattern=6 4;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-15c-page-k-AbSimulationScreen" target="r2-15c-page-k-LayoutCampaignService">
           <mxGeometry relative="1" as="geometry">
             <Array as="points" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="r2-15c-page-e2" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;exitX=0.6500;exitY=1.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5128;entryY=0.0000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-15c-page-k-SimulationService" target="r2-15c-page-k-TransactionSource">
+        <mxCell id="r2-15c-page-e2" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;exitX=0.6500;exitY=1.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5128;entryY=0.0000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-15c-page-k-LayoutCampaignService" target="r2-15c-page-k-OfflineLayoutSimulation">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="870" y="640" />
@@ -10356,7 +10375,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="r2-15c-page-e3" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;exitX=0.3500;exitY=1.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-15c-page-k-SimulationService" target="r2-15c-page-k-ComparativeReportRepository">
+        <mxCell id="r2-15c-page-e3" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;exitX=0.3500;exitY=1.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-15c-page-k-LayoutCampaignService" target="r2-15c-page-k-LayoutCampaignRepository">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="750" y="640" />
@@ -10364,7 +10383,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="r2-15c-page-e4" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;exitX=0.0000;exitY=0.5000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.0000;entryY=0.5000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-15c-page-k-SimulationService" target="r2-15c-page-k-LayoutService">
+        <mxCell id="r2-15c-page-e4" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;exitX=0.0000;exitY=0.5000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.0000;entryY=0.4286;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-15c-page-k-LayoutCampaignService" target="r2-15c-page-k-LayoutRules">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="470" y="440" />
@@ -10372,7 +10391,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="r2-15c-page-e5" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;dashed=1;dashPattern=6 4;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-15c-page-k-SimulationService" target="r2-15c-page-k-SimulationRequest">
+        <mxCell id="r2-15c-page-e5" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;dashed=1;dashPattern=6 4;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-15c-page-k-LayoutCampaignService" target="r2-15c-page-k-SimulationRequest">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="1160" y="440" />
@@ -10380,7 +10399,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="r2-15c-page-e6" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;dashed=1;dashPattern=6 4;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.4800;entryY=0.0000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-15c-page-k-ComparativeReportRepository" target="r2-15c-page-k-ComparisonReport">
+        <mxCell id="r2-15c-page-e6" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;dashed=1;dashPattern=6 4;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.4800;entryY=0.0000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-15c-page-k-LayoutCampaignRepository" target="r2-15c-page-k-CampaignReportView">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="810" y="910" />
@@ -10388,28 +10407,16 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="r2-15c-page-e7" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=none;startArrow=diamondThin;startFill=1;startSize=14;exitX=1.0000;exitY=0.4706;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.0000;entryY=0.5455;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-15c-page-k-ComparisonReport" target="r2-15c-page-k-MetricComparison">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="1170" y="1000" />
-              <mxPoint x="1170" y="980" />
-            </Array>
-          </mxGeometry>
+        <mxCell id="r2-15c-page-e7" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=none;startArrow=diamondThin;startFill=1;startSize=14;exitX=1.0000;exitY=0.2222;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.0000;entryY=0.3158;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-15c-page-k-CampaignReportView" target="r2-15c-page-k-ReportLayoutView">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
         </mxCell>
-        <mxCell id="r2-15c-page-e8" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-15c-page-k-MetricComparison" target="r2-15c-page-k-MetricType">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points" />
-          </mxGeometry>
+        <mxCell id="r2-15c-page-e8" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-15c-page-k-ReportLayoutView" target="r2-15c-page-k-RatioMetric">
+          <mxGeometry relative="1" as="geometry"></mxGeometry>
         </mxCell>
-        <mxCell id="r2-15c-page-e9" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;exitX=0.4800;exitY=1.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-15c-page-k-ComparisonReport" target="r2-15c-page-k-SimulationDecision">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="800" y="1210" />
-              <mxPoint x="810" y="1210" />
-            </Array>
-          </mxGeometry>
+        <mxCell id="r2-15c-page-e9" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;exitX=1.0000;exitY=0.9000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-15c-page-k-ReportLayoutView" target="r2-15c-page-k-LayoutRole">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1610" y="1091" /></Array></mxGeometry>
         </mxCell>
-        <mxCell id="r2-15c-page-e10" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;dashed=1;dashPattern=6 4;exitX=0.5128;exitY=1.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5263;entryY=0.0000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-15c-page-k-TransactionSource" target="r2-15c-page-k-PreparedTransaction">
+        <mxCell id="r2-15c-page-e10" value="" style="edgeStyle=none;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.2;fontFamily=Arial;fontSize=11;endArrow=open;endFill=0;endSize=9;startArrow=none;dashed=1;dashPattern=6 4;exitX=0.5128;exitY=1.0000;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5263;entryY=0.0000;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="r2-15c-page-k-OfflineLayoutSimulation" target="r2-15c-page-k-ReplayMetrics">
           <mxGeometry relative="1" as="geometry">
             <Array as="points" />
           </mxGeometry>
@@ -10423,8 +10430,8 @@
         <mxCell id="r2-15c-page-t3" value="1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
           <mxGeometry x="875" y="533" width="14" height="14" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15c-page-t4" value="source 1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="1775" y="643" width="59" height="14" as="geometry" />
+        <mxCell id="r2-15c-page-t4" value="simulation 1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
+          <mxGeometry x="1790" y="648" width="59" height="14" as="geometry" />
         </mxCell>
         <mxCell id="r2-15c-page-t5" value="1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
           <mxGeometry x="755" y="533" width="14" height="14" as="geometry" />
@@ -10435,7 +10442,7 @@
         <mxCell id="r2-15c-page-t7" value="1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
           <mxGeometry x="592" y="424" width="14" height="14" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15c-page-t8" value="layouts 1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
+        <mxCell id="r2-15c-page-t8" value="rules 1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
           <mxGeometry x="454" y="394" width="65" height="14" as="geometry" />
         </mxCell>
         <mxCell id="r2-15c-page-t9" value="«use»" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
@@ -10445,25 +10452,28 @@
           <mxGeometry x="814" y="838" width="40" height="14" as="geometry" />
         </mxCell>
         <mxCell id="r2-15c-page-t11" value="1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="934" y="984" width="14" height="14" as="geometry" />
+          <mxGeometry x="934" y="960" width="14" height="14" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15c-page-t12" value="metrics 1..*" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="1092" y="964" width="84" height="14" as="geometry" />
+        <mxCell id="r2-15c-page-t12" value="layouts 2" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="962" width="70" height="14" as="geometry" />
         </mxCell>
         <mxCell id="r2-15c-page-t13" value="*" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="1295" y="1033" width="14" height="14" as="geometry" />
+          <mxGeometry x="1325" y="1133" width="14" height="14" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15c-page-t14" value="metric 1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="1295" y="1203" width="59" height="14" as="geometry" />
+        <mxCell id="r2-15c-page-t14" value="metrics 3" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
+          <mxGeometry x="1340" y="1175" width="60" height="14" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15c-page-t15" value="*" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="805" y="1093" width="14" height="14" as="geometry" />
+        <mxCell id="r2-15c-page-t19" value="*" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
+          <mxGeometry x="1596" y="1103" width="14" height="14" as="geometry" />
         </mxCell>
-        <mxCell id="r2-15c-page-t16" value="decision 1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="815" y="1203" width="72" height="14" as="geometry" />
+        <mxCell id="r2-15c-page-t18" value="role 1" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
+          <mxGeometry x="1620" y="1190" width="50" height="14" as="geometry" />
         </mxCell>
         <mxCell id="r2-15c-page-t17" value="«use»" style="text;html=1;whiteSpace=nowrap;fontFamily=Arial;fontSize=11;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;spacing=0;" vertex="1" parent="1">
-          <mxGeometry x="1774" y="848" width="40" height="14" as="geometry" />
+          <mxGeometry x="1774" y="890" width="40" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="r2-15c-page-k-LayoutRole" value="&lt;p style=&quot;margin:4px 0 0 0;text-align:center;line-height:16px;&quot;&gt;&lt;i&gt;«enumeration»&lt;/i&gt;&lt;br/&gt;&lt;b&gt;LayoutRole&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;margin:4px 0;&quot;/&gt;&lt;p style=&quot;margin:0 0 0 6px;line-height:16px;&quot;&gt;A&lt;br/&gt;B&lt;/p&gt;" style="html=1;whiteSpace=wrap;overflow=fill;align=left;verticalAlign=top;fontFamily=Arial;fontSize=12;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.2;rounded=0;spacing=0;spacingLeft=0;" vertex="1" parent="1">
+          <mxGeometry x="1520" y="1220" width="180" height="90" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

@@ -136,16 +136,16 @@
 | **Active layout projection** | `GET /api/storefront/active-layout` returns the layout of the active campaign, or `defaultLayout:true`. It is JWT-scoped for staff and is not the public storefront API. |
 | **Rollback** | Store Admin action that restores the previously active campaign, or the default layout. |
 
-## 7. Storefront, cart and analytics (F09–F11, planned)
+## 7. Storefront, cart and analytics (F09–F11)
 
 | Term | Definition |
 |---|---|
 | **Storefront (F09)** | Public shop pages: homepage from the active layout, product detail and bundles. Anonymous read access through a separate public API (`/api/storefront/**`), for ACTIVE Stores only (DEC-20261125-04). |
 | **storeSlug** | The Store `slug` (V27): unique, lowercase letters, digits and hyphens, set and changed only by a System Admin. The F09 public key of a Store. |
 | **availability** | Planned per-product state such as `OUT_OF_STOCK`, recomputed when the response is built. |
-| **Bundle cart (F10)** | Planned per-customer, per-Store cart. A whole-bundle action adds eligible components as independent Product lines and reports skipped items. No stock reservation, no order or payment, and no bundle discount. |
-| **storefront_event** | Planned append-only event table (cart and bundle actions) that feeds F11. |
-| **Retail Performance Dashboard (F11)** | Planned (MVP decided 2026-11-19), for Store Admin and Merchandiser: total weighted utility per snapshot, A/B simulation results (labelled simulated), successful bundle actions by MINED/MANUAL origin and actual Product units from `storefront_event`. No benchmark charts. |
+| **Bundle cart (F10)** | Per-customer, per-Store cart implemented on the stacked Part 2 branch. A whole-bundle action adds eligible components as independent Product lines and reports skipped items. No stock reservation, no order or payment, and no bundle discount. |
+| **storefront_event** | Append-only F10 event table. F11 reads successful bundle-add actions from it. |
+| **Retail Performance Dashboard (F11)** | Backend implemented on the stacked F11 branch, for Store Admin and Merchandiser: total weighted utility per snapshot, A/B simulation results (labelled simulated), successful bundle actions by MINED/MANUAL origin and actual Product units from `storefront_event`. No benchmark charts. |
 
 ## 8. Process and evidence
 

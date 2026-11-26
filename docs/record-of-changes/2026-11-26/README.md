@@ -1,6 +1,6 @@
 # ROC-20261126 — Diagrams brought in line with `dev`; black-box test pack
 
-2026-11-26 / Asia/Ho_Chi_Minh. Records 001–008: branch `Khoi/docs/diagrams-update-20261126` (merged by PR #37, `fb48d55`), one record per phase. Record 009: branch `Khoi/docs/blackbox-test-cases`. Delivered through a pull request into `dev` ([DEC-20261119-01](../../decisions/2026-11-19/DEC-20261119-01-dev-changes-only-through-pr.md)); no PR has been opened.
+2026-11-26 / Asia/Ho_Chi_Minh. Records 001–008: branch `Khoi/docs/diagrams-update-20261126` (merged by PR #37, `fb48d55`), one record per phase. Record 009: branch `Khoi/docs/blackbox-test-cases`. Records 010–014 come from their own branches (PRs #38, #44, #45, #46, #47). Every record is delivered through a pull request into `dev` ([DEC-20261119-01](../../decisions/2026-11-19/DEC-20261119-01-dev-changes-only-through-pr.md)).
 
 ## Record 001 — Diagram baseline
 
@@ -36,4 +36,25 @@
 
 ## Record 009 — Black-box test cases, traceability and test plan
 
-[Record 009](09-blackbox-test-cases.md) adds `docs/testing/blackbox/`: 248 test cases (F01–F09 implemented, F10/F11 PLANNED), traceability to every SRS FR/UC/BR, a test plan and PO questions. Update 2 applies the PO answers of [DEC-20261126-02](../../decisions/2026-11-26/DEC-20261126-02-vnd-display-cart-cap-dashboard-window-merch-screens.md) to the cases, F10/F11 API docs and F09/F10/F11 handoffs. Update 3 applies [DEC-20261126-03](../../decisions/2026-11-26/DEC-20261126-03-blackbox-test-round-scope-and-remaining-answers.md) (all remaining answers, round scope), fixes four documentation conflicts and merges `dev`. Branch `Khoi/docs/blackbox-test-cases`. Documentation only; no case executed; Maven NOT RUN.
+[Record 009](09-blackbox-test-cases.md) adds `docs/testing/blackbox/`: 248 test cases (F01–F11; F10/F11 aligned with the implemented endpoints in Update 4), traceability to every SRS FR/UC/BR, a test plan and PO questions. Update 2 applies the PO answers of [DEC-20261126-02](../../decisions/2026-11-26/DEC-20261126-02-vnd-display-cart-cap-dashboard-window-merch-screens.md) to the cases, F10/F11 API docs and F09/F10/F11 handoffs. Update 3 applies [DEC-20261126-03](../../decisions/2026-11-26/DEC-20261126-03-blackbox-test-round-scope-and-remaining-answers.md) (all remaining answers, round scope), fixes four documentation conflicts and merges `dev`. Branch `Khoi/docs/blackbox-test-cases`. Documentation only; no case executed; Maven NOT RUN. Update 4 merges `dev` after F10/F11 landed: the API docs keep dev's wording plus the PO rules, and the F10/F11 cases drop [PLANNED].
+
+## Record 010 — F10 Part 1 ordinary cart
+
+[Record 010](10-f10-cart-core.md) records the V31 migration, ordinary cart operations and verification.
+
+
+## Record 011 — F10 Part 2 whole-bundle add
+
+[Record 011](11-f10-bundle-add.md) records the F09 bundle key, versioned bundle cart endpoint, bundle events and the single-item rejection boundary tests.
+
+## Record 012 — AD07 / R2-08.07 / R2-07.07 as the offline replay
+
+[Record 012](12-ab-diagrams-offline-replay.md) redraws AD07 and its sequence and class pages as the synchronous offline replay (`OFFLINE_REPLAY_V4`) after [DEC-20261126-03](../../decisions/2026-11-26/DEC-20261126-03-blackbox-test-round-scope-and-remaining-answers.md). Documentation only; Maven NOT RUN.
+
+## Record 013 — TDP-01 test-data preparation script
+
+[Record 013](13-tdp-01-test-store-seed.md) adds `scripts/seed/seed_test_stores.py` (Store B / Store C and four test accounts through the public API, idempotent) for the black-box test round ([DEC-20261126-03](../../decisions/2026-11-26/DEC-20261126-03-blackbox-test-round-scope-and-remaining-answers.md)). Unit tests PASS; run twice against a disposable local stack. No backend change.
+
+## Record 014 — F11 dashboard Backend
+
+[Record 014](14-f11-dashboard-api.md) records the READY snapshot headers, successful bundle-add metrics, existing F08 report reads and verification. Record 012 (A/B diagrams) and Record 013 (TDP-01 test Store seed) belong to separate branches.

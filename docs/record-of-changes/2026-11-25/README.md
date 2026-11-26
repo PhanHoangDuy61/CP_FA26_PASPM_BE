@@ -1,4 +1,4 @@
-# ROC-20261125 — F07 Layout B editor, Maven Wrapper, demo seed / SKU mapping, F09 Storefront merge, priority coverage, F10/F11 contracts and SPMF (GPL v3) CI/CD
+# ROC-20261125 — F07 Layout B editor, Maven Wrapper, demo seed / SKU mapping, F09 Storefront merge, priority coverage, F10/F11 contracts, source-of-truth rule and SPMF (GPL v3) CI/CD
 
 2026-11-25 / Asia/Ho_Chi_Minh. Records of this day are delivered through pull requests into `dev` ([DEC-20261119-01](../../decisions/2026-11-19/DEC-20261119-01-dev-changes-only-through-pr.md)).
 
@@ -20,6 +20,10 @@ Release status: **UNRELEASED**, feature branch only. No push.
 ## Record 002 — Executable Maven Wrapper
 
 [Record 002](02-mvnw-executable.md) records the Git mode fix, setup guide updates and local wrapper verification.
+
+## Record 003 — Source-of-truth rule: the latest PO decision wins
+
+[Record 003](03-source-of-truth-rule.md) replaces the "docs làm chuẩn" precedence in `AGENTS.md`, `CLAUDE.md`, both `paspm-context` skill copies and `BRD_VISION.md` §9.3 with [DEC-20261125-02](../../decisions/2026-11-25/DEC-20261125-02-source-of-truth-latest-po-decision.md): docs record decisions as of their date, the latest PO decision wins, and code/docs differences are reported to the PO and then recorded as a DEC. Docs only; Maven NOT RUN.
 
 ## Record 004 — Demo seed, FoodMart mapping and JpaPilotMigrationMySqlTest
 

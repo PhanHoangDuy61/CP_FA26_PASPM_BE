@@ -419,6 +419,17 @@ class LayoutCampaignIntegrationTest {
                 WHERE report_id=? ORDER BY transaction_id
                 """, (rs, row) -> rs.getInt(1), report.path("reportId").asLong()));
         assertFalse(evaluationIds.contains(trainingId));
+        for (String reader : List.of(adminToken, merchantToken)) {
+            get("/api/campaigns", reader).andExpect(status().isOk())
+                    .andExpect(jsonPath("$.items[0].campaignId").value(campaignId));
+            get("/api/campaigns/" + campaignId + "/reports", reader).andExpect(status().isOk())
+                    .andExpect(jsonPath("$.items[0].reportId").value(report.path("reportId").asLong()));
+            get("/api/campaign-reports/" + report.path("reportId").asLong(), reader).andExpect(status().isOk())
+                    .andExpect(jsonPath("$.simulated").value(true))
+                    .andExpect(jsonPath("$.layouts[1].priorityCoverageDenominator").value(2));
+        }
+        post("/api/campaigns/" + campaignId + "/simulations", adminToken,
+                simulationRequest(1, 1, 2, today.minusDays(1), today)).andExpect(status().isForbidden());
         get("/api/campaign-reports/" + report.path("reportId").asLong(), foreignToken)
                 .andExpect(status().isNotFound());
         get("/api/campaigns/" + campaignId + "/reports", foreignToken)

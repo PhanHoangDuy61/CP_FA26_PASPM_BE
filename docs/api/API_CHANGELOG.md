@@ -1,13 +1,30 @@
 # API Changelog
 
-## 2026-11-26 — PO answers for F10/F11 (PLANNED), VND display and doc fixes (DEC-20261126-02, DEC-20261126-03)
+## 2026-11-26 — PO answers DEC-20261126-02/-03 and documentation fixes (black-box test pack)
 
-- Documentation only; no route, schema or OpenAPI change (F10/F11 are not implemented).
-- [F10](F10_BUNDLE_CART_API.md): a single-item `POST /items` or `PATCH /items/{itemId}` that would exceed 99 units per Product is refused as a whole with `409 CART_QUANTITY_LIMIT` (no clamping). Whole-bundle add still adds as much as fits per component.
-- [F10](F10_BUNDLE_CART_API.md): a single-item add or increase above the sellable stock is also refused as a whole with `409 INSUFFICIENT_SELLABLE_STOCK` ([DEC-20261126-03](../decisions/2026-11-26/DEC-20261126-03-blackbox-test-round-scope-and-remaining-answers.md)).
-- [F07/F08](F07_F08_LAYOUT_CAMPAIGN_API.md): documents that editing Layout A returns 409 `Layout A is immutable and read-only` (existing behaviour). [F05](F05_MINING_API.md): historical sections labelled Superseded.
-- [F11](F11_DASHBOARD_API.md): a bundle-additions window of exactly 90 days (both ends included) is accepted; 91 or more returns 400.
-- Money keeps 2 decimals in responses; UIs display VND as whole đồng rounded HALF_UP. See [DEC-20261126-02](../decisions/2026-11-26/DEC-20261126-02-vnd-display-cart-cap-dashboard-window-merch-screens.md) and [ROC-20261126-009](../record-of-changes/2026-11-26/09-blackbox-test-cases.md).
+- Documentation only. No route, schema or behaviour change; OpenAPI stays 118 paths / 147 operations.
+- [F10](F10_BUNDLE_CART_API.md) and [F11](F11_DASHBOARD_API.md) cite the PO decisions their implemented rules follow: a single-item add or PATCH increase above 99 or above the sellable stock is refused as a whole (`409 CART_QUANTITY_LIMIT` / `409 INSUFFICIENT_SELLABLE_STOCK`); a bundle request carries only `bundleKey` (`bundleQuantity` returns 400); the F11 window accepts exactly 90 inclusive days and rejects 91 with 400.
+- Money keeps 2 decimals in responses; every UI displays VND as whole đồng rounded HALF_UP ([DEC-20261126-02](../decisions/2026-11-26/DEC-20261126-02-vnd-display-cart-cap-dashboard-window-merch-screens.md)). The [F09](../frontend_handoff/F09_HANDOFF.md), [F10](../frontend_handoff/F10_HANDOFF.md) and [F11](../frontend_handoff/F11_HANDOFF.md) handoffs state it.
+- [F07/F08](F07_F08_LAYOUT_CAMPAIGN_API.md): editing Layout A returns 409 `Layout A is immutable and read-only` (existing behaviour). [F05](F05_MINING_API.md): historical sections that call `POST /api/mining/requests` forbidden are labelled Superseded ([DEC-20261126-03](../decisions/2026-11-26/DEC-20261126-03-blackbox-test-round-scope-and-remaining-answers.md)).
+- Record: [ROC-20261126-009](../record-of-changes/2026-11-26/09-blackbox-test-cases.md).
+
+## 2026-11-26 — F11 retail performance dashboard
+
+- Added `GET /api/dashboard/snapshot-utilities` and `GET /api/dashboard/bundle-additions` for STORE_ADMIN and MERCHANDISER. Both use the authenticated Store. Saved simulations use the existing F08 reads with their existing permissions.
+- Snapshot totals come from READY headers. Bundle counts use successful F10 events, group by Store-local day with zero-filled days, and allow a maximum of 90 inclusive days.
+- OpenAPI grows from 116 paths / 145 operations to 118 paths / 147 operations. No migration. See the [F11 API](F11_DASHBOARD_API.md).
+
+## 2026-11-26 — F10 Part 2 whole-bundle add
+
+- Added `POST /api/storefront/{storeSlug}/cart/bundles` for END_CUSTOMER. It uses the cart version and adds one bundle per request. The result reports the actual increment per Product.
+- F09 home adds the opaque `HomePlacement.bundleKey` for BUNDLE blocks on active selected Layout B. Blocks remain visible when components are out of stock. Other F09 routes are unchanged.
+- OpenAPI grows from 115 paths / 144 operations to 116 paths / 145 operations. The new operation ID is `addStorefrontCartBundle`. Uses existing V31 tables. F11 remains PLANNED.
+
+## 2026-11-26 — F10 Part 1 ordinary cart
+
+- Added five END_CUSTOMER operations under `/api/storefront/{storeSlug}/cart`. Every mutation uses a quoted `If-Match` version and records one item event for each actual change.
+- V31 creates `shopping_cart`, `shopping_cart_item` and `storefront_event`. The branch export grows from 112 paths / 139 operations to 115 paths / 144 operations.
+- Whole-bundle add and F11 remain planned. See the [F10 contract](F10_BUNDLE_CART_API.md).
 
 ## 2026-11-25 — Stable operation IDs and F07 placement schema
 
