@@ -121,7 +121,7 @@ F05 rejects a snapshot whose converted dataset does not fit SPMF int32: `Lossles
 
 ## TDP-01: Store B and Store C for the black-box test round
 
-`seed_test_stores.py` (run it with `seed_test_stores.sh`) is the test-data preparation script TDP-01 of [TEST_PLAN §6](../../docs/testing/blackbox/TEST_PLAN.md) (DEC-20261126-03, Q-16): testers do not create Stores by hand, so running it is an entry criterion of the round. Public REST API only (no SQL), signed in as the System Admin; the OTP of each invitation is read from Mailpit, as in the demo seed.
+`seed_test_stores.py` (run it with `seed_test_stores.sh`) is the test-data preparation script TDP-01 of TEST_PLAN §6 (`docs/testing/blackbox/TEST_PLAN.md`, on branch `Khoi/docs/blackbox-test-cases`) (DEC-20261126-03, Q-16): testers do not create Stores by hand, so running it is an entry criterion of the round. Public REST API only (no SQL), signed in as the System Admin; the OTP of each invitation is read from Mailpit, as in the demo seed.
 
 | Created | Through |
 |---|---|
