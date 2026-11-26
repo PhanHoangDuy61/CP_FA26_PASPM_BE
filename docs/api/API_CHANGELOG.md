@@ -1,5 +1,11 @@
 # API Changelog
 
+## 2026-11-26 — F11 retail performance dashboard
+
+- Added `GET /api/dashboard/snapshot-utilities` and `GET /api/dashboard/bundle-additions` for STORE_ADMIN and MERCHANDISER. Both use the authenticated Store. Saved simulations use the existing F08 reads with their existing permissions.
+- Snapshot totals come from READY headers. Bundle counts use successful F10 events, group by Store-local day with zero-filled days, and allow a maximum of 90 inclusive days.
+- OpenAPI grows from 116 paths / 145 operations to 118 paths / 147 operations. No migration. See the [F11 API](F11_DASHBOARD_API.md).
+
 ## 2026-11-26 — F10 Part 2 whole-bundle add
 
 - Added `POST /api/storefront/{storeSlug}/cart/bundles` for END_CUSTOMER. It uses the cart version and adds one bundle per request. The result reports the actual increment per Product.

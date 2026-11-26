@@ -1,6 +1,6 @@
 # F10 — Bundle Cart API
 
-**Part 2: IMPLEMENTED on `Khoi/feat/f10-bundle-add`, stacked on Part 1.** This branch includes the ordinary cart, whole-bundle add, the F09 key and storefront events. F11 dashboards remain **PLANNED**. Decision: [DEC-20261125-06](../decisions/2026-11-25/DEC-20261125-06-f10-f11-mvp-contract.md). The F09 baseline is [the storefront contract on dev](F09_STOREFRONT_API.md) and its [StorefrontService](../../src/main/java/vn/edu/fpt/paspm/storefront/StorefrontService.java), merged in PR #33. Dev keeps V29 and applies F09 V30. V31 adds `shopping_cart`, `shopping_cart_item` and `storefront_event`. Migrations after V31 start at V32.
+**Part 2: IMPLEMENTED on `Khoi/feat/f10-bundle-add`, stacked on Part 1.** This branch includes the ordinary cart, whole-bundle add, the F09 key and storefront events. The separate [F11 dashboard contract](F11_DASHBOARD_API.md) describes the bundle-event metrics. Decision: [DEC-20261125-06](../decisions/2026-11-25/DEC-20261125-06-f10-f11-mvp-contract.md). The F09 baseline is [the storefront contract on dev](F09_STOREFRONT_API.md) and its [StorefrontService](../../src/main/java/vn/edu/fpt/paspm/storefront/StorefrontService.java), merged in PR #33. Dev keeps V29 and applies F09 V30. V31 adds `shopping_cart`, `shopping_cart_item` and `storefront_event`. Migrations after V31 start at V32.
 
 ## Access and Store isolation
 

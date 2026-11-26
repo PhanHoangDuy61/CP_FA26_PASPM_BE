@@ -232,3 +232,12 @@ Regenerated OpenAPI verified: 103 paths / 125 operations (124 baseline + this ro
 | POST `/bundles` | 200 own cart; 404 foreign or invalid key; 409 stale key or all components skipped | 403 | 401 |
 
 All mutations require `If-Match` and reject a stale version for an in-scope resource with 409. [F10 contract](F10_BUNDLE_CART_API.md).
+
+## 2026-11-26 — F11 dashboard reads
+
+| Method / path | STORE_ADMIN / MERCHANDISER | SYSTEM_ADMIN / END_CUSTOMER | Anonymous |
+|---|---|---|---|
+| GET `/api/dashboard/snapshot-utilities` | 200 same-Store READY headers; 404 foreign, absent or unavailable selected snapshot | 403 | 401 |
+| GET `/api/dashboard/bundle-additions` | 200 same-Store successful bundle-event aggregates; 404 foreign or absent campaign | 403 | 401 |
+
+An inactive staff Store returns 403 `STORE_INACTIVE`. F11 reuses the existing own-Store F08 campaign and simulation-report GET operations. [F11 contract](F11_DASHBOARD_API.md).
