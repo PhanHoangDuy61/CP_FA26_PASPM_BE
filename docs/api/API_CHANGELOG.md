@@ -1,5 +1,13 @@
 # API Changelog
 
+## 2026-11-26 — PO answers DEC-20261126-02/-03 and documentation fixes (black-box test pack)
+
+- Documentation only. No route, schema or behaviour change; OpenAPI stays 118 paths / 147 operations.
+- [F10](F10_BUNDLE_CART_API.md) and [F11](F11_DASHBOARD_API.md) cite the PO decisions their implemented rules follow: a single-item add or PATCH increase above 99 or above the sellable stock is refused as a whole (`409 CART_QUANTITY_LIMIT` / `409 INSUFFICIENT_SELLABLE_STOCK`); a bundle request carries only `bundleKey` (`bundleQuantity` returns 400); the F11 window accepts exactly 90 inclusive days and rejects 91 with 400.
+- Money keeps 2 decimals in responses; every UI displays VND as whole đồng rounded HALF_UP ([DEC-20261126-02](../decisions/2026-11-26/DEC-20261126-02-vnd-display-cart-cap-dashboard-window-merch-screens.md)). The [F09](../frontend_handoff/F09_HANDOFF.md), [F10](../frontend_handoff/F10_HANDOFF.md) and [F11](../frontend_handoff/F11_HANDOFF.md) handoffs state it.
+- [F07/F08](F07_F08_LAYOUT_CAMPAIGN_API.md): editing Layout A returns 409 `Layout A is immutable and read-only` (existing behaviour). [F05](F05_MINING_API.md): historical sections that call `POST /api/mining/requests` forbidden are labelled Superseded ([DEC-20261126-03](../decisions/2026-11-26/DEC-20261126-03-blackbox-test-round-scope-and-remaining-answers.md)).
+- Record: [ROC-20261126-009](../record-of-changes/2026-11-26/09-blackbox-test-cases.md).
+
 ## 2026-11-26 — F11 retail performance dashboard
 
 - Added `GET /api/dashboard/snapshot-utilities` and `GET /api/dashboard/bundle-additions` for STORE_ADMIN and MERCHANDISER. Both use the authenticated Store. Saved simulations use the existing F08 reads with their existing permissions.

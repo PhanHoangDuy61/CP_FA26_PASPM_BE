@@ -268,7 +268,7 @@
         <mxCell id="FR08-function-3" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=17;fontStyle=0;align=left;verticalAlign=middle;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0;text=;fillColor=none;strokeColor=none;" value="FR08.03  Simulate tests from historical data" vertex="1">
           <mxGeometry height="32" width="492" x="662" y="1096" as="geometry" />
         </mxCell>
-        <mxCell id="FR08-function-4" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=17;fontStyle=0;align=left;verticalAlign=middle;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0;text=;fillColor=none;strokeColor=none;" value="FR08.04  Compare CTR / conversion rate" vertex="1">
+        <mxCell id="FR08-function-4" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=17;fontStyle=0;align=left;verticalAlign=middle;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0;text=;fillColor=none;strokeColor=none;" value="FR08.04  Compare simulated A/B metrics" vertex="1">
           <mxGeometry height="32" width="492" x="662" y="1130" as="geometry" />
         </mxCell>
         <mxCell id="FR08-function-5" parent="1" style="html=0;whiteSpace=wrap;fontFamily=Arial;fontColor=#000000;shadow=0;rounded=0;fontSize=17;fontStyle=0;align=left;verticalAlign=middle;spacing=0;spacingLeft=0;spacingRight=0;spacingTop=0;spacingBottom=0;text=;fillColor=none;strokeColor=none;" value="FR08.05  Activate approved layout campaign" vertex="1">

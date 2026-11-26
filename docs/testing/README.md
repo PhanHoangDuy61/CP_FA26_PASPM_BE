@@ -19,6 +19,7 @@
 | F06 | [Verification](reports/F06_VERIFICATION.md), [captured evidence](evidence/feature_verification) |
 | JPA | [Pilot real-data report](JPA_PILOT_REAL_DATA_VERIFICATION.md), [Swagger](JPA_PILOT_SWAGGER_VERIFICATION.md), [V5→V11 verification record](JPA_V5_TO_V10_MIGRATION_VERIFICATION.md) |
 | Recovery | [Populated matrix plan](V5_V10_POPULATED_MATRIX_RECOVERY_TEST_PLAN.md), [evidence](evidence/historical_matrix_recovery) |
+| Black-box (manual) | [Test plan](blackbox/TEST_PLAN.md), [test cases](blackbox/TEST_CASES.md) ([CSV](blackbox/TEST_CASES.csv)), [traceability](blackbox/TRACEABILITY.md), [PO questions](blackbox/PO_QUESTIONS.md) — designs only, NOT RUN |
 | CI | [Remote verification](BACKEND_CI_REMOTE_VERIFICATION.md), [SPMF readiness](SPMF_CI_READINESS.md), [setup](../setup/BACKEND_CI.md) |
 
 File names V5_TO_V10/v4 are retained identifiers, not a promise that their contents omit later V11 changes. Read the report body and source authority.

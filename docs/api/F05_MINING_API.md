@@ -102,6 +102,8 @@ Scheduler configuration was not changed: keep schedule-dispatch-enabled unset/fa
 
 ## CURRENT BRANCH CONTRACT — Frontend handoff (2026-11-01)
 
+> **Superseded (labelled 2026-11-26, DEC-20261126-03).** This section is historical. `POST /api/mining/requests` is **allowed for the Merchandiser** (own Store, body `{requestKey, snapshotId}`) since 2026-11-15, and mining is EFIM-only since 2026-11-16. Use the current contract at the top of this file.
+
 This block supersedes any older text below that says a Merchandiser may submit mining or read benchmarks. Verified against `SecurityConfig`, the `@PreAuthorize` annotations and the merged-tree test run recorded in the [implementation report](../reports/PASPM_F03_F05_Implementation_Report.md); `openapi.json` is the runtime export of the merged backend (the two forbidden operations are marked `deprecated`).
 
 | Method | Route | Allowed role | Status |
@@ -147,6 +149,8 @@ The Store of a Store user comes from the authenticated database user (`CatalogAc
 Base URL depends on the environment (local default `http://localhost:8080`). OpenAPI: `GET /v3/api-docs`; Swagger UI `/swagger-ui/index.html`. The committed `openapi.json` is a runtime export; select your own deployment base URL.
 
 ## Endpoint inventory
+
+> **Superseded (labelled 2026-11-26, DEC-20261126-03).** This section is historical. `POST /api/mining/requests` is **allowed for the Merchandiser** (own Store, body `{requestKey, snapshotId}`) since 2026-11-15, and mining is EFIM-only since 2026-11-16. Use the current contract at the top of this file.
 
 | Method | Route | Role | Response DTO | Purpose / side effect |
 |---|---|---|---|---|
@@ -229,6 +233,8 @@ Response `RequestView` (202). The minUtil conversion described below is applied 
 
 ### Retired body (legacy, route forbidden)
 
+> **Superseded (labelled 2026-11-26, DEC-20261126-03).** This section is historical. `POST /api/mining/requests` is **allowed for the Merchandiser** (own Store, body `{requestKey, snapshotId}`) since 2026-11-15, and mining is EFIM-only since 2026-11-16. Use the current contract at the top of this file.
+
 The former `POST /api/mining/requests` accepted `requestKey`, `snapshotId`, `algorithms`, `minUtilMode` and `minUtilValue` from a Merchandiser. That route now answers 403 for every role. Do not build a form for it.
 
 Snapshot validation: complete frozen metadata/analysis date, READY status, Store ownership, known PRODUCT_ID_V1 mapping, scale6/HALF_UP, valid 64-hex source/matrix hashes, nonempty matrix, positive transaction/Product IDs and quantities, unique item per transaction, exact nonnegative weighted utilities, matching transaction/dataset totals, supported precision and bounded sizes. Product/transaction ownership is checked without reading their prices/scores. Old/new scoringVersion values are preserved metadata; neither expiry nor Weight is recalculated.
@@ -261,6 +267,8 @@ Run startedAt is null before claim. completedAt is null until terminal. Runtime,
 ### Field/type inventory from runtime OpenAPI
 
 ### CreateRequest (legacy DTO of the forbidden route; kept for reference)
+
+> **Superseded (labelled 2026-11-26, DEC-20261126-03).** This section is historical. `POST /api/mining/requests` is **allowed for the Merchandiser** (own Store, body `{requestKey, snapshotId}`) since 2026-11-15, and mining is EFIM-only since 2026-11-16. Use the current contract at the top of this file.
 
 | Field | Type | Notes |
 |---|---|---|
