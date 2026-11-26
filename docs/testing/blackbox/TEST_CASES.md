@@ -1,6 +1,6 @@
 # PASPM black-box test cases
 
-Generated from the sources listed in [TEST_PLAN.md](TEST_PLAN.md) §2. Same content as [TEST_CASES.csv](TEST_CASES.csv) (one row per case). Every case is **NOT RUN**; results are recorded as described in TEST_PLAN.md §8. Cases titled `[PLANNED]` cover F10/F11, which are not implemented yet, and run once those features are merged. Cases titled `[OUT OF ROUND]` are kept with their IDs but are not run in the current round (scheduler, DEC-20261126-03).
+Generated from the sources listed in [TEST_PLAN.md](TEST_PLAN.md) §2. Same content as [TEST_CASES.csv](TEST_CASES.csv) (one row per case). Every case is **NOT RUN**; results are recorded as described in TEST_PLAN.md §8. F10/F11 cases follow the implemented API (PR #38, #44, #45); their storefront cart and dashboard UI steps run once the FE calls the real API. Cases titled `[OUT OF ROUND]` are kept with their IDs but are not run in the current round (scheduler, DEC-20261126-03).
 
 Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`ACC-…`), environments (`ENV-1`), setups (`SETUP-B`) and data preparations (`DP-…`) are defined in TEST_PLAN.md §4–§6. Steps prefixed `[API]` have no UI path (no screen exists, the FE screen is still mock data, or the step forces a call the UI never makes, such as a forbidden role or an extra field); run them with Swagger (`/swagger`) or curl using the role's bearer token.
 
@@ -17,8 +17,8 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | [F07 Layout simulator](#f07) | 15 | 11 | 3 | 1 | 3 | 6 | 3 | 1 | 2 | 0 | 0 |
 | [F08 Campaigns and simulated A/B](#f08) | 19 | 13 | 4 | 2 | 1 | 6 | 3 | 1 | 7 | 0 | 1 |
 | [F09 Public storefront](#f09) | 13 | 8 | 3 | 2 | 3 | 2 | 3 | 3 | 1 | 1 | 0 |
-| [F10 Bundle cart (PLANNED)](#f10) | 16 | 10 | 6 | 0 | 4 | 4 | 4 | 2 | 1 | 1 | 0 |
-| [F11 Dashboard (PLANNED)](#f11) | 9 | 4 | 4 | 1 | 4 | 0 | 2 | 1 | 0 | 0 | 2 |
+| [F10 Bundle cart](#f10) | 16 | 10 | 6 | 0 | 4 | 4 | 4 | 2 | 1 | 1 | 0 |
+| [F11 Dashboard](#f11) | 9 | 4 | 4 | 1 | 4 | 0 | 2 | 1 | 0 | 0 | 2 |
 | **Total** | **248** | **143** | **82** | **23** | **67** | **57** | **67** | **29** | **18** | **6** | **4** |
 
 ## F01
@@ -3654,96 +3654,96 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 ## F10
 
-**Bundle cart (PLANNED)** — 16 cases.
+**Bundle cart** — 16 cases.
 
 | ID | Title | Priority | Type |
 |---|---|---|---|
-| [TC-F10-001](#tc-f10-001) | [PLANNED] Cart requires an End Customer | High | security |
-| [TC-F10-002](#tc-f10-002) | [PLANNED] Add an item with If-Match | High | functional |
-| [TC-F10-003](#tc-f10-003) | [PLANNED] If-Match header rules | High | negative |
-| [TC-F10-004](#tc-f10-004) | [PLANNED] 99-unit cap per product: single-item writes are all-or-nothing | High | boundary |
-| [TC-F10-005](#tc-f10-005) | [PLANNED] Quantity validation | Medium | negative |
-| [TC-F10-006](#tc-f10-006) | [PLANNED] Stock is checked on add and increase only | High | boundary |
-| [TC-F10-007](#tc-f10-007) | [PLANNED] Whole bundle add, all components | High | functional |
-| [TC-F10-008](#tc-f10-008) | [PLANNED] Partial bundle add | High | boundary |
-| [TC-F10-009](#tc-f10-009) | [PLANNED] Bundle with nothing addable is rejected | High | negative |
-| [TC-F10-010](#tc-f10-010) | [PLANNED] Bundle request rules and stale keys | High | negative |
-| [TC-F10-011](#tc-f10-011) | [PLANNED] Origin MANUAL when the block matches zero or several recommendations | Medium | decision table |
-| [TC-F10-012](#tc-f10-012) | [PLANNED] Edit, remove and clear; one event per change | Medium | functional |
-| [TC-F10-013](#tc-f10-013) | [PLANNED] Cart isolation | High | security |
-| [TC-F10-014](#tc-f10-014) | [PLANNED] Hidden product line stays editable | Medium | state transition |
-| [TC-F10-015](#tc-f10-015) | [PLANNED] No reservation, discount or checkout | Medium | functional |
-| [TC-F10-016](#tc-f10-016) | [PLANNED] Cart money display rounds the server values HALF_UP | Medium | boundary |
+| [TC-F10-001](#tc-f10-001) | Cart requires an End Customer | High | security |
+| [TC-F10-002](#tc-f10-002) | Add an item with If-Match | High | functional |
+| [TC-F10-003](#tc-f10-003) | If-Match header rules | High | negative |
+| [TC-F10-004](#tc-f10-004) | 99-unit cap per product: single-item writes are all-or-nothing | High | boundary |
+| [TC-F10-005](#tc-f10-005) | Quantity validation | Medium | negative |
+| [TC-F10-006](#tc-f10-006) | Stock is checked on add and increase only | High | boundary |
+| [TC-F10-007](#tc-f10-007) | Whole bundle add, all components | High | functional |
+| [TC-F10-008](#tc-f10-008) | Partial bundle add | High | boundary |
+| [TC-F10-009](#tc-f10-009) | Bundle with nothing addable is rejected | High | negative |
+| [TC-F10-010](#tc-f10-010) | Bundle request rules and stale keys | High | negative |
+| [TC-F10-011](#tc-f10-011) | Origin MANUAL when the block matches zero or several recommendations | Medium | decision table |
+| [TC-F10-012](#tc-f10-012) | Edit, remove and clear; one event per change | Medium | functional |
+| [TC-F10-013](#tc-f10-013) | Cart isolation | High | security |
+| [TC-F10-014](#tc-f10-014) | Hidden product line stays editable | Medium | state transition |
+| [TC-F10-015](#tc-f10-015) | No reservation, discount or checkout | Medium | functional |
+| [TC-F10-016](#tc-f10-016) | Cart money display rounds the server values HALF_UP | Medium | boundary |
 
 ### TC-F10-001
 
-**[PLANNED] Cart requires an End Customer**
+**Cart requires an End Customer**
 
 | Field | Value |
 |---|---|
 | Trace | FR-10.1; UC29 |
 | Role | Guest (anonymous), Store Admin, End Customer |
-| Preconditions | Feature PLANNED (DEC-20261125-06); run when F10 is merged. ENV-1 (local Docker stack, demo seed loaded) |
+| Preconditions | F10 implemented on dev (PR #38, #44); cart base `/api/storefront/{storeSlug}/cart`. ENV-1 (local Docker stack, demo seed loaded) |
 | Test data | GET /api/storefront/foodmart-benchmark/cart |
 | Steps | 1. [API] GET without a token<br>2. [API] GET as Store Admin<br>3. [API] GET as End Customer with no cart yet |
-| Expected result | 401; 403; 200 virtual cart: cartId null, version 0, items [], subtotal 0, updatedAt null. |
+| Expected result | 401; 403; 200 virtual CartView: cartId null, version 0, currency VND, updatedAt null, items [], subtotal 0. |
 | Priority / type | High / security |
 | Status | NOT RUN |
 
 ### TC-F10-002
 
-**[PLANNED] Add an item with If-Match**
+**Add an item with If-Match**
 
 | Field | Value |
 |---|---|
 | Trace | FR-10.1 |
 | Role | End Customer |
-| Preconditions | Feature PLANNED (DEC-20261125-06); run when F10 is merged. ENV-1 (local Docker stack, demo seed loaded) |
+| Preconditions | F10 implemented on dev (PR #38, #44); cart base `/api/storefront/{storeSlug}/cart`. ENV-1 (local Docker stack, demo seed loaded) |
 | Test data | product P1 (32000 đ), If-Match "0", {"productId":P1,"quantity":2} |
-| Steps | 1. [API] POST …/cart/items |
-| Expected result | 200; line P1 ×2; unitPrice = current selling price; lineTotal 64000.00 and subtotal computed by the server; version 1; currency VND. The cart UI shows `64.000 ₫`. |
+| Steps | 1. [API] POST /api/storefront/foodmart-benchmark/cart/items with header If-Match: "0" |
+| Expected result | 200 CartView; line P1 ×2; unitPrice = current selling price; lineTotal 64000.00 and subtotal computed by the server; version 1; currency VND. (UI, later round: the cart shows `64.000 ₫`.) |
 | Priority / type | High / functional |
 | Status | NOT RUN |
 
 ### TC-F10-003
 
-**[PLANNED] If-Match header rules**
+**If-Match header rules**
 
 | Field | Value |
 |---|---|
 | Trace | FR-10.1 |
 | Role | End Customer |
-| Preconditions | Feature PLANNED (DEC-20261125-06); run when F10 is merged. Cart at version 3 |
+| Preconditions | F10 implemented on dev (PR #38, #44); cart base `/api/storefront/{storeSlug}/cart`. Cart at version 3 |
 | Test data | no header; W/"3"; *; "abc"; "2" (stale) |
 | Steps | 1. [API] POST …/cart/items with each header |
-| Expected result | Missing, weak, wildcard and malformed: 400. Stale: 409 CART_VERSION_CONFLICT; cart unchanged. |
+| Expected result | Missing, weak, wildcard and malformed: 400. Stale: 409 CART_VERSION_CONFLICT; cart and version unchanged. The cart uses only If-Match; there is no Idempotency-Key header. |
 | Priority / type | High / negative |
 | Status | NOT RUN |
 
 ### TC-F10-004
 
-**[PLANNED] 99-unit cap per product: single-item writes are all-or-nothing**
+**99-unit cap per product: single-item writes are all-or-nothing**
 
 | Field | Value |
 |---|---|
 | Trace | FR-10.1; DEC-20261125-06; DEC-20261126-02 |
 | Role | End Customer |
-| Preconditions | Feature PLANNED (DEC-20261125-06); run when F10 is merged. P1 has ≥ 200 sellable units |
+| Preconditions | F10 implemented on dev (PR #38, #44); cart base `/api/storefront/{storeSlug}/cart`. P1 has ≥ 200 sellable units |
 | Test data | add 99; add 100; line 98 + add 1; line 98 + add 2; PATCH 99; PATCH 100 |
 | Steps | 1. [API] Run each case on a fresh cart and GET the cart after each refusal |
-| Expected result | Add 99, 98+1 and PATCH 99: 200, line = 99. Add 100, 98+2 and PATCH 100: 409 CART_QUANTITY_LIMIT for the whole request; nothing is clamped (the line stays 0 or 98), the version does not change and no event is recorded. |
+| Expected result | Add 99, 98+1 and PATCH 99: 200, line = 99. Add 100, 98+2 and PATCH 100: 409 CART_QUANTITY_LIMIT for the whole request; nothing is clamped (GET shows the line still at 0 or 98) and the version does not change. |
 | Priority / type | High / boundary |
 | Status | NOT RUN |
 
 ### TC-F10-005
 
-**[PLANNED] Quantity validation**
+**Quantity validation**
 
 | Field | Value |
 |---|---|
 | Trace | FR-10.1 |
 | Role | End Customer |
-| Preconditions | Feature PLANNED (DEC-20261125-06); run when F10 is merged.  |
+| Preconditions | F10 implemented on dev (PR #38, #44); cart base `/api/storefront/{storeSlug}/cart`.  |
 | Test data | quantity 0; -1; 1.5; "2"; PATCH 0 |
 | Steps | 1. [API] POST and PATCH with each value |
 | Expected result | 400 for each (quantity zero must use DELETE). |
@@ -3752,118 +3752,118 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 ### TC-F10-006
 
-**[PLANNED] Stock is checked on add and increase only**
+**Stock is checked on add and increase only**
 
 | Field | Value |
 |---|---|
 | Trace | FR-10.1; FR-10.3; DEC-20261126-03 |
 | Role | End Customer, Store Admin |
-| Preconditions | Feature PLANNED (DEC-20261125-06); run when F10 is merged. P2 has 3 sellable units; empty cart |
+| Preconditions | F10 implemented on dev (PR #38, #44); cart base `/api/storefront/{storeSlug}/cart`. P2 has 3 sellable units; empty cart |
 | Test data | add 4; add 3; add 1 more; then Store Admin sets stock to 1; PATCH 3 → 2 |
 | Steps | 1. [API] Add 4 P2<br>2. [API] Add 3 P2<br>3. [API] Add 1 more P2<br>4. Store Admin lowers stock<br>5. [API] Reduce the line to 2 |
-| Expected result | Add 4: 409 INSUFFICIENT_SELLABLE_STOCK for the whole request — nothing added (not 3), version unchanged, no event. Add 3: 200, line 3. Add 1 more: 409, line stays 3. Reduce: 200 (reductions are always allowed). |
+| Expected result | Add 4: 409 INSUFFICIENT_SELLABLE_STOCK for the whole request — nothing added (not 3), version unchanged. Add 3: 200, line 3. Add 1 more: 409 INSUFFICIENT_SELLABLE_STOCK, line stays 3. Reduce: 200 (reductions are always allowed). |
 | Priority / type | High / boundary |
 | Status | NOT RUN |
 
 ### TC-F10-007
 
-**[PLANNED] Whole bundle add, all components**
+**Whole bundle add, all components**
 
 | Field | Value |
 |---|---|
 | Trace | FR-10.2; FR-10.4; UC29 |
 | Role | End Customer |
-| Preconditions | Feature PLANNED (DEC-20261125-06); run when F10 is merged. C1 ACTIVE; BUNDLE block (P1, P2, P3) matching exactly one APPROVED, ready BUNDLE recommendation |
+| Preconditions | F10 implemented on dev (PR #38, #44); cart base `/api/storefront/{storeSlug}/cart`. C1 ACTIVE; BUNDLE block (P1, P2, P3) matching exactly one APPROVED, ready BUNDLE recommendation |
 | Test data | bundleKey from F09 home |
-| Steps | 1. [API] POST …/cart/bundles {bundleKey} |
-| Expected result | 200 BundleAddResult; components [{P1,1,1},{P2,1,1},{P3,1,1}]; lines merged; version +1; one BUNDLE_ADDED event with origin MINED and 3 units. |
+| Steps | 1. [API] POST …/cart/bundles with body {"bundleKey":…} and If-Match<br>2. [API] GET /api/dashboard/bundle-additions as Store Admin A |
+| Expected result | 200 BundleAddResult {cart, components}: components [{productId P1, requested 1, added 1}, {P2,1,1}, {P3,1,1}]; lines merged (addedFromBundle true); version +1 once. F11 shows one more MINED action and 3 more units today. |
 | Priority / type | High / functional |
 | Status | NOT RUN |
 
 ### TC-F10-008
 
-**[PLANNED] Partial bundle add**
+**Partial bundle add**
 
 | Field | Value |
 |---|---|
 | Trace | FR-10.2 |
 | Role | End Customer |
-| Preconditions | Feature PLANNED (DEC-20261125-06); run when F10 is merged. same block; P2 out of stock; P1 already at 99 in the cart |
+| Preconditions | F10 implemented on dev (PR #38, #44); cart base `/api/storefront/{storeSlug}/cart`. same block; P2 out of stock; P1 already at 99 in the cart |
 | Test data | bundleKey |
-| Steps | 1. [API] Add the bundle |
-| Expected result | 200; P1 added 0 (no room), P2 added 0 (no stock), P3 added 1; event records 1 unit. |
+| Steps | 1. [API] Add the bundle<br>2. [API] GET /api/dashboard/bundle-additions |
+| Expected result | 200; components P1 added 0 (no room), P2 added 0 (no stock), P3 added 1; F11 counts 1 action and 1 unit. |
 | Priority / type | High / boundary |
 | Status | NOT RUN |
 
 ### TC-F10-009
 
-**[PLANNED] Bundle with nothing addable is rejected**
+**Bundle with nothing addable is rejected**
 
 | Field | Value |
 |---|---|
 | Trace | FR-10.2; FR-10.4 |
 | Role | End Customer |
-| Preconditions | Feature PLANNED (DEC-20261125-06); run when F10 is merged. all components out of stock |
+| Preconditions | F10 implemented on dev (PR #38, #44); cart base `/api/storefront/{storeSlug}/cart`. all components out of stock |
 | Test data | bundleKey |
-| Steps | 1. [API] Add the bundle |
-| Expected result | 409 BUNDLE_ADD_REJECTED with components all added 0; cart and version unchanged; a BUNDLE_ADD_REJECTED event is recorded (excluded from F11). |
+| Steps | 1. [API] Add the bundle<br>2. [API] GET /api/dashboard/bundle-additions |
+| Expected result | 409 BUNDLE_ADD_REJECTED; the response lists the components, each added 0; cart and version unchanged. The rejection is recorded but F11 does not count it. |
 | Priority / type | High / negative |
 | Status | NOT RUN |
 
 ### TC-F10-010
 
-**[PLANNED] Bundle request rules and stale keys**
+**Bundle request rules and stale keys**
 
 | Field | Value |
 |---|---|
 | Trace | FR-10.2 |
 | Role | End Customer |
-| Preconditions | Feature PLANNED (DEC-20261125-06); run when F10 is merged.  |
+| Preconditions | F10 implemented on dev (PR #38, #44); cart base `/api/storefront/{storeSlug}/cart`.  |
 | Test data | body with bundleQuantity; random key; key of a block after B was edited or C1 ended; key of Store B under Store A slug |
 | Steps | 1. [API] Add with each |
-| Expected result | bundleQuantity: 400. Random key: 404. Stale key: 409 BUNDLE_UNAVAILABLE. Foreign key: 404. No business event for these. |
+| Expected result | bundleQuantity (or any field other than bundleKey): 400. Random or malformed key: 404. Stale same-Store key: 409 BUNDLE_UNAVAILABLE. Store B key under the Store A slug: 404. No cart change and nothing counted by F11 for these. |
 | Priority / type | High / negative |
 | Status | NOT RUN |
 
 ### TC-F10-011
 
-**[PLANNED] Origin MANUAL when the block matches zero or several recommendations**
+**Origin MANUAL when the block matches zero or several recommendations**
 
 | Field | Value |
 |---|---|
 | Trace | FR-10.4; DEC-20261125-06 |
 | Role | End Customer |
-| Preconditions | Feature PLANNED (DEC-20261125-06); run when F10 is merged. block built manually; block matching two approved BUNDLE recommendations |
+| Preconditions | F10 implemented on dev (PR #38, #44); cart base `/api/storefront/{storeSlug}/cart`. block built manually; block matching two approved BUNDLE recommendations |
 | Test data | two bundleKeys |
-| Steps | 1. [API] Add each bundle |
-| Expected result | Both events have origin MANUAL. |
+| Steps | 1. [API] Add each bundle<br>2. [API] GET /api/dashboard/bundle-additions |
+| Expected result | Both additions are counted under MANUAL. |
 | Priority / type | Medium / decision table |
 | Status | NOT RUN |
 
 ### TC-F10-012
 
-**[PLANNED] Edit, remove and clear; one event per change**
+**Edit, remove and clear; one event per change**
 
 | Field | Value |
 |---|---|
 | Trace | FR-10.3; FR-10.4 |
 | Role | End Customer |
-| Preconditions | Feature PLANNED (DEC-20261125-06); run when F10 is merged. cart with 3 lines |
+| Preconditions | F10 implemented on dev (PR #38, #44); cart base `/api/storefront/{storeSlug}/cart`. cart with 3 lines |
 | Test data | PATCH line 1 to 2; PATCH it to 2 again; DELETE line 2; DELETE cart |
 | Steps | 1. [API] Run each mutation |
-| Expected result | Each change returns the cart and advances the version once with one event (ITEM_QUANTITY_CHANGED, ITEM_REMOVED, CART_CLEARED). The no-op PATCH keeps the version and records no event. Clear keeps the cart identity. |
+| Expected result | Each change returns 200 CartView and advances the version by exactly 1. The no-op PATCH (same quantity) returns 200 and keeps the version. DELETE on the cart root empties it and keeps the same cartId. |
 | Priority / type | Medium / functional |
 | Status | NOT RUN |
 
 ### TC-F10-013
 
-**[PLANNED] Cart isolation**
+**Cart isolation**
 
 | Field | Value |
 |---|---|
 | Trace | FR-10.1; BR-01 |
 | Role | End Customer |
-| Preconditions | Feature PLANNED (DEC-20261125-06); run when F10 is merged. two End Customers with carts in Store A |
+| Preconditions | F10 implemented on dev (PR #38, #44); cart base `/api/storefront/{storeSlug}/cart`. two End Customers with carts in Store A |
 | Test data | itemId of customer 2 |
 | Steps | 1. [API] Customer 1 PATCH/DELETE customer 2's itemId<br>2. [API] GET cart under slug qa-store-c (INACTIVE) |
 | Expected result | 404 for both. |
@@ -3872,13 +3872,13 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 ### TC-F10-014
 
-**[PLANNED] Hidden product line stays editable**
+**Hidden product line stays editable**
 
 | Field | Value |
 |---|---|
 | Trace | FR-10.3 |
 | Role | End Customer, Store Admin |
-| Preconditions | Feature PLANNED (DEC-20261125-06); run when F10 is merged. line P4 in the cart; Store Admin soft-deletes or deactivates P4 |
+| Preconditions | F10 implemented on dev (PR #38, #44); cart base `/api/storefront/{storeSlug}/cart`. line P4 in the cart; Store Admin soft-deletes or deactivates P4 |
 | Test data | P4 |
 | Steps | 1. [API] GET cart<br>2. [API] DELETE the P4 line |
 | Expected result | Line state NO_LONGER_AVAILABLE, public fields and money null, subtotal null; removal succeeds. |
@@ -3887,13 +3887,13 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 ### TC-F10-015
 
-**[PLANNED] No reservation, discount or checkout**
+**No reservation, discount or checkout**
 
 | Field | Value |
 |---|---|
 | Trace | FR-10.3; BR-26 |
 | Role | End Customer, Store Admin |
-| Preconditions | Feature PLANNED (DEC-20261125-06); run when F10 is merged.  |
+| Preconditions | F10 implemented on dev (PR #38, #44); cart base `/api/storefront/{storeSlug}/cart`.  |
 | Test data | add 5 units of P1 |
 | Steps | 1. [API] Add<br>2. Store Admin checks P1 stock<br>3. Look for checkout or discount |
 | Expected result | Stock unchanged; no discount; no checkout, order or payment route. |
@@ -3902,134 +3902,134 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 ### TC-F10-016
 
-**[PLANNED] Cart money display rounds the server values HALF_UP**
+**Cart money display rounds the server values HALF_UP**
 
 | Field | Value |
 |---|---|
 | Trace | FR-10.1; DEC-20261126-02 |
 | Role | End Customer |
-| Preconditions | Feature PLANNED (DEC-20261125-06); run when F10 is merged. products P5 at 10000.50 đ and P6 at 10000.50 đ |
+| Preconditions | F10 implemented on dev (PR #38, #44); cart base `/api/storefront/{storeSlug}/cart`. UI steps run once the storefront FE calls the real cart API (DEC-20261126-03 Q-08); run the API steps now. products P5 at 10000.50 đ and P6 at 10000.50 đ |
 | Test data | add P5 ×1 and P6 ×1 |
-| Steps | 1. [API] Add both<br>2. Open the cart drawer |
+| Steps | 1. [API] Add both<br>2. Later round: open the cart |
 | Expected result | API: lineTotal 10000.50 each, subtotal 20001.00 (computed by the server). UI: each line `10.001 ₫` and subtotal `20.001 ₫` — the displayed subtotal is the rounded server subtotal, not the sum of rounded lines (20.002). |
 | Priority / type | Medium / boundary |
 | Status | NOT RUN |
 
 ## F11
 
-**Dashboard (PLANNED)** — 9 cases.
+**Dashboard** — 9 cases.
 
 | ID | Title | Priority | Type |
 |---|---|---|---|
-| [TC-F11-001](#tc-f11-001) | [PLANNED] Dashboard opens for Store Admin and Merchandiser | High | functional |
-| [TC-F11-002](#tc-f11-002) | [PLANNED] Dashboard RBAC and INACTIVE Store | High | security |
-| [TC-F11-003](#tc-f11-003) | [PLANNED] Snapshot utility panel | Medium | functional |
-| [TC-F11-004](#tc-f11-004) | [PLANNED] Saved simulation panel | Medium | UI |
-| [TC-F11-005](#tc-f11-005) | [PLANNED] Bundle additions: default window and counts | High | functional |
-| [TC-F11-006](#tc-f11-006) | [PLANNED] Date range boundaries (maximum 90 days inclusive) | High | boundary |
-| [TC-F11-007](#tc-f11-007) | [PLANNED] Campaign filter | Medium | functional |
-| [TC-F11-008](#tc-f11-008) | [PLANNED] Day boundary follows Asia/Ho_Chi_Minh | Medium | boundary |
-| [TC-F11-009](#tc-f11-009) | [PLANNED] One panel failing does not hide the others | Low | UI |
+| [TC-F11-001](#tc-f11-001) | Dashboard opens for Store Admin and Merchandiser | High | functional |
+| [TC-F11-002](#tc-f11-002) | Dashboard RBAC and INACTIVE Store | High | security |
+| [TC-F11-003](#tc-f11-003) | Snapshot utility panel | Medium | functional |
+| [TC-F11-004](#tc-f11-004) | Saved simulation panel | Medium | UI |
+| [TC-F11-005](#tc-f11-005) | Bundle additions: default window and counts | High | functional |
+| [TC-F11-006](#tc-f11-006) | Date range boundaries (maximum 90 days inclusive) | High | boundary |
+| [TC-F11-007](#tc-f11-007) | Campaign filter | Medium | functional |
+| [TC-F11-008](#tc-f11-008) | Day boundary follows Asia/Ho_Chi_Minh | Medium | boundary |
+| [TC-F11-009](#tc-f11-009) | One panel failing does not hide the others | Low | UI |
 
 ### TC-F11-001
 
-**[PLANNED] Dashboard opens for Store Admin and Merchandiser**
+**Dashboard opens for Store Admin and Merchandiser**
 
 | Field | Value |
 |---|---|
 | Trace | FR-11.1; UC24 |
 | Role | Store Admin, Merchandiser |
-| Preconditions | Feature PLANNED (DEC-20261125-06); run when F11 is merged. ENV-1 (local Docker stack, demo seed loaded) |
-| Test data | /store/dashboard |
-| Steps | 1. Open /store/dashboard as each role |
-| Expected result | Three panels load independently: snapshot utility, saved simulated reports, bundle additions. |
+| Preconditions | F11 Backend implemented on dev (PR #45). Dashboard UI steps run once FE /store/dashboard calls the real API; run the API steps now. ENV-1 (local Docker stack, demo seed loaded) |
+| Test data | GET /api/dashboard/snapshot-utilities; GET /api/dashboard/bundle-additions; GET /api/campaigns; /store/dashboard |
+| Steps | 1. [API] Call the two dashboard routes and GET /api/campaigns as each role<br>2. Later round: open /store/dashboard as each role |
+| Expected result | API: 200 for both roles on all three reads, data of Store A only. UI: three panels load independently: snapshot utility, saved simulated reports, bundle additions. |
 | Priority / type | High / functional |
 | Status | NOT RUN |
 
 ### TC-F11-002
 
-**[PLANNED] Dashboard RBAC and INACTIVE Store**
+**Dashboard RBAC and INACTIVE Store**
 
 | Field | Value |
 |---|---|
 | Trace | FR-11.1; NFR 5.4 |
 | Role | End Customer, System Admin, Guest (anonymous), Store Admin |
-| Preconditions | Feature PLANNED (DEC-20261125-06); run when F11 is merged. Store C INACTIVE |
+| Preconditions | F11 Backend implemented on dev (PR #45). Store C INACTIVE |
 | Test data | dashboard routes |
 | Steps | 1. [API] Call the dashboard routes as each role<br>2. Store Admin C opens the dashboard |
-| Expected result | End Customer and System Admin 403; no token 401; Store C user 403 STORE_INACTIVE. |
+| Expected result | No token 401; End Customer and System Admin 403; Store C Store Admin 403 with code STORE_INACTIVE. |
 | Priority / type | High / security |
 | Status | NOT RUN |
 
 ### TC-F11-003
 
-**[PLANNED] Snapshot utility panel**
+**Snapshot utility panel**
 
 | Field | Value |
 |---|---|
 | Trace | FR-11.1 |
 | Role | Merchandiser |
-| Preconditions | Feature PLANNED (DEC-20261125-06); run when F11 is merged. snapshots S1, S2 in Store A; SETUP-B |
-| Test data | snapshotId S1; a Store B snapshotId; pageSize 0 |
-| Steps | 1. [API] GET /api/dashboard/snapshot-utilities<br>2. [API] …?snapshotId=S1<br>3. [API] …?snapshotId=<Store B><br>4. [API] …?pageSize=0 |
-| Expected result | READY snapshots newest first with totalWeightedUtility at 6 decimals labelled as a score. Store B snapshot: 404. pageSize 0: 400. |
+| Preconditions | F11 Backend implemented on dev (PR #45). snapshots S1, S2 in Store A; SETUP-B |
+| Test data | snapshotId S1; a Store B snapshotId; pageSize 0 and 101 |
+| Steps | 1. [API] GET /api/dashboard/snapshot-utilities<br>2. [API] …?snapshotId=S1<br>3. [API] …?snapshotId=<Store B><br>4. [API] …?pageSize=0 and …?pageSize=101 |
+| Expected result | Page {items, page, pageSize (default 20), totalElements}: READY snapshots newest first; each item has snapshotId, rangeStart, rangeEnd, analysisDate, createdAt and totalWeightedUtility (6 decimals, a score, not VND). snapshotId=S1: only S1. Store B snapshot: 404 `Snapshot not found`. pageSize 0 or 101: 400. |
 | Priority / type | Medium / functional |
 | Status | NOT RUN |
 
 ### TC-F11-004
 
-**[PLANNED] Saved simulation panel**
+**Saved simulation panel**
 
 | Field | Value |
 |---|---|
 | Trace | FR-11.1; BR-13 |
 | Role | Store Admin |
-| Preconditions | Feature PLANNED (DEC-20261125-06); run when F11 is merged. V4 report with priorityCoverage 0 and one with null; a report with nExceedsBaseline |
-| Test data | reports |
-| Steps | 1. Open the panel |
-| Expected result | 0 shows 0%; null shows unavailable; the nExceedsBaseline case is labelled; results labelled simulated. |
+| Preconditions | F11 Backend implemented on dev (PR #45). Dashboard UI steps run once FE /store/dashboard calls the real API; run the API steps now. V4 report with priorityCoverage 0 and one with null; a report with nExceedsBaseline |
+| Test data | GET /api/campaigns/{id}/reports; GET /api/campaign-reports/{reportId} |
+| Steps | 1. [API] Read the reports as Store Admin and as Merchandiser<br>2. Later round: open the panel |
+| Expected result | API: 200 for both roles with priorityCoverage 0 and null as stored. UI: 0 shows 0%; null shows unavailable; the nExceedsBaseline case is labelled; results labelled simulated. |
 | Priority / type | Medium / UI |
 | Status | NOT RUN |
 
 ### TC-F11-005
 
-**[PLANNED] Bundle additions: default window and counts**
+**Bundle additions: default window and counts**
 
 | Field | Value |
 |---|---|
 | Trace | FR-11.1; FR-10.4 |
 | Role | Store Admin |
-| Preconditions | Feature PLANNED (DEC-20261125-06); run when F11 is merged. events: MINED ×1 (2 units), MANUAL ×1 (3 units), one rejection, one partial (A ×2, B ×1) |
+| Preconditions | F11 Backend implemented on dev (PR #45). events: MINED ×1 (2 units), MANUAL ×1 (3 units), one rejection, one partial (A ×2, B ×1) |
 | Test data | no dates |
 | Steps | 1. [API] GET /api/dashboard/bundle-additions |
-| Expected result | Last 30 local days including today; days zero-filled; counts by origin exclude rejections; totalAddedProductUnits sums actual units (partial = 1 action, 3 units). |
+| Expected result | 200 {from, to, timeZone Asia/Ho_Chi_Minh, campaignId null, totalAddActions, addActionsByOrigin {MINED, MANUAL}, totalAddedProductUnits, days[30]}: from = today − 29, to = today; missing days are zero rows; counts exclude rejections; totalAddedProductUnits sums actual units (the partial add = 1 action, 3 units). |
 | Priority / type | High / functional |
 | Status | NOT RUN |
 
 ### TC-F11-006
 
-**[PLANNED] Date range boundaries (maximum 90 days inclusive)**
+**Date range boundaries (maximum 90 days inclusive)**
 
 | Field | Value |
 |---|---|
 | Trace | FR-11.1; DEC-20261126-02 |
 | Role | Store Admin |
-| Preconditions | Feature PLANNED (DEC-20261125-06); run when F11 is merged.  |
+| Preconditions | F11 Backend implemented on dev (PR #45).  |
 | Test data | from 2026-09-01 to 2026-11-29 (90 days inclusive); from 2026-08-31 to 2026-11-29 (91 days); from = to (1 day); only from; from after to |
 | Steps | 1. [API] Call /api/dashboard/bundle-additions with each range |
-| Expected result | 90 days and 1 day: 200 with one row per day (90 and 1 rows). 91 days: 400. Only one date and an inverted range: 400. |
+| Expected result | 90 days and 1 day: 200 with one row per day (90 and 1 rows). 91 days: 400 `Date window must contain 1 to 90 inclusive days`. Only one date: 400 `Supply both from and to`. Inverted range: 400. |
 | Priority / type | High / boundary |
 | Status | NOT RUN |
 
 ### TC-F11-007
 
-**[PLANNED] Campaign filter**
+**Campaign filter**
 
 | Field | Value |
 |---|---|
 | Trace | FR-11.1 |
 | Role | Merchandiser |
-| Preconditions | Feature PLANNED (DEC-20261125-06); run when F11 is merged. events of C1 (now ENDED); SETUP-B |
+| Preconditions | F11 Backend implemented on dev (PR #45). events of C1 (now ENDED); SETUP-B |
 | Test data | campaignId C1; a Store B campaignId |
 | Steps | 1. [API] Filter by each |
 | Expected result | C1: its events are still counted. Store B campaign: 404 `Campaign not found`. |
@@ -4038,13 +4038,13 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 ### TC-F11-008
 
-**[PLANNED] Day boundary follows Asia/Ho_Chi_Minh**
+**Day boundary follows Asia/Ho_Chi_Minh**
 
 | Field | Value |
 |---|---|
 | Trace | FR-11.1; Common 6 |
 | Role | Store Admin |
-| Preconditions | Feature PLANNED (DEC-20261125-06); run when F11 is merged. event at 23:59 local on D (16:59 UTC) and one at 00:01 local on D+1 (17:01 UTC on D) |
+| Preconditions | F11 Backend implemented on dev (PR #45). event at 23:59 local on D (16:59 UTC) and one at 00:01 local on D+1 (17:01 UTC on D) |
 | Test data | from D to D+1 |
 | Steps | 1. [API] GET bundle additions |
 | Expected result | The first event counts on D, the second on D+1. |
@@ -4053,13 +4053,13 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 ### TC-F11-009
 
-**[PLANNED] One panel failing does not hide the others**
+**One panel failing does not hide the others**
 
 | Field | Value |
 |---|---|
 | Trace | FR-11.1 |
 | Role | Store Admin |
-| Preconditions | Feature PLANNED (DEC-20261125-06); run when F11 is merged. bundle-additions backend made unavailable (test stub) |
+| Preconditions | F11 Backend implemented on dev (PR #45). Dashboard UI steps run once FE /store/dashboard calls the real API; run the API steps now. bundle-additions backend made unavailable (test stub) |
 | Test data | — |
 | Steps | 1. Open the dashboard |
 | Expected result | That panel shows an unavailable state (not zero); the other two render. |

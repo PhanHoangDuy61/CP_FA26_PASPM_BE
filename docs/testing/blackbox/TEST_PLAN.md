@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Version / date | 0.4 — 2026-11-26 (Asia/Ho_Chi_Minh); 0.2 applied DEC-20261126-02, 0.3 applied DEC-20261126-03, 0.4 its Q-05 addendum (Run mining screen) and known issue KI-01 |
-| Baseline | Backend `dev` @ `fb48d55` (merged into this branch); FE `dev` @ `7f298bc` (routes used to name screens); F05 mining screen checked at FE `dev` @ `0cd57a6` |
+| Version / date | 0.5 — 2026-11-26 (Asia/Ho_Chi_Minh); 0.2 applied DEC-20261126-02, 0.3 applied DEC-20261126-03, 0.4 its Q-05 addendum (Run mining screen) and known issue KI-01, 0.5 F10/F11 cases aligned with the implemented API after merging `dev` @ `114576d` |
+| Baseline | Backend `dev` @ `114576d` (merged into this branch; F10 PR #38/#44, F11 PR #45, TDP-01 PR #47); FE `dev` @ `7f298bc` (routes used to name screens); F05 mining screen checked at FE `dev` @ `0cd57a6` |
 | Deliverables | [TEST_CASES.md](TEST_CASES.md) / [TEST_CASES.csv](TEST_CASES.csv) (248 cases), [TRACEABILITY.md](TRACEABILITY.md), [PO_QUESTIONS.md](PO_QUESTIONS.md) |
 | Execution status | **NOT RUN.** No case has been executed. This pack contains designs only |
 
@@ -22,7 +22,7 @@
 | F07/F08 | Baseline A, Layout B editor and caps, priority coverage, simulation, campaign lifecycle, single ACTIVE campaign, rollback |
 | F09 | Public storefront API by Store slug. Accepted on the API in this round; storefront UI checks come when the FE calls the real API |
 
-**In scope, PLANNED:** F10 bundle cart and F11 dashboard, written from [DEC-20261125-06](../../decisions/2026-11-25/DEC-20261125-06-f10-f11-mvp-contract.md), the [F10](../../api/F10_BUNDLE_CART_API.md) and [F11](../../api/F11_DASHBOARD_API.md) API docs. Their cases are titled `[PLANNED]` and run when the features are merged.
+**In scope, implemented after the pack was first written:** F10 bundle cart (PR #38, #44) and F11 dashboard Backend (PR #45), following [DEC-20261125-06](../../decisions/2026-11-25/DEC-20261125-06-f10-f11-mvp-contract.md) and the [F10](../../api/F10_BUNDLE_CART_API.md) and [F11](../../api/F11_DASHBOARD_API.md) API docs. Their API steps run in this round; storefront cart and dashboard UI steps run once the FE calls the real API.
 
 **Out of scope:** automated unit, integration and MySQL tests (they run in CI from `.github/scripts/test-groups.py`); performance targets (none defined, SRS §5.2); the scheduler beyond the 503 check — enabling it is a separate later decision (BR-24, [DEC-20261126-03](../../decisions/2026-11-26/DEC-20261126-03-blackbox-test-round-scope-and-remaining-answers.md)); internal lease, fencing and crash takeover; removed features except checks that they are absent. See TRACEABILITY.md §7.
 
@@ -92,7 +92,7 @@ Passwords come from the tester's local `scripts/seed/.env.seed` (git-ignored) or
 | DP-08 | Synthetic Store D for F05 bounds: snapshots with 1,600 / 1,601 products, 20,000 / 20,001 rows, an int32 lossless / whole-đồng / overflow trio, and a 2,000 / 2,001 pattern pair | Generated CSV imports; build once and keep the files outside the repository |
 | DP-09 | Import files `qa_valid.csv`, `qa_conflict.csv`, `qa_valid.xlsx/.xls`, boundary files (5 MiB, 10,000 / 10,001 rows), files with bad rows | Created by the tester from the F04 template |
 
-### TDP-01 — test-data preparation script (planned, separate task)
+### TDP-01 — test-data preparation script (implemented: `scripts/seed/seed_test_stores.py`, PR #47, ROC-20261126-013)
 
 Decided by DEC-20261126-03 (Q-16). The script is a separate small code task and is **not** part of this documentation branch. Required behaviour:
 
@@ -106,17 +106,17 @@ Decided by DEC-20261126-03 (Q-16). The script is a separate small code task and 
 
 **Entry**
 
-- ENV-1 is up, Flyway reports V30, the seed run finished without error and its record counts match `scripts/seed/README.md`.
+- ENV-1 is up, Flyway reports V31, the seed run finished without error and its record counts match `scripts/seed/README.md`.
 - **TDP-01 has run** on the ENV-1 database (Stores B and C with their accounts exist), and the other DP items a case needs are prepared.
 - **DEC-20261125-02 is merged into `dev`** (source-of-truth rule, Q-01).
 - **Known defect KD-01 fixed and verified on FE `dev`** (see §9): a Merchandiser can open every screen the role is allowed to use (F03, F05 mining reads, F06 recommendations, F07/F08 workspace). DEC-20261126-02 §2 makes this an entry criterion.
 - **Known defect KD-02 fixed and verified on FE `dev`** (see §9): the removed screens `/f03/expiry-window`, `/f03/product-scores` and `/admin/benchmark` cannot be reached (DEC-20261126-03).
 - All PO questions are answered (PO_QUESTIONS.md; DEC-20261126-02 and DEC-20261126-03).
-- For `[PLANNED]` cases: F10/F11 merged on `dev` and their contracts final.
+- F10/F11 UI steps: run only when the FE calls the real cart and dashboard APIs; until then record those steps as NOT RUN with the reason "FE not integrated".
 
 **Exit (accepted by the PO, DEC-20261126-03)**
 
-- Every non-PLANNED case has a recorded result (PASS, FAIL, BLOCKED or NOT RUN with a reason). `[OUT OF ROUND]` cases (TC-F05-021, TC-F05-023) are recorded as NOT RUN with the reason "out of round (DEC-20261126-03)".
+- Every case has a recorded result (PASS, FAIL, BLOCKED or NOT RUN with a reason). `[OUT OF ROUND]` cases (TC-F05-021, TC-F05-023) are recorded as NOT RUN with the reason "out of round (DEC-20261126-03)".
 - 100 % of High cases PASS; at least 95 % of Medium cases PASS.
 - No open defect of severity Critical or Major; Minor defects have an owner and a target.
 - Every FAIL links to a defect, and every requirement in TRACEABILITY.md has at least one executed case or a documented reason.

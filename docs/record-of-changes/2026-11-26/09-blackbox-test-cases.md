@@ -6,10 +6,10 @@
 | Date / timezone | 2026-11-26 / Asia/Ho_Chi_Minh |
 | Agent | Claude Code (Claude Opus 5.5), requested by Nguyễn Minh Khôi |
 | Type | Documentation (testing) |
-| Features | F01–F09 (implemented), F10–F11 (PLANNED) |
-| Branch / base HEAD | `Khoi/docs/blackbox-test-cases` / `origin/dev` @ `b94584b`; `origin/dev` @ `fb48d55` merged in update 3 |
+| Features | F01–F11 (F10/F11 implemented on `dev` since PR #38, #44, #45; cases aligned in update 5) |
+| Branch / base HEAD | `Khoi/docs/blackbox-test-cases` / `origin/dev` @ `b94584b`; `origin/dev` @ `fb48d55` merged in update 3, `114576d` in update 5 |
 | Execution status | COMPLETED (design only; no case executed) |
-| Release status | UNRELEASED — branch pushed (`5fbf473`, update 2 `c836795`, update 3 `6c391ce` after the merge `56a0225`, update 4), no PR opened |
+| Release status | UNRELEASED — branch pushed (`5fbf473`, update 2 `c836795`, update 3 `6c391ce` after the merge `56a0225`, update 4 `a9a3fd9`, update 5 after the merge `8973967`); delivered by a PR into `dev` |
 | Daily summary | [README of the day](README.md) |
 
 ## 1. Request and scope
@@ -145,3 +145,41 @@ The PO answered every remaining question; recorded as [DEC-20261126-03](../../de
 | 248 cases; IDs unchanged; every FR, UC and BR traced | PASS |
 | Cited case IDs exist; relative links; `git diff --check` | PASS |
 | Test case execution; Maven | NOT RUN |
+
+## 9. Update 5 — merge with `dev` after F10/F11 landed; F10/F11 cases aligned (2026-11-26)
+
+PO answer of 2026-11-26: take `dev`'s API docs as the base (F10/F11 are implemented there), re-apply only the PO rules `dev` lacks, check each rule against the code and report disagreements as defects instead of hiding them.
+
+| Change | Where |
+|---|---|
+| Merge `origin/dev` @ `114576d` (`8973967`). Conflicts in four API docs resolved by taking `dev`'s text, then adding what it lacked: DEC-20261126-02/-03 links on the 99 cap and the sellable-stock refusal, "nothing is clamped", `bundleQuantity` and any field other than `bundleKey` → 400, VND whole đồng HALF_UP with the server `subtotal` formatted as such; F11 window and handoff cite DEC-20261126-02 | `docs/api/F10_BUNDLE_CART_API.md`, `F11_DASHBOARD_API.md`, `docs/frontend_handoff/F11_HANDOFF.md`, `docs/api/API_CHANGELOG.md` (new entry; no route or schema change, OpenAPI 118 / 147) |
+| Duplicate F09 HALF_UP checklist item removed (dev's and this branch's) | `docs/frontend_handoff/F09_HANDOFF.md` |
+| Record READMEs: all records kept (001–014); 2026-11-26 index row counts 14 | `docs/record-of-changes/README.md`, `2026-11-26/README.md` |
+| TC-F10-001…016 and TC-F11-001…009: `[PLANNED]` removed, IDs kept; routes, `If-Match` (no Idempotency-Key), error codes and messages, `BundleAddResult` / `SnapshotUtilityPage` / `BundleAdditions` fields aligned with the code; event checks made black-box through F11 counts; UI steps marked for the round in which the FE calls the real API | `outputs/blackbox-tools/cases.py`, `gen.py`, `trace.py` → TEST_CASES.md/.csv, TRACEABILITY.md |
+| Test plan 0.5: F10/F11 scope, TDP-01 implemented (PR #47), Flyway V31, entry/exit criteria without `[PLANNED]` | TEST_PLAN.md |
+| `scripts/seed/README.md` links TEST_PLAN §6 again (the file is now on `dev`) | `scripts/seed/README.md` |
+
+PO rules checked against `dev` @ `114576d` (backend agrees with every rule):
+
+| Rule | Code |
+|---|---|
+| Single-item add/PATCH above 99 → 409 `CART_QUANTITY_LIMIT`, whole request | `CartService.java:61-62` (add: target = line + requested, checked before any write), `:136-138` (PATCH increase), `:192-193` |
+| Above sellable stock → 409 `INSUFFICIENT_SELLABLE_STOCK`, whole request | `CartService.java:195-196`; reductions skip the check (`:136`) |
+| One bundle per click, body `{bundleKey}` only | `CartContracts.java:31-33` (`AddBundle` has only `bundleKey`), `application.yml:14` (`fail-on-unknown-properties: true`), one unit per component `CartService.java:111-112` |
+| Only `If-Match` version, 409 `CART_VERSION_CONFLICT`, no idempotency key | `CartController.java:55,69,84,93`, `CartService.java:172-176`; no idempotency code in `storefront/cart` |
+| F11 default 30 days, max 90 inclusive, 91 → 400 | `DashboardService.java:23-24,83,89-91` |
+| VND whole đồng HALF_UP (UI) | FE `dev` @ `f38d3ad` does not follow it; see defects |
+
+Candidate defects found (not fixed here; the PO decides):
+
+| ID | Defect | Where (FE `dev` @ `f38d3ad`) |
+|---|---|---|
+| C-01 | F02 money is shown with up to 20 decimals, not whole đồng HALF_UP | `src/features/store/f02.forms.ts:5` |
+| C-02 | F04 sales transactions show VND with up to 2 decimals | `src/features/f04/components/SalesTransactionsView.tsx:13` |
+| C-03 | The storefront catalog formats prices with the `vi-VN` default (up to 3 decimals), not whole đồng; the file is local catalog data, not the real F09 API | `src/features/customer/data/customerCatalog.ts:122` |
+
+| Check | Result |
+|---|---|
+| 248 cases; IDs unchanged; only the 25 F10/F11 cases changed; `trace.py` `missing: []` | PASS |
+| No `[PLANNED]` left in TEST_CASES; relative links; `git diff --check` | PASS |
+| Test case execution | NOT RUN |

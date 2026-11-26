@@ -60,11 +60,11 @@ Coverage: 57/57 FR, 33/33 UC, 33/33 BR have at least one case.
 | FR-09.2 | Home renders the ACTIVE campaign layout or the default catalogue | DONE | TC-F09-002, TC-F09-003, TC-F09-012 |
 | FR-09.3 | Product detail, availability, bundle filtering | DONE (related products deferred) | TC-F09-005, TC-F09-007, TC-F09-009, TC-F09-013 |
 | FR-09.4 | No admin fields in public DTOs; product image URL and description | DONE | TC-F02-008, TC-F02-037, TC-F09-008, TC-F09-013 |
-| FR-10.1 | END_CUSTOMER cart, 99 cap, If-Match versioning | PLANNED | TC-F10-001, TC-F10-002, TC-F10-003, TC-F10-004, TC-F10-005, TC-F10-006, TC-F10-013, TC-F10-016 |
-| FR-10.2 | Whole-bundle add by bundleKey with per-component results | PLANNED | TC-F10-007, TC-F10-008, TC-F10-009, TC-F10-010 |
-| FR-10.3 | Lines editable/removable; no reservation, discount, checkout | PLANNED | TC-F10-006, TC-F10-012, TC-F10-014, TC-F10-015 |
-| FR-10.4 | Cart events; MINED/MANUAL origin | PLANNED | TC-F10-007, TC-F10-009, TC-F10-011, TC-F10-012, TC-F11-005 |
-| FR-11.1 | Dashboard: three panels, 30/90-day window, campaign filter | PLANNED | TC-F11-001, TC-F11-002, TC-F11-003, TC-F11-004, TC-F11-005, TC-F11-006, TC-F11-007, TC-F11-008, TC-F11-009 |
+| FR-10.1 | END_CUSTOMER cart, 99 cap, If-Match versioning | DONE (API) | TC-F10-001, TC-F10-002, TC-F10-003, TC-F10-004, TC-F10-005, TC-F10-006, TC-F10-013, TC-F10-016 |
+| FR-10.2 | Whole-bundle add by bundleKey with per-component results | DONE (API) | TC-F10-007, TC-F10-008, TC-F10-009, TC-F10-010 |
+| FR-10.3 | Lines editable/removable; no reservation, discount, checkout | DONE (API) | TC-F10-006, TC-F10-012, TC-F10-014, TC-F10-015 |
+| FR-10.4 | Cart events; MINED/MANUAL origin | DONE (API) | TC-F10-007, TC-F10-009, TC-F10-011, TC-F10-012, TC-F11-005 |
+| FR-11.1 | Dashboard: three panels, 30/90-day window, campaign filter | DONE (API); UI pending | TC-F11-001, TC-F11-002, TC-F11-003, TC-F11-004, TC-F11-005, TC-F11-006, TC-F11-007, TC-F11-008, TC-F11-009 |
 
 ## 2. Use cases → test cases
 
@@ -93,12 +93,12 @@ UC03 and UC22 were removed before Report 3 and are not reused.
 | UC20 | Manage Inventory | DONE | TC-F02-014, TC-F02-015, TC-F02-027 |
 | UC21 | Import Transaction Files | DONE | TC-F04-001, TC-F04-002, TC-F04-014, TC-F04-015 |
 | UC23 | Activate Approved Campaign | DONE (API) | TC-F08-009, TC-F08-012, TC-F08-013, TC-F08-016 |
-| UC24 | View Retail Performance Dashboard | PLANNED | TC-F11-001 |
+| UC24 | View Retail Performance Dashboard | DONE (API); UI pending | TC-F11-001 |
 | UC25 | View A/B Reports | DONE (API read) | TC-F08-005, TC-F08-017 |
 | UC26 | View Merchandising Homepage | DONE (API, MVP) | TC-F09-001, TC-F09-002 |
 | UC27 | View Product Details / Related | PARTIAL (API) | TC-F09-005, TC-F09-006 |
 | UC28 | View Recommended Bundles | DONE (API, MVP) | TC-F09-002, TC-F09-009, TC-F09-010 |
-| UC29 | Add Whole Bundle to Cart | PLANNED | TC-F10-001, TC-F10-007 |
+| UC29 | Add Whole Bundle to Cart | DONE (API) | TC-F10-001, TC-F10-007 |
 | UC30 | Validate / Preprocess Orders | DONE | TC-F04-004, TC-F04-005, TC-F04-006 |
 | UC31 | Create Frozen Utility Snapshot | DONE | TC-F03-022, TC-F03-023 |
 | UC32 | Set Global Utility Lambda Policy | DONE | TC-F03-001, TC-F03-002 |
@@ -135,7 +135,7 @@ UC03 and UC22 were removed before Report 3 and are not reused.
 | BR-23 | Priority product = W > 1 | TC-F07-014, TC-F08-001 |
 | BR-24 | Scheduler enable 503 | TC-F05-022 |
 | BR-25 | Only ACTIVE Store's active layout is public; no cost/batch data | TC-F09-001, TC-F09-004, TC-F09-008 |
-| BR-26 | Bundle add merges eligible lines; no reservation/discount (PLANNED) | TC-F10-015 |
+| BR-26 | Bundle add merges eligible lines; no reservation/discount | TC-F10-015 |
 | BR-27 | Store name unique (trim, ignore case) | TC-F01-029 |
 | BR-28 | Store slug unique; SA only | TC-F01-030, TC-F01-042 |
 | BR-29 | Store never hard-deleted | TC-F01-036 |
@@ -244,4 +244,4 @@ Decisions cited directly in a case's trace. Decisions not listed here are covere
 | FR-01.1 — successful Google sign-in | Needs a configured Google client ID and real Google accounts; the default local stack has none. | TC-F01-012 (503 path); conditional note in the case |
 | §7 Messages — MSG numbers for new messages | MSG numbers are TBD in the SRS; cases check the message text instead. | — |
 
-F10 and F11 requirements are traced to `[PLANNED]` cases written from DEC-20261125-06 and the planned API docs. They cannot run until the features are merged.
+F10 (PR #38, #44) and F11 (PR #45) are implemented on `dev`; their cases follow the implemented API docs. Storefront cart and dashboard UI steps wait until the FE calls the real API; the API steps run now. The diagram labels above are quoted as drawn.
