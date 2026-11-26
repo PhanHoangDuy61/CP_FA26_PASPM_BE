@@ -119,6 +119,26 @@ F05 rejects a snapshot whose converted dataset does not fit SPMF int32: `Lossles
 
 **Recommended: `rangeStart = rangeEnd = 2026-10-02`, `asOfDate = 2026-10-05`.** The System Admin minUtil policy matters because the data is dense: for 2026-10-02 at 0.2% EFIM exceeded the 2,000-pattern cap (`OUTPUT_LIMIT`), at 0.25% it completed with 179 patterns, at 0.3%, 0.35% and 0.4% it returned 0 patterns (higher values were not tried). A policy of `PERCENTAGE 0.25` works for 2026-10-02 (179 patterns, 11,199 output bytes, 165 ms); 2026-10-03 completed at 0.2% with 69 patterns. See [record 014](../../docs/record-of-changes/2026-11-17/14-demo-seed-weight-v2.md) for the complete run results.
 
+## TDP-01: Store B and Store C for the black-box test round
+
+`seed_test_stores.py` (run it with `seed_test_stores.sh`) is the test-data preparation script TDP-01 of TEST_PLAN §6 (`docs/testing/blackbox/TEST_PLAN.md`, on branch `Khoi/docs/blackbox-test-cases`) (DEC-20261126-03, Q-16): testers do not create Stores by hand, so running it is an entry criterion of the round. Public REST API only (no SQL), signed in as the System Admin; the OTP of each invitation is read from Mailpit, as in the demo seed.
+
+| Created | Through |
+|---|---|
+| Store B `QA Store B` (slug `qa-store-b`), Store C `QA Store C` (slug `qa-store-c`) | `POST /api/system/stores` |
+| `qa-storeadmin-b@paspm.example`, `qa-merchandiser-b@paspm.example` (Store B) | `POST /api/users`, then `POST /api/auth/activate` with the `ADMIN_INVITE` OTP |
+| `qa-storeadmin-c@paspm.example`, `qa-merchandiser-c@paspm.example` (Store C) | the same |
+
+```bash
+# scripts/seed/.env.seed: SEED_API_URL, SEED_MAILPIT_URL, SEED_SYSADMIN_EMAIL/PASSWORD and SEED_TEST_ACCOUNT_PASSWORD
+scripts/seed/seed_test_stores.sh            # or: scripts/seed/seed_test_stores.sh path/to/other.env
+```
+
+- Run it on the disposable ENV-1 backend (bootstrap System Admin, Mailpit reachable). `SEED_TEST_ACCOUNT_PASSWORD` is one password for the four accounts (backend password rules); it is read from the environment, never printed or written.
+- **Safe to run twice.** A Store is found by slug (`status=ALL`) and an account by e-mail (a login with the configured password) before anything is created; the second run creates nothing. A pending account of an interrupted run gets a new OTP instead of a second invitation. An **INACTIVE** Store stops the script with a message (it never reactivates a Store); an account that exists but does not accept the configured password is left alone and stops the script.
+- It prints one line per Store (with its `storeId`) and per account (`created` / `found`) for the run record, and no password.
+- The catalogue, snapshots, mining requests and icons of Stores B and C are not created here (TEST_PLAN §6, SETUP-B and DP-07).
+
 ## Tests
 
 The date, push-day, quantity, season and configuration rules are pure functions in `weight_v2_plan.py`; the FoodMart code → SKU mapping and the CSV rewrite are pure functions in `foodmart_mapping.py`. Their unit tests need no backend:
@@ -127,4 +147,4 @@ The date, push-day, quantity, season and configuration rules are pure functions 
 python3 -I -m unittest discover -s scripts/seed/tests -v
 ```
 
-The remaining script (HTTP calls) is covered by verification runs, not by automated tests: record 014 (2026-11-17) and [ROC-20261125-004](../../docs/record-of-changes/2026-11-25/04-sku-foodmart-seed.md) (fresh MySQL 8.4, two runs).
+`tests/test_seed_test_stores.py` covers TDP-01 (request bodies and idempotency, with the HTTP layer faked). The remaining demo-seed script (HTTP calls) is covered by verification runs, not by automated tests: record 014 (2026-11-17) and [ROC-20261125-004](../../docs/record-of-changes/2026-11-25/04-sku-foodmart-seed.md) (fresh MySQL 8.4, two runs).
