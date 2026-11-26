@@ -1,10 +1,10 @@
-# ROC-20261126-013 — F11 dashboard Backend
+# ROC-20261126-014 — F11 dashboard Backend
 
 | Field | Value |
 |---|---|
 | Date / timezone | 2026-11-26 / Asia/Ho_Chi_Minh |
 | Type | Backend implementation |
-| Branch / base | `Khoi/feat/f11-dashboard-api` / `e4bce3b` (F10 Part 2) |
+| Branch / base | `Khoi/feat/f11-dashboard-api-v2` / `54eb481` (dev after F10 Part 2, PR #44); cherry-pick of `ef20d3a` from `Khoi/feat/f11-dashboard-api` |
 | Release | UNRELEASED |
 | Daily index | [2026-11-26](README.md) |
 
@@ -15,7 +15,7 @@
 - `GET /api/dashboard/bundle-additions` aggregates successful F10 `BUNDLE_ADDED` events by Store-local day and MINED/MANUAL origin, with actual units added and zero-filled days. The database groups records in bounded, half-open UTC ranges derived from local midnights. The optional campaign filter also works for ended same-Store campaigns. Foreign and unknown IDs return 404.
 - F11 uses the existing F08 campaign/report read endpoints. Integration assertions exercise both staff roles, foreign report and campaign IDs, and the Store Admin denial on the simulation write. The F08 API and its permissions stay as implemented.
 - The runtime [OpenAPI](../../api/openapi.json) adds two operations with explicit IDs and five schemas (116 paths / 145 operations to 118 paths / 147 operations). The checked-in file matches the runtime export and all 274 internal references resolve.
-- No migrations. F11 uses the existing snapshot, campaign/report and V31 event tables. Merge order is F10 Part 1 → F10 Part 2 → F11. Checked 63 local remote refs and local branches for numbering. Record 012 is taken on a separate local diagram branch.
+- No migrations. F11 uses the existing snapshot, campaign/report and V31 event tables. Merge order is F10 Part 1 → F10 Part 2 → F11. 2026-11-26 numbering is fixed by the owner: 009 black-box test cases, 010 F10 Part 1, 011 F10 Part 2, 012 A/B diagrams, 013 TDP-01, 014 F11. This record was drafted as 013 and renumbered to 014.
 
 ## Verification
 
