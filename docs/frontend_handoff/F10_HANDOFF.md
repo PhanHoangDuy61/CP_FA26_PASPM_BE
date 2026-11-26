@@ -22,7 +22,7 @@ interface CartLine {
 }
 interface CartView {
   cartId: Int64 | null;
-  store: { storeSlug: string; name: string };
+  store: { storeSlug: string; name: string; iconUrl: string | null; bannerUrl: string | null }; // same public Store as F09 (2026-11-27)
   version: Int64;
   currency: 'VND';
   updatedAt: string | null;

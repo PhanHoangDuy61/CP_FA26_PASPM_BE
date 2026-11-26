@@ -15,6 +15,7 @@ The stacked F10 Part 2 branch adds an opaque `bundleKey` to public BUNDLE blocks
 | Rule | Where |
 |---|---|
 | A Store is public only while `store.status = ACTIVE`; `storeSlug` is `store.slug` | `storefront/StorefrontRepository.java` (`publicStores`, `publicStore`) |
+| The public Store carries nullable `iconUrl` and `bannerUrl` (2026-11-27), built by the shared `catalog/store/StoreImageUrls` from `store.icon_key` / `banner_key`; no migration | `StorefrontRepository.StoreRow.toPublic/toSummary`, `StorefrontContracts.PublicStore/StoreSummary`; tests `StorefrontIntegrationTest`, `StoreImageHttpTest` |
 | Only ACTIVE, non-deleted Products (`deleted_at IS NULL`) are listed, shown or AVAILABLE | `storefront/StorefrontRepository.java` (`products`, `activeProduct`, `activeProductsByCategory`, `availability`, `placements`) |
 | A batch is sellable on its expiry date, expired only the day after | `StorefrontRepository.availability` (`expiry_date >= today`) |
 | Homepage placements are checked one by one (F07 product-level Layout B, DEC-20261125-01): the product must be public and sellable; a placement from a recommendation also needs that recommendation APPROVED, from the active snapshot, still containing the product, and stock at or above its policy minimum | `storefront/StorefrontService.java` (`validPlacement`) |

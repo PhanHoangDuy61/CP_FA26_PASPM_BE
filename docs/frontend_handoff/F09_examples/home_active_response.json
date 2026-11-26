@@ -1,7 +1,9 @@
 {
   "store": {
     "storeSlug": "green-market",
-    "name": "Green Market"
+    "name": "Green Market",
+    "iconUrl": "/api/public/stores/7/images/3f6c0d0e-5a2b-4c1e-9d55-0a6b8f2d9c11.png",
+    "bannerUrl": null
   },
   "campaignName": "Summer display",
   "fallbackType": null,

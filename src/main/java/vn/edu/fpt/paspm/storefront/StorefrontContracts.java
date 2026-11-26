@@ -11,8 +11,18 @@ public final class StorefrontContracts {
     /** FR-09.3: a public product is AVAILABLE or OUT_OF_STOCK (no quantity is exposed). */
     public enum Availability { AVAILABLE, OUT_OF_STOCK }
 
-    public record PublicStore(String storeSlug, String name) {}
-    public record StoreSummary(String storeSlug, String name) {}
+    /**
+     * A public Store: its slug, name and branding. {@code iconUrl} and {@code bannerUrl} are the public image URLs
+     * ({@code /api/public/stores/{storeId}/images/{fileName}}, DEC-20261123-01), {@code null} without an image.
+     * The Store id is not a field; it only appears inside those URLs.
+     */
+    public record PublicStore(String storeSlug, String name,
+            @Schema(types = {"string", "null"}, description = "Public URL of the current Store icon, null without one") String iconUrl,
+            @Schema(types = {"string", "null"}, description = "Public URL of the current Store banner, null without one") String bannerUrl) {}
+    /** The Store inside the home view; the same fields as {@link PublicStore}. */
+    public record StoreSummary(String storeSlug, String name,
+            @Schema(types = {"string", "null"}, description = "Public URL of the current Store icon, null without one") String iconUrl,
+            @Schema(types = {"string", "null"}, description = "Public URL of the current Store banner, null without one") String bannerUrl) {}
     public record ProductCategory(Integer categoryId, String name) {}
     public record ProductCard(int productId, String name, String description, String imageUrl,
             String unit, BigDecimal sellingPrice, ProductCategory category, Availability availability) {}

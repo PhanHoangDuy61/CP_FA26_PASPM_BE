@@ -42,7 +42,7 @@ A changed cart records exactly one of `ITEM_ADDED`, `ITEM_QUANTITY_CHANGED`, `IT
 A virtual empty cart in Part 1 is returned with HTTP 200.
 
 ```json
-{"cartId":null,"store":{"storeSlug":"demo-store","name":"Demo Store"},"version":0,"currency":"VND","updatedAt":null,"items":[],"subtotal":0}
+{"cartId":null,"store":{"storeSlug":"demo-store","name":"Demo Store","iconUrl":null,"bannerUrl":null},"version":0,"currency":"VND","updatedAt":null,"items":[],"subtotal":0}
 ```
 
 The following example illustrates whole-bundle partial success. Product 501 had one unit in the cart and the block added another. Product 502 was skipped.
@@ -51,7 +51,7 @@ The following example illustrates whole-bundle partial success. Product 501 had 
 {
   "cart": {
     "cartId": 31,
-    "store": { "storeSlug": "demo-store", "name": "Demo Store" },
+    "store": { "storeSlug": "demo-store", "name": "Demo Store", "iconUrl": null, "bannerUrl": null },
     "version": 5,
     "currency": "VND",
     "updatedAt": "2026-11-25T09:30:00Z",

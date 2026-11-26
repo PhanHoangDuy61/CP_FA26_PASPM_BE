@@ -230,4 +230,51 @@ class StoreImageHttpTest {
         mvc.perform(get("/api/stores/" + store + "/images/icon").header("Authorization", token("STORE_ADMIN", other))).andExpect(status().isNotFound());
         mvc.perform(get("/api/stores/" + store + "/images/icon").header("Authorization", token("END_CUSTOMER", null))).andExpect(status().isForbidden());
     }
+
+    /** F09 + DEC-20261123-01: the public storefront advertises the same public image URLs the Store API returns. */
+    @Test void publicStorefrontListsTheCurrentIconAndBannerUrlsAndTheyAreServedToAnonymousVisitors() throws Exception {
+        int store = store();
+        String slug = jdbc.queryForObject("SELECT slug FROM store WHERE store_id=?", String.class, store);
+        String system = token("SYSTEM_ADMIN", null);
+        byte[] png = image("png", 32, 32), jpeg = image("jpg", 800, 200);
+
+        // No image yet: both URLs are JSON null.
+        mvc.perform(get("/api/storefront/stores")).andExpect(status().isOk())
+                .andExpect(jsonPath("$[?(@.storeSlug=='" + slug + "')].iconUrl", contains(nullValue())))
+                .andExpect(jsonPath("$[?(@.storeSlug=='" + slug + "')].bannerUrl", contains(nullValue())));
+
+        String iconUrl = json.readTree(upload(store, "icon", system, png, "i.png").andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString()).path("iconUrl").asText();
+        String bannerUrl = json.readTree(upload(store, "banner", system, jpeg, "b.jpg").andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString()).path("bannerUrl").asText();
+
+        // The storefront (list and home) shows exactly the URLs of the Store API, and an anonymous visitor can fetch them.
+        mvc.perform(get("/api/storefront/stores")).andExpect(status().isOk())
+                .andExpect(jsonPath("$[?(@.storeSlug=='" + slug + "')].iconUrl", contains(iconUrl)))
+                .andExpect(jsonPath("$[?(@.storeSlug=='" + slug + "')].bannerUrl", contains(bannerUrl)));
+        mvc.perform(get("/api/storefront/" + slug + "/home")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.store.iconUrl").value(iconUrl)).andExpect(jsonPath("$.store.bannerUrl").value(bannerUrl));
+        mvc.perform(get(iconUrl)).andExpect(status().isOk()).andExpect(content().bytes(png))
+                .andExpect(header().string("X-Content-Type-Options", "nosniff"));
+        mvc.perform(get(bannerUrl)).andExpect(status().isOk()).andExpect(content().bytes(jpeg));
+
+        // Replacing the icon changes the advertised URL; the old one stops being served.
+        String newIconUrl = json.readTree(upload(store, "icon", system, image("png", 16, 16), "j.png").andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString()).path("iconUrl").asText();
+        assertNotEquals(iconUrl, newIconUrl);
+        mvc.perform(get("/api/storefront/stores")).andExpect(status().isOk())
+                .andExpect(jsonPath("$[?(@.storeSlug=='" + slug + "')].iconUrl", contains(newIconUrl)));
+        mvc.perform(get(iconUrl)).andExpect(status().isNotFound());
+
+        // Removing the banner makes it null again.
+        mvc.perform(delete("/api/stores/" + store + "/images/banner").header("Authorization", system)).andExpect(status().isOk());
+        mvc.perform(get("/api/storefront/stores")).andExpect(status().isOk())
+                .andExpect(jsonPath("$[?(@.storeSlug=='" + slug + "')].bannerUrl", contains(nullValue())));
+
+        // Deactivating the Store hides it from the storefront and stops serving its images.
+        jdbc.update("UPDATE store SET status='INACTIVE' WHERE store_id=?", store);
+        mvc.perform(get("/api/storefront/stores")).andExpect(status().isOk())
+                .andExpect(jsonPath("$[?(@.storeSlug=='" + slug + "')]", empty()));
+        mvc.perform(get(newIconUrl)).andExpect(status().isNotFound());
+    }
 }

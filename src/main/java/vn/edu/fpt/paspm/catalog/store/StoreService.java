@@ -117,9 +117,9 @@ public class StoreService {
                 row.deactivatedAt());
     }
 
-    /** The public URL of the current file; it is cache-safe because every upload gets a new UUID file name. */
+    /** The public URL of the current file (see {@link StoreImageUrls}, shared with the F09 storefront). */
     static String imageUrl(StoreRow row, String key) {
-        return key == null ? null : "/api/public/stores/" + row.storeId() + "/images/" + key.substring(key.lastIndexOf('/') + 1);
+        return StoreImageUrls.publicUrl(row.storeId(), key);
     }
 
     private static void requireUniqueName(java.util.List<StoreRow> all, String name, int excludeStoreId) {

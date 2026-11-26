@@ -203,7 +203,7 @@ public class CartService {
     }
 
     private CartView view(StoreRow store, Cart cart, LocalDate today) {
-        PublicStore publicStore = new PublicStore(store.slug(), store.name());
+        PublicStore publicStore = store.toPublic();
         if (cart == null) return new CartView(null, publicStore, 0, "VND", null, List.of(), EMPTY_SUBTOTAL);
         List<Line> rows = carts.lines(store.id(), cart.id());
         Map<Integer, AvailabilityRow> inventory = storefront.availability(store.id(),

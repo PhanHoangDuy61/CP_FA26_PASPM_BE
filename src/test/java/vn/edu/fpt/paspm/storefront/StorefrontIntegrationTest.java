@@ -69,12 +69,17 @@ class StorefrontIntegrationTest {
         String slug = slug(store);
         JsonNode publicStore = findStore(stores, slug);
         assertNotNull(publicStore);
-        assertEquals(2, publicStore.size());
+        // storeSlug, name and the two nullable branding URLs (DEC-20261123-01); no internal id field.
+        assertEquals(4, publicStore.size());
+        assertTrue(publicStore.path("iconUrl").isNull(), "No icon uploaded: iconUrl is JSON null");
+        assertTrue(publicStore.path("bannerUrl").isNull(), "No banner uploaded: bannerUrl is JSON null");
         assertFalse(publicStore.has("storeId"));
         assertFalse(publicStore.has("id"));
 
         mvc.perform(get("/api/storefront/" + slug + "/home"))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.store.iconUrl").value(org.hamcrest.Matchers.nullValue()))
+                .andExpect(jsonPath("$.store.bannerUrl").value(org.hamcrest.Matchers.nullValue()))
                 .andExpect(jsonPath("$.fallbackType").value("DEFAULT_CATALOG"))
                 .andExpect(jsonPath("$.zones").isEmpty())
                 .andExpect(jsonPath("$.campaignName").doesNotExist());
@@ -294,6 +299,40 @@ class StorefrontIntegrationTest {
     }
 
     @Test
+    void storeIconAndBannerAreExposedAsPublicImageUrlsInTheStoreListAndTheHomeView() throws Exception {
+        int store = store("Branded " + UUID.randomUUID(), true);
+        String slug = slug(store);
+        String iconFile = UUID.randomUUID() + ".png", bannerFile = UUID.randomUUID() + ".jpg";
+        jdbc.update("UPDATE store SET icon_key=?, banner_key=? WHERE store_id=?",
+                "stores/" + store + "/" + iconFile, "stores/" + store + "/" + bannerFile, store);
+        String icon = "/api/public/stores/" + store + "/images/" + iconFile;
+        String banner = "/api/public/stores/" + store + "/images/" + bannerFile;
+
+        JsonNode listed = findStore(json.readTree(mvc.perform(get("/api/storefront/stores"))
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString()), slug);
+        assertEquals(icon, listed.path("iconUrl").asText());
+        assertEquals(banner, listed.path("bannerUrl").asText());
+        assertEquals(4, listed.size());
+        mvc.perform(get("/api/storefront/" + slug + "/home")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.store.storeSlug").value(slug))
+                .andExpect(jsonPath("$.store.iconUrl").value(icon))
+                .andExpect(jsonPath("$.store.bannerUrl").value(banner));
+
+        // Each image is independent: a Store with only a banner has a null icon.
+        jdbc.update("UPDATE store SET icon_key=NULL WHERE store_id=?", store);
+        listed = findStore(json.readTree(mvc.perform(get("/api/storefront/stores"))
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString()), slug);
+        assertTrue(listed.path("iconUrl").isNull());
+        assertEquals(banner, listed.path("bannerUrl").asText());
+
+        // Visibility is unchanged: an INACTIVE Store is not listed and its home is 404, whatever its images.
+        jdbc.update("UPDATE store SET status='INACTIVE' WHERE store_id=?", store);
+        assertNull(findStore(json.readTree(mvc.perform(get("/api/storefront/stores"))
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString()), slug));
+        mvc.perform(get("/api/storefront/" + slug + "/home")).andExpect(status().isNotFound());
+    }
+
+    @Test
     void runtimeOpenApiDocumentsThePublicRoutes() throws Exception {
         JsonNode api = json.readTree(mvc.perform(get("/v3/api-docs"))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString());
@@ -323,6 +362,10 @@ class StorefrontIntegrationTest {
                 productSchema.path("properties").path("availability").path("enum").toString());
         assertFalse(productSchema.path("properties").has("costPrice"));
         assertFalse(productSchema.path("properties").has("stockQuantity"));
+        for (String schema : List.of("PublicStore", "StoreSummary")) {
+            JsonNode properties = api.path("components").path("schemas").path(schema).path("properties");
+            assertEquals(List.of("storeSlug", "name", "iconUrl", "bannerUrl"), propertyNames(properties), schema);
+        }
         JsonNode storefrontPage = api.path("components").path("schemas").path("StorefrontProductPage");
         assertTrue(storefrontPage.path("properties").has("items"));
         JsonNode catalogPage = api.path("components").path("schemas").path("ProductPage");
@@ -443,6 +486,13 @@ class StorefrontIntegrationTest {
             }
         }
         return layoutB;
+    }
+
+    private static List<String> propertyNames(JsonNode properties) {
+        List<String> names = new java.util.ArrayList<>();
+        properties.fieldNames().forEachRemaining(names::add);
+        names.sort(java.util.Comparator.comparingInt(List.of("storeSlug", "name", "iconUrl", "bannerUrl")::indexOf));
+        return names;
     }
 
     private JsonNode findStore(JsonNode stores, String slug) {

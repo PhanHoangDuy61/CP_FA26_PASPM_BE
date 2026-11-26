@@ -45,7 +45,7 @@ public class StorefrontService {
     @Transactional(readOnly = true)
     public List<PublicStore> stores() {
         return repository.publicStores().stream()
-                .map(store -> new PublicStore(store.slug(), store.name())).toList();
+                .map(StoreRow::toPublic).toList();
     }
 
     @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
@@ -109,7 +109,7 @@ public class StorefrontService {
                 .map(entry -> new CatalogCategory(entry.getKey().id(), entry.getKey().name(),
                         List.copyOf(entry.getValue())))
                 .toList();
-        return new HomeView(new StoreSummary(store.slug(), store.name()), null, "DEFAULT_CATALOG",
+        return new HomeView(store.toSummary(), null, "DEFAULT_CATALOG",
                 List.of(), catalog);
     }
 
@@ -159,7 +159,7 @@ public class StorefrontService {
         List<HomeZone> result = zones.entrySet().stream()
                 .map(entry -> new HomeZone(entry.getKey(), List.copyOf(entry.getValue())))
                 .toList();
-        return new HomeView(new StoreSummary(store.slug(), store.name()), active.campaignName(),
+        return new HomeView(store.toSummary(), active.campaignName(),
                 null, result, List.of());
     }
 

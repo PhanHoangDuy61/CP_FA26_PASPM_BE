@@ -17,7 +17,7 @@ Coverage: 57/57 FR, 33/33 UC, 33/33 BR have at least one case.
 | FR-01.7 | System Admin creates, edits, (de)activates Stores; no delete; assigned users | DONE | TC-F01-028, TC-F01-034, TC-F01-035 |
 | FR-01.8 | Store Admin edits own address/phone; Merchandiser views own Store | DONE | TC-F01-041, TC-F01-042 |
 | FR-01.9 | INACTIVE Store: central 403 guard, 409 for new SA work/assignment, history readable | DONE | TC-F01-037, TC-F01-039, TC-F01-040, TC-F05-024 |
-| FR-01.10 | Store icon/banner: PNG/JPEG, size and dimension limits, public GET for ACTIVE | DONE | TC-F01-043, TC-F01-044, TC-F01-045, TC-F01-046, TC-F01-047, TC-F01-048, TC-F01-049, TC-F01-050 |
+| FR-01.10 | Store icon/banner: PNG/JPEG, size and dimension limits, public GET for ACTIVE | DONE | TC-F01-043, TC-F01-044, TC-F01-045, TC-F01-046, TC-F01-047, TC-F01-048, TC-F01-049, TC-F01-050, TC-F09-014 |
 | FR-02.1 | Category/product CRUD, server SKU, similar-name confirmation | DONE | TC-F02-001, TC-F02-002, TC-F02-003, TC-F02-004, TC-F02-005, TC-F02-006, TC-F02-007, TC-F02-008, TC-F02-009, TC-F02-011, TC-F02-012 |
 | FR-02.2 | Batches: expiry, push day, effectiveStatus, daysToExpiry, MISSING_PUSH_DAY, batch code | DONE | TC-F02-015, TC-F02-016, TC-F02-017, TC-F02-018, TC-F02-019, TC-F02-020, TC-F02-021, TC-F02-022, TC-F02-024, TC-F02-025, TC-F02-026, TC-F02-027, TC-F02-028, TC-F02-029 |
 | FR-02.3 | Stock derived from sellable batches | DONE | TC-F02-026, TC-F02-030 |
@@ -56,7 +56,7 @@ Coverage: 57/57 FR, 33/33 UC, 33/33 BR have at least one case.
 | FR-08.2 | At most one ACTIVE campaign; activation rechecks | DONE | TC-F08-010, TC-F08-011, TC-F08-019 |
 | FR-08.3 | Offline replay simulation V2+ (equal size), simulated:true | DONE | TC-F07-013, TC-F08-001, TC-F08-002, TC-F08-003, TC-F08-004, TC-F08-005 |
 | FR-08.4 | All F07/F08 operations synchronous | DONE | TC-F08-001, TC-F08-003 |
-| FR-09.1 | Public API by storeSlug; ACTIVE Stores only | DONE | TC-F09-001, TC-F09-004, TC-F09-011 |
+| FR-09.1 | Public API by storeSlug; ACTIVE Stores only | DONE | TC-F09-001, TC-F09-004, TC-F09-011, TC-F09-014 |
 | FR-09.2 | Home renders the ACTIVE campaign layout or the default catalogue | DONE | TC-F09-002, TC-F09-003, TC-F09-012 |
 | FR-09.3 | Product detail, availability, bundle filtering | DONE (related products deferred) | TC-F09-005, TC-F09-007, TC-F09-009, TC-F09-013 |
 | FR-09.4 | No admin fields in public DTOs; product image URL and description | DONE | TC-F02-008, TC-F02-037, TC-F09-008, TC-F09-013 |
@@ -95,7 +95,7 @@ UC03 and UC22 were removed before Report 3 and are not reused.
 | UC23 | Activate Approved Campaign | DONE (API) | TC-F08-009, TC-F08-012, TC-F08-013, TC-F08-016 |
 | UC24 | View Retail Performance Dashboard | DONE (API); UI pending | TC-F11-001 |
 | UC25 | View A/B Reports | DONE (API read) | TC-F08-005, TC-F08-017 |
-| UC26 | View Merchandising Homepage | DONE (API, MVP) | TC-F09-001, TC-F09-002 |
+| UC26 | View Merchandising Homepage | DONE (API, MVP) | TC-F09-001, TC-F09-002, TC-F09-014 |
 | UC27 | View Product Details / Related | PARTIAL (API) | TC-F09-005, TC-F09-006 |
 | UC28 | View Recommended Bundles | DONE (API, MVP) | TC-F09-002, TC-F09-009, TC-F09-010 |
 | UC29 | Add Whole Bundle to Cart | DONE (API) | TC-F10-001, TC-F10-007 |
@@ -134,13 +134,13 @@ UC03 and UC22 were removed before Report 3 and are not reused.
 | BR-22 | Layout score is a priority score, not revenue | TC-F07-003, TC-F08-017 |
 | BR-23 | Priority product = W > 1 | TC-F07-014, TC-F08-001 |
 | BR-24 | Scheduler enable 503 | TC-F05-022 |
-| BR-25 | Only ACTIVE Store's active layout is public; no cost/batch data | TC-F09-001, TC-F09-004, TC-F09-008 |
+| BR-25 | Only ACTIVE Store's active layout is public; no cost/batch data | TC-F09-001, TC-F09-004, TC-F09-008, TC-F09-014 |
 | BR-26 | Bundle add merges eligible lines; no reservation/discount | TC-F10-015 |
 | BR-27 | Store name unique (trim, ignore case) | TC-F01-029 |
 | BR-28 | Store slug unique; SA only | TC-F01-030, TC-F01-042 |
 | BR-29 | Store never hard-deleted | TC-F01-036 |
 | BR-30 | INACTIVE Store users 403; no new SA work 409 | TC-F01-037, TC-F01-038, TC-F01-039, TC-F01-040, TC-F05-024 |
-| BR-31 | Store image rules | TC-F01-043, TC-F01-044, TC-F01-045, TC-F01-046, TC-F01-048 |
+| BR-31 | Store image rules | TC-F01-043, TC-F01-044, TC-F01-045, TC-F01-046, TC-F01-048, TC-F09-014 |
 | BR-32 | Expired only after the expiry date | TC-F02-022, TC-F02-023, TC-F02-024, TC-F02-032, TC-F03-021, TC-F06-012, TC-F09-007 |
 | BR-33 | Product soft delete with guards | TC-F02-031, TC-F02-032, TC-F02-033, TC-F02-035, TC-F09-005 |
 
@@ -216,7 +216,7 @@ Decisions cited directly in a case's trace. Decisions not listed here are covere
 | DEC-20261119-05 | TC-F05-014, TC-F05-015 |
 | DEC-20261119-06 | TC-F07-005, TC-F07-013, TC-F09-012 |
 | DEC-20261119-07 | TC-F02-003, TC-F02-005, TC-F02-006 |
-| DEC-20261123-01 | TC-F05-004 |
+| DEC-20261123-01 | TC-F05-004, TC-F09-014 |
 | DEC-20261124-01 | TC-F02-022 |
 | DEC-20261124-02 | TC-F02-021 |
 | DEC-20261124-03 | TC-F02-031 |

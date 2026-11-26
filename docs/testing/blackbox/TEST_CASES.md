@@ -16,10 +16,10 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | [F06 Recommendations](#f06) | 18 | 9 | 8 | 1 | 6 | 2 | 8 | 1 | 1 | 0 | 0 |
 | [F07 Layout simulator](#f07) | 15 | 11 | 3 | 1 | 3 | 6 | 3 | 1 | 2 | 0 | 0 |
 | [F08 Campaigns and simulated A/B](#f08) | 19 | 13 | 4 | 2 | 1 | 6 | 3 | 1 | 7 | 0 | 1 |
-| [F09 Public storefront](#f09) | 13 | 8 | 3 | 2 | 3 | 2 | 3 | 3 | 1 | 1 | 0 |
+| [F09 Public storefront](#f09) | 14 | 8 | 4 | 2 | 4 | 2 | 3 | 3 | 1 | 1 | 0 |
 | [F10 Bundle cart](#f10) | 16 | 10 | 6 | 0 | 4 | 4 | 4 | 2 | 1 | 1 | 0 |
 | [F11 Dashboard](#f11) | 9 | 4 | 4 | 1 | 4 | 0 | 2 | 1 | 0 | 0 | 2 |
-| **Total** | **248** | **143** | **82** | **23** | **67** | **57** | **67** | **29** | **18** | **6** | **4** |
+| **Total** | **249** | **143** | **83** | **23** | **68** | **57** | **67** | **29** | **18** | **6** | **4** |
 
 ## F01
 
@@ -3439,7 +3439,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 ## F09
 
-**Public storefront** — 13 cases.
+**Public storefront** — 14 cases.
 
 | ID | Title | Priority | Type |
 |---|---|---|---|
@@ -3456,6 +3456,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | [TC-F09-011](#tc-f09-011) | No storefront write routes | Low | negative |
 | [TC-F09-012](#tc-f09-012) | Home needs configured zone caps | Low | negative |
 | [TC-F09-013](#tc-f09-013) | Storefront prices: API keeps decimals, UI shows whole đồng HALF_UP | Medium | boundary |
+| [TC-F09-014](#tc-f09-014) | Public Store shows icon and banner URLs | Medium | functional |
 
 ### TC-F09-001
 
@@ -3468,7 +3469,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded); Store C INACTIVE |
 | Test data | — |
 | Steps | 1. [API] GET /api/storefront/stores without a token (F09 is accepted on the API in this round, DEC-20261126-03) |
-| Expected result | 200; Store A and B with storeSlug and name only (no storeId); Store C absent. |
+| Expected result | 200; Store A and B, each with storeSlug, name, iconUrl and bannerUrl (nullable, JSON null without an image) and no storeId field; Store C absent. |
 | Priority / type | High / functional |
 | Status | NOT RUN |
 
@@ -3483,7 +3484,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded); C1 ACTIVE with B (BUNDLE, CROSS_SELL, FBT, BANNER blocks) |
 | Test data | slug foodmart-benchmark |
 | Steps | 1. [API] GET /api/storefront/foodmart-benchmark/home |
-| Expected result | campaignName C1; one HomePlacement per zone and block in stored order; type is the zone name; no BASELINE; no recommendation IDs, policy, review data or utility. |
+| Expected result | campaignName C1; store has storeSlug, name, iconUrl and bannerUrl (same values as the Stores list); one HomePlacement per zone and block in stored order; type is the zone name; no BASELINE; no recommendation IDs, policy, review data or utility. |
 | Priority / type | High / functional |
 | Status | NOT RUN |
 
@@ -3573,7 +3574,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded) |
 | Test data | home, list and detail responses |
 | Steps | 1. [API] Inspect the three responses |
-| Expected result | No costPrice, stockQuantity, batches, SKU-level inventory, recommendation evidence, review history or utility; storeId absent. |
+| Expected result | No costPrice, stockQuantity, batches, SKU-level inventory, recommendation evidence, review history or utility; no storeId field (the Store id appears only inside the public image URLs, as in the staff Store API). |
 | Priority / type | High / security |
 | Status | NOT RUN |
 
@@ -3650,6 +3651,21 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Steps | 1. [API] GET …/products/{id} for both products<br>2. Later round, once the storefront FE calls the real API (DEC-20261126-03): open both product pages |
 | Expected result | API returns 15000.50 and 15000.49 unchanged. The storefront shows `15.001 ₫` and `15.000 ₫`. |
 | Priority / type | Medium / boundary |
+| Status | NOT RUN |
+
+### TC-F09-014
+
+**Public Store shows icon and banner URLs**
+
+| Field | Value |
+|---|---|
+| Trace | UC26; FR-09.1; FR-01.10; BR-25; BR-31; DEC-20261123-01 |
+| Role | Guest (anonymous), Store Admin |
+| Preconditions | ENV-1 (local Docker stack, demo seed loaded); Store A has no images; Store B has none |
+| Test data | icon.png 256×256, banner.jpg 1600×400 (as TC-F01-043) |
+| Steps | 1. [API] GET /api/storefront/stores: Store A iconUrl and bannerUrl<br>2. Store Admin A uploads the icon on /store/profile<br>3. [API] GET /api/storefront/stores and /api/storefront/foodmart-benchmark/home<br>4. [API] GET the returned iconUrl without a token<br>5. Store Admin A uploads another icon<br>6. [API] GET the old iconUrl<br>7. Store Admin A removes the icon<br>8. System Admin deactivates Store A<br>9. [API] GET /api/storefront/stores and the last iconUrl |
+| Expected result | First list: Store A iconUrl and bannerUrl are JSON null. After the upload: iconUrl is `/api/public/stores/{id}/images/{uuid}.png` in both the list and home.store (same value as the Store API); bannerUrl stays null; the URL serves the PNG anonymously (200). After the second upload: a new URL; the old one is 404. After removal: iconUrl null. After deactivation: Store A is not listed and its image URL is 404. |
+| Priority / type | Medium / functional |
 | Status | NOT RUN |
 
 ## F10
