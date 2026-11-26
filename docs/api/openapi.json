@@ -14040,6 +14040,14 @@
           },
           "name" : {
             "type" : "string"
+          },
+          "iconUrl" : {
+            "type" : [ "string", "null" ],
+            "description" : "Public URL of the current Store icon, null without one"
+          },
+          "bannerUrl" : {
+            "type" : [ "string", "null" ],
+            "description" : "Public URL of the current Store banner, null without one"
           }
         }
       },
@@ -14051,6 +14059,14 @@
           },
           "name" : {
             "type" : "string"
+          },
+          "iconUrl" : {
+            "type" : [ "string", "null" ],
+            "description" : "Public URL of the current Store icon, null without one"
+          },
+          "bannerUrl" : {
+            "type" : [ "string", "null" ],
+            "description" : "Public URL of the current Store banner, null without one"
           }
         }
       }

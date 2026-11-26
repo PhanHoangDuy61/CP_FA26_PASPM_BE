@@ -10,6 +10,9 @@ import java.util.Map;
 import java.util.TreeSet;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import vn.edu.fpt.paspm.catalog.store.StoreImageUrls;
+import vn.edu.fpt.paspm.storefront.StorefrontContracts.PublicStore;
+import vn.edu.fpt.paspm.storefront.StorefrontContracts.StoreSummary;
 
 @Repository
 public class StorefrontRepository {
@@ -20,7 +23,17 @@ public class StorefrontRepository {
         this.jdbc = jdbc;
     }
 
-    public record StoreRow(int id, String slug, String name) {}
+    public record StoreRow(int id, String slug, String name, String iconKey, String bannerKey) {
+        /** The public Store of the stores list and the cart; the image URLs come from the shared Store URL builder. */
+        public PublicStore toPublic() {
+            return new PublicStore(slug, name, StoreImageUrls.publicUrl(id, iconKey), StoreImageUrls.publicUrl(id, bannerKey));
+        }
+
+        /** The Store of the home view. */
+        public StoreSummary toSummary() {
+            return new StoreSummary(slug, name, StoreImageUrls.publicUrl(id, iconKey), StoreImageUrls.publicUrl(id, bannerKey));
+        }
+    }
     public record ProductRow(int id, String name, String description, String imageUrl, String unit,
             BigDecimal sellingPrice, Integer categoryId, String categoryName,
             boolean requiresExpiry, String status) {}
@@ -45,11 +58,10 @@ public class StorefrontRepository {
     /** A Store is public exactly when it is ACTIVE (DEC-20261123-01); its F09 storeSlug is store.slug (V27). */
     public List<StoreRow> publicStores() {
         return jdbc.query("""
-                SELECT store_id,slug,name FROM store
+                SELECT store_id,slug,name,icon_key,banner_key FROM store
                 WHERE status='ACTIVE'
                 ORDER BY name,slug
-                """, (rs, row) -> new StoreRow(rs.getInt("store_id"), rs.getString("slug"),
-                rs.getString("name")));
+                """, (rs, row) -> storeRow(rs));
     }
 
     public StoreRow publicStore(String slug) {
@@ -62,10 +74,14 @@ public class StorefrontRepository {
 
     private StoreRow publicStore(String slug, boolean lock) {
         return jdbc.query("""
-                SELECT store_id,slug,name FROM store
+                SELECT store_id,slug,name,icon_key,banner_key FROM store
                 WHERE slug=? AND status='ACTIVE'
-                """ + (lock ? " FOR UPDATE" : ""), (rs, row) -> new StoreRow(rs.getInt("store_id"), rs.getString("slug"),
-                rs.getString("name")), slug).stream().findFirst().orElse(null);
+                """ + (lock ? " FOR UPDATE" : ""), (rs, row) -> storeRow(rs), slug).stream().findFirst().orElse(null);
+    }
+
+    private static StoreRow storeRow(java.sql.ResultSet rs) throws java.sql.SQLException {
+        return new StoreRow(rs.getInt("store_id"), rs.getString("slug"), rs.getString("name"),
+                rs.getString("icon_key"), rs.getString("banner_key"));
     }
 
     public boolean categoryExists(int storeId, int categoryId) {

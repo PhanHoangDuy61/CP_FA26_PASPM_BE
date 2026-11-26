@@ -1,5 +1,11 @@
 # API Changelog
 
+## 2026-11-27 — F09: public Store icon and banner URLs (additive)
+
+- The public Store object gains two nullable fields, `iconUrl` and `bannerUrl`: items of `GET /api/storefront/stores`, `store` in `GET /api/storefront/{storeSlug}/home`, and `store` in the F10 cart view. They hold the public image route `/api/public/stores/{storeId}/images/{fileName}` of F01 ([DEC-20261123-01](../decisions/2026-11-23/DEC-20261123-01-store-management.md)), built by the same code as the staff Store views, and are `null` without an image. See [F09 API, "Store branding"](F09_STOREFRONT_API.md) and the [F09 handoff](../frontend_handoff/F09_HANDOFF.md).
+- Additive: no route, request, status code or existing field changed; who can see the storefront is unchanged (ACTIVE Stores only). No migration.
+- OpenAPI stays at **118 paths / 147 operations**; only the `PublicStore` and `StoreSummary` schemas gained the two properties (16 inserted lines). Generated clients regenerate those two types. Record: [ROC-20261127-001](../record-of-changes/2026-11-27/01-f09-store-images.md).
+
 ## 2026-11-26 — PO answers DEC-20261126-02/-03 and documentation fixes (black-box test pack)
 
 - Documentation only. No route, schema or behaviour change; OpenAPI stays 118 paths / 147 operations.

@@ -6,7 +6,7 @@ F09 exposes a read-only public catalogue and selected F08 homepage. It does not 
 
 | Method and path | Access | Behavior |
 |---|---|---|
-| `GET /api/storefront/stores` | Public, no bearer required | Lists only ACTIVE Stores; response has `storeSlug` (= the Store's `slug`) and `name`, never `storeId`. |
+| `GET /api/storefront/stores` | Public, no bearer required | Lists only ACTIVE Stores; each has `storeSlug` (= the Store's `slug`), `name`, and the nullable `iconUrl` and `bannerUrl` (see "Store branding"). There is no `storeId` field. |
 | `GET /api/storefront/{storeSlug}/home` | Public, no bearer required | Returns the currently ACTIVE campaign's selected READY layout, or `DEFAULT_CATALOG` only when there is no ACTIVE campaign. |
 | `GET /api/storefront/{storeSlug}/products` | Public, no bearer required | Pages ACTIVE, non-deleted Products from the selected Store. |
 | `GET /api/storefront/{storeSlug}/products/{productId}` | Public, no bearer required | Reads ACTIVE, non-deleted Product detail from the selected Store. |
@@ -20,6 +20,22 @@ The public `storeSlug` is the Store's existing `slug` from F01 Store management 
 A Store is public exactly when `store.status = ACTIVE` (DEC-20261125-04). There is no separate storefront visibility flag or endpoint: deactivating a Store hides its storefront immediately, reactivating it shows it again. Neither action publishes, activates or ends a campaign.
 
 > **Merge note (2026-11-25).** An older copy of the F09 branch (`Duy/Feature/F09_Storefront`) was merged into `dev` directly at `68d6f0b` (2026-11-21). It added `V29__f09_storefront.java` (`store.store_slug`, `store.storefront_enabled`, `product.image_url`, `product.description`) and `PUT /api/system/stores/{storeId}/storefront-visibility`. V29 is kept unchanged because it may already be applied. **V30** `f09_drop_old_storefront_columns` drops `store.store_slug` and `store.storefront_enabled`; the visibility endpoint is removed. Public lookup uses `store.slug` and `store.status` (DEC-20261125-04, addendum "Migrations").
+
+## Store branding (2026-11-27)
+
+Every public Store object has two nullable image URLs: `GET /api/storefront/stores` items, `store` in `GET /api/storefront/{storeSlug}/home`, and `store` in the F10 cart view (the same fields everywhere). They follow [DEC-20261123-01](../decisions/2026-11-23/DEC-20261123-01-store-management.md).
+
+```json
+{ "storeSlug": "green-market", "name": "Green Market",
+  "iconUrl": "/api/public/stores/7/images/3f6c0d0e-5a2b-4c1e-9d55-0a6b8f2d9c11.png",
+  "bannerUrl": null }
+```
+
+- `iconUrl` and `bannerUrl` are the public image routes of F01 (`GET /api/public/stores/{storeId}/images/{fileName}`, anonymous, PNG or JPEG), built by the same code as the staff Store views, so both APIs advertise identical URLs. They are relative paths: resolve them against the API origin.
+- `null` means the Store has no such image; the client shows a placeholder. Each image is independent.
+- Replacing an image gives a new UUID file name, so the URL changes and the old one answers 404; removing it makes the field `null`.
+- Visibility is unchanged: only ACTIVE Stores are listed, and deactivating a Store also makes its image URLs answer 404. The Store id is not a field of the DTO; it appears only inside these URLs, as in the staff Store API.
+- Additive change: no request, route, status code or existing field changed (OpenAPI stays at 118 paths / 147 operations; only the `PublicStore` and `StoreSummary` schemas gained the two properties).
 
 ## Public Product fields
 

@@ -4,7 +4,7 @@ The public storefront is anonymous and read-only. Staff routes remain protected.
 
 ## Base URL and public access
 
-- `GET /api/storefront/stores` returns ACTIVE Stores only, as `{storeSlug,name}`. `storeSlug` is the Store's `slug` from Store management (DEC-20261123-01). There is no public Store id.
+- `GET /api/storefront/stores` returns ACTIVE Stores only, as `{storeSlug,name,iconUrl,bannerUrl}`. `storeSlug` is the Store's `slug` from Store management (DEC-20261123-01). There is no public Store id field. `iconUrl` and `bannerUrl` are nullable public image URLs (2026-11-27, below); `home.store` and `cart.store` carry the same four fields.
 - Public paths require no bearer token: `GET /api/storefront/{storeSlug}/home`, `/products`, and `/products/{productId}`.
 - A Store is public exactly when it is ACTIVE (DEC-20261125-04). There is **no** storefront visibility endpoint: the System Admin deactivates/reactivates the Store and edits its slug through the existing Store management screens (`/api/system/stores`).
 - Unknown and INACTIVE Store slugs intentionally share a 404 response so the API does not reveal the existence of inactive Stores.
@@ -48,11 +48,20 @@ The public storefront is anonymous and read-only. Staff routes remain protected.
 
 > **Breaking vs current `dev` (old F09 merge `68d6f0b`, 2026-11-21):** `PUT /api/system/stores/{storeId}/storefront-visibility`, its `{"storefrontEnabled":…}` body and the `store_visibility_not_found_error.json` example are removed; V30 drops `store.store_slug` and `store.storefront_enabled`. Example slugs no longer carry a hash suffix because they are ordinary Store slugs. `availability` value `UNAVAILABLE` is renamed to `OUT_OF_STOCK` (FR-09.3, PO review 2026-11-25).
 
+## Store icon and banner (2026-11-27, additive)
+
+- [ ] Show `iconUrl` as the Store logo and `bannerUrl` as the Store banner in the Store chooser and the Store header. Use `<img src>`; the routes are anonymous, so no `Authorization` header is needed (do not send one).
+- [ ] The URLs are relative (`/api/public/stores/{storeId}/images/{uuid}.png|jpg`). Resolve them against the API origin (the same origin or proxy as the other storefront calls); never store or log them as stable ids.
+- [ ] `null` is a normal state, not an error: show a placeholder (for example the Store initial). The two images are independent.
+- [ ] Treat the URL as opaque and re-read it with the Store (`/stores` or `/home`): replacing an image changes the file name, and the old URL then answers 404. An image that fails to load must fall back to the placeholder.
+- [ ] An INACTIVE Store is not listed at all, so there is no separate case for it.
+- Source of the rule: [DEC-20261123-01](../decisions/2026-11-23/DEC-20261123-01-store-management.md) (Store icon and banner).
+
 ## Public models
 
 ```ts
 export type Availability = 'AVAILABLE' | 'OUT_OF_STOCK';
-export interface PublicStore { storeSlug: string; name: string }
+export interface PublicStore { storeSlug: string; name: string; iconUrl: string | null; bannerUrl: string | null }
 export interface ProductCard {
   productId: number; name: string; description: string | null; imageUrl: string | null;
   unit: string; sellingPrice: number;
