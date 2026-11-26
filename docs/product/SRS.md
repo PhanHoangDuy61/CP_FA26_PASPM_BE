@@ -37,7 +37,7 @@ This file is the map. When it disagrees with those files, they win. Fix this fil
 | System Administrator (`SYSTEM_ADMIN`) | No | Accounts and roles, λmax policy, mining configuration (minUtil), mining for a selected Store, schedules, Store management (create, edit including slug, deactivate/reactivate, images; no delete) |
 | Store Admin (`STORE_ADMIN`) | Yes | Catalogue, prices and costs, batches and push days, imports, activate / end / rollback campaigns, own Store profile (address, phone, icon, banner) |
 | Merchandiser (`MERCHANDISER`) | Yes | λ / α / β / N, seasons, snapshots, mining for its own Store, recommendations, layouts, campaigns, simulation, view own Store |
-| End Customer (`END_CUSTOMER`) | No | Self-registers. F10 cart (planned); F09 viewing planned to need no login |
+| End Customer (`END_CUSTOMER`) | No | Self-registers. F10 cart on the Part 2 branch; anonymous F09 browsing |
 | System Scheduler (`SYSTEM_SCHEDULER`) | — | Internal principal that creates scheduled snapshots and requests. It cannot log in |
 
 ## 2. Use cases (Report 3 numbering kept)
@@ -71,8 +71,8 @@ UC03 and UC22 were removed earlier, and their numbers are not reused.
 | 25 | View A/B Reports | Store Admin, Merch | F08/F11 | DONE (API read) | Reports are immutable |
 | 26 | View Merchandising Homepage | End Customer / guest | F09 | DONE (API, MVP) | Anonymous, by `storeSlug` = `store.slug`; ACTIVE Stores only (DEC-20261125-04). Frontend still mock |
 | 27 | View Product Details / Related | End Customer / guest | F09 | PARTIAL (API) | Product list and detail done; related products come after the MVP |
-| 28 | View Recommended Bundles | End Customer / guest | F09 | DONE (API, MVP) | Bundles are rendered as homepage placements; only APPROVED blocks whose components are all still sellable |
-| 29 | Add Whole Bundle to Cart | End Customer | F10 | PLANNED | Login required. Skips unavailable components. No reservation |
+| 28 | View Recommended Bundles | End Customer / guest | F09 | DONE (API, MVP) | Bundles are homepage placements. On the F10 Part 2 branch, every BUNDLE block in the active selected Layout B supports the bundle action |
+| 29 | Add Whole Bundle to Cart | End Customer | F10 | Implemented on Part 2 branch | Login required. Skips unavailable components. No reservation |
 | 30 | Validate / Preprocess Orders | (included in UC21) | F04 | DONE | — |
 | 31 | Create Frozen Utility Snapshot | Merch | F03 | DONE | Freezes W2 inputs, seasons and warnings |
 | 32 | Set Global Utility Lambda Policy | SA | F03 | DONE | **λmax only** (range [0, λmax], default 0.5) |
@@ -229,12 +229,12 @@ Each line gives the behaviour an agent must preserve. Exact request and response
 
 - FR-09.1: Public read API, separate from the staff API, keyed by `storeSlug` = `store.slug` (V27). No login needed. A Store is public exactly when it is ACTIVE; there is no separate visibility switch (DEC-20261125-04). Unknown or INACTIVE Store → 404.
 - FR-09.2: The homepage renders the zones of the **active** campaign layout in placement order. With no active campaign it falls back to the default layout. Draft and ended layouts are never shown.
-- FR-09.3: Product detail and the bundle list. Bundles are APPROVED and ready. A bundle with an invalid component is hidden. An out-of-stock product shows `OUT_OF_STOCK`: the public `availability` is `AVAILABLE | OUT_OF_STOCK` (PO review 2026-11-25, DEC-20261125-04 addendum). Soft-deleted and INACTIVE products are never public (DEC-20261124-03); a batch is sellable on its expiry date (DEC-20261124-01).
+- FR-09.3: Product detail and the bundle list. On the F10 Part 2 branch, each BUNDLE block of the active selected Layout B keeps its public projection even when components are out of stock. Hidden Product metadata stays private. An out-of-stock product shows `OUT_OF_STOCK`: the public `availability` is `AVAILABLE | OUT_OF_STOCK` (PO review 2026-11-25, DEC-20261125-04 addendum). Soft-deleted and INACTIVE products are never public (DEC-20261124-03); a batch is sellable on its expiry date (DEC-20261124-01).
 - FR-09.4: No admin fields (cost, batches) in public DTOs. The product gets `image_url` and `description` columns in **V29** (V30 drops the Store columns V29 also added); F02 `ProductRequest`/`ProductView` accept and return them (`imageUrl` absolute HTTP(S) only).
 
-### F10 — Bundle cart (Part 1 on `Khoi/feat/f10-cart-core`, whole-bundle add PLANNED)
+### F10 — Bundle cart (implemented on `Khoi/feat/f10-bundle-add`, stacked on Part 1)
 
-- FR-10.1: END_CUSTOMER login, one persistent cart per customer/Store, a 99-unit cap per Product, current price and stock checked on adds/increases. All mutations require `If-Match`. Stale version returns `409 CART_VERSION_CONFLICT`.
+- FR-10.1: END_CUSTOMER login, one persistent cart per customer/Store, a 99-unit cap per Product, current price and stock checked on adds/increases. A single-item mutation exceeding 99 or available stock is rejected in full. All mutations require `If-Match`. Stale version returns `409 CART_VERSION_CONFLICT`.
 - FR-10.2: Each BUNDLE block on the active selected Layout B supports a whole-bundle action by opaque `bundleKey`. One click requests one bundle. Add up to the requested quantity, sellable stock available for the increment and remaining capacity under 99 per Product. Report requested and added quantities for every component. If no component can be added, return 409 and record rejection.
 - FR-10.3: Each line is independently editable and removable. No reservation, discount, checkout, order or payment.
 - FR-10.4: Record one event per successful mutation that changes the cart. Record unsuccessful adds when a resolved bundle has no eligible component. Bundle events classify the full block as MINED or MANUAL and store actual units added.
@@ -276,7 +276,7 @@ BR-01 to BR-13 keep Report 3 numbering. BR-14 onward are new proposals in this d
 | BR-23 | A priority product is one with W > 1 in the layout's snapshot | Merged in PR #32 (`516183d`) |
 | BR-24 | Scheduled-mining enable returns 503 until release sign-off | New |
 | BR-25 | (F09) Only the active campaign layout of an ACTIVE Store is public. Public DTOs never expose cost or batch data | Valid (DEC-20261125-04) |
-| BR-26 | (F10, planned) Bundle add merges currently eligible Product lines. Each line is independently editable and removable. No reservation or discount | DEC-20261125-06, PLANNED |
+| BR-26 | (F10) Bundle add merges currently eligible Product lines. Each line is independently editable and removable. No reservation or discount | DEC-20261125-06, implemented on Part 2 branch |
 | BR-27 | A Store name is unique after trimming, ignoring case (service rule; no database UNIQUE yet) | New (DEC-20261123-01) |
 | BR-28 | A Store slug is unique and only a System Admin sets or changes it | New (DEC-20261123-01) |
 | BR-29 | A Store is never hard-deleted | New (DEC-20261123-01) |
@@ -290,10 +290,10 @@ BR-01 to BR-13 keep Report 3 numbering. BR-14 onward are new proposals in this d
 ### 5.1 External interfaces
 
 - **Web SPA:** React and TypeScript, desktop and mobile widths from 320 to 1440 px.
-- **REST/JSON API:** Bearer JWT plus refresh cookie and CSRF. Errors are returned as `{"error":"…"}`. **144 operations / 115 paths** on the F10 Part 1 branch (dev baseline: 139 operations / 112 paths). Whole-bundle add and F11 are outside this export. Swagger is at `/swagger`.
+- **REST/JSON API:** Bearer JWT plus refresh cookie and CSRF. Errors are returned as `{"error":"…"}`. **145 operations / 116 paths** on the F10 Part 2 branch (dev baseline: 139 operations / 112 paths). F11 is outside this export. Swagger is at `/swagger`.
 - **Identity and email:** Google Identity for sign-in, SMTP for OTP (Mailpit in development).
 - **Mining runtime:** SPMF 2.67a on Java 25, pinned by SHA-256.
-- **Database:** MySQL 8.4 with Flyway **V1–V30** (V27 Store management, V28 product soft delete, V29 F09 storefront from the old `dev` merge, V30 drops its unused Store columns; V31 reserved for F10). H2 is used for some automated tests.
+- **Database:** MySQL 8.4 with Flyway **V1–V30** (V27 Store management, V28 product soft delete, V29 F09 storefront from the old `dev` merge, V30 drops its unused Store columns; V31 on the stacked F10 branch). H2 is used for some automated tests.
 
 ### 5.2 Limits
 
@@ -378,7 +378,7 @@ Changes against Report 3 §3.1.2:
   - async import progress;
   - Merchandiser "Run mining" on its own snapshot.
 - **F07/F08:** campaign list and detail, layout B editor with zone policy and preview, simulation report, decision, publish / withdraw, and activate / end / rollback for the Store Admin.
-- **F09/F10 (planned):**
+- **F09/F10 customer screens:**
   - Store chooser, Homepage, Product Detail and Bundles;
   - cart drawer or cart page;
   - Related Products after the MVP.
@@ -396,7 +396,7 @@ Changes against Report 3 §3.1.2:
 | F06 | 10, 11 | `F06_RECOMMENDATION_API.md` | `F06_HANDOFF.md` |
 | F07/F08 | 12–16, 23, 25 | `F07_F08_LAYOUT_CAMPAIGN_API.md` | `F07_F08_HANDOFF.md` |
 | F09 | 26–28 | `F09_STOREFRONT_API.md` | `F09_HANDOFF.md` |
-| F10 | 29 | [Bundle Cart API (PLANNED)](../api/F10_BUNDLE_CART_API.md) | [F10 handoff](../frontend_handoff/F10_HANDOFF.md) |
+| F10 | 29 | [Bundle Cart API (Part 2 branch)](../api/F10_BUNDLE_CART_API.md) | [F10 handoff](../frontend_handoff/F10_HANDOFF.md) |
 | F11 | 24 | [Dashboard API (PLANNED)](../api/F11_DASHBOARD_API.md) | [F11 handoff](../frontend_handoff/F11_HANDOFF.md) |
 
 ## 10. Report 3 items superseded

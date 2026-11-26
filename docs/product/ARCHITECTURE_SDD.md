@@ -82,7 +82,7 @@ Root package: `vn.edu.fpt.paspm`. Java migrations live in `db.migration`.
 | `common` | Shared | 7 | Errors, shared contracts, transaction manager. `common.media`: `MediaStorage` / `LocalMediaStorage` (Store images, avatars) |
 | `deployment` | Ops | 5 | Flyway callback, legacy recovery |
 | `storefront` | F09 | `StorefrontController`, `StorefrontService`, `StorefrontRepository` | DONE (MVP). Separate public controller; reads the active selected layout and rechecks recommendation blocks |
-| `storefront.cart` | F10 | Five ordinary cart operations and item events | Part 1 implemented on `Khoi/feat/f10-cart-core` |
+| `storefront.cart` | F10 | Five ordinary cart operations, whole-bundle add and storefront events | Parts 1 and 2 implemented on `Khoi/feat/f10-bundle-add` |
 | *(planned)* `dashboard` | F11 | — | **PLANNED** |
 
 Dependency rules:
@@ -233,12 +233,12 @@ flowchart LR
 - **Activation** locks the Store row, rechecks validity, ends the previously active campaign and records history.
 - **Priority coverage (OFFLINE_REPLAY_V4):** distinct displayed products with W > 1 divided by the distinct products displayed. The service reads W from the frozen campaign snapshot and saves the rate and denominator in `comparison_report_layout`. Layout views use their complete placement list, and reports use the actual A prefix and full B. Historical reports are read as stored.
 
-### 6.5 Storefront (F09 — DONE, MVP) and cart (F10 Part 1 branch)
+### 6.5 Storefront (F09 — DONE, MVP) and cart (F10 Part 2 branch)
 
 - `StorefrontController` (anonymous GETs, permitted in `SecurityConfig`) resolves `storeSlug` = `store.slug` of an ACTIVE Store to the active campaign's selected READY layout. With no ACTIVE campaign it returns `DEFAULT_CATALOG` (ACTIVE, non-deleted products by category), not baseline A.
 - Public DTOs carry no cost or batch data. `availability` is computed with aggregate queries.
 - The cart is per customer and per Store. Every mutation checks the optimistic version from If-Match.
-- Whole-bundle add resolves the F09 key against active Layout B, checks each component, merges eligible Product lines, advances cart version and records one successful event in a transaction. An all-skipped request records rejection without a cart change.
+- Whole-bundle add binds the opaque F09 key to Store, campaign, layout revision and block. The cart transaction serializes on the customer and Store rows. The Store lock is shared with F08 campaign lifecycle writes. Success adds eligible components as ordinary Product lines, advances the cart version and records one event. An all-zero result commits only a rejection event.
 - F10 Part 1 migration V31 creates `shopping_cart`, `shopping_cart_item` and `storefront_event`. F11 reads snapshot, comparison report and bundle event aggregates without a separate schema. Migrations after V31 start at V32. See [DEC-20261125-06](../decisions/2026-11-25/DEC-20261125-06-f10-f11-mvp-contract.md).
 
 ## 7. Cross-cutting concerns

@@ -29,7 +29,11 @@ import vn.edu.fpt.paspm.utility.UtilityTimeZone;
         "spring.datasource.username=sa", "spring.datasource.password=", "spring.flyway.enabled=true",
         "paspm.jwt-secret=01234567890123456789012345678901",
         "paspm.otp-secret=test-only-otp-key-with-at-least-thirty-two-bytes",
-        "paspm.bootstrap-email=", "paspm.bootstrap-password="
+        "paspm.bootstrap-email=", "paspm.bootstrap-password=",
+        "paspm.layout.max-blocks-by-zone.BUNDLE=10", "paspm.layout.max-products-by-zone.BUNDLE=30",
+        "paspm.layout.max-blocks-by-zone.CROSS_SELL=10", "paspm.layout.max-products-by-zone.CROSS_SELL=30",
+        "paspm.layout.max-blocks-by-zone.FBT=10", "paspm.layout.max-products-by-zone.FBT=30",
+        "paspm.layout.max-blocks-by-zone.BANNER=10", "paspm.layout.max-products-by-zone.BANNER=30"
 })
 @AutoConfigureMockMvc
 class CartIntegrationTest {
@@ -174,14 +178,40 @@ class CartIntegrationTest {
     }
 
     @Test
+    void singleItemWritesAtSellableStockBoundaryRejectTheEntireExcess() throws Exception {
+        int product = product(storeId, false);
+        batch(product, 8, "ACTIVE", null);
+        add(product, 5, 0).andExpect(status().isOk());
+        add(product, 4, 1).andExpect(status().isConflict())
+                .andExpect(jsonPath("$.code").value("INSUFFICIENT_SELLABLE_STOCK"));
+        call(get(base)).andExpect(status().isOk()).andExpect(jsonPath("$.version").value(1))
+                .andExpect(jsonPath("$.items[0].quantity").value(5));
+        add(product, 3, 1).andExpect(status().isOk()).andExpect(jsonPath("$.items[0].quantity").value(8));
+        long item = line();
+        quantity(item, 5, 2).andExpect(status().isOk());
+        quantity(item, 9, 3).andExpect(status().isConflict())
+                .andExpect(jsonPath("$.code").value("INSUFFICIENT_SELLABLE_STOCK"));
+        call(get(base)).andExpect(status().isOk()).andExpect(jsonPath("$.version").value(3))
+                .andExpect(jsonPath("$.items[0].quantity").value(5));
+        quantity(item, 8, 3).andExpect(status().isOk()).andExpect(jsonPath("$.version").value(4))
+                .andExpect(jsonPath("$.items[0].quantity").value(8));
+        assertEquals(4, count("storefront_event"));
+    }
+
+    @Test
     void cartCapAppliesAfterMergingQuantities() throws Exception {
         int product = product(storeId, false);
         batch(product, 150, "ACTIVE", null);
         add(product, 100, 0).andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("CART_QUANTITY_LIMIT"));
-        add(product, 99, 0).andExpect(status().isOk());
-        add(product, 1, 1).andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("CART_QUANTITY_LIMIT"));
-        quantity(line(), 100, 1).andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("CART_QUANTITY_LIMIT"));
-        assertEquals(1, count("storefront_event"));
+        add(product, 98, 0).andExpect(status().isOk());
+        quantity(line(), 99, 1).andExpect(status().isOk()).andExpect(jsonPath("$.items[0].quantity").value(99));
+        add(product, 1, 2).andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("CART_QUANTITY_LIMIT"));
+        quantity(line(), 100, 2).andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("CART_QUANTITY_LIMIT"));
+        quantity(line(), 98, 2).andExpect(status().isOk());
+        add(product, 1, 3).andExpect(status().isOk()).andExpect(jsonPath("$.items[0].quantity").value(99));
+        call(get(base)).andExpect(status().isOk()).andExpect(jsonPath("$.version").value(4))
+                .andExpect(jsonPath("$.items[0].quantity").value(99));
+        assertEquals(4, count("storefront_event"));
     }
 
     @Test
@@ -209,6 +239,229 @@ class CartIntegrationTest {
         assertEquals(1, count("shopping_cart"));
         assertEquals(1, count("shopping_cart_item"));
         assertEquals(1, count("storefront_event"));
+    }
+
+    @Test
+    void manualBundleAddsOnlyAvailableRoomAndKeepsOrdinaryLines() throws Exception {
+        int stocked = product(storeId, false);
+        int out = product(storeId, false);
+        int capped = product(storeId, false);
+        int hidden = product(storeId, false);
+        batch(stocked, 2, "ACTIVE", null);
+        batch(capped, 110, "ACTIVE", null);
+        Block block = activeBlock(List.of(stocked, out, capped, hidden));
+        jdbc.update("UPDATE product SET status='INACTIVE' WHERE product_id=?", hidden);
+        add(stocked, 1, 0).andExpect(status().isOk());
+        add(capped, 99, 1).andExpect(status().isOk());
+        String key = bundleKey();
+        assertFalse(key.contains("="));
+        bundle(key, 2).andExpect(status().isOk())
+                .andExpect(jsonPath("$.cart.version").value(3))
+                .andExpect(jsonPath("$.cart.items.length()").value(2))
+                .andExpect(jsonPath("$.cart.items[0].quantity").value(2))
+                .andExpect(jsonPath("$.cart.items[0].addedFromBundle").value(true))
+                .andExpect(jsonPath("$.components.length()").value(4))
+                .andExpect(jsonPath("$.components[0].productId").value(stocked))
+                .andExpect(jsonPath("$.components[0].requested").value(1))
+                .andExpect(jsonPath("$.components[0].added").value(1))
+                .andExpect(jsonPath("$.components[1].added").value(0))
+                .andExpect(jsonPath("$.components[2].added").value(0))
+                .andExpect(jsonPath("$.components[3].added").value(0));
+        assertBundleEvent(block, "BUNDLE_ADDED", "MANUAL", 1, null);
+        call(get(base)).andExpect(status().isOk()).andExpect(jsonPath("$.items[0].quantity").value(2));
+        assertEquals(2, jdbc.queryForObject("SELECT remaining_quantity FROM inventory_batch WHERE product_id=?",
+                Integer.class, stocked));
+    }
+
+    @Test
+    void allSkippedStillCommitsOneRejectionAndLeavesVirtualCartUnchanged() throws Exception {
+        int one = product(storeId, false);
+        int two = product(storeId, false);
+        Block block = activeBlock(List.of(one, two));
+        String key = bundleKey();
+        bundle(key, 0).andExpect(status().isConflict())
+                .andExpect(jsonPath("$.code").value("BUNDLE_ADD_REJECTED"))
+                .andExpect(jsonPath("$.components.length()").value(2))
+                .andExpect(jsonPath("$.components[0].productId").value(one))
+                .andExpect(jsonPath("$.components[0].added").value(0))
+                .andExpect(jsonPath("$.components[1].productId").value(two))
+                .andExpect(jsonPath("$.components[1].added").value(0));
+        assertBundleEvent(block, "BUNDLE_ADD_REJECTED", "MANUAL", 0, "BUNDLE_ADD_REJECTED");
+        call(get(base)).andExpect(status().isOk()).andExpect(jsonPath("$.version").value(0));
+        assertEquals(0, count("shopping_cart"));
+        assertEquals(0, count("shopping_cart_item"));
+    }
+
+    @Test
+    void exactReadyRecommendationIsMinedEvenWithMissingPlacementProvenanceButAmbiguityIsManual() throws Exception {
+        int one = product(storeId, false);
+        int two = product(storeId, false);
+        batch(one, 10, "ACTIVE", null);
+        batch(two, 10, "ACTIVE", null);
+        Block block = activeBlock(List.of(one, two));
+        recommendation(block, List.of(one, two), 1);
+        recommendation(block, List.of(one, two), 20); // Approved but not currently ready.
+        String key = bundleKey();
+        bundle(key, 0).andExpect(status().isOk()).andExpect(jsonPath("$.cart.items[0].addedFromBundle").value(true));
+        assertBundleEvent(block, "BUNDLE_ADDED", "MINED", 2, null);
+        recommendation(block, List.of(one, two), 1);
+        bundle(key, 1).andExpect(status().isOk());
+        assertEquals(List.of("MINED", "MANUAL"), jdbc.queryForList("""
+                SELECT bundle_origin FROM storefront_event WHERE store_id=? ORDER BY event_id
+                """, String.class, storeId));
+    }
+
+    @Test
+    void invalidForeignAndStaleKeysAndInvalidRequestsRecordNoEvent() throws Exception {
+        int one = product(storeId, false);
+        int two = product(storeId, false);
+        Block block = activeBlock(List.of(one, two));
+        String key = bundleKey();
+        String other = "cart-" + UUID.randomUUID();
+        store(other, "ACTIVE");
+        call(bundleRequest(url(other), key, 0)).andExpect(status().isNotFound());
+        bundle("forged", 0).andExpect(status().isNotFound());
+        String tampered = (key.startsWith("A") ? "B" : "A") + key.substring(1);
+        bundle(tampered, 0).andExpect(status().isNotFound());
+        mvc.perform(bundleRequest(base, key, 0)).andExpect(status().isUnauthorized());
+        mvc.perform(bundleRequest(base, key, 0).header("Authorization", "Bearer " + token("STORE_ADMIN", storeId)))
+                .andExpect(status().isForbidden());
+        call(post(base + "/bundles").contentType("application/json").content("{\"bundleKey\":\"" + key + "\"}"))
+                .andExpect(status().isBadRequest());
+        for (String body : List.of("{}", "{\"bundleKey\":42}",
+                "{\"bundleKey\":\"" + key + "\",\"bundleQuantity\":2}")) {
+            call(post(base + "/bundles").header("If-Match", tag(0)).contentType("application/json").content(body))
+                    .andExpect(status().isBadRequest());
+        }
+        jdbc.update("UPDATE storefront_layout SET version=2 WHERE layout_id=?", block.layout());
+        bundle(key, 0).andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("BUNDLE_UNAVAILABLE"));
+        assertEquals(0, count("storefront_event"));
+        assertEquals(0, count("shopping_cart"));
+    }
+
+    @Test
+    void simultaneousBundleWritesWithSameCartVersionCommitOnlyOneEvent() throws Exception {
+        int one = product(storeId, false);
+        int two = product(storeId, false);
+        batch(one, 10, "ACTIVE", null);
+        batch(two, 10, "ACTIVE", null);
+        Block block = activeBlock(List.of(one, two));
+        String key = bundleKey();
+        var ready = new CountDownLatch(2);
+        var start = new CountDownLatch(1);
+        Callable<org.springframework.mock.web.MockHttpServletResponse> write = () -> {
+            ready.countDown();
+            assertTrue(start.await(10, TimeUnit.SECONDS));
+            return bundle(key, 0).andReturn().getResponse();
+        };
+        var pool = Executors.newFixedThreadPool(2);
+        try {
+            var a = pool.submit(write);
+            var b = pool.submit(write);
+            assertTrue(ready.await(10, TimeUnit.SECONDS));
+            start.countDown();
+            var responses = List.of(a.get(10, TimeUnit.SECONDS), b.get(10, TimeUnit.SECONDS));
+            assertEquals(List.of(200, 409), responses.stream().map(r -> r.getStatus()).sorted().toList());
+            var conflict = responses.stream().filter(r -> r.getStatus() == 409).findFirst().orElseThrow();
+            assertEquals("CART_VERSION_CONFLICT", json.readTree(conflict.getContentAsString()).path("code").asText());
+        } finally {
+            pool.shutdownNow();
+        }
+        assertBundleEvent(block, "BUNDLE_ADDED", "MANUAL", 2, null);
+        assertEquals(1, count("shopping_cart"));
+        assertEquals(2, count("shopping_cart_item"));
+    }
+
+    private String bundleKey() throws Exception {
+        return json.readTree(mvc.perform(get(base.substring(0, base.length() - "/cart".length()) + "/home")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.zones[0].placements[0].bundleKey").isString())
+                .andReturn().getResponse().getContentAsString())
+                .path("zones").get(0).path("placements").get(0).path("bundleKey").asText();
+    }
+
+    private org.springframework.test.web.servlet.ResultActions bundle(String key, long version) throws Exception {
+        return call(bundleRequest(base, key, version));
+    }
+
+    private MockHttpServletRequestBuilder bundleRequest(String cartUrl, String key, long version) throws Exception {
+        return post(cartUrl + "/bundles").header("If-Match", tag(version)).contentType("application/json")
+                .content(json.writeValueAsString(java.util.Map.of("bundleKey", key)));
+    }
+
+    private record Block(long campaign, long layout, int snapshot, int actor) {}
+
+    private Block activeBlock(List<Integer> products) {
+        int actor = users.createPendingUser("Test merchandiser", UUID.randomUUID() + "@example.test",
+                "MERCHANDISER", storeId, null, null).id();
+        LocalDate asOf = timeZone.today().minusDays(1);
+        jdbc.update("""
+                INSERT INTO utility_snapshot(store_id,created_by,range_start,range_end,as_of_date,
+                    config_snapshot,source_hash,matrix_hash,total_weighted_utility,rounding_scale,status)
+                VALUES (?,?,?,?,?,'{}',?,?,0,6,'READY')
+                """, storeId, actor, asOf.minusDays(1), asOf, asOf, "a".repeat(64), "b".repeat(64));
+        int snapshot = jdbc.queryForObject("SELECT snapshot_id FROM utility_snapshot WHERE store_id=?", Integer.class, storeId);
+        jdbc.update("INSERT INTO campaign(store_id,utility_snapshot_id,name,created_by) VALUES (?,?,?,?)",
+                storeId, snapshot, "Bundle campaign", actor);
+        long campaign = jdbc.queryForObject("SELECT campaign_id FROM campaign WHERE store_id=?", Long.class, storeId);
+        jdbc.update("""
+                INSERT INTO storefront_layout(store_id,campaign_id,utility_snapshot_id,role,status,version,name,created_by)
+                VALUES (?,?,?,'B','READY',1,'Selected',?)
+                """, storeId, campaign, snapshot, actor);
+        long layout = jdbc.queryForObject("SELECT layout_id FROM storefront_layout WHERE store_id=?", Long.class, storeId);
+        jdbc.update("""
+                INSERT INTO storefront_layout_revision(store_id,layout_id,version,placements_json,content_sha256,created_by)
+                VALUES (?,?,1,'[]',?,?)
+                """, storeId, layout, "c".repeat(64), actor);
+        jdbc.update("""
+                UPDATE campaign SET layout_b_id=?,selected_layout_id=?,decision='CHOOSE_B',status='ACTIVE'
+                WHERE campaign_id=?
+                """, layout, layout, campaign);
+        for (int i = 0; i < products.size(); i++) {
+            jdbc.update("""
+                    INSERT INTO layout_placement(store_id,layout_id,utility_snapshot_id,product_id,zone,block_no,position)
+                    VALUES (?,?,?,?,'BUNDLE',1,?)
+                    """, storeId, layout, snapshot, products.get(i), i + 1);
+        }
+        return new Block(campaign, layout, snapshot, actor);
+    }
+
+    private void recommendation(Block block, List<Integer> products, int minimum) {
+        String identity = UUID.randomUUID().toString().replace("-", "") + "a".repeat(32);
+        String key = products.stream().sorted().map(String::valueOf).collect(java.util.stream.Collectors.joining(","));
+        String policy = """
+                {"version":1,"maxBundleSize":4,"minSupportCount":2,"minSupportRatio":0.05,
+                 "minConfidence":0.5,"minimumSellableQuantity":%d,"ruleVersion":"F06_RULES_V1_1"}
+                """.formatted(minimum);
+        jdbc.update("""
+                INSERT INTO recommendation(store_id,utility_snapshot_id,identity_hash,canonical_key,type,utility,
+                    rule_version,policy_version,policy_snapshot,evidence,generation_eligibility,explanation,
+                    review_status,version,created_by,reviewed_by,reviewed_at,review_reason)
+                VALUES (?,?,?,?,'BUNDLE',10,'F06_RULES_V1_1',1,?,'{}','{}','[]','APPROVED',1,?,?,CURRENT_TIMESTAMP,'Approved for test')
+                """, storeId, block.snapshot(), identity, key, policy, block.actor(), block.actor());
+        long recommendation = jdbc.queryForObject("SELECT recommendation_id FROM recommendation WHERE store_id=? AND identity_hash=?",
+                Long.class, storeId, identity);
+        for (int product : products) {
+            jdbc.update("INSERT INTO recommendation_item(recommendation_id,store_id,product_id) VALUES (?,?,?)",
+                    recommendation, storeId, product);
+        }
+    }
+
+    private void assertBundleEvent(Block block, String type, String origin, int units, String failure) {
+        var rows = jdbc.query("""
+                SELECT event_type,campaign_id,layout_id,layout_version,block_no,bundle_origin,added_product_units,failure_code
+                FROM storefront_event WHERE store_id=? AND event_type LIKE 'BUNDLE_%'
+                """, (rs, row) -> {
+            assertEquals(type, rs.getString("event_type"));
+            assertEquals(block.campaign(), rs.getLong("campaign_id"));
+            assertEquals(block.layout(), rs.getLong("layout_id"));
+            assertEquals(1L, rs.getLong("layout_version"));
+            assertEquals(1, rs.getInt("block_no"));
+            assertEquals(origin, rs.getString("bundle_origin"));
+            assertEquals(units, rs.getInt("added_product_units"));
+            assertEquals(failure, rs.getString("failure_code"));
+            return type;
+        }, storeId);
+        assertEquals(List.of(type), rows);
     }
 
     private org.springframework.test.web.servlet.ResultActions call(MockHttpServletRequestBuilder request) throws Exception {

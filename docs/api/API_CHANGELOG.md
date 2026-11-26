@@ -1,5 +1,11 @@
 # API Changelog
 
+## 2026-11-26 — F10 Part 2 whole-bundle add
+
+- Added `POST /api/storefront/{storeSlug}/cart/bundles` for END_CUSTOMER. It uses the cart version and adds one bundle per request. The result reports the actual increment per Product.
+- F09 home adds the opaque `HomePlacement.bundleKey` for BUNDLE blocks on active selected Layout B. Blocks remain visible when components are out of stock. Other F09 routes are unchanged.
+- OpenAPI grows from 115 paths / 144 operations to 116 paths / 145 operations. The new operation ID is `addStorefrontCartBundle`. Uses existing V31 tables. F11 remains PLANNED.
+
 ## 2026-11-26 — F10 Part 1 ordinary cart
 
 - Added five END_CUSTOMER operations under `/api/storefront/{storeSlug}/cart`. Every mutation uses a quoted `If-Match` version and records one item event for each actual change.

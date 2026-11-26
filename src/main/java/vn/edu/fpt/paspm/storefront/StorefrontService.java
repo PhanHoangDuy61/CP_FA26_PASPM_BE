@@ -2,12 +2,11 @@ package vn.edu.fpt.paspm.storefront;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import vn.edu.fpt.paspm.common.ApiException;
 import vn.edu.fpt.paspm.layout.LayoutRules;
@@ -32,13 +31,15 @@ public class StorefrontService {
     private final UtilityTimeZone timeZone;
     private final UtilitySettingsRepository json;
     private final LayoutRules layoutRules;
+    private final BundleKeys bundleKeys;
 
-    public StorefrontService(StorefrontRepository repository, UtilityTimeZone timeZone,
-            UtilitySettingsRepository json, LayoutRules layoutRules) {
+    StorefrontService(StorefrontRepository repository, UtilityTimeZone timeZone,
+            UtilitySettingsRepository json, LayoutRules layoutRules, BundleKeys bundleKeys) {
         this.repository = repository;
         this.timeZone = timeZone;
         this.json = json;
         this.layoutRules = layoutRules;
+        this.bundleKeys = bundleKeys;
     }
 
     @Transactional(readOnly = true)
@@ -47,7 +48,7 @@ public class StorefrontService {
                 .map(store -> new PublicStore(store.slug(), store.name())).toList();
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
     public HomeView home(String storeSlug) {
         StoreRow store = requirePublicStore(storeSlug);
         ActiveLayout active = repository.activeLayout(store.id());
@@ -131,8 +132,15 @@ public class StorefrontService {
 
         for (Map.Entry<LayoutBlockKey, List<PlacementRow>> entry : layoutBlocks.entrySet()) {
             List<PlacementRow> block = entry.getValue();
+            PlacementRow first = block.get(0);
+            boolean purchasable = "B".equals(active.role()) && "BUNDLE".equals(first.zone());
             List<ProductCard> products = new ArrayList<>();
             for (PlacementRow row : block) {
+                if (purchasable) {
+                    AvailabilityRow value = availability.get(row.productId());
+                    if (publicProduct(row, value)) products.add(card(row, value));
+                    continue;
+                }
                 RecommendationRow recommendation = row.recommendationId() == null
                         ? null : recommendations.get(row.recommendationId());
                 List<Integer> storedProducts = row.recommendationId() == null
@@ -141,10 +149,11 @@ public class StorefrontService {
                     products.add(card(row, availability.get(row.productId())));
                 }
             }
-            if (!products.isEmpty()) {
-                PlacementRow first = block.get(0);
+            if (purchasable || !products.isEmpty()) {
+                String key = purchasable ? bundleKeys.encode(new BundleKeys.BlockRef(store.id(),
+                        active.campaignId(), active.layoutId(), active.layoutVersion(), first.blockNo())) : null;
                 zones.computeIfAbsent(first.zone(), ignored -> new ArrayList<>()).add(new HomePlacement(
-                        first.zone(), first.blockNo(), first.position(), List.copyOf(products)));
+                        first.zone(), first.blockNo(), first.position(), List.copyOf(products), key));
             }
         }
         List<HomeZone> result = zones.entrySet().stream()

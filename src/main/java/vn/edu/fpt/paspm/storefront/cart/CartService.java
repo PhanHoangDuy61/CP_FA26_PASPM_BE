@@ -3,15 +3,20 @@ package vn.edu.fpt.paspm.storefront.cart;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import vn.edu.fpt.paspm.common.ApiException;
+import vn.edu.fpt.paspm.storefront.StorefrontBundleService;
 import vn.edu.fpt.paspm.storefront.StorefrontContracts.PublicStore;
 import vn.edu.fpt.paspm.storefront.StorefrontRepository;
 import vn.edu.fpt.paspm.storefront.StorefrontRepository.AvailabilityRow;
 import vn.edu.fpt.paspm.storefront.StorefrontRepository.StoreRow;
+import vn.edu.fpt.paspm.storefront.cart.CartContracts.BundleAddResult;
+import vn.edu.fpt.paspm.storefront.cart.CartContracts.BundleComponentResult;
 import vn.edu.fpt.paspm.storefront.cart.CartContracts.CartLineState;
 import vn.edu.fpt.paspm.storefront.cart.CartContracts.CartLineView;
 import vn.edu.fpt.paspm.storefront.cart.CartContracts.CartView;
@@ -28,11 +33,14 @@ public class CartService {
     private final CartRepository carts;
     private final StorefrontRepository storefront;
     private final UtilityTimeZone timeZone;
+    private final StorefrontBundleService bundles;
 
-    CartService(CartRepository carts, StorefrontRepository storefront, UtilityTimeZone timeZone) {
+    CartService(CartRepository carts, StorefrontRepository storefront, UtilityTimeZone timeZone,
+            StorefrontBundleService bundles) {
         this.carts = carts;
         this.storefront = storefront;
         this.timeZone = timeZone;
+        this.bundles = bundles;
     }
 
     @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
@@ -59,6 +67,62 @@ public class CartService {
             carts.updateQuantity(store.id(), cart.id(), line.id(), (int) target);
         }
         return changed(store, customerId, cart, Event.ITEM_ADDED, today);
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, noRollbackFor = BundleRejected.class)
+    public BundleAddResult addBundle(String slug, int customerId, long version, String key) {
+        carts.lockCustomer(customerId);
+        StoreRow store = storefront.publicStoreForUpdate(slug);
+        if (store == null) throw new ApiException(404, "Storefront not found");
+        var bundle = bundles.resolve(store.id(), key);
+        Cart cart = carts.find(store.id(), customerId);
+        checkVersion(cart, version);
+        LocalDate today = timeZone.today();
+        Map<Integer, AvailabilityRow> stock = storefront.availability(store.id(), bundle.productIds(), today);
+        Map<Integer, Line> existing = cart == null ? Map.of() : carts.lines(store.id(), cart.id()).stream()
+                .collect(Collectors.toMap(Line::productId, Function.identity()));
+        List<BundleComponentResult> components = bundle.productIds().stream()
+                .map(productId -> bundleComponent(productId, stock.get(productId), existing.get(productId)))
+                .toList();
+        int total = components.stream().mapToInt(BundleComponentResult::added).sum();
+        if (total == 0) {
+            carts.recordBundle(store.id(), cart == null ? null : cart.id(), bundle, 0);
+            throw new BundleRejected(components);
+        }
+
+        if (cart == null) cart = carts.create(store.id(), customerId);
+        for (BundleComponentResult component : components) {
+            if (component.added() == 0) continue;
+            Line line = existing.get(component.productId());
+            if (line == null) {
+                carts.insertLine(store.id(), cart.id(), component.productId(), component.added(), true);
+            } else {
+                carts.addBundleToLine(store.id(), cart.id(), line.id(), line.quantity() + component.added());
+            }
+        }
+        carts.advanceVersion(store.id(), cart.id());
+        carts.recordBundle(store.id(), cart.id(), bundle, total);
+        return new BundleAddResult(view(store, carts.find(store.id(), customerId), today), components);
+    }
+
+    private static BundleComponentResult bundleComponent(int productId, AvailabilityRow stock, Line line) {
+        int quantity = line == null ? 0 : line.quantity();
+        long available = stock == null || !stock.productActive() ? 0 : stock.sellableQuantity();
+        long increment = Math.min(Math.max(0, available - quantity), MAX_QUANTITY - quantity);
+        return new BundleComponentResult(productId, 1, (int) Math.min(1, increment));
+    }
+
+    static final class BundleRejected extends ApiException {
+        private final List<BundleComponentResult> components;
+
+        BundleRejected(List<BundleComponentResult> components) {
+            super(409, "No bundle component can be added", "BUNDLE_ADD_REJECTED");
+            this.components = components;
+        }
+
+        List<BundleComponentResult> components() {
+            return components;
+        }
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
