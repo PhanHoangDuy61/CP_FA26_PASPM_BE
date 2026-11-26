@@ -12,10 +12,7 @@
 | Synced with | `dev` @ `636952b` (2026-11-20): F02 update `d22f735`; PR #20 (decisions); PR #21 (F04 Excel); PR #22 (zone caps, top-K baseline, equal-size simulation, DEC-20261119-06); PR #23 (SPMF whole-đồng fallback, DEC-20261119-05); PR #25 (agent kit). Checked for these changes only, not a full re-audit |
 | Companion files | [SRS.md](SRS.md) · [ARCHITECTURE_SDD.md](ARCHITECTURE_SDD.md) · [GLOSSARY.md](GLOSSARY.md) |
 
-> **Source precedence.** When sources disagree, a higher item overrides a lower one:
-> 1. Owner decisions in `docs/decisions/` and the merged code on `dev`.
-> 2. `FA26_SE048.pdf`, the supervisor-approved brief.
-> 3. Reports 1–4, which are partly outdated. Items they get wrong are listed in §10.
+> **Source of truth** ([DEC-20261125-02](../decisions/2026-11-25/DEC-20261125-02-source-of-truth-latest-po-decision.md)). The latest PO decision wins: a DEC file in `docs/decisions/`, or an explicit PO answer in the session (recorded as a DEC). The merged code on `dev`, these documents and `FA26_SE048.pdf` (the supervisor-approved brief) are evidence; none of them wins automatically. When they disagree, report the difference and ask the PO; after the decision, update the docs (and the code if needed) and record a DEC. Reports 1–4 are partly outdated; items they get wrong are listed in §10.
 >
 > Anything marked **TBD** has not been decided. Ask the owner; do not guess.
 
@@ -107,8 +104,8 @@ Workflow ownership (Review 2):
 | F07 | Layout Simulator: baseline A, editable B, zones, utility score, preview | Backend API implemented. `priorityCoverage` merged in PR #32 (`516183d`). Frontend in progress (mock screens on the local branch `feature/f07-f11-mock`, not pushed) |
 | F08 | Campaign & A/B (simulated): campaign lifecycle, offline replay report | Backend API implemented. Frontend in progress |
 | F09 | Storefront: homepage, product detail, bundles | **Backend MVP** (Duy Phan, branch `Duy/Feature/F09_Storefront`, 2026-11-21) merged with `dev` through `Khoi/merge/f09-storefront-be` (V29; public = Store ACTIVE, DEC-20261125-04). Related products and the frontend storefront are still open |
-| F10 | Bundle Cart | **PLANNED.** Whole-bundle action adds eligible components to ordinary Product lines, with current price, stock validation and If-Match (DEC-20261125-06). |
-| F11 | Retail Performance Dashboard | **PLANNED.** Same-Store dashboard for STORE_ADMIN and MERCHANDISER with frozen snapshot utility, saved simulated A/B including priority coverage, and bundle add counts by origin plus actual units added (DEC-20261125-06). |
+| F10 | Bundle Cart | **Implemented on the stacked Part 2 branch.** Whole-bundle action adds eligible components to ordinary Product lines, with current price, stock validation and If-Match (DEC-20261125-06). |
+| F11 | Retail Performance Dashboard | **Backend implemented on the stacked F11 branch.** Same-Store dashboard for STORE_ADMIN and MERCHANDISER with frozen snapshot utility, saved simulated A/B including priority coverage, and bundle add counts by origin plus actual units added (DEC-20261125-06). |
 
 ### 6.2 Out of scope
 
@@ -184,7 +181,7 @@ flowchart LR
 
 ### 9.3 Working rules for contributors and agents
 
-- `FA26_SE048.pdf` and owner decisions are the standard. Fix code to match requirements; do not rewrite requirements to justify code ("docs làm chuẩn").
+- Source of truth ([DEC-20261125-02](../decisions/2026-11-25/DEC-20261125-02-source-of-truth-latest-po-decision.md)): docs record decisions as of their date and are not automatically right over code. The latest PO decision (a DEC file, or an explicit PO answer in the session) wins. When code and docs disagree, report the difference and ask the PO; after the decision, update the docs (and code if needed) and record a DEC.
 - Never edit historical Flyway migrations V1–V26. Add a new version.
 - Never delete or repair a teammate's local database. Tests use disposable databases.
 - No commit, push, merge or deploy without an explicit instruction.
@@ -222,7 +219,7 @@ Quantitative targets are **TBD**: no response-time, throughput or availability t
 ## 12. Open questions (ask the owner)
 
 1. ~~RQ3 and G4~~: kept (2026-11-19).
-2. F11 scope and planned contract are recorded in DEC-20261125-06. Implementation is pending.
+2. F11 scope is recorded in DEC-20261125-06. The Backend is implemented on the stacked F11 branch.
 3. ~~Currency~~: VND, whole đồng (2026-11-19).
 4. ~~F04 Excel import~~: merged on 2026-11-19 (PR #21).
 5. ~~Sign-off~~: the Team Leader (Nguyễn Minh Khôi) acts as Product Owner and signs off owner decisions; the supervisor reviews them at Review 3 (2026-11-19). Enabling the scheduler still needs that sign-off after its acceptance tests.

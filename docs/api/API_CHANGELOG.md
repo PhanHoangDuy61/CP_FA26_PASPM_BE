@@ -1,5 +1,23 @@
 # API Changelog
 
+## 2026-11-26 — F11 retail performance dashboard
+
+- Added `GET /api/dashboard/snapshot-utilities` and `GET /api/dashboard/bundle-additions` for STORE_ADMIN and MERCHANDISER. Both use the authenticated Store. Saved simulations use the existing F08 reads with their existing permissions.
+- Snapshot totals come from READY headers. Bundle counts use successful F10 events, group by Store-local day with zero-filled days, and allow a maximum of 90 inclusive days.
+- OpenAPI grows from 116 paths / 145 operations to 118 paths / 147 operations. No migration. See the [F11 API](F11_DASHBOARD_API.md).
+
+## 2026-11-26 — F10 Part 2 whole-bundle add
+
+- Added `POST /api/storefront/{storeSlug}/cart/bundles` for END_CUSTOMER. It uses the cart version and adds one bundle per request. The result reports the actual increment per Product.
+- F09 home adds the opaque `HomePlacement.bundleKey` for BUNDLE blocks on active selected Layout B. Blocks remain visible when components are out of stock. Other F09 routes are unchanged.
+- OpenAPI grows from 115 paths / 144 operations to 116 paths / 145 operations. The new operation ID is `addStorefrontCartBundle`. Uses existing V31 tables. F11 remains PLANNED.
+
+## 2026-11-26 — F10 Part 1 ordinary cart
+
+- Added five END_CUSTOMER operations under `/api/storefront/{storeSlug}/cart`. Every mutation uses a quoted `If-Match` version and records one item event for each actual change.
+- V31 creates `shopping_cart`, `shopping_cart_item` and `storefront_event`. The branch export grows from 112 paths / 139 operations to 115 paths / 144 operations.
+- Whole-bundle add and F11 remain planned. See the [F10 contract](F10_BUNDLE_CART_API.md).
+
 ## 2026-11-25 — Stable operation IDs and F07 placement schema
 
 - `GET /api/layouts/products` explicitly uses `layoutSnapshotProducts`. See [ROC-20261125-010](../record-of-changes/2026-11-25/10-f07-openapi-annotations.md) for all 47 prior runtime IDs and replacements. Regenerated client method names can change.
