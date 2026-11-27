@@ -101,6 +101,7 @@ compose one (a real SMTP server cannot be read back). Seeded data: 1 store, 4 ac
 Since 2026-11-17 the seed also creates Weight v2 demo data: 551 products that require expiry (batches with expiry date and push day), four seasons and the weight
 configuration α 0.6 / β 0.4 / λ 0.3 / N 30. It is switched off with `SEED_WEIGHT_V2=0`. What it contains, the environment variables, how to reseed (recreate the
 database), the date to analyse and the recommended F05 snapshot range are in [scripts/seed/README.md](../../scripts/seed/README.md).
+The seed also sets the System Admin mining policy to `PERCENTAGE 0.12` (a new policy version only when the current one differs, so running it again changes nothing); the Product Owner or System Admin can change it afterwards, but a later seed run sets it back.
 
 ## 6. Health check
 

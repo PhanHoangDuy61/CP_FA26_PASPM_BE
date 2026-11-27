@@ -14,6 +14,8 @@ Creates through the public REST API, so the business rules apply:
   * Weight v2 / F06 demo data (skip with SEED_WEIGHT_V2=0): a deterministic share of the products requires expiry
     and its batches carry expiry dates and push days; four seasons assigned to product groups (Merchandiser);
     the Store weight configuration alpha/beta/lambda/N (Merchandiser). The plan itself is in weight_v2_plan.py.
+  * the System Admin mining policy PERCENTAGE 0.12 (always; a new version only when the current policy differs,
+    mining_policy.py). Existing mining requests and runs are never touched.
 
 The Store is created through POST /api/system/stores (DEC-20261123-01). Direct SQL is used only for the final
 record counts, sent through SEED_SQL_COMMAND.
@@ -47,6 +49,7 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parent.parent
 sys.path.insert(0, str(HERE))  # seed.sh runs `python3 -I`, which does not add the script directory itself
 import weight_v2_plan as w2  # noqa: E402
+import mining_policy  # noqa: E402
 import foodmart_mapping as fm  # noqa: E402
 
 
@@ -507,6 +510,10 @@ def main():
         ensure_weight_config(admin, merchandiser)
     else:
         summary["weight v2"] = "skipped (SEED_WEIGHT_V2=0)"
+    try:  # global System Admin policy; a new version only when mode or value differ (mining_policy.py)
+        summary["mining policy"] = mining_policy.ensure_mining_policy(api, admin)
+    except mining_policy.PolicyError as e:
+        sys.exit(f"ERROR: {e}")
     log("\n== Seed summary ==")
     for k, v in summary.items():
         log(f"  {k}: {v}")
