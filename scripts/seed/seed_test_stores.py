@@ -126,8 +126,13 @@ class Seeder:
             query = urllib.parse.quote(f"to:{email}")
             res = self.http("GET", f"{self.mailpit}/api/v1/search?query={query}")[1]
             for message in res.get("messages", []):
-                match = OTP_CODE.search(message.get("Snippet", ""))
-                if match and message.get("Subject") == OTP_SUBJECTS[purpose_hint] and _epoch(message.get("Created", "")) >= since - 2:
+                if message.get("Subject") != OTP_SUBJECTS[purpose_hint] or _epoch(message.get("Created", "")) < since - 2:
+                    continue
+                # The list's Snippet is built from the HTML part (no colon after the label) and cut at 200 characters,
+                # so the code is read from the plain-text body of the message.
+                body = self.http("GET", f"{self.mailpit}/api/v1/message/{message['ID']}")[1]
+                match = OTP_CODE.search(body.get("Text", "") if isinstance(body, dict) else "")
+                if match:
                     return match.group(1)
             self.sleep(1)
         raise SystemExit(f"ERROR: no OTP mail for {email} found in Mailpit ({self.mailpit})")
