@@ -1,4 +1,4 @@
-# ROC-20261127 — F09 public Store images; demo seed co-purchase baskets; smoke-test documentation follow-ups
+# ROC-20261127 — F09 public Store images; demo seed co-purchase baskets; smoke-test documentation follow-ups; seed mining policy
 
 2026-11-27 / Asia/Ho_Chi_Minh.
 
@@ -13,3 +13,7 @@
 ## Record 003 — Smoke-test documentation follow-ups
 
 [Record 003](03-smoke-test-doc-followups.md): DEC-20261127-01 (the End Customer lands on `/customer-home`, superseding that part of Q-06), the removed benchmark routes documented and tested as 404, known issues KI-02 (cold-start invitation e-mail 503), KI-03 (sign-in rate limit) and KI-04 plus data item DP-10 (the demo Store's full range uses 19,932 of 20,000 matrix rows), SRS §5.4 limit numbers, black-box pack regenerated (249 cases, no ID changed). Documentation only. Branch `Khoi/docs/smoke-followups`.
+
+## Record 004 — Demo seed sets the mining policy
+
+[Record 004](04-demo-seed-mining-policy.md): the demo seed sets the System Admin mining policy to `PERCENTAGE 0.12` through `PUT /api/system/mining/config`, writing a new policy version only when the mode or the value differ (a second run changes nothing); no manual step remains in the test plan. Seed and test data only. Branch `Khoi/fix/seed-demo-mining-policy`.

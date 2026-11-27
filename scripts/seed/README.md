@@ -18,6 +18,7 @@ scripts/seed/seed.sh
 | Transactions | Store Admin CSV import of the **import-ready copies** (below) | 4,776 orders, 19,932 lines, dated **2026-10-01 to 2026-10-04** (the last day ends at 06:00): 4,141 random FoodMart orders (`Part1`, `Part2`) plus 635 co-purchase orders (`Transactions_F04_Demo_Copurchase.csv`, [below](#co-purchase-baskets-why-the-demo-has-bundle-cross_sell-and-fbt-candidates)) |
 | Seasons | Merchandiser API | 4 seasons, 1,451 product assignments (below) |
 | Weight configuration | Merchandiser API | α = 0.6, β = 0.4, λ = 0.3, N = 30 days |
+| Mining policy | System Admin API | `PERCENTAGE 0.12` ([below](#mining-policy-set-by-the-seed)) |
 
 ### FoodMart codes, server SKUs and the import-ready CSV copies
 
@@ -99,6 +100,16 @@ Invalid values stop the script before anything is created.
 - **A database seeded before Weight v2 cannot get expiry dates through the API.** The batch PATCH accepts only `remainingQuantity`, `status` and `pushDay` (no `expiryDate`), and `PUT /api/products/{id}` with `requiresExpiry = true` answers 400 "Cannot require expiry while a batch has no expiry date", even after the batch is blocked and emptied (checked on a real database). The seed therefore keeps the existing undated batches, still creates the seasons and the weight configuration (seasons give W > 1 for 624 products), and prints a warning with the number of products that stay undated (551). It does **not** add a second `SEED-W2` batch: such a batch on a product that does not require expiry has no F03 effect (`NOT_APPLICABLE`) and would only add stock.
 - A seed run uses roughly 6–10 logins; the backend limits logins to 30 per IP per 15 minutes, so several runs in a row can answer 429.
 
+## Mining policy (set by the seed)
+
+The F05 minUtil policy is one global setting of the System Admin (`GET`/`PUT /api/system/mining/config`, versioned with `expectedVersion`). The seed sets it to **`PERCENTAGE 0.12`**, the value measured on the demo data (182 patterns; F06 17 BUNDLE, 41 CROSS_SELL, 5 FBT over 2026-10-01..04), in `mining_policy.py`:
+
+- It reads the current policy first and writes **a new version only when the mode or the value differ** (numbers are compared as decimals). Already `PERCENTAGE 0.12`: no write, the version stays. A second run changes nothing.
+- It never touches mining requests, runs or snapshots: they keep the input they froze when they were created.
+- The write is one `PUT`, so a failure leaves the stored policy as it was. The seed then stops with `ERROR: PUT /api/system/mining/config failed (…); the stored policy is unchanged, run the seed again`.
+- **A rerun resets the policy:** if the System Admin chose another value after seeding, the next seed run sets `PERCENTAGE 0.12` again (a new version). Do not rerun the seed on a stack whose policy you want to keep.
+- No environment variable: the value is a constant of `mining_policy.py`. The seed uses the System Admin (bootstrap) login it already needs.
+
 ## Co-purchase baskets: why the demo has BUNDLE, CROSS_SELL and FBT candidates
 
 The two base files hold random baskets: no product pair is bought together more often than chance, so EFIM returned only single-product patterns and F06 could build nothing but BANNER candidates (smoke test 2026-11-27, defect #1). `data/Transactions_F04_Demo_Copurchase.csv` adds 635 orders (1,613 lines, ids `FMCOP-000001…`) in which four disjoint groups of products are bought together. It is generated, deterministic and committed; the base files are never changed.
@@ -137,7 +148,7 @@ The seeded orders are from **2026-10-01 to 2026-10-04**, but the live preview (`
 
 ## Recommended demo snapshot range and policy for F03 → F05
 
-**Use `rangeStart = 2026-10-01`, `rangeEnd = 2026-10-04`, `asOfDate = 2026-10-05` and the System Admin minUtil policy `PERCENTAGE 0.12`.** On a fresh seed this gives 182 EFIM patterns in about 0.5 s (`LOSSLESS`), and F06 generates 17 BUNDLE, 41 CROSS_SELL, 5 FBT and 182 BANNER candidates (measured 2026-11-27, [ROC-20261127-002](../../docs/record-of-changes/2026-11-27/02-demo-seed-copurchase-baskets.md)). The policy is a System Admin setting (`PUT /api/system/mining/config`); the seed does not set it.
+**Use `rangeStart = 2026-10-01`, `rangeEnd = 2026-10-04`, `asOfDate = 2026-10-05` and the System Admin minUtil policy `PERCENTAGE 0.12`.** On a fresh seed this gives 182 EFIM patterns in about 0.5 s (`LOSSLESS`), and F06 generates 17 BUNDLE, 41 CROSS_SELL, 5 FBT and 182 BANNER candidates (measured 2026-11-27, [ROC-20261127-002](../../docs/record-of-changes/2026-11-27/02-demo-seed-copurchase-baskets.md)). **The seed sets this policy** (System Admin `PUT /api/system/mining/config`, see [Mining policy](#mining-policy-set-by-the-seed)); testers do not set it by hand.
 
 | Range (`asOfDate`) | minUtil | Result | Patterns by size | BUNDLE / CROSS_SELL / FBT / BANNER |
 |---|---|---|---|---|
@@ -182,4 +193,4 @@ The date, push-day, quantity, season and configuration rules are pure functions 
 python3 -I -m unittest discover -s scripts/seed/tests -v
 ```
 
-`tests/test_copurchase_baskets.py` proves from the data files that the committed basket file is what the generator produces, that the base files are unchanged, and that the F06 FBT and CROSS_SELL arithmetic and the 20,000-row limit hold. `tests/test_seed_test_stores.py` covers TDP-01 (request bodies and idempotency, with the HTTP layer faked). The remaining demo-seed script (HTTP calls) is covered by verification runs, not by automated tests: record 014 (2026-11-17) and [ROC-20261125-004](../../docs/record-of-changes/2026-11-25/04-sku-foodmart-seed.md) (fresh MySQL 8.4, two runs).
+`tests/test_mining_policy.py` covers the policy step with a fake endpoint: one update only when the mode or value differ (with the current `expectedVersion`), no write when it is already `PERCENTAGE 0.12`, nothing changes on a second run, and a clear failure with no retry on an API error. `tests/test_copurchase_baskets.py` proves from the data files that the committed basket file is what the generator produces, that the base files are unchanged, and that the F06 FBT and CROSS_SELL arithmetic and the 20,000-row limit hold. `tests/test_seed_test_stores.py` covers TDP-01 (request bodies and idempotency, with the HTTP layer faked). The remaining demo-seed script (HTTP calls) is covered by verification runs, not by automated tests: record 014 (2026-11-17) and [ROC-20261125-004](../../docs/record-of-changes/2026-11-25/04-sku-foodmart-seed.md) (fresh MySQL 8.4, two runs).
