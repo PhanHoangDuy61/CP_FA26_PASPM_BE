@@ -4,6 +4,8 @@
 
 > **2026-11-15 verification (branch `Khoi/feat/f05-progress-f03-weight-v2` @ `c8c837a`).** The F02 batch, F03, F05 and season rows were re-checked against code (paths relative to `src/main/java/vn/edu/fpt/paspm/`): `security/SecurityConfig.java:93-95` (system mining → SYSTEM_ADMIN; `POST /api/mining/requests` → MERCHANDISER; benchmark `denyAll`); `mining/MiningController.java:18`, `:24`; `mining/MiningProgressController.java:22-29`; `utility/SeasonController.java:15`, `:19`, `:22`, `:34` (class-level MERCHANDISER, reads STORE_ADMIN + MERCHANDISER); `utility/UtilityConfigurationController.java:17-30`; `utility/ProductScoreController.java:11`, `:16`, `:20`; `catalog/inventory/InventoryBatchController.java:26`. Executable check: `F03F05RbacMatrixTest` (42 routes) in the final gate. Older coverage prose below stays NEEDS_REVIEW.
 
+> **Update 2026-11-27 (smoke test, ROC-20261127-003).** Both F05 benchmark routes were removed on 2026-11-16 (DEC-20261116-04) and are no longer mapped: every signed-in role gets **404**, not 403. The `denyAll` wording in the paragraph above, and "2 legacy routes forbidden" in the readiness table, describe the state on 2026-11-15 and are historical. The two benchmark rows below are corrected.
+
 # F01 / F02 / F03 / F04 / F05 / F06 / F09 RBAC Matrix
 
 Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and feature service/repository checks (updated 2026-10-23 for F06; F05 rows added 2026-11-02 and generated from the runtime OpenAPI; F04 rows added 2026-11-02 from the controller annotations and `F04_TRANSACTION_API.md`, effective rules checked by `F03F05RbacMatrixTest`). “Public” means the Spring security route is explicitly permitted; “authenticated” requires a valid active bearer token. An authenticated-but-wrong role is 403. Store-scoped foreign or absent resources are hidden as 404 after the controller role gate.
@@ -92,7 +94,7 @@ Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and fea
 | F05 | GET `/api/mining/requests/{id}` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign→404 | Forbidden |
 | F05 | GET `/api/mining/requests/{id}/runs` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign→404 | Forbidden |
 | F05 | GET `/api/mining/runs/{id}` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign→404 | Forbidden |
-| F05 | GET `/api/mining/runs/{id}/benchmark` | Forbidden (`denyAll`) | Forbidden (`denyAll`) | Forbidden (`denyAll`) | Forbidden (`denyAll`) |
+| F05 | GET `/api/mining/runs/{id}/benchmark` (**removed**, DEC-20261116-04) | Not mapped → **404** | Not mapped → **404** | Not mapped → **404** (observed on the 2026-11-27 smoke test) | Not mapped → **404** |
 | F05 | GET `/api/mining/runs/{id}/patterns` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign→404 | Forbidden |
 | F05 | GET `/api/mining/snapshots` | Forbidden | Allowed, own Store; foreign→404 | Allowed, own Store; foreign→404 | Forbidden |
 | F05 | GET `/api/system/mining/config` | Allowed | Forbidden | Forbidden | Forbidden |
@@ -108,7 +110,7 @@ Derived from controller `@PreAuthorize`, `SecurityConfig`, `StoreScope`, and fea
 | F05 | GET `/api/system/mining/stores/{storeId}/requests/{requestId}` | Allowed by default (D1 `REQUESTS`); 403 if the operator removes this group | Forbidden | Forbidden | Forbidden |
 | F05 | GET `/api/system/mining/stores/{storeId}/requests/{requestId}/progress` (2026-11-15) | Allowed by default (D1 `REQUESTS`), audited; 403 if the operator removes this group | Forbidden | Forbidden | Forbidden |
 | F05 | GET `/api/system/mining/stores/{storeId}/requests/{requestId}/runs` | Allowed by default (D1 `RUNS`); 403 if the operator removes this group | Forbidden | Forbidden | Forbidden |
-| F05 | GET `/api/system/mining/stores/{storeId}/runs/{runId}/benchmark` | Allowed; unknown Store or foreign run→404 | Forbidden | Forbidden | Forbidden |
+| F05 | GET `/api/system/mining/stores/{storeId}/runs/{runId}/benchmark` (**removed**, DEC-20261116-04) | Not mapped → **404** | Not mapped → **404** | Not mapped → **404** | Not mapped → **404** |
 | F05 | GET `/api/system/mining/stores/{storeId}/runs/{runId}/patterns` | **403 by default** (D1 group `PATTERNS`); allowed only if the instance lists the group | Forbidden | Forbidden | Forbidden |
 | F05 | GET `/api/system/mining/stores/{storeId}/snapshots` | Allowed by default (D1 `SNAPSHOTS`); 403 if the operator removes this group | Forbidden | Forbidden | Forbidden |
 | F06 Generate recommendations | POST `/api/recommendations/generate` | Forbidden | Forbidden | Allowed, own Store; completed own-Store mining run required | Forbidden |
@@ -149,7 +151,7 @@ Integration-ready: F01 access/refresh, password/OTP/user APIs and F02 all 15 ope
 | F02 | 15 | 15 | 15 | Browser cross-origin integration needs a same-origin proxy or deployment CORS policy; API endpoints themselves are available | delete endpoints, stock adjustment/movement history |
 | F03 | 12 | 12 | 12 (one deprecated) | Preview/Snapshot need persisted eligible F04 rows and valid config; snapshot reads need a known ID | snapshot history list |
 | F04 | 6 | 6 | 6 | Requires valid Store-scoped transaction data | Excel import, external POS synchronization |
-| F05 | 23 | 23 | 16 open to integration; 5 System Admin Store reads gated (D1, 403), 2 legacy routes forbidden | Mining execution requires the configured SPMF runtime; schedule activation returns 503 | Store list for System Admin (D2), recurring scheduling |
+| F05 | 23 | 23 | 16 open to integration; 5 System Admin Store reads gated (D1, 403), 2 legacy routes forbidden (2026-11-15; removed since, now 404) | Mining execution requires the configured SPMF runtime; schedule activation returns 503 | Store list for System Admin (D2), recurring scheduling |
 | F06 | 8 | 8 | 8 (backend handoff) | Generation requires a completed own-Store F05 run; expiry-push is independent of Mining | frontend implementation, scheduling, reservation, campaign/publication workflows |
 
 “Contract verified” means route, method, request/response model and security declaration were compared with the maintained OpenAPI plus controller/service source. Existing MockMvc tests cover F01 authentication/OTP/invite/password change/token revocation and F02 CRUD/Store isolation/summary. F06's recorded verification is in [F06_VERIFICATION.md](../testing/reports/F06_VERIFICATION.md); its 27 Swagger UI cases are recorded evidence, not a new UI execution in this documentation update. Current v1.2 verification ran `mvn -Dpaspm.avatar.directory=/tmp/paspm-test-avatars -Dpaspm.v12.export-dir=/tmp/paspm-v12-examples verify`; see its report for actual results. Historical baseline coverage counts below are not new interactive-execution claims.

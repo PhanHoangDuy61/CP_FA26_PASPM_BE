@@ -1,8 +1,8 @@
 ID,Feature,Trace (FR/UC/BR/DEC),Title,Role,Preconditions,Test data,Steps,Expected result,Priority,Type,Status
-TC-F01-001,F01,FR-01.1; FR-01.4; UC01; BR-02; NFR 5.5; DEC-20261126-03,"Sign in with email and password, each role lands on its own workspace","System Admin, Store Admin, Merchandiser, End Customer","ENV-1 (local Docker stack, demo seed loaded)","ACC-SA, ACC-STA-A, ACC-MER-A, ACC-EC (passwords from .env.seed)","1. Open /login
+TC-F01-001,F01,FR-01.1; FR-01.4; UC01; BR-02; NFR 5.5; DEC-20261126-03; DEC-20261127-01,"Sign in with email and password, each role lands on its own workspace","System Admin, Store Admin, Merchandiser, End Customer","ENV-1 (local Docker stack, demo seed loaded)","ACC-SA, ACC-STA-A, ACC-MER-A, ACC-EC (passwords from .env.seed)","1. Open /login
 2. Sign in as each account in turn
 3. Open Profile (/profile) and check role and Store
-4. Sign out","Each sign-in succeeds. System Admin lands on /admin/overview, Store Admin on /store/inventory, Merchandiser on its F03/merchandiser workspace, End Customer on /storefront. Profile shows exactly one role; Store Admin and Merchandiser show Store A, System Admin and End Customer show no Store.",High,functional,NOT RUN
+4. Sign out","Each sign-in succeeds. System Admin lands on /admin/overview, Store Admin on /store/inventory, Merchandiser on its F03/merchandiser workspace, End Customer on /customer-home (the Store chooser, DEC-20261127-01). Profile shows exactly one role; Store Admin and Merchandiser show Store A, System Admin and End Customer show no Store.",High,functional,NOT RUN
 TC-F01-002,F01,FR-01.1; NFR 5.4,Wrong password and unknown email give the same generic error,Guest (anonymous),"ENV-1 (local Docker stack, demo seed loaded)",ACC-STA-A with a wrong password; unknown email qa-nobody@paspm.example,"1. Open /login
 2. Sign in with ACC-STA-A and a wrong password
 3. Sign in with the unknown email",Both attempts are refused with HTTP 401 and the same message `Invalid credentials or account unavailable`; the UI does not reveal whether the email exists.,High,negative,NOT RUN
@@ -316,10 +316,11 @@ TC-F05-024,F05,FR-01.9; BR-30; DEC-20261126-03,No new System Admin work for an I
 2. [API] Replay key KC
 3. [API] Read Store C request history",New request: 409 code STORE_INACTIVE (the schedule variant is out of this round). Replay of KC: 202 existing request. History: 200.,High,negative,NOT RUN
 TC-F05-025,F05,UC08 (REMOVED); DEC-20261116-04; DEC-20261126-03,Benchmark is removed,"System Admin, Merchandiser","ENV-1 (local Docker stack, demo seed loaded); R1",R1,"1. Check there is no Benchmark entry in the menu and open /admin/benchmark directly
-2. [API] GET /api/mining/runs/{R1}/benchmark",No menu entry; the URL shows not-found or redirects (known defect KD-02 until fixed). API: 403 for every role.,Low,negative,NOT RUN
+2. [API] GET /api/mining/runs/{R1}/benchmark
+3. [API] System Admin: GET /api/system/mining/stores/{A}/runs/{R1}/benchmark",No menu entry; the URL shows not-found or redirects (known defect KD-02 until fixed). Both API routes: 404 for a signed-in user of any role (the routes are not mapped; it is not a 403).,Low,negative,NOT RUN
 TC-F05-026,F05,UC04–UC07; NFR 5.4,F05 RBAC (decision table),"End Customer, Guest (anonymous), Store Admin, Merchandiser","ENV-1 (local Docker stack, demo seed loaded)",system and Store mining routes,"1. [API] End Customer and no token: GET /api/mining/requests
 2. [API] Store Admin and Merchandiser: GET /api/system/mining/config",End Customer 403; no token 401; Store roles on system routes 403.,High,security,NOT RUN
-TC-F06-001,F06,UC10; FR-06.1; BR-09,Generate the four recommendation types,Merchandiser,"ENV-1 (local Docker stack, demo seed loaded); DP-04 R1","miningRunId R1, types BUNDLE, CROSS_SELL, FBT, BANNER","1. Open /merchandiser/recommendations
+TC-F06-001,F06,UC10; FR-06.1; BR-09,Generate the four recommendation types,Merchandiser,"ENV-1 (local Docker stack, demo seed loaded); DP-04 R1","miningRunId R1, types BUNDLE, CROSS_SELL, FBT, BANNER","1. Open Recommendations (/recommendations; the old /merchandiser/recommendations URL redirects there)
 2. Generate from R1","200 with createdCount, reusedCount, recommendationIds and skipped reasons; candidates are PENDING_REVIEW.",High,functional,NOT RUN
 TC-F06-002,F06,FR-06.2,Generation is idempotent,Merchandiser,"ENV-1 (local Docker stack, demo seed loaded); recommendations from R1, one approved",R1 again,1. Generate again,"createdCount 0, reusedCount = previous total, same IDs; the approved one stays APPROVED.",High,functional,NOT RUN
 TC-F06-003,F06,UC10; BR-09,Generation input errors,Merchandiser,"ENV-1 (local Docker stack, demo seed loaded); SETUP-B; a FAILED or running run","running/failed run; Store B run; types []; [BUNDLE,BUNDLE]; unknown type",1. Generate with each input,"Unfinished or failed run: 409. Store B run: 404. Empty, duplicate or unknown types: 400.",Medium,negative,NOT RUN

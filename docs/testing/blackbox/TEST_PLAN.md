@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Version / date | 0.5 — 2026-11-26 (Asia/Ho_Chi_Minh); 0.2 applied DEC-20261126-02, 0.3 applied DEC-20261126-03, 0.4 its Q-05 addendum (Run mining screen) and known issue KI-01, 0.5 F10/F11 cases aligned with the implemented API after merging `dev` @ `114576d` |
+| Version / date | 0.6 — 2026-11-27 (Asia/Ho_Chi_Minh); 0.6 applied the smoke-test follow-ups (DEC-20261127-01 End Customer landing, benchmark routes 404, known issues KI-02 and KI-03); 0.5 — 2026-11-26; 0.2 applied DEC-20261126-02, 0.3 applied DEC-20261126-03, 0.4 its Q-05 addendum (Run mining screen) and known issue KI-01, 0.5 F10/F11 cases aligned with the implemented API after merging `dev` @ `114576d` |
 | Baseline | Backend `dev` @ `114576d` (merged into this branch; F10 PR #38/#44, F11 PR #45, TDP-01 PR #47); FE `dev` @ `7f298bc` (routes used to name screens); F05 mining screen checked at FE `dev` @ `0cd57a6` |
 | Deliverables | [TEST_CASES.md](TEST_CASES.md) / [TEST_CASES.csv](TEST_CASES.csv) (249 cases), [TRACEABILITY.md](TRACEABILITY.md), [PO_QUESTIONS.md](PO_QUESTIONS.md) |
 | Execution status | **NOT RUN.** No case has been executed. This pack contains designs only |
@@ -143,6 +143,8 @@ Decided by DEC-20261126-03 (Q-16). The script is a separate small code task and 
 | ID | Issue | Source | Affects | Workaround |
 |---|---|---|---|---|
 | KI-01 | FE: the browser test for selecting a Store **with the keyboard** on Users & Roles (`/admin/users`) fails | Reported by Codex (FE browser test); not reproduced in this pack | Store selection in TC-F01-019, TC-F01-020, TC-F01-022, TC-F01-040; keyboard use in TC-F01-051 | Select the Store with the mouse and note KI-01 in the result; retest keyboard selection when fixed |
+| KI-02 | Backend: the **first e-mail sent after a cold start** can fail with `503 {"error":"Email delivery unavailable; retry later"}` (admin invitation `POST /api/users`, OTP request or resend). The same request succeeds when repeated a moment later. The cause is not investigated | Live smoke test 2026-11-27 (defect #5); seen again on the first TDP-01 invitation after a backend restart (ROC-20261127-002) | Any case or script that sends an e-mail first after a backend start: TC-F01-009, TC-F01-019, TC-F01-021, TDP-01 | **Demo and test tip: after every backend start, send one warm-up invitation or OTP request to a throwaway address before the real work.** If a case still gets the 503, repeat it once and note KI-02 in the result. TDP-01 is safe to run again (idempotent) |
+| KI-03 | Backend (by design): sign-in is rate-limited **per e-mail (10) and per IP (30) in 15 minutes** (900 s). Every attempt counts, **successful sign-ins too**. The 11th attempt for one e-mail returns `429 {"error":"Too many attempts; try later"}`. The counters are in memory, per instance, and a backend restart clears them | `auth/AuthService.java` (`login-ip`, `login-user`), SRS §5.4; seen during the smoke test (repeated sign-ins of the same account) | TC-F01-011 (the intended test); any case or demo that signs the same account in more than 10 times in 15 minutes | Reuse one signed-in session per role instead of signing in again; do not run TC-F01-011 on an account another case needs in the same 15 minutes (use a throwaway e-mail); wait 15 minutes or restart a **disposable** test backend |
 
 **Risks**
 

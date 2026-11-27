@@ -320,7 +320,7 @@ No response-time, throughput, availability or MTTR targets have been defined (**
 ### 5.4 Security
 
 - RBAC on every operation: 403 for the wrong role, 401 when not authenticated, 404 for another Store's resource.
-- Passwords are hashed with BCrypt (strength 12). OTP codes are stored as HMAC-SHA256 hashes. Login, OTP, refresh, registration and Google sign-in are rate-limited (in memory, per instance).
+- Passwords are hashed with BCrypt (strength 12). OTP codes are stored as HMAC-SHA256 hashes. Login, OTP, refresh, registration and Google sign-in are rate-limited (in memory, per instance). Sign-in allows 10 attempts per e-mail and 30 per IP in 15 minutes; every attempt counts, successful ones too, and the next one returns 429 (`Too many attempts; try later`). A backend restart clears the counters.
 - With `paspm.refresh-cookie-secure=true` (the default), cookies are `__Host-` prefixed, Secure and SameSite=Strict. With `false`, they are unprefixed, still SameSite=Strict, and accepted only on localhost. The Origin header is checked on login, Google sign-in, refresh, logout and logout-all.
 - Jackson rejects unknown fields (`fail-on-unknown-properties: true`), so clients must not send extra fields.
 - The only anonymous business route is `GET /api/public/stores/{storeId}/images/{fileName}`. It serves only the current images of ACTIVE Stores, with `nosniff` (DEC-20261123-01). Image files are stored by relative key, never as URL or BLOB.

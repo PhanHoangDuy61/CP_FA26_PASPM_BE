@@ -15,7 +15,7 @@
 | Q-01 Source-of-truth rule | DEC-20261125-02 (latest PO decision wins; branch `Khoi/docs/source-of-truth-rule`) is the baseline for the test round. Its PR is merged into `dev` before the round starts (entry criterion) |
 | Q-04 Removed screens on FE `dev` | Tests assert that `/f03/expiry-window`, `/f03/product-scores` and `/admin/benchmark` cannot be reached (no menu entry; the route shows not-found or redirects). Their presence on FE `dev` is a defect fixed together with the Merchandiser screen defect (KD-01) before the round |
 | Q-05 Merchandiser "Run mining" screen | ~~This round tests Merchandiser mining submission through the API. The screen comes later~~ — superseded by the addendum below |
-| Q-06 Landing page per role | System Admin → `/admin/overview`; Store Admin → `/store/inventory`; Merchandiser → its F03 workspace; End Customer → `/storefront` |
+| Q-06 Landing page per role | System Admin → `/admin/overview`; Store Admin → `/store/inventory`; Merchandiser → its F03 workspace; End Customer → ~~`/storefront`~~ — superseded by [DEC-20261127-01](../2026-11-27/DEC-20261127-01-end-customer-landing-customer-home.md): `/customer-home` (Store chooser) |
 | Q-07 Campaign activation screen | The Store Admin activates, ends and rolls back campaigns in the F07/F08 workspace `/store/layout` |
 | Q-08 F09 storefront | F09 is accepted on the public API in this round. Storefront UI checks are added when the FE calls the real API |
 | Q-09 Image limits | Binary units: 1 MiB = 1,048,576 bytes, 5 MiB = 5,242,880 bytes. If the multipart size limit rejects the upload first, a 413 with a different message is accepted |
