@@ -172,6 +172,15 @@ def wait_for_backend(seconds=120):
     sys.exit(f"ERROR: backend at {API} did not answer within {seconds}s")
 
 
+# Subject of the OTP e-mail per purpose (backend `OtpEmail`); the e-mail never shows the purpose name.
+OTP_SUBJECTS = {
+    "SELF_REGISTER": "Verify your PASPM account",
+    "ADMIN_INVITE": "You're invited to PASPM",
+    "PASSWORD_RESET": "Reset your PASPM password",
+}
+OTP_CODE = re.compile(r"verification code:\s*(\d{6})", re.IGNORECASE)
+
+
 def otp_from_mailpit(email, purpose_hint, since):
     """Newest OTP mail sent to `email` after `since` (epoch seconds)."""
     deadline = time.time() + 30
@@ -179,9 +188,9 @@ def otp_from_mailpit(email, purpose_hint, since):
         q = urllib.parse.quote(f"to:{email}")
         res = http("GET", f"{MAILPIT}/api/v1/search?query={q}")[1]
         for message in res.get("messages", []):
-            match = re.search(r"code is (\d{6})", message.get("Snippet", ""))
+            match = OTP_CODE.search(message.get("Snippet", ""))
             created = message.get("Created", "")
-            if match and purpose_hint in message.get("Snippet", "") and _epoch(created) >= since - 2:
+            if match and message.get("Subject") == OTP_SUBJECTS[purpose_hint] and _epoch(created) >= since - 2:
                 return match.group(1)
         time.sleep(1)
     sys.exit(f"ERROR: no OTP mail for {email} found in Mailpit ({MAILPIT})")

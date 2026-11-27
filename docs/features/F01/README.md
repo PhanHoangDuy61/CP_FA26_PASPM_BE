@@ -34,7 +34,7 @@ Complete registration/OTP/user DTOs: [API contract](../../api/F01_AUTH_USER_API.
 ## 4. Business and security rules
 
 - ACTIVE, verified identity required; passwords follow existing BCrypt limits/policy.
-- Registration returns202 for a new email and409 for an existing email. OTP/invitation/reset rules are unchanged.
+- Registration returns202 for a new email and409 for an existing email. OTP/invitation/reset rules are unchanged. OTP e-mails are multipart (HTML and plain text) with purpose-specific subjects and no internal names (DEC-20261128-01).
 - Token and CSRF secrets are hashed in DB; refresh raw value is only in HttpOnly cookie.
 - HTTPS defaults to Secure `__Host-` cookies, SameSite=Strict, Path=/, no Domain. Local HTTP uses explicit REFRESH_COOKIE_SECURE=false with loopback hostname.
 - Origin and duplicate cookie checks; refresh requires exact stored CSRF binding. Replay revokes family and its session-bound access JWTs. Password/role/status changes still invalidate account versions.

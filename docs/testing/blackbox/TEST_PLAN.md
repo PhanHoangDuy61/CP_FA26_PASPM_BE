@@ -4,7 +4,7 @@
 |---|---|
 | Version / date | 0.6 — 2026-11-27 (Asia/Ho_Chi_Minh); 0.6 applied the smoke-test follow-ups (DEC-20261127-01 End Customer landing, benchmark routes 404, known issues KI-02, KI-03 and KI-04, data item DP-10); 0.5 — 2026-11-26; 0.2 applied DEC-20261126-02, 0.3 applied DEC-20261126-03, 0.4 its Q-05 addendum (Run mining screen) and known issue KI-01, 0.5 F10/F11 cases aligned with the implemented API after merging `dev` @ `114576d` |
 | Baseline | Backend `dev` @ `114576d` (merged into this branch; F10 PR #38/#44, F11 PR #45, TDP-01 PR #47); FE `dev` @ `7f298bc` (routes used to name screens); F05 mining screen checked at FE `dev` @ `0cd57a6` |
-| Deliverables | [TEST_CASES.md](TEST_CASES.md) / [TEST_CASES.csv](TEST_CASES.csv) (249 cases), [TRACEABILITY.md](TRACEABILITY.md), [PO_QUESTIONS.md](PO_QUESTIONS.md) |
+| Deliverables | [TEST_CASES.md](TEST_CASES.md) / [TEST_CASES.csv](TEST_CASES.csv) (250 cases), [TRACEABILITY.md](TRACEABILITY.md), [PO_QUESTIONS.md](PO_QUESTIONS.md) |
 | Execution status | **NOT RUN.** No case has been executed. This pack contains designs only |
 
 ## 1. Scope
@@ -98,7 +98,7 @@ Passwords come from the tester's local `scripts/seed/.env.seed` (git-ignored) or
 Decided by DEC-20261126-03 (Q-16). The script is a separate small code task and is **not** part of this documentation branch. Required behaviour:
 
 - Runs against the disposable ENV-1 backend through the public API only (no SQL), signed in as the System Admin.
-- Creates Store B (`QA Store B`, `qa-store-b`) and Store C (`QA Store C`, `qa-store-c`) with `POST /api/system/stores`, and one Store Admin and one Merchandiser per Store (accounts in §5) through `POST /api/users`, activating each invitation with the OTP read from Mailpit.
+- Creates Store B (`QA Store B`, `qa-store-b`) and Store C (`QA Store C`, `qa-store-c`) with `POST /api/system/stores`, and one Store Admin and one Merchandiser per Store (accounts in §5) through `POST /api/users`, activating each invitation with the OTP read from Mailpit (the `You're invited to PASPM` e-mail, DEC-20261128-01).
 - Reads passwords from environment variables (as `scripts/seed/.env.seed` does); never prints or writes them.
 - Is safe to run twice: finds existing Stores by slug and accounts by email before creating anything.
 - Prints the created Store IDs and account emails for the run record.

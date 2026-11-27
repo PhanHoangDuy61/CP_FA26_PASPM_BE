@@ -94,7 +94,7 @@ Each line gives the behaviour an agent must preserve. Exact request and response
 ### F01 — Identity & access (DONE)
 
 - FR-01.1: Sign-in uses email and password, or a Google ID token whose email Google has verified.
-- FR-01.2: Self-registration (End Customer) and invitation both use an email OTP. Registration returns 202 for a new email and 409 for an existing one.
+- FR-01.2: Self-registration (End Customer) and invitation both use an email OTP. Registration returns 202 for a new email and 409 for an existing one. The OTP e-mail is a professional English multipart e-mail (HTML and plain text) with a purpose-specific subject, the code, the expiry from the configured TTL and a security note; it never shows internal names (DEC-20261128-01).
 - FR-01.3: Session tokens:
   - the access JWT is a Bearer token, 3600 s by default;
   - the refresh credential is held **only in an HttpOnly cookie**;

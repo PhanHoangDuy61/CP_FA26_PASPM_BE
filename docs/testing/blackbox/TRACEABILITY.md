@@ -9,7 +9,7 @@ Coverage: 57/57 FR, 33/33 UC, 33/33 BR have at least one case.
 | FR | Requirement | Status | Test cases |
 |---|---|---|---|
 | FR-01.1 | Sign-in by email/password or verified Google ID token | DONE | TC-F01-001, TC-F01-002, TC-F01-003, TC-F01-012 |
-| FR-01.2 | Self-registration and invitation with email OTP (202 new / 409 existing) | DONE | TC-F01-004, TC-F01-005, TC-F01-006, TC-F01-007, TC-F01-008, TC-F01-009, TC-F01-010, TC-F01-019 |
+| FR-01.2 | Self-registration and invitation with email OTP (202 new / 409 existing) | DONE | TC-F01-004, TC-F01-005, TC-F01-006, TC-F01-007, TC-F01-008, TC-F01-009, TC-F01-010, TC-F01-019, TC-F01-052 |
 | FR-01.3 | Access JWT, HttpOnly refresh cookie, CSRF, logout, logout-all, token_version | DONE | TC-F01-013, TC-F01-014, TC-F01-015, TC-F01-016, TC-F01-017, TC-F01-018 |
 | FR-01.4 | One role per account; Store Admin and Merchandiser have one Store | DONE | TC-F01-001, TC-F01-006, TC-F01-019, TC-F01-020, TC-F01-022 |
 | FR-01.5 | Profile with avatar; account states | DONE | TC-F01-003, TC-F01-024, TC-F01-027 |
