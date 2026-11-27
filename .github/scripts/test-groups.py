@@ -27,7 +27,7 @@ GROUPS = {
               "RecommendationMigrationTest", "TransactionImportMySqlIntegrationTest",
               "TransactionImportCorrectnessMySqlIntegrationTest", "TransactionRawEvidenceMigrationMySqlTest",
               "TransactionExcelImportMySqlIntegrationTest",
-              "RetailCatalogUtilityMySqlIntegrationTest", "MiningMigrationMySqlTest", "StoreMigrationV27MySqlTest",
+              "RetailCatalogUtilityMySqlIntegrationTest", "MiningMigrationMySqlTest", "MiningRequestListSortMemoryMySqlTest", "StoreMigrationV27MySqlTest",
               "ProductSoftDeleteV28MySqlTest", "JpaPilotMigrationMySqlTest"],
 }
 

@@ -34,7 +34,12 @@ public class MiningRepository {
         for(var algorithm:request.algorithms().stream().sorted().toList())jdbc.update("INSERT INTO mining_run(store_id,request_id,algorithm,library_version,conversion_version,memory_method,runtime_method) VALUES (?,?,?,?,?,?,?)",store,id,algorithm.name(),SpmfMiningEngine.VERSION,input.conversionVersion(),SpmfMiningEngine.MEMORY_METHOD,SpmfMiningEngine.RUNTIME_METHOD);
         return find(store,id);
     }
-    public Page<RequestView> requests(int store,int page,int size){return new Page<>(jdbc.query("SELECT * FROM mining_request WHERE store_id=? ORDER BY request_id DESC LIMIT ? OFFSET ?",this::stored,store,size,(long)page*size).stream().map(Stored::view).toList(),page,size,jdbc.queryForObject("SELECT COUNT(*) FROM mining_request WHERE store_id=?",Long.class,store));}
+    public Page<RequestView> requests(int store,int page,int size){
+        // Sort ids only, then load each row by id (as snapshots() does): sorting SELECT * would put every frozen_input
+        // (hundreds of KB) into MySQL's sort buffer and fail with error 1038 "Out of sort memory" (walk-through 2026-11-27).
+        var ids=jdbc.queryForList("SELECT request_id FROM mining_request WHERE store_id=? ORDER BY request_id DESC LIMIT ? OFFSET ?",Long.class,store,size,(long)page*size);
+        return new Page<>(ids.stream().map(id->find(store,id).view()).toList(),page,size,jdbc.queryForObject("SELECT COUNT(*) FROM mining_request WHERE store_id=?",Long.class,store));
+    }
     public Page<SnapshotView> snapshots(int store,int page,int size,vn.edu.fpt.paspm.utility.UtilitySnapshotRepository snapshots){
         var ids=jdbc.queryForList("SELECT snapshot_id FROM utility_snapshot WHERE store_id=? AND status='READY' ORDER BY snapshot_id DESC LIMIT ? OFFSET ?",Integer.class,store,size,(long)page*size);
         return new Page<>(ids.stream().map(id->snapshots.find(store,id)).toList(),page,size,jdbc.queryForObject("SELECT COUNT(*) FROM utility_snapshot WHERE store_id=? AND status='READY'",Long.class,store));

@@ -1,4 +1,4 @@
-# ROC-20261127 — F09 public Store images; demo seed co-purchase baskets; smoke-test documentation follow-ups; seed mining policy
+# ROC-20261127 — F09 public Store images; demo seed co-purchase baskets; smoke-test documentation follow-ups; seed mining policy; F05 request list sort memory
 
 2026-11-27 / Asia/Ho_Chi_Minh.
 
@@ -17,3 +17,7 @@
 ## Record 004 — Demo seed sets the mining policy
 
 [Record 004](04-demo-seed-mining-policy.md): the demo seed sets the System Admin mining policy to `PERCENTAGE 0.12` through `PUT /api/system/mining/config`, writing a new policy version only when the mode or the value differ (a second run changes nothing); no manual step remains in the test plan. Seed and test data only. Branch `Khoi/fix/seed-demo-mining-policy`.
+
+## Record 005 — F05 request history sort memory
+
+[Record 005](05-f05-request-list-sort-memory.md): `GET /api/mining/requests` returned 500 (MySQL 1038 "Out of sort memory") once a request's frozen input exceeded the default sort buffer; the repository now sorts ids only and loads each row by id. No contract change, no migration. New MySQL test in the CI `mysql` group. Branch `Khoi/fix/f05-history-sort-memory`.
