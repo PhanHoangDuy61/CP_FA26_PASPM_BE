@@ -10,8 +10,8 @@ TC-F01-003,F01,FR-01.5; FR-01.1,Pending and INACTIVE accounts cannot sign in,Gue
 2. Sign in as the deactivated Merchandiser
 3. Reactivate the Merchandiser (System Admin) and sign in again",Steps 1–2: 401 `Invalid credentials or account unavailable`. Step 3: sign-in succeeds.,High,negative,NOT RUN
 TC-F01-004,F01,FR-01.2,Self-registration with email OTP creates an End Customer,Guest (anonymous),"ENV-1 (local Docker stack, demo seed loaded); Mailpit at http://127.0.0.1:8025","New email qa-ec-001@paspm.example; valid password (12–72 chars, upper, lower, digit)","1. Open /register and submit the new email
-2. Read the 6-digit OTP from Mailpit
-3. Enter the OTP
+2. Read the 6-digit code from the ""Verify your PASPM account"" e-mail in Mailpit
+3. Enter the code
 4. Complete name and password
 5. Sign in with the new account",Register returns 202; OTP verify returns 200; completion returns 200 without issuing a token; sign-in succeeds; the account has role END_CUSTOMER and no Store.,High,functional,NOT RUN
 TC-F01-005,F01,FR-01.2,Registering an existing email returns 409,Guest (anonymous),"ENV-1 (local Docker stack, demo seed loaded)",customer@paspm.example (already registered),"1. Open /register
@@ -40,7 +40,7 @@ TC-F01-016,F01,FR-01.3,Logout and logout-all revoke sessions,Store Admin,"ENV-1 
 3. Browser 2: Sign out of all sessions
 4. Browser 3 (signed in before step 3): reload","After logout, browser 1 is sent to /login. After logout-all every session of the account gets 401 and must sign in again.",Medium,functional,NOT RUN
 TC-F01-017,F01,FR-01.3,Password reset invalidates old tokens,Merchandiser,"ENV-1 (local Docker stack, demo seed loaded)",ACC-MER-A; new valid password,"1. Open /forgot-password and request a reset
-2. Use the OTP from Mailpit to set a new password
+2. Read the code from the ""Reset your PASPM password"" e-mail in Mailpit and use it to set a new password
 3. Use the access token issued before the reset
 4. Sign in with the new password","Reset request always returns the same 202 message. After confirm, the old token gets 401 (token_version incremented). New password works.",Medium,functional,NOT RUN
 TC-F01-018,F01,FR-01.3,"Change password: wrong current, same password, success",Store Admin,"ENV-1 (local Docker stack, demo seed loaded)",ACC-STA-A,"1. Profile → Change password with a wrong current password
@@ -49,7 +49,7 @@ TC-F01-018,F01,FR-01.3,"Change password: wrong current, same password, success",
 4. Reuse the old token","Wrong current: 401. Same password: 400. Success: 200, the old token is revoked and the user signs in again.",Medium,negative,NOT RUN
 TC-F01-019,F01,UC01; FR-01.2; FR-01.4,System Admin invites a Store Admin who activates by OTP,System Admin,"ENV-1 (local Docker stack, demo seed loaded)","name QA Store Admin 2, email qa-sta-a2@paspm.example, role STORE_ADMIN, Store A","1. Open /admin/users → Invite
 2. Fill name, email, role STORE_ADMIN and Store A
-3. Invitee reads the ADMIN_INVITE OTP in Mailpit and activates at /activate with a new password
+3. Invitee reads the code from the ""You're invited to PASPM"" e-mail in Mailpit and activates at /activate with a new password
 4. Invitee signs in",Invite returns 201 with status PENDING_VERIFICATION. Activation returns 200. Sign-in succeeds with role STORE_ADMIN and storeId of Store A.,High,functional,NOT RUN
 TC-F01-020,F01,UC01; UC02; FR-01.4; BR-02,Role and Store combinations (decision table),System Admin,"ENV-1 (local Docker stack, demo seed loaded)",Invites: STORE_ADMIN without Store; MERCHANDISER without Store; SYSTEM_ADMIN with Store A; END_CUSTOMER with Store A; STORE_ADMIN with Store A; unknown role QA_ROLE,1. Invite each combination from /admin/users,"STORE_ADMIN/MERCHANDISER without Store, SYSTEM_ADMIN or END_CUSTOMER with a Store, and an unknown role are refused with 400. STORE_ADMIN with Store A is created (201).",High,negative,NOT RUN
 TC-F01-021,F01,UC01,Duplicate email invite returns 409,System Admin,"ENV-1 (local Docker stack, demo seed loaded)",storeadmin@paspm.example,1. Invite a new account with an existing email,HTTP 409; no second account.,Medium,negative,NOT RUN
@@ -118,6 +118,9 @@ TC-F01-049,F01,FR-01.10; Common 6,Image change bumps the Store version,Store Adm
 2. Save address in the first tab with version v",Profile save returns 409 `Store version conflict`; after reload the save works.,Medium,negative,NOT RUN
 TC-F01-050,F01,FR-01.10,Remove an image,Store Admin,"ENV-1 (local Docker stack, demo seed loaded); Store A has an icon",Store A icon,1. Remove the icon on /store/profile,iconUrl becomes null and a placeholder is shown; the old public URL returns 404.,Low,functional,NOT RUN
 TC-F01-051,F01,NFR 5.1; NFR 5.5,Screens work from 320 to 1440 px wide,"Store Admin, Merchandiser","ENV-1 (local Docker stack, demo seed loaded)","viewport widths 320, 768, 1440 px","1. Open /login, /store/inventory, /store/batches, /f03/configuration and /store/layout at each width",No horizontal page overflow or hidden primary action; tables scroll inside their container; validation errors stay next to their field; empty lists show an explicit empty state.,Low,UI,NOT RUN
+TC-F01-052,F01,FR-01.2,"OTP e-mails are professional, purpose-specific and show no internal names","Guest (anonymous), System Admin","ENV-1 (local Docker stack, demo seed loaded); Mailpit at http://127.0.0.1:8025","Three throwaway addresses: a new self-registration, a new invitation (name QA Mail & Co) and a password reset of an active account","1. Register the first address, invite the second, request a password reset for the third
+2. Open each e-mail in Mailpit and compare its HTML and Text tabs
+3. Compare the subject, heading, code, expiry line and security note of the three e-mails","Subjects are exactly `Verify your PASPM account`, `You're invited to PASPM` and `Reset your PASPM password`. Each e-mail has an HTML part and a plain-text part with a PASPM text header, a greeting, one purpose line, the 6-digit code in large type, `expires in 10 minutes`, `If you didn't request this, you can ignore this email. Never share this code with anyone.` and a footer. No text shows SELF_REGISTER, ADMIN_INVITE, PASSWORD_RESET, PENDING_VERIFICATION or an ID. The invitee name appears as typed (`QA Mail & Co`). The HTML has no image, link, script or tracking pixel.",Medium,functional,NOT RUN
 TC-F02-001,F02,UC18; FR-02.1,"Create, edit and deactivate a category",Store Admin,"ENV-1 (local Docker stack, demo seed loaded)",category QA Dairy,"1. Open /store/categories → Add QA Dairy
 2. Rename it to QA Dairy & Eggs
 3. Set it INACTIVE","Created (201), renamed (200) and deactivated (status INACTIVE). There is no delete action.",High,functional,NOT RUN

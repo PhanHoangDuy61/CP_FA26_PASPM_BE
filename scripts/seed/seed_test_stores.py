@@ -32,6 +32,14 @@ STORES = [
 ]
 ACCOUNT_DOMAIN = "paspm.example"
 
+# Subject of the OTP e-mail per purpose (backend `OtpEmail`); the e-mail never shows the purpose name.
+OTP_SUBJECTS = {
+    "SELF_REGISTER": "Verify your PASPM account",
+    "ADMIN_INVITE": "You're invited to PASPM",
+    "PASSWORD_RESET": "Reset your PASPM password",
+}
+OTP_CODE = re.compile(r"verification code:\s*(\d{6})", re.IGNORECASE)
+
 
 def account_plan():
     """The fixed plan: per Store a Store Admin and a Merchandiser (TEST_PLAN section 5: ACC-STA-x, ACC-MER-x)."""
@@ -118,9 +126,8 @@ class Seeder:
             query = urllib.parse.quote(f"to:{email}")
             res = self.http("GET", f"{self.mailpit}/api/v1/search?query={query}")[1]
             for message in res.get("messages", []):
-                snippet = message.get("Snippet", "")
-                match = re.search(r"code is (\d{6})", snippet)
-                if match and purpose_hint in snippet and _epoch(message.get("Created", "")) >= since - 2:
+                match = OTP_CODE.search(message.get("Snippet", ""))
+                if match and message.get("Subject") == OTP_SUBJECTS[purpose_hint] and _epoch(message.get("Created", "")) >= since - 2:
                     return match.group(1)
             self.sleep(1)
         raise SystemExit(f"ERROR: no OTP mail for {email} found in Mailpit ({self.mailpit})")

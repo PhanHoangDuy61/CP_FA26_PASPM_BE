@@ -8,12 +8,15 @@ import java.time.Instant;
 import java.util.HexFormat;
 import java.util.Locale;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.MailPreparationException;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -139,13 +142,23 @@ public class OtpService {
                 now
         );
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(from);
-        message.setTo(user.email());
-        boolean passwordReset = "PASSWORD_RESET".equals(purpose);
-        message.setSubject(passwordReset ? "PASPM password reset" : "PASPM account verification");
-        message.setText("Your " + purpose + " code is " + code + ". Expires in " + ttl / 60 + " minutes. Do not share this code.");
-        mail.send(message);
+        mail.send(message(user, purpose, code));
+    }
+
+    private MimeMessage message(User user, String purpose, String code) {
+        OtpEmail email = OtpEmail.compose(purpose, user.name(), code, ttl);
+        try {
+            MimeMessage message = mail.createMimeMessage();
+            // multipart/alternative: plain text first, HTML second (the client shows the last it can render)
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
+            helper.setFrom(from);
+            helper.setTo(user.email());
+            helper.setSubject(email.subject());
+            helper.setText(email.text(), email.html());
+            return message;
+        } catch (MessagingException e) {
+            throw new MailPreparationException("Could not prepare the verification e-mail", e);
+        }
     }
 
     @Transactional(noRollbackFor = ApiException.class)

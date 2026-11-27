@@ -18,7 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.mail.SimpleMailMessage;
+import jakarta.mail.internet.MimeMessage;
+import vn.edu.fpt.paspm.auth.OtpMailTestSupport;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -60,7 +61,7 @@ class AuthIntegrationTest {
  @MockitoBean JavaMailSender mail;
  @Autowired AvatarObjectStorage avatarStorage;
  final String password="TestingPassword123!";
- @BeforeEach void resetData(){jdbc.update("DELETE FROM external_identity");jdbc.update("DELETE FROM verification_challenge");jdbc.update("DELETE FROM app_user");jdbc.update("DELETE FROM store");reset(mail);}
+ @BeforeEach void resetData(){jdbc.update("DELETE FROM external_identity");jdbc.update("DELETE FROM verification_challenge");jdbc.update("DELETE FROM app_user");jdbc.update("DELETE FROM store");reset(mail);when(mail.createMimeMessage()).thenAnswer(i->OtpMailTestSupport.newMessage());}
  User active(String email,String role,Integer store){User u=users.createPendingUser("Test",email,role,store,passwords.encode(password),null);jdbc.update("UPDATE app_user SET status='ACTIVE',email_verified_at=? WHERE user_id=?",Timestamp.from(Instant.now()),u.id());return users.findById(u.id());}
  MockHttpServletRequestBuilder body(MockHttpServletRequestBuilder r,Object body)throws Exception{return r.contentType("application/json").content(json.writeValueAsString(body));}
  String token(User u){return auth.token(u).accessToken();}
@@ -99,7 +100,37 @@ class AuthIntegrationTest {
    .header(CSRF_HEADER,session.csrfToken())
    .with(request->{request.setRemoteAddr(remoteAddress);return request;});
  }
- String latestOtp(){var c=ArgumentCaptor.forClass(SimpleMailMessage.class);verify(mail,atLeastOnce()).send(c.capture());var match=Pattern.compile("code is ([0-9]{6})").matcher(c.getValue().getText());assertTrue(match.find());return match.group(1);}
+ MimeMessage latestMail(){var c=ArgumentCaptor.forClass(MimeMessage.class);verify(mail,atLeastOnce()).send(c.capture());try{c.getValue().saveChanges();}catch(Exception e){throw new IllegalStateException(e);}return c.getValue();}
+ String latestOtp()throws Exception{return OtpMailTestSupport.code(latestMail());}
+
+ @Test void otpMailsArePurposeSpecificMultipartWithoutInternalNames()throws Exception{
+  // SELF_REGISTER
+  mvc.perform(body(post("/api/auth/register"),Map.of("email","mail-self@example.com"))).andExpect(status().isAccepted());
+  assertOtpMail(latestMail(),"Verify your PASPM account","verify your email address");
+  // ADMIN_INVITE
+  users.createPendingUser("Invitee <b>One</b>","mail-invite@example.com","SYSTEM_ADMIN",null,null,"ADMIN_INVITE");
+  mvc.perform(body(post("/api/auth/otp/request"),Map.of("email","mail-invite@example.com","purpose","ADMIN_INVITE"))).andExpect(status().isAccepted());
+  MimeMessage invite=latestMail();
+  assertOtpMail(invite,"You're invited to PASPM","invited to join PASPM");
+  assertTrue(OtpMailTestSupport.html(invite).contains("Invitee &lt;b&gt;One&lt;/b&gt;"));
+  assertFalse(OtpMailTestSupport.html(invite).contains("<b>One</b>"));
+  // PASSWORD_RESET
+  User u=active("mail-reset@example.com","END_CUSTOMER",null);
+  mvc.perform(body(post("/api/auth/password-reset/request"),Map.of("email",u.email()))).andExpect(status().isAccepted());
+  assertOtpMail(latestMail(),"Reset your PASPM password","reset the password");
+ }
+ void assertOtpMail(MimeMessage message,String subject,String purposeText)throws Exception{
+  assertEquals(subject,message.getSubject());
+  assertTrue(message.isMimeType("multipart/*"));
+  String text=OtpMailTestSupport.text(message),html=OtpMailTestSupport.html(message);
+  assertNotNull(text);assertNotNull(html);
+  String code=OtpMailTestSupport.code(message);
+  for(String part:new String[]{message.getSubject(),text,html}){
+   for(String internal:new String[]{"SELF_REGISTER","ADMIN_INVITE","PASSWORD_RESET","PENDING_VERIFICATION"})assertFalse(part.contains(internal),internal);
+  }
+  assertTrue(html.contains(code));assertTrue(text.contains("expires in 10 minutes"));assertTrue(html.contains("expires in 10 minutes"));
+  assertTrue(text.contains(purposeText)||html.contains(purposeText));
+ }
 
  @Test void loginMeAndAnonymousAccess()throws Exception{
   User u=active("login@example.com","SYSTEM_ADMIN",null);
@@ -448,7 +479,7 @@ class AuthIntegrationTest {
  }
  @Test void passwordResetMailFailureDoesNotDiscloseAccountAndRollsBackChallenge()throws Exception{
   User u=active("reset-mail-"+java.util.UUID.randomUUID()+"@example.com","END_CUSTOMER",null);
-  doThrow(new MailSendException("mail unavailable")).when(mail).send(any(SimpleMailMessage.class));
+  doThrow(new MailSendException("mail unavailable")).when(mail).send(any(MimeMessage.class));
   mvc.perform(body(post("/api/auth/password-reset/request"),Map.of("email",u.email())))
    .andExpect(status().isAccepted()).andExpect(jsonPath("$.message").value("If the account is eligible, a verification email will be sent"));
   assertEquals(0,jdbc.queryForObject("SELECT COUNT(*) FROM verification_challenge WHERE user_id=?",Integer.class,u.id()));
@@ -480,7 +511,7 @@ class AuthIntegrationTest {
   mvc.perform(get("/api/users").header("Authorization","Bearer "+t)).andExpect(status().isForbidden());
  }
  @Test void smtpFailureRollsBackRegistration()throws Exception{
-  doThrow(new MailSendException("test unavailable")).when(mail).send(any(SimpleMailMessage.class));
+  doThrow(new MailSendException("test unavailable")).when(mail).send(any(MimeMessage.class));
   mvc.perform(body(post("/api/auth/register"),Map.of("email","mailfail@example.com"))).andExpect(status().isServiceUnavailable());
   assertTrue(users.findByEmail("mailfail@example.com").isEmpty());
  }

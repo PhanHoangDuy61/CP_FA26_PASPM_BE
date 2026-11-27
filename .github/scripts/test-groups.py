@@ -3,7 +3,7 @@ from pathlib import Path
 import sys
 
 GROUPS = {
-    "backend": ["AuthIntegrationTest", "GoogleRegistrationTest", "SessionHttpIntegrationTest", "SessionOriginGuardTest", "SessionV21MigrationTest", "CatalogDevSeederTest", "CatalogIntegrationTest", "StorefrontIntegrationTest",
+    "backend": ["AuthIntegrationTest", "OtpEmailTest", "GoogleRegistrationTest", "SessionHttpIntegrationTest", "SessionOriginGuardTest", "SessionV21MigrationTest", "CatalogDevSeederTest", "CatalogIntegrationTest", "StorefrontIntegrationTest",
                 "LegacyPreflightTest", "MiningInputTest", "FrozenEvidenceReaderTest", "RecommendationRulesTest",
                 "TransactionEvidenceTest", "DatabaseTransactionSourceTest", "TransactionImportIntegrationTest",
                 "TransactionImportSchemaTest", "TransactionCsvParserTest", "TransactionOrderValidatorTest",

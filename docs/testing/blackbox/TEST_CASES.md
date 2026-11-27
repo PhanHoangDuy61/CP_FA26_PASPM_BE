@@ -8,7 +8,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 | Feature | Cases | High | Medium | Low | functional | negative | boundary | security | state transition | decision table | UI |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| [F01 Identity, access and Store management](#f01) | 51 | 28 | 17 | 6 | 13 | 14 | 11 | 9 | 3 | 0 | 1 |
+| [F01 Identity, access and Store management](#f01) | 52 | 28 | 18 | 6 | 14 | 14 | 11 | 9 | 3 | 0 | 1 |
 | [F02 Catalogue and inventory](#f02) | 37 | 19 | 16 | 2 | 11 | 4 | 13 | 4 | 2 | 3 | 0 |
 | [F03 Utility profiling (Weight v2)](#f03) | 29 | 16 | 11 | 2 | 9 | 6 | 10 | 2 | 1 | 1 | 0 |
 | [F04 Transaction import](#f04) | 15 | 11 | 2 | 2 | 7 | 4 | 3 | 1 | 0 | 0 | 0 |
@@ -19,11 +19,11 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | [F09 Public storefront](#f09) | 14 | 8 | 4 | 2 | 4 | 2 | 3 | 3 | 1 | 1 | 0 |
 | [F10 Bundle cart](#f10) | 16 | 10 | 6 | 0 | 4 | 4 | 4 | 2 | 1 | 1 | 0 |
 | [F11 Dashboard](#f11) | 9 | 4 | 4 | 1 | 4 | 0 | 2 | 1 | 0 | 0 | 2 |
-| **Total** | **249** | **143** | **83** | **23** | **68** | **57** | **67** | **29** | **18** | **6** | **4** |
+| **Total** | **250** | **143** | **84** | **23** | **69** | **57** | **67** | **29** | **18** | **6** | **4** |
 
 ## F01
 
-**Identity, access and Store management** — 51 cases.
+**Identity, access and Store management** — 52 cases.
 
 | ID | Title | Priority | Type |
 |---|---|---|---|
@@ -78,6 +78,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | [TC-F01-049](#tc-f01-049) | Image change bumps the Store version | Medium | negative |
 | [TC-F01-050](#tc-f01-050) | Remove an image | Low | functional |
 | [TC-F01-051](#tc-f01-051) | Screens work from 320 to 1440 px wide | Low | UI |
+| [TC-F01-052](#tc-f01-052) | OTP e-mails are professional, purpose-specific and show no internal names | Medium | functional |
 
 ### TC-F01-001
 
@@ -134,7 +135,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Role | Guest (anonymous) |
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded); Mailpit at http://127.0.0.1:8025 |
 | Test data | New email qa-ec-001@paspm.example; valid password (12–72 chars, upper, lower, digit) |
-| Steps | 1. Open /register and submit the new email<br>2. Read the 6-digit OTP from Mailpit<br>3. Enter the OTP<br>4. Complete name and password<br>5. Sign in with the new account |
+| Steps | 1. Open /register and submit the new email<br>2. Read the 6-digit code from the "Verify your PASPM account" e-mail in Mailpit<br>3. Enter the code<br>4. Complete name and password<br>5. Sign in with the new account |
 | Expected result | Register returns 202; OTP verify returns 200; completion returns 200 without issuing a token; sign-in succeeds; the account has role END_CUSTOMER and no Store. |
 | Priority / type | High / functional |
 | Status | NOT RUN |
@@ -329,7 +330,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Role | Merchandiser |
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded) |
 | Test data | ACC-MER-A; new valid password |
-| Steps | 1. Open /forgot-password and request a reset<br>2. Use the OTP from Mailpit to set a new password<br>3. Use the access token issued before the reset<br>4. Sign in with the new password |
+| Steps | 1. Open /forgot-password and request a reset<br>2. Read the code from the "Reset your PASPM password" e-mail in Mailpit and use it to set a new password<br>3. Use the access token issued before the reset<br>4. Sign in with the new password |
 | Expected result | Reset request always returns the same 202 message. After confirm, the old token gets 401 (token_version incremented). New password works. |
 | Priority / type | Medium / functional |
 | Status | NOT RUN |
@@ -359,7 +360,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Role | System Admin |
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded) |
 | Test data | name QA Store Admin 2, email qa-sta-a2@paspm.example, role STORE_ADMIN, Store A |
-| Steps | 1. Open /admin/users → Invite<br>2. Fill name, email, role STORE_ADMIN and Store A<br>3. Invitee reads the ADMIN_INVITE OTP in Mailpit and activates at /activate with a new password<br>4. Invitee signs in |
+| Steps | 1. Open /admin/users → Invite<br>2. Fill name, email, role STORE_ADMIN and Store A<br>3. Invitee reads the code from the "You're invited to PASPM" e-mail in Mailpit and activates at /activate with a new password<br>4. Invitee signs in |
 | Expected result | Invite returns 201 with status PENDING_VERIFICATION. Activation returns 200. Sign-in succeeds with role STORE_ADMIN and storeId of Store A. |
 | Priority / type | High / functional |
 | Status | NOT RUN |
@@ -842,6 +843,21 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Steps | 1. Open /login, /store/inventory, /store/batches, /f03/configuration and /store/layout at each width |
 | Expected result | No horizontal page overflow or hidden primary action; tables scroll inside their container; validation errors stay next to their field; empty lists show an explicit empty state. |
 | Priority / type | Low / UI |
+| Status | NOT RUN |
+
+### TC-F01-052
+
+**OTP e-mails are professional, purpose-specific and show no internal names**
+
+| Field | Value |
+|---|---|
+| Trace | FR-01.2 |
+| Role | Guest (anonymous), System Admin |
+| Preconditions | ENV-1 (local Docker stack, demo seed loaded); Mailpit at http://127.0.0.1:8025 |
+| Test data | Three throwaway addresses: a new self-registration, a new invitation (name QA Mail & Co) and a password reset of an active account |
+| Steps | 1. Register the first address, invite the second, request a password reset for the third<br>2. Open each e-mail in Mailpit and compare its HTML and Text tabs<br>3. Compare the subject, heading, code, expiry line and security note of the three e-mails |
+| Expected result | Subjects are exactly `Verify your PASPM account`, `You're invited to PASPM` and `Reset your PASPM password`. Each e-mail has an HTML part and a plain-text part with a PASPM text header, a greeting, one purpose line, the 6-digit code in large type, `expires in 10 minutes`, `If you didn't request this, you can ignore this email. Never share this code with anyone.` and a footer. No text shows SELF_REGISTER, ADMIN_INVITE, PASSWORD_RESET, PENDING_VERIFICATION or an ID. The invitee name appears as typed (`QA Mail & Co`). The HTML has no image, link, script or tracking pixel. |
+| Priority / type | Medium / functional |
 | Status | NOT RUN |
 
 ## F02

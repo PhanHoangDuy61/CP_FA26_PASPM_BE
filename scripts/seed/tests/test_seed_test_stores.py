@@ -31,7 +31,7 @@ class FakeBackend:
             email = url.split("to%3A")[1]
             email = email.replace("%40", "@")
             u = self.users.get(email)
-            msgs = [{"Snippet": f"Your ADMIN_INVITE code is {self.otp}", "Created": "2999-01-01T00:00:00Z"}] if u and u.get("mailed") else []
+            msgs = [{"Subject": "You're invited to PASPM", "Snippet": f"PASPM You're invited to PASPM Hello, Your verification code: {self.otp} This code expires in 10 minutes.", "Created": "2999-01-01T00:00:00Z"}] if u and u.get("mailed") else []
             return 200, {"messages": msgs}
         if path == "/api/auth/login":
             if body["email"] == "sys@x.example":
