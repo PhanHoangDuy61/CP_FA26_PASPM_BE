@@ -224,6 +224,7 @@ Decisions cited directly in a case's trace. Decisions not listed here are covere
 | DEC-20261125-06 | TC-F10-004, TC-F10-011 |
 | DEC-20261126-02 | TC-F02-009, TC-F09-013, TC-F10-004, TC-F10-016, TC-F11-006 |
 | DEC-20261126-03 | TC-F01-001, TC-F01-027, TC-F01-044, TC-F02-006, TC-F03-028, TC-F05-006, TC-F05-007, TC-F05-020, TC-F05-021, TC-F05-022, TC-F05-023, TC-F05-024, TC-F05-025, TC-F08-009, TC-F08-017, TC-F09-001, TC-F09-013, TC-F10-006 |
+| DEC-20261127-01 | TC-F01-001 |
 
 [DEC-20261126-02](../../decisions/2026-11-26/DEC-20261126-02-vnd-display-cart-cap-dashboard-window-merch-screens.md) (PO answers of 2026-11-26) sets: VND displayed as whole đồng HALF_UP; F10 single-item writes above 99 refused whole with 409 `CART_QUANTITY_LIMIT`; F11 window of 90 days inclusive accepted, 91 refused; the Merchandiser screen gap on FE `dev` is a defect to fix before the run (TEST_PLAN.md §7 and §9).
 

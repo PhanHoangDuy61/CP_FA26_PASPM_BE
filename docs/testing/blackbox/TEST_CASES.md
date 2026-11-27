@@ -85,12 +85,12 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 | Field | Value |
 |---|---|
-| Trace | FR-01.1; FR-01.4; UC01; BR-02; NFR 5.5; DEC-20261126-03 |
+| Trace | FR-01.1; FR-01.4; UC01; BR-02; NFR 5.5; DEC-20261126-03; DEC-20261127-01 |
 | Role | System Admin, Store Admin, Merchandiser, End Customer |
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded) |
 | Test data | ACC-SA, ACC-STA-A, ACC-MER-A, ACC-EC (passwords from .env.seed) |
 | Steps | 1. Open /login<br>2. Sign in as each account in turn<br>3. Open Profile (/profile) and check role and Store<br>4. Sign out |
-| Expected result | Each sign-in succeeds. System Admin lands on /admin/overview, Store Admin on /store/inventory, Merchandiser on its F03/merchandiser workspace, End Customer on /storefront. Profile shows exactly one role; Store Admin and Merchandiser show Store A, System Admin and End Customer show no Store. |
+| Expected result | Each sign-in succeeds. System Admin lands on /admin/overview, Store Admin on /store/inventory, Merchandiser on its F03/merchandiser workspace, End Customer on /customer-home (the Store chooser, DEC-20261127-01). Profile shows exactly one role; Store Admin and Merchandiser show Store A, System Admin and End Customer show no Store. |
 | Priority / type | High / functional |
 | Status | NOT RUN |
 
@@ -2564,8 +2564,8 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Role | System Admin, Merchandiser |
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded); R1 |
 | Test data | R1 |
-| Steps | 1. Check there is no Benchmark entry in the menu and open /admin/benchmark directly<br>2. [API] GET /api/mining/runs/{R1}/benchmark |
-| Expected result | No menu entry; the URL shows not-found or redirects (known defect KD-02 until fixed). API: 403 for every role. |
+| Steps | 1. Check there is no Benchmark entry in the menu and open /admin/benchmark directly<br>2. [API] GET /api/mining/runs/{R1}/benchmark<br>3. [API] System Admin: GET /api/system/mining/stores/{A}/runs/{R1}/benchmark |
+| Expected result | No menu entry; the URL shows not-found or redirects (known defect KD-02 until fixed). Both API routes: 404 for a signed-in user of any role (the routes are not mapped; it is not a 403). |
 | Priority / type | Low / negative |
 | Status | NOT RUN |
 
@@ -2619,7 +2619,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Role | Merchandiser |
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded); DP-04 R1 |
 | Test data | miningRunId R1, types BUNDLE, CROSS_SELL, FBT, BANNER |
-| Steps | 1. Open /merchandiser/recommendations<br>2. Generate from R1 |
+| Steps | 1. Open Recommendations (/recommendations; the old /merchandiser/recommendations URL redirects there)<br>2. Generate from R1 |
 | Expected result | 200 with createdCount, reusedCount, recommendationIds and skipped reasons; candidates are PENDING_REVIEW. |
 | Priority / type | High / functional |
 | Status | NOT RUN |
