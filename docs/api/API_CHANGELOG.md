@@ -1,5 +1,10 @@
 # API Changelog
 
+## 2026-11-27 — F05: request history list no longer fails on large frozen input (no contract change)
+
+- **No contract change.** `GET /api/mining/requests` returns the same body, order (newest `requestId` first), paging and `totalElements` as before; no route, request, field, status code or error changed. No migration. OpenAPI is unchanged (118 paths / 147 operations).
+- Fixed: on MySQL the list answered `500` (error 1038 "Out of sort memory") once a request's frozen input was larger than the server's default `sort_buffer_size` (262,144 bytes), which the co-purchase demo seed produces (about 280,000 bytes per request). The repository now sorts the request ids only and loads each row by id, as `GET /api/mining/snapshots` already did. Record: [ROC-20261127-005](../record-of-changes/2026-11-27/05-f05-request-list-sort-memory.md).
+
 ## 2026-11-27 — F09: public Store icon and banner URLs (additive)
 
 - The public Store object gains two nullable fields, `iconUrl` and `bannerUrl`: items of `GET /api/storefront/stores`, `store` in `GET /api/storefront/{storeSlug}/home`, and `store` in the F10 cart view. They hold the public image route `/api/public/stores/{storeId}/images/{fileName}` of F01 ([DEC-20261123-01](../decisions/2026-11-23/DEC-20261123-01-store-management.md)), built by the same code as the staff Store views, and are `null` without an image. See [F09 API, "Store branding"](F09_STOREFRONT_API.md) and the [F09 handoff](../frontend_handoff/F09_HANDOFF.md).
