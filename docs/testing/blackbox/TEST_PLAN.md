@@ -54,7 +54,7 @@ The latest PO decision wins ([DEC-20261125-02](https://github.com/PhanHoangDuy61
 
 1. Start the stack as in [LOCAL_SETUP_MACOS.md](../../setup/LOCAL_SETUP_MACOS.md) / [LOCAL_SETUP_WINDOWS.md](../../setup/LOCAL_SETUP_WINDOWS.md) and [STAGING.md](../../setup/STAGING.md): MySQL 8.4 (Flyway V1–V30), Mailpit (SMTP 1025, UI http://127.0.0.1:8025), backend on http://127.0.0.1:8080 with SPMF 2.67a on Java 25, `REFRESH_COOKIE_SECURE=false` for local HTTP.
 2. Use a **disposable** database volume. Never run the pack against a teammate's database.
-3. Run [`scripts/seed/seed.sh`](../../../scripts/seed/README.md) on the empty database. It creates Store A (`FoodMart Benchmark`, slug `foodmart-benchmark`), 1,559 products with batches, 4,141 orders dated 2026-10-01 to 2026-10-04, 4 seasons and α 0.6 / β 0.4 / λ 0.3 / N 30.
+3. Run [`scripts/seed/seed.sh`](../../../scripts/seed/README.md) on the empty database. It creates Store A (`FoodMart Benchmark`, slug `foodmart-benchmark`), 1,559 products with batches, 4,776 orders dated 2026-10-01 to 2026-10-04 (4,141 random FoodMart orders and 635 co-purchase orders), 4 seasons and α 0.6 / β 0.4 / λ 0.3 / N 30.
 4. Frontend: FE `dev` started against the backend (same-origin proxy). F09 FE is still mock data, so F09 is accepted on the API in this round (DEC-20261126-03).
 5. Keep `paspm.mining.schedule-dispatch-enabled` unset (scheduler enable must return 503).
 6. Cases that need a special backend start (short token TTL, timeout 1 ms, no SPMF jar, zone cap 0) say so in their preconditions; use a separate test instance and restore defaults afterwards.
@@ -84,9 +84,9 @@ Passwords come from the tester's local `scripts/seed/.env.seed` (git-ignored) or
 | SETUP-B | Store B `QA Store B` (slug `qa-store-b`), ACC-STA-B and ACC-MER-B, 1 category, 3 products with batches | Store and accounts: **TDP-01** (below; testers do not create Stores by hand). Catalogue: Store Admin B in the UI |
 | DP-01 | QA products in Store A: `QA Milk 1L` (requiresExpiry, category `QA Dairy`), `QA Rice 5kg` (no expiry) | Store Admin A, TC-F02-001/003 |
 | DP-02 | Snapshot S1: rangeStart 2026-10-01, rangeEnd 2026-10-03, asOfDate 2026-10-03 | Merchandiser A on `/f03/snapshot`. 2026-10-04 stays free for simulation (TC-F08-001) |
-| DP-03 | Mining policy `PERCENTAGE 0.12` | System Admin. Measured on the full seed range at 180 patterns (SRS §11 item 4); record the pattern count for S1 |
+| DP-03 | Mining policy `PERCENTAGE 0.12` | System Admin. Measured on 2026-11-27 on a fresh seed: 182 patterns on the full range 2026-10-01..04 and **183 patterns on S1** (DP-02), `LOSSLESS`, about 0.5 s; the same multi-product patterns from 0.14 to 0.08 (SRS §11 item 4, ROC-20261127-002). Record the pattern count for S1; a different count means the seed or the policy differs |
 | DP-04 | Completed mining request R1 on S1 | System Admin or Merchandiser A |
-| DP-05 | F06 candidates from R1 (all four types), at least two BUNDLE approved; controlled datasets for the F06 threshold cases | Merchandiser A; the threshold cases need a small hand-built Store (40 transactions) |
+| DP-05 | F06 candidates from R1 (all four types; the demo seed gives 17 BUNDLE, 41 CROSS_SELL, 5 FBT and 183 BANNER on S1 at 0.12, ROC-20261127-002), at least two BUNDLE approved; controlled datasets for the F06 threshold cases | Merchandiser A; the threshold cases need a small hand-built Store (40 transactions) |
 | DP-06 | Campaigns in each status (DRAFT, PUBLISHED, ACTIVE, ENDED) using DP-05 | Merchandiser A and Store Admin A |
 | DP-07 | Store C `QA Store C` (slug `qa-store-c`) with ACC-STA-C, ACC-MER-C, a snapshot, a mining request (key KC) and an icon; deactivated when a case says so | Store and accounts: **TDP-01**. Snapshot, request and icon: the Store C users and the System Admin in the UI / API |
 | DP-08 | Synthetic Store D for F05 bounds: snapshots with 1,600 / 1,601 products, 20,000 / 20,001 rows, an int32 lossless / whole-đồng / overflow trio, and a 2,000 / 2,001 pattern pair | Generated CSV imports; build once and keep the files outside the repository |
