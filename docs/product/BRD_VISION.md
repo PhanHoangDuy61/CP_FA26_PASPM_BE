@@ -208,7 +208,7 @@ Quantitative targets are **TBD**: no response-time, throughput or availability t
 
 | Risk | Mitigation |
 |---|---|
-| Low minUtil causes output explosion or timeouts | Limits of 2,000 patterns, 4 MiB output, 60 s and 256 MiB. Choose minUtil from pilot runs. On the demo seed, the single day 2026-10-02 at `PERCENTAGE 0.25` gave 179 patterns, inside the demo target of about 100–300. The full range 2026-10-01..04 at 0.25 gave 0 patterns. For the multi-day demo (2026-10-01..04), `PERCENTAGE 0.12` gives 180 patterns in 385 ms (LOSSLESS) |
+| Low minUtil causes output explosion or timeouts | Limits of 2,000 patterns, 4 MiB output, 60 s and 256 MiB. Choose minUtil from pilot runs. On the demo seed (with the co-purchase baskets, ROC-20261127-002), the full range 2026-10-01..04 at `PERCENTAGE 0.12` gives 182 patterns in 520 ms (LOSSLESS) and 0.25 gives 22; the single day 2026-10-02 at 0.12 fails with `OUTPUT_LIMIT`, so the demo uses the full range (SRS §11 item 4) |
 | High-price data overflows SPMF int32 | EFIM-aware guard returns 400 with a clear reason. Since PR #23, the input falls back to whole-đồng rounding only on overflow. The 4,100-order fixture (lossless product TWU 3,217,593,703) is accepted. If whole-đồng still overflows, the request gets 400; coarser units need a new decision |
 | Reports 1–4 and diagrams drift from code | This document set plus the record of changes; update the reports before Review 3 (**TBD**) |
 | The FoodMart dataset uses its own product codes (`FOODMART-xxxx`) while the backend generates SKUs (DEC-20261119-07) | The demo seed creates each product as `FoodMart Item NNNN`, reads back the server SKU, writes `mapping.csv` and imports CSV copies whose `sku` column holds the server SKUs; the original files are unchanged (ROC-20261125-004). Databases seeded before 2026-11-20 keep their `FOODMART-xxxx` SKUs with no migration; their products can be edited normally because updates never touch the SKU |
@@ -226,7 +226,7 @@ Quantitative targets are **TBD**: no response-time, throughput or availability t
 6. Timeline: the exact dates of Review 3, handover and defence.
 7. ~~Realistic VND prices vs int32~~: decided 2026-11-19 (whole-đồng fallback). Open: what to do if whole-đồng still overflows (thousands of đồng needs a new decision).
 8. ~~Layout zone capacities~~: decided 2026-11-19 (BANNER 3 blocks / 3 products, BUNDLE 4 / 16, CROSS_SELL 2 / 8, FBT 2 / 8, BASELINE 35 / 35). Optional: sensitivity runs at 20 / 35 / 50 products for RQ3.
-9. ~~Multi-day demo minUtil~~: `PERCENTAGE 0.12` gives 180 patterns on 2026-10-01..04 (measured 2026-11-19). Setting it as the demo policy is an owner action.
+9. ~~Multi-day demo minUtil~~: `PERCENTAGE 0.12` gives 182 patterns on 2026-10-01..04 with the co-purchase baskets (180, all single-product, before them; measured 2026-11-19 and 2026-11-27). Setting it as the demo policy is an owner action.
 10. Cleanup task (not part of DEC-20261123-01): drop the unused `store.mining_schedule` column in a later migration.
 11. ~~`scoringVersion` for the 2026-11-24 expiry boundary~~: decided 2026-11-24, **not bumped** (`W2_EXPIRY_SEASON_V1` is the whole Weight v2 model tag and every stored reader accepts only that string). Snapshots taken after the merge follow the new boundary and experiment snapshots must be regenerated, never mixed ([DEC-20261124-01](../decisions/2026-11-24/DEC-20261124-01-batch-expiry-boundary-effective-status.md) §6).
 
