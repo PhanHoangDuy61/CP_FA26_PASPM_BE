@@ -188,9 +188,13 @@ def otp_from_mailpit(email, purpose_hint, since):
         q = urllib.parse.quote(f"to:{email}")
         res = http("GET", f"{MAILPIT}/api/v1/search?query={q}")[1]
         for message in res.get("messages", []):
-            match = OTP_CODE.search(message.get("Snippet", ""))
-            created = message.get("Created", "")
-            if match and message.get("Subject") == OTP_SUBJECTS[purpose_hint] and _epoch(created) >= since - 2:
+            if message.get("Subject") != OTP_SUBJECTS[purpose_hint] or _epoch(message.get("Created", "")) < since - 2:
+                continue
+            # The list's Snippet is built from the HTML part (no colon after the label) and cut at 200 characters,
+            # so the code is read from the plain-text body of the message.
+            body = http("GET", f"{MAILPIT}/api/v1/message/{message['ID']}")[1]
+            match = OTP_CODE.search(body.get("Text", "") if isinstance(body, dict) else "")
+            if match:
                 return match.group(1)
         time.sleep(1)
     sys.exit(f"ERROR: no OTP mail for {email} found in Mailpit ({MAILPIT})")

@@ -28,10 +28,14 @@ class FakeBackend:
         self.calls.append((method, url.replace(API, "").replace(MAIL, ""), body))
         path = url.replace(API, "")
         if url.startswith(MAIL):
+            if "/api/v1/message/" in url:  # the message detail has the exact plain-text body, like the live Mailpit
+                return 200, {"Text": f"PASPM\r\n\r\nYou're invited to PASPM\r\n\r\nYour verification code: {self.otp}\r\n\r\nThis code expires in 10 minutes.\r\n"}
             email = url.split("to%3A")[1]
             email = email.replace("%40", "@")
             u = self.users.get(email)
-            msgs = [{"Subject": "You're invited to PASPM", "Snippet": f"PASPM You're invited to PASPM Hello, Your verification code: {self.otp} This code expires in 10 minutes.", "Created": "2999-01-01T00:00:00Z"}] if u and u.get("mailed") else []
+            # The list Snippet is shaped like the live one (2026-11-28): no colon after the label, cut at 200 characters.
+            snippet = "PASPM You're invited to PASPM Hello Demo Store Admin, You have been invited to join PASPM. Enter this code to activate your account. Your verification code 000000 This code expires in 10 minutes. If y..."
+            msgs = [{"ID": "m1", "Subject": "You're invited to PASPM", "Snippet": snippet, "Created": "2999-01-01T00:00:00Z"}] if u and u.get("mailed") else []
             return 200, {"messages": msgs}
         if path == "/api/auth/login":
             if body["email"] == "sys@x.example":
