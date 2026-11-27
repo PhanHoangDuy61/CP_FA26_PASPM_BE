@@ -21,7 +21,8 @@ The live smoke test of 2026-11-27 compared the running system with the black-box
 2. **Defect #4 — benchmark routes are removed, so 404.** `F01_F02_RBAC_MATRIX.md`: both benchmark rows (`GET /api/mining/runs/{id}/benchmark` and the System Admin Store route) now say "Not mapped → 404" for every role (they said `denyAll` 403 and "Allowed"), with a dated note that the earlier `denyAll` wording and "2 legacy routes forbidden" are historical. The current contract (`F05_MINING_API.md`, "Benchmark routes … return 404") and `SecurityConfig` (no benchmark mapping) already agreed with the 404. TC-F05-025 expects 404 on both routes (it expected 403; the smoke run was the FAIL that found this).
 3. **Defect #5 — known issues.** TEST_PLAN §9 adds **KI-02** (the first e-mail after a cold start can return `503 Email delivery unavailable`; repeat succeeds; tip: send one warm-up invitation or OTP request after every backend start) and **KI-03** (sign-in is limited to 10 attempts per e-mail and 30 per IP in 15 minutes, successful sign-ins included; a restart clears the counters; reuse sessions in demos and tests). SRS §5.4 now states the limit numbers. KI-02 was seen twice: the smoke test, and the first TDP-01 invitation after a backend restart (ROC-20261127-002). The cause is not investigated.
 4. **TC-F06-001** step 1 opens `/recommendations` (the old `/merchandiser/recommendations` URL redirects there since the FE fix of the same day). TEST_PLAN version 0.6.
-5. **Black-box pack regenerated** with `outputs/blackbox-tools` (`gen.py`, then `trace.py`, `missing: []`): still 249 cases, no ID changed; only TC-F01-001, TC-F05-025, TC-F06-001 and one TRACEABILITY line (the new DEC reference) differ. The generator reproduced the committed files byte for byte before the edit.
+5. **Matrix-row budget (PO decision 2026-11-27).** After ROC-20261127-002 the demo Store's full range 2026-10-01..04 uses 19,932 of the 20,000 mining matrix rows. TEST_PLAN gets data item **DP-10** and known issue **KI-04**: F04 import cases run on the TDP-01 Stores B/C or with dates outside 2026-10-01..04, and full-range snapshots on Store A are made on a fresh seed only; otherwise mining answers 400 `Snapshot matrix exceeds mining row limit`.
+6. **Black-box pack regenerated** with `outputs/blackbox-tools` (`gen.py`, then `trace.py`, `missing: []`): still 249 cases, no ID changed; only TC-F01-001, TC-F05-025, TC-F06-001 and one TRACEABILITY line (the new DEC reference) differ. The generator reproduced the committed files byte for byte before the edit.
 
 ## Files
 
@@ -30,7 +31,7 @@ The live smoke test of 2026-11-27 compared the running system with the black-box
 | `docs/decisions/2026-11-27/DEC-20261127-01-end-customer-landing-customer-home.md` | Added |
 | `docs/decisions/2026-11-26/DEC-20261126-03-…md` | Q-06 End Customer text struck through, pointer to the new DEC |
 | `docs/testing/blackbox/PO_QUESTIONS.md` | Q-06 updated |
-| `docs/testing/blackbox/TEST_PLAN.md` | Version 0.6; KI-02 and KI-03 |
+| `docs/testing/blackbox/TEST_PLAN.md` | Version 0.6; DP-10; KI-02, KI-03 and KI-04 |
 | `docs/testing/blackbox/TEST_CASES.csv`, `TEST_CASES.md`, `TRACEABILITY.md` | Regenerated (3 cases + 1 line) |
 | `docs/api/F01_F02_RBAC_MATRIX.md` | Benchmark rows and a dated note |
 | `docs/product/SRS.md` | §5.4 rate-limit numbers |
