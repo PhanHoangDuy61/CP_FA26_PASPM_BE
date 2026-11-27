@@ -8,7 +8,7 @@ Creates through the public REST API, so the business rules apply:
     PARSED here; the SQL file itself is not executed) and one inventory batch per product.
     The backend generates every SKU (DEC-20261119-07): a product is created as "FoodMart Item NNNN" for the
     dataset code FOODMART-NNNN, its server SKU is read back and written to mapping.csv
-  * import-ready copies of the two transaction CSV files (only the sku column is replaced through mapping.csv;
+  * import-ready copies of the three transaction CSV files (only the sku column is replaced through mapping.csv;
     the originals in scripts/seed/data are never modified), imported through POST /api/transactions/imports/csv.
     mapping.csv and the copies go to SEED_OUTPUT_DIR (default scripts/seed/out/<store slug>/, git-ignored)
   * Weight v2 / F06 demo data (skip with SEED_WEIGHT_V2=0): a deterministic share of the products requires expiry
@@ -80,7 +80,8 @@ SQL_COMMAND = env(
     "SEED_SQL_COMMAND",
     "docker compose -f compose.yml exec -T mysql sh -c 'mysql -uroot -p\"$MYSQL_ROOT_PASSWORD\" paspm'",
 )
-CSV_FILES = ["Transactions_F04_Import_Test_Part1.csv", "Transactions_F04_Import_Test_Part2.csv"]
+CSV_FILES = ["Transactions_F04_Import_Test_Part1.csv", "Transactions_F04_Import_Test_Part2.csv",
+             "Transactions_F04_Demo_Copurchase.csv"]  # the third file holds the co-purchase baskets (generate_copurchase_baskets.py)
 PRODUCT_SQL = "FoodMart_Product_Direct_Insert.sql"
 
 
