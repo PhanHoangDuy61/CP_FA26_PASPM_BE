@@ -56,9 +56,9 @@ Coverage: 57/57 FR, 33/33 UC, 33/33 BR have at least one case.
 | FR-08.2 | At most one ACTIVE campaign; activation rechecks | DONE | TC-F08-010, TC-F08-011, TC-F08-019 |
 | FR-08.3 | Offline replay simulation V2+ (equal size), simulated:true | DONE | TC-F07-013, TC-F08-001, TC-F08-002, TC-F08-003, TC-F08-004, TC-F08-005 |
 | FR-08.4 | All F07/F08 operations synchronous | DONE | TC-F08-001, TC-F08-003 |
-| FR-09.1 | Public API by storeSlug; ACTIVE Stores only | DONE | TC-F09-001, TC-F09-004, TC-F09-011, TC-F09-014 |
-| FR-09.2 | Home renders the ACTIVE campaign layout or the default catalogue | DONE | TC-F09-002, TC-F09-003, TC-F09-012 |
-| FR-09.3 | Product detail, availability, bundle filtering | DONE (related products deferred) | TC-F09-005, TC-F09-007, TC-F09-009, TC-F09-013 |
+| FR-09.1 | Public API by storeSlug; ACTIVE Stores only | DONE | TC-F09-001, TC-F09-004, TC-F09-011, TC-F09-014, TC-F09-015 |
+| FR-09.2 | Home renders the ACTIVE campaign layout or the default catalogue | DONE | TC-F09-002, TC-F09-003, TC-F09-012, TC-F09-015 |
+| FR-09.3 | Product detail, availability, bundle filtering | DONE (related products deferred) | TC-F09-005, TC-F09-007, TC-F09-009, TC-F09-013, TC-F09-016 |
 | FR-09.4 | No admin fields in public DTOs; product image URL and description | DONE | TC-F02-008, TC-F02-037, TC-F09-008, TC-F09-013 |
 | FR-10.1 | END_CUSTOMER cart, 99 cap, If-Match versioning | DONE (API) | TC-F10-001, TC-F10-002, TC-F10-003, TC-F10-004, TC-F10-005, TC-F10-006, TC-F10-013, TC-F10-016 |
 | FR-10.2 | Whole-bundle add by bundleKey with per-component results | DONE (API) | TC-F10-007, TC-F10-008, TC-F10-009, TC-F10-010 |
@@ -95,9 +95,9 @@ UC03 and UC22 were removed before Report 3 and are not reused.
 | UC23 | Activate Approved Campaign | DONE (API) | TC-F08-009, TC-F08-012, TC-F08-013, TC-F08-016 |
 | UC24 | View Retail Performance Dashboard | DONE (API); UI pending | TC-F11-001 |
 | UC25 | View A/B Reports | DONE (API read) | TC-F08-005, TC-F08-017 |
-| UC26 | View Merchandising Homepage | DONE (API, MVP) | TC-F09-001, TC-F09-002, TC-F09-014 |
-| UC27 | View Product Details / Related | PARTIAL (API) | TC-F09-005, TC-F09-006 |
-| UC28 | View Recommended Bundles | DONE (API, MVP) | TC-F09-002, TC-F09-009, TC-F09-010 |
+| UC26 | View Merchandising Homepage | DONE (API, MVP) | TC-F09-001, TC-F09-002, TC-F09-014, TC-F09-015 |
+| UC27 | View Product Details / Related | PARTIAL (API) | TC-F09-005, TC-F09-006, TC-F09-016 |
+| UC28 | View Recommended Bundles | DONE (API, MVP) | TC-F09-002, TC-F09-009, TC-F09-010, TC-F09-015, TC-F09-016 |
 | UC29 | Add Whole Bundle to Cart | DONE (API) | TC-F10-001, TC-F10-007 |
 | UC30 | Validate / Preprocess Orders | DONE | TC-F04-004, TC-F04-005, TC-F04-006 |
 | UC31 | Create Frozen Utility Snapshot | DONE | TC-F03-022, TC-F03-023 |
@@ -128,7 +128,7 @@ UC03 and UC22 were removed before Report 3 and are not reused.
 | BR-16 | SA sets λmax; Merchandiser sets λ, α, β, N | TC-F03-001, TC-F03-003, TC-F03-006, TC-F03-020 |
 | BR-17 | Frozen JSON read by version; unknown rejected | TC-F03-029 |
 | BR-18 | Mining input bounds and int32 | TC-F05-012, TC-F05-013 |
-| BR-19 | Consume only APPROVED ∧ ready, rechecked | TC-F06-010, TC-F06-011, TC-F09-009, TC-F09-010 |
+| BR-19 | Consume only APPROVED ∧ ready, rechecked | TC-F06-010, TC-F06-011, TC-F09-009, TC-F09-010, TC-F09-016 |
 | BR-20 | Per-product B; once per layout; F06 and A untouched | TC-F07-004, TC-F07-012 |
 | BR-21 | One ACTIVE campaign per Store | TC-F08-010, TC-F08-019 |
 | BR-22 | Layout score is a priority score, not revenue | TC-F07-003, TC-F08-017 |
@@ -223,8 +223,8 @@ Decisions cited directly in a case's trace. Decisions not listed here are covere
 | DEC-20261125-04 | TC-F09-004, TC-F09-011 |
 | DEC-20261125-06 | TC-F10-004, TC-F10-011 |
 | DEC-20261126-02 | TC-F02-009, TC-F09-013, TC-F10-004, TC-F10-016, TC-F11-006 |
-| DEC-20261126-03 | TC-F01-001, TC-F01-027, TC-F01-044, TC-F02-006, TC-F03-028, TC-F05-006, TC-F05-007, TC-F05-020, TC-F05-021, TC-F05-022, TC-F05-023, TC-F05-024, TC-F05-025, TC-F08-009, TC-F08-017, TC-F09-001, TC-F09-013, TC-F10-006 |
-| DEC-20261127-01 | TC-F01-001 |
+| DEC-20261126-03 | TC-F01-001, TC-F01-027, TC-F01-044, TC-F02-006, TC-F03-028, TC-F05-006, TC-F05-007, TC-F05-020, TC-F05-021, TC-F05-022, TC-F05-023, TC-F05-024, TC-F05-025, TC-F08-009, TC-F08-017, TC-F09-001, TC-F09-013, TC-F09-016, TC-F10-006 |
+| DEC-20261127-01 | TC-F01-001, TC-F09-015 |
 
 [DEC-20261126-02](../../decisions/2026-11-26/DEC-20261126-02-vnd-display-cart-cap-dashboard-window-merch-screens.md) (PO answers of 2026-11-26) sets: VND displayed as whole đồng HALF_UP; F10 single-item writes above 99 refused whole with 409 `CART_QUANTITY_LIMIT`; F11 window of 90 days inclusive accepted, 91 refused; the Merchandiser screen gap on FE `dev` is a defect to fix before the run (TEST_PLAN.md §7 and §9).
 
