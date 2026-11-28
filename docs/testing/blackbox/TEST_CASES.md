@@ -16,10 +16,10 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | [F06 Recommendations](#f06) | 18 | 9 | 8 | 1 | 6 | 2 | 8 | 1 | 1 | 0 | 0 |
 | [F07 Layout simulator](#f07) | 15 | 11 | 3 | 1 | 3 | 6 | 3 | 1 | 2 | 0 | 0 |
 | [F08 Campaigns and simulated A/B](#f08) | 19 | 13 | 4 | 2 | 1 | 6 | 3 | 1 | 7 | 0 | 1 |
-| [F09 Public storefront](#f09) | 14 | 8 | 4 | 2 | 4 | 2 | 3 | 3 | 1 | 1 | 0 |
+| [F09 Public storefront](#f09) | 16 | 8 | 6 | 2 | 4 | 2 | 3 | 3 | 1 | 1 | 2 |
 | [F10 Bundle cart](#f10) | 16 | 10 | 6 | 0 | 4 | 4 | 4 | 2 | 1 | 1 | 0 |
 | [F11 Dashboard](#f11) | 9 | 4 | 4 | 1 | 4 | 0 | 2 | 1 | 0 | 0 | 2 |
-| **Total** | **250** | **143** | **84** | **23** | **69** | **57** | **67** | **29** | **18** | **6** | **4** |
+| **Total** | **252** | **143** | **86** | **23** | **69** | **57** | **67** | **29** | **18** | **6** | **6** |
 
 ## F01
 
@@ -91,7 +91,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded) |
 | Test data | ACC-SA, ACC-STA-A, ACC-MER-A, ACC-EC (passwords from .env.seed) |
 | Steps | 1. Open /login<br>2. Sign in as each account in turn<br>3. Open Profile (/profile) and check role and Store<br>4. Sign out |
-| Expected result | Each sign-in succeeds. System Admin lands on /admin/overview, Store Admin on /store/inventory, Merchandiser on its F03/merchandiser workspace, End Customer on /customer-home (the Store chooser, DEC-20261127-01). Profile shows exactly one role; Store Admin and Merchandiser show Store A, System Admin and End Customer show no Store. |
+| Expected result | Each sign-in succeeds. System Admin lands on /admin/overview, Store Admin on /store/inventory, Merchandiser on its F03/merchandiser workspace, End Customer on /customer-home (the Store chooser, DEC-20261127-01). A guest sees a `Đăng nhập` button in the header of /customer-home; a signed-in End Customer sees the avatar menu instead and no such button. Profile shows exactly one role; Store Admin and Merchandiser show Store A, System Admin and End Customer show no Store. |
 | Priority / type | High / functional |
 | Status | NOT RUN |
 
@@ -106,7 +106,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded) |
 | Test data | ACC-STA-A with a wrong password; unknown email qa-nobody@paspm.example |
 | Steps | 1. Open /login<br>2. Sign in with ACC-STA-A and a wrong password<br>3. Sign in with the unknown email |
-| Expected result | Both attempts are refused with HTTP 401 and the same message `Invalid credentials or account unavailable`; the UI does not reveal whether the email exists. |
+| Expected result | Both attempts are refused with HTTP 401 and the same API message `Invalid credentials or account unavailable`. The UI shows the same single message `Invalid email or password.` in one alert area for both and never the API text, so it does not reveal whether the email exists. |
 | Priority / type | High / negative |
 | Status | NOT RUN |
 
@@ -121,7 +121,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded); ACC-PENDING (invited, not activated); ACC-MER-A deactivated by the System Admin |
 | Test data | ACC-PENDING; ACC-MER-A (INACTIVE) |
 | Steps | 1. Sign in as ACC-PENDING<br>2. Sign in as the deactivated Merchandiser<br>3. Reactivate the Merchandiser (System Admin) and sign in again |
-| Expected result | Steps 1–2: 401 `Invalid credentials or account unavailable`. Step 3: sign-in succeeds. |
+| Expected result | Steps 1–2: 401 `Invalid credentials or account unavailable` on the API; the UI shows `Invalid email or password.` and nothing about the account state. Step 3: sign-in succeeds. |
 | Priority / type | High / negative |
 | Status | NOT RUN |
 
@@ -136,7 +136,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded); Mailpit at http://127.0.0.1:8025 |
 | Test data | New email qa-ec-001@paspm.example; valid password (12–72 chars, upper, lower, digit) |
 | Steps | 1. Open /register and submit the new email<br>2. Read the 6-digit code from the "Verify your PASPM account" e-mail in Mailpit<br>3. Enter the code<br>4. Complete name and password<br>5. Sign in with the new account |
-| Expected result | Register returns 202; OTP verify returns 200; completion returns 200 without issuing a token; sign-in succeeds; the account has role END_CUSTOMER and no Store. |
+| Expected result | Register returns 202 and the UI shows `Check your email for a verification code.`; OTP verify returns 200 (UI: `Email verified successfully! Create your name and password to finish.`); completion returns 200 without issuing a token; sign-in succeeds; the account has role END_CUSTOMER and no Store. Every step has `Back to sign in` and `Back to home` links. |
 | Priority / type | High / functional |
 | Status | NOT RUN |
 
@@ -151,7 +151,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded) |
 | Test data | customer@paspm.example (already registered) |
 | Steps | 1. Open /register<br>2. Submit the existing email |
-| Expected result | HTTP 409 `Email already exists`; no OTP email is sent. |
+| Expected result | HTTP 409 `Email already exists` on the API; the UI shows `This email is already registered.` (not the API text); no OTP email is sent. |
 | Priority / type | Medium / negative |
 | Status | NOT RUN |
 
@@ -181,7 +181,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded); a verified pending self-registration |
 | Test data | Passwords: 11 chars `Abcdefghij1`; 12 chars `Abcdefghijk1`; 72 chars; 73 chars; 12 chars without upper case `abcdefghijk1` |
 | Steps | 1. Complete registration with each password in turn (new email per valid attempt) |
-| Expected result | 11 and 73 characters, and the one without an upper-case letter, are refused with 400 and a field error. 12 and 72 characters are accepted. |
+| Expected result | 11 and 73 characters, and the one without an upper-case letter, are refused with 400 and a field error. The UI refuses a weak password before sending, next to the password field: `Use at least 12 characters, including uppercase, lowercase and a digit.`; different passwords show `Passwords do not match.` next to the confirmation field. 12 and 72 characters are accepted. |
 | Priority / type | High / boundary |
 | Status | NOT RUN |
 
@@ -196,7 +196,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded); pending self-registration with an OTP sent |
 | Test data | Wrong OTP 000000 ×5, then the correct OTP |
 | Steps | 1. Enter a wrong OTP five times<br>2. Enter the correct OTP |
-| Expected result | Attempts 1–5 return 400. The correct OTP after five failures is also refused (400); a new OTP must be requested. |
+| Expected result | Attempts 1–5 return 400. The correct OTP after five failures is also refused (400); a new OTP must be requested. The UI shows `This code could not be verified. Check it or request a new one.` for every refusal (wrong, expired or exhausted); a code that is not 6 digits shows `Enter the 6-digit verification code.` next to the field without a request. |
 | Priority / type | Medium / boundary |
 | Status | NOT RUN |
 
@@ -211,7 +211,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded); OTP just sent |
 | Test data | Same email |
 | Steps | 1. Click Resend OTP immediately<br>2. Wait 60 s and click Resend again |
-| Expected result | First resend: 429 (cooldown). After 60 s: 202 and a new OTP in Mailpit. |
+| Expected result | First resend: 429 (cooldown); the UI shows `Please wait before requesting another code.`. After 60 s: 202 and a new OTP in Mailpit. |
 | Priority / type | Low / boundary |
 | Status | NOT RUN |
 
@@ -226,7 +226,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded); OTP TTL default 600 s |
 | Test data | OTP older than 10 minutes |
 | Steps | 1. Request an OTP<br>2. Wait more than 600 s<br>3. Submit the OTP |
-| Expected result | HTTP 400 (invalid or expired OTP). |
+| Expected result | HTTP 400 (invalid or expired OTP); the UI shows `This code could not be verified. Check it or request a new one.` |
 | Priority / type | Low / boundary |
 | Status | NOT RUN |
 
@@ -241,7 +241,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded); fresh backend process (limits are in memory) |
 | Test data | ACC-MER-A with a wrong password |
 | Steps | 1. Submit 10 wrong-password logins for the same email within 15 min<br>2. Submit an 11th attempt |
-| Expected result | Attempts 1–10 return 401; the 11th returns 429. |
+| Expected result | Attempts 1–10 return 401 (UI: `Invalid email or password.`); the 11th returns 429 (UI: `Too many sign-in attempts. Please wait a few minutes and try again.`). |
 | Priority / type | Medium / security |
 | Status | NOT RUN |
 
@@ -256,7 +256,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded); GOOGLE client ID not configured (default local stack) |
 | Test data | Any Google ID token |
 | Steps | 1. Click Sign in with Google on /login |
-| Expected result | HTTP 503; the UI shows that Google sign-in is unavailable. (With Google configured: a verified Google email linked to an ACTIVE account signs in; an unverified email is refused 401.) |
+| Expected result | HTTP 503; the UI shows `Google sign-in is currently unavailable. Please use your email and password.` (and not the generic server error) and the email sign-in form keeps working. (With Google configured: a verified Google email linked to an ACTIVE account signs in; an unverified email is refused 401.) |
 | Priority / type | Low / negative |
 | Status | NOT RUN |
 
@@ -331,7 +331,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded) |
 | Test data | ACC-MER-A; new valid password |
 | Steps | 1. Open /forgot-password and request a reset<br>2. Read the code from the "Reset your PASPM password" e-mail in Mailpit and use it to set a new password<br>3. Use the access token issued before the reset<br>4. Sign in with the new password |
-| Expected result | Reset request always returns the same 202 message. After confirm, the old token gets 401 (token_version incremented). New password works. |
+| Expected result | Reset request always returns the same 202 message, and the UI shows the same `If an account exists for this email, we've sent a verification code.` for a registered and an unknown email. The forgot-password page has `Back to sign in` and `Back to home` links. After confirm, the old token gets 401 (token_version incremented). New password works. |
 | Priority / type | Medium / functional |
 | Status | NOT RUN |
 
@@ -361,7 +361,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded) |
 | Test data | name QA Store Admin 2, email qa-sta-a2@paspm.example, role STORE_ADMIN, Store A |
 | Steps | 1. Open /admin/users → Invite<br>2. Fill name, email, role STORE_ADMIN and Store A<br>3. Invitee reads the code from the "You're invited to PASPM" e-mail in Mailpit and activates at /activate with a new password<br>4. Invitee signs in |
-| Expected result | Invite returns 201 with status PENDING_VERIFICATION. Activation returns 200. Sign-in succeeds with role STORE_ADMIN and storeId of Store A. |
+| Expected result | Invite returns 201 with status PENDING_VERIFICATION. The /activate screen is English only (steps `Verify`, `Set your password`, `Account activated`); an invitation link with a malformed email or code (`/activate?email=x&code=bad`) shows `This verification link is invalid. Enter your email and verification code below.`; a wrong or expired code shows `This code could not be verified. Check it or request a new one.`; the screen has `Back to sign in` and `Back to home` links. Activation returns 200. Sign-in succeeds with role STORE_ADMIN and storeId of Store A. |
 | Priority / type | High / functional |
 | Status | NOT RUN |
 
@@ -661,7 +661,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded); ACC-STA-C and ACC-MER-C signed in; then Store C deactivated |
 | Test data | ACC-STA-C, ACC-MER-C |
 | Steps | 1. Reload any page as ACC-STA-C<br>2. Sign out and sign in again<br>3. Sign in with a wrong password<br>4. Try a silent refresh as ACC-MER-C<br>5. Reactivate Store C and refresh again |
-| Expected result | Every authenticated request, sign-in and refresh returns 403 `{error:"Store is inactive", code:"STORE_INACTIVE"}` and the UI explains it. A wrong password still returns 401. After reactivation the kept refresh session works again. |
+| Expected result | Every authenticated request, sign-in and refresh returns 403 `{error:"Store is inactive", code:"STORE_INACTIVE"}` and the UI shows `Your store is inactive. Contact your system administrator for help.` once in the sign-in alert area (never the API text). A wrong password still returns 401 and the UI shows `Invalid email or password.`. After reactivation the kept refresh session works again. |
 | Priority / type | High / security |
 | Status | NOT RUN |
 
@@ -841,7 +841,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded) |
 | Test data | viewport widths 320, 768, 1440 px |
 | Steps | 1. Open /login, /store/inventory, /store/batches, /f03/configuration and /store/layout at each width |
-| Expected result | No horizontal page overflow or hidden primary action; tables scroll inside their container; validation errors stay next to their field; empty lists show an explicit empty state. |
+| Expected result | No horizontal page overflow or hidden primary action; tables scroll inside their container; validation errors stay next to their field (on /login: `This field is required.` for an empty field and `Please enter a valid email address.` for a malformed email, linked to the field with aria-describedby) and a request error appears in one alert area (`role=alert`); empty lists show an explicit empty state. |
 | Priority / type | Low / UI |
 | Status | NOT RUN |
 
@@ -3455,7 +3455,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 
 ## F09
 
-**Public storefront** — 14 cases.
+**Public storefront** — 16 cases.
 
 | ID | Title | Priority | Type |
 |---|---|---|---|
@@ -3473,6 +3473,8 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | [TC-F09-012](#tc-f09-012) | Home needs configured zone caps | Low | negative |
 | [TC-F09-013](#tc-f09-013) | Storefront prices: API keeps decimals, UI shows whole đồng HALF_UP | Medium | boundary |
 | [TC-F09-014](#tc-f09-014) | Public Store shows icon and banner URLs | Medium | functional |
+| [TC-F09-015](#tc-f09-015) | Customer homepage: sign-in button, stores directory, featured products, Store-local categories | Medium | UI |
+| [TC-F09-016](#tc-f09-016) | Product page: Thường được mua cùng (FBT) and Có thể bạn cũng thích (CROSS_SELL) | Medium | UI |
 
 ### TC-F09-001
 
@@ -3500,7 +3502,7 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded); C1 ACTIVE with B (BUNDLE, CROSS_SELL, FBT, BANNER blocks) |
 | Test data | slug foodmart-benchmark |
 | Steps | 1. [API] GET /api/storefront/foodmart-benchmark/home |
-| Expected result | campaignName C1; store has storeSlug, name, iconUrl and bannerUrl (same values as the Stores list); one HomePlacement per zone and block in stored order; type is the zone name; no BASELINE; no recommendation IDs, policy, review data or utility. |
+| Expected result | campaignName C1; store has storeSlug, name, iconUrl and bannerUrl (same values as the Stores list); one HomePlacement per zone and block in stored order; type is the zone name; no BASELINE; no recommendation IDs, policy, review data or utility. On /customer-home the products of the BANNER blocks appear under `Sản phẩm nổi bật`; the FBT and CROSS_SELL blocks appear on the product pages (TC-F09-015, TC-F09-016). |
 | Priority / type | High / functional |
 | Status | NOT RUN |
 
@@ -3514,8 +3516,8 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Role | Guest (anonymous) |
 | Preconditions | ENV-1 (local Docker stack, demo seed loaded); no ACTIVE campaign; DRAFT, PUBLISHED and ENDED campaigns exist |
 | Test data | slug foodmart-benchmark |
-| Steps | 1. [API] GET …/home |
-| Expected result | fallbackType DEFAULT_CATALOG; no zones; ACTIVE non-deleted products grouped by category, ordered by name then productId. |
+| Steps | 1. [API] GET …/home<br>2. Open /customer-home (UI) |
+| Expected result | fallbackType DEFAULT_CATALOG; no zones; ACTIVE non-deleted products grouped by category, ordered by name then productId. The homepage has no `Sản phẩm nổi bật` section. |
 | Priority / type | High / state transition |
 | Status | NOT RUN |
 
@@ -3682,6 +3684,36 @@ Conventions: `T` = today in `Asia/Ho_Chi_Minh` on the execution day. Accounts (`
 | Steps | 1. [API] GET /api/storefront/stores: Store A iconUrl and bannerUrl<br>2. Store Admin A uploads the icon on /store/profile<br>3. [API] GET /api/storefront/stores and /api/storefront/foodmart-benchmark/home<br>4. [API] GET the returned iconUrl without a token<br>5. Store Admin A uploads another icon<br>6. [API] GET the old iconUrl<br>7. Store Admin A removes the icon<br>8. System Admin deactivates Store A<br>9. [API] GET /api/storefront/stores and the last iconUrl |
 | Expected result | First list: Store A iconUrl and bannerUrl are JSON null. After the upload: iconUrl is `/api/public/stores/{id}/images/{uuid}.png` in both the list and home.store (same value as the Store API); bannerUrl stays null; the URL serves the PNG anonymously (200). After the second upload: a new URL; the old one is 404. After removal: iconUrl null. After deactivation: Store A is not listed and its image URL is 404. |
 | Priority / type | Medium / functional |
+| Status | NOT RUN |
+
+### TC-F09-015
+
+**Customer homepage: sign-in button, stores directory, featured products, Store-local categories**
+
+| Field | Value |
+|---|---|
+| Trace | UC26; UC28; FR-09.1; FR-09.2; DEC-20261127-01 |
+| Role | Guest (anonymous), End Customer |
+| Preconditions | ENV-1 (local Docker stack, demo seed loaded); Stores A and B ACTIVE; Store A has an ACTIVE campaign with a BANNER block; Store B has no campaign |
+| Test data | slug foodmart-benchmark; BANNER product P1 with an image |
+| Steps | 1. Open /customer-home as a guest<br>2. Read the header, then scroll through the sections<br>3. Open the Store A page from its card and open the category filter<br>4. Sign in as the End Customer and return to /customer-home |
+| Expected result | The header has a `Đăng nhập` button (it is not shown once signed in; the avatar menu replaces it, and the sign-in then returns to the page). There is no `Mua theo danh mục` section and no `Xem danh mục` menu; `Khám phá cửa hàng` (the ACTIVE Stores) comes before `Sản phẩm từ các cửa hàng`. `Sản phẩm nổi bật` lists the BANNER products of Store A with their images and a link `/product/{id}?store=foodmart-benchmark`; Store B adds nothing. On the Store A page the category filter is built from that Store's products, including products that are not placed in the campaign. |
+| Priority / type | Medium / UI |
+| Status | NOT RUN |
+
+### TC-F09-016
+
+**Product page: Thường được mua cùng (FBT) and Có thể bạn cũng thích (CROSS_SELL)**
+
+| Field | Value |
+|---|---|
+| Trace | UC27; UC28; FR-09.3; BR-19; DEC-20261126-03 |
+| Role | Guest (anonymous), End Customer |
+| Preconditions | ENV-1 (local Docker stack, demo seed loaded); ACTIVE campaign with an FBT block (P1, P2, P3), a CROSS_SELL block (P1, P4); P3 out of stock; P5 in no block |
+| Test data | slug foodmart-benchmark; products P1..P5 |
+| Steps | 1. Open the product page of P1<br>2. Add P2 to the cart as the End Customer (the cart page version is stale in a second tab: add again after the conflict)<br>3. As a guest, press Thêm vào giỏ on P2<br>4. Open the product page of P5 |
+| Expected result | `Thường được mua cùng` shows P2 and P3 and `Có thể bạn cũng thích` shows P4 (never P1 itself, no duplicates, at most 8 per section); each card shows its price and `Còn hàng` or `Hết hàng`, and P3's add button is disabled. Adding P2 uses the versioned Store cart (If-Match): a stale version shows `Giỏ hàng đã thay đổi. Hãy kiểm tra lại trước khi thực hiện lại.`, the cart reloads without repeating the POST, the next add shows `Đã cập nhật giỏ hàng.` and the cart count is 1. A guest is sent to the sign-in page. P5 shows neither section. |
+| Priority / type | Medium / UI |
 | Status | NOT RUN |
 
 ## F10
